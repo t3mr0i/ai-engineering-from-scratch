@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does subword tokenization buy you over word-level vocabularies?",
+      "question": "What does word_counts do with uppercase words in the corpus?",
       "options": [
-        "Rare words decompose into known subword pieces, eliminating OOV while keeping vocabulary bounded",
-        "Smaller models",
-        "Faster training",
-        "Better embeddings — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases"
+        "It lowercases them before counting",
+        "It drops them because the pattern accepts only lowercase input",
+        "It keeps a separate count for every capitalization",
+        "It turns each uppercase letter into a boundary token"
       ],
       "correct": 0,
-      "explanation": "Subword tokens cover any input by decomposition, removing the OOV problem of word-level vocab."
+      "explanation": "The regex accepts letters and the code applies text.lower() before constructing the Counter."
     },
     {
       "stage": "check",
-      "question": "Why does GPT-2 use byte-level BPE rather than character-level BPE?",
+      "question": "What is the initial symbol sequence for \"low\" from init_vocab?",
       "options": [
-        "Required by transformers, with no need to inspect intermediate results or test edge cases",
-        "Byte BPE skips merges",
-        "A 256-byte base vocabulary covers any UTF-8 input, guaranteeing no [UNK] tokens",
-        "Bytes are smaller"
-      ],
-      "correct": 2,
-      "explanation": "Byte-level BPE starts from 256 bytes so every input encodes; nothing is OOV."
-    },
-    {
-      "stage": "check",
-      "question": "How does the Unigram tokenizer build its vocabulary?",
-      "options": [
-        "Greedy IDF weighting",
-        "Start from a large candidate set, iteratively prune tokens whose removal least hurts corpus log-likelihood",
-        "Greedy frequent-pair merging, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "Random sampling"
+        "(\"low\", \"</w>\")",
+        "(\"l\", \"o\", \"w\", \"</w>\")",
+        "(\"<\", \"l\", \"o\", \"w\", \">\")",
+        "(\"l\", \"o\", \"w\") without an end marker"
       ],
       "correct": 1,
-      "explanation": "Unigram fits a unigram LM and iteratively removes the least useful tokens to reach target vocab size."
+      "explanation": "BPE starts with characters and appends </w> so word-final merges remain distinguishable."
     },
     {
       "stage": "check",
-      "question": "What distinguishes WordPiece's merge criterion from BPE's?",
+      "question": "How are pair counts weighted when \"low\" occurs five times?",
       "options": [
-        "WordPiece uses bytes",
-        "WordPiece is unsupervised, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "WordPiece merges pairs that maximize training-corpus likelihood, while BPE merges the most frequent pair",
-        "WordPiece skips merges"
+        "Each pair contributes one regardless of word frequency",
+        "Only the final pair receives the word frequency",
+        "Every adjacent pair from low contributes five to its count",
+        "The word is ignored until it appears ten times"
       ],
       "correct": 2,
-      "explanation": "WordPiece picks merges by likelihood; BPE picks by raw frequency."
+      "explanation": "pair_counts adds freq for every adjacent symbol pair in each vocabulary entry."
     },
     {
-      "stage": "post",
-      "question": "Which tool trains a tokenizer directly on raw multilingual Unicode text?",
+      "stage": "check",
+      "question": "What does merge_pair do when it finds the selected pair twice in a row?",
       "options": [
-        "spaCy",
-        "tiktoken",
-        "tokenizers-lite — and applies unchanged even when the lesson's stated preconditions fail",
-        "SentencePiece (encodes whitespace as a special marker and trains BPE or Unigram)"
+        "It merges only the final occurrence",
+        "It recursively merges every possible overlapping substring",
+        "It deletes both symbols instead of creating a token",
+        "It merges each non-overlapping occurrence from left to right"
       ],
       "correct": 3,
-      "explanation": "SentencePiece trains BPE/Unigram on raw text without pre-tokenization; tiktoken only encodes."
+      "explanation": "The while loop appends the combined symbol and advances by two whenever the pair matches."
     },
     {
       "stage": "post",
-      "question": "Why must production CI hash-check the deployed tokenizer.json?",
+      "question": "Why does train_bpe stop early when pair_counts returns no pairs?",
       "options": [
-        "Tokenizer drift produces different token IDs from those the model was trained on, silently corrupting outputs",
-        "Required by Hugging Face",
-        "To compress storage",
-        "It reduces vocabulary size, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence"
+        "There is no adjacent symbol left to merge",
+        "The requested number of merges was automatically doubled",
+        "The corpus has been translated into another language",
+        "All tokens have become unknown and must be discarded"
       ],
       "correct": 0,
-      "explanation": "Even small tokenizer changes shift IDs; a hash check catches drift before it reaches users."
+      "explanation": "The loop breaks when the pair Counter is empty; otherwise it selects the most frequent pair and continues."
+    },
+    {
+      "stage": "post",
+      "question": "What does encode_bpe(\"slowest\", merges) preserve even if the word was unseen during training?",
+      "options": [
+        "A guaranteed single whole-word token",
+        "Character-level pieces, plus </w>, replayed through the learned merges",
+        "A lookup from the training corpus that must contain slowest",
+        "Only the first character, because unseen words are rejected"
+      ],
+      "correct": 1,
+      "explanation": "Encoding starts from the word characters and applies known merges, so unseen words can still decompose into pieces."
     }
   ]
 }

@@ -237,6 +237,14 @@ This lesson produces a reusable prompt for deciding when to go multi-agent. See 
 | Fan-out / fan-in | "Map-reduce for agents" | Splitting a task across parallel agents (fan-out), then combining their results (fan-in). |
 | Message passing | "Agents talk to each other" | The communication mechanism between agents: structured data sent from one agent to another, replacing shared context windows. |
 
+## Build It
+
+Reconstruct **Why Multi-Agent?** by following `fakeLLMCall` on the text "red fox". Run `run main.text` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
+
+## Ship It
+
+Hand off `outputs/prompt-multi-agent-decision.md` with the command `run main.text`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [The Landscape of Emerging AI Agent Architectures](https://arxiv.org/abs/2409.02977) - survey of multi-agent patterns

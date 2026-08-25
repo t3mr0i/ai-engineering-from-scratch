@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What problem does momentum solve in gradient descent?",
+      "question": "SGD receives parameter p=1, gradient g=0.5, and lr=0.1. What is p after one step?",
       "options": [
-        "It reduces memory usage",
-        "It dampens oscillation by accumulating past gradients, accelerating movement in consistent directions",
-        "It eliminates the need for a learning rate — and applies unchanged even when the lesson's stated preconditions fail",
-        "It prevents overfitting"
+        "1.05",
+        "0.5",
+        "0.95",
+        "0.9"
       ],
-      "correct": 1,
-      "explanation": "In narrow valleys, gradients oscillate across the valley while making slow progress along it. Momentum accumulates past gradients: consistent directions amplify while oscillating directions cancel, giving smoother, faster convergence."
+      "correct": 2,
+      "explanation": "The update is p-lr*g=1-0.1*0.5=0.95."
     },
     {
       "stage": "check",
-      "question": "What is the key difference between Adam and AdamW?",
+      "question": "On the first SGDMomentum step with beta=0.9 and gradient 0.5, what velocity does the scratch optimizer use?",
       "options": [
-        "AdamW uses a higher learning rate",
-        "AdamW applies weight decay directly to weights instead of through the gradient, giving proper regularization",
-        "AdamW doesn't use momentum",
-        "AdamW only works with transformers, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence"
-      ],
-      "correct": 1,
-      "explanation": "In Adam + L2, the adaptive learning rate scales the regularization term differently per parameter. AdamW decouples weight decay from the gradient update, applying uniform shrinkage regardless of gradient statistics."
-    },
-    {
-      "stage": "check",
-      "question": "Why does Adam use bias correction in early training steps?",
-      "options": [
-        "To prevent overfitting",
-        "The moment estimates are initialized to zero, so early values are biased toward zero; correction compensates for this cold start",
-        "To clip large gradients, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "To speed up convergence"
-      ],
-      "correct": 1,
-      "explanation": "At step 1 with beta1=0.9, m_1 = 0.1 * gradient (10x too small). Dividing by (1 - 0.9^1) = 0.1 corrects this to the actual gradient. The correction becomes negligible after ~50 steps."
-    },
-    {
-      "stage": "check",
-      "question": "What are the standard default hyperparameters for Adam?",
-      "options": [
-        "lr=0.1, beta1=0.5, beta2=0.5",
-        "lr=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8",
-        "lr=0.01, beta1=0.99, beta2=0.99, before defining the measurement, acceptance threshold, or rollback path",
-        "lr=0.0001, beta1=0.8, beta2=0.9"
-      ],
-      "correct": 1,
-      "explanation": "The original Adam paper (Kingma & Ba, 2014) recommended lr=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8. These defaults work well for most problems."
-    },
-    {
-      "stage": "post",
-      "question": "Which optimizer is the modern default for training transformers and LLMs?",
-      "options": [
-        "Vanilla SGD",
-        "SGD with momentum",
-        "RMSProp",
-        "AdamW"
+        "0.05",
+        "0.9",
+        "0",
+        "0.5"
       ],
       "correct": 3,
-      "explanation": "AdamW (Adam with decoupled weight decay) is used to train BERT, GPT, LLaMA, and virtually all modern transformers. It combines adaptive learning rates with proper weight decay regularization."
+      "explanation": "The initial velocity is zero, so v=0.9*0+0.5=0.5. Later steps include the previous velocity."
+    },
+    {
+      "stage": "check",
+      "question": "On Adam's first step with a positive gradient g, what does bias correction make m_hat and v_hat equal to?",
+      "options": [
+        "g and g squared",
+        "0.9g and 0.999g squared",
+        "1 and 1",
+        "g/2 and g/2"
+      ],
+      "correct": 0,
+      "explanation": "At t=1, m=0.1g and v=0.001g^2. Dividing by 1-beta1 and 1-beta2 recovers g and g^2."
+    },
+    {
+      "stage": "check",
+      "question": "For AdamW with p=2, zero gradient, lr=0.1, and weight_decay=0.5, what is p after its decoupled decay step?",
+      "options": [
+        "2.05",
+        "1.9",
+        "1.0",
+        "2.5"
+      ],
+      "correct": 1,
+      "explanation": "The implementation first multiplies p by 1-weight_decay*lr=0.95, giving 2*0.95=1.9; the gradient update is zero."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Optimizers?",
+      "question": "Which optimizer class in this lesson applies weight decay separately from the Adam moment update?",
       "options": [
-        "Explain how Adam's bias correction compensates for zero-initialized moment estimates in early training steps",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "SGD",
+        "SGDMomentum",
+        "AdamW",
+        "Adam without weight decay"
       ],
-      "correct": 0,
-      "explanation": "“Explain how Adam's bias correction compensates for zero-initialized moment estimates in early training steps” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "AdamW performs a direct multiplicative decay before applying the bias-corrected Adam update, unlike adding an L2 term to the gradient."
+    },
+    {
+      "stage": "post",
+      "question": "Why is Adam's bias correction important during its first few steps?",
+      "options": [
+        "It changes the sign of every gradient",
+        "It removes the need to choose a learning rate",
+        "It makes Adam identical to plain SGD",
+        "Zero-initialized moments would otherwise underestimate the current gradient"
+      ],
+      "correct": 3,
+      "explanation": "The moving averages start at zero, so early uncorrected moments are biased toward zero. Dividing by 1-beta^t compensates for that initialization."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the only legal way actors interact in AutoGen v0.4?",
+      "question": "After `python3 code/main.py` runs the review flow, what does the checklist report?",
       "options": [
-        "Shared SQL transactions coordinated through a central database",
-        "Mutating each other's system prompts directly at runtime",
-        "Asynchronous messages exchanged through inboxes; no shared memory",
-        "Direct access to a shared dict that every actor can read and write"
-      ],
-      "correct": 2,
-      "explanation": "Actors have private state and an inbox; messages are the only interaction."
-    },
-    {
-      "stage": "check",
-      "question": "What are the three API layers of AutoGen v0.4?",
-      "options": [
-        "Frontend, Backend, and Database layers",
-        "Tools, Models, and Memory subsystems",
-        "Plan, Act, and Reflect in a fixed loop",
-        "Core, AgentChat, and Extensions"
-      ],
-      "correct": 3,
-      "explanation": "Core is the low-level actor framework, AgentChat is the task-driven high-level API, Extensions are integrations."
-    },
-    {
-      "stage": "check",
-      "question": "Why does decoupling delivery from handling give fault isolation?",
-      "options": [
-        "The runtime catches handler failures in B without crashing A; A's send() returned immediately and never blocked",
-        "Each actor runs on a physically separate machine by default, isolating every failure at the hardware level rather than in software",
-        "The runtime automatically restarts the entire operating system whenever a handler raises an exception",
-        "Every handler is written as a pure function with no side effects, so failures cannot propagate"
+        "Consensus is `False`, and one failed reviewer message is in the dead-letter queue.",
+        "Consensus is `True`, and the queue is empty because failed handlers are retried.",
+        "Consensus is `False`, but the crash stops all three review messages from running.",
+        "Consensus is `True`, with the crashed message delivered to the checklist instead."
       ],
       "correct": 0,
-      "explanation": "send() puts the message in the recipient's inbox and returns; a handler crash is local to that actor."
+      "explanation": "The checklist receives the three review results and reaches `False`; the reviewer handling `crash_me` fails once, so that message is recorded as the single dead letter while the other messages continue."
     },
     {
       "stage": "check",
-      "question": "Which AgentChat topology rotates agents in a fixed order?",
+      "question": "What happens when `Runtime.send` targets an actor name that is not registered?",
       "options": [
-        "SelectorGroupChat, which uses a selector agent to pick who goes next",
-        "RoundRobinGroupChat, which rotates agents in a fixed order",
-        "Magentic-One, the reference team for web browsing and code execution",
-        "Supervisor, a central router that dispatches to specialist subagents"
+        "The runtime creates a temporary actor and invokes its default handler.",
+        "It records a dead letter with reason `no actor 'name'` and does not deliver the message.",
+        "It blocks the FIFO queue until an actor with that name is registered.",
+        "It silently drops the message without changing the trace or dead-letter list."
       ],
       "correct": 1,
-      "explanation": "RoundRobinGroupChat is fixed rotation; SelectorGroupChat uses a selector to pick next."
+      "explanation": "`run_until_idle` looks up the recipient; an unknown name produces a dead letter whose reason is `no actor 'name'`, rather than a delivery or retry."
     },
     {
-      "stage": "post",
-      "question": "What is Magentic-One in this lesson?",
+      "stage": "check",
+      "question": "What two guarantees does `Runtime.send` provide for a normal message?",
       "options": [
-        "A serialization format used for persisting actor state between separate runs",
-        "An OpenTelemetry exporter that ships spans directly to a tracing backend",
-        "A reference multi-agent team for web browsing, code execution, and file handling built on AgentChat",
-        "A new frontier LLM model released alongside AutoGen v0.4 specifically for benchmarking multi-agent performance at scale"
+        "It reuses the sender's ID and dispatches immediately in a nested call.",
+        "It assigns a random UUID and processes the message before returning.",
+        "It assigns increasing IDs such as `m001` and appends messages to the FIFO queue.",
+        "It assigns IDs only after the handler succeeds and reverses the queue for priority."
       ],
       "correct": 2,
-      "explanation": "Magentic-One is Microsoft's reference team that demonstrates the AgentChat API."
+      "explanation": "`send` increments the runtime counter, writes the resulting `mNNN` ID into the message, and appends it to the `deque`; processing happens later."
+    },
+    {
+      "stage": "check",
+      "question": "How does the runtime isolate a handler that raises `RuntimeError`?",
+      "options": [
+        "It rolls back every earlier message and re-raises the exception to the caller.",
+        "It marks the actor permanently inactive and discards all messages still queued.",
+        "It converts the exception to a successful result so the actor's sender can continue.",
+        "It catches the exception, records a failed dead letter and trace entry, then continues with queued messages."
+      ],
+      "correct": 3,
+      "explanation": "The handler call is wrapped in a `try`/`except`; the failed message is dead-lettered and traced as `FAIL`, while the FIFO loop proceeds with remaining work."
     },
     {
       "stage": "post",
-      "question": "What is the lesson's stated status of AutoGen v0.4 in early 2026?",
+      "question": "What verdict does the reviewer give a snippet containing `eval(`?",
       "options": [
-        "Deprecated and fully removed from Microsoft's GitHub organization",
-        "Replaced entirely by LangGraph as Microsoft's recommended framework",
-        "Just announced at a research preview event this quarter, with no production users yet",
-        "Stable but in maintenance mode; Microsoft Agent Framework is the forward path"
+        "`ok=False` with the issue `uses eval`.",
+        "`ok=True` because the snippet has no bare `except:` clause.",
+        "`ok=False` with only the issue `missing type annotations`.",
+        "The runtime sends it to the dead-letter queue before the reviewer sees it."
       ],
-      "correct": 3,
-      "explanation": "AutoGen v0.7.x is stable for research; active development has shifted to Microsoft Agent Framework."
+      "correct": 0,
+      "explanation": "The review handler checks the snippet text for `eval(` and returns a failed result whose issue list contains `uses eval`."
+    },
+    {
+      "stage": "post",
+      "question": "If `runtime.max_messages` is set to `1` while two valid messages are queued, what remains after `run_until_idle()`?",
+      "options": [
+        "Both messages run because the limit applies only to failed deliveries.",
+        "The first message is processed and the second remains in the FIFO queue.",
+        "Neither message runs because a bounded run requires an empty queue first.",
+        "The second message runs first because bounded runs use LIFO ordering."
+      ],
+      "correct": 1,
+      "explanation": "The loop stops once one message has been processed; with two valid queued messages, the first is handled and the second stays queued for a later call."
     }
   ]
 }

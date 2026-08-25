@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the purpose of composing seven surfaces?",
+      "question": "Why is the first harness.run call blocked in main?",
       "options": [
-        "Make the full reliability contract explicit",
-        "Hide all of the harness's controls",
-        "Remove the independent review step",
-        "Automate the whole production deployment now"
+        "It has no task_id and no instructions",
+        "Its unit check is marked false despite passing feedback",
+        "It includes secrets/key.txt and omits the required acceptance check",
+        "It changed no files, so scope validation cannot run"
+      ],
+      "correct": 2,
+      "explanation": "The incomplete call has a forbidden secrets/key.txt path and only unit=True; the missing acceptance evidence also prevents readiness."
+    },
+    {
+      "stage": "check",
+      "question": "What does the complete harness report use as its next_action?",
+      "options": [
+        "repair the first failed surface",
+        "rerun the unit command",
+        "close the task without a handoff",
+        "request human approval"
+      ],
+      "correct": 3,
+      "explanation": "When review_candidate passes, Harness sets the state to ready and uses request human approval as the next gate."
+    },
+    {
+      "stage": "check",
+      "question": "What does review_candidate return when runtime feedback contains one failed receipt?",
+      "options": [
+        "Review(False, 'runtime feedback contains a failure')",
+        "Review(True, 'scope and verification are enough')",
+        "Review(False, 'scope violations remain') regardless of scope",
+        "Review(True, 'failed feedback is only advisory')"
       ],
       "correct": 0,
-      "explanation": "Composition connects the mechanisms while keeping ownership visible."
+      "explanation": "After scope and check evidence pass, review_candidate still requires every Feedback.passed value to be true; a failed receipt blocks readiness."
     },
     {
       "stage": "check",
-      "question": "What does the harness control plane do?",
+      "question": "If completed_checks is {'unit': True}, what evidence does the acceptance row carry?",
       "options": [
-        "Write arbitrary files to production",
-        "Replace the underlying model entirely",
-        "Evaluate evidence and route readiness",
-        "Delete receipts from failed checks"
-      ],
-      "correct": 2,
-      "explanation": "The control plane governs decisions around the model."
-    },
-    {
-      "stage": "check",
-      "question": "When is a report ready in this project?",
-      "options": [
-        "When the maker's note simply sounds confident",
-        "When exactly one test happens to pass",
-        "When the candidate diff is simply large",
-        "When scope, feedback, checks, and review pass"
-      ],
-      "correct": 3,
-      "explanation": "Readiness requires all evidence categories."
-    },
-    {
-      "stage": "check",
-      "question": "What should a blocked handoff contain?",
-      "options": [
-        "No context at all about what happened",
-        "The failed surface and next repair action",
-        "A success claim offered with no real evidence",
-        "A fully hidden, unrecorded exception"
+        "name='unit', passed=True, detail='passed'",
+        "name='acceptance', passed=False, detail='missing or failed'",
+        "name='acceptance', passed=True, detail='passed'",
+        "No row, because missing checks are omitted"
       ],
       "correct": 1,
-      "explanation": "A blocked state must preserve actionable context."
+      "explanation": "Harness creates a CheckEvidence row for every required check; absent or non-True values become passed=False with detail missing or failed."
     },
     {
       "stage": "post",
-      "question": "Why keep instructions as a separate field?",
+      "question": "How many startup instructions does the main Harness load into its handoff?",
       "options": [
-        "To count the words used in the prompt",
-        "To avoid persisting any durable state",
-        "To fully replace the scope contract instead",
-        "To prove which startup rules were loaded"
-      ],
-      "correct": 3,
-      "explanation": "Surface ownership remains reviewable when it is explicit."
-    },
-    {
-      "stage": "post",
-      "question": "What should happen after a ready report?",
-      "options": [
-        "An irreversible deploy that runs automatically",
-        "Erasing the report once it is marked ready",
-        "Human approval or the configured next gate",
-        "Skipping the handoff to the next session"
+        "1",
+        "2",
+        "3",
+        "7"
       ],
       "correct": 2,
-      "explanation": "Readiness is evidence for the next gate, not permission for every side effect."
+      "explanation": "The constructor receives ('read state', 'respect scope', 'verify before done'), so the serialized handoff reports instructions_loaded=3."
+    },
+    {
+      "stage": "post",
+      "question": "What review detail accompanies a ready report?",
+      "options": [
+        "runtime feedback contains a failure",
+        "verification is incomplete",
+        "scope violations remain",
+        "scope, feedback, and verification evidence are ready"
+      ],
+      "correct": 3,
+      "explanation": "review_candidate returns that exact detail only after scope is clean, all required checks pass, and every feedback receipt passes."
     }
   ]
 }

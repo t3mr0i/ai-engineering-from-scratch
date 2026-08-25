@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to AI Operations: Triage Signals, Runbooks, and Incident Response (2026)?",
+      "question": "A MetricDeltas sample has safety_classifier_score=0.72, a cost spike, and a quality drop. Which classification does classify_incident return?",
       "options": [
-        "Explain the production problem addressed by AI Operations: Triage Signals, Runbooks, and Incident Response...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "SAFETY with P1 severity, because the safety threshold overrides the other buckets",
+        "COST with P2 severity, because spend is the most actionable signal",
+        "QUALITY with P2 severity, because the judge score changed",
+        "TOOL_USE with P1 severity, because every mixed incident is treated as agentic"
       ],
       "correct": 0,
-      "explanation": "“Explain the production problem addressed by AI Operations: Triage Signals, Runbooks, and Incident Response...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The safety gate runs first and fires at 0.70 or above. It returns Category.SAFETY and Severity.P1 without letting cost or quality signals change the category."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of AI Operations: Triage Signals, Runbooks, and Incident Response (2026)?",
+      "question": "Incident C has tool_error_rate_delta=55 and tool_loop_detected=True. What category and severity does classify_incident select?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "COST, P2, because a long agent loop mainly increases token spend",
+        "TOOL_USE, P1, because the loop is an agentic signal requiring immediate mitigation",
+        "QUALITY, P2, because tool errors are output regressions",
+        "SAFETY, P1, because all production side effects are safety incidents"
       ],
       "correct": 1,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The tool bucket has the error-rate and loop signals. A detected loop upgrades the severity to P1; the runbook then adds a max_turns guard and disables the looping tool."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through AI Operations: Triage Signals, Runbooks, and Incident Response (2026)?",
+      "question": "For Category.COST with context_length_spike=True and feature_flag_changed=False, which conditional step appears in route_runbook?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Measure quality, cost, latency, and risk with explicit acceptance criteria",
-        "Treat one successful example as proof that every edge case works"
+        "Check the MCP schema and roll back the affected server",
+        "Check the safety-classifier threshold and preserve affected sessions",
+        "Check context-length p95 at the inflection point for an inlined-history prompt bug",
+        "Pin a dated model version before looking at cost telemetry"
       ],
       "correct": 2,
-      "explanation": "“Measure quality, cost, latency, and risk with explicit acceptance criteria” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The cost runbook includes the context_length_spike branch when that state flag is true. The feature-flag branch is omitted here because feature_flag_changed is false."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits AI Operations: Triage Signals, Runbooks, and Incident Response (2026)?",
+      "question": "In detect_silent_drift, which layer catches the sample regression while transport and cost remain clean?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Identify failure modes and define a safe rollback or review path",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Identify failure modes and define a safe rollback or review path” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for AI Operations: Triage Signals, Runbooks, and Incident Response (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the production problem addressed by AI Operations: Triage Signals, Runbooks, and Incident Response..."
+        "L1 infrastructure, because the improved latency is itself an alert",
+        "L2 platform, because unchanged cost proves a token anomaly",
+        "L4 business, because the 3.5-point satisfaction drop crosses its alert threshold",
+        "L3 AI quality, through both the judge-score and output-length alerts"
       ],
       "correct": 3,
-      "explanation": "“Explain the production problem addressed by AI Operations: Triage Signals, Runbooks, and Incident Response...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The judge score falls about 16% and output length falls 38%, so both L3 checks fire. L1 latency improves, L2 cost is flat, and the L4 drop is below its 5-point threshold."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for AI Operations: Triage Signals, Runbooks, and Incident Response (2026)?",
+      "question": "A quality incident has provider_status_clean=True and model_version_changed=True. What mitigation does the quality runbook recommend?",
       "options": [
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Pin the model to an explicit dated version instead of the family alias",
+        "Disable every tool and reduce max_turns until the model recovers",
+        "Raise the safety threshold so fewer responses are escalated",
+        "Wait for the quarterly satisfaction survey before changing configuration"
       ],
       "correct": 0,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "After checking the provider, the model-version branch tells the responder to verify configuration and pin a dated suffix such as claude-sonnet-4-6-20260501."
+    },
+    {
+      "stage": "post",
+      "question": "Why is a safety-classifier hit treated as P1 even when only a small number of users are affected?",
+      "options": [
+        "P1 is reserved for cost spikes above 20 percent, regardless of user impact",
+        "Safety incidents are always at least P1, so scope does not lower the response priority",
+        "Safety signals are ignored until an L4 satisfaction metric confirms harm",
+        "The router cannot distinguish safety from quality and therefore defaults to P1"
+      ],
+      "correct": 1,
+      "explanation": "The lesson makes safety the exception to traffic-based prioritisation: harmful or policy-violating output is always at least P1 and must reach the safety lead quickly."
     }
   ]
 }

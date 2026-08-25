@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which span name represents an agent run in the GenAI conventions?",
+      "question": "What ID does a fresh `ExternalContentStore` assign to its first `put` call?",
       "options": [
-        "agent.start, emitted once when create_agent constructs the agent instance",
-        "run_chain, the span name emitted by the model/client category for raw LLM calls",
-        "agent_loop, the span name used for tool spans linked by parent-child relation",
-        "invoke_agent, optionally suffixed by gen_ai.agent.name when the agent is named"
-      ],
-      "correct": 3,
-      "explanation": "invoke_agent is the canonical name; the agent's name attribute appears in the span name when set."
-    },
-    {
-      "stage": "check",
-      "question": "Which three span categories does the GenAI SIG define?",
-      "options": [
-        "Model/client, agent, and tool spans",
-        "Frontend, backend, and database spans",
-        "Read, write, and execute spans",
-        "Latency, error, and throughput spans"
-      ],
-      "correct": 0,
-      "explanation": "Model/client (LLM calls), agent (create/invoke), tool (per invocation) are the categories."
-    },
-    {
-      "stage": "check",
-      "question": "When does an invoke_agent span use kind CLIENT vs INTERNAL?",
-      "options": [
-        "Always INTERNAL, because span kind is fixed by the SIG regardless of whether the service is remote or in-process",
-        "CLIENT for remote agent services (OpenAI Assistants, Bedrock Agents); INTERNAL for in-process frameworks (LangChain, CrewAI, local ReAct)",
-        "CLIENT only when the transport is HTTPS, and INTERNAL whenever the connection falls back to plain HTTP without TLS",
-        "Always CLIENT, since every invoke_agent span represents a network call to a model provider's API endpoint directly"
-      ],
-      "correct": 1,
-      "explanation": "Remote agent calls are CLIENT; in-process agent runs are INTERNAL."
-    },
-    {
-      "stage": "check",
-      "question": "What is the default rule for content capture (inputs and outputs)?",
-      "options": [
-        "Capture everything by default so ops teams have full request and response bodies for every span",
-        "Capture only output text by default, while input prompts stay redacted unless requested",
-        "Instrumentations SHOULD NOT capture by default; capture is opt-in via gen_ai.* attributes",
-        "Capture only on error spans by default, skipping successful calls to reduce storage costs"
+        "`reference_001`",
+        "`content-0`",
+        "`content_001`",
+        "A random UUID with no stable prefix"
       ],
       "correct": 2,
-      "explanation": "Default-off content capture protects PII and secrets; opt-in is explicit."
+      "explanation": "The store starts its counter at zero and formats the first stored payload as `content_001`; later references increment that suffix."
     },
     {
-      "stage": "post",
-      "question": "Which attribute identifies the corpus or store consulted for a retrieval?",
+      "stage": "check",
+      "question": "What does `Tracer.add_content` do by default when `capture_inline=False`?",
       "options": [
-        "gen_ai.response.model",
-        "gen_ai.operation.name",
-        "gen_ai.provider.name",
-        "gen_ai.data_source.id"
+        "It drops the content and records only its character count.",
+        "It stores the full text in every span attribute.",
+        "It hashes the content and uses the hash as the prompt itself.",
+        "It stores the content externally and puts its reference ID in the span attributes."
       ],
       "correct": 3,
-      "explanation": "gen_ai.data_source.id labels the RAG corpus or store hit by retrieval."
+      "explanation": "The default avoids inline payload capture: the content store receives the text and the span receives an attribute such as `{key}.reference_id`."
+    },
+    {
+      "stage": "check",
+      "question": "What changes when a `Tracer` is created with `capture_inline=True`?",
+      "options": [
+        "The first 200 characters are placed inline in the attribute and no external item is required.",
+        "Only a reference ID is stored; inline capture is ignored.",
+        "The span is converted from INTERNAL to CLIENT automatically.",
+        "The tracer refuses to create chat child spans."
+      ],
+      "correct": 0,
+      "explanation": "Inline mode stores `content[:200]` directly under the requested attribute key; it does not need to create an external reference for that payload."
+    },
+    {
+      "stage": "check",
+      "question": "How is the `invoke_agent research_bot` span related to its chat spans in the demo?",
+      "options": [
+        "It is a sibling of three unrelated root spans.",
+        "It is the parent span containing three `chat` children.",
+        "It is a child of the final chat span only.",
+        "It is replaced by the first chat span when the root ends."
+      ],
+      "correct": 1,
+      "explanation": "The tracer stack nests each `chat` span while `invoke_agent` is active, so the ended agent span owns all three chat children."
     },
     {
       "stage": "post",
-      "question": "What does the lesson recommend for storing prompt content in production?",
+      "question": "What does `_scripted_llm(\"please search\")` return?",
       "options": [
-        "Store content externally (S3, log store) and record reference IDs on the span instead",
-        "Capture full prompts on every span as plain text so ops can read exact requests directly",
-        "Never store any content at all, even as external references, to avoid legal discovery",
-        "Encrypt prompts directly inside span attributes using a key managed by the collector"
+        "`final answer: agents in 2026`",
+        "An empty string because search is handled only by the agent span.",
+        "`search_tool(\"agent engineering\")`",
+        "`tool_error: search_tool` because tools cannot be nested in a model span."
       ],
-      "correct": 0,
-      "explanation": "External storage with pointer IDs avoids PII leaking into traces that ops can read."
+      "correct": 2,
+      "explanation": "The scripted model recognizes `search` in the prompt and returns the tool-call string `search_tool(\"agent engineering\")`, which the demo then traces as a tool span."
+    },
+    {
+      "stage": "post",
+      "question": "How does `Span.duration_ms` compute a completed span's duration?",
+      "options": [
+        "It divides `start_ns` by `end_ns` and rounds to seconds.",
+        "It counts child spans and multiplies by one millisecond.",
+        "It returns wall-clock seconds without using the stored timestamps.",
+        "It subtracts `start_ns` from `end_ns` and divides by 1,000,000."
+      ],
+      "correct": 3,
+      "explanation": "The implementation converts nanoseconds to milliseconds with `(end_ns - start_ns) / 1_000_000`, using the timestamps recorded on the span."
     }
   ]
 }

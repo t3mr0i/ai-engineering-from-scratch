@@ -182,6 +182,18 @@ Llama 3 deliberately violates the Chinchilla law. Meta found that overtraining o
 
 
 
+## Build It
+
+Reconstruct **Data Pipelines for Pre-Training** by following `clean_text` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `clean_text` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-data-quality-checker.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Hoffmann et al., 2022 -- Training Compute-Optimal Large Language Models (Chinchilla)](https://arxiv.org/abs/2203.15556) -- the paper that changed how we think about data scale
@@ -193,10 +205,20 @@ Llama 3 deliberately violates the Chinchilla law. Meta found that overtraining o
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build a streaming data pipeline that tokenizes, chunks, shuffles, and batches terabytes of text without loading it all into memory.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement data quality filters (deduplication, language detection, content filtering) used in real pre-training pipelines.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Create fixed-length training sequences with proper attention masks and document boundary handling.
+Work from the smallest fixture that the Data Pipelines for Pre-Training demo already understands, then make one deliberate change and record what moved.
+
+1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using tokens=["red","fox"]. Follow `clean_text`, `quality_filter`, `get_shingles`. Expect the attention/embedding shape follows the token count and each valid attention row remains normalized; capture the first printed shape, metric, status, or summary field and state which part supports **Build a streaming data pipeline that tokenizes, chunks, shuffles, and batches terabytes of text without loading it all into memory**.
+2. **Perturb one field.** Repeat the command after changing only the token sequence: use tokens=["red","fox","runs"]. Predict the direction of the change, then compare the two output values. Explain why **Implement data quality filters (deduplication, language detection, content filtering) used in real pre-training pipelines** says the other inputs should stay fixed.
+3. **Check the failure boundary.** Feed the implementation tokens=[]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Create fixed-length training sequences with proper attention masks and document boundary handling** and record the exception text if the code rejects the case.
+4. **Make the result repeatable.** Open `outputs/prompt-data-quality-checker.md` and add a worked example using tokens=["red","fox"]. Include the input contract, one expected output field, and a named acceptance check for **Profile pipeline throughput to ensure the dataloader keeps up with GPU training speed**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build a streaming data pipeline that tokenizes, chunks, shuffles, and batches terabytes of text without loading it all into memory,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Create fixed-length training sequences with proper attention masks and document boundary handling,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Data Pipelines for Pre-Training** should contain:
+
+- the `python3 main.py` output for tokens=["red","fox"], with `clean_text`, `quality_filter`, `get_shingles` traced to the value or shape that supports **Build a streaming data pipeline that tokenizes, chunks, shuffles, and batches terabytes of text without loading it all into memory**;
+- a before/after comparison for the token sequence, where tokens=["red","fox","runs"] changes the observation in the direction predicted by **Implement data quality filters (deduplication, language detection, content filtering) used in real pre-training pipelines**;
+- a recorded result for tokens=[] that matches the implementation’s validation or empty-result contract and explains the evidence for **Create fixed-length training sequences with proper attention masks and document boundary handling**; and
+- an updated `outputs/prompt-data-quality-checker.md` example with a concrete input, expected output field, and acceptance check tied to **Profile pipeline throughput to ensure the dataloader keeps up with GPU training speed**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

@@ -4,75 +4,45 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does a basic BPE tokenizer break on multilingual or code input?",
-      "options": [
-        "BPE is inherently monolingual",
-        "Without proper Unicode handling, byte fallback, and pre-tokenization regex, it produces incorrect or inefficient token sequences",
-        "Multilingual text can't be tokenized — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "BPE only works on ASCII"
-      ],
-      "correct": 1,
-      "explanation": "A naive BPE implementation may not handle multi-byte Unicode characters, may merge across word boundaries incorrectly, and may not have byte-level fallback for characters outside the trained vocabulary."
+      "question": "What does `ProductionTokenizer.normalize` do before it splits text into chunks?",
+      "options": ["It removes all whitespace.", "It converts every character to ASCII.", "It NFKC-normalizes the text.", "It replaces every word with a byte ID."],
+      "correct": 2,
+      "explanation": "The method calls `unicodedata.normalize('NFKC', text)`, which canonicalizes compatibility forms while retaining the normalized text."
     },
     {
       "stage": "check",
-      "question": "What is the role of pre-tokenization regex in a production tokenizer?",
-      "options": [
-        "It removes punctuation",
-        "It splits text at word boundaries before BPE merges, preventing merges across spaces and word boundaries",
-        "It compresses whitespace",
-        "It converts text to lowercase, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence"
-      ],
-      "correct": 1,
-      "explanation": "Pre-tokenization regex splits text into chunks (typically at word boundaries, numbers, and punctuation) so BPE merges only happen within chunks. Without this, BPE could merge 'end' with the space before the next word."
+      "question": "After `add_special_token('<|user|>')`, how should `encode` treat that exact marker?",
+      "options": ["As separate UTF-8 bytes and then ordinary BPE merges.", "As whitespace that is dropped before encoding.", "As an unknown word that is replaced by padding.", "As one atomic token ID registered by the handler."],
+      "correct": 3,
+      "explanation": "`split_with_specials` marks registered markers as special, and `encode` emits their single registered ID instead of tokenizing their characters."
     },
     {
       "stage": "check",
-      "question": "What is a special token and why are tokenizers designed to handle them?",
-      "options": [
-        "Tokens that appear frequently",
-        "Reserved tokens like <|endoftext|> or [PAD] that control model behavior and must be encoded as single, specific IDs",
-        "Tokens with the highest embedding values, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "Tokens used only during evaluation"
-      ],
-      "correct": 1,
-      "explanation": "Special tokens serve structural purposes: marking document boundaries, padding sequences, indicating start/end of generation. They must be recognized and encoded as their exact IDs, not broken into subwords."
-    },
-    {
-      "stage": "check",
-      "question": "How do you evaluate whether a custom tokenizer is good?",
-      "options": [
-        "By checking if it can tokenize your name, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "By measuring compression ratio (tokens per character) across diverse text and comparing to established tokenizers like tiktoken",
-        "By counting the vocabulary size",
-        "By measuring encoding speed only"
-      ],
-      "correct": 1,
-      "explanation": "Compression ratio (bytes per token or tokens per word) measures efficiency. A good tokenizer produces fewer tokens for the same text, which means more content fits in the context window. Compare across languages and domains."
-    },
-    {
-      "stage": "post",
-      "question": "Why is byte-level BPE preferred over word-level tokenization for modern LLMs?",
-      "options": [
-        "It's faster",
-        "It can represent any input without unknown tokens while still learning efficient subword merges for common patterns",
-        "It produces smaller vocabularies",
-        "Word-level tokenization is more accurate — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases"
-      ],
-      "correct": 1,
-      "explanation": "Word-level tokenizers can't handle unseen words (producing [UNK] tokens). Byte-level BPE starts from raw bytes (guaranteeing coverage of any input) and learns merges for common sequences, balancing coverage with efficiency."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Building a Tokenizer from Scratch?",
-      "options": [
-        "Implement byte-level fallback so the tokenizer can encode any input (including emoji, CJK, and code) withou...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "Why does the production tokenizer count and apply BPE pairs within each pre-tokenized chunk?",
+      "options": ["It keeps merges inside each regex chunk.", "It makes every chunk have the same number of tokens.", "It guarantees that every merge is a Unicode character.", "It removes the need for a vocabulary."],
       "correct": 0,
-      "explanation": "“Implement byte-level fallback so the tokenizer can encode any input (including emoji, CJK, and code) withou...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The training loop builds byte sequences for each regex chunk separately, so adjacent bytes from different chunks are never presented as a merge pair."
+    },
+    {
+      "stage": "check",
+      "question": "What problem does the byte-level fallback solve for a new Unicode character?",
+      "options": ["It sorts the character into the most common word.", "It represents unseen characters as UTF-8 bytes.", "It changes the character into an ASCII space.", "It skips the character so the sequence length stays fixed."],
+      "correct": 1,
+      "explanation": "The base vocabulary contains all 256 byte values, so any UTF-8 string can be represented even when no larger merge was learned."
+    },
+    {
+      "stage": "post",
+      "question": "A tokenizer has only its 256 byte entries and then calls `add_special_token('<s>')`. Which ID is the first available ID?",
+      "options": ["0", "255", "256", "257, after skipping the first free ID"],
+      "correct": 2,
+      "explanation": "`next_id` starts at 256 after the byte vocabulary, so the first added special token receives 256."
+    },
+    {
+      "stage": "post",
+      "question": "After registering `<|assistant|>` and encoding it as one special token, what does `get_token_bytes` return for that ID?",
+      "options": ["The UTF-8 bytes for the previous ordinary word.", "An empty byte string because specials are discarded.", "The integer ID encoded as decimal text.", "The marker's stored UTF-8 bytes."],
+      "correct": 3,
+      "explanation": "`add_special_token` stores the marker's UTF-8 bytes in `vocab`, so `get_token_bytes` returns those bytes for the registered ID."
     }
   ]
 }

@@ -83,6 +83,18 @@ Two tests keep the layering honest. The reachability test: an agent should reach
 
 
 
+## Build It
+
+Reconstruct **Agent Instructions as Executable Constraints** by following `on` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Use It
+
+Call `on` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-rule-set-builder.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [OpenAI Agents SDK, Guardrails and approvals](https://developers.openai.com/api/docs/guides/agents/guardrails-approvals)
@@ -99,10 +111,20 @@ Two tests keep the layering honest. The reachability test: an agent should reach
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Separate routing prose from operational rules.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Express startup rules, forbidden actions, definition of done, uncertainty handling, and approval boundaries as machine-checkable constraints.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement a rule checker that scores a run against the rule set.
+Work from the smallest fixture that the Agent Instructions as Executable Constraints demo already understands, then make one deliberate change and record what moved.
+
+1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using x=0.5 with the demo defaults. Follow `on`, `Rule`, `TurnTrace`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Separate routing prose from operational rules.**.
+2. **Perturb one field.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Express startup rules, forbidden actions, definition of done, uncertainty handling, and approval boundaries as machine-checkable constraints.** says the other inputs should stay fixed.
+3. **Check the failure boundary.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Implement a rule checker that scores a run against the rule set.** and record the exception text if the code rejects the case.
+4. **Make the result repeatable.** Open `outputs/skill-rule-set-builder.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Make the rule set diff-friendly so review can see what changed.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Separate routing prose from operational rules,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement a rule checker that scores a run against the rule set,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Agent Instructions as Executable Constraints** should contain:
+
+- the `python3 main.py` output for x=0.5 with the demo defaults, with `on`, `Rule`, `TurnTrace` traced to the value or shape that supports **Separate routing prose from operational rules.**;
+- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Express startup rules, forbidden actions, definition of done, uncertainty handling, and approval boundaries as machine-checkable constraints.**;
+- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Implement a rule checker that scores a run against the rule set.**; and
+- an updated `outputs/skill-rule-set-builder.md` example with a concrete input, expected output field, and acceptance check tied to **Make the rule set diff-friendly so review can see what changed.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

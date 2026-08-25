@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why should AI-Enhanced User Research be taught as a workflow instead of only as tool awareness?",
+      "question": "A research `Scenario` contains `signals=(\"personal data\",)` and has `impact=4`, `uncertainty=3`. What does its score include?",
       "options": [
-        "Because AI-generated personas are automatically representative of the whole user base",
-        "Because polished, confident-sounding quotes are proof the sample size was sufficient",
-        "Because teams need shared signals, controls, and decision rules they can apply to real work",
-        "Because a single synthesis pass removes the need for running any further round of user interviews"
+        "Only the impact value, because signal names are labels for the report",
+        "A fixed score of 20, because personal data always triggers the maximum",
+        "Base risk plus two points per matched signal",
+        "The number of interview notes, because score is based on sample size"
       ],
       "correct": 2,
-      "explanation": "The lesson is built around reusable operating artifacts — not the idea that generated personas are automatically representative, that confident quotes prove sample size, or that one synthesis pass replaces further interviews."
+      "explanation": "`score_scenario` starts at `4*2 + 3 = 11` and adds two points per match returned by `signal_matches`, capped at 20. The explicit signal tuple is included in the text used for matching."
     },
     {
       "stage": "check",
-      "question": "In the lesson's opening example, what does the AI miss when it turns raw interview notes into confident personas?",
+      "question": "If a scenario description contains `single-source claim` but its `signals` tuple is empty, how can `signal_matches` still find that research risk?",
       "options": [
-        "The interview transcripts were altogether far too short to generate any personas worth using at all",
-        "The assistant refused outright to produce any quotes without first putting a signed data-processing agreement in place",
-        "The generated personas were technically accurate but written in the wrong language for the target market",
-        "Personal data in the notes, a sample skewed toward power users, and disagreement flattened into confident segments"
+        "It reads the user's interview transcript from disk when the tuple is empty",
+        "It assigns every possible signal whenever `signals=()` is passed",
+        "It uses a random embedding lookup that is independent of the scenario text",
+        "It searches the combined scenario text, including the description"
       ],
       "correct": 3,
-      "explanation": "The lesson's opening example shows AI missing exactly this: personal data buried in notes, a sample skewed toward power users, and real disagreement flattened into tidy, confident personas — not a transcript-length problem, a compliance refusal, or a language mismatch."
+      "explanation": "The function builds one normalized haystack from `name`, `description`, and the joined signals. For a multiword signal it first checks all words, then any word, so the description can provide the evidence."
     },
     {
       "stage": "check",
-      "question": "What does the Python artifact produce for AI-Enhanced User Research?",
+      "question": "What priority does `priority_for(7)` return for a research synthesis?",
       "options": [
-        "A fully anonymized transcript ready to publish without further review",
-        "A single sentiment score with no link back to the underlying evidence or transcript",
-        "A ranked plan with category, score, priority, controls, and rationale",
-        "A slide deck summarizing the interviews for a leadership readout"
-      ],
-      "correct": 2,
-      "explanation": "The lesson's Python artifact outputs a ranked plan — category, score, priority, controls, and rationale — not a pre-anonymized transcript, an unlinked sentiment score, or a leadership slide deck."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to the lesson design?",
-      "options": [
-        "Anonymization, so personal data in interview notes never reaches a persona or a slide",
-        "Publishing quotes with names attached because the assistant already redacted them, before defining the measurement, acceptance threshold, or rollback path",
-        "Skipping evidence tags since the interview sample felt representative enough",
-        "Treating a single power-user complaint as proof of a wider product problem"
+        "`team practice`, because 7 is the inclusive threshold",
+        "`awareness only`, because the team-practice range starts at 8",
+        "`guided pilot`, because every research finding needs a pilot",
+        "`launch gate required`, because 7 is treated as a high-impact boundary"
       ],
       "correct": 0,
-      "explanation": "The lesson's controls include anonymization — keeping personal data out of personas and slides — the opposite of trusting the assistant's own redaction, skipping evidence tags, or treating one complaint as broad proof."
+      "explanation": "The threshold is inclusive: scores at least 7 and below 11 return `team practice`. The function does not round or require a score above 7."
+    },
+    {
+      "stage": "check",
+      "question": "Which category can `choose_category` return for a scenario with no matched signals?",
+      "options": [
+        "`cluster`, because every research record is first grouped",
+        "`observe`, the first entry in the research `CATEGORIES` list",
+        "`hypothesize`, because no signal means the evidence is provisional",
+        "`validate`, the last category because uncertainty is unresolved"
+      ],
+      "correct": 1,
+      "explanation": "When `signal_matches` returns an empty list, `choose_category` immediately returns `CATEGORIES[0]`. For this lesson the list begins with `observe`; the other categories are used only when matches exist."
     },
     {
       "stage": "post",
-      "question": "When should a scenario become a launch-gate discussion rather than a casual awareness exercise?",
+      "question": "How many controls does `recommend` select when a user-research scenario matches three signals?",
       "options": [
-        "Only when the interview sample happens to already include some enterprise customers",
-        "Only when the resulting personas are going to be shown directly to external stakeholders in a readout",
-        "When impact, uncertainty, and matched risk signals such as personal data are all running high",
-        "Never — a research synthesis gap can always wait for the next round of user interviews"
+        "Two, because the minimum always overrides the match count",
+        "Three, because one control is assigned to each signal",
+        "Four, because `1 + len(matches)` reaches the four-item control-list cap",
+        "Zero, because matched signals are reported in the rationale instead of controls"
       ],
       "correct": 2,
-      "explanation": "High-impact, uncertain, risk-heavy research findings need a launch gate regardless of who's in the sample, who sees the personas, or whether another interview round is scheduled."
+      "explanation": "Three matches yield `1 + 3 = 4`; the inner `min(len(CONTROLS), ...)` caps the slice at four. Thus all controls—anonymization, evidence tags, sample warning, and follow-up question—are selected."
     },
     {
       "stage": "post",
-      "question": "What is the main purpose of the output template?",
+      "question": "What does `build_plan(demo_scenarios())` make easy to audit in a user-research review?",
       "options": [
-        "To formally replace the researcher's own judgment about what counts as valid evidence",
-        "To keep unresolved contradictions in the interview data hidden from the product team",
-        "To automatically generate completion certificates for participants once the workshop ends",
-        "To create a reusable worksheet or prompt teams keep applying after the course ends"
+        "It exposes only the model's raw interview transcript, without a risk decision",
+        "It deletes low-scoring observations so stakeholders see only launch gates",
+        "It replaces every category with `observe` to avoid making a research judgment",
+        "It returns scored, categorized rows with controls and rationale, sorted by score"
       ],
       "correct": 3,
-      "explanation": "The output template is meant to become a reusable worksheet or prompt teams keep applying — not a substitute for researcher judgment, a way to hide contradictions, or an automatic certificate generator."
+      "explanation": "`build_plan` serializes each `Recommendation` into an auditable row and sorts rows by descending score. The rationale names matched signals and includes impact and uncertainty, making the recommendation inspectable."
     }
   ]
 }

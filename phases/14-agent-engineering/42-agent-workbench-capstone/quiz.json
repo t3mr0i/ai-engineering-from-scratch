@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the capstone produce?",
+      "question": "Which version does the generated agent-workbench-pack write to VERSION?",
       "options": [
-        "A versioned drop-in directory with the seven surfaces plus an install.sh that runs idempotently",
-        "A detailed research paper summarizing the mini-track's findings for an academic audience",
-        "A brand-new fine-tuned model trained end to end on the workbench's own feedback records",
-        "A monitoring dashboard that graphs verification-gate pass rates across every branch of the repo over time"
+        "1.0.0",
+        "0.1.0",
+        "2026.14",
+        "latest"
       ],
       "correct": 0,
-      "explanation": "The pack is the recipe; each install is a serving."
+      "explanation": "PACK_VERSION is the literal string 1.0.0, and main writes that value followed by a newline to the pack's VERSION file."
     },
     {
       "stage": "check",
-      "question": "Which is NOT part of the pack layout?",
+      "question": "Which set is required for every task object in BOARD_SCHEMA?",
       "options": [
-        "AGENTS.md and the docs/ directory that hold the pack's rules and rubric",
-        "The schemas/ directory that defines the pack's contract for target repos",
-        "vendor_proprietary_weights/, since the pack ships no model weights of its own",
-        "The scripts/ directory that supplies the pack's runtime behavior at install time"
-      ],
-      "correct": 2,
-      "explanation": "Pack layout is AGENTS.md, docs/, schemas/, scripts/, bin/, README.md. The pack is framework- and vendor-agnostic."
-    },
-    {
-      "stage": "check",
-      "question": "What does the lesson say bumps the pack's major version?",
-      "options": [
-        "Any change at all, since the pack has no separate patch tier",
-        "Only changes to bin/install.sh, since it is the sole entry point",
-        "Adding a new doc file, since docs are the pack's main contract",
-        "Schema bumps and script changes that require a migration script"
-      ],
-      "correct": 3,
-      "explanation": "The lesson says schema bumps and script changes that require migrations bump the major version, and doc-only changes bump the patch."
-    },
-    {
-      "stage": "check",
-      "question": "What does the lesson say the installer refuses to do by default?",
-      "options": [
-        "Copy the pack into a repo that has no .github/workflows/ directory",
-        "Run at all without an internet connection to fetch schema updates",
-        "Install into a repo where agent_state.json does not already exist",
-        "Install over an existing pack unless the operator passes --force"
-      ],
-      "correct": 3,
-      "explanation": "The lesson lists the installer's first step as: refuses to install over an existing pack without --force."
-    },
-    {
-      "stage": "post",
-      "question": "What three things does the lesson list as staying 'in' the pack?",
-      "options": [
-        "The target repo's tasks, its CI secrets, and its onboarding wiki",
-        "A pinned model ID, a vendor SDK key, and a billing dashboard link",
-        "The installer log file, a changelog, and a support contact list",
-        "The surface schemas, the four scripts, and the four docs"
-      ],
-      "correct": 3,
-      "explanation": "The lesson's 'what stays in' list is: surface schemas (the contract), the four scripts (the runtime), the four docs (the rules and the rubric)."
-    },
-    {
-      "stage": "post",
-      "question": "What stays OUT of the pack?",
-      "options": [
-        "Surface schemas, since they are the only thing the installer copies into a target repo",
-        "Project-specific tasks, vendor SDK calls, and onboarding prose; the pack stays framework-agnostic",
-        "The four runtime scripts, since those alone define what the pack does at install time",
-        "The bin/install.sh entry point, since it is the single script a target repo directly and actually executes"
+        "task_id, summary, owner, commands, verdict",
+        "id, goal, owner, acceptance, status",
+        "id, prompt, model, temperature, tokens",
+        "name, files, tests, review, timestamp"
       ],
       "correct": 1,
-      "explanation": "Tasks belong on the target repo's board, not the pack; vendor SDK calls would lock the pack to one framework."
+      "explanation": "BOARD_SCHEMA lists id, goal, owner, acceptance, and status as required fields; status is constrained to todo, in_progress, done, or blocked."
+    },
+    {
+      "stage": "check",
+      "question": "What does bin/install.sh do when AGENTS.md already exists and no flag is supplied?",
+      "options": [
+        "Back up AGENTS.md and continue silently",
+        "Merge the two files line by line",
+        "Refuse the install and ask for --force",
+        "Delete the existing file before copying the pack"
+      ],
+      "correct": 2,
+      "explanation": "The installer checks for an existing AGENTS.md and exits with an instruction to pass --force rather than overwriting it by default."
+    },
+    {
+      "stage": "check",
+      "question": "What status does _probe_state return when agent_state.json does not exist?",
+      "options": [
+        "pass with detail 'state is fresh'",
+        "fail with detail 'missing state file'",
+        "pass with detail 'state is 0s old'",
+        "warn with detail 'no state file yet'"
+      ],
+      "correct": 3,
+      "explanation": "Missing state is a warning in the initializer, not a failed probe: _probe_state returns ('state_freshness', 'warn', 'no state file yet')."
+    },
+    {
+      "stage": "post",
+      "question": "For deterministic_tail, what happens to a 35-line string with HEAD_LINES=5 and TAIL_LINES=30?",
+      "options": [
+        "It is returned unchanged with a truncation count of 0",
+        "It keeps 5 head lines and 30 tail lines plus a truncation marker",
+        "Only the final 30 lines survive and the count is 5",
+        "It raises because the input reaches the combined limit"
+      ],
+      "correct": 0,
+      "explanation": "The function truncates only when len(lines) exceeds HEAD_LINES + TAIL_LINES; exactly 35 lines therefore return unchanged with zero truncated lines."
+    },
+    {
+      "stage": "post",
+      "question": "How does verify_agent.check_acceptance classify a feedback record with exit_code=None?",
+      "options": [
+        "acceptance.passed with severity info",
+        "feedback.null_exit with severity block",
+        "acceptance.missing with severity warn",
+        "scope.off_scope with severity block"
+      ],
+      "correct": 1,
+      "explanation": "A null exit code means the command did not produce a usable result; check_acceptance emits feedback.null_exit at block severity."
     }
   ]
 }

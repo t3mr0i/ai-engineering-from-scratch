@@ -1,78 +1,78 @@
 {
   "lesson": "24-sam3-open-vocab-segmentation",
-  "title": "SAM 3 & Open-Vocabulary Segmentation",
+  "title": "Open-Vocabulary Segmentation",
   "questions": [
     {
       "stage": "pre",
-      "question": "What is Promptable Concept Segmentation (PCS), introduced by SAM 3?",
+      "question": "What concepts does split_concepts('cats, dogs and balloons') return?",
       "options": [
-        "Segmenting all instances of a concept described by a short noun phrase or image exemplar in a single forward pass, returning masks plus unique instance IDs",
-        "A visual prompt (point/box) segmentation like classic SAM — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "A multi-step chain of a detector followed by SAM",
-        "A tracking-only mode"
-      ],
-      "correct": 0,
-      "explanation": "PCS is SAM 3's signature capability. You pass 'yellow school bus' or an image exemplar of a bus; SAM 3 returns every matching instance with its own mask and unique ID, plus a presence score. Classic SAM needed one prompt per instance; PCS produces all matches end-to-end."
-    },
-    {
-      "stage": "check",
-      "question": "Why keep a decoupled detector + SAM 2 pipeline (Grounded SAM 2) in 2026 if SAM 3 already does text-prompted segmentation?",
-      "options": [
-        "Grounded SAM 2 is always more accurate, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "Modularity — you can swap in different open-vocabulary detectors (DINO-X, Florence-2, Grounding DINO 1.5) for different domains, license constraints, or threshold behaviour; SAM 3's architecture is monolithic",
-        "SAM 3 does not support video",
-        "SAM 3 is only available in the cloud"
-      ],
-      "correct": 1,
-      "explanation": "Grounded SAM 2 is a composition of a detector and SAM 2 with frozen weights. That modularity is sometimes exactly what you need — a medical-imaging detector, a license-friendly detector, or tight threshold control. SAM 3 is more accurate end-to-end for common use but harder to customise. Both have production roles in 2026."
-    },
-    {
-      "stage": "check",
-      "question": "SAM 3's presence head produces what?",
-      "options": [
-        "The list of candidate bounding boxes, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "A tracking memory bank",
-        "A scalar probability that the queried concept exists in the image, decoupled from localisation; lets the model say 'not present' cleanly and reduces false positives on absent concepts",
-        "The final mask"
+        "['cats, dogs and balloons']",
+        "['cats', 'dogs and balloons']",
+        "['cats', 'dogs', 'balloons']",
+        "['catsdogsballoons']"
       ],
       "correct": 2,
-      "explanation": "The presence head separates the 'is this here?' decision from the 'where is it?' decision. A model that must produce boxes whenever asked tends to hallucinate matches for absent concepts. With a presence head, SAM 3 can return zero detections cleanly. This also improves discrimination between closely related prompts (e.g., 'a player in white' vs 'a player in red')."
+      "explanation": "The helper splits on commas and the word 'and', trims whitespace, and drops empty entries."
     },
     {
       "stage": "check",
-      "question": "SAM 3.1 Object Multiplex (March 2026) introduced a shared-memory mechanism for tracking. What does it replace?",
+      "question": "How should split_concepts handle the phrase 'yellow school bus'?",
       "options": [
-        "SAM 2 altogether",
-        "Per-instance separate memory banks; Multiplex collapses them into one shared memory with per-instance queries so tracking N objects runs substantially faster while keeping accuracy",
-        "The whole presence head, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "The ViT backbone"
-      ],
-      "correct": 1,
-      "explanation": "Prior SAM 2 / SAM 3 tracking maintained one memory bank per tracked instance, so cost grew linearly with object count. Object Multiplex introduces a single shared memory plus per-instance queries that fetch instance-specific features. Many-instance tracking is now efficient — essential for crowds and dense multi-object scenes."
-    },
-    {
-      "stage": "post",
-      "question": "You need real-time open-vocabulary DETECTION (boxes only, no masks) on an edge device. Which 2026 model family is the right choice?",
-      "options": [
-        "SAM 3",
-        "A custom CLIP + detector chain — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "Grounded SAM 2",
-        "YOLO-World (and related real-time open-vocab detectors); SAM 3 produces masks and is heavier, while YOLO-World is designed specifically for boxes at high fps on edge hardware"
+        "Split it into three concepts",
+        "Discard it because it contains two words",
+        "Treat 'school' as an image coordinate",
+        "Keep it as one concept"
       ],
       "correct": 3,
-      "explanation": "YOLO-World and similar models (OV-DINO, LLMDet) are real-time open-vocabulary detectors. They do not produce masks but they hit 30-60 fps at 640x640 on modest GPUs. SAM 3 is the right choice when masks and tracking matter. Always match tool weight to the task: detection-only is fine without mask overhead."
+      "explanation": "Only the configured separators divide concepts; words inside a noun phrase remain together."
+    },
+    {
+      "stage": "check",
+      "question": "What does the RLE round trip test in the lesson establish?",
+      "options": [
+        "Decoding the encoded runs reconstructs the original binary mask",
+        "Every mask must contain exactly one foreground pixel",
+        "RLE changes a mask into an RGB image",
+        "The mask's bounding box is always square"
+      ],
+      "correct": 0,
+      "explanation": "Run-length encoding is lossless here: the alternating runs decode back to the same flattened mask."
+    },
+    {
+      "stage": "check",
+      "question": "If the stub returns two detections per concept, how many does run_multi_concept return for two concepts?",
+      "options": [
+        "2",
+        "4",
+        "1",
+        "0"
+      ],
+      "correct": 1,
+      "explanation": "The helper runs detection for each concept and concatenates the two results from each call."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for SAM 3 & Open-Vocabulary Segmentation?",
+      "question": "Which fields identify one ConceptDetection in the lesson?",
       "options": [
-        "Explain the SAM 3 architecture: shared backbone + image detector + memory-based video tracker + presence he...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "only an RGB color and a filename",
+        "a class index with no location or mask",
+        "concept, instance_id, box, score, and mask_rle",
+        "the model's optimizer state and batch size"
       ],
-      "correct": 0,
-      "explanation": "“Explain the SAM 3 architecture: shared backbone + image detector + memory-based video tracker + presence he...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "Each record keeps the text concept, instance identity, box, confidence score, and compact mask representation."
+    },
+    {
+      "stage": "post",
+      "question": "Why does the lesson define an abstract detector interface?",
+      "options": [
+        "It prevents any implementation from returning masks",
+        "It makes every concept a fixed closed-set class",
+        "It removes the need to parse text prompts",
+        "A real model and the stub can share the same detect contract"
+      ],
+      "correct": 3,
+      "explanation": "The interface isolates pipeline code from the detector backend, so a deterministic stub can be swapped for a model without changing callers."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is progressive disclosure for a repository?",
+      "question": "Which directory is excluded by SKIP_DIRS when build_index scans a workspace?",
       "options": [
-        "Load every file in the repository immediately",
-        "Hide all documentation from the agent entirely",
-        "Replace every test file with a short summary",
-        "Show a map and open detail when relevant"
-      ],
-      "correct": 3,
-      "explanation": "A map-first read set controls context while preserving access to detail."
-    },
-    {
-      "stage": "check",
-      "question": "Why skip generated directories in an index?",
-      "options": [
-        "They add noise and are rarely source truth",
-        "They are always marked secret and unreadable",
-        "They cannot contain readable text at all",
-        "They make the Python interpreter run slower"
-      ],
-      "correct": 0,
-      "explanation": "Generated output competes with relevant source files."
-    },
-    {
-      "stage": "check",
-      "question": "What should a root router do?",
-      "options": [
-        "Contain the entire codebase inline",
-        "Run production deploys on a schedule",
-        "Point to state, rules, and verification",
-        "Replace the task contract for every session"
+        "docs",
+        "src",
+        "dist",
+        "tests"
       ],
       "correct": 2,
-      "explanation": "The router directs the agent to deeper sources of truth."
+      "explanation": "SKIP_DIRS contains .git, .venv, __pycache__, dist, build, and .cache; source and docs remain indexable."
     },
     {
       "stage": "check",
-      "question": "What makes an index useful to a task?",
+      "question": "How does _summary choose text for a file containing headings and fenced code?",
       "options": [
-        "Alphabetical order only, regardless of the task",
-        "Deterministic ranking using task-relevant terms",
-        "A random sample of files chosen each run",
-        "A very long summary of every file in the repo"
+        "It returns the complete file contents without a limit",
+        "It returns the last line, including a closing fence if present",
+        "It returns the first line even when it is a fence marker",
+        "It strips heading markers and skips blank, fence, and HTML-comment lines"
+      ],
+      "correct": 3,
+      "explanation": "_summary scans lines, removes leading # markers, skips empty lines and ---/```/<!-- lines, then bounds the first useful line to 140 characters."
+    },
+    {
+      "stage": "check",
+      "question": "Why does AGENTS.md appear before README.md in the progressive read set?",
+      "options": [
+        "Both are router entries and AGENTS.md wins the final ascending path tie",
+        "README.md is ignored whenever AGENTS.md exists",
+        "AGENTS.md is always the largest file in the workspace",
+        "The index reads files in filesystem creation order"
+      ],
+      "correct": 0,
+      "explanation": "Both names are ROOT_HINTS and receive the same router bonus; the deterministic path tie-break places AGENTS.md first."
+    },
+    {
+      "stage": "check",
+      "question": "For task 'add validation and run acceptance tests', which source file does keyword overlap favor?",
+      "options": [
+        "dist/bundle.js",
+        "src/validator.py",
+        "README.md only, because source files are never selected",
+        "An arbitrary file selected with random sampling"
       ],
       "correct": 1,
-      "explanation": "Task terms help select a small, relevant first read set."
+      "explanation": "The task terms validation and tests overlap with src/validator.py and its summary; generated dist is skipped and selection is deterministic."
     },
     {
       "stage": "post",
-      "question": "Which file should usually be read first when present?",
+      "question": "What path does build_index store for a file under src/ rather than an absolute path?",
       "options": [
-        "A generated build bundle",
-        "The repository's root router",
-        "The largest binary file",
-        "An older, unrelated log entry"
+        "The resolved filesystem path beginning with /",
+        "Only the basename, such as validator.py",
+        "The POSIX-relative path, such as src/validator.py",
+        "A URI beginning with file://"
       ],
-      "correct": 1,
-      "explanation": "The router explains how to navigate the workspace."
+      "correct": 2,
+      "explanation": "Each Entry.path is path.relative_to(base).as_posix(), keeping the index portable and readable from the workspace root."
     },
     {
       "stage": "post",
-      "question": "What is the index not meant to replace?",
+      "question": "What happens if progressive_read_set receives limit=0?",
       "options": [
-        "The original task description text",
-        "Opening the authoritative source files",
-        "A single bare relative path string",
-        "A specific test command to run first here"
+        "It returns an empty list",
+        "It silently changes the limit to 1",
+        "It reads every file to compensate",
+        "It raises ValueError because the limit must be positive"
       ],
-      "correct": 1,
-      "explanation": "The index is a navigation aid, not a substitute for source inspection."
+      "correct": 3,
+      "explanation": "The function validates limit before ranking and raises ValueError('limit must be positive') for zero or negative values."
     }
   ]
 }

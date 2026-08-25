@@ -1,78 +1,78 @@
 {
   "lesson": "63-ai-human-review-approval-workflows",
-  "title": "AI Human Review and Approval Workflow Design",
+  "title": "AI Human Review and Approval Workflows",
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is 'human in the loop' not enough by itself?",
+      "question": "What turns a human-in-the-loop claim into an inspectable approval workflow?",
       "options": [
-        "Because humans should never be asked to review AI output in an accountable workflow — and applies unchanged even when the lesson's stated preconditions fail",
-        "Because review roles, approval gates, quality criteria, and appeal paths must be explicit",
-        "Because approval always happens automatically once the AI output passes a filter",
-        "Because quality criteria stop mattering as soon as a named reviewer is assigned"
-      ],
-      "correct": 1,
-      "explanation": "Saying a human will review it stays a vague reassurance until the review role and authority, the approval gate, the quality criteria, and the appeal path are explicit — it is not an argument against human review, automatic approval, or dropping quality criteria."
-    },
-    {
-      "stage": "check",
-      "question": "An AI workflow drafts HR decisions and a manager is expected to check them, but nobody has defined at which point in the process that check has to happen before the output goes out. Which of the lesson's four signals does this match most directly?",
-      "options": [
-        "Decision authority — it is unclear who is actually allowed to make the final call here",
-        "Quality uncertainty — nobody knows how reliable the AI's drafted output really is",
-        "User impact — the output affects people whose interests the workflow must protect",
-        "Approval gap — no defined decision point exists where the output must be approved"
-      ],
-      "correct": 3,
-      "explanation": "No defined point in the process where output must be approved is the lesson's approval-gap signal, closed with an approval gate — distinct from decision authority (who may decide), quality uncertainty (how reliable the output is), or user impact."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Python artifact produce?",
-      "options": [
-        "A final legal opinion on whether the AI workflow may be used in this process",
-        "A ranked human-review workflow plan with a control for each scenario",
-        "A deployed approval system wired into the team's production workflow",
-        "A model training job that learns from past reviewer approvals and rejections"
-      ],
-      "correct": 1,
-      "explanation": "The artifact ranks scenarios and recommends review and approval controls — review role, approval gate, quality checklist, appeal path — it does not issue a legal opinion, deploy an approval system, or train a model."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to this lesson?",
-      "options": [
-        "Hiding quality uncertainty from reviewers so approvals move through faster",
-        "Appeal path — a route for affected people to challenge an AI-supported decision",
-        "Skipping the named reviewer because the AI output looked convincing enough",
-        "Removing the approval gate so high-impact output reaches users without delay, before defining the measurement, acceptance threshold, or rollback path"
-      ],
-      "correct": 1,
-      "explanation": "The lesson's controls are review role, approval gate, quality checklist, and appeal path — an appeal path lets affected people challenge a decision, unlike hiding uncertainty, skipping the reviewer, or removing the gate."
-    },
-    {
-      "stage": "post",
-      "question": "When is a mandatory approval gate appropriate?",
-      "options": [
-        "Only when the AI output is trivial and has no effect on any downstream decision — and applies unchanged even when the lesson's stated preconditions fail",
-        "Only when no user or customer is affected by the outcome of the workflow at all",
-        "When impact and uncertainty are high and decision authority or user impact is involved",
-        "Never — informal peer review by a colleague always covers accountable approval"
+        "A person seeing the model output once, without a defined decision or record",
+        "A final reviewer who can approve anything but has no way to return an exception",
+        "A named review role, an approval gate, a quality checklist, and an appeal or exception path",
+        "A confidence score that automatically decides whether human review is necessary"
       ],
       "correct": 2,
-      "explanation": "Approval gates should be tied to impact and uncertainty, so high impact combined with decision authority or user impact is exactly the case — unlike trivial output, no affected users, or relying on informal peer review."
+      "explanation": "Human oversight is a process, not a decorative sign-off. The artifact names who reviews, what quality means, where approval occurs, and how an affected case can be challenged."
+    },
+    {
+      "stage": "check",
+      "question": "The candidate shortlist fixture matches three signals and has impact=5 and uncertainty=5. Which priority does recommend return?",
+      "options": [
+        "peer review with score 20",
+        "named reviewer with score 18",
+        "self review with score 16",
+        "mandatory approval gate with score 20"
+      ],
+      "correct": 3,
+      "explanation": "The score is 5*2 + 5*2 + 3*2 = 26, capped at 20. Scores of at least 16 require a mandatory approval gate."
+    },
+    {
+      "stage": "check",
+      "question": "With three matched signals, which controls does recommend select for the candidate shortlist?",
+      "options": [
+        "review role, approval gate, quality checklist, and appeal path",
+        "review role and approval gate only",
+        "quality checklist and appeal path only",
+        "an approval gate without a named review role"
+      ],
+      "correct": 0,
+      "explanation": "Three matches select all four controls. The workflow therefore records the accountable reviewer, the gate, the quality evidence, and the route for an exception."
+    },
+    {
+      "stage": "check",
+      "question": "The support answer fixture has one match, impact=4, and uncertainty=4. What result should recommend produce?",
+      "options": [
+        "named reviewer with score 18",
+        "mandatory approval gate with score 18",
+        "peer review with score 16",
+        "self review with score 10"
+      ],
+      "correct": 1,
+      "explanation": "The score is 4*2 + 4*2 + 2 = 18. That remains in the mandatory approval gate band even though only one signal matched."
     },
     {
       "stage": "post",
-      "question": "What should a human review workflow define?",
+      "question": "A no-match Scenario has impact=2 and uncertainty=1. Which recommendation follows?",
       "options": [
-        "Only the prompt used to generate the AI output being reviewed in the workflow",
-        "Only the output format the AI must return so reviewers can read it quickly",
-        "No escalation path, since uncertain cases can be decided by the first reviewer",
-        "Review role, approval gate, quality checklist, and appeal path for the output"
+        "mandatory approval gate with score 6",
+        "peer review with score 8",
+        "self review with score 6",
+        "named reviewer with score 11"
+      ],
+      "correct": 2,
+      "explanation": "The no-match score is 2*2 + 1*2 = 6. Scores below 7 use self review."
+    },
+    {
+      "stage": "post",
+      "question": "What should sheet-human-review-approval-workflow.md record for a model-assisted decision?",
+      "options": [
+        "Only the model output, because the reviewer can explain the decision verbally",
+        "A reviewer name without a quality standard or route for an appeal",
+        "An approval checkbox that remains the same for low- and high-impact cases",
+        "The review role, approval gate, quality checklist, decision record, and appeal path"
       ],
       "correct": 3,
-      "explanation": "A human review workflow defines the review role, the approval gate, the quality checklist, and the appeal path — not just the prompt, the output format, or a design with no escalation route for uncertain cases."
+      "explanation": "The sheet makes human review auditable. It connects the output to a responsible role, a defined gate, quality evidence, and a way to revisit an incorrect or disputed result."
     }
   ]
 }

@@ -62,6 +62,14 @@ Here's when each tool comes into play during this course:
 | nohup | "No hangup" | Runs a command immune to the hangup signal, so closing the terminal won't kill it |
 | SSH | "Connecting to the server" | Secure Shell, an encrypted protocol for running commands on a remote machine |
 
+## Build It
+
+Reconstruct **Terminal & Shell** by following `code` on x=0.5 with the demo defaults. Run `run main.text` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Ship It
+
+Hand off `outputs/artifact-card.md` with the command `run main.text`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+
 ## Exercises
 
 1. **Explain the mechanism.** Give a concrete example and a counterexample that demonstrate this objective: Use piping, redirects, and `grep` to filter and process training logs from the command line.

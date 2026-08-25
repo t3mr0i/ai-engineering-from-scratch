@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the main risk of AI-generated customer-facing material?",
+      "question": "What is the central risk when AI drafts customer-facing sales or product material?",
       "options": [
-        "It shifts preparation work from the account team over to the product consultant",
-        "It keeps proposal drafts internal so they never reach the stakeholder review step",
-        "It can invent customer context, overstate value, and weaken trust when unchecked",
-        "It slows discovery preparation because every competitive note has to be rewritten"
+        "The account team may finish preparation faster than the product consultant",
+        "The output may contain fewer words than the customer's usual proposal format",
+        "It may invent customer context, overstate value, or make an unsupported claim that damages trust",
+        "A follow-up plan becomes unnecessary once the proposal has been polished"
       ],
       "correct": 2,
-      "explanation": "The lesson's problem statement is that a polished output invents context, overstates value, or weakens trust. Customer-facing material therefore needs an evidence check and a review before it is shared."
+      "explanation": "Customer material needs evidence and review. AI can sharpen preparation, but it must not invent a customer's priorities, value case, or decision context."
     },
     {
       "stage": "check",
-      "question": "A proposal draft reads well, but nobody can say where its customer numbers came from. Which control of this lesson addresses that?",
+      "question": "The proposal draft fixture has three matched signals, impact=5, and uncertainty=4. Which priority does it receive?",
       "options": [
-        "The follow-up plan, which records the customer action expected after the meeting",
-        "The source check, which confirms every customer claim traces back to real context",
-        "The value story, which shapes how the benefit is framed for the customer audience during the pitch",
-        "The stakeholder review, which puts a second reader on the draft before it is sent"
+        "guided pilot",
+        "team practice",
+        "awareness only",
+        "launch gate required"
+      ],
+      "correct": 3,
+      "explanation": "Its score is capped at 20: 5*2 + 4 + 3*2 = 20. Proposal risk and weak customer evidence therefore require a launch gate."
+    },
+    {
+      "stage": "check",
+      "question": "Which category does choose_category assign to the proposal draft fixture?",
+      "options": [
+        "customer",
+        "proposal",
+        "follow-up",
+        "value"
+      ],
+      "correct": 0,
+      "explanation": "Three matches, impact 5, and uncertainty 4 give index 12 modulo 4 = 0. The selected category is customer."
+    },
+    {
+      "stage": "check",
+      "question": "What controls does recommend select when the proposal fixture matches three signals?",
+      "options": [
+        "source check and value story only",
+        "source check, value story, stakeholder review, and follow up plan",
+        "stakeholder review alone, because a second reader catches all errors",
+        "A follow-up plan without checking the customer evidence"
       ],
       "correct": 1,
-      "explanation": "Unattributed numbers are an evidence problem, and the source check is the control that ties each claim back to actual customer context. Value story, stakeholder review, and follow-up plan are the other three controls the lesson teaches."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Python artifact produce?",
-      "options": [
-        "A finished customer proposal that can be sent externally without further review",
-        "A competitive analysis that replaces the team's own customer discovery interviews",
-        "A CRM record set that tracks every follow-up action assigned during the meeting",
-        "A ranked sales and product consulting AI plan with controls and a rationale each"
-      ],
-      "correct": 3,
-      "explanation": "The artifact triages customer context and maps signals such as proposal risk to control levels, so teams can choose the controls before AI-assisted material is shared."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to this lesson?",
-      "options": [
-        "A proposal claim that skips the source check so the draft can go out the same day",
-        "A value story written from the model's assumptions rather than customer context",
-        "A follow-up list kept private to the author, so the customer only sees the proposal",
-        "A stakeholder review that puts a second reader on material before it is shared"
-      ],
-      "correct": 3,
-      "explanation": "Stakeholder review protects customer trust. Source check, value story, and follow-up plan are the other three controls this lesson teaches."
+      "explanation": "The three matches select all four controls. Source checking and value framing are paired with stakeholder review and a concrete follow-up plan."
     },
     {
       "stage": "post",
-      "question": "When should customer-facing AI material require stronger controls?",
+      "question": "How is Scenario(\"internal notes\", \"Summary task with no listed signals.\", (), impact=2, uncertainty=2) classified?",
       "options": [
-        "Only when the draft stays internal and no customer will read the final version",
-        "Only when the follow-up plan is already written down and assigned to a named owner",
-        "Never, because a polished draft with a clear value story is evidence enough already",
-        "When proposal risk is high, customer evidence is weak, or the impact is large"
-      ],
-      "correct": 3,
-      "explanation": "Proposal risk and weak customer signal are exactly the inputs the triage artifact maps to a stronger control level, and high-impact external material carries the most trust at stake."
-    },
-    {
-      "stage": "post",
-      "question": "What should AI improve in sales and product consulting?",
-      "options": [
-        "The number of customer claims a proposal makes without a source check behind them",
-        "The speed of sending material externally by dropping the stakeholder review step",
-        "Preparation quality, the clarity of the value story, and follow-up discipline",
-        "The volume of competitive notes produced, whatever customer context is available"
+        "launch gate required because it is a customer-related lesson",
+        "guided pilot because every note should be tested with a buyer",
+        "awareness only with score 6",
+        "team practice with score 8"
       ],
       "correct": 2,
-      "explanation": "The lesson positions AI as support for preparation: sharper customer context, a clearer value hypothesis, and follow-up discipline that turns preparation into better customer action."
+      "explanation": "No signals add points, so the score is 6. The artifact assigns awareness only to that low-evidence fixture."
+    },
+    {
+      "stage": "post",
+      "question": "What should sheet-sales-product-ai-prep.md require before material is shared externally?",
+      "options": [
+        "A higher volume of customer claims, even when no source supports them",
+        "A faster send time that bypasses stakeholder review",
+        "A polished value story based on model assumptions rather than customer context",
+        "A source check, value hypothesis, stakeholder review, and an assigned follow-up action"
+      ],
+      "correct": 3,
+      "explanation": "The preparation sheet keeps customer evidence and the next action visible. It improves speed without turning an unsupported draft into a customer promise."
     }
   ]
 }

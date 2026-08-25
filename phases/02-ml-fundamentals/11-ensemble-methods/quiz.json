@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does combining multiple weak classifiers into an ensemble improve accuracy?",
+      "question": "What is the main variance-reduction idea behind bagging?",
       "options": [
-        "Each weak classifier memorizes a different part of the test set — and applies unchanged even when the lesson's stated preconditions fail",
-        "If the classifiers make different errors, majority voting cancels out individual mistakes",
-        "Ensembles always use more training data than single models",
-        "Weak classifiers are always faster than strong classifiers"
-      ],
-      "correct": 1,
-      "explanation": "The key is diversity. If classifiers make independent errors, majority voting means a wrong answer must fool more than half the models. Errors cancel out, and the ensemble accuracy exceeds any individual."
-    },
-    {
-      "stage": "check",
-      "question": "What is the main difference between bagging and boosting?",
-      "options": [
-        "Bagging trains models in parallel on random subsets; boosting trains models sequentially, focusing on previous errors",
-        "Bagging uses deep neural networks; boosting uses decision trees, with no need to inspect intermediate results or test edge cases",
-        "Bagging reduces bias; boosting reduces variance",
-        "Bagging requires labeled data; boosting works unsupervised"
+        "Fit models on bootstrap samples and average their predictions",
+        "Fit one model repeatedly on the same residual",
+        "Use only the single deepest tree",
+        "Replace all labels with their class frequencies"
       ],
       "correct": 0,
-      "explanation": "Bagging trains models independently on bootstrap samples (parallel, reduces variance). Boosting trains models sequentially, with each new model focusing on the mistakes of the ensemble so far (reduces bias)."
+      "explanation": "Bootstrap samples create several related but different estimators; averaging their errors can cancel sampling variation."
     },
     {
       "stage": "check",
-      "question": "In AdaBoost, what happens to the sample weight of a misclassified training point after each round?",
+      "question": "How does AdaBoost update its focus after a weak learner makes errors?",
       "options": [
-        "It stays the same",
-        "It increases, so the next weak learner focuses more on this hard example",
-        "It decreases, so the next learner ignores it, because one plausible output is sufficient production evidence",
-        "It is removed from the training set"
+        "It deletes every correctly classified example",
+        "It increases the weights of misclassified examples",
+        "It shuffles the feature names but leaves example weights fixed",
+        "It fits only on the final test set"
       ],
       "correct": 1,
-      "explanation": "AdaBoost increases the weights of misclassified samples after each round. This forces the next weak learner to pay more attention to the examples the ensemble currently gets wrong."
+      "explanation": "AdaBoost gives more influence to examples the current learner gets wrong, so later learners concentrate on them."
     },
     {
       "stage": "check",
-      "question": "A random forest with 100 trees has the same test accuracy as 200 trees. Adding more trees to 500 also shows no improvement. Why?",
+      "question": "What target does a standard gradient-boosting stage fit after the current model?",
       "options": [
-        "The random forest is underfitting and needs a different algorithm, before defining the measurement, acceptance threshold, or rollback path",
-        "After enough trees, variance reduction plateaus and adding more trees provides diminishing returns without increasing overfitting",
-        "500 trees is the maximum allowed",
-        "The trees are all identical so adding more has no effect"
+        "A fresh random label for every row",
+        "The feature with the highest variance",
+        "The residual or negative loss gradient",
+        "The bootstrap index of the previous tree"
       ],
-      "correct": 1,
-      "explanation": "Random forests do not overfit with more trees (unlike boosting). However, variance reduction plateaus once enough diverse trees have been averaged. More trees just add compute cost without improving accuracy."
+      "correct": 2,
+      "explanation": "Each new learner approximates the direction that reduces the loss, commonly represented by residuals for squared-error regression."
+    },
+    {
+      "stage": "check",
+      "question": "Why does a random forest sample features at each split as well as rows?",
+      "options": [
+        "It guarantees that every tree sees every feature",
+        "It changes a classification target into a continuous target",
+        "It prevents bootstrap sampling from changing the data",
+        "It reduces correlation between trees when a few features are dominant"
+      ],
+      "correct": 3,
+      "explanation": "Feature subsampling gives trees different candidate views, increasing diversity before their votes are averaged."
     },
     {
       "stage": "post",
-      "question": "Gradient boosting fits each new tree to what quantity?",
+      "question": "What is the role of the meta-learner in stacking?",
       "options": [
-        "The original target values",
-        "The residuals (errors) of the current ensemble's predictions",
-        "Random subsets of features",
-        "The predictions of the previous tree — and applies unchanged even when the lesson's stated preconditions fail"
+        "It learns how to combine predictions from several base models",
+        "It replaces all base models with a nearest-neighbor lookup",
+        "It creates labels without observing the training target",
+        "It selects the first feature alphabetically"
       ],
-      "correct": 1,
-      "explanation": "In gradient boosting, each new tree is trained to predict the residuals (negative gradient of the loss) of the current ensemble. This sequentially reduces the remaining error."
+      "correct": 0,
+      "explanation": "Stacking feeds base-model predictions to a second model. Out-of-fold predictions are used for training that second model to limit leakage."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Ensemble Methods?",
+      "question": "Why can a majority vote improve as independent weak learners are added?",
       "options": [
-        "Build a bagging ensemble and demonstrate how averaging decorrelated models reduces variance without increas...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Each learner becomes perfect after the first vote",
+        "Their uncorrelated mistakes are less likely to occur in the same vote",
+        "The ensemble discards every minority class",
+        "Voting changes the features into bootstrap samples"
       ],
-      "correct": 0,
-      "explanation": "“Build a bagging ensemble and demonstrate how averaging decorrelated models reduces variance without increas...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 1,
+      "explanation": "When errors are not perfectly correlated, the majority is increasingly likely to be correct as more learners vote."
     }
   ]
 }

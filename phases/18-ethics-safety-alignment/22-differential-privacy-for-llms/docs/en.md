@@ -72,6 +72,18 @@ Lessons 20-21 are bias/fairness. Lesson 22 is privacy. Lesson 23 is provenance v
 
 
 
+## Build It
+
+Reconstruct **Differential Privacy for LLMs** by following `sigmoid` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Use It
+
+Call `sigmoid` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-dp-audit.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Abadi et al. — DP-SGD (arXiv:1607.00133)](https://arxiv.org/abs/1607.00133) — the standard DP training algorithm
@@ -82,10 +94,20 @@ Lessons 20-21 are bias/fairness. Lesson 22 is privacy. Lesson 23 is provenance v
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Define (epsilon, delta)-differential privacy and state the DP-SGD recipe.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain the 2024-2025 tension: canary MIA vs training-data extraction give different pictures.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe PMixED and why inference-time private prediction is an alternative to DP training.
+Keep two runs side by side for **Differential Privacy for LLMs**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
+
+1. **Read the first result.** From `code/`, run `python3 main.py` using x=0.5 with the demo defaults. Follow `sigmoid`, `gen`, `clip`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Define (epsilon, delta)-differential privacy and state the DP-SGD recipe.**.
+2. **Run a two-value comparison.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Explain the 2024-2025 tension: canary MIA vs training-data extraction give different pictures.** says the other inputs should stay fixed.
+3. **Try an adversarial fixture.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Describe PMixED and why inference-time private prediction is an alternative to DP training.** and record the exception text if the code rejects the case.
+4. **Write the operator note.** Open `outputs/skill-dp-audit.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Describe the Differential Privacy Reversal via LLM Feedback attack.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define (epsilon, delta)-differential privacy and state the DP-SGD recipe,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe PMixED and why inference-time private prediction is an alternative to DP training,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Differential Privacy for LLMs** should contain:
+
+- the `python3 main.py` output for x=0.5 with the demo defaults, with `sigmoid`, `gen`, `clip` traced to the value or shape that supports **Define (epsilon, delta)-differential privacy and state the DP-SGD recipe.**;
+- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Explain the 2024-2025 tension: canary MIA vs training-data extraction give different pictures.**;
+- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Describe PMixED and why inference-time private prediction is an alternative to DP training.**; and
+- an updated `outputs/skill-dp-audit.md` example with a concrete input, expected output field, and acceptance check tied to **Describe the Differential Privacy Reversal via LLM Feedback attack.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

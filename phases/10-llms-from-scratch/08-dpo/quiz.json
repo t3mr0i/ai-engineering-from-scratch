@@ -4,75 +4,45 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the main advantage of DPO over RLHF?",
-      "options": [
-        "DPO produces better models",
-        "DPO eliminates the need for a separate reward model and PPO, training directly on preference pairs in a single loop",
-        "DPO uses less training data",
-        "DPO works without any preference data — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases"
-      ],
-      "correct": 1,
-      "explanation": "RLHF requires training a reward model separately, then running PPO optimization. DPO folds both steps into a single training objective that directly optimizes the language model on preference pairs."
+      "question": "What is the scalar inside the sigmoid in `dpo_loss` for one preference pair?",
+      "options": ["The policy's preferred log-probability alone.", "The reference model's rejected log-probability alone.", "`beta * (preferred ratio - rejected ratio)`.", "The average token count of the two responses."],
+      "correct": 2,
+      "explanation": "DPO forms `pref_ratio = policy_pref - ref_pref` and `rej_ratio = policy_rej - ref_rej`, then uses `beta * (pref_ratio - rej_ratio)` as the logit."
     },
     {
       "stage": "check",
-      "question": "What role does the reference model play in DPO?",
-      "options": [
-        "It generates training data, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "It serves as the anchor that prevents the trained model from diverging too far, similar to the KL penalty in RLHF",
-        "It evaluates model quality",
-        "It handles tokenization"
-      ],
-      "correct": 1,
-      "explanation": "The DPO loss compares log probabilities under the trained policy and the reference (usually SFT) model. The reference model constrains how far the policy can drift, preventing reward hacking without explicit KL tuning."
+      "question": "What does the reference model contribute to the DPO objective in this implementation?",
+      "options": ["A second sampled response for every prompt.", "A learned scalar reward head.", "The target labels for next-token cross-entropy.", "Reference-relative log-probabilities."],
+      "correct": 3,
+      "explanation": "DPO compares each policy sequence log-probability with the fixed reference log-probability; it does not train a separate reward model or require online rollouts."
     },
     {
       "stage": "check",
-      "question": "What does the beta parameter in DPO control?",
-      "options": [
-        "The learning rate",
-        "How strongly the policy is constrained to stay close to the reference model -- higher beta means more conservative updates",
-        "The batch size",
-        "The number of training epochs, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path"
-      ],
-      "correct": 1,
-      "explanation": "Beta scales the implicit KL divergence penalty. Beta=0.1 allows the model to diverge significantly from the reference (potentially better but riskier). Beta=0.5 keeps it close (safer but less learning)."
-    },
-    {
-      "stage": "check",
-      "question": "How does DPO implicitly represent a reward model?",
-      "options": [
-        "It doesn't -- DPO has no concept of reward",
-        "The DPO loss function can be derived by showing that the optimal policy under a reward function is directly expressible through policy log probabilities",
-        "It trains a hidden reward model inside the language model, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "DPO uses the loss function as the reward"
-      ],
-      "correct": 1,
-      "explanation": "Rafailov et al. showed that the closed-form solution of the RLHF objective expresses the reward as a function of the policy's log-probabilities relative to the reference. DPO optimizes this directly, implicitly learning the reward."
-    },
-    {
-      "stage": "post",
-      "question": "When might RLHF still be preferred over DPO?",
-      "options": [
-        "Always -- RLHF is strictly better",
-        "When you need a reusable reward model for evaluating multiple policies or when online data collection is beneficial",
-        "When you have less preference data — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "When training smaller models"
-      ],
-      "correct": 1,
-      "explanation": "DPO is offline (fixed preference data). RLHF allows online data collection where the reward model scores new generations, discovering reward-hacking patterns. A standalone reward model is also useful for evaluation and other policies."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for DPO: Direct Preference Optimization?",
-      "options": [
-        "Derive the DPO loss function and explain how it implicitly represents a reward model through the policy's l...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "Why does `compute_sequence_log_prob` begin response targets at `prompt_len - 1`?",
+      "options": ["It aligns the first response target.", "It excludes every response token from the sum.", "The prompt is always one token long.", "It aligns the loss with the first vocabulary row."],
       "correct": 0,
-      "explanation": "“Derive the DPO loss function and explain how it implicitly represents a reward model through the policy's l...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "With `full[:-1]` as input and `full[1:]` as target, the first response target is paired with the last prompt token at input index `prompt_len - 1`."
+    },
+    {
+      "stage": "check",
+      "question": "What does increasing `beta` do to the DPO preference margin, all else equal?",
+      "options": ["It removes the reference model from the calculation.", "It scales the DPO margin.", "It forces both responses to have the same length.", "It changes byte tokenization into word tokenization."],
+      "correct": 1,
+      "explanation": "`beta` multiplies the difference of policy/reference log-probability ratios, so it controls how strongly that margin affects the logistic loss and implicit rewards."
+    },
+    {
+      "stage": "post",
+      "question": "How does `evaluate_preference_accuracy` decide that a pair is correct?",
+      "options": ["The preferred response has more characters.", "The rejected response has lower raw token IDs.", "The preferred implicit reward is larger.", "The two sequence log-probabilities are exactly equal."],
+      "correct": 2,
+      "explanation": "The evaluator compares the two reference-relative implicit rewards and counts the example when the preferred one is larger."
+    },
+    {
+      "stage": "post",
+      "question": "If both policy/reference log-probability ratios are zero for a pair, what value does `dpo_loss` return with any positive `beta`?",
+      "options": ["0.0 exactly", "1.0 exactly", "`beta`", "approximately 0.693"],
+      "correct": 3,
+      "explanation": "The DPO logit is zero, so `-log(sigmoid(0) + 1e-8)` is approximately `log(2)`, independent of beta."
     }
   ]
 }

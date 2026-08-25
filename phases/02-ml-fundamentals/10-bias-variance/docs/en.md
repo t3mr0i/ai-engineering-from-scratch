@@ -258,6 +258,18 @@ flowchart TD
 
 
 
+## Build It
+
+Reconstruct **Bias-Variance Tradeoff** by following `true_function` on x=0.5 with the demo defaults. Run `run main.text` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Use It
+
+Call `true_function` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-model-diagnostics.md` with the command `run main.text`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Hastie, Tibshirani, Friedman: Elements of Statistical Learning, Ch. 7](https://hastie.su.domains/ElemStatLearn/) -- the definitive treatment of bias-variance decomposition

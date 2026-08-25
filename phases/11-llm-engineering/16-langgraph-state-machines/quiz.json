@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does the `messages` field in a LangGraph State TypedDict need `Annotated[list, add_messages]`?",
+      "question": "Why is `State.messages` annotated with `add_messages` in the graph definition?",
       "options": [
-        "It enables streaming of token deltas from the model as they're generated, rather than merging or appending anything.",
-        "It compresses the message list when checkpoints are written to disk, trimming older turns to save storage space.",
-        "Without the reducer, node updates overwrite the list instead of appending, so every turn loses the prior history.",
-        "It converts plain dicts into LangChain message objects at runtime, independent of how list updates get merged."
+        "It encrypts messages before they are written to `MemorySaver`",
+        "It converts a list of messages into one string before the model sees it",
+        "It appends and reconciles new message updates instead of overwriting the conversation list",
+        "It routes every message directly to the `tools` node without consulting the agent"
       ],
       "correct": 2,
-      "explanation": "Every state field has a reducer; the default is overwrite. `add_messages` makes the message list accumulate instead. Forgetting it is the most common LangGraph bug -- the second node to update `messages` silently wins and prior turns vanish."
+      "explanation": "LangGraph uses the field reducer to merge node updates. `add_messages` appends and reconciles message objects instead of overwriting earlier human, assistant, or tool messages; it does not perform tool routing."
     },
     {
       "stage": "check",
-      "question": "What is the difference between `interrupt_before=['tools']` and `interrupt_after=['tools']`?",
+      "question": "What does `should_continue` return when the last assistant message contains a nonempty `tool_calls` list?",
       "options": [
-        "No difference; they are aliases for the same hook, and both pause execution at exactly the same point in the graph's node boundary., with no need to inspect intermediate results or test edge cases",
-        "`interrupt_before` is meant for unit tests where you mock tool calls; `interrupt_after` is meant only for production traffic.",
-        "`interrupt_before` pauses after the model emits tool_calls but before the tools execute; `interrupt_after` pauses after the tools have already run.",
-        "`interrupt_before` runs the tool in an isolated sandbox first; `interrupt_after` always runs the same tool in production."
+        "`END`, because tool calls are terminal output from the agent node",
+        "`agent`, which invokes the model again before any tool can run",
+        "`interrupt`, a special node name created automatically by the checkpointer",
+        "`tools`, routing execution to the `ToolNode`"
       ],
-      "correct": 2,
-      "explanation": "Interrupts stop execution at a node boundary. `interrupt_before` catches the proposed tool call before any side effect happens, which is why approvals belong on the edge into a side-effecting node."
+      "correct": 3,
+      "explanation": "The router checks `getattr(last, \"tool_calls\", None)`. A truthy list returns `tools`; a message without tool calls returns `END`, so the graph either executes tools or finishes."
     },
     {
       "stage": "check",
-      "question": "Given a thread's checkpoint history, how do you time-travel to a prior state and explore a different branch?",
+      "question": "What is the observable effect of compiling with `interrupt_before=[\"tools\"]`?",
       "options": [
-        "Call a `graph.reset(thread_id)` method to clear history, then `graph.invoke(new_input, config)` with a completely fresh input and no prior context",
-        "Delete the checkpoint directory on disk entirely, then reinvoke the graph fresh with the same thread_id, expecting it to rebuild history automatically, because one plausible output is sufficient production evidence",
-        "Invoke the graph with the desired prior `checkpoint_id` in the config; passing `None` as input replays from that checkpoint, passing a new value appends to it before resuming.",
-        "Set an undocumented `graph.rewind = True` flag on the compiled graph object and reinvoke with the original input, expecting it to jump backward"
-      ],
-      "correct": 2,
-      "explanation": "`get_state_history` returns the full checkpoint log; passing an old `checkpoint_id` in the config forks execution from that point, either replaying it (`None` input) or appending a new update before resuming."
-    },
-    {
-      "stage": "check",
-      "question": "In a four-node ReAct graph (agent, tools, conditional edge, static edge back to agent), where does the conditional edge live?",
-      "options": [
-        "From `agent`, routing to `tools` if the last message has tool_calls and to `END` otherwise.",
-        "From `tools` back to `agent`, routing on whether the tool output was empty or contained an error.",
-        "From `START`, routing to either `agent` or `END` based on the length of the initial input message.",
-        "There is no conditional edge in this graph at all; both transitions between nodes are static edges."
+        "The graph pauses before executing the pending tool call, so its side effect can be approved or denied",
+        "The `tools` node is removed from the graph and tool calls are returned as plain text",
+        "Execution pauses after the tool has run, allowing a reviewer to undo its side effect",
+        "Only the first message is checkpointed; later nodes run without persistence"
       ],
       "correct": 0,
-      "explanation": "The conditional edge from `agent` decides whether to loop into `tools` or finish; the edge from `tools` back to `agent` is always static, since a tool result always goes back to the model."
+      "explanation": "`interrupt_before=[\"tools\"]` suspends execution before `ToolNode` runs. The pending call and checkpointed state can be inspected before any tool side effect, then the same thread can be resumed explicitly."
+    },
+    {
+      "stage": "check",
+      "question": "Why does the demo choose `history[-1].config` as its earliest checkpoint before the time-travel branch?",
+      "options": [
+        "The final snapshot always contains the user's first message by definition of `StateGraph`",
+        "`get_state_history` yields snapshots newest first, so `history[-1]` is the oldest available snapshot",
+        "Only the last snapshot has a valid thread ID; earlier configs are read-only copies",
+        "LangGraph stores history alphabetically by node name, making the last item the initial node"
+      ],
+      "correct": 1,
+      "explanation": "In this demo, `get_state_history` yields snapshots newest first. Therefore `history[-1]` is the oldest available checkpoint, which is the state selected before adding the alternate math question; this is an ordering property, not a guarantee about the first user message."
     },
     {
       "stage": "post",
-      "question": "When should you use `Send(node_name, state)` instead of a plain edge?",
+      "question": "What does `app.stream(Command(resume=True), config, stream_mode=\"updates\")` do after the tools interrupt?",
       "options": [
-        "To dispatch N parallel executions of a target node whose outputs merge back through the state reducer.",
-        "To retry a node after a failure, replaying the same state until the node succeeds or a max-attempts limit is hit.",
-        "To defer a node's execution until a timer expires, pausing the graph without persisting an interrupt checkpoint.",
-        "To invoke a node in a separate operating-system process for isolation, independent of the state reducer."
+        "It clears the checkpointer and starts a new thread with no messages",
+        "It rewinds to the first checkpoint and discards the pending tool call",
+        "It resumes the paused thread and runs the pending tool",
+        "It asks the model for a new user message before any state transition"
       ],
-      "correct": 0,
-      "explanation": "`Send` lets a node fan out to N parallel executions of a target node -- e.g. querying three retrievers at once -- whose outputs merge back through the state reducer, the orchestrator-workers pattern without manual threading."
+      "correct": 2,
+      "explanation": "`Command(resume=True)` continues the same `thread_id` from the interrupt. The tool call is executed, its result is appended through the message reducer, and control returns to the agent node."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for LangGraph — State Machines for Agents?",
+      "question": "What happens when the demo's `calculator` tool receives `2 + unknown`?",
       "options": [
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "It imports the missing name from Python's global namespace and returns a value",
+        "It returns the literal expression because the graph does not execute tools in tests",
+        "It asks `web_lookup` to define `unknown` before evaluating the expression",
+        "It returns `ERROR: only digits and + - * / ( ) are allowed` before calling `eval`"
       ],
-      "correct": 0,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 3,
+      "explanation": "`calculator` checks the character allowlist before evaluating. Because `unknown` contains letters, the guard returns `ERROR: only digits and + - * / ( ) are allowed`; execution never reaches `eval` or a `NameError` handler."
     }
   ]
 }

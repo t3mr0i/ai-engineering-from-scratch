@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the goal of running the same task through prompt-only and workbench-guided pipelines?",
+      "question": "What outcome does run_prompt_only report for the sample signup task?",
       "options": [
-        "To produce a before/after report with numbers, not arguments, for a skeptic to read",
-        "To compare which of two candidate models performs better on the exact same fixed task",
-        "To pick a vendor by running the identical task through each vendor's own separate pipeline",
-        "To benchmark GPU throughput under two different agent-loop configurations"
+        "tests_actually_run=False and acceptance_met=False",
+        "tests_actually_run=True and acceptance_met=False",
+        "tests_actually_run=False and acceptance_met=True",
+        "tests_actually_run=True and acceptance_met=True"
       ],
       "correct": 0,
-      "explanation": "The numbers do the arguing; the case is made on a real-feeling task, not a toy."
+      "explanation": "The prompt-only fixture only claims completion: it does not run tests and does not establish the requested short-password behavior."
     },
     {
       "stage": "check",
-      "question": "Which is NOT one of the five outcomes measured?",
+      "question": "What is workbench-guided files_outside_scope for the sample app?",
       "options": [
-        "tests_actually_run, since most tests passed claims are otherwise completely unverifiable",
-        "acceptance_met, since the test that proves the goal must be the test that ran",
-        "model_perplexity, a measure none of the lesson's five scored outcomes ever reference",
-        "files_outside_scope, since scope creep is the dominant silent failure here"
+        "['README.md']",
+        "[]",
+        "['sample_app/scripts/release.sh']",
+        "['README.md', 'sample_app/scripts/release.sh']"
+      ],
+      "correct": 1,
+      "explanation": "run_workbench touches only sample_app/app.py and sample_app/test_app.py, so its outside-scope list is empty."
+    },
+    {
+      "stage": "check",
+      "question": "What reviewer_total values are returned for prompt-only and workbench-guided?",
+      "options": [
+        "8 and 3",
+        "3 and 3",
+        "3 and 9",
+        "9 and 8"
       ],
       "correct": 2,
-      "explanation": "The five are tests_actually_run, acceptance_met, files_outside_scope, handoff_quality, reviewer_total."
+      "explanation": "The two TaskOutcome fixtures deliberately record reviewer_total=3 for prompt-only and 9 for workbench-guided."
     },
     {
       "stage": "check",
-      "question": "What role do README.md and scripts/release.sh play in the sample app, per the lesson?",
+      "question": "Which behavior must the real-repo task add to /signup?",
       "options": [
-        "They hold the acceptance criteria the verification gate checks",
-        "They are the two files the task explicitly asks the agent to edit",
-        "They are forbidden-zone bait, testing if a run stays in scope",
-        "They store the before/after report the lesson later generates"
-      ],
-      "correct": 2,
-      "explanation": "The lesson describes README.md and scripts/release.sh in the sample app as forbidden-zone bait."
-    },
-    {
-      "stage": "check",
-      "question": "What does the prompt-only pipeline skip that the workbench-guided pipeline includes, per the lesson?",
-      "options": [
-        "Reading the README before editing any files in the repo",
-        "Running the test suite at any point during the session",
-        "Editing app.py to add the validation the task requested",
-        "A scope contract, a verification gate, and a reviewer"
+        "Rate-limit every signup request and log the client IP",
+        "Accept any password but normalize the email case",
+        "Move signup to an asynchronous background queue",
+        "Reject passwords under eight characters with a typed 422 envelope"
       ],
       "correct": 3,
-      "explanation": "The lesson lists the prompt-only pipeline as read README, read app.py, edit files, claim done; the workbench-guided pipeline adds the scope contract, feedback runner, verification gate, reviewer, and handoff steps."
+      "explanation": "The lesson task is input validation: short passwords must be rejected with HTTP 422 and a typed error envelope, backed by a test."
     },
     {
       "stage": "post",
-      "question": "What is the task both pipelines run in the lesson?",
+      "question": "Which paths does the sample TaskOutcome allow the workbench to change?",
       "options": [
-        "Add rate limiting to /signup and log every rejected attempt",
-        "Migrate /signup from synchronous to asynchronous request handling",
-        "Add a password-strength meter to the signup form's frontend",
-        "Validate /signup: reject short passwords, return a typed 422"
+        "sample_app/app.py and sample_app/test_app.py",
+        "README.md and sample_app/scripts/release.sh",
+        "sample_app/app.py and README.md",
+        "Every file beneath sample_app/ plus the README"
       ],
-      "correct": 3,
-      "explanation": "The lesson states the task as: add input validation to /signup, reject passwords shorter than 8 characters, return 422 with a typed error envelope, and add a test that proves the new behavior."
+      "correct": 0,
+      "explanation": "The ALLOWED set contains exactly sample_app/app.py and sample_app/test_app.py; README.md and the release script are scope bait."
     },
     {
       "stage": "post",
-      "question": "Why does the lesson measure tests_actually_run as one of the five outcomes?",
+      "question": "Why is handoff_quality='missing' significant in the prompt-only outcome?",
       "options": [
-        "Because CI billing is charged per test that actually runs",
-        "Because the reviewer agent only reads tests run more than once",
-        "Because handoff quality is scored solely on total test count",
-        "Because most 'tests passed' claims are otherwise unverifiable"
+        "It means the sample app could not import its signup function",
+        "It shows the next session receives no usable continuation packet",
+        "It proves the reviewer score was not computed at all",
+        "It means the workbench ran too many commands"
       ],
-      "correct": 3,
-      "explanation": "The lesson's outcomes table gives the reason for tests_actually_run as: most 'tests passed' claims are unverifiable."
+      "correct": 1,
+      "explanation": "A missing handoff leaves the next session without the structured context needed to resume, even if a plausible edit exists."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the distributional hypothesis?",
+      "question": "Which skip-gram pairs does skipgram_pairs([\"a\", \"b\", \"c\"], window=1) emit?",
       "options": [
-        "You shall know a word by the company it keeps",
-        "Words are uniformly distributed across documents",
-        "All words can be embedded in 300 dimensions",
-        "Frequent words carry the most meaning"
+        "(a,b), (b,a), (b,c), (c,b)",
+        "(a,c), (c,a) only",
+        "(a,a), (b,b), (c,c)",
+        "Every ordered pair, including tokens more than one position away"
       ],
       "correct": 0,
-      "explanation": "Firth's (1957) distributional hypothesis: similar contexts imply similar meanings."
+      "explanation": "The loop visits neighbors within one position and skips i==j, producing the four adjacent ordered pairs."
     },
     {
       "stage": "check",
-      "question": "Why is plain softmax over the vocabulary impractical in Word2Vec?",
+      "question": "What shapes do init_embeddings(vocab_size=5, dim=16, ...) return?",
       "options": [
-        "Computing softmax over 100k+ vocabulary terms is prohibitively expensive per training step",
-        "Softmax cannot model probabilities, with no need to inspect intermediate results or test edge cases",
-        "Softmax has no gradient",
-        "It causes vanishing gradients"
-      ],
-      "correct": 0,
-      "explanation": "Full-vocabulary softmax is too expensive; negative sampling reformulates it as binary classification."
-    },
-    {
-      "stage": "check",
-      "question": "What is the difference between skip-gram and CBOW?",
-      "options": [
-        "Skip-gram uses bigrams; CBOW uses unigrams",
-        "Skip-gram predicts context words from the center; CBOW predicts the center from context",
-        "Skip-gram predicts the center word from context; CBOW does the reverse, because one plausible output is sufficient production evidence",
-        "Skip-gram trains a deep network; CBOW is shallow"
+        "W is (16,5) and W_prime is (5,1)",
+        "W and W_prime are both (5,16)",
+        "Both arrays are (5,5)",
+        "One scalar vector is returned for the entire vocabulary"
       ],
       "correct": 1,
-      "explanation": "Skip-gram: center -> context. CBOW: context -> center."
+      "explanation": "There is one 16-dimensional row for each vocabulary item in each of the two embedding tables."
     },
     {
       "stage": "check",
-      "question": "In negative sampling, what is the objective for the positive pair (center, context)?",
+      "question": "Which IDs does train exclude while sampling negative contexts for a center/context pair?",
       "options": [
-        "Maximize sigmoid(W[center] dot W'[context]) so it is close to 1",
-        "Force them to be orthogonal, before defining the measurement, acceptance threshold, or rollback path",
-        "Minimize their dot product",
-        "Decorrelate the vectors"
+        "Only the first vocabulary ID",
+        "Every ID that appears in the document",
+        "The positive context ID and the center ID",
+        "No IDs; negatives may equal the positive context"
       ],
-      "correct": 0,
-      "explanation": "Positive pairs train sigmoid near 1; sampled negatives train sigmoid near 0."
+      "correct": 2,
+      "explanation": "The candidate filter keeps n only when it differs from both ctx_idx and c_idx."
     },
     {
-      "stage": "post",
-      "question": "After training Word2Vec, which weight matrix becomes the word embeddings?",
+      "stage": "check",
+      "question": "What is the positive-pair error term in train_pair?",
       "options": [
-        "A separate post-training projection — and applies unchanged even when the lesson's stated preconditions fail",
-        "The input-to-hidden W matrix (center-word table)",
-        "Both, multiplied together",
-        "The hidden-to-output W' matrix"
-      ],
-      "correct": 1,
-      "explanation": "The center-word table W is the standard embedding output; W' is often discarded or averaged in."
-    },
-    {
-      "stage": "post",
-      "question": "Why does Word2Vec fail on polysemy (e.g. 'bank')?",
-      "options": [
-        "The window size is too small",
-        "It ignores rare words",
-        "Negative sampling drops rare meanings, with no need to inspect intermediate results or test edge cases",
-        "It assigns one static vector per word, so 'river bank' and 'financial bank' share the same vector"
+        "sigmoid(v_c @ u_pos) + 1",
+        "v_c - u_pos, without a sigmoid",
+        "The cosine distance between every vocabulary row",
+        "sigmoid(v_c @ u_pos) - 1"
       ],
       "correct": 3,
-      "explanation": "Static embeddings cannot disambiguate senses; contextual embeddings (ELMo/BERT) fix this."
+      "explanation": "A positive pair targets probability one, so the logistic error is sigmoid(score)-1 before the gradient update."
+    },
+    {
+      "stage": "post",
+      "question": "What similarity does nearest use when ranking candidate words?",
+      "options": [
+        "Cosine similarity after normalizing each row and the target vector",
+        "Raw Euclidean distance without normalization",
+        "The number of characters shared by two words",
+        "The order in which the words entered the vocabulary"
+      ],
+      "correct": 0,
+      "explanation": "nearest builds W_norm and a normalized target, then sorts W_norm @ target in descending order."
+    },
+    {
+      "stage": "post",
+      "question": "What information does skip-gram add that a bag-of-words vector lacks?",
+      "options": [
+        "It preserves exact document order in a sparse count matrix",
+        "It trains vectors from local context, so words with similar neighborhoods can become nearby",
+        "It guarantees that every synonym receives an identical vector",
+        "It removes the need for a vocabulary or negative samples"
+      ],
+      "correct": 1,
+      "explanation": "The center/context objective uses neighboring words as a learning signal; it does not store the original sequence verbatim."
     }
   ]
 }

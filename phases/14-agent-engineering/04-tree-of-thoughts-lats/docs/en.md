@@ -442,6 +442,18 @@ else:
     print(f"\nDirect answer:\n{lrn_llm.text(r)}")
 ```
 
+## Build It
+
+Reconstruct **Tree of Thoughts and LATS: Deliberate Search** by following `call` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `call` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-search-policy.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Yao et al., Tree of Thoughts (arXiv:2305.10601)](https://arxiv.org/abs/2305.10601) — the canonical paper
@@ -451,10 +463,20 @@ else:
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Frame reasoning as search: nodes are "thoughts," edges are "expansions," value is "how promising.".
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement a stdlib ToT-style BFS tree search with self-evaluation scoring.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Extend to a toy LATS MCTS loop with select / expand / simulate / backpropagate.
+Use `call` as the trace: start from tokens=["red","fox"], keep the raw output, and tie each observation to a named objective.
+
+1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using tokens=["red","fox"]. Follow `call`, `text`, `usage`. Expect the attention/embedding shape follows the token count and each valid attention row remains normalized; capture the first printed shape, metric, status, or summary field and state which part supports **Frame reasoning as search: nodes are "thoughts," edges are "expansions," value is "how promising."**.
+2. **Vary one named input.** Repeat the command after changing only the token sequence: use tokens=["red","fox","runs"]. Predict the direction of the change, then compare the two output values. Explain why **Implement a stdlib ToT-style BFS tree search with self-evaluation scoring.** says the other inputs should stay fixed.
+3. **Probe the empty case.** Feed the implementation tokens=[]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Extend to a toy LATS MCTS loop with select / expand / simulate / backpropagate.** and record the exception text if the code rejects the case.
+4. **Package a usable handoff.** Open `outputs/skill-search-policy.md` and add a worked example using tokens=["red","fox"]. Include the input contract, one expected output field, and a named acceptance check for **Decide when search is worth the token multiplier (Game of 24, code generation) and when a single trajectory is enough (simple Q&A).**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Frame reasoning as search: nodes are "thoughts," edges are "expansions," value is "how promising.",” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Extend to a toy LATS MCTS loop with select / expand / simulate / backpropagate,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Tree of Thoughts and LATS: Deliberate Search** should contain:
+
+- the `python3 main.py` output for tokens=["red","fox"], with `call`, `text`, `usage` traced to the value or shape that supports **Frame reasoning as search: nodes are "thoughts," edges are "expansions," value is "how promising."**;
+- a before/after comparison for the token sequence, where tokens=["red","fox","runs"] changes the observation in the direction predicted by **Implement a stdlib ToT-style BFS tree search with self-evaluation scoring.**;
+- a recorded result for tokens=[] that matches the implementation’s validation or empty-result contract and explains the evidence for **Extend to a toy LATS MCTS loop with select / expand / simulate / backpropagate.**; and
+- an updated `outputs/skill-search-policy.md` example with a concrete input, expected output field, and acceptance check tied to **Decide when search is worth the token multiplier (Game of 24, code generation) and when a single trajectory is enough (simple Q&A).**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

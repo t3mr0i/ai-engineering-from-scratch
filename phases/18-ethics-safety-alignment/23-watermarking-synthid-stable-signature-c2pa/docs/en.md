@@ -75,6 +75,18 @@ Lessons 22-23 are about what the model emits (private data, provenance signal). 
 
 
 
+## Build It
+
+Reconstruct **Watermarking — SynthID, Stable Signature, C2PA** by following `green_set` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `green_set` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-provenance-audit.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Kirchenbauer et al. — A Watermark for Large Language Models (ICML 2023, arXiv:2301.10226)](https://arxiv.org/abs/2301.10226) — the token-watermark mechanism
@@ -85,10 +97,20 @@ Lessons 22-23 are about what the model emits (private data, provenance signal). 
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Describe token-level watermarking (SynthID-text style) and the mechanism by which it is detectable.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe Stable Signature and the 2024 removal attack that broke it.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: State C2PA's role and why it is complementary to watermarking.
+Work from the smallest fixture that the Watermarking — SynthID, Stable Signature, C2PA demo already understands, then make one deliberate change and record what moved.
+
+1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using tokens=["red","fox"]. Follow `green_set`, `unwatermarked_sample`, `watermarked_sample`. Expect the attention/embedding shape follows the token count and each valid attention row remains normalized; capture the first printed shape, metric, status, or summary field and state which part supports **Describe token-level watermarking (SynthID-text style) and the mechanism by which it is detectable.**.
+2. **Perturb one field.** Repeat the command after changing only the token sequence: use tokens=["red","fox","runs"]. Predict the direction of the change, then compare the two output values. Explain why **Describe Stable Signature and the 2024 removal attack that broke it.** says the other inputs should stay fixed.
+3. **Check the failure boundary.** Feed the implementation tokens=[]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **State C2PA's role and why it is complementary to watermarking.** and record the exception text if the code rejects the case.
+4. **Make the result repeatable.** Open `outputs/skill-provenance-audit.md` and add a worked example using tokens=["red","fox"]. Include the input contract, one expected output field, and a named acceptance check for **Describe the key limitations: model-specific signal, robustness under paraphrase, and meaning-preserving attacks (arXiv:2508.20228).**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Describe token-level watermarking (SynthID-text style) and the mechanism by which it is detectable,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “State C2PA's role and why it is complementary to watermarking,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Watermarking — SynthID, Stable Signature, C2PA** should contain:
+
+- the `python3 main.py` output for tokens=["red","fox"], with `green_set`, `unwatermarked_sample`, `watermarked_sample` traced to the value or shape that supports **Describe token-level watermarking (SynthID-text style) and the mechanism by which it is detectable.**;
+- a before/after comparison for the token sequence, where tokens=["red","fox","runs"] changes the observation in the direction predicted by **Describe Stable Signature and the 2024 removal attack that broke it.**;
+- a recorded result for tokens=[] that matches the implementation’s validation or empty-result contract and explains the evidence for **State C2PA's role and why it is complementary to watermarking.**; and
+- an updated `outputs/skill-provenance-audit.md` example with a concrete input, expected output field, and acceptance check tied to **Describe the key limitations: model-specific signal, robustness under paraphrase, and meaning-preserving attacks (arXiv:2508.20228).**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

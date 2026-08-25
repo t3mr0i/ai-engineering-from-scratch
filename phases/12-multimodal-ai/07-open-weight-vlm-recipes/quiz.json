@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Open-Weight VLM Recipes: What Actually Matters?",
+      "question": "Which set matches the five-axis design space encoded by the recipe lesson?",
       "options": [
-        "Name the five-axis VLM design space: image encoder, connector, LLM, data mix, resolution schedule",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Image encoder, connector, LLM, data mix, and resolution schedule",
+        "Tokenizer vocabulary, optimizer, GPU brand, batch norm, and beam width",
+        "Only connector depth and prompt length",
+        "Audio codec, robot arm, video FPS, OCR engine, and database"
       ],
       "correct": 0,
-      "explanation": "“Name the five-axis VLM design space: image encoder, connector, LLM, data mix, resolution schedule” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The lesson treats encoder, connector, language model, data mixture, and resolution schedule as separate recipe axes. The other choices mix in unrelated implementation details."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Open-Weight VLM Recipes: What Actually Matters?",
+      "question": "In axis_impact, which factor receives the largest share of explained benchmark variance?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Read an MM1 / Idefics2 / Cambrian-1 ablation table and predict which knob moves a given benchmark",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Connector architecture at 5%",
+        "Visual-token count at 60%",
+        "Image encoder at 20%",
+        "Resolution schedule at 5%"
       ],
       "correct": 1,
-      "explanation": "“Read an MM1 / Idefics2 / Cambrian-1 ablation table and predict which knob moves a given benchmark” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The controlled-comparison toy assigns 60% to visual-token count, larger than encoder (20%), LLM size (15%), data (10%), or either 5% axis."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Open-Weight VLM Recipes: What Actually Matters?",
+      "question": "Which data row has the highest MMMU score in compare_data?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Pick a recipe (encoder, connector, data, resolution) for a new VLM given a compute budget and task mix",
-        "Treat one successful example as proof that every edge case works"
+        "LLaVA-Inst-150k at 40.0",
+        "+ ShareGPT4V at 42.0",
+        "PixMo + Cauldron + more at 47.0",
+        "+ Cauldron at 43.0"
       ],
       "correct": 2,
-      "explanation": "“Pick a recipe (encoder, connector, data, resolution) for a new VLM given a compute budget and task mix” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The final compare_data row, PixMo + Cauldron + more, reaches 47.0 MMMU. It is higher than PixMo alone at 45.3 and the earlier mixtures at 43.0 or below."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Open-Weight VLM Recipes: What Actually Matters?",
+      "question": "For pick_recipe(budget_b=10, task='ocr'), which candidate scores highest under the toy weights?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Explain why detailed human captions beat GPT-4V distillation at the same token count",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Explain why detailed human captions beat GPT-4V distillation at the same token count” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Open-Weight VLM Recipes: What Actually Matters?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Name the five-axis VLM design space: image encoder, connector, LLM, data mix, resolution schedule"
+        "MM1-3B, because the smallest LLM always wins OCR",
+        "Idefics2-8B, because Perceiver-64 is the only OCR connector",
+        "Cambrian-1-8B, because four encoders guarantee the top DocVQA score",
+        "Molmo-7B-D, because its 92.4 DocVQA score dominates the OCR-weighted total"
       ],
       "correct": 3,
-      "explanation": "“Name the five-axis VLM design space: image encoder, connector, LLM, data mix, resolution schedule” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The OCR weights emphasize DocVQA (1.2). Among recipes at or below 10B, Molmo-7B-D's 92.4 DocVQA score gives it the highest weighted total."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Open-Weight VLM Recipes: What Actually Matters?",
+      "question": "Which encoder row wins CV-Bench in compare_encoders?",
       "options": [
-        "Read an MM1 / Idefics2 / Cambrian-1 ablation table and predict which knob moves a given benchmark",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "SigLIP + DINOv2 concat with CV-Bench 67.0",
+        "CLIP ViT-L/14 @ 336 with CV-Bench 56.0",
+        "SigLIP SO400m/14 @ 384 with CV-Bench 60.0",
+        "DINOv2 ViT-g/14 @ 224 with CV-Bench 65.0"
       ],
       "correct": 0,
-      "explanation": "“Read an MM1 / Idefics2 / Cambrian-1 ablation table and predict which knob moves a given benchmark” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The concatenated SigLIP + DINOv2 row reaches 67.0, so it—not standalone DINOv2 at 65.0—wins the table."
+    },
+    {
+      "stage": "post",
+      "question": "What conclusion does the connector row support when token count is held constant?",
+      "options": [
+        "A Q-Former always doubles DocVQA relative to an MLP",
+        "MLP, Q-Former, and Perceiver are roughly a wash; encoder, tokens, and data deserve earlier ablations",
+        "Connector choice accounts for all variance in the benchmark",
+        "Connector architecture cannot be changed after the LLM is selected"
+      ],
+      "correct": 1,
+      "explanation": "The controlled comparison assigns only about 5% to connector architecture and notes similar MLP, Q-Former, and Perceiver results at equal token counts."
     }
   ]
 }

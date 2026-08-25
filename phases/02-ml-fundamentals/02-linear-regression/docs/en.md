@@ -150,6 +150,18 @@ The penalty term discourages large weights. The hyperparameter lambda controls t
 
 
 
+## Build It
+
+Reconstruct **Linear Regression** by following `LinearRegression` on x=0.5 with the demo defaults. Run `julia main.jl` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Use It
+
+Call `LinearRegression` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-regression.md` with the command `julia main.jl`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [An Introduction to Statistical Learning (ISLR)](https://www.statlearning.com/) -- free PDF, chapters 3 and 6 cover linear regression and regularization with practical R examples
@@ -159,14 +171,23 @@ The penalty term discourages large weights. The hyperparameter lambda controls t
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Derive the gradient descent update rules for mean squared error and implement linear regression from scratch.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compare gradient descent and the normal equation in terms of computational complexity and when to use each.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a multiple linear regression model with feature standardization and interpret the learned weights.
+Keep two runs side by side for **Linear Regression**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
+
+1. **Read the first result.** From `code/`, run `julia main.jl` using x=0.5 with the demo defaults. Follow `LinearRegression`, `predict`, `compute_cost`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Derive the gradient descent update rules for mean squared error and implement linear regression from scratch**.
+2. **Run a two-value comparison.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Compare gradient descent and the normal equation in terms of computational complexity and when to use each** says the other inputs should stay fixed.
+3. **Try an adversarial fixture.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Build a multiple linear regression model with feature standardization and interpret the learned weights** and record the exception text if the code rejects the case.
+4. **Write the operator note.** Open `outputs/skill-regression.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Explain how Ridge regression (L2 regularization) prevents overfitting by penalizing large weights**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.jl](../code/main.jl) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Derive the gradient descent update rules for mean squared error and implement linear regression from scratch,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a multiple linear regression model with feature standardization and interpret the learned weights,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Linear Regression** should contain:
 
+- the `julia main.jl` output for x=0.5 with the demo defaults, with `LinearRegression`, `predict`, `compute_cost` traced to the value or shape that supports **Derive the gradient descent update rules for mean squared error and implement linear regression from scratch**;
+- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Compare gradient descent and the normal equation in terms of computational complexity and when to use each**;
+- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Build a multiple linear regression model with feature standardization and interpret the learned weights**; and
+- an updated `outputs/skill-regression.md` example with a concrete input, expected output field, and acceptance check tied to **Explain how Ridge regression (L2 regularization) prevents overfitting by penalizing large weights**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
 ## Guided Demo
 
 Use the [10–15 minute guided demo](demo.md) to predict an invariant, run the canonical entrypoint, change one variable, and probe a failure case.

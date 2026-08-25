@@ -1,78 +1,78 @@
 {
   "lesson": "10-audio-transformers-whisper",
-  "title": "Audio Transformers — Whisper Architecture",
+  "title": "Audio Transformers — Whisper Preprocessing",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Audio Transformers — Whisper Architecture?",
+      "question": "For a 1-second signal at 16 kHz, frame_size=400, and hop=160, how many frames does frame_signal create?",
       "options": [
-        "Derive the mechanism behind Audio Transformers — Whisper Architecture from tensor operations",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Derive the mechanism behind Audio Transformers — Whisper Architecture from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Audio Transformers — Whisper Architecture?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the core component without relying on a transformer framework",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Audio Transformers — Whisper Architecture?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Trace tensor shapes and information flow through the implementation",
-        "Treat one successful example as proof that every edge case works"
+        "400",
+        "100",
+        "98",
+        "1,600"
       ],
       "correct": 2,
-      "explanation": "“Trace tensor shapes and information flow through the implementation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The starts run through 15,600 inclusive in steps of 160, so floor((16,000-400)/160)+1 = 98 frames."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Audio Transformers — Whisper Architecture?",
+      "question": "What are the frame duration and hop duration represented by FRAME_SIZE=400 and HOP=160 at 16 kHz?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate the computational and modeling trade-offs introduced by Audio Transformers — Whisper Architecture",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate the computational and modeling trade-offs introduced by Audio Transformers — Whisper Architecture” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Audio Transformers — Whisper Architecture?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Derive the mechanism behind Audio Transformers — Whisper Architecture from tensor operations"
+        "16 ms frames and 4 ms hops",
+        "10 ms frames and 25 ms hops",
+        "400 ms frames and 160 ms hops",
+        "25 ms frames and 10 ms hops"
       ],
       "correct": 3,
-      "explanation": "“Derive the mechanism behind Audio Transformers — Whisper Architecture from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "400/16,000 seconds is 25 ms; 160/16,000 seconds is 10 ms."
+    },
+    {
+      "stage": "check",
+      "question": "What does pad_or_clip do when 5 seconds of frames are passed with target=3000?",
+      "options": [
+        "It keeps the 5-second frames and appends zero frames until the list has 3000 entries",
+        "It rescales each frame to 3000 samples",
+        "It repeats the waveform until it reaches 30,000 seconds",
+        "It drops every frame after the first 3000 even when the input is shorter"
+      ],
+      "correct": 0,
+      "explanation": "The 5-second input has fewer than 3000 frames, so the function appends zero-valued frames to reach the fixed Whisper window."
+    },
+    {
+      "stage": "check",
+      "question": "Which token list does whisper_prompt(lang=\"fr\", task=\"translate\", timestamps=False) produce?",
+      "options": [
+        "<|fr|>, <|transcribe|>, <|timestamps|>",
+        "<|startoftranscript|>, <|fr|>, <|translate|>, <|notimestamps|>",
+        "<|startoftranscript|>, <|en|>, <|translate|>",
+        "<|startoftranscript|>, <|fr|>, <|transcribe|>, <|endoftext|>"
+      ],
+      "correct": 1,
+      "explanation": "The function always starts with startoftranscript, then inserts the language and task tokens and adds notimestamps when timestamps is false."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Audio Transformers — Whisper Architecture?",
+      "question": "What does frame_energy use as its toy stand-in for mel power?",
       "options": [
-        "Implement the core component without relying on a transformer framework",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "A softmax over the 400 sample values",
+        "The maximum sample divided by the frame length",
+        "log(sum(v*v for v in frame) + 1e-9)",
+        "The number of zero crossings in the frame"
       ],
-      "correct": 0,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "frame_energy sums squared samples and applies a natural logarithm after adding a small floor."
+    },
+    {
+      "stage": "post",
+      "question": "Why does the demo set TARGET_FRAMES=3000 for MAX_SECONDS=30?",
+      "options": [
+        "It makes every frame 3,000 samples long",
+        "It allocates one frame per audio sample at 100 Hz",
+        "It gives 30 frames per second only when the sample rate is 400 Hz",
+        "A 10 ms hop across 30 seconds gives roughly 3,000 transformer input time steps"
+      ],
+      "correct": 3,
+      "explanation": "Whisper's 10 ms hop corresponds to about 100 frames per second, so 30 seconds is represented by 3,000 frame positions."
     }
   ]
 }

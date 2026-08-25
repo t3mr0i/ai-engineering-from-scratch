@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why do AI-assisted communication drafts need explicit review controls?",
+      "question": "Why can a polished AI communication draft still be unsafe to publish?",
       "options": [
-        "Because AI drafts use longer sentences than the corporate style guide allows",
-        "Because campaign copy must be translated before it reaches internal channels",
-        "Because the communications team writes faster than the model does in practice",
-        "Because polished text can hide weak sources, tone risk, or missing approval"
-      ],
-      "correct": 3,
-      "explanation": "Review controls protect source quality, tone, claims, and approval ownership. Tone quality is not the same as factual reliability."
-    },
-    {
-      "stage": "check",
-      "question": "Before AI-assisted copy is used, which four things does this lesson say to check?",
-      "options": [
-        "The audience, the claim being made, the sensitivity of the topic, and the owner",
-        "The headline length, the keyword density, the call to action, and the send time",
-        "The channel, the campaign budget, the target reach, and the expected click rate",
-        "The translation quality, the image rights, the file format, and the archive path"
+        "It can hide a weak source, an unreviewed brand claim, sensitive-topic risk, or a missing approval owner",
+        "The model always writes in a tone that violates the channel's character limit",
+        "Communication teams cannot edit a draft after a model has produced it",
+        "A message with a clear headline is automatically approved for every audience"
       ],
       "correct": 0,
-      "explanation": "The review gate checks audience, claim, sensitivity, and owner, and the artifact turns those four signals into a review priority. The channel plan then decides how much review is required."
+      "explanation": "Fluency is not factual or governance evidence. The review checklist connects source pack, tone, approval ownership, sensitivity, and channel to the publishing decision."
     },
     {
       "stage": "check",
-      "question": "What does the Python artifact produce?",
+      "question": "The press note fixture has two matched signals, reach=5, and sensitivity=5. Which priority does it receive?",
       "options": [
-        "A ranked communications review plan with controls and rationale",
-        "A published press release routed to the agreed external channels",
-        "A social media schedule built from the approved campaign messages",
-        "A translation of the approved copy into each market's local language"
-      ],
-      "correct": 0,
-      "explanation": "The artifact ranks scenarios and recommends review controls. Publishing stays a human decision with a named owner."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to this lesson?",
-      "options": [
-        "A tone check skipped when the draft already matches the house style",
-        "A named approval owner who signs off before a sensitive message goes out",
-        "A source pack assembled after publication, in case questions come back, before defining the measurement, acceptance threshold, or rollback path",
-        "A channel plan chosen by whoever happens to publish the message first"
+        "manager review",
+        "communications review board",
+        "peer check",
+        "self check"
       ],
       "correct": 1,
-      "explanation": "A named approval owner is a key communications control, and sensitive messages need one. The source pack, tone check, and channel plan are the others this lesson teaches."
+      "explanation": "The score is capped at 20: 5*2 + 5*2 + 2*2 = 24 before the cap. Scores of 16 or more use communications review board."
     },
     {
-      "stage": "post",
-      "question": "When should AI-assisted communication require stronger review?",
+      "stage": "check",
+      "question": "Which category does choose_category assign to the press note fixture?",
       "options": [
-        "Only when the draft is longer than the channel's usual published format allows — and applies unchanged even when the lesson's stated preconditions fail",
-        "Only when the campaign runs in more than one language across several markets",
-        "When the message has external reach, sensitive content, a brand claim, or an approval gap",
-        "Only when the message will be published rather than sent to a mailing list"
+        "external message",
+        "leadership brief",
+        "internal update",
+        "campaign draft"
       ],
       "correct": 2,
-      "explanation": "Risk signals decide how much review is needed: audience risk, brand claim, sensitive topic, and approval gap."
+      "explanation": "The index is (2 + reach 5 + sensitivity 5) modulo 4 = 0. The first communication category is internal update."
+    },
+    {
+      "stage": "check",
+      "question": "Which controls does recommend select for a message with two matched signals?",
+      "options": [
+        "source pack only",
+        "channel plan and approval owner",
+        "tone check and channel plan only",
+        "source pack, tone check, and approval owner"
+      ],
+      "correct": 3,
+      "explanation": "Two matches select the first three controls. The channel plan is fourth and becomes part of the recommendation when at least three signals match."
     },
     {
       "stage": "post",
-      "question": "What should AI improve in communications work?",
+      "question": "What priority does the team post fixture receive with no matched signals, reach=2, and sensitivity=1?",
       "options": [
-        "Drafting speed, together with source, tone, and approval discipline",
-        "The number of channels a single message can be published across",
-        "The turnaround time, by publishing before the approval owner replies",
-        "The consistency of house style, so the tone check becomes unnecessary"
+        "self check with score 6",
+        "peer check with score 8",
+        "manager review with score 12",
+        "communications review board with score 16"
       ],
       "correct": 0,
-      "explanation": "AI should support quality and review discipline, not bypass it. Speed is only useful alongside source, tone, and approval checks."
+      "explanation": "The score is 2*2 + 1*2 = 6. In this lesson scores below 7 use self check, while higher bands require peer, manager, or board review."
+    },
+    {
+      "stage": "post",
+      "question": "What should checklist-communications-ai-review.md preserve before a message is sent?",
+      "options": [
+        "Only the generated wording, because a polished tone proves the claim",
+        "The source pack, tone check, approval owner, channel choice, audience and sensitivity assessment",
+        "A promise to publish first and collect approval comments afterward",
+        "A single reach number without recording the message's topic or owner"
+      ],
+      "correct": 1,
+      "explanation": "The checklist links content quality to governance. It gives reviewers enough context to decide whether the message is ready for its intended audience and channel."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is a GPU faster than a CPU for training neural networks?",
+      "question": "Why do neural-network matrix multiplications often benefit from a GPU?",
       "options": [
-        "GPUs have higher clock speeds than CPUs",
-        "GPUs can perform thousands of parallel matrix operations simultaneously",
-        "GPUs have more RAM than CPUs",
-        "GPUs use a more efficient programming language — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "GPUs have thousands of cores optimized for parallel computation, making them ideal for the matrix multiplications that dominate neural network training."
-    },
-    {
-      "stage": "check",
-      "question": "What does VRAM refer to?",
-      "options": [
-        "Virtual RAM used by the operating system for swap space",
-        "Video RAM on the GPU, separate from system RAM",
-        "The total RAM available across all devices",
-        "A type of CPU cache memory"
-      ],
-      "correct": 1,
-      "explanation": "VRAM (Video RAM) is the dedicated memory on a GPU. It limits the size of models and batch sizes you can use during training, separate from your system's main RAM."
-    },
-    {
-      "stage": "check",
-      "question": "What command verifies that your NVIDIA GPU is detected and shows its current status?",
-      "options": [
-        "gpu --status",
-        "nvidia-smi",
-        "torch.cuda.list_devices()",
-        "lspci | grep gpu"
-      ],
-      "correct": 1,
-      "explanation": "nvidia-smi (NVIDIA System Management Interface) displays GPU utilization, memory usage, temperature, and running processes. It is the standard tool for verifying GPU availability."
-    },
-    {
-      "stage": "check",
-      "question": "When benchmarking GPU vs CPU matrix multiplication, why must you call torch.cuda.synchronize() before measuring GPU time?",
-      "options": [
-        "To transfer data from CPU to GPU memory",
-        "To ensure all GPU operations have completed before stopping the timer",
-        "To reset the GPU clock speed to its base frequency, before defining the measurement, acceptance threshold, or rollback path",
-        "To free unused GPU memory"
-      ],
-      "correct": 1,
-      "explanation": "GPU operations are asynchronous -- Python returns immediately while the GPU is still computing. synchronize() blocks until all GPU operations finish, giving accurate timing."
-    },
-    {
-      "stage": "post",
-      "question": "Using the fp16 rule of thumb, approximately how many parameters can fit in 24 GB of VRAM?",
-      "options": [
-        "24 billion parameters — and applies unchanged even when the lesson's stated preconditions fail",
-        "12 billion parameters",
-        "6 billion parameters",
-        "48 billion parameters"
-      ],
-      "correct": 1,
-      "explanation": "In fp16, each parameter uses 2 bytes. 24 GB / 2 bytes = 12 billion parameters. This is a rough estimate; actual usage includes activations, gradients, and optimizer states."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for GPU Setup & Cloud?",
-      "options": [
-        "Configure Google Colab with a T4 GPU for free cloud-based experiments",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "They parallelize matrix arithmetic",
+        "A GPU automatically removes the need for training data",
+        "A GPU always has more memory than the host computer",
+        "A GPU runs Python bytecode in a different syntax"
       ],
       "correct": 0,
-      "explanation": "“Configure Google Colab with a T4 GPU for free cloud-based experiments” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Matrix multiplication contains many independent arithmetic operations, matching the GPU's parallel hardware. The speedup still depends on data transfer, matrix size, and available memory."
+    },
+    {
+      "stage": "check",
+      "question": "Which pair gives both a driver-level and a PyTorch-level GPU check?",
+      "options": [
+        "free -h and torch.__version__",
+        "The driver and PyTorch CUDA checks",
+        "ls /dev and torch.manual_seed(0)",
+        "pip list and torch.set_num_threads(1)"
+      ],
+      "correct": 1,
+      "explanation": "nvidia-smi asks the NVIDIA driver about the device, while torch.cuda.is_available() checks whether the active PyTorch installation can use CUDA."
+    },
+    {
+      "stage": "check",
+      "question": "In the lesson's benchmark, why is torch.cuda.synchronize() called around the GPU multiplication timer?",
+      "options": [
+        "It moves the input matrices from CPU memory to VRAM",
+        "It resets the GPU's allocated-memory counter",
+        "Synchronize before reading the timer",
+        "It changes a float32 matrix into fp16"
+      ],
+      "correct": 2,
+      "explanation": "Without synchronization, Python can stop the timer before the GPU has completed the queued operation. The lesson moves inputs first and synchronizes before reading the elapsed time."
+    },
+    {
+      "stage": "check",
+      "question": "Google Colab opens with no CUDA device. Which action requests the GPU used by this lesson?",
+      "options": [
+        "Run nvidia-smi --install inside the notebook",
+        "Change the notebook's Markdown renderer",
+        "Set torch.cuda.is_available to True by assignment",
+        "Select Runtime > Change runtime type > T4 GPU"
+      ],
+      "correct": 3,
+      "explanation": "Colab controls the attached hardware through its runtime type. After selecting a T4 GPU, a fresh runtime can be checked with nvidia-smi and PyTorch."
+    },
+    {
+      "stage": "post",
+      "question": "The script reports a 24 GB device and estimates fp16 capacity. About how many raw parameters does the two-bytes-per-parameter estimate give?",
+      "options": [
+        "About 12 billion",
+        "About 2 billion",
+        "About 24 million",
+        "About 48 trillion"
+      ],
+      "correct": 0,
+      "explanation": "Ignoring activations, gradients, and allocator overhead, 24 GB divided by two bytes per fp16 parameter is roughly 12 billion parameters."
+    },
+    {
+      "stage": "post",
+      "question": "Your 4000 by 4000 GPU matmul looks no faster than the CPU run. Which diagnosis is most useful first?",
+      "options": [
+        "Assume the GPU is broken because its name contains a number",
+        "Confirm both matrices are on CUDA and that the timed region is bracketed by torch.cuda.synchronize()",
+        "Reduce the matrix to 4 by 4 and compare the printed speedup",
+        "Replace the CUDA build with a CPU-only PyTorch wheel"
+      ],
+      "correct": 1,
+      "explanation": "A CPU-side allocation or an unsynchronized timer can hide the GPU work. Checking devices and synchronization addresses those measurement errors before changing the installation."
     }
   ]
 }

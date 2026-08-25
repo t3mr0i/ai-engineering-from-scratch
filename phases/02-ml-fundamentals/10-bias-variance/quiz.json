@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "A linear model is used to fit a clearly curved (quadratic) relationship. Which error component dominates?",
+      "question": "A model has high training error and similarly high validation error. Which diagnosis fits best?",
       "options": [
-        "Irreducible noise: the underlying data is simply too noisy for any model to fit well",
-        "None: a linear model should fit a quadratic relationship perfectly once enough data is collected",
-        "Bias: the model's linear assumption is too rigid to capture the true nonlinear pattern",
-        "Variance: the model's predictions change too much depending on which training data it sees"
+        "High variance from memorizing the training set",
+        "Perfect calibration",
+        "High bias or underfitting",
+        "Test-set contamination alone"
       ],
       "correct": 2,
-      "explanation": "A linear model cannot capture a quadratic curve no matter how much data it sees. This systematic error from wrong model assumptions is bias. The model underfits."
+      "explanation": "The model is inaccurate even on examples it saw, which is the typical high-bias pattern."
     },
     {
       "stage": "check",
-      "question": "The bias-variance decomposition of expected error has three terms. Which one cannot be reduced by any model?",
+      "question": "A model has very low training error but much higher validation error. What does that pattern suggest?",
       "options": [
-        "Bias squared, since a sufficiently flexible and well-tuned model always eliminates systematic error entirely, with no need to inspect intermediate results or test edge cases",
-        "Irreducible noise (sigma squared), which comes from randomness in the data itself and no model can predict away",
-        "Variance, since it always drops to zero once the training set is made large enough for the model",
-        "All three terms can be driven to zero given enough model capacity and enough training data"
-      ],
-      "correct": 1,
-      "explanation": "Irreducible noise comes from randomness in the data itself (measurement error, missing variables). No model can predict noise. Expected error = bias^2 + variance + irreducible noise."
-    },
-    {
-      "stage": "check",
-      "question": "Adding L2 regularization to a model increases bias and decreases variance. Why is this useful?",
-      "options": [
-        "It always improves both training accuracy and test accuracy at the same time, with no tradeoff",
-        "L2 regularization eliminates irreducible noise by shrinking the weights that amplify measurement error, because one plausible output is sufficient production evidence",
-        "It makes the model noticeably faster to train, since smaller weights converge in fewer gradient steps",
-        "The reduction in variance can outweigh the increase in bias, lowering the model's total expected error"
+        "High bias with a model that cannot fit training examples",
+        "No relationship between model and data",
+        "A guaranteed improvement from reducing training data",
+        "High variance or overfitting"
       ],
       "correct": 3,
-      "explanation": "Regularization trades a small increase in bias for a larger decrease in variance. When a model is overfitting (high variance), this tradeoff reduces total error even though bias goes up slightly."
+      "explanation": "The large train-validation gap indicates that the model learned idiosyncrasies of the training sample."
     },
     {
       "stage": "check",
-      "question": "A model has training error = 2% and test error = 25%. What is the most likely diagnosis?",
+      "question": "Which terms appear in the expected squared prediction error decomposition?",
       "options": [
-        "High bias (underfitting): the model architecture is too simple to capture the underlying patterns in this data",
-        "High irreducible noise: the target variable itself is too random for any model to ever predict well",
-        "High variance (overfitting): the model memorized training data and fails to generalize to new examples",
-        "The model is perfectly calibrated and this size of error gap is normal, expected behavior"
+        "Squared bias, variance, and irreducible noise",
+        "Only accuracy and the number of classes",
+        "Precision, recall, and F1 for every regression task",
+        "The training set size and feature names only"
+      ],
+      "correct": 0,
+      "explanation": "Expected squared error separates systematic error (bias), variation across training samples (variance), and noise in the target."
+    },
+    {
+      "stage": "check",
+      "question": "What is a typical effect of increasing L2 regularization strength?",
+      "options": [
+        "The model is forced to fit every training point exactly",
+        "Weights are shrunk, often reducing variance while increasing bias",
+        "Every weight becomes exactly zero immediately",
+        "The validation set becomes part of the training labels"
+      ],
+      "correct": 1,
+      "explanation": "L2 penalizes large weights and smooths the fitted function. Too much regularization can underfit."
+    },
+    {
+      "stage": "post",
+      "question": "A polynomial model's validation error falls through degree 4 and rises for degrees 8 and 12. Which degree is a sensible candidate?",
+      "options": [
+        "Degree 12, because the most complex model must generalize best",
+        "Degree 1, regardless of its validation error",
+        "Degree 4, selected from the validation curve",
+        "Any degree, because complexity cannot change variance"
       ],
       "correct": 2,
-      "explanation": "Low training error + high test error + large gap = high variance (overfitting). The model fits training-specific noise. Remedies: regularize, reduce complexity, get more data."
+      "explanation": "The curve indicates that higher degrees begin fitting sample-specific noise; degree 4 is the observed validation minimum."
     },
     {
       "stage": "post",
-      "question": "You train the same model architecture on 50 different random training subsets and observe that predictions vary wildly between them. What does this indicate?",
+      "question": "If a model has high variance and the data distribution is stable, what can adding more independent training examples often do?",
       "options": [
-        "High variance: the model's predictions are highly sensitive to exactly which training subset it happens to see",
-        "High bias: the model consistently misses the true underlying pattern no matter which training subset it happens to see",
-        "High irreducible noise: the target variable itself is random and no model could predict it consistently",
-        "The learning rate is set too high, causing the optimizer to overshoot a stable solution each time"
+        "Guarantee zero irreducible noise",
+        "Increase variance because every new row adds a feature",
+        "Change a regression target into a class label",
+        "Reduce variance by giving the model a broader sample"
       ],
-      "correct": 0,
-      "explanation": "Variance measures how much predictions change when trained on different data subsets. Wildly different predictions across subsets is the definition of high variance."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Bias-Variance Tradeoff?",
-      "options": [
-        "Diagnose whether a model suffers from high bias or high variance using training and test error patterns",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Diagnose whether a model suffers from high bias or high variance using training and test error patterns” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 3,
+      "explanation": "More representative data usually makes the fitted model less sensitive to the particular training sample, though it does not remove bias or target noise by itself."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What single question does the verification gate answer?",
+      "question": "Why does the demo's `T-001` verification report say `passed=False`?",
       "options": [
-        "Is the current prompt template the optimal one for this particular class of task?",
-        "Is the model's response fast enough to keep the agent loop under its latency budget?",
-        "Is this task actually complete? answered by reading scope, rule, feedback, and diff artifacts",
-        "Is the token budget for this whole session still healthy enough to finish all of the remaining work?"
+        "Its acceptance command is missing from feedback.",
+        "Its scope report contains a forbidden write.",
+        "Its 0.84 coverage is one percentage point below 0.85, triggering the regression block.",
+        "Its rule report contains a failed `done/tests-pass` row."
       ],
       "correct": 2,
-      "explanation": "The gate is a deterministic function over workbench artifacts producing a pass/fail verdict."
+      "explanation": "`T-001` has a successful acceptance record, clean scope, and a passing rule; the report still emits `coverage.regression` for the 0.85 to 0.84 drop."
     },
     {
       "stage": "check",
-      "question": "Why must the gate be deterministic?",
+      "question": "Which coverage findings appear for `T-002`?",
       "options": [
-        "The same artifact set must produce the same verdict every time; LLM judges belong in the reviewer, not the gate",
-        "Determinism is required because the hosting provider bills extra for every nondeterministic call the gate ever makes",
-        "A probabilistic gate would need a much larger context window than the workbench currently budgets for",
-        "Nondeterministic gates cannot be represented at all inside the verification_report.json schema"
+        "Only a warning about missing coverage.",
+        "No coverage finding because the acceptance command passed.",
+        "Only `coverage.minor_regression`, because 62% is above the floor.",
+        "A block for coverage below the 80% floor and a block for the 18-point regression."
+      ],
+      "correct": 3,
+      "explanation": "`T-002` reports current coverage 0.62 versus the 0.80 floor and previous 0.80, so `_coverage_findings` emits both `below_floor` and `regression` blocks."
+    },
+    {
+      "stage": "check",
+      "question": "How is missing coverage represented for `T-003`?",
+      "options": [
+        "As a `coverage.missing` warning, alongside its other blocking findings.",
+        "As a pass, because no coverage report means no regression.",
+        "As a `coverage.below_floor` block with current coverage 0.0.",
+        "As an exception that stops report generation before acceptance checks."
       ],
       "correct": 0,
-      "explanation": "Mixing model judgment into the gate collapses the deterministic/qualitative split."
+      "explanation": "With `coverage_report=None`, `_coverage_findings` emits `coverage.missing` at warning severity; T-003 is nevertheless failed by missing acceptance and a failed rule."
     },
     {
       "stage": "check",
-      "question": "What is the gate's override discipline?",
+      "question": "What does `verify(..., strict=True)` do to a warning such as `scope.off_scope`?",
       "options": [
-        "Any team member can silently override a block finding as long as the merge succeeds afterward",
-        "Only a human can override a block finding, with a recorded override_reason and overridden_by id",
-        "The agent itself can override a block finding once it re-runs the failing acceptance command a second time",
-        "Overrides require only a manager's email address forwarded into the pull request thread"
+        "It removes the warning from the report.",
+        "It promotes the warning's severity to `block`.",
+        "It converts every block into an informational note.",
+        "It signs an override automatically."
       ],
       "correct": 1,
-      "explanation": "Signed overrides land in outputs/verification/overrides.jsonl; agent cannot self-override."
-    },
-    {
-      "stage": "check",
-      "question": "What is the Hybrid Norm pairing the lesson cites?",
-      "options": [
-        "Verifiable rewards like tests and exit codes answer whether it solved the problem; rubrics judge style",
-        "Hot prompts run on GPUs while cold prompts fall back to CPU inference for the same request",
-        "One pass checks correctness twice; a second identical pass just confirms the first pass was not a fluke",
-        "The gate caches results while the reviewer always runs a fresh, uncached pass over the diff"
-      ],
-      "correct": 0,
-      "explanation": "Anthropic 2026 guidance: gate runs the first class; reviewer (Lesson 39) runs the second."
+      "explanation": "Strict mode rebuilds each finding with severity `block` when its original severity is `warn`; the detail and finding code stay unchanged."
     },
     {
       "stage": "post",
-      "question": "How does defense-in-depth layer the gates?",
+      "question": "What happens if neither `VERIFY_OVERRIDE_SECRET` nor `VERIFY_DEMO_MODE=1` is set?",
       "options": [
-        "Single gate at merge time",
-        "Pre-commit hook -> CI status check -> pre-tool authz hook -> pre-merge gate; each layer is deterministic so failure in one is caught by the next",
-        "Only IDE warnings",
-        "Only a chat reminder"
+        "The signer uses an empty secret and records an unsigned override.",
+        "The verifier silently skips every coverage finding.",
+        "`_load_override_secret` raises `RuntimeError` and refuses to sign an override.",
+        "The demo always uses the hard-coded secret without checking the environment."
       ],
-      "correct": 1,
-      "explanation": "Multiple non-bypassable layers catch what a single layer would miss."
+      "correct": 2,
+      "explanation": "The secret loader fails closed: it accepts the environment secret, or the insecure demo secret only with explicit demo mode; otherwise it raises `RuntimeError`."
     },
     {
       "stage": "post",
-      "question": "What does a coverage_floor check protect against?",
+      "question": "Why is the 0.80-to-0.62 coverage change in `T-002` a regression block?",
       "options": [
-        "Cold starts on the CI runner, a cost the gate has no way to measure from the artifacts it is given to read",
-        "Agents quietly deleting failing tests; the gate blocks if coverage drops below the floor or regresses",
-        "Outdated lockfiles, which the gate flags separately from any coverage-related finding",
-        "Hot-path latency, which the coverage_floor check reports as a warn-severity finding"
+        "The previous value is ignored whenever a scope finding exists.",
+        "Any change from the previous value is automatically a block, even zero change.",
+        "The current value is above the 80% floor, so only the delta matters.",
+        "The drop is 18 percentage points, which is greater than the 0.01 regression delta."
       ],
-      "correct": 1,
-      "explanation": "Without a floor, agents can silently lower coverage to keep the verdict green."
+      "correct": 3,
+      "explanation": "The previous-minus-current delta is 0.18, well above `COVERAGE_REGRESSION_DELTA = 0.01`; `_coverage_findings` therefore adds `coverage.regression` as a block."
     }
   ]
 }

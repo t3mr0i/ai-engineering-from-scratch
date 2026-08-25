@@ -118,6 +118,18 @@ If fine-tuned is less than pretrained-only, you have a learning-rate or BN bug. 
 
 
 
+## Build It
+
+Reconstruct **Transfer Learning & Fine-Tuning** by following `synthetic_dataset` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Use It
+
+Call `synthetic_dataset` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-fine-tune-planner.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [How transferable are features in deep neural networks? (Yosinski et al., 2014)](https://arxiv.org/abs/1411.1792) — the paper that quantified feature transferability across layers
@@ -127,10 +139,20 @@ If fine-tuned is less than pretrained-only, you have a learning-rate or BN bug. 
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Distinguish feature extraction from fine-tuning and pick the right one based on dataset size, domain distance, and compute budget.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Load a pretrained backbone, replace its classifier head, and train only the head to a working baseline in under 20 lines.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Progressively unfreeze layers with discriminative learning rates so early generic features get smaller updates than late task-specific ones.
+Use `synthetic_dataset` as the trace: start from x=0.5 with the demo defaults, keep the raw output, and tie each observation to a named objective.
+
+1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using x=0.5 with the demo defaults. Follow `synthetic_dataset`, `ArrayDataset`, `make_feature_extractor`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Distinguish feature extraction from fine-tuning and pick the right one based on dataset size, domain distance, and compute budget**.
+2. **Vary one named input.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Load a pretrained backbone, replace its classifier head, and train only the head to a working baseline in under 20 lines** says the other inputs should stay fixed.
+3. **Probe the empty case.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Progressively unfreeze layers with discriminative learning rates so early generic features get smaller updates than late task-specific ones** and record the exception text if the code rejects the case.
+4. **Package a usable handoff.** Open `outputs/prompt-fine-tune-planner.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Diagnose the three common failures: feature drift from too-high LR on unfrozen blocks, BN statistics collapse on tiny datasets, and catastrophic forgetting**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish feature extraction from fine-tuning and pick the right one based on dataset size, domain distance, and compute budget,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Progressively unfreeze layers with discriminative learning rates so early generic features get smaller updates than late task-specific ones,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Transfer Learning & Fine-Tuning** should contain:
+
+- the `python3 main.py` output for x=0.5 with the demo defaults, with `synthetic_dataset`, `ArrayDataset`, `make_feature_extractor` traced to the value or shape that supports **Distinguish feature extraction from fine-tuning and pick the right one based on dataset size, domain distance, and compute budget**;
+- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Load a pretrained backbone, replace its classifier head, and train only the head to a working baseline in under 20 lines**;
+- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Progressively unfreeze layers with discriminative learning rates so early generic features get smaller updates than late task-specific ones**; and
+- an updated `outputs/prompt-fine-tune-planner.md` example with a concrete input, expected output field, and acceptance check tied to **Diagnose the three common failures: feature drift from too-high LR on unfrozen blocks, BN statistics collapse on tiny datasets, and catastrophic forgetting**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

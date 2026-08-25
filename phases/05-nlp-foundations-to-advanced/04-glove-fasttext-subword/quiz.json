@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What did GloVe contribute over Word2Vec?",
+      "question": "Why does char_ngrams wrap a word such as \"where\" in angle brackets?",
       "options": [
-        "Direct factorization of the word-word co-occurrence matrix with a weighted loss",
-        "Byte-level tokenization",
-        "A deeper neural network",
-        "Subword n-gram embeddings — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 0,
-      "explanation": "GloVe factorizes the global co-occurrence matrix with a thoughtfully weighted log-loss."
-    },
-    {
-      "stage": "check",
-      "question": "What problem does FastText solve that Word2Vec and GloVe do not?",
-      "options": [
-        "Reducing training cost",
-        "Multilingual transfer",
-        "Producing vectors for unseen words by composing character n-grams",
-        "Polysemy disambiguation, with no need to inspect intermediate results or test edge cases"
+        "They force every word to have exactly two characters",
+        "They turn the word into a BPE merge before counting",
+        "The boundary markers let n-grams represent the beginning and end of the word",
+        "They remove all internal character n-grams"
       ],
       "correct": 2,
-      "explanation": "FastText composes a word vector from its subword n-grams, so OOV words still get a sensible vector."
+      "explanation": "char_ngrams builds <where> first, so n-grams can encode boundary information as well as interior spelling."
     },
     {
       "stage": "check",
-      "question": "In GloVe, what role does the weighting function f(x) = (x/x_max)^alpha play?",
+      "question": "Why does char_ngrams return a set rather than a list?",
       "options": [
-        "Downweights extremely frequent pairs so they do not dominate the loss",
-        "Selects negative samples",
-        "Initializes weights randomly",
-        "Normalizes vectors to unit length, because one plausible output is sufficient production evidence"
+        "A set preserves the exact left-to-right order of every slice",
+        "A set stores the frequency of each character automatically",
+        "The function returns only the whole word and no n-grams",
+        "Repeated slices should contribute one shared subword feature"
+      ],
+      "correct": 3,
+      "explanation": "The implementation collects the wrapped word and generated slices in a set, removing duplicate strings."
+    },
+    {
+      "stage": "check",
+      "question": "What symbol sequence does init_vocab create for the word \"low\"?",
+      "options": [
+        "(\"l\", \"o\", \"w\", \"</w>\")",
+        "(\"low\", \"<w>\")",
+        "(\"<\", \"l\", \"o\", \"w\", \">\")",
+        "(\"l\", \"o\", \"w\") without a boundary symbol"
       ],
       "correct": 0,
-      "explanation": "The weighting prevents ubiquitous co-occurrences like (the, and) from dominating training."
+      "explanation": "The BPE vocabulary starts from characters and appends the explicit end-of-word symbol </w>."
     },
     {
       "stage": "check",
-      "question": "How does the BPE merge step pick which pair to combine next?",
+      "question": "How does learn_bpe choose the first merge?",
       "options": [
-        "A random pair",
-        "The lexicographically first pair, before defining the measurement, acceptance threshold, or rollback path",
-        "The most frequent adjacent token pair across the corpus",
-        "The pair with highest IDF"
+        "It chooses the alphabetically first character pair",
+        "It selects the adjacent pair with the highest frequency weighted by each word's corpus count",
+        "It merges the longest word before counting pairs",
+        "It samples a pair uniformly from all vocabulary entries"
       ],
-      "correct": 2,
-      "explanation": "BPE iteratively merges the most frequent adjacent pair."
+      "correct": 1,
+      "explanation": "pair_freq adds each pair's word frequency and most_common(1) supplies the next merge."
     },
     {
       "stage": "post",
-      "question": "Why does GPT-2 use byte-level BPE?",
+      "question": "Why does apply_bpe apply the learned merges in their stored order?",
       "options": [
-        "Byte BPE skips merge training",
-        "The base vocabulary of 256 bytes covers any input, eliminating out-of-vocabulary entirely",
-        "Bytes train faster than characters — and applies unchanged even when the lesson's stated preconditions fail",
-        "Bytes preserve casing implicitly"
+        "The order only changes display formatting, never the tokenization",
+        "Applying merges backward is required to recover characters",
+        "Later merges depend on symbols created by earlier merges",
+        "It uses the word frequency to choose a new order for every input"
       ],
-      "correct": 1,
-      "explanation": "Starting from 256 bytes means every UTF-8 string tokenizes; nothing is OOV."
+      "correct": 2,
+      "explanation": "Each merge list records a sequence of vocabulary-building operations; replaying that sequence produces compatible subword pieces."
     },
     {
       "stage": "post",
-      "question": "Which tokenizer should you use when fine-tuning a pretrained transformer?",
+      "question": "What is the main FastText advantage for an unseen word such as \"whereupon\"?",
       "options": [
-        "Always SentencePiece",
-        "The exact tokenizer the model shipped with; mismatch breaks the embeddings",
-        "Whichever has the largest vocabulary, with no need to inspect intermediate results or test edge cases",
-        "Always byte-level BPE"
+        "It looks up the word in a larger word-level dictionary at inference time",
+        "It assigns the same vector to every out-of-vocabulary word",
+        "It removes morphology by mapping the word to a single [UNK] token",
+        "Known character n-grams can compose a vector even when the whole word was unseen"
       ],
-      "correct": 1,
-      "explanation": "Tokenizer-model mismatch silently corrupts inputs; always pair the shipped tokenizer with its model."
+      "correct": 3,
+      "explanation": "Subword features share information across related spellings, so an OOV word can still receive a composed representation."
     }
   ]
 }

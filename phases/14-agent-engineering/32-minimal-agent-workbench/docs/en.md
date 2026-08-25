@@ -63,6 +63,18 @@ Later lessons add scope contracts, feedback runners, verification gates, reviewe
 
 
 
+## Build It
+
+Reconstruct **The Minimal Agent Workbench** by following `AgentState` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.
+
+## Use It
+
+Call `AgentState` from a small caller with the smallest valid record {"id": 1}. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-minimal-workbench.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [agents.md — the open spec](https://agents.md/) — adopted by Cursor, Codex, Claude Code, Copilot, Gemini, OpenCode
@@ -77,10 +89,20 @@ Later lessons add scope contracts, feedback runners, verification gates, reviewe
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Define the three files that form the minimum viable workbench.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why a short root router beats a long monolithic `AGENTS.md`.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a state file the agent can read at every turn and write at the end.
+Keep two runs side by side for **The Minimal Agent Workbench**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
+
+1. **Read the first result.** From `code/`, run `python3 main.py` using the smallest valid record {"id": 1}. Follow `AgentState`, `Task`, `write_initial`. Expect validation names the missing field or rejects the request; it must not silently accept an incomplete record; capture the first printed shape, metric, status, or summary field and state which part supports **Define the three files that form the minimum viable workbench.**.
+2. **Run a two-value comparison.** Repeat the command after changing only the optional field: use the same record with one optional field changed. Predict the direction of the change, then compare the two output values. Explain why **Explain why a short root router beats a long monolithic `AGENTS.md`.** says the other inputs should stay fixed.
+3. **Try an adversarial fixture.** Feed the implementation a record missing the required "id" field. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Build a state file the agent can read at every turn and write at the end.** and record the exception text if the code rejects the case.
+4. **Write the operator note.** Open `outputs/skill-minimal-workbench.md` and add a worked example using the smallest valid record {"id": 1}. Include the input contract, one expected output field, and a named acceptance check for **Build a task board that survives multi-session work without chat history.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define the three files that form the minimum viable workbench,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a state file the agent can read at every turn and write at the end,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **The Minimal Agent Workbench** should contain:
+
+- the `python3 main.py` output for the smallest valid record {"id": 1}, with `AgentState`, `Task`, `write_initial` traced to the value or shape that supports **Define the three files that form the minimum viable workbench.**;
+- a before/after comparison for the optional field, where the same record with one optional field changed changes the observation in the direction predicted by **Explain why a short root router beats a long monolithic `AGENTS.md`.**;
+- a recorded result for a record missing the required "id" field that matches the implementation’s validation or empty-result contract and explains the evidence for **Build a state file the agent can read at every turn and write at the end.**; and
+- an updated `outputs/skill-minimal-workbench.md` example with a concrete input, expected output field, and acceptance check tied to **Build a task board that survives multi-session work without chat history.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

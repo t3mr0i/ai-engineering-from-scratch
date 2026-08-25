@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is neural network debugging harder than traditional software debugging?",
+      "question": "A loss history with at least two values contains NaN. What status does NetworkDebugger.check_loss_health return?",
       "options": [
-        "Neural networks use different programming languages — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "Networks can produce wrong outputs without any error messages or crashes -- the code runs but the results are silently incorrect",
-        "Neural networks can't be tested",
-        "There are no debugging tools for neural networks"
-      ],
-      "correct": 1,
-      "explanation": "Traditional bugs crash or throw exceptions. Neural network bugs produce a number that's just wrong -- a loss that doesn't decrease, accuracy that plateaus, or outputs that are subtly incorrect. No error message tells you what went wrong."
-    },
-    {
-      "stage": "check",
-      "question": "What is the 'overfit one batch' debugging technique?",
-      "options": [
-        "Training on the full dataset until it overfits, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "Training on a single small batch until the loss reaches near-zero, verifying the model can memorize at least a few examples",
-        "Using a very large batch size",
-        "Overfitting the validation set"
-      ],
-      "correct": 1,
-      "explanation": "If your model can't memorize a tiny batch (e.g., 4-8 samples) to near-zero loss, something is fundamentally broken: wrong architecture, broken loss function, or incorrect training loop. This is the first diagnostic to run."
-    },
-    {
-      "stage": "check",
-      "question": "Your loss is NaN after a few training steps. What is the most likely cause?",
-      "options": [
-        "The dataset is too small",
-        "Exploding gradients or numerical overflow, often from a learning rate that's too high or missing gradient clipping",
-        "The model has too few parameters, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "The activation function is wrong"
-      ],
-      "correct": 1,
-      "explanation": "NaN loss typically comes from numerical overflow: gradients explode, weights grow unbounded, and operations like log(0) or exp(1000) produce infinity/NaN. Lower the learning rate or add gradient clipping."
-    },
-    {
-      "stage": "check",
-      "question": "Your training loss decreases but validation loss stays flat from the start. What does this indicate?",
-      "options": [
-        "The model is overfitting",
-        "The model is learning training data patterns but they don't generalize -- likely a data pipeline issue (train/val data mismatch) or severe overfitting",
-        "The learning rate is too low, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "The model needs more layers"
-      ],
-      "correct": 1,
-      "explanation": "If validation loss never improves, the model is either memorizing training noise (overfitting), or there's a data pipeline bug where train and validation distributions are fundamentally different."
-    },
-    {
-      "stage": "post",
-      "question": "What should you check first when your loss curve is completely flat (loss doesn't decrease at all)?",
-      "options": [
-        "Try a different architecture",
-        "Verify gradients are nonzero, the learning rate is high enough, and the loss function actually depends on the model's predictions",
-        "Add more training data",
-        "Switch to a different optimizer — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases"
-      ],
-      "correct": 1,
-      "explanation": "A flat loss means the model isn't updating. Common causes: zero gradients (dead neurons, detached tensors), learning rate too small, or a loss function that doesn't flow gradients to the model (e.g., using .item() before .backward())."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Debugging Neural Networks?",
-      "options": [
-        "Apply the \"overfit one batch\" technique to verify that your model architecture and training loop are correct",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "NAN_OR_INF",
+        "HEALTHY",
+        "NOT_ENOUGH_DATA",
+        "OSCILLATING"
       ],
       "correct": 0,
-      "explanation": "“Apply the \"overfit one batch\" technique to verify that your model architecture and training loop are correct” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The health check scans the recent losses first and returns NAN_OR_INF when any value is NaN or infinite."
+    },
+    {
+      "stage": "check",
+      "question": "An activation hook reports fraction_zero=0.75 for a ReLU layer. Which issue does check_activations report?",
+      "options": [
+        "EXPLODING_ACTIVATIONS",
+        "DEAD_NEURONS",
+        "VANISHING_GRADIENT",
+        "HEALTHY"
+      ],
+      "correct": 1,
+      "explanation": "The debugger flags DEAD_NEURONS when more than half of recorded activations are exactly zero."
+    },
+    {
+      "stage": "check",
+      "question": "A gradient hook reports abs_mean=1e-8. Which gradient diagnostic is triggered?",
+      "options": [
+        "EXPLODING_GRADIENT",
+        "GRADIENT_RATIO",
+        "VANISHING_GRADIENT",
+        "HEALTHY"
+      ],
+      "correct": 2,
+      "explanation": "The threshold for a per-layer vanishing-gradient warning is abs_mean < 1e-7, so 1e-8 is flagged."
+    },
+    {
+      "stage": "check",
+      "question": "What does overfit_one_batch report as a pass condition?",
+      "options": [
+        "The first loss is at most 0.1",
+        "The batch contains exactly 200 examples",
+        "The model never calls backward",
+        "The final loss is at most 0.1"
+      ],
+      "correct": 3,
+      "explanation": "After the requested optimization steps, the helper returns True only when final_loss <= 0.1. Failure to fit one small batch points to a loop or model bug."
+    },
+    {
+      "stage": "post",
+      "question": "How does gradient_check estimate a numerical derivative for one parameter?",
+      "options": [
+        "(loss_plus-loss_minus)/(2*eps) after perturbing the parameter by plus and minus eps",
+        "The parameter value divided by the batch size",
+        "The model accuracy after one optimizer step",
+        "The difference between two class labels"
+      ],
+      "correct": 0,
+      "explanation": "The centered finite difference compares the loss at parameter+eps and parameter-eps, then divides by 2eps."
+    },
+    {
+      "stage": "post",
+      "question": "A training loop omits optimizer.zero_grad() while calling loss.backward() each step. What symptom should you investigate first?",
+      "options": [
+        "The model automatically switches to evaluation mode",
+        "Gradients accumulate across steps and can produce unstable updates",
+        "All activations become exactly zero before the first update",
+        "The test set is shuffled into the labels"
+      ],
+      "correct": 1,
+      "explanation": "PyTorch accumulates gradients by default. Clearing them before each backward pass keeps each update tied to the current batch."
     }
   ]
 }

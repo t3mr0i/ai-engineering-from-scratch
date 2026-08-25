@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is launch not the same as AI value realization?",
+      "question": "What must be tracked after an AI launch if the team wants to demonstrate realized value?",
       "options": [
-        "Because launch always proves that the expected value has been delivered — and applies unchanged even when the lesson's stated preconditions fail",
-        "Because adoption should never be measured once a tool has gone live",
-        "Because baselines are irrelevant once a tool has been rolled out",
-        "Because value needs a named owner, a baseline, a metric, a cadence, and a review"
+        "Only the launch date and the number of model calls",
+        "A polished success story, even when no baseline or accountable owner exists",
+        "A benefit hypothesis with an owner, baseline metric, cadence, adoption evidence, and drift checks",
+        "The model's training loss instead of the operational outcome the project promised"
+      ],
+      "correct": 2,
+      "explanation": "Value realization compares an explicit benefit claim with an observable baseline over time. Ownership, measurement cadence, adoption, and metric drift determine whether the claim survives contact with operations."
+    },
+    {
+      "stage": "check",
+      "question": "The copilot rollout fixture matches three signals, has expected_value=5, and measurement_confidence=2. What priority does recommend return?",
+      "options": [
+        "benefits tracking with score 17",
+        "baseline setup with score 15",
+        "watch with score 13",
+        "portfolio value review with score 20"
       ],
       "correct": 3,
-      "explanation": "Launch just means the tool exists — realizing value needs a named owner, a baseline, a metric, a cadence, and a review, not the assumption that launch proves value, that adoption shouldn't be measured, or that baselines don't matter."
+      "explanation": "The confidence gap is 6-2 = 4. The score is 5*2 + 4 + 3*2 = 20, which uses portfolio value review."
     },
     {
       "stage": "check",
-      "question": "Three months after launch, usage of the new AI tool is still far below what was expected, and nobody has investigated why adoption is lagging. Which of the lesson's four signals does this match most directly?",
+      "question": "Which controls does recommend select for the copilot rollout after three signal matches?",
       "options": [
-        "Benefit owner — no one has been named as accountable for the expected value",
-        "Baseline missing — there's no pre-launch measurement to compare current results against",
-        "Adoption lag — actual usage is trailing well behind the expected pace",
-        "Metric drift — the metric being tracked has quietly changed meaning over time"
-      ],
-      "correct": 2,
-      "explanation": "Usage staying far below expectations for months is the lesson's adoption-lag signal — distinct from a missing benefit owner, a missing baseline, or metric drift (the metric itself changing meaning)."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Python artifact produce?",
-      "options": [
-        "A final budget approval signed off by finance before the initiative starts",
-        "A ranked benefits-tracking plan with controls and rationale for each gap",
-        "A production-ready model trained specifically to predict adoption lag",
-        "A single dashboard screenshot showing current usage for stakeholders"
-      ],
-      "correct": 1,
-      "explanation": "The artifact ranks scenarios into a benefits-tracking plan with controls and rationale — it doesn't approve budget, train a model, or produce a dashboard screenshot."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to this lesson?",
-      "options": [
-        "Skipping the owner review because the initiative already shipped on time",
-        "Hiding adoption numbers so the portfolio review looks more favorable",
-        "Baseline metric — a pre-launch measurement to compare outcomes against",
-        "Removing the benefit hypothesis once the tool has gone live"
-      ],
-      "correct": 2,
-      "explanation": "The lesson's controls are benefit hypothesis, baseline metric, tracking cadence, and owner review — a baseline metric gives something pre-launch to compare against, unlike skipping review, hiding adoption, or dropping the hypothesis."
-    },
-    {
-      "stage": "post",
-      "question": "When should an AI initiative enter a portfolio value review?",
-      "options": [
-        "When expected value is high but baselines, metrics, ownership, or adoption are weak",
-        "Only when all of the expected value has already been fully proven and confirmed — and applies unchanged even when the lesson's stated preconditions fail",
-        "Only when there is no owner at all and nobody is tracking the initiative",
-        "Never — reporting delivery status alone is always a sufficient value review"
+        "benefit hypothesis, baseline metric, tracking cadence, and owner review",
+        "benefit hypothesis and baseline metric only",
+        "tracking cadence and owner review only",
+        "an owner review without a baseline metric"
       ],
       "correct": 0,
-      "explanation": "High expected value paired with weak baselines, metrics, ownership, or adoption is exactly when a portfolio value review is needed — not proven value, the total absence of an owner, or delivery status alone."
+      "explanation": "Three matches produce a four-item control slice. The result keeps the value claim, its baseline, the tracking cadence, and an owner review together."
+    },
+    {
+      "stage": "check",
+      "question": "A recommendation has score 13. Which priority_for result should the caller expect?",
+      "options": [
+        "portfolio value review",
+        "benefits tracking",
+        "baseline setup",
+        "watch"
+      ],
+      "correct": 1,
+      "explanation": "priority_for checks the bands from the highest downward: 13 is below 16 but at least 11, so the result is benefits tracking."
     },
     {
       "stage": "post",
-      "question": "What should benefits tracking connect?",
+      "question": "A no-match Scenario has expected_value=2 and measurement_confidence=5. What score and priority does score_scenario imply?",
       "options": [
-        "Only the launch date on which the AI tool became available to users",
-        "The benefit hypothesis, baseline, adoption, metric cadence, and portfolio decision",
-        "Only raw tool usage numbers, without connecting them to business context",
-        "No owner or review cadence, since tracking is assumed to happen automatically, with no need to inspect intermediate results or test edge cases"
+        "7 and baseline setup",
+        "9 and baseline setup",
+        "5 and watch",
+        "11 and benefits tracking"
       ],
-      "correct": 1,
-      "explanation": "Benefits tracking should connect the benefit hypothesis, baseline, adoption, metric cadence, and portfolio decision — not just a launch date, raw usage without context, or tracking with no owner or cadence."
+      "correct": 2,
+      "explanation": "The confidence gap is max(0, 6-5) = 1. With no matches, the score is 2*2 + 1 = 5, so the correct pair is 5 and watch."
+    },
+    {
+      "stage": "post",
+      "question": "What should sheet-ai-benefits-tracking.md make visible when a rollout's metric starts drifting?",
+      "options": [
+        "Only the newest metric, so the report remains simple",
+        "A new target chosen after the drift, without preserving the original baseline",
+        "The model's confidence score instead of the operational benefit measure",
+        "The benefit hypothesis, baseline, tracking cadence, owner review, adoption signal, and the drift that needs investigation"
+      ],
+      "correct": 3,
+      "explanation": "The tracking sheet preserves the original claim and comparison point. A drift signal can then trigger an owner review instead of being hidden by a rewritten target."
     }
   ]
 }

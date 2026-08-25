@@ -72,6 +72,18 @@ git push --> webhook --> ingest worker (LlamaIndex Workflow)
 
 
 
+## Build It
+
+Reconstruct **Capstone 02 — RAG over Codebase (Cross-Repo Semantic Search)** by following `Chunk` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
+
+## Use It
+
+Call `Chunk` from a small caller with the text "red fox". Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-codebase-rag.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Sourcegraph Amp](https://ampcode.com) — production cross-repo code intelligence
@@ -85,10 +97,20 @@ git push --> webhook --> ingest worker (LlamaIndex Workflow)
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Define measurable acceptance criteria for Capstone 02 — RAG over Codebase (Cross-Repo Semantic Search).
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Integrate the required components into one self-terminating workflow.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Exercise happy paths, edge cases, and failure recovery with reproducible fixtures.
+Keep two runs side by side for **Capstone 02 — RAG over Codebase (Cross-Repo Semantic Search)**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
+
+1. **Read the first result.** From `code/`, run `python3 main.py` using the text "red fox". Follow `Chunk`, `anchor`, `check_permission`. Expect the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text; capture the first printed shape, metric, status, or summary field and state which part supports **Define measurable acceptance criteria for Capstone 02 — RAG over Codebase (Cross-Repo Semantic Search)**.
+2. **Run a two-value comparison.** Repeat the command after changing only the input text: use the text "red fox runs". Predict the direction of the change, then compare the two output values. Explain why **Integrate the required components into one self-terminating workflow** says the other inputs should stay fixed.
+3. **Try an adversarial fixture.** Feed the implementation an empty string. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Exercise happy paths, edge cases, and failure recovery with reproducible fixtures** and record the exception text if the code rejects the case.
+4. **Write the operator note.** Open `outputs/skill-codebase-rag.md` and add a worked example using the text "red fox". Include the input contract, one expected output field, and a named acceptance check for **Package the verified result as a reusable curriculum artifact**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define measurable acceptance criteria for Capstone 02 — RAG over Codebase (Cross-Repo Semantic Search),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Exercise happy paths, edge cases, and failure recovery with reproducible fixtures,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Capstone 02 — RAG over Codebase (Cross-Repo Semantic Search)** should contain:
+
+- the `python3 main.py` output for the text "red fox", with `Chunk`, `anchor`, `check_permission` traced to the value or shape that supports **Define measurable acceptance criteria for Capstone 02 — RAG over Codebase (Cross-Repo Semantic Search)**;
+- a before/after comparison for the input text, where the text "red fox runs" changes the observation in the direction predicted by **Integrate the required components into one self-terminating workflow**;
+- a recorded result for an empty string that matches the implementation’s validation or empty-result contract and explains the evidence for **Exercise happy paths, edge cases, and failure recovery with reproducible fixtures**; and
+- an updated `outputs/skill-codebase-rag.md` example with a concrete input, expected output field, and acceptance check tied to **Package the verified result as a reusable curriculum artifact**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

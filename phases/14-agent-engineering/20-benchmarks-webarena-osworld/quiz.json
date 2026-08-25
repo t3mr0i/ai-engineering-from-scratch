@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does WebArena self-host its four target apps?",
+      "question": "What does `ShoppingApp.checkout()` return when the cart is empty?",
       "options": [
-        "To save on the hosting cost of running four separate production web apps",
-        "To take full advantage of GPU-accelerated rendering for all four apps",
-        "To avoid negotiating TLS certificates for four separate production domains today",
-        "To pin reproducible versions so evaluation is execution-based and not flaky"
-      ],
-      "correct": 3,
-      "explanation": "Pinned self-hosted apps make execution-based evaluation reliable and comparable over time."
-    },
-    {
-      "stage": "check",
-      "question": "Why does OSWorld use real OS screenshots rather than accessibility APIs?",
-      "options": [
-        "Screenshots force the agent to do real GUI grounding in 1920x1080, matching production constraints",
-        "Accessibility APIs return their complete results far too quickly for any fair timing comparisons at all",
-        "Accessibility APIs can leak personally identifiable information straight from the page",
-        "Screenshots are noticeably cheaper to store and transmit than accessibility-tree data"
-      ],
-      "correct": 0,
-      "explanation": "Screenshot-driven evaluation forces pixel-to-element grounding, the actual production constraint."
-    },
-    {
-      "stage": "check",
-      "question": "What two primary failure modes does OSWorld surface?",
-      "options": [
-        "Latency in network round-trips and available upstream bandwidth capacity",
-        "GUI grounding (pixel-to-element mapping) and operational knowledge (menus, shortcuts)",
-        "Embedding drift and unexpected token leakage across long user sessions",
-        "Model hallucination and outright refusal to attempt the assigned task at all"
-      ],
-      "correct": 1,
-      "explanation": "Grounding (pixel-to-element) and operational knowledge (menus, shortcuts) are the headline blockers."
-    },
-    {
-      "stage": "check",
-      "question": "What does OSWorld-Human add on top of the base benchmark?",
-      "options": [
-        "A larger raw count of tasks added on top of the base benchmark suite overall",
-        "A meaningfully higher-resolution screen capture recorded for every single task",
-        "Manually curated gold action trajectories that surface a 1.4-2.7x agent step-inefficiency gap",
-        "Support for a brand new operating system added beyond the original three platforms"
+        "`ord-001` with total 0",
+        "`success: empty cart`",
+        "`error: empty cart`",
+        "`error: unknown sku`"
       ],
       "correct": 2,
-      "explanation": "Gold trajectories make trajectory efficiency measurable, not just success rate."
+      "explanation": "The checkout guard checks the cart before calculating a total; with no items it returns the explicit `error: empty cart` result."
     },
     {
-      "stage": "post",
-      "question": "Which release-time number does the lesson cite for WebArena?",
+      "stage": "check",
+      "question": "What are the revised-order metrics for WebArena fixture task 3?",
       "options": [
-        "Best agent reaching 99% success rate with human performance at exactly 100%",
-        "Best agent and human performance tied at exactly 50% success each",
-        "Best agent scoring 0% success across every single task category tested",
-        "Best GPT-4 agent hit 14.41% success versus a human success rate of 78.24%"
+        "Success, 3 trace steps, and 1.00x efficiency.",
+        "Failure, 7 trace steps, and 0.71x efficiency.",
+        "Success, 5 trace steps, and 1.40x efficiency.",
+        "Success, 7 trace steps, and 1.40x efficiency."
       ],
       "correct": 3,
-      "explanation": "The 14.41% vs 78.24% gap is the WebArena release-time number."
+      "explanation": "The revised order completes in seven recorded actions against a five-step gold path, so the demo prints success and the `1.40x` steps-to-gold ratio."
+    },
+    {
+      "stage": "check",
+      "question": "Which sequence completes task 1 in the shopping fixture?",
+      "options": [
+        "List the three products, add `sku-001`, then checkout as `ord-001`.",
+        "Add `sku-003`, remove it, then checkout an empty cart.",
+        "Checkout first, then add `sku-001` to the already-created order.",
+        "Add an unknown SKU and treat the error as a successful order."
+      ],
+      "correct": 0,
+      "explanation": "Task 1 lists the catalog, adds the headphones at `sku-001`, and checks out the non-empty cart, producing order ID `ord-001`."
+    },
+    {
+      "stage": "check",
+      "question": "What does `add_to_cart(\"sku-999\")` return?",
+      "options": [
+        "It creates `sku-999` at price 0.",
+        "`error: unknown sku`",
+        "`error: empty cart`",
+        "It adds the headphones because `sku-999` aliases `sku-001`."
+      ],
+      "correct": 1,
+      "explanation": "The catalog contains only `sku-001` through `sku-003`; an absent key is rejected before any quantity is added, with `error: unknown sku`."
     },
     {
       "stage": "post",
-      "question": "What does the lesson warn happens with screenshot-only evaluation when the agent uses DOM or accessibility APIs?",
+      "question": "What total does the task-2 bundle produce before checkout?",
       "options": [
-        "You miss the grounding challenge OSWorld is designed to measure",
-        "Nothing changes; screenshot-only scoring is identical either way",
-        "You exceed the benchmark's per-minute request rate limit",
-        "Tests pass trivially regardless of how the agent perceives the screen"
+        "59",
+        "129",
+        "188",
+        "387"
       ],
-      "correct": 0,
-      "explanation": "Evaluating an accessibility-API agent on screenshot-only benchmarks skips the grounding test."
+      "correct": 2,
+      "explanation": "The bundle contains the keyboard (`129`) and mouse (`59`), so the fixture sums them to `188` before returning its order."
+    },
+    {
+      "stage": "post",
+      "question": "What aggregate result does the demo report for all three WebArena tasks?",
+      "options": [
+        "2/3 successful, 12 total steps, and 1.40x efficiency.",
+        "3/3 successful, 12 total steps, and 1.17x efficiency.",
+        "3/3 successful, 14 total steps, and 1.40x efficiency.",
+        "3/3 successful, 14 total steps, and 1.17x efficiency."
+      ],
+      "correct": 3,
+      "explanation": "The three traces all succeed and use 3 + 4 + 7 = 14 steps; compared with 12 gold steps, the aggregate ratio is about `1.17x`."
     }
   ]
 }

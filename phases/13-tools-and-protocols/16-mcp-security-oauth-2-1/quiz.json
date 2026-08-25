@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to MCP Security II — OAuth 2.1, Resource Indicators, Incremental Scopes?",
+      "question": "What does the authorization server verify before exchanging an OAuth code?",
       "options": [
-        "Distinguish resource server from authorization server responsibilities",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Distinguish resource server from authorization server responsibilities” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of MCP Security II — OAuth 2.1, Resource Indicators, Incremental Scopes?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Walk the PKCE-protected OAuth 2.1 authorization code flow",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Walk the PKCE-protected OAuth 2.1 authorization code flow” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through MCP Security II — OAuth 2.1, Resource Indicators, Incremental Scopes?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Use `resource` (RFC 8707) and protected-resource metadata (RFC 9728) to prevent confused-deputy attacks",
-        "Treat one successful example as proof that every edge case works"
+        "Only the client's display name",
+        "That the redirect URI is localhost",
+        "resource + S256 PKCE match",
+        "That the requested scope is empty"
       ],
       "correct": 2,
-      "explanation": "“Use `resource` (RFC 8707) and protected-resource metadata (RFC 9728) to prevent confused-deputy attacks” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "exchange pops the code and checks both its resource indicator and the SHA-256 PKCE challenge before issuing a token."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits MCP Security II — OAuth 2.1, Resource Indicators, Incremental Scopes?",
+      "question": "What response follows a notes create call when the token lacks notes:write?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement step-up authorization: server responds 403 with WWW-Authenticate asking for a higher scope; clien...",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement step-up authorization: server responds 403 with WWW-Authenticate asking for a higher scope; clien...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for MCP Security II — OAuth 2.1, Resource Indicators, Incremental Scopes?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Distinguish resource server from authorization server responsibilities"
+        "200 with a read-only note",
+        "401 with no scope information",
+        "404 because create is not a tool",
+        "403 insufficient_scope"
       ],
       "correct": 3,
-      "explanation": "“Distinguish resource server from authorization server responsibilities” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The resource server distinguishes authentication from authorization: a valid token missing notes:write receives 403 and a WWW-Authenticate insufficient_scope challenge."
+    },
+    {
+      "stage": "check",
+      "question": "What happens when a notes token is sent to another resource server?",
+      "options": [
+        "401 audience mismatch",
+        "It is upgraded to all scopes",
+        "It succeeds because scopes are global",
+        "It is treated as an unauthenticated notification"
+      ],
+      "correct": 0,
+      "explanation": "Resource indicators bind the token to NOTES_SERVER, so a different audience fails authentication with an audience mismatch."
+    },
+    {
+      "stage": "check",
+      "question": "How does call_with_step_up obtain permission for a missing write scope?",
+      "options": [
+        "It retries the same token until the scope changes",
+        "adds required scope and retries",
+        "It sends the secret verifier to the tool",
+        "It downgrades the operation to a read"
+      ],
+      "correct": 1,
+      "explanation": "The client performs incremental authorization: it extracts the required scope, obtains a token containing existing plus required scopes, then retries."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for MCP Security II — OAuth 2.1, Resource Indicators, Incremental Scopes?",
+      "question": "What lifetime does the issued access token use in the fake authorization server?",
       "options": [
-        "Walk the PKCE-protected OAuth 2.1 authorization code flow",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "60 seconds",
+        "600 seconds",
+        "3600 seconds",
+        "900000 seconds"
       ],
-      "correct": 0,
-      "explanation": "“Walk the PKCE-protected OAuth 2.1 authorization code flow” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "Authorization codes expire in 600 seconds, while the issued Token records an access-token expiry of 3600 seconds."
+    },
+    {
+      "stage": "post",
+      "question": "What error does register_client return when redirect_uris is missing?",
+      "options": [
+        "201 with a generated redirect URI",
+        "403 insufficient_scope",
+        "401 invalid_token",
+        "400 invalid_redirect_uri"
+      ],
+      "correct": 3,
+      "explanation": "Dynamic client registration requires redirect_uris; the implementation rejects a missing list with HTTP 400 and invalid_redirect_uri."
     }
   ]
 }

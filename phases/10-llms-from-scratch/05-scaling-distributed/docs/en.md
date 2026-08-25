@@ -242,6 +242,18 @@ graph TD
 
 
 
+## Build It
+
+Reconstruct **Scaling: Distributed Training, FSDP, DeepSpeed** by following `simulate_data_parallelism` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Use It
+
+Call `simulate_data_parallelism` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-distributed-training-planner.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Rajbhandari et al., 2020 -- "ZeRO: Memory Optimizations Toward Training Trillion Parameter Models"](https://arxiv.org/abs/1910.02054) -- the DeepSpeed ZeRO paper that defined the three sharding stages
@@ -253,10 +265,20 @@ graph TD
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the three types of parallelism (data, tensor, pipeline) and when each is necessary based on model and cluster size.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement data-parallel training using PyTorch DDP with gradient synchronization across multiple GPUs.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Calculate the memory budget for a given model size (weights + optimizer states + gradients + activations) to determine the minimum hardware.
+This lab follows `simulate_data_parallelism` and `simulate_tensor_parallelism` on a controlled fixture; write down the value before changing the input.
+
+1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using x=0.5 with the demo defaults. Follow `simulate_data_parallelism`, `simulate_tensor_parallelism`, `simulate_pipeline_parallelism`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Explain the three types of parallelism (data, tensor, pipeline) and when each is necessary based on model and cluster size**.
+2. **Change the controlled parameter.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Implement data-parallel training using PyTorch DDP with gradient synchronization across multiple GPUs** says the other inputs should stay fixed.
+3. **Exercise the guard.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Calculate the memory budget for a given model size (weights + optimizer states + gradients + activations) to determine the minimum hardware** and record the exception text if the code rejects the case.
+4. **Prepare the artifact for reuse.** Open `outputs/prompt-distributed-training-planner.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Configure FSDP or DeepSpeed ZeRO stages to shard model states across GPUs and fit models that exceed single-GPU memory**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the three types of parallelism (data, tensor, pipeline) and when each is necessary based on model and cluster size,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Calculate the memory budget for a given model size (weights + optimizer states + gradients + activations) to determine the minimum hardware,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Scaling: Distributed Training, FSDP, DeepSpeed** should contain:
+
+- the `python3 main.py` output for x=0.5 with the demo defaults, with `simulate_data_parallelism`, `simulate_tensor_parallelism`, `simulate_pipeline_parallelism` traced to the value or shape that supports **Explain the three types of parallelism (data, tensor, pipeline) and when each is necessary based on model and cluster size**;
+- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Implement data-parallel training using PyTorch DDP with gradient synchronization across multiple GPUs**;
+- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Calculate the memory budget for a given model size (weights + optimizer states + gradients + activations) to determine the minimum hardware**; and
+- an updated `outputs/prompt-distributed-training-planner.md` example with a concrete input, expected output field, and acceptance check tied to **Configure FSDP or DeepSpeed ZeRO stages to shard model states across GPUs and fit models that exceed single-GPU memory**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

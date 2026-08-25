@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What signal does Toolformer use to decide whether to keep a candidate tool annotation?",
+      "question": "What `ToolResult` does the registered `add` tool produce for `ToolCall(\"u01\", \"add\", {\"a\": 2, \"b\": 3})`?",
       "options": [
-        "Whether including the tool result reduces next-token loss on the surrounding text",
-        "Whether a human annotator agreed the candidate call was labeled correctly",
-        "Whether the tool call returns a result within a fixed 100 ms budget",
-        "Whether the tool call's output happens to be valid, parseable JSON"
+        "`tool_use_id=\"u01\"`, `ok=True`, `content=\"5\"`",
+        "`tool_use_id=\"u01\"`, `ok=False`, `content=\"5\"`",
+        "`tool_use_id=\"add\"`, `ok=True`, `content=\"23\"`",
+        "`tool_use_id=\"u01\"`, `ok=False`, `content=\"missing required: a\"`"
       ],
       "correct": 0,
-      "explanation": "Toolformer's self-supervised signal keeps annotations whose tool results lower next-token loss."
+      "explanation": "Validation accepts both integers, `add` returns `str(2 + 3)`, and the result preserves the call id `u01`."
     },
     {
       "stage": "check",
-      "question": "What is the BFCL V4 split that the lesson reports?",
+      "question": "Why does the demo's `multiply` call with `a=\"4\"` and `b=5` succeed?",
       "options": [
-        "100% single-turn calls, since BFCL V4 dropped multi-turn evaluation entirely",
-        "50% live user prompts and 50% synthetic non-live test cases, split evenly",
-        "40% agentic, 30% multi-turn, 10% live, 10% non-live, 10% hallucination",
-        "33% agentic, 33% planning, 33% reflection, with no live or hallucination split"
-      ],
-      "correct": 2,
-      "explanation": "BFCL V4 weights are 40 agentic / 30 multi-turn / 10 live / 10 non-live / 10 hallucination."
-    },
-    {
-      "stage": "check",
-      "question": "Why is a tool's description load-bearing?",
-      "options": [
-        "It is the label the user sees rendered inside the product's tool-picker menu UI",
-        "The model reads it to pick the right tool; a bad description is the top cause of wrong-tool failures",
-        "It determines which internal billing bucket the call gets metered against each month",
-        "JSON Schema requires every field to carry a non-empty description before it validates"
+        "The executor concatenates the string and integer as text.",
+        "The integer schema coerces the numeric string `\"4\"` to `4` before execution.",
+        "The required-field check ignores the declared types.",
+        "The registry routes the call to `add` when multiplication gets a string."
       ],
       "correct": 1,
-      "explanation": "Tool descriptions are the model's primary signal for tool selection; poor descriptions cause wrong-tool routing."
+      "explanation": "`_coerce` accepts an integer-looking string, converts it with `int`, and `multiply(4, 5)` returns `20`."
     },
     {
       "stage": "check",
-      "question": "What role does tool_use_id play in parallel tool calling?",
+      "question": "What is wrong with `ToolCall(\"u03\", \"classify\", {\"status\": \"in_progress\"})`?",
       "options": [
-        "It compresses the JSON payload of a tool call before it ever reaches the model",
-        "It authorizes the call against an API key stored in the runtime's secret store",
-        "It caches the result so a repeated identical call can skip execution entirely",
-        "It correlates each result with its originating call, so out-of-order results still route correctly"
+        "`status` must be an integer, not a string.",
+        "`classify` is not in the registry.",
+        "`in_progress` is outside the enum `open`, `closed`, `pending`.",
+        "The call omits the required `tool_use_id`."
+      ],
+      "correct": 2,
+      "explanation": "The schema declares a string enum; the string type is valid, but `in_progress` is not one of its three allowed values."
+    },
+    {
+      "stage": "check",
+      "question": "What content does a call to the unregistered tool `subtract` produce?",
+      "options": [
+        "`validation error: unknown tool`",
+        "`execution error: NameError`",
+        "`5`, because subtraction falls back to addition",
+        "`error: unknown tool 'subtract'`"
       ],
       "correct": 3,
-      "explanation": "tool_use_id is the correlation token; swapping them routes results to the wrong call."
+      "explanation": "`ToolRegistry.dispatch` checks its map before validation or execution and returns the formatted unknown-tool error."
     },
     {
       "stage": "post",
-      "question": "Which class of failure does V3 state-based evaluation try to catch?",
+      "question": "What does `validate({\"a\": 2}, add_schema)` return when `a` and `b` are required?",
       "options": [
-        "AST-matching tool calls that look right but leave the API in the wrong state",
-        "Token leakage between the model's reasoning channel and its final answer",
-        "Tool execution that runs slower than the caller's configured timeout",
-        "Drift between a tool's declared schema version and the one it actually serves"
+        "An output containing `a: 2` plus the error `missing required: b`.",
+        "An empty output and no errors, because missing fields are optional.",
+        "A `TypeError` from the `add` executor.",
+        "An output containing `b: 0` because the validator supplies defaults."
       ],
       "correct": 0,
-      "explanation": "State-based evaluation checks the resulting API state (e.g. file actually created) rather than syntactic call matching."
+      "explanation": "The validator records missing required names, but it still keeps valid provided properties in the returned `out` mapping."
     },
     {
       "stage": "post",
-      "question": "Which 2026 problem does the lesson NOT list among the open ones for function calling?",
+      "question": "What ordering does `dispatch_many` preserve for the five demo calls?",
       "options": [
-        "Long-horizon tool chaining, where drift sets in after twenty or more steps",
-        "Dynamic decision-making across many tools based on prior results",
-        "Memory, meaning carrying context and facts across separate turns",
-        "Token-level decoding speed of the underlying model at inference time"
+        "It sorts results alphabetically by tool name.",
+        "It returns results in input order: `u01`, `u02`, `u03`, `u04`, `u05`.",
+        "It returns only the three successful calls.",
+        "It groups validation errors after all successful executions."
       ],
-      "correct": 3,
-      "explanation": "The open problems are memory, dynamic decision-making, long-horizon chains, and hallucination detection; decoding speed is not on the list."
+      "correct": 1,
+      "explanation": "The implementation is a list comprehension over `calls`, so each `ToolResult` stays in the original call order."
     }
   ]
 }

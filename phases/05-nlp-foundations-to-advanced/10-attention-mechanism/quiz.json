@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What problem in seq2seq did Bahdanau attention solve?",
+      "question": "Why do softmax([1,2]) and softmax([101,102]) return the same weights?",
       "options": [
-        "Tokenization mismatch",
-        "The fixed-size context-vector bottleneck where the decoder only saw the encoder's final state",
-        "Vanishing gradients in encoders — and applies unchanged even when the lesson's stated preconditions fail",
-        "Beam search latency"
-      ],
-      "correct": 1,
-      "explanation": "Attention lets the decoder consult every encoder state, not just the last one."
-    },
-    {
-      "stage": "check",
-      "question": "What is the attention context vector at decoder step t?",
-      "options": [
-        "The decoder's input embedding",
-        "A weighted average of encoder hidden states where the weights come from a query-key score",
-        "The encoder's final hidden state, with no need to inspect intermediate results or test edge cases",
-        "A random projection"
-      ],
-      "correct": 1,
-      "explanation": "Context = sum of alpha_i * h_i, a step-dependent weighted average of encoder states."
-    },
-    {
-      "stage": "check",
-      "question": "In Bahdanau (additive) attention, what role does the vector v_a play?",
-      "options": [
-        "It controls dropout",
-        "It is the projection that turns the attention-dim hidden combination into a scalar score per encoder position",
-        "It encodes positions",
-        "It biases the softmax, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path"
-      ],
-      "correct": 1,
-      "explanation": "v_a dot-products with tanh(W_a s + U_a h) to collapse a d_attn vector into a scalar score."
-    },
-    {
-      "stage": "check",
-      "question": "In Luong's 'dot' attention variant, what constraint must hold?",
-      "options": [
-        "Decoder state and encoder state must share the same dimensionality (d_s == d_h)",
-        "The encoder must be bidirectional, before defining the measurement, acceptance threshold, or rollback path",
-        "Softmax must be log-space",
-        "Beam search is required"
-      ],
-      "correct": 0,
-      "explanation": "dot uses s^T h with no projection, so dimensions must match exactly."
-    },
-    {
-      "stage": "post",
-      "question": "Which Q/K/V mapping describes classical (Bahdanau/Luong) attention?",
-      "options": [
-        "Q, K, V are three independent learned projections of the source",
-        "Q is random, K and V are learned",
-        "Q from encoder, K and V from decoder",
-        "Q = decoder state; K and V = encoder states (same tensor)"
-      ],
-      "correct": 3,
-      "explanation": "In classical attention, keys and values are both encoder states; transformers split K and V via learned projections."
-    },
-    {
-      "stage": "post",
-      "question": "Why is reporting raw attention weights as 'explanation' considered fragile?",
-      "options": [
-        "Attention weights leak labels",
-        "They are too small to plot",
-        "Research (e.g. Jain and Wallace, 2019) showed attention distributions can be permuted without changing predictions on some tasks",
-        "Attention weights are not differentiable, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence"
+        "Softmax rounds all scores to zero before normalizing",
+        "The lists have the same number of elements, so scores are ignored",
+        "Subtracting the maximum makes softmax invariant to adding a constant",
+        "Softmax returns the raw input whenever it sees two values"
       ],
       "correct": 2,
-      "explanation": "Attention weights are correlated with predictions but not faithful explanations without ablation/counterfactual checks."
+      "explanation": "The implementation subtracts max(scores), leaving the same difference of one in both lists."
+    },
+    {
+      "stage": "check",
+      "question": "What does dot_attention return besides the weighted context vector?",
+      "options": [
+        "A single class label for the whole source sentence",
+        "The unnormalized dot-product matrix for every decoder layer",
+        "Only the index of the largest encoder state",
+        "One normalized attention weight for each encoder state"
+      ],
+      "correct": 3,
+      "explanation": "It softmaxes one score per encoder state and returns the context together with the complete weight list."
+    },
+    {
+      "stage": "check",
+      "question": "What error does dot_attention raise when an encoder state has a different length from the decoder state?",
+      "options": [
+        "ValueError describing the length mismatch",
+        "IndexError after silently padding the shorter vector",
+        "No error; zip truncates the longer vector",
+        "A zero context with no diagnostic"
+      ],
+      "correct": 0,
+      "explanation": "The explicit validation checks every encoder state before calculating dot products and raises ValueError on mismatch."
+    },
+    {
+      "stage": "check",
+      "question": "In additive_attention, what does v_a do after the tanh projection?",
+      "options": [
+        "It expands every encoder state back to the vocabulary size",
+        "It turns each attention-dimension vector into one scalar score by a dot product",
+        "It supplies the final weighted context without softmax",
+        "It chooses which source tokens to delete"
+      ],
+      "correct": 1,
+      "explanation": "The code computes dot(v_a, combined) for each encoder state, producing the score that softmax will normalize."
+    },
+    {
+      "stage": "post",
+      "question": "What is the shape relationship in matvec(M, v)?",
+      "options": [
+        "M must be square and the result always has the same length as v",
+        "Only the first row is multiplied; all other rows are ignored",
+        "Every row of M must have len(v), and the result has one value per row",
+        "v is treated as a string of token IDs rather than numbers"
+      ],
+      "correct": 2,
+      "explanation": "The helper validates each row length and computes one row-dot-vector value for every row of M."
+    },
+    {
+      "stage": "post",
+      "question": "How do Luong dot attention and Bahdanau additive attention score a decoder/source pair here?",
+      "options": [
+        "Both use only token frequency and never inspect hidden states",
+        "Dot attention concatenates strings, while additive attention sorts them",
+        "Additive attention removes the softmax step that dot attention requires",
+        "Dot attention uses a direct dot product; additive attention learns projections, tanh, and v_a"
+      ],
+      "correct": 3,
+      "explanation": "dot_attention scores decoder_state against h directly, while additive_attention combines projected states before its scalar projection."
     }
   ]
 }

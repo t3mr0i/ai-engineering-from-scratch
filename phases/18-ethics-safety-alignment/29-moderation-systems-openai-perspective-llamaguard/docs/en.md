@@ -76,6 +76,18 @@ Lesson 16 covers the moderation tooling in the red-team context. Lesson 29 cover
 
 
 
+## Build It
+
+Reconstruct **Moderation Systems — OpenAI, Perspective, Llama Guard** by following `openai_moderation` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
+
+## Use It
+
+Call `openai_moderation` from a small caller with the demo’s smallest built-in fixture. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-moderation-stack.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [OpenAI Moderation API docs](https://platform.openai.com/docs/api-reference/moderations) — omni-moderation endpoint
@@ -85,10 +97,20 @@ Lesson 16 covers the moderation tooling in the red-team context. Lesson 29 cover
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Describe the OpenAI Moderation API's category taxonomy and how it differs from Llama Guard 3's MLCommons set.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe the three moderation-layer pattern (input, output, custom) and name one failure mode of each.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe Perspective API's position as a pre-LLM-era baseline and why it remains used in research.
+Work from the smallest fixture that the Moderation Systems — OpenAI, Perspective, Llama Guard demo already understands, then make one deliberate change and record what moved.
+
+1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using the demo’s smallest built-in fixture. Follow `openai_moderation`, `input_moderator`, `output_moderator`. Expect the result reports the empty case explicitly or raises the documented validation error; capture the first printed shape, metric, status, or summary field and state which part supports **Describe the OpenAI Moderation API's category taxonomy and how it differs from Llama Guard 3's MLCommons set.**.
+2. **Perturb one field.** Repeat the command after changing only the primary fixture value: use the same fixture with its primary value changed from 1 to 2. Predict the direction of the change, then compare the two output values. Explain why **Describe the three moderation-layer pattern (input, output, custom) and name one failure mode of each.** says the other inputs should stay fixed.
+3. **Check the failure boundary.** Feed the implementation an empty fixture {}. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Describe Perspective API's position as a pre-LLM-era baseline and why it remains used in research.** and record the exception text if the code rejects the case.
+4. **Make the result repeatable.** Open `outputs/skill-moderation-stack.md` and add a worked example using the demo’s smallest built-in fixture. Include the input contract, one expected output field, and a named acceptance check for **State the Azure deprecation timeline.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Describe the OpenAI Moderation API's category taxonomy and how it differs from Llama Guard 3's MLCommons set,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe Perspective API's position as a pre-LLM-era baseline and why it remains used in research,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Moderation Systems — OpenAI, Perspective, Llama Guard** should contain:
+
+- the `python3 main.py` output for the demo’s smallest built-in fixture, with `openai_moderation`, `input_moderator`, `output_moderator` traced to the value or shape that supports **Describe the OpenAI Moderation API's category taxonomy and how it differs from Llama Guard 3's MLCommons set.**;
+- a before/after comparison for the primary fixture value, where the same fixture with its primary value changed from 1 to 2 changes the observation in the direction predicted by **Describe the three moderation-layer pattern (input, output, custom) and name one failure mode of each.**;
+- a recorded result for an empty fixture {} that matches the implementation’s validation or empty-result contract and explains the evidence for **Describe Perspective API's position as a pre-LLM-era baseline and why it remains used in research.**; and
+- an updated `outputs/skill-moderation-stack.md` example with a concrete input, expected output field, and acceptance check tied to **State the Azure deprecation timeline.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

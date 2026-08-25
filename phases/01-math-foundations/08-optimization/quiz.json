@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does 'optimization' mean in the context of training a neural network?",
+      "question": "For f(x)=x^2, what is one gradient-descent step from x=3 with learning rate 0.1?",
       "options": [
-        "Making the code run faster",
-        "Finding the model weights that minimize the loss function",
-        "Reducing the number of parameters in the model — and applies unchanged even when the lesson's stated preconditions fail",
-        "Choosing the best hardware for training"
+        "x becomes 3.3",
+        "x becomes 2.9",
+        "x becomes 2.4",
+        "x becomes 0.3"
       ],
-      "correct": 1,
-      "explanation": "Training a neural network IS optimization. The loss function measures how wrong the model is, and optimization finds the weight values that make it as small as possible."
+      "correct": 2,
+      "explanation": "The gradient is 2x=6. The update is 3 - 0.1*6 = 2.4."
     },
     {
       "stage": "check",
-      "question": "What happens if the learning rate is too large during gradient descent?",
+      "question": "What does momentum add to vanilla gradient descent?",
       "options": [
-        "Training converges faster to the global minimum",
-        "The optimizer overshoots the minimum and the loss diverges (bounces or increases)",
-        "The gradients become zero",
-        "The model automatically reduces the learning rate, with no need to inspect intermediate results or test edge cases"
+        "A guarantee that every loss is convex",
+        "A separate random learning rate for each sample",
+        "A second forward pass that computes the Hessian exactly",
+        "A running velocity that smooths updates across successive gradients"
       ],
-      "correct": 1,
-      "explanation": "A learning rate that is too large causes each step to overshoot the valley, potentially bouncing between walls or diverging entirely. The loss increases instead of decreasing."
+      "correct": 3,
+      "explanation": "Momentum accumulates a decayed previous velocity and the current gradient, helping movement through shallow directions while damping oscillation."
     },
     {
       "stage": "check",
-      "question": "How does Adam differ from vanilla gradient descent?",
+      "question": "Why is the Rosenbrock function a useful optimizer test?",
       "options": [
-        "Adam uses a fixed learning rate while GD uses adaptive rates",
-        "Adam tracks running averages of gradients and squared gradients to give each weight its own adaptive learning rate",
-        "Adam computes exact second derivatives while GD uses first derivatives, because one plausible output is sufficient production evidence",
-        "Adam processes the full dataset per step while GD uses mini-batches"
-      ],
-      "correct": 1,
-      "explanation": "Adam maintains per-weight first moment (gradient direction) and second moment (gradient magnitude) estimates. Dividing by sqrt(second moment) gives small steps for weights with large gradients and large steps for weights with small gradients."
-    },
-    {
-      "stage": "check",
-      "question": "Why is the noise in mini-batch SGD considered beneficial rather than just a nuisance?",
-      "options": [
-        "Noise reduces memory usage during training",
-        "Noise helps the optimizer escape shallow local minima and saddle points that a noiseless optimizer would get stuck in",
-        "Noise is not beneficial; it always slows convergence, before defining the measurement, acceptance threshold, or rollback path",
-        "Noise makes the loss function convex"
-      ],
-      "correct": 1,
-      "explanation": "The stochastic noise from random mini-batches provides random perturbations that can push the optimizer out of shallow local minima and saddle points, leading to better generalization."
-    },
-    {
-      "stage": "post",
-      "question": "What does a cosine annealing learning rate schedule do?",
-      "options": [
-        "Increases the learning rate throughout training following a cosine curve — and applies unchanged even when the lesson's stated preconditions fail",
-        "Starts with a high learning rate and smoothly decreases it following a cosine curve, with optional warmup",
-        "Alternates the learning rate between two fixed values",
-        "Sets the learning rate to the cosine of the current epoch number"
-      ],
-      "correct": 1,
-      "explanation": "Cosine annealing smoothly reduces the learning rate from lr_max to lr_min following a half-cosine curve. This provides large steps early for fast progress and small steps late for fine convergence."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Optimization?",
-      "options": [
-        "Compare optimizer convergence on the Rosenbrock function and explain why Adam adapts per-weight learning rates",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Its narrow curved valley exposes step-size and direction problems",
+        "It is a flat constant, so every optimizer ties",
+        "Its minimum is at every point in the plane",
+        "It contains no gradient information"
       ],
       "correct": 0,
-      "explanation": "“Compare optimizer convergence on the Rosenbrock function and explain why Adam adapts per-weight learning rates” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The Rosenbrock valley leads to (1,1) but is badly conditioned away from it. An optimizer can overshoot across the valley or move slowly along it."
+    },
+    {
+      "stage": "check",
+      "question": "What distinguishes a convex loss from a saddle-shaped non-convex loss?",
+      "options": [
+        "A convex function always has a negative Hessian",
+        "A convex function has no spurious local minima; a saddle has directions of opposite curvature",
+        "A saddle has only positive curvature in every direction",
+        "Convexity means the function must be one-dimensional"
+      ],
+      "correct": 1,
+      "explanation": "For convex objectives, every local minimum is global. A saddle has a Hessian with mixed-sign curvature, so it is neither a local minimum nor maximum."
+    },
+    {
+      "stage": "post",
+      "question": "Why does Adam use bias-corrected first and second moment estimates early in training?",
+      "options": [
+        "Bias correction removes all gradient noise permanently",
+        "It changes Adam into plain batch gradient descent",
+        "The running moments start at zero and are initially biased toward zero",
+        "The correction computes an exact inverse Hessian"
+      ],
+      "correct": 2,
+      "explanation": "Exponential moving averages initialized at zero underestimate moments during the first steps. Dividing by the appropriate 1-beta^t factor corrects that startup bias."
+    },
+    {
+      "stage": "post",
+      "question": "Loss and gradient norms explode after increasing the learning rate tenfold. Which response is most direct?",
+      "options": [
+        "Increase the learning rate again to cross the unstable region faster",
+        "Remove all validation checks so the optimizer can adapt",
+        "Replace the loss with its parameter count",
+        "Lower the learning rate and consider gradient clipping while inspecting the run"
+      ],
+      "correct": 3,
+      "explanation": "A large step can overshoot repeatedly and amplify gradients. Reducing the step and bounding extreme norms addresses the observed instability without hiding it."
     }
   ]
 }

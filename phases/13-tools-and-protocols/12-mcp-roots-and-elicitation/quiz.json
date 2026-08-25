@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Roots and Elicitation — Scoping and Mid-Flight User Input?",
+      "question": "How does uri_in_roots classify the lesson's two example locations?",
       "options": [
-        "Declare `roots` and respond to `notifications/roots/list_changed`",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Notes is inside; /tmp is outside",
+        "Both are outside because roots accept only HTTP URLs",
+        "Both are inside because the check ignores path prefixes",
+        "Only the Scratch URI is inside Notes"
       ],
       "correct": 0,
-      "explanation": "“Declare `roots` and respond to `notifications/roots/list_changed`” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The declared Notes and Scratch file URI prefixes allow matching descendants but do not include the unrelated /tmp path."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Roots and Elicitation — Scoping and Mid-Flight User Input?",
+      "question": "What interaction occurs when deleting the three TPS notes?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Restrict server file operations to URIs inside the declared root set",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "The tool deletes all three without asking",
+        "elicitation picks note-14 and confirm=true",
+        "It rejects every multi-match request as ambiguous",
+        "It reads a prompt but never changes the notes"
       ],
       "correct": 1,
-      "explanation": "“Restrict server file operations to URIs inside the declared root set” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Multiple matches trigger structured elicitation; the fixture chooses note-14 and confirm true, so that in-root note is removed."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Roots and Elicitation — Scoping and Mid-Flight User Input?",
+      "question": "What happens to the unambiguous shopping note?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Use `elicitation/create` to ask the user for a confirmation or structured input mid-tool-call",
-        "Treat one successful example as proof that every edge case works"
+        "It is held for manual review",
+        "It is copied to Scratch",
+        "It deletes the in-root shopping note",
+        "It triggers an OAuth step-up"
       ],
       "correct": 2,
-      "explanation": "“Use `elicitation/create` to ask the user for a confirmation or structured input mid-tool-call” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "A single matching note still passes the root check, so notes_delete deletes the shopping note without a multi-choice prompt."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Roots and Elicitation — Scoping and Mid-Flight User Input?",
+      "question": "What result does deleting the outside-root target produce?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose between form-mode and URL-mode elicitation (the latter is experimental; drift-risk noted)",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Choose between form-mode and URL-mode elicitation (the latter is experimental; drift-risk noted)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Roots and Elicitation — Scoping and Mid-Flight User Input?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Declare `roots` and respond to `notifications/roots/list_changed`"
+        "A successful deletion because the title is unique",
+        "A new root is automatically granted",
+        "A prompt that moves it into Notes",
+        "outside-roots error"
       ],
       "correct": 3,
-      "explanation": "“Declare `roots` and respond to `notifications/roots/list_changed`” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The tool checks the note URI against ROOTS before deletion and refuses the /tmp target even when there is only one match."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Roots and Elicitation — Scoping and Mid-Flight User Input?",
+      "question": "What does tool_notes_setup do in URL elicitation mode when the fixture accepts?",
       "options": [
-        "Restrict server file operations to URIs inside the declared root set",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "setup complete",
+        "It deletes the Notes root",
+        "It returns setup cancelled without showing a URL",
+        "It treats the URL as a note id"
       ],
       "correct": 0,
-      "explanation": "“Restrict server file operations to URIs inside the declared root set” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "URL mode shows the browser-based setup interaction; the accepted FAKE_USER_ANSWERS entry produces the setup complete result."
+    },
+    {
+      "stage": "post",
+      "question": "What should a server do after ROOTS.pop removes the Scratch root?",
+      "options": [
+        "Continue using every previously granted path forever",
+        "drop handles outside new roots",
+        "Turn all file URIs into HTTP URLs",
+        "Delete every note in the remaining Notes root"
+      ],
+      "correct": 1,
+      "explanation": "Root changes narrow the client's authorization boundary, so the demo notes that the server must drop handles outside the new roots."
     }
   ]
 }

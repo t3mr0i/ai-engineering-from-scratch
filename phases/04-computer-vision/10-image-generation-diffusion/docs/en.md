@@ -123,6 +123,18 @@ Without time conditioning the network has to guess the noise level from the imag
 
 
 
+## Build It
+
+Reconstruct **Image Generation — Diffusion Models** by following `linear_beta_schedule` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+
+## Use It
+
+Call `linear_beta_schedule` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-diffusion-sampler-picker.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Denoising Diffusion Probabilistic Models (Ho et al., 2020)](https://arxiv.org/abs/2006.11239) — the paper that made diffusion practical and beat GANs on FID
@@ -132,10 +144,20 @@ Without time conditioning the network has to guess the noise level from the imag
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Derive the forward noising process `x_0 -> x_1 -> ... -> x_T` and explain why the closed-form `q(x_t | x_0)` holds for any t.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement a DDPM-style training objective that regresses the noise added at each step, and a sampler that walks back from pure noise to an image.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a time-conditioned U-Net (small enough to train on CPU) that predicts the noise for any timestep.
+This lab follows `linear_beta_schedule` and `precompute_schedule` on a controlled fixture; write down the value before changing the input.
+
+1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using an 8x8 synthetic image. Follow `linear_beta_schedule`, `precompute_schedule`, `q_sample`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **Derive the forward noising process `x_0 -> x_1 -> ... -> x_T` and explain why the closed-form `q(x_t | x_0)` holds for any t**.
+2. **Change the controlled parameter.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Implement a DDPM-style training objective that regresses the noise added at each step, and a sampler that walks back from pure noise to an image** says the other inputs should stay fixed.
+3. **Exercise the guard.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Build a time-conditioned U-Net (small enough to train on CPU) that predicts the noise for any timestep** and record the exception text if the code rejects the case.
+4. **Prepare the artifact for reuse.** Open `outputs/prompt-diffusion-sampler-picker.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **Explain the difference between DDPM and DDIM sampling, and when each is appropriate (Lesson 23 covers flow matching and rectified flow in depth)**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Derive the forward noising process `x_0 -> x_1 -> ... -> x_T` and explain why the closed-form `q(x_t | x_0)` holds for any t,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a time-conditioned U-Net (small enough to train on CPU) that predicts the noise for any timestep,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Image Generation — Diffusion Models** should contain:
+
+- the `python3 main.py` output for an 8x8 synthetic image, with `linear_beta_schedule`, `precompute_schedule`, `q_sample` traced to the value or shape that supports **Derive the forward noising process `x_0 -> x_1 -> ... -> x_T` and explain why the closed-form `q(x_t | x_0)` holds for any t**;
+- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Implement a DDPM-style training objective that regresses the noise added at each step, and a sampler that walks back from pure noise to an image**;
+- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Build a time-conditioned U-Net (small enough to train on CPU) that predicts the noise for any timestep**; and
+- an updated `outputs/prompt-diffusion-sampler-picker.md` example with a concrete input, expected output field, and acceptance check tied to **Explain the difference between DDPM and DDIM sampling, and when each is appropriate (Lesson 23 covers flow matching and rectified flow in depth)**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why do AI assistants need governed knowledge sources?",
+      "question": "Why does a knowledge assistant need content governance before it needs a more polished chat interface?",
       "options": [
-        "Because content owners are never needed once a document is uploaded to the assistant",
-        "Because retrieval can make stale or wrong sources look authoritative and trustworthy",
-        "Because access rules should be ignored so retrieval can search everything freely",
-        "Because duplicate answers across sources actually improve user trust in the assistant"
-      ],
-      "correct": 1,
-      "explanation": "Retrieval can surface a stale or wrong source and present it as authoritative — content owners still matter, access rules still apply, and duplicate answers undermine trust rather than improving it."
-    },
-    {
-      "stage": "check",
-      "question": "Two SharePoint pages give contradictory instructions for the same expense-approval process, and the assistant sometimes cites one page and sometimes the other. Which of the lesson's four signals does this match most directly?",
-      "options": [
-        "Duplicate answer — conflicting versions of the same content exist and haven't been reconciled",
-        "Stale content — the page hasn't been updated even though the process it describes has changed recently",
-        "Unclear source — no one can tell which document is the authoritative one to cite",
-        "Access risk — the page is visible to people who shouldn't be able to read it"
+        "Content owners, freshness, source ranking, and access rules determine whether an answer can be trusted",
+        "A large corpus makes stale or duplicate answers harmless",
+        "A fluent answer can stand in for a source citation and an access decision",
+        "Access risk matters only after the assistant has been used by customers"
       ],
       "correct": 0,
-      "explanation": "Two contradictory pages describing the same process is the lesson's duplicate-answer signal — distinct from stale content (outdated but singular), unclear source (no clear authoritative origin), or access risk (wrong visibility)."
+      "explanation": "The checklist treats sources as a maintained product surface. Ownership and freshness affect correctness, while ranking and access rules affect what the assistant may present."
     },
     {
       "stage": "check",
-      "question": "What does the Python artifact produce?",
+      "question": "The policy assistant source fixture matches three signals with usage_frequency=5 and trust_risk=5. Which priority does it receive?",
       "options": [
-        "A ranked content-governance readiness plan with controls for each source",
-        "A complete, fully populated knowledge base ready to connect to an assistant",
-        "An access-control server that manages permissions across every content source",
-        "A finalized governance policy document ready for executive sign-off"
-      ],
-      "correct": 0,
-      "explanation": "The artifact ranks source risks into a content-governance readiness plan with controls — it doesn't build a knowledge base, stand up an access-control server, or finalize a policy."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to this lesson?",
-      "options": [
-        "Ignoring source rank so every document is treated as equally authoritative",
-        "Freshness check — confirming a source still reflects the current process",
-        "Removing content owners once a document has been indexed for retrieval",
-        "Skipping the access review so retrieval can reach every document by default"
+        "source review",
+        "governance cleanup",
+        "owner assignment",
+        "monitor"
       ],
       "correct": 1,
-      "explanation": "The lesson's controls are content owner, freshness check, source rank, and access rule — freshness check confirms a source still matches the current process, unlike ignoring rank, removing owners, or skipping access review."
+      "explanation": "The score is 5 + 5*2 + 3*2 = 21, capped at 20. The highest band is governance cleanup."
+    },
+    {
+      "stage": "check",
+      "question": "Which controls are selected when a knowledge Scenario matches three signals?",
+      "options": [
+        "content owner and freshness check only",
+        "source rank and access rule only",
+        "content owner, freshness check, source rank, and access rule",
+        "A search index rebuild without an owner or access rule"
+      ],
+      "correct": 2,
+      "explanation": "Three matches select all four controls. The source is owned, freshness is checked, ranking is explicit, and access is bounded."
+    },
+    {
+      "stage": "check",
+      "question": "What priority does priority_for(14) return for content governance?",
+      "options": [
+        "governance cleanup",
+        "owner assignment",
+        "monitor",
+        "source review"
+      ],
+      "correct": 3,
+      "explanation": "Scores from 11 through 15 use source review. Governance cleanup starts at 16, while owner assignment starts at 7."
     },
     {
       "stage": "post",
-      "question": "When should content be cleaned up before AI use?",
+      "question": "What does Scenario(\"routine note\", \"Routine note with no listed signals.\", (), usage_frequency=2, trust_risk=1) receive?",
       "options": [
-        "Only when nobody in the organization is actively using the content anymore — and applies unchanged even when the lesson's stated preconditions fail",
-        "When content is stale, duplicated, ownerless, or sensitive from an access standpoint",
-        "Only when the content has already passed a full editorial and legal review",
-        "Never — retrieval quality alone is enough to fix source-quality problems"
+        "monitor with score 4",
+        "owner assignment with score 7",
+        "source review with score 11",
+        "governance cleanup with score 16"
       ],
-      "correct": 1,
-      "explanation": "Stale, duplicated, ownerless, or access-sensitive content is exactly when cleanup is needed before AI use — not only unused content, already-reviewed content, or trusting retrieval to fix source quality."
+      "correct": 0,
+      "explanation": "The score is 2 + 1*2 = 4, with no match bonus. That result stays in monitor."
     },
     {
       "stage": "post",
-      "question": "What should every important knowledge source have?",
+      "question": "What should checklist-knowledge-source-governance.md establish before content is exposed to AI search?",
       "options": [
-        "A named owner, a freshness check, a source rank, and a clear access rule",
-        "No review date, since freshness matters less than completeness for AI sources",
-        "Unlimited access for every employee, since access rules slow retrieval down",
-        "Conflicting duplicates left unresolved, since AI can pick the better version itself"
+        "Only a vector index and a preferred embedding model",
+        "Content owners, freshness checks, source ranking, access rules, and a process for duplicate or unclear answers",
+        "A promise that every page is current because it is stored in SharePoint",
+        "A single global permission that gives every assistant the same source visibility"
       ],
-      "correct": 0,
-      "explanation": "Every important source needs a named owner, a freshness check, a source rank, and an access rule — not an absent review date, unlimited access, or unresolved duplicates left for AI to sort out."
+      "correct": 1,
+      "explanation": "The governance checklist turns source maintenance into explicit controls. It helps a team decide what can be indexed and how uncertain or conflicting content is handled."
     }
   ]
 }

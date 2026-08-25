@@ -291,6 +291,18 @@ flowchart TD
 
 
 
+## Build It
+
+Reconstruct **What Is Machine Learning** by following `NearestCentroid` on x=0.5 with the demo defaults. Run `run main.text` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Use It
+
+Call `NearestCentroid` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-ml-problem-framer.md` with the command `run main.text`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [An Introduction to Statistical Learning](https://www.statlearning.com/) - free textbook covering all classical ML methods with practical examples

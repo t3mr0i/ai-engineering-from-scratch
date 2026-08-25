@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why should AI-Assisted Documentation be taught as a workflow instead of only as tool awareness?",
+      "question": "What does `normalize(\"API-doc  v2\")` produce before documentation signals are matched?",
       "options": [
-        "Because AI-generated runbooks are always technically accurate once they read fluently",
-        "Because teams need shared signals, controls, and decision rules they can apply to real work",
-        "Because a polished writing style is sufficient proof that every documented command still works",
-        "Because one successful incident response means the documentation needs no more checks"
-      ],
-      "correct": 1,
-      "explanation": "The lesson is built around reusable operating artifacts — shared signals, controls, decision rules — not the idea that fluent prose proves accuracy, that polish proves a command works, or that one clean incident retires the need for checks."
-    },
-    {
-      "stage": "check",
-      "question": "In the lesson's opening example, why did the AI-generated runbook slow the team down during an actual incident?",
-      "options": [
-        "It had no source citations, so the review cadence process rejected it before publication",
-        "One command in it was obsolete and a prerequisite step was missing, though the prose read as polished",
-        "The owner-approval step was skipped entirely, so the document was never assigned a maintainer",
-        "A stale date on the page confused readers about which of several incident runbooks to open first, with no need to inspect intermediate results or test edge cases"
-      ],
-      "correct": 1,
-      "explanation": "The lesson's runbook example failed because one command was obsolete and a prerequisite was missing — a command-validation gap, not a citation, approval, or date-labeling problem."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Python artifact produce for AI-Assisted Documentation?",
-      "options": [
-        "A finished runbook that is automatically republished after every code change",
-        "A single trust score with no explanation of which check it failed",
-        "A word count comparing the AI draft to the previous documentation version",
-        "A ranked plan with category, score, priority, controls, and rationale"
-      ],
-      "correct": 3,
-      "explanation": "The lesson's Python artifact outputs a ranked plan — category, score, priority, controls, and rationale — not an auto-republishing runbook, an unexplained trust score, or a word-count comparison."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to the lesson design?",
-      "options": [
-        "Publishing a fluent-sounding draft without assigning an owner to keep it current",
-        "Source citation, so every claim in the doc links back to code, tickets, or an architecture decision",
-        "Skipping command validation entirely because the runbook's prose already reads as authoritative, before defining the measurement, acceptance threshold, or rollback path",
-        "Treating a document's polish as proof that its prerequisites are still accurate"
-      ],
-      "correct": 1,
-      "explanation": "The lesson's controls include source citation — tying every claim back to code, tickets, or an architecture decision — the opposite of shipping a fluent draft with no owner, skipping command validation, or trusting polish as proof of accuracy."
-    },
-    {
-      "stage": "post",
-      "question": "When should a scenario become a launch-gate discussion rather than a casual awareness exercise?",
-      "options": [
-        "When impact, uncertainty, and matched risk signals such as missing ownership are all running high",
-        "Only when the documentation happens to be written in a formal and highly technical tone",
-        "Only when the runbook covers more than a dozen interdependent production services at once",
-        "Never — a documentation gap can always wait until the next scheduled review cadence comes round again"
+        "`api doc v2`, after lowercasing and whitespace normalization",
+        "`API-doc v2`, because normalization changes spacing but preserves case and punctuation",
+        "A token list `['api', 'doc', 'v2']`, which is required by `signal_matches`",
+        "`api_doc_v2`, because hyphens become underscores for category lookup"
       ],
       "correct": 0,
-      "explanation": "High-impact, uncertain, risk-heavy documentation gaps need a launch gate regardless of tone, how many services are covered, or whether a review is already scheduled."
+      "explanation": "`normalize` calls `lower()`, replaces hyphens with spaces, and joins the result of `split()`. It returns a string rather than a token list."
+    },
+    {
+      "stage": "check",
+      "question": "For `Scenario(\"release note\", \"stale date and no verification step\", signals=(\"no source link\",), impact=3, uncertainty=3)`, how is the score assembled?",
+      "options": [
+        "`9`, because only `impact + uncertainty` is used",
+        "A base of `9` plus two points for each matched signal, capped at 20",
+        "`20` automatically, because documentation scenarios always need a launch gate",
+        "The number of controls selected, because controls define the score"
+      ],
+      "correct": 1,
+      "explanation": "`score_scenario` computes `impact * 2 + uncertainty`, which is 9 here, then adds `2 * len(signal_matches(scenario))` and applies `min(20, ...)`. The signal list and description can each contribute matches."
+    },
+    {
+      "stage": "check",
+      "question": "Which priority does `priority_for(10)` assign to a documentation scenario?",
+      "options": [
+        "`launch gate required`, because every stale document blocks release",
+        "`guided pilot`, because 10 is rounded up to the 11-point threshold",
+        "`team practice`, because scores from 7 through 10 use that band",
+        "`awareness only`, because anything below 16 is considered harmless"
+      ],
+      "correct": 2,
+      "explanation": "The function checks the thresholds in descending order: 16, 11, then 7. A score of 10 is below 11 but at least 7, so it returns `team practice`."
+    },
+    {
+      "stage": "check",
+      "question": "For `choose_category` with two matched documentation signals, which index is used to select from `CATEGORIES`?",
+      "options": [
+        "`len(matches) - 1`, so two matches choose the first category",
+        "The index of the first matching signal in `SIGNALS`, regardless of impact",
+        "Always the last category, because multiple signals require a release note",
+        "`(len(matches) + impact + uncertainty) % len(CATEGORIES)`"
+      ],
+      "correct": 3,
+      "explanation": "For nonempty matches, `choose_category` computes `(len(matches) + scenario.impact + scenario.uncertainty) % len(CATEGORIES)`. This keeps the category selection deterministic while incorporating the scenario's severity fields."
     },
     {
       "stage": "post",
-      "question": "What is the main purpose of the output template?",
+      "question": "Why does `recommend` include at least two controls even when no signal matches?",
       "options": [
-        "To formally replace the reviewer's sign-off on whether a given runbook is safe to use",
-        "To keep the known documentation gaps hidden from the on-call team in the middle of an incident",
-        "To create a reusable checklist or prompt that teams can keep applying after the course ends",
-        "To automatically generate completion certificates for participants once the workshop ends"
+        "It always keeps a two-control minimum",
+        "The function duplicates the first control until the score reaches 16",
+        "A no-signal scenario is treated as a PII incident and receives all controls",
+        "The controls are unrelated to matches and are always the complete four-item list"
       ],
-      "correct": 2,
-      "explanation": "The output template is meant to become a reusable checklist or prompt teams keep applying — not a substitute for reviewer sign-off, a way to hide gaps from on-call, or an automatic certificate generator."
+      "correct": 0,
+      "explanation": "With zero matches, `1 + len(matches)` is 1, but the outer `max(2, ...)` raises the slice length to 2. The recommendation therefore starts with `source citation` and `owner approval`."
+    },
+    {
+      "stage": "post",
+      "question": "What evidence does `build_plan` preserve in each returned row for an AI-generated runbook or ADR review?",
+      "options": [
+        "Only the category label, because score and rationale are considered presentation details",
+        "The scenario name, category, score, priority, selected controls, and rationale",
+        "The full source document text and a model-generated citation URL",
+        "Only the original iterable position, so reviewers can reconstruct the score themselves"
+      ],
+      "correct": 1,
+      "explanation": "Each row includes `scenario`, `category`, `score`, `priority`, `controls`, and `rationale`. The rows are then sorted by score, giving reviewers both the decision and the signals behind it."
     }
   ]
 }

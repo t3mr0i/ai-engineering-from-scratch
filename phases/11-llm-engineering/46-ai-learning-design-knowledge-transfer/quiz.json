@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the main weakness of generic AI-generated training text?",
+      "question": "What should an AI-assisted learning design start with?",
       "options": [
-        "It can create content volume without role transfer or behavior change",
-        "It cannot be produced quickly enough to keep up with enablement demand",
-        "It uses vocabulary that most learners in the target role will not recognise",
-        "It leaves out the learning objectives that a course outline normally states"
-      ],
-      "correct": 0,
-      "explanation": "Learning design must target role outcomes and transfer. Generic AI text creates training volume without behavior change."
-    },
-    {
-      "stage": "check",
-      "question": "A team asks for \"an AI training\". What does this lesson say that request usually hides?",
-      "options": [
-        "A budget approval, a room booking, a trainer assignment, or a calendar slot",
-        "A tooling request, a licence purchase, an account setup, or an access ticket",
-        "A compliance deadline, an audit finding, a policy update, or a mandatory sign-off",
-        "A role skill gap, a guided practice format, a job aid, or a knowledge check"
-      ],
-      "correct": 3,
-      "explanation": "The lesson translates a generic training request into something specific: a role skill gap, a guided practice format, a job aid, or a knowledge check. Design starts from the role outcome, not from the wording of the request."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Python artifact recommend?",
-      "options": [
-        "The HR policy that governs how training hours are recorded",
-        "The optimizer settings for a model trained on course material, because one plausible output is sufficient production evidence",
-        "The right learning form and controls for an enablement scenario",
-        "The manager decisions that follow once a learner has finished"
+        "A slide count, tool list, and draft article",
+        "A generic course outline that can be reused for every role",
+        "The role outcome, target behavior, practice opportunity, assessment, and transfer evidence",
+        "A model-generated summary of the topic without a manager or learner context"
       ],
       "correct": 2,
-      "explanation": "The artifact maps learning signals - skill gap, role context, practice need, assessment need - to a learning form and its controls."
+      "explanation": "Learning design is about behavior in a role, not content volume. Objectives, practice, knowledge checks, and manager handoff make transfer observable."
     },
     {
       "stage": "check",
-      "question": "Which control belongs to this lesson?",
+      "question": "The consulting prompt skill fixture matches all four learning signals through its name, description, and signals tuple. With learner_impact=5 and transfer_risk=4, what priority does it receive?",
       "options": [
-        "A knowledge check that tests the target behavior, not just recall of the text",
-        "An objective written after the course content has already been drafted",
-        "A practice task replaced by a longer reading section to save session time, before defining the measurement, acceptance threshold, or rollback path",
-        "A manager handoff dropped once the learner has completed the material"
+        "practice sprint",
+        "guided cohort",
+        "reference only",
+        "curriculum module"
       ],
-      "correct": 0,
-      "explanation": "Knowledge checks provide evidence that learning happened, and the lesson asks that they test the target behavior. Objective checks, practice tasks, and manager handoff are the other controls."
+      "correct": 3,
+      "explanation": "The signal matcher finds skill gap, role context, practice need, and assessment need, so the score is capped at 5*2 + 4 + 4*2 = 20. Scores of 16 or more map to curriculum module."
     },
     {
-      "stage": "post",
-      "question": "When is a workshop a better fit than a micro lesson?",
+      "stage": "check",
+      "question": "Which category does choose_category assign to the consulting prompt skill fixture?",
       "options": [
-        "When the topic is broad enough that a single short lesson cannot cover it — and applies unchanged even when the lesson's stated preconditions fail",
-        "When learners need guided practice, discussion, and role-specific transfer",
-        "When the material changes often and a live format is cheaper to update",
-        "When the audience is large enough to fill a scheduled session properly"
+        "workshop",
+        "micro lesson",
+        "assessment",
+        "job aid"
+      ],
+      "correct": 0,
+      "explanation": "Four matches, learner impact 5, and transfer risk 4 give index (4+5+4) modulo 4 = 1. CATEGORIES[1] is workshop."
+    },
+    {
+      "stage": "check",
+      "question": "Which controls does recommend select for a learning scenario with two matched signals?",
+      "options": [
+        "objective check only",
+        "objective check, practice task, and knowledge check",
+        "manager handoff and knowledge check only",
+        "A long reading section without a practice task"
       ],
       "correct": 1,
-      "explanation": "Workshops are useful when guided practice, discussion, and role-specific transfer matter, not simply when a topic is long."
+      "explanation": "Two matches select the first three controls. The manager handoff is the fourth control and appears when the scenario has at least three matches."
     },
     {
       "stage": "post",
-      "question": "What should AI learning design start with?",
+      "question": "What priority does the tool tip fixture receive with one skill-gap signal, learner_impact=2, and transfer_risk=2?",
       "options": [
-        "Role outcome, target behavior, practice task, and transfer evidence",
-        "A content outline, a slide count, a session length, and a trainer note",
-        "A tool list, a vendor demo, an access request, and a licence assignment",
-        "A draft article, a summary prompt, a review pass, and a publish decision"
+        "reference only with score 6",
+        "guided cohort with score 10",
+        "practice sprint with score 8",
+        "curriculum module with score 16"
       ],
-      "correct": 0,
-      "explanation": "Transfer-focused design keeps AI-generated training useful: define the role, the behavior, the practice task, and the evidence that learning happened before drafting anything."
+      "correct": 2,
+      "explanation": "The score is 2*2 + 2 + 2 = 8. Scores from 7 through 10 use practice sprint in this lesson."
+    },
+    {
+      "stage": "post",
+      "question": "What does planner-learning-design-transfer.md add to a generated course draft?",
+      "options": [
+        "A promise that more content will guarantee workplace adoption",
+        "A vendor choice and a model benchmark for the training team",
+        "A replacement for the manager's role after the learner finishes",
+        "A link from role objectives to practice, knowledge checks, and manager handoff so transfer can be reviewed"
+      ],
+      "correct": 3,
+      "explanation": "The planner keeps the target behavior and its evidence visible beyond the lesson. It helps a manager and learner discuss whether the new skill appears in daily work."
     }
   ]
 }

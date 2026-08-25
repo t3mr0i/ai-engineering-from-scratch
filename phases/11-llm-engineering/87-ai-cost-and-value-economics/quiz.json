@@ -1,78 +1,78 @@
 {
   "lesson": "87-ai-cost-and-value-economics",
-  "title": "AI Cost and Value Economics: From Token Price to Business Case (2026)",
+  "title": "AI Cost and Value Economics",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to AI Cost and Value Economics: From Token Price to Business Case (2026)?",
+      "question": "What does caching change in cost_per_query when the system prompt is a cache hit?",
       "options": [
-        "Explain the production problem addressed by AI Cost and Value Economics: From Token Price to Business Case...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Explain the production problem addressed by AI Cost and Value Economics: From Token Price to Business Case...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of AI Cost and Value Economics: From Token Price to Business Case (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through AI Cost and Value Economics: From Token Price to Business Case (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Measure quality, cost, latency, and risk with explicit acceptance criteria",
-        "Treat one successful example as proof that every edge case works"
+        "The user turn becomes free and the output is billed at the input price",
+        "Every token is charged at the cache-write premium on a hit",
+        "Only the system-prompt portion uses the cache-read fraction; the user turn and output remain full-price",
+        "Caching changes quality routing but never changes token cost"
       ],
       "correct": 2,
-      "explanation": "“Measure quality, cost, latency, and risk with explicit acceptance criteria” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The function applies CACHE_READ_FRACTION to cached system tokens. User tokens and output tokens are still billed with their normal input and output prices."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits AI Cost and Value Economics: From Token Price to Business Case (2026)?",
+      "question": "Which tier does route choose for a high-confidence query in the COMPLEX_REASONING category?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Identify failure modes and define a safe rollback or review path",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Identify failure modes and define a safe rollback or review path” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for AI Cost and Value Economics: From Token Price to Business Case (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the production problem addressed by AI Cost and Value Economics: From Token Price to Business Case..."
+        "HAIKU, because high confidence always selects the cheapest tier",
+        "SONNET, because complex queries bypass only the Haiku branch",
+        "HAIKU, if the combined token count is under 600",
+        "OPUS, because complex reasoning is routed to the frontier tier first"
       ],
       "correct": 3,
-      "explanation": "“Explain the production problem addressed by AI Cost and Value Economics: From Token Price to Business Case...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The first branch in route checks category COMPLEX_REASONING and returns OPUS. Confidence and token count do not override that quality requirement."
+    },
+    {
+      "stage": "check",
+      "question": "What tier handles a 250-input/120-output structured-extraction query with confidence=0.92?",
+      "options": [
+        "HAIKU",
+        "SONNET",
+        "OPUS",
+        "No route, because the output is structured"
+      ],
+      "correct": 0,
+      "explanation": "The total is 370 tokens, below MAX_TOKENS_FOR_HAIKU=600; confidence exceeds 0.85; and the category is STRUCTURED_EXTRACTION. The cheapest qualifying tier is HAIKU."
+    },
+    {
+      "stage": "check",
+      "question": "What happens to a SHORT_QA query with confidence=0.55, even when its input is short?",
+      "options": [
+        "It routes to HAIKU because the task is short",
+        "It routes to OPUS because confidence is below the Sonnet threshold of 0.70",
+        "It routes to SONNET because every SHORT_QA task uses the balanced tier",
+        "It is rejected without a model tier"
+      ],
+      "correct": 1,
+      "explanation": "The low-confidence guard runs before the short-query branch. Since 0.55 is below MIN_CONFIDENCE_SONNET=0.70, route returns OPUS."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for AI Cost and Value Economics: From Token Price to Business Case (2026)?",
+      "question": "At cache_hit_rate=1.0, which cost components remain full-price in cost_per_query?",
       "options": [
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Only the cache write",
+        "Only the system prompt",
+        "The user input and model output; the system prompt uses the cache-read rate",
+        "None, because a full cache hit makes the query free"
       ],
-      "correct": 0,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "A complete hit changes only the system-prompt charge to 10% of input price. User-turn input and generated output are still charged normally."
+    },
+    {
+      "stage": "post",
+      "question": "What cost does cost_per_query(HAIKU, 400, 180, 120, 0.0) return under the catalog prices?",
+      "options": [
+        "0.000150 USD",
+        "0.000245 USD",
+        "0.000400 USD",
+        "0.000295 USD"
+      ],
+      "correct": 3,
+      "explanation": "The three terms are 400/1M*0.25 = 0.000100, 180/1M*0.25 = 0.000045, and 120/1M*1.25 = 0.000150. Their sum is 0.000295 USD."
     }
   ]
 }

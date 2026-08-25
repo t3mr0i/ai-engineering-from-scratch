@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Temporal Difference — Q-Learning & SARSA?",
+      "question": "What state does reset() return at the start of every GridWorld episode?",
       "options": [
-        "Formulate Temporal Difference — Q-Learning & SARSA in terms of states, actions, rewards, and objectives",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Formulate Temporal Difference — Q-Learning & SARSA in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Temporal Difference — Q-Learning & SARSA?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the central update rule from first principles",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Temporal Difference — Q-Learning & SARSA?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Trace learning signals through a self-terminating experiment",
-        "Treat one successful example as proof that every edge case works"
+        "(0, 3)",
+        "(3, 3)",
+        "(0, 0)",
+        "A random coordinate in the grid"
       ],
       "correct": 2,
-      "explanation": "“Trace learning signals through a self-terminating experiment” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "This toy environment always starts at the upper-left coordinate (0,0); TERMINAL is the separate state (3,3)."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Temporal Difference — Q-Learning & SARSA?",
+      "question": "What does epsilon_greedy do when rng.random() is below epsilon?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate convergence, stability, and exploration trade-offs",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate convergence, stability, and exploration trade-offs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Temporal Difference — Q-Learning & SARSA?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Formulate Temporal Difference — Q-Learning & SARSA in terms of states, actions, rewards, and objectives"
+        "It takes the action with the largest Q value",
+        "It returns the previous episode's action",
+        "It sets every Q value to zero",
+        "It chooses a random action from ACTIONS"
       ],
       "correct": 3,
-      "explanation": "“Formulate Temporal Difference — Q-Learning & SARSA in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The first branch is the exploration branch and calls rng.choice(ACTIONS); the greedy max is used only otherwise."
+    },
+    {
+      "stage": "check",
+      "question": "How does q_learning update the final transition into TERMINAL?",
+      "options": [
+        "It uses target=r, with no bootstrap term from the absorbing state",
+        "It uses target=r + gamma*max(Q[TERMINAL].values())",
+        "It skips the transition entirely",
+        "It replaces the reward with epsilon"
+      ],
+      "correct": 0,
+      "explanation": "When done is true, the code updates Q[s][a] toward r directly and breaks instead of reading a next-state maximum."
+    },
+    {
+      "stage": "check",
+      "question": "Which target distinguishes SARSA from q_learning in the nonterminal update?",
+      "options": [
+        "SARSA uses only r, while q_learning uses only gamma",
+        "SARSA uses r + gamma Q(s_next, a_next), while q_learning uses r + gamma max_a Q(s_next, a)",
+        "SARSA always uses the value at TERMINAL",
+        "SARSA samples a new environment, while q_learning uses no transitions"
+      ],
+      "correct": 1,
+      "explanation": "SARSA selects a_next with epsilon_greedy and bootstraps that action; q_learning takes the maximum next-action value regardless of the sampled action."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Temporal Difference — Q-Learning & SARSA?",
+      "question": "Why is q_learning called off-policy in this implementation?",
       "options": [
-        "Implement the central update rule from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It never explores during training",
+        "It updates only after complete episodes",
+        "Its target assumes a greedy next action even while behavior is epsilon-greedy",
+        "It uses a separate neural network for every state"
       ],
-      "correct": 0,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The behavior action may be exploratory, but the bootstrap target uses max(Q[s_next].values()), which corresponds to the greedy target policy."
+    },
+    {
+      "stage": "post",
+      "question": "What does block_means(xs, block) do with a list whose length is not divisible by block?",
+      "options": [
+        "It pads the final block with zeros",
+        "It sorts the list before averaging",
+        "It raises an error for every incomplete block",
+        "It averages only complete, non-overlapping blocks and drops the remainder"
+      ],
+      "correct": 3,
+      "explanation": "The range stops at len(xs)-block+1, so slices shorter than block are never included in the returned learning curve."
     }
   ]
 }

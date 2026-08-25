@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why can't you build a useful deep network using only linear layers (no activation functions)?",
+      "question": "What does the scratch ReLU function return for x=-2?",
       "options": [
-        "Linear layers are too slow",
-        "Stacking linear layers collapses to a single linear transformation, giving no benefit from depth",
-        "Linear layers don't have biases",
-        "Linear layers can't handle batched data — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "y = W2(W1*x + b1) + b2 simplifies to y = Ax + c. No matter how many linear layers you stack, the result is equivalent to one linear layer. Activation functions break this composability."
-    },
-    {
-      "stage": "check",
-      "question": "What is the output range of the ReLU activation function?",
-      "options": [
-        "(-1, 1)",
-        "(0, 1)",
-        "[0, infinity)",
-        "(-infinity, infinity)"
+        "-2",
+        "0.01",
+        "0",
+        "0.5"
       ],
       "correct": 2,
-      "explanation": "ReLU(x) = max(0, x). It outputs 0 for all negative inputs and passes positive inputs unchanged, giving a range of [0, infinity)."
+      "explanation": "ReLU is max(0,x), so a negative input is clipped to zero."
     },
     {
       "stage": "check",
-      "question": "What is the 'dead neuron' problem in ReLU networks?",
+      "question": "For logits [2,1,0], which class receives the largest softmax probability?",
       "options": [
-        "Neurons that compute too slowly, because one plausible output is sufficient production evidence",
-        "Neurons whose input is permanently negative, producing zero output and zero gradient forever",
-        "Neurons that produce NaN values",
-        "Neurons with zero bias"
+        "Class 2, corresponding to logit 0",
+        "All three classes equally",
+        "No class, because softmax returns logits",
+        "Class 0, corresponding to logit 2"
       ],
-      "correct": 1,
-      "explanation": "If a ReLU neuron's weighted input is always negative (due to bad initialization or large negative bias), it outputs 0 with gradient 0. It can never recover because zero gradient means zero update."
+      "correct": 3,
+      "explanation": "Softmax preserves logit ordering, so the first class has the largest probability; all probabilities sum to one."
     },
     {
       "stage": "check",
-      "question": "Which activation function is the default for hidden layers in modern transformers like GPT and BERT?",
+      "question": "What is sigmoid_derivative(0) in the lesson code?",
       "options": [
-        "Sigmoid",
-        "ReLU",
-        "GELU",
-        "Tanh"
-      ],
-      "correct": 2,
-      "explanation": "GELU (Gaussian Error Linear Unit) is the default activation in transformers. It provides smooth gradient flow, avoids dead neurons, and has been shown to outperform ReLU in language models."
-    },
-    {
-      "stage": "post",
-      "question": "Why is softmax used only in the output layer and never in hidden layers?",
-      "options": [
-        "It's too slow for hidden layers — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "It converts a vector into a probability distribution (values sum to 1), which is needed for classification output but not for intermediate representations",
-        "It causes exploding gradients",
-        "It only works with two classes"
-      ],
-      "correct": 1,
-      "explanation": "Softmax normalizes a vector so all values are in (0,1) and sum to 1, creating a probability distribution. Hidden layers need to preserve and transform information, not compress it into probabilities."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Activation Functions?",
-      "options": [
-        "Diagnose the vanishing gradient problem by measuring activation magnitudes through 10+ layers with differen...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "0.25",
+        "0",
+        "0.5",
+        "1"
       ],
       "correct": 0,
-      "explanation": "“Diagnose the vanishing gradient problem by measuring activation magnitudes through 10+ layers with differen...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The derivative is s(1-s), and sigmoid(0)=0.5, giving 0.25."
+    },
+    {
+      "stage": "check",
+      "question": "With the default alpha=0.01, what does leaky_relu(-2) return?",
+      "options": [
+        "0",
+        "-0.02",
+        "2",
+        "-2"
+      ],
+      "correct": 1,
+      "explanation": "For a negative input, Leaky ReLU returns alpha*x=0.01*(-2)=-0.02."
+    },
+    {
+      "stage": "post",
+      "question": "Which function in this lesson converts a three-class logit list into probabilities that sum to one?",
+      "options": [
+        "ReLU",
+        "Tanh",
+        "Softmax",
+        "Leaky ReLU"
+      ],
+      "correct": 2,
+      "explanation": "The scratch softmax subtracts the largest logit for stability, exponentiates, and normalizes. categorical_cross_entropy calls this conversion internally."
+    },
+    {
+      "stage": "post",
+      "question": "A ReLU neuron has a negative pre-activation for every training example. What happens to its local derivative in this implementation?",
+      "options": [
+        "It is one for every example, so the neuron learns normally",
+        "It is equal to the neuron's output probability",
+        "It becomes the GELU derivative automatically",
+        "It is zero for every example, so the neuron is dead"
+      ],
+      "correct": 3,
+      "explanation": "relu_derivative returns 0 when x is not positive. The neuron receives no gradient until an input moves its pre-activation above zero; GELU keeps a smooth negative-side response."
     }
   ]
 }

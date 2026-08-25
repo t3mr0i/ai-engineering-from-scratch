@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does master-data quality matter for AI workflows?",
+      "question": "Why is data ownership part of an AI data-quality plan rather than an administrative detail?",
       "options": [
-        "AI automatically fixes every source record before it reaches a downstream report",
-        "Data ownership stops mattering once a data-quality rule has been written down",
-        "AI can amplify duplicated, stale, undefined, or ownerless data problems",
-        "Sampling should always be avoided because it only checks a fraction of the records"
+        "A larger dataset makes ownership unnecessary because the model can infer the right field",
+        "A quality rule can repair duplicate records without anyone deciding which value is authoritative",
+        "AI enrichment needs accountable owners, definitions, samples, and a way to track unresolved issues",
+        "Master data is reliable whenever a dashboard renders without a visible error"
       ],
       "correct": 2,
-      "explanation": "AI output quality depends on source-data quality and ownership — AI doesn't auto-fix bad records, ownership still matters even with a quality rule in place, and sampling (checking a fraction of records) is one of the lesson's recommended controls, not something to avoid."
+      "explanation": "Quality work needs someone who can define the field, approve a rule, inspect samples, and resolve exceptions. The checklist connects technical checks to that ownership."
     },
     {
       "stage": "check",
-      "question": "A customer master table has three separate rows for the same company, each with a slightly different name, and nobody has merged or flagged them. Which of the lesson's four signals does this match?",
+      "question": "The customer master cleanup fixture matches two signals with data_impact=5 and correction_effort=4. Which priority does it receive?",
       "options": [
-        "Missing owner — no one is accountable for approving or fixing changes to this table",
-        "Duplicate records — the same real-world entity is represented multiple times",
-        "Stale field — the values were correct once but haven't been refreshed recently",
-        "Definition gap — the team disagrees about what counts as an active customer"
+        "sampling check",
+        "quality rule sprint",
+        "observe",
+        "data governance action"
+      ],
+      "correct": 3,
+      "explanation": "Its score is 5*2 + 4 + 2*2 = 18. The data-governance action band begins at 16."
+    },
+    {
+      "stage": "check",
+      "question": "Which controls does recommend select when a data-quality Scenario matches two signals?",
+      "options": [
+        "data owner, quality rule, and sample check",
+        "issue backlog only, because unresolved records are the final output",
+        "data owner and issue backlog, skipping the sample check",
+        "A dashboard refresh without a quality rule"
+      ],
+      "correct": 0,
+      "explanation": "Two matches select the first three controls: data owner, quality rule, and sample check. The issue backlog is the fourth control."
+    },
+    {
+      "stage": "check",
+      "question": "What priority does priority_for(15) return in this data-quality lesson?",
+      "options": [
+        "data governance action",
+        "quality rule sprint",
+        "sampling check",
+        "observe"
       ],
       "correct": 1,
-      "explanation": "Three rows for one company that were never merged is the lesson's duplicate-records signal — distinct from a missing owner (no accountable person), a stale field (an outdated single value), or a definition gap (disagreement about what a field means)."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Python artifact produce?",
-      "options": [
-        "A full data warehouse that replaces the team's existing operational database",
-        "A neural embedding model trained on the flagged duplicate and stale records",
-        "A final legal opinion on whether the data can be used for the AI use case",
-        "A ranked data-quality readiness plan with controls and rationale"
-      ],
-      "correct": 3,
-      "explanation": "The artifact is a triage tool that ranks scenarios into a data-quality readiness plan with controls and rationale — it doesn't build a warehouse, train an embedding model, or issue a legal opinion."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to this lesson?",
-      "options": [
-        "Ignoring the data owner because the AI pipeline can proceed without accountability",
-        "Skipping the sample check since AI enrichment is assumed to catch bad records anyway",
-        "Hiding the definition gap so the backlog doesn't grow before the AI project ships",
-        "Quality rule — a testable, explicit definition of what a valid value looks like"
-      ],
-      "correct": 3,
-      "explanation": "The lesson's controls are data owner, quality rule, sample check, and issue backlog — quality rule makes assumptions testable, unlike ignoring the owner, skipping sampling, or hiding a definition gap."
+      "explanation": "Scores from 11 through 15 are quality rule sprint. Scores of 16 or more require data governance action."
     },
     {
       "stage": "post",
-      "question": "When should a data issue become an AI readiness blocker?",
+      "question": "The reporting field fixture matches stale field and definition gap, with data_impact=4 and correction_effort=4. What score and priority should a reviewer see?",
       "options": [
-        "Only when the underlying source data is already perfect and needs absolutely no further review — and applies unchanged even when the lesson's stated preconditions fail",
-        "When ownership, duplicates, stale fields, or definitions stay unresolved for a high-impact use case",
-        "Only when there is no AI use case being considered for that data at all right now",
-        "Never — AI can reliably infer every missing data definition from context on its own"
+        "12 and quality rule sprint",
+        "14 and sampling check",
+        "16 and data governance action",
+        "20 and observe"
       ],
-      "correct": 1,
-      "explanation": "High-impact AI use cases need resolved ownership, deduping, freshness, and definitions — not perfect data as a precondition, the absence of any AI use case, or blind trust that AI can infer definitions."
+      "correct": 2,
+      "explanation": "The score is 4*2 + 4 + 2*2 = 16, so the first governance-action band applies."
     },
     {
       "stage": "post",
-      "question": "What should teams create before scaling AI on operational data?",
+      "question": "What should checklist-data-quality-ai-readiness.md establish before data feeds an AI workflow?",
       "options": [
-        "A single prompt template that works without referencing any source data at all, with no need to inspect intermediate results or test edge cases",
-        "Named owners, testable quality rules, sample checks, and a data-quality backlog",
-        "An enrichment workflow that runs on operational data without any human review",
-        "A data definition that stays undocumented so the team can move faster"
+        "Only a deduplication percentage, without naming the field owner",
+        "A guarantee that enrichment will correct every missing field automatically",
+        "A model choice before the source data's meaning and quality are agreed",
+        "The data owner, quality rule, sample evidence, definitions, and backlog for unresolved records"
       ],
-      "correct": 1,
-      "explanation": "The lesson's readiness controls are named owners, quality rules, sample checks, and a backlog for issues — not a prompt that ignores source data, an unreviewed enrichment workflow, or an undocumented definition."
+      "correct": 3,
+      "explanation": "The checklist makes data readiness reviewable. It links rules and samples to ownership and gives the team a place to manage issues that the pilot does not resolve."
     }
   ]
 }

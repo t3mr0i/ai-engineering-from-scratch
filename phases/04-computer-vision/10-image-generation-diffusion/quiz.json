@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why can diffusion training pick any timestep t directly instead of simulating the forward Markov chain step by step?",
+      "question": "What does linear_beta_schedule(T=200) return?",
       "options": [
-        "It is an approximation that ignores the intermediate steps — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "Because the composition of many Gaussian additions still yields a Gaussian, giving a closed-form q(x_t|x_0) = N(sqrt(alpha_bar_t) x_0, (1 - alpha_bar_t) I) that you can sample in one step",
-        "Because x_t is independent of x_0",
-        "It is required by PyTorch's autograd"
+        "A single beta selected from the image mean",
+        "A 200x200 covariance matrix",
+        "A length-200 tensor linearly interpolating from beta_start to beta_end",
+        "A list of denoised images"
       ],
-      "correct": 1,
-      "explanation": "Repeated Gaussian additions close up analytically. The cumulative product alpha_bar_t encodes 'how much signal is left after t steps', and you can sample x_t directly without running the chain. This is why diffusion training is O(1) per step rather than O(T)."
+      "correct": 2,
+      "explanation": "torch.linspace creates one beta for each of the T forward-noising steps."
     },
     {
       "stage": "check",
-      "question": "What does a DDPM's neural network actually predict?",
+      "question": "What is the shape of q_sample(x0, t, noise, schedule) relative to x0?",
       "options": [
-        "The next image x_{t-1} directly, with no need to inspect intermediate results or test edge cases",
-        "The noise epsilon that was added at step t, from which x_{t-1}'s mean is derived analytically",
-        "The class label of the input",
-        "The signal-to-noise ratio"
+        "One scalar per timestep",
+        "The shape of the beta vector",
+        "A class-logit matrix",
+        "The same shape as x0"
       ],
-      "correct": 1,
-      "explanation": "DDPM parameterises the model to predict epsilon. Given the noise prediction and the noise schedule, x_{t-1}'s Gaussian mean and variance are closed-form. Predicting epsilon instead of x_0 or x_{t-1} simplifies the loss to a plain MSE and gives numerically better gradients."
+      "correct": 3,
+      "explanation": "The schedule coefficients are reshaped to broadcast over channels and spatial dimensions, so the noisy sample retains x0's image shape."
     },
     {
       "stage": "check",
-      "question": "Why does DDIM achieve similar sample quality to DDPM with ~20x fewer steps?",
+      "question": "What target does train_step use for the TinyUNet's MSE loss?",
       "options": [
-        "DDIM changes the training objective",
-        "DDIM reformulates sampling as a deterministic ODE whose trajectory can be discretised with far fewer steps while hitting nearly the same endpoint; no retraining required",
-        "DDIM uses a faster model architecture, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "DDIM generates smaller images"
-      ],
-      "correct": 1,
-      "explanation": "DDIM's key observation is that the reverse process, when re-parameterised deterministically, becomes an ODE that a few steps approximate well. The model (weights and loss) is unchanged from DDPM; only the sampler differs. A DDPM checkpoint can be used with a DDIM, DPM-Solver, or Euler sampler interchangeably."
-    },
-    {
-      "stage": "check",
-      "question": "You plot `alpha_bar_t` for a linear beta schedule with T=1000 and see it drops to near-zero by t=600. Why does this matter?",
-      "options": [
-        "It does not matter",
-        "The last 40% of timesteps add almost no signal; training those timesteps teaches the network to denoise noise that is already approximately N(0, I), which wastes capacity. Cosine or sigmoid schedules fix this by spreading the noise injection more evenly",
-        "alpha_bar_t must be zero at the end, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "PyTorch requires a linear schedule"
-      ],
-      "correct": 1,
-      "explanation": "Linear beta schedules finish the diffusion process too early. By t=600 the signal is already destroyed; training and sampling through t=600-1000 adds nothing. Cosine schedules (Nichol & Dhariwal) keep signal around longer, which is why modern models use them, especially at lower resolutions."
-    },
-    {
-      "stage": "post",
-      "question": "Why does time conditioning get added to the U-Net via a sinusoidal embedding instead of a one-hot timestep?",
-      "options": [
-        "One-hot vectors are too large",
-        "A sinusoidal embedding is smooth in t, which lets the network interpolate between timesteps it has not seen exactly and encodes scale information the architecture can use additively at multiple depths",
-        "Sinusoidal is required by BatchNorm",
-        "One-hot would violate the chain rule — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence"
-      ],
-      "correct": 1,
-      "explanation": "Sinusoidal embeddings give the network a continuous representation of t at multiple frequencies. Any timestep is a unique point in that embedding space, and nearby timesteps are nearby embeddings. That lets the model generalise across all T values with far fewer parameters than a learned per-timestep embedding. Same idea as transformer positional encoding."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Image Generation — Diffusion Models?",
-      "options": [
-        "Implement a DDPM-style training objective that regresses the noise added at each step, and a sampler that w...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "The Gaussian noise sampled for the selected timestep",
+        "The clean image class label",
+        "The original timestep integer as a pixel map",
+        "The denoised image from a previous epoch"
       ],
       "correct": 0,
-      "explanation": "“Implement a DDPM-style training objective that regresses the noise added at each step, and a sampler that w...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The model receives x_t and t and is trained with F.mse_loss(pred, noise), learning to predict the injected noise."
+    },
+    {
+      "stage": "check",
+      "question": "What does q_sample combine to construct x_t?",
+      "options": [
+        "x0 divided by the timestep plus a class embedding",
+        "sqrt(alpha_bar_t)*x0 plus sqrt(1-alpha_bar_t)*noise",
+        "Only the noise tensor, with x0 discarded",
+        "The denoiser output plus the beta index"
+      ],
+      "correct": 1,
+      "explanation": "The closed form uses the cumulative alpha product to mix the clean image and standard Gaussian noise at any selected t."
+    },
+    {
+      "stage": "post",
+      "question": "How does sample_ddim differ from sample_ddpm in this code when eta=0?",
+      "options": [
+        "It starts from a clean image instead of Gaussian noise",
+        "It trains the U-Net after every reverse step",
+        "It uses a shorter chosen timestep sequence and no additional random noise",
+        "It never calls the model with a timestep"
+      ],
+      "correct": 2,
+      "explanation": "DDIM selects a reduced sequence of timesteps; eta=0 sets sigma to zero, making the update deterministic for a given initial noise."
+    },
+    {
+      "stage": "post",
+      "question": "Why does TinyUNet receive t as a separate argument?",
+      "options": [
+        "The timestep is the image's class label",
+        "t determines the number of output channels",
+        "The U-Net cannot process spatial tensors without an integer",
+        "The denoiser must condition its prediction on the noise level"
+      ],
+      "correct": 3,
+      "explanation": "The time embedding is projected into the encoder features so the same network can predict noise at different corruption levels."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to MDPs, States, Actions & Rewards?",
+      "question": "What does all_states() return when GRID=4?",
       "options": [
-        "Formulate MDPs, States, Actions & Rewards in terms of states, actions, rewards, and objectives",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
+        "The 16 coordinate pairs (r, c) for rows and columns 0 through 3",
+        "Only the 4 terminal states on the bottom row",
+        "A probability distribution over the four action names",
+        "A value table containing one floating-point return"
       ],
       "correct": 0,
-      "explanation": "“Formulate MDPs, States, Actions & Rewards in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "all_states uses two ranges of length four and returns every pair, so the 4x4 grid contains 16 states."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of MDPs, States, Actions & Rewards?",
+      "question": "What does step((2, 3), 'down') return in this GridWorld?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the central update rule from first principles",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "((2, 3), 0.0, False)",
+        "((3, 3), -1.0, True)",
+        "((3, 3), 1.0, False)",
+        "((2, 2), -1.0, True)"
       ],
       "correct": 1,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Moving down reaches TERMINAL=(3,3); the transition still receives -1.0 and reports done=True."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through MDPs, States, Actions & Rewards?",
+      "question": "What probability does uniform_policy assign to each action?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Trace learning signals through a self-terminating experiment",
-        "Treat one successful example as proof that every edge case works"
+        "0.0, because it never chooses an action",
+        "0.5 for down and right, and 0.0 for the others",
+        "0.25 for each of up, down, left, and right",
+        "A probability selected by the rollout's random seed"
       ],
       "correct": 2,
-      "explanation": "“Trace learning signals through a self-terminating experiment” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "uniform_policy divides one by len(ACTIONS), and there are four actions, so every action has probability 0.25."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits MDPs, States, Actions & Rewards?",
+      "question": "If policy_evaluation is called with gamma=0, what value does every nonterminal state receive after convergence?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate convergence, stability, and exploration trade-offs",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate convergence, stability, and exploration trade-offs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for MDPs, States, Actions & Rewards?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Formulate MDPs, States, Actions & Rewards in terms of states, actions, rewards, and objectives"
+        "0.0, because future rewards are ignored",
+        "-gamma, because the discount is the only remaining term",
+        "The shortest-path length to (3,3)",
+        "-1.0, because only the immediate step reward remains"
       ],
       "correct": 3,
-      "explanation": "“Formulate MDPs, States, Actions & Rewards in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "With gamma=0, each Bellman backup keeps only the transition reward, which is -1.0 for every nonterminal action."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for MDPs, States, Actions & Rewards?",
+      "question": "Which expression does policy_evaluation use for a state under a stochastic policy?",
       "options": [
-        "Implement the central update rule from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "The probability-weighted sum of reward plus gamma times the current value of each next state",
+        "The largest raw reward observed in any rollout",
+        "The average of action names converted to integers",
+        "The undiscounted return from only the first episode"
       ],
       "correct": 0,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "For each action, the code calls step and adds pi_a * (reward + gamma * values[next_state]), which is the Bellman expectation backup."
+    },
+    {
+      "stage": "post",
+      "question": "What does step(TERMINAL, 'up') return?",
+      "options": [
+        "((2, 3), -1.0, False)",
+        "((3, 3), 0.0, True)",
+        "((3, 3), -1.0, False)",
+        "An exception because terminal states have no actions"
+      ],
+      "correct": 1,
+      "explanation": "The first branch of step treats TERMINAL as absorbing and returns the same state, zero reward, and done=True."
     }
   ]
 }

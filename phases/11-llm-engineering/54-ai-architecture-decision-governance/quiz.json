@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why should AI architecture decisions be recorded?",
+      "question": "What belongs in an architecture decision record for an uncertain AI design?",
       "options": [
-        "Because tradeoffs should be hidden from future teams who inherit the decision",
-        "Because reversibility never matters once an architecture decision has shipped",
-        "Because an ADR record replaces the need for a separate security review and approval entirely",
-        "Because model, vendor, security, and cost choices can become expensive defaults"
+        "The options, technical uncertainty, lock-in and security boundaries, cost trade-offs, and reversibility",
+        "Only the selected vendor, because alternatives make the decision harder to implement",
+        "A performance claim without assumptions about data, permissions, or operating cost",
+        "A diagram that leaves ownership and review timing to the delivery team"
+      ],
+      "correct": 0,
+      "explanation": "The artifact turns an architecture choice into a reviewable decision. Recording alternatives, constraints, trade-offs, reversibility, and accountable review prevents a provisional choice from becoming an unexplained commitment."
+    },
+    {
+      "stage": "check",
+      "question": "The model gateway choice fixture matches three signals, has design_impact=5, and reversibility=2. What priority does recommend return?",
+      "options": [
+        "formal adr with score 15",
+        "architecture review board with score 20",
+        "design note with score 13",
+        "team note with score 11"
+      ],
+      "correct": 1,
+      "explanation": "Irreversibility is 6-2 = 4. The raw score is 5*2 + 4 + 3*2 = 20, which reaches the architecture review board band."
+    },
+    {
+      "stage": "check",
+      "question": "Which category does choose_category assign to the model gateway choice fixture?",
+      "options": [
+        "architecture decision",
+        "vendor choice",
+        "security review",
+        "cost review"
+      ],
+      "correct": 2,
+      "explanation": "There are three matches. The category index is (3 + 5 + 2) modulo 4 = 2, and CATEGORIES[2] is security review."
+    },
+    {
+      "stage": "check",
+      "question": "A Scenario with three matched architecture signals receives which controls from recommend?",
+      "options": [
+        "adr record and threat model only",
+        "cost model and review board only",
+        "a review board entry without an ADR record",
+        "adr record, threat model, cost model, and review board"
       ],
       "correct": 3,
-      "explanation": "Recorded decisions preserve context so model, vendor, security, and cost choices don't quietly become expensive defaults — tradeoffs shouldn't be hidden, reversibility still matters, and an ADR doesn't substitute for security review."
-    },
-    {
-      "stage": "check",
-      "question": "A team adopts a proprietary vector database with a data format and query API that no other vendor supports, without ever discussing what switching away would cost later. Which of the lesson's four signals does this match most directly?",
-      "options": [
-        "Vendor lock-in — the chosen technology makes switching to an alternative costly or difficult later",
-        "Technical uncertainty — the team isn't sure the chosen approach will even work at the required scale",
-        "Security boundary — the decision changes who or what can access sensitive data",
-        "Cost tradeoff — the decision trades a lower price today for a higher price later"
-      ],
-      "correct": 0,
-      "explanation": "Choosing a proprietary format with no viable exit path is the lesson's vendor-lock-in signal — distinct from technical uncertainty (unproven feasibility), a security boundary change, or a cost tradeoff."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Python artifact produce?",
-      "options": [
-        "A finished, deployable production system ready to serve live traffic",
-        "An itemized cloud invoice showing the cost of each architecture option, because one plausible output is sufficient production evidence",
-        "A ranked architecture decision plan with governance controls for each option",
-        "A user survey measuring satisfaction with the chosen architecture"
-      ],
-      "correct": 2,
-      "explanation": "The artifact ranks scenarios into an architecture decision plan with governance controls, recommending a design note, ADR, or review path — it doesn't build a production system, generate an invoice, or run a survey."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to this lesson?",
-      "options": [
-        "Ignoring the cost model because the architecture decision needs to ship quickly",
-        "Skipping the review board because the team is confident in its own judgment",
-        "Threat model — a review of who could misuse the new architecture and how",
-        "Hiding the alternatives that were considered so the ADR looks more decisive"
-      ],
-      "correct": 2,
-      "explanation": "The lesson's controls are ADR record, threat model, cost model, and review board — a threat model reviews who could misuse the architecture, unlike ignoring cost, skipping review, or hiding alternatives."
+      "explanation": "The control slice takes four entries when three signals match. That gives the decision record, threat model, cost model, and review board controls together."
     },
     {
       "stage": "post",
-      "question": "When does an AI architecture decision need stronger governance?",
+      "question": "A no-match Scenario has design_impact=2 and reversibility=5. What does recommend return?",
       "options": [
-        "Only when there is no security boundary involved in the decision at all",
-        "Only when the architecture choice is trivial and easy to reverse later",
-        "When impact is high, reversibility is low, or security, vendor, or cost tradeoffs exist",
-        "Never — documenting implementation details is enough governance on its own — and applies unchanged even when the lesson's stated preconditions fail"
+        "team note with score 5",
+        "design note with score 7",
+        "formal adr with score 11",
+        "architecture review board with score 16"
       ],
-      "correct": 2,
-      "explanation": "High impact, low reversibility, or security, vendor, or cost tradeoffs are exactly when governance should strengthen — not the absence of a security boundary, a trivial choice, or implementation notes alone."
+      "correct": 0,
+      "explanation": "Irreversibility is max(0, 6-5) = 1, so the score is 2*2 + 1 = 5. With no matched signals it remains in the team note band."
     },
     {
       "stage": "post",
-      "question": "What should an AI architecture decision record include?",
+      "question": "Before approving the gateway choice, what should template-ai-architecture-decision-record.md make explicit?",
       "options": [
-        "The decision, alternatives considered, consequences, threat model, and cost tradeoff",
-        "Only the name of the vendor that was ultimately chosen for the project",
-        "No alternatives, since listing rejected options makes the record longer, with no need to inspect intermediate results or test edge cases",
-        "No trigger for revisiting the decision later, once it has been approved"
+        "Only the preferred vendor and a target date for implementation",
+        "The alternatives, trade-offs, reversibility, decision owner, and required review controls",
+        "A single benchmark number with no record of the security boundary",
+        "A permanent choice that cannot be revisited when assumptions change"
       ],
-      "correct": 0,
-      "explanation": "An ADR should record the decision, the alternatives considered, consequences, the threat model, and the cost tradeoff — not just a vendor name, a record with no alternatives, or one with no revisit trigger."
+      "correct": 1,
+      "explanation": "The template keeps the decision governable. A reviewer can challenge assumptions and revisit the choice because the alternatives, constraints, owner, and control evidence are visible."
     }
   ]
 }

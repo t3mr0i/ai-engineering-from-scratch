@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to AI-Assisted Project Status and Steering Pack Production (2026)?",
+      "question": "A T4 signal is five days old. Is it admissible under STALENESS_THRESHOLD_DAYS?",
       "options": [
-        "Explain the production problem addressed by AI-Assisted Project Status and Steering Pack Production (2026)",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Yes, because T4 signals remain admissible for up to 14 days",
+        "No, because every steering signal must be younger than one day",
+        "No, because T4 is qualitative and can never support a pack",
+        "Yes, but only if it is also marked as a blocker"
       ],
       "correct": 0,
-      "explanation": "“Explain the production problem addressed by AI-Assisted Project Status and Steering Pack Production (2026)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "T4 has the widest threshold in the table: 14 days. A five-day-old proxy is therefore admissible, although it cannot by itself support status confirmation without T1/T2 evidence."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of AI-Assisted Project Status and Steering Pack Production (2026)?",
+      "question": "Why does scenario B, with only admissible T4 signals, route to RISK_ESCALATION?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "A T4 signal always creates a blocker regardless of its age",
+        "The signals are admissible but no T1 or T2 evidence is present to confirm status",
+        "The router ignores all T4 signals before checking freshness",
+        "RISK_ESCALATION is the default for every healthy project"
       ],
       "correct": 1,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The T4 signals pass their 14-day freshness window, but route_section reserves STATUS_CONFIRMATION for admissible T1/T2 evidence. T3/T4-only evidence is routed to escalation and fails the tier-coverage gate."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through AI-Assisted Project Status and Steering Pack Production (2026)?",
+      "question": "What changes when scenario B gains a fresh T1 API error-rate signal?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Measure quality, cost, latency, and risk with explicit acceptance criteria",
-        "Treat one successful example as proof that every edge case works"
+        "It becomes DECISION_REQUEST because adding a signal invalidates the old evidence",
+        "It stays RISK_ESCALATION because T4 evidence always dominates T1",
+        "It becomes STATUS_CONFIRMATION and clears the no-T1/T2 quality gate",
+        "It becomes BLOCKED because three signals exceed the pack limit"
       ],
       "correct": 2,
-      "explanation": "“Measure quality, cost, latency, and risk with explicit acceptance criteria” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The added T1 signal is fresh and admissible. With T1 evidence present and no blocker or threshold breach, route_section selects STATUS_CONFIRMATION and the tier gate passes."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits AI-Assisted Project Status and Steering Pack Production (2026)?",
+      "question": "What section type has priority in scenario D, where an admissible dependency signal is_blocker=True?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Identify failure modes and define a safe rollback or review path",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Identify failure modes and define a safe rollback or review path” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for AI-Assisted Project Status and Steering Pack Production (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the production problem addressed by AI-Assisted Project Status and Steering Pack Production (2026)"
+        "STATUS_CONFIRMATION, because the production error rate is fresh",
+        "RISK_ESCALATION, because every blocker is only a threshold breach",
+        "STATUS_CONFIRMATION, because T1/T2 evidence always outranks blockers",
+        "DECISION_REQUEST, because an admissible blocker requires a steering decision"
       ],
       "correct": 3,
-      "explanation": "“Explain the production problem addressed by AI-Assisted Project Status and Steering Pack Production (2026)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "route_section checks admissible blockers first. The dependency blocker therefore selects DECISION_REQUEST before it considers threshold breaches or evidence tiers."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for AI-Assisted Project Status and Steering Pack Production (2026)?",
+      "question": "What does scenario C route_section return when fresh T1/T2 evidence exists but a fresh T2 scope signal has threshold_breached=True?",
       "options": [
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "RISK_ESCALATION, because a threshold breach outranks ordinary status confirmation",
+        "STATUS_CONFIRMATION, because any T1 signal suppresses escalation",
+        "DECISION_REQUEST, because stale signals are always blockers",
+        "STATUS_CONFIRMATION, because only T4 breaches are actionable"
       ],
       "correct": 0,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The stale signals are excluded, but the fresh scope breach remains admissible. A breach is checked before the T1/T2 branch, so the section becomes RISK_ESCALATION."
+    },
+    {
+      "stage": "post",
+      "question": "What does route_section return when every supplied signal is stale?",
+      "options": [
+        "STATUS_CONFIRMATION with a note that stale data is acceptable for steering",
+        "DECISION_REQUEST plus an evidence-traceability gate failure because no signal is admissible",
+        "RISK_ESCALATION with all stale signals treated as current",
+        "No section decision; the function raises an exception for an empty admissible list"
+      ],
+      "correct": 1,
+      "explanation": "When admissible is empty, the router chooses DECISION_REQUEST and adds the zero-admissible-signals quality failure. Stale observations remain visible as rejected evidence rather than being promoted."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is runtime feedback?",
+      "question": "Under the demo contract, which path is forbidden even though src/** and tests/** are allowed?",
       "options": [
-        "A polished completion sentence",
-        "A hidden model thought process",
-        "Observed command evidence",
-        "A future task not yet attempted"
+        "src/app.py",
+        "tests/test_app.py",
+        "secrets/key.txt",
+        "tests/fixtures/input.json"
       ],
       "correct": 2,
-      "explanation": "Exit status and captured streams describe what actually happened."
+      "explanation": "The contract allows src/** and tests/** but explicitly lists secrets/** as forbidden; the demo reports secrets/key.txt as forbidden."
     },
     {
       "stage": "check",
-      "question": "Why should forbidden patterns win?",
+      "question": "Which input does _normalize_relative reject before matching a scope pattern?",
       "options": [
-        "To make every scoped path string in the contract a little longer",
-        "To skip running the test suite before every command",
-        "To reorder the captured stdout and stderr log lines",
-        "To prevent a broad allow-list from authorizing a sensitive path"
+        "tests/test_app.py",
+        "src/./app.py",
+        "fixtures/input.json",
+        "../secrets/key.txt"
       ],
       "correct": 3,
-      "explanation": "Specific deny rules protect against broad matches."
+      "explanation": "Parent traversal is unsafe and returns None; the normalizer also rejects absolute paths and Windows-drive paths before scope matching."
     },
     {
       "stage": "check",
-      "question": "Why use argv with shell=False?",
+      "question": "What receipt represents a command that exceeds run_command's timeout?",
       "options": [
-        "To permit shell-level command injection",
-        "To keep command boundaries explicit",
-        "To hide the command's stderr output",
-        "To disable the runtime timeout"
-      ],
-      "correct": 1,
-      "explanation": "An argv boundary avoids shell interpretation and accidental expansion."
-    },
-    {
-      "stage": "check",
-      "question": "How should a timeout be represented?",
-      "options": [
-        "As an explicit receipt",
-        "As an unlogged success",
-        "By hanging without limit",
-        "By deleting its output"
+        "returncode=-1 and timed_out=True",
+        "returncode=0 and timed_out=False",
+        "returncode=124 and timed_out=False",
+        "returncode=None and timed_out=False"
       ],
       "correct": 0,
-      "explanation": "Timeout is feedback that informs retry or escalation."
+      "explanation": "TimeoutExpired is converted into CommandReceipt(argv, -1, ..., timed_out=True), preserving partial output instead of raising."
+    },
+    {
+      "stage": "check",
+      "question": "What does the failing demo command report in its CommandReceipt?",
+      "options": [
+        "returncode=0, stderr='' and passed=True",
+        "returncode=2, stderr contains 'tests: fail' and passed=False",
+        "returncode=-1, timed_out=True and passed=False",
+        "returncode=1, stdout contains 'tests: pass' and passed=False"
+      ],
+      "correct": 1,
+      "explanation": "The second subprocess writes tests: fail to stderr and exits 2; passed requires returncode 0 and no timeout."
     },
     {
       "stage": "post",
-      "question": "What belongs in the next decision?",
+      "question": "Why does run_command receive an argv sequence and use shell=False?",
       "options": [
-        "Only the raw stdout stream itself",
-        "Scope verdict plus command receipts",
-        "Only the original task prompt text",
-        "Nothing at all once a command fails"
+        "To let shell metacharacters expand inside the command",
+        "To suppress all stderr so only the exit code remains",
+        "To keep executable and arguments as explicit boundaries",
+        "To make a timed-out process count as successful"
       ],
-      "correct": 1,
-      "explanation": "Scope and runtime evidence together explain what can happen next."
+      "correct": 2,
+      "explanation": "An argv list with shell=False avoids shell interpretation and makes the executed command and its arguments explicit in the receipt."
     },
     {
       "stage": "post",
-      "question": "What should a failed command do to feedback?",
+      "question": "If a path matches both an allowed pattern and a forbidden pattern, which result does check_scope return?",
       "options": [
-        "Erase it from the receipt",
-        "Preserve exit code and stderr",
-        "Convert it into a silent pass",
-        "Retry the command forever"
+        "passed=True because any allowed match wins",
+        "The path is omitted from the result",
+        "A warning only, never a violation",
+        "A forbidden violation, because deny rules are checked first"
       ],
-      "correct": 1,
-      "explanation": "Failure output is needed for a bounded repair."
+      "correct": 3,
+      "explanation": "check_scope tests contract.forbidden before allowed, so a sensitive path cannot be authorized accidentally by a broad allow-list."
     }
   ]
 }

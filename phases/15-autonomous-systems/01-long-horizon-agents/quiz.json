@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to The Shift from Chatbots to Long-Horizon Agents?",
+      "question": "With a 14-hour baseline and a 7-month doubling time, what horizon does horizon_at report at month 14?",
       "options": [
-        "Explain the autonomy mechanism and assumptions behind The Shift from Chatbots to Long-Horizon Agents",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "56 hours",
+        "28 hours",
+        "42 hours",
+        "98 hours"
       ],
       "correct": 0,
-      "explanation": "“Explain the autonomy mechanism and assumptions behind The Shift from Chatbots to Long-Horizon Agents” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Two doubling intervals have elapsed, so 14 * 2^(14/7) = 14 * 4 = 56 hours."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of The Shift from Chatbots to Long-Horizon Agents?",
+      "question": "What does end_to_end_reliability(0.99, 70) imply about a 70-step agent run?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Model its control loop, state transitions, and stopping conditions explicitly",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "About 70% reliability, so it is production-ready",
+        "About 49% reliability, which the demo labels coin-flip or worse",
+        "Exactly 99% reliability because each step is independent",
+        "A reliability above 99% because errors average out"
       ],
       "correct": 1,
-      "explanation": "“Model its control loop, state transitions, and stopping conditions explicitly” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The function raises the per-step probability to the number of steps: 0.99^70 is about 0.495, so long chains compound small failures."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through The Shift from Chatbots to Long-Horizon Agents?",
+      "question": "What is the largest integer step count max_steps_for_target(0.99, 0.5) can return?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Apply bounded permissions, budgets, and rollback controls",
-        "Treat one successful example as proof that every edge case works"
+        "50",
+        "70",
+        "68",
+        "99"
       ],
       "correct": 2,
-      "explanation": "“Apply bounded permissions, budgets, and rollback controls” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "It floors log(0.5) / log(0.99), which is about 68.97, yielding 68 steps."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits The Shift from Chatbots to Long-Horizon Agents?",
+      "question": "A 168-hour horizon has a 40% deployment gap. What effective horizon does the demo compute?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate capability and safety claims against reproducible evidence",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate capability and safety claims against reproducible evidence” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for The Shift from Chatbots to Long-Horizon Agents?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the autonomy mechanism and assumptions behind The Shift from Chatbots to Long-Horizon Agents"
+        "168 hours",
+        "67.2 hours",
+        "100 hours",
+        "100.8 hours"
       ],
       "correct": 3,
-      "explanation": "“Explain the autonomy mechanism and assumptions behind The Shift from Chatbots to Long-Horizon Agents” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The gap multiplier is 1 - 0.40, so 168 * 0.60 = 100.8 hours."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for The Shift from Chatbots to Long-Horizon Agents?",
+      "question": "Using the lesson's 14-hour baseline and 7-month doubling time, when does the horizon first reach 168 hours?",
       "options": [
-        "Model its control loop, state transitions, and stopping conditions explicitly",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "About month 25.1",
+        "Month 14",
+        "Month 42",
+        "About month 7.0"
       ],
       "correct": 0,
-      "explanation": "“Model its control loop, state transitions, and stopping conditions explicitly” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The target is twelve times the baseline, so months_to_cross returns 7 * log2(12), about 25.1 months."
+    },
+    {
+      "stage": "post",
+      "question": "How should the demo classify 0.995 per-step reliability over 200 steps?",
+      "options": [
+        "Production-ready because the step rate exceeds 99%",
+        "About 37% end-to-end reliability, so coin flip or worse",
+        "About 37% end-to-end reliability, so not production",
+        "Exactly 0.5 because the target is 200 steps"
+      ],
+      "correct": 1,
+      "explanation": "0.995^200 is about 0.367, which is below 0.5, so the runtime label is coin flip or worse; it is also below the 0.80 production threshold."
     }
   ]
 }

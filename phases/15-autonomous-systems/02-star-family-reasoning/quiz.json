@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to STaR, V-STaR, Quiet-STaR — Self-Taught Reasoning?",
+      "question": "In the simulator, which trace is a shortcut rather than a sound rationale?",
       "options": [
-        "Explain the autonomy mechanism and assumptions behind STaR, V-STaR, Quiet-STaR — Self-Taught Reasoning",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It gets the answer right but sets rationale_sound to False",
+        "It gets the answer wrong and has a sound rationale",
+        "It is always sampled on OOD tasks",
+        "It is discarded before answer accuracy is measured"
       ],
       "correct": 0,
-      "explanation": "“Explain the autonomy mechanism and assumptions behind STaR, V-STaR, Quiet-STaR — Self-Taught Reasoning” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "A shortcut trace can be correct, but the model marks its rationale as unsound; the ID/OOD difference changes its answer probability, not that label."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of STaR, V-STaR, Quiet-STaR — Self-Taught Reasoning?",
+      "question": "For a model with probabilities sound=.20, shortcut=.40, random=.40, what does evaluate measure separately?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Model its control loop, state transitions, and stopping conditions explicitly",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Only the fraction of sound traces",
+        "Answer accuracy and the fraction of evaluated traces whose rationale is sound",
+        "Only whether shortcut traces work OOD",
+        "The number of generated traces, without their answers"
       ],
       "correct": 1,
-      "explanation": "“Model its control loop, state transitions, and stopping conditions explicitly” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "evaluate counts correct answers for accuracy and counts rationale_sound for rationale soundness, so a correct shortcut affects the two metrics differently."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through STaR, V-STaR, Quiet-STaR — Self-Taught Reasoning?",
+      "question": "In one idealized STaR update, why can sound=.20, shortcut=.40, random=.40 move toward approximately .38, .40, .22?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Apply bounded permissions, budgets, and rollback controls",
-        "Treat one successful example as proof that every edge case works"
+        "The update deletes every shortcut trace",
+        "The alpha value replaces the old model with a uniform distribution",
+        "Correct traces are filtered, their sound/shortcut/random shares are measured, and alpha=.6 blends those shares with the old probabilities",
+        "The OOD accuracy of shortcuts is copied into the sound probability"
       ],
       "correct": 2,
-      "explanation": "“Apply bounded permissions, budgets, and rollback controls” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The expected kept shares are .50, .40, and .10; with alpha .6, blending them with the old vector gives .38, .40, and .22."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits STaR, V-STaR, Quiet-STaR — Self-Taught Reasoning?",
+      "question": "What is the main effect of V-STaR's score when it compares traces?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate capability and safety claims against reproducible evidence",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate capability and safety claims against reproducible evidence” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for STaR, V-STaR, Quiet-STaR — Self-Taught Reasoning?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the autonomy mechanism and assumptions behind STaR, V-STaR, Quiet-STaR — Self-Taught Reasoning"
+        "It selects the shortest rationale regardless of correctness",
+        "It gives every wrong trace the same score as a sound trace",
+        "It evaluates only the first sampled trace",
+        "It makes a sound correct trace score higher than a shortcut or wrong trace"
       ],
       "correct": 3,
-      "explanation": "“Explain the autonomy mechanism and assumptions behind STaR, V-STaR, Quiet-STaR — Self-Taught Reasoning” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The score is .9 for a sound trace, .55 for a correct shortcut, and .3 for a wrong trace, so sampling can favor a sound explanation."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for STaR, V-STaR, Quiet-STaR — Self-Taught Reasoning?",
+      "question": "Why can STaR reinforce a shortcut on an OOD task?",
       "options": [
-        "Model its control loop, state transitions, and stopping conditions explicitly",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It retains traces because they are correct, even though a shortcut is correct only .05 of the time OOD and has no sound rationale",
+        "It forces every OOD answer to use the sound branch",
+        "It scores every incorrect trace above a correct sound trace",
+        "It changes the OOD shortcut probability to .40 before filtering"
       ],
       "correct": 0,
-      "explanation": "“Model its control loop, state transitions, and stopping conditions explicitly” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "STaR's filter sees correctness, not causal validity. A shortcut that happens to be correct can therefore enter the training set without a sound rationale."
+    },
+    {
+      "stage": "post",
+      "question": "What does increasing V-STaR from one sample to 16 samples change?",
+      "options": [
+        "It guarantees every selected trace is sound",
+        "It gives more chances to find a high-scoring sound trace, but does not make the guarantee absolute",
+        "It removes the OOD penalty from shortcuts",
+        "It prevents the model from generating random traces"
+      ],
+      "correct": 1,
+      "explanation": "More samples increase the chance that at least one sound, correct trace is available for selection; the simulator still samples stochastically."
     }
   ]
 }

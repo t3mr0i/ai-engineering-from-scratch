@@ -89,6 +89,18 @@ EU customer PHI cannot leave EU. If your cache-aware router sends a Paris-origin
 
 
 
+## Build It
+
+Reconstruct **Multi-Region LLM Serving and KV Cache Locality** by following `rtt` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `rtt` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-multi-region-router.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [BentoML — Multi-cloud and cross-region inference](https://bentoml.com/llm/infrastructure-and-operations/multi-cloud-and-cross-region-inference)
@@ -99,10 +111,20 @@ EU customer PHI cannot leave EU. If your cache-aware router sends a Paris-origin
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain why round-robin load balancing breaks cached inference and quantify the TTFT penalty.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Diagram a cache-aware router: inputs (KV-cache events), algorithm (prefix-hash match), tie-breaker (GPU utilization).
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Name the 32% DR failure driver for LLMs (missing tokenizer files / quantization configs) and state a three-file DR checklist.
+Work from the smallest fixture that the Multi-Region LLM Serving and KV Cache Locality demo already understands, then make one deliberate change and record what moved.
+
+1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using tokens=["red","fox"]. Follow `rtt`, `Replica`, `Request`. Expect the attention/embedding shape follows the token count and each valid attention row remains normalized; capture the first printed shape, metric, status, or summary field and state which part supports **Explain why round-robin load balancing breaks cached inference and quantify the TTFT penalty.**.
+2. **Perturb one field.** Repeat the command after changing only the token sequence: use tokens=["red","fox","runs"]. Predict the direction of the change, then compare the two output values. Explain why **Diagram a cache-aware router: inputs (KV-cache events), algorithm (prefix-hash match), tie-breaker (GPU utilization).** says the other inputs should stay fixed.
+3. **Check the failure boundary.** Feed the implementation tokens=[]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Name the 32% DR failure driver for LLMs (missing tokenizer files / quantization configs) and state a three-file DR checklist.** and record the exception text if the code rejects the case.
+4. **Make the result repeatable.** Open `outputs/skill-multi-region-router.md` and add a worked example using tokens=["red","fox"]. Include the input contract, one expected output field, and a named acceptance check for **Distinguish commercial cross-region offerings (Bedrock CRI, GKE Multi-Cluster Gateway) from KV-aware routing.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain why round-robin load balancing breaks cached inference and quantify the TTFT penalty,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Name the 32% DR failure driver for LLMs (missing tokenizer files / quantization configs) and state a three-file DR checklist,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Multi-Region LLM Serving and KV Cache Locality** should contain:
+
+- the `python3 main.py` output for tokens=["red","fox"], with `rtt`, `Replica`, `Request` traced to the value or shape that supports **Explain why round-robin load balancing breaks cached inference and quantify the TTFT penalty.**;
+- a before/after comparison for the token sequence, where tokens=["red","fox","runs"] changes the observation in the direction predicted by **Diagram a cache-aware router: inputs (KV-cache events), algorithm (prefix-hash match), tie-breaker (GPU utilization).**;
+- a recorded result for tokens=[] that matches the implementation’s validation or empty-result contract and explains the evidence for **Name the 32% DR failure driver for LLMs (missing tokenizer files / quantization configs) and state a three-file DR checklist.**; and
+- an updated `outputs/skill-multi-region-router.md` example with a concrete input, expected output field, and acceptance check tied to **Distinguish commercial cross-region offerings (Bedrock CRI, GKE Multi-Cluster Gateway) from KV-aware routing.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

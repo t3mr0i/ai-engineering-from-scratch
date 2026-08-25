@@ -316,6 +316,14 @@ clf = Pipeline([
 | Slack variables | xi_i: measures how much a point violates the margin. Zero for correctly classified points outside margin |
 | Maximum margin | The principle of choosing the hyperplane that maximizes the distance to the nearest points of each class |
 
+## Build It
+
+Reconstruct **Support Vector Machines** by following `dotprod` on x=0.5 with the demo defaults. Run `julia main.jl` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Ship It
+
+Hand off `outputs/skill-svm-kernel-chooser.md` with the command `julia main.jl`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Vapnik: The Nature of Statistical Learning Theory (1995)](https://link.springer.com/book/10.1007/978-1-4757-3264-1) - the foundational text on SVMs and statistical learning
@@ -326,10 +334,20 @@ clf = Pipeline([
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement a linear SVM from scratch using hinge loss and gradient descent on the primal formulation.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain the maximum margin principle and identify support vectors from a trained model.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compare linear, polynomial, and RBF kernels and explain how the kernel trick avoids explicit high-dimensional mapping.
+Work from the smallest fixture that the Support Vector Machines demo already understands, then make one deliberate change and record what moved.
+
+1. **Run the smallest fixture.** From `code/`, run `julia main.jl` using x=0.5 with the demo defaults. Follow `dotprod`, `vec_norm`, `linear_kernel`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Implement a linear SVM from scratch using hinge loss and gradient descent on the primal formulation**.
+2. **Perturb one field.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Explain the maximum margin principle and identify support vectors from a trained model** says the other inputs should stay fixed.
+3. **Check the failure boundary.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Compare linear, polynomial, and RBF kernels and explain how the kernel trick avoids explicit high-dimensional mapping** and record the exception text if the code rejects the case.
+4. **Make the result repeatable.** Open `outputs/skill-svm-kernel-chooser.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Evaluate the tradeoff controlled by the C parameter between margin width and classification errors**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.jl](../code/main.jl) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement a linear SVM from scratch using hinge loss and gradient descent on the primal formulation,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compare linear, polynomial, and RBF kernels and explain how the kernel trick avoids explicit high-dimensional mapping,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Support Vector Machines** should contain:
+
+- the `julia main.jl` output for x=0.5 with the demo defaults, with `dotprod`, `vec_norm`, `linear_kernel` traced to the value or shape that supports **Implement a linear SVM from scratch using hinge loss and gradient descent on the primal formulation**;
+- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Explain the maximum margin principle and identify support vectors from a trained model**;
+- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Compare linear, polynomial, and RBF kernels and explain how the kernel trick avoids explicit high-dimensional mapping**; and
+- an updated `outputs/skill-svm-kernel-chooser.md` example with a concrete input, expected output field, and acceptance check tied to **Evaluate the tradeoff controlled by the C parameter between margin width and classification errors**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

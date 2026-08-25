@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the key difference between zero-shot and few-shot prompting?",
+      "question": "What does `build_cot_prompt(question, examples, num_examples=3)` add before the new question?",
       "options": [
-        "Zero-shot sends a single API call, while few-shot chains several calls and feeds each output into the next prompt — and applies unchanged even when the lesson's stated preconditions fail",
-        "Zero-shot answers at temperature 0, while few-shot samples several reasoning paths and takes a majority vote",
-        "Zero-shot appends 'Let's think step by step', while few-shot has the model score and prune its own branches",
-        "Zero-shot gives only the instruction; few-shot includes example input-output demonstrations before the actual query"
-      ],
-      "correct": 3,
-      "explanation": "Few-shot prompting includes worked examples (demonstrations) that show the model the expected pattern. This is like showing someone how to fill out a form before asking them to fill out their own."
-    },
-    {
-      "stage": "check",
-      "question": "What does 'Chain of Thought' prompting do?",
-      "options": [
-        "It samples several independent reasoning paths above temperature 0 and returns the answer that wins the vote",
-        "It splits a complex task into separate prompts, where each prompt's output becomes the input of the next one",
-        "It alternates thinking with tool actions, feeding each observation back before the model reasons about the next step, with no need to inspect intermediate results or test edge cases",
-        "It has the model show intermediate reasoning steps before the final answer, which raises accuracy on multi-step problems"
-      ],
-      "correct": 3,
-      "explanation": "CoT prompting (e.g., 'Let's think step by step') gives the model 'scratch paper' to work through problems. On GSM8K math problems, this alone improved GPT-4o accuracy from 78% to 91%."
-    },
-    {
-      "stage": "check",
-      "question": "How does Tree-of-Thought differ from Chain-of-Thought?",
-      "options": [
-        "It samples several complete reasoning chains at once and returns the final answer that most of them agree on",
-        "It repeats one single reasoning chain with ever more detailed steps until the final answer stops changing",
-        "It explores multiple reasoning paths in parallel and evaluates which path leads to the best answer",
-        "It interleaves every reasoning step with a tool call so that observations can correct the path mid-run"
+        "Three independent model completions whose majority answer is inserted into the user message",
+        "A tree of candidate thoughts that are scored before the user question is appended",
+        "Three worked examples plus an answer-format instruction",
+        "A tool trace containing one `calculate` action for every example"
       ],
       "correct": 2,
-      "explanation": "CoT follows a single reasoning path. Tree-of-Thought generates multiple candidate paths, evaluates them (possibly with the LLM itself), and selects the best one. This helps on problems where the first reasoning path might be wrong."
+      "explanation": "The helper selects the first `num_examples` demonstrations and formats each as a problem plus solution before appending the new question. It does not call a model or build a search tree itself."
     },
     {
       "stage": "check",
-      "question": "When selecting few-shot examples, what matters most?",
+      "question": "For the text `Work it out. #### 42`, what value does `extract_answer` return?",
       "options": [
-        "Packing in as many examples as the context window allows, since more demonstrations always sharpen the pattern",
-        "Picking the shortest examples available so the reasoning overhead per query stays well under 200 extra tokens",
-        "Choosing diverse examples that cover different cases and demonstrate the exact format and reasoning pattern you want",
-        "Drawing the examples straight from the test set you evaluate on, so the model sees the exact cases it is scored on, before defining the measurement, acceptance threshold, or rollback path"
+        "`42.0`, because every numeric answer is converted to a floating-point value",
+        "The string `Work it out`, because the parser keeps text before the delimiter",
+        "`None`, because `####` is accepted only at the start of a line",
+        "The string `42`, matched by the `####` answer pattern"
       ],
-      "correct": 2,
-      "explanation": "Example quality trumps quantity. 3-5 diverse, well-formatted examples that cover different edge cases teach the model the pattern better than 20 repetitive examples that waste context window tokens."
+      "correct": 3,
+      "explanation": "`extract_answer` searches for the `####` marker and returns the trimmed text after it. It preserves the answer as a string, so this case yields `42`."
+    },
+    {
+      "stage": "check",
+      "question": "What makes `self_consistency_solve` different from a single chain-of-thought call?",
+      "options": [
+        "It samples several solutions, then returns the majority answer and vote confidence",
+        "It always expands exactly two branches and chooses the branch with the longest reasoning trace",
+        "It asks the model to execute a Python expression after every reasoning step",
+        "It trains the model on the first solution before generating the remaining samples"
+      ],
+      "correct": 0,
+      "explanation": "The implementation collects `n_samples` answers, counts the extracted strings, and returns the majority answer plus `winning_votes / total_votes`. Sampling multiple paths reduces sensitivity to one mistaken chain."
+    },
+    {
+      "stage": "check",
+      "question": "In `tree_of_thought_solve`, why are only the top two thoughts retained after evaluation?",
+      "options": [
+        "The remaining thoughts are sent to a second model that always rejects them as duplicates",
+        "It keeps the two highest-scoring branches as a small search beam",
+        "The solver can evaluate only two strings because `evaluate_thought` accepts a fixed-size tuple",
+        "The top two branches are concatenated into one chain so the model sees both answers at once"
+      ],
+      "correct": 1,
+      "explanation": "Tree-of-thought search generates several candidates, scores them, sorts by score, and keeps the best two before extending them. This is a simple beam-search tradeoff between exploration and cost."
     },
     {
       "stage": "post",
-      "question": "Why does CoT prompting improve accuracy even though the model has the same knowledge with or without it?",
+      "question": "A `react_solve` trace contains `Action: calculate 6 * 7` followed by `Answer: 42`. Which value should the solver return?",
       "options": [
-        "Each intermediate token becomes context for the next one, so the model conditions its final answer on its own reasoning",
-        "The extra reasoning tokens are scored by a separate evaluator that prunes the weak branches before the answer",
-        "Reasoning text raises the sampling temperature for the answer tokens, widening the distribution the model draws from — and applies unchanged even when the lesson's stated preconditions fail",
-        "The reasoning steps update the model's weights during the call, so it keeps what it worked out for later queries"
+        "The literal action string, because observations are not parsed",
+        "`6`, because the calculator receives only the first numeric token",
+        "`42`, after the answer line is recognized and returned",
+        "An empty string, because ReAct requires a web lookup before an answer"
       ],
-      "correct": 0,
-      "explanation": "Without CoT, the model must jump directly to the answer in one token. With CoT, each intermediate step is a token the model conditions on for the next step. The model essentially 'thinks out loud,' building up to the answer."
+      "correct": 2,
+      "explanation": "`react_solve` parses the calculation, appends its observation, and then checks for an `Answer:` line. Once it sees `Answer: 42`, it returns the extracted answer rather than the intermediate action."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Few-Shot, Chain-of-Thought, Tree-of-Thought?",
+      "question": "What does `solve_with_escalation` do when self-consistency returns confidence `0.6`?",
       "options": [
-        "Apply chain-of-thought (CoT) reasoning to improve accuracy on multi-step problems like math word problems",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "It accepts the first few-shot answer because escalation is used only for syntax errors",
+        "It raises an exception immediately because confidence must be exactly `1.0`",
+        "It increases the temperature and repeats self-consistency without trying a different search method",
+        "It falls back to a tree-of-thought solve because the confidence is below the `0.8` threshold"
       ],
-      "correct": 0,
-      "explanation": "“Apply chain-of-thought (CoT) reasoning to improve accuracy on multi-step problems like math word problems” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 3,
+      "explanation": "The escalation path first runs self-consistency. Confidence below `0.8` triggers `tree_of_thought_solve`, giving the uncertain problem a broader search rather than silently accepting the vote."
     }
   ]
 }

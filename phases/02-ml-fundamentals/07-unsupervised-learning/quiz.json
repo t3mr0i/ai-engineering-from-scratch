@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What distinguishes unsupervised learning from supervised learning?",
+      "question": "K-Means compares point x=[1,1] with centroids [0,0] and [5,5]. Which centroid receives the point?",
       "options": [
-        "Unsupervised learning uses more data",
-        "Unsupervised learning has no labeled outputs -- the algorithm finds structure on its own",
-        "Unsupervised learning only works with text data",
-        "Unsupervised learning always produces better results — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "In unsupervised learning, there are no labels. The algorithm discovers patterns, groupings, or structure in the data without being told what the correct output should be."
-    },
-    {
-      "stage": "check",
-      "question": "What does K-Means require you to specify before training?",
-      "options": [
-        "The exact cluster centers",
-        "The number of clusters K",
-        "The labels for each data point",
-        "The distance metric to use"
-      ],
-      "correct": 1,
-      "explanation": "K-Means requires the number of clusters K as input. It then iteratively assigns points to the nearest centroid and recomputes centroids until convergence."
-    },
-    {
-      "stage": "check",
-      "question": "K-Means fails on two interlocking half-moon shapes but DBSCAN succeeds. Why?",
-      "options": [
-        "DBSCAN uses more data than K-Means",
-        "DBSCAN finds clusters based on density, so it can discover arbitrary shapes, while K-Means assumes spherical clusters",
-        "DBSCAN always outperforms K-Means on every dataset, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "K-Means cannot handle 2D data"
-      ],
-      "correct": 1,
-      "explanation": "K-Means assigns points to the nearest centroid, producing spherical (convex) clusters. DBSCAN grows clusters from dense regions, discovering any shape as long as the cluster is connected by density."
-    },
-    {
-      "stage": "check",
-      "question": "What is the silhouette score measuring?",
-      "options": [
-        "The total number of clusters found",
-        "How similar each point is to its own cluster compared to the nearest other cluster",
-        "The speed of the clustering algorithm",
-        "The percentage of outliers in the data, before defining the measurement, acceptance threshold, or rollback path"
-      ],
-      "correct": 1,
-      "explanation": "Silhouette score = (b - a) / max(a, b), where a is mean intra-cluster distance and b is mean nearest-cluster distance. It ranges from -1 (wrong cluster) to +1 (well-clustered)."
-    },
-    {
-      "stage": "post",
-      "question": "How does a Gaussian Mixture Model differ from K-Means in its cluster assignments?",
-      "options": [
-        "GMM uses hard assignments where each point belongs to exactly one cluster — and applies unchanged even when the lesson's stated preconditions fail",
-        "GMM gives soft (probabilistic) assignments where each point has a probability of belonging to each cluster",
-        "GMM does not use centroids at all",
-        "GMM only works with one-dimensional data"
-      ],
-      "correct": 1,
-      "explanation": "K-Means assigns each point to exactly one cluster (hard). GMM computes the probability that each point belongs to each Gaussian component (soft), and can model elliptical, overlapping clusters."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Unsupervised Learning?",
-      "options": [
-        "Evaluate cluster quality using the silhouette score and the elbow method to select the optimal K",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "The centroid [0,0]",
+        "The centroid [5,5]",
+        "Both centroids, because K-Means never assigns points",
+        "Neither, because centroids must be integers"
       ],
       "correct": 0,
-      "explanation": "“Evaluate cluster quality using the silhouette score and the elbow method to select the optimal K” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The distances are about 1.41 and 5.66, so the first centroid is closer."
+    },
+    {
+      "stage": "check",
+      "question": "What does a high silhouette score generally indicate?",
+      "options": [
+        "Every cluster contains exactly the same number of points",
+        "A point is close to its own cluster and far from neighboring clusters",
+        "The algorithm found the largest possible K",
+        "All input features have zero variance"
+      ],
+      "correct": 1,
+      "explanation": "Silhouette compares within-cluster cohesion with separation from the nearest other cluster; values near 1 are favorable."
+    },
+    {
+      "stage": "check",
+      "question": "In DBSCAN, what makes a point a core point?",
+      "options": [
+        "It is the closest point to a K-Means centroid",
+        "It has the largest value on the first feature",
+        "It has at least min_samples points within the chosen eps neighborhood",
+        "It belongs to a cluster with exactly two dimensions"
+      ],
+      "correct": 2,
+      "explanation": "DBSCAN grows clusters from dense neighborhoods. Border points can join a core point's cluster, while isolated points are noise."
+    },
+    {
+      "stage": "check",
+      "question": "An elbow plot shows inertia falling sharply through K=3 and only slightly afterward. What is K=3 usually taken to be?",
+      "options": [
+        "The only mathematically valid number of clusters",
+        "A sign that DBSCAN must be used instead",
+        "The number of features in the input matrix",
+        "A reasonable tradeoff between compactness and model complexity"
+      ],
+      "correct": 3,
+      "explanation": "The elbow marks where adding another centroid yields diminishing improvement; it is a heuristic, not a proof of the true cluster count."
+    },
+    {
+      "stage": "post",
+      "question": "Your data contain two crescent-shaped groups and isolated points. Which first choice matches those properties?",
+      "options": [
+        "DBSCAN, with eps and min_samples tuned to the data density",
+        "K-Means with a very large K",
+        "A single Gaussian with a diagonal covariance",
+        "A supervised classifier trained without labels"
+      ],
+      "correct": 0,
+      "explanation": "DBSCAN can find non-spherical connected regions and label sparse points as noise, unlike the spherical-centroid assumption of K-Means."
+    },
+    {
+      "stage": "post",
+      "question": "How does a Gaussian Mixture Model differ from a hard K-Means assignment?",
+      "options": [
+        "It can only return one cluster for the entire dataset",
+        "It assigns each point probabilities of belonging to each Gaussian component",
+        "It labels every low-density point as a missing value",
+        "It never estimates component means"
+      ],
+      "correct": 1,
+      "explanation": "GMM uses soft responsibilities, allowing a point to be partly associated with several components while fitting their parameters with EM."
     }
   ]
 }

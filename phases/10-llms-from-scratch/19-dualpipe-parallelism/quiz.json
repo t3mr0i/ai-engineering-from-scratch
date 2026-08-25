@@ -4,75 +4,45 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to DualPipe Parallelism?",
-      "options": [
-        "Name the four components of a DualPipe forward-backward chunk and why each one gets its own overlap window",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "Which four operations make up the forward/backward chunk that DualPipe tries to overlap?",
+      "options": ["Attention, all-to-all dispatch, MLP experts, and all-to-all combine.", "Tokenization, decoding, sampling, and evaluation.", "Embedding, layer norm, dropout, and checkpointing only.", "QKV projection, optimizer step, checkpoint save, and validation."],
       "correct": 0,
-      "explanation": "“Name the four components of a DualPipe forward-backward chunk and why each one gets its own overlap window” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The lesson's chunk follows attention with expert dispatch, MoE MLP computation, and expert-output combine; DualPipe overlaps these communication and compute windows."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of DualPipe Parallelism?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Explain the pipeline bubble problem at scale, and what \"bubble-free\" means in practice versus in marketing",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "What is the numerator of `bubble_1f1b(P, M)` in the simulator?",
+      "options": ["`P * M` warmup slots.", "`2 * (P - 1)` warmup and cooldown slots.", "`M / P` backward slots.", "`3 * M + P - 1` total slots."],
       "correct": 1,
-      "explanation": "“Explain the pipeline bubble problem at scale, and what \"bubble-free\" means in practice versus in marketing” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The 1F1B approximation counts P-1 forward warmup and P-1 backward cooldown slots, giving `2*(P-1)` bubble slots."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through DualPipe Parallelism?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Trace a DualPipe schedule by hand for 8 PP ranks and 16 micro-batches and confirm the forward and reverse s...",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "How many parameter copies does `summarize(P, M)` assign to DualPipe?",
+      "options": ["0", "1", "2", "P copies, one per pipeline rank."],
       "correct": 2,
-      "explanation": "“Trace a DualPipe schedule by hand for 8 PP ranks and 16 micro-batches and confirm the forward and reverse s...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The summary records two copies for DualPipe, reflecting its bidirectional schedule; DualPipeV is the one-copy variant."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits DualPipe Parallelism?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "State the tradeoff DualPipeV (Sea AI Lab, 2025) makes: drops the 2x parameter replication at the cost of a...",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“State the tradeoff DualPipeV (Sea AI Lab, 2025) makes: drops the 2x parameter replication at the cost of a...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for DualPipe Parallelism?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Name the four components of a DualPipe forward-backward chunk and why each one gets its own overlap window"
-      ],
+      "question": "What relationship does `bubble_dualpipev` use in this teaching simulator?",
+      "options": ["It has exactly the same bubble as DualPipe.", "It doubles the DualPipe bubble and doubles memory.", "It sets the bubble to zero for every P and M.", "It returns `1.2 * bubble_dualpipe(P, M)` while using one parameter copy."],
       "correct": 3,
-      "explanation": "“Name the four components of a DualPipe forward-backward chunk and why each one gets its own overlap window” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The V-shaped one-copy approximation multiplies DualPipe's bubble fraction by 1.2, trading a little schedule efficiency for lower memory."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for DualPipe Parallelism?",
-      "options": [
-        "Explain the pipeline bubble problem at scale, and what \"bubble-free\" means in practice versus in marketing",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "What happens to `bubble_dualpipe(P, M)` as M grows while P stays fixed?",
+      "options": ["It decreases because the fixed warmup term is amortized over a larger denominator.", "It grows linearly with M.", "It becomes exactly one after M exceeds P.", "It ignores M because DualPipe has no denominator."],
       "correct": 0,
-      "explanation": "“Explain the pipeline bubble problem at scale, and what \"bubble-free\" means in practice versus in marketing” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Its numerator is fixed at `(P-1)//2`, while the denominator `3*M + (P-1)` grows with micro-batches, reducing the fraction."
+    },
+    {
+      "stage": "post",
+      "question": "How does `gpu_hours_recovered` estimate the hours saved by DualPipe?",
+      "options": ["It multiplies the DualPipe bubble by the number of parameters.", "It multiplies `(1F1B bubble - DualPipe bubble)` by total GPU-hours.", "It subtracts the number of micro-batches from the GPU count.", "It divides total GPU-hours by the pipeline depth."],
+      "correct": 1,
+      "explanation": "The helper treats the bubble-fraction reduction as recovered utilization and multiplies that difference by the supplied total GPU-hours."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In the lesson's canonical failure mode, why does the automation demo work but production fail a week later?",
+      "question": "What verdict does gate return for a low-sensitivity process with exception_coverage=0.75, no volume profile, and a measured manual baseline?",
       "options": [
-        "The model was retrained on stale data between demo and launch",
-        "The demo only covers the curated examples the team chose, and production silently fails on the exception cases nobody looked at",
-        "The production environment has less compute than the demo environment — and applies unchanged even when the lesson's stated preconditions fail",
-        "The manual team stopped reviewing outputs once headcount was reduced"
-      ],
-      "correct": 1,
-      "explanation": "The twenty curated demo examples hide the 8% of cases — multi-currency invoices, API-created tickets, non-standard clause ordering — that the team never examined. By the time the silent failures surface, the fallback (the manual team) is often already gone."
-    },
-    {
-      "stage": "check",
-      "question": "Which of the four automation-readiness inputs specifically sets the accuracy floor the AI must clear?",
-      "options": [
-        "Output sensitivity",
-        "Volume and variance profile",
-        "Manual process error rate",
-        "Exception map"
-      ],
-      "correct": 2,
-      "explanation": "The manual process error rate is the baseline the AI has to beat — it also reveals whether 'automation' is really just papering over a process defect that has a cheaper fix than a model."
-    },
-    {
-      "stage": "check",
-      "question": "At the 'High' output-sensitivity level, what does the lesson say the automation posture should be?",
-      "options": [
-        "Automate immediately with lightweight monitoring",
-        "Automate with a sampling-based human review layer",
-        "Human-in-the-loop on every decision, or automation is premature",
-        "Delay automation until volume data covers two full years, because one plausible output is sufficient production evidence"
-      ],
-      "correct": 2,
-      "explanation": "High sensitivity means a wrong output has financial, legal, or reputational consequences that survive detection — the lesson's table maps that directly to full human-in-the-loop review, not sampling-based checks."
-    },
-    {
-      "stage": "check",
-      "question": "Why does the lesson call it circular to use a model to decide whether a process is ready to automate, and then use that analysis to justify deploying the model?",
-      "options": [
-        "Because models cannot read structured SOPs at all",
-        "Because the readiness judgment and the deployment justification would both rest on the same unverified model output, with no independent ground truth",
-        "Because ISO/IEC 42001 explicitly prohibits using AI in the assessment phase, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "Because it doubles the compute cost of the assessment"
-      ],
-      "correct": 1,
-      "explanation": "If the same model both generates the readiness hypothesis and gets deployed on the strength of it, nothing independent has validated the process. The lesson calls a human audit of a sample the only non-circular baseline."
-    },
-    {
-      "stage": "post",
-      "question": "Why does skipping this lesson's readiness gate make a Phase 17 · 20 shadow deployment meaningless?",
-      "options": [
-        "Shadow deployments require GPU quota that only the readiness gate can allocate — and applies unchanged even when the lesson's stated preconditions fail",
-        "A shadow comparison needs a defined baseline of 'correct,' which this lesson's exception map and error-rate measurement establish",
-        "Phase 17 · 20 cannot run without a signed scope contract from Phase 14 · 36",
-        "Shadow mode only works on processes with fewer than 200 cases per day"
-      ],
-      "correct": 1,
-      "explanation": "The lesson frames the three-stage sequence explicitly: this lesson establishes what the process does and fails at; without that baseline, a shadow deployment in Phase 17 · 20 has nothing meaningful to compare its outputs against."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Process Analysis Before Automation: The AI Readiness Gate (2026)?",
-      "options": [
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "FAIL, because exception coverage and the missing volume profile are two failed checks",
+        "CONDITIONAL, because only the coverage threshold is missed",
+        "PASS, because the manual baseline is the most important check",
+        "FAIL, because low sensitivity is itself an automation blocker"
       ],
       "correct": 0,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Coverage below 80% and the absent historical volume profile each add a failure. Two failed checks produce GateVerdict.FAIL even though the process is low sensitivity and has a baseline."
+    },
+    {
+      "stage": "check",
+      "question": "How is Support ticket triage classified when coverage is 0.85, the manual baseline exists, but no historical volume profile is available?",
+      "options": [
+        "PASS, because 85% coverage is enough to ignore peak-volume behavior",
+        "CONDITIONAL, because exactly one check—the volume profile—is missing",
+        "FAIL, because every missing volume profile counts as two failures",
+        "CONDITIONAL, but only after sensitivity is changed to HIGH"
+      ],
+      "correct": 1,
+      "explanation": "Coverage clears 80%, sensitivity is LOW, and the baseline is present. The missing volume profile is the sole failed check, so gate returns CONDITIONAL."
+    },
+    {
+      "stage": "check",
+      "question": "What happens to Contract clause risk scoring with 72% exception coverage and no measured manual baseline?",
+      "options": [
+        "CONDITIONAL, because the high-sensitivity caveat replaces the coverage failure",
+        "PASS, because a legal process may rely on expert judgment instead of a baseline",
+        "FAIL, because low coverage and the mandatory HIGH-sensitivity baseline are both failures",
+        "PASS, because a volume profile is present and covers the missing checks"
+      ],
+      "correct": 2,
+      "explanation": "Coverage below 80% adds one failure, and HIGH sensitivity with no manual baseline adds another. The two failures make the gate FAIL; the caveat about 95% coverage does not remove either failure."
+    },
+    {
+      "stage": "check",
+      "question": "A HIGH-sensitivity process has 95% exception coverage, a volume profile, and a measured baseline. What verdict does gate return?",
+      "options": [
+        "CONDITIONAL, because HIGH sensitivity always fails the base gate",
+        "FAIL, because full exception coverage is mandatory before any pilot",
+        "CONDITIONAL, because the volume profile is informational only",
+        "PASS, with a caveat recommending at least 95% coverage before the pilot"
+      ],
+      "correct": 3,
+      "explanation": "All four failure checks pass: 95% exceeds the 80% threshold, volume and baseline are present, and the high-sensitivity baseline exists. Because coverage is below 100%, gate records a caveat but still returns PASS."
+    },
+    {
+      "stage": "post",
+      "question": "What next step does recommend give the Medical referral routing profile with three failed checks?",
+      "options": [
+        "Run a pre-analysis sprint before model selection and revisit the gate afterward",
+        "Proceed directly to a shadow pilot because high sensitivity guarantees human review",
+        "Add a max_tokens limit and deploy the first available classifier",
+        "Ignore the missing baseline until the pilot produces enough data"
+      ],
+      "correct": 0,
+      "explanation": "GateVerdict.FAIL maps to the pre-analysis sprint recommendation. Each failed check becomes a bounded observation, instrumentation, or sample-audit task before a pilot budget is committed."
+    },
+    {
+      "stage": "post",
+      "question": "What does recommend append when a HIGH-sensitivity profile passes or is conditional rather than failing?",
+      "options": [
+        "A cost waiver that removes the exception-coverage requirement",
+        "A human-in-the-loop scope contract before pilot launch",
+        "A promise that the model can act without an approver",
+        "A request to discard the measured manual baseline"
+      ],
+      "correct": 1,
+      "explanation": "For HIGH sensitivity and a non-FAIL verdict, recommend adds the Phase 14 human-in-the-loop scope-contract requirement. It does not waive the readiness checks."
     }
   ]
 }

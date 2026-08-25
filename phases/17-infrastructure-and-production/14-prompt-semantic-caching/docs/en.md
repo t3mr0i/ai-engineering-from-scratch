@@ -96,6 +96,18 @@ Pricing points are captured 2026-04 from the linked vendor docs and drift every 
 
 
 
+## Build It
+
+Reconstruct **Prompt Caching and Semantic Caching Economics** by following `Request` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `Request` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-cache-auditor.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Anthropic Prompt Caching](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching) — official `cache_control` semantics and TTLs.
@@ -106,10 +118,20 @@ Pricing points are captured 2026-04 from the linked vendor docs and drift every 
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Distinguish L2 prompt/prefix caching (KV reuse at provider) from L1 semantic caching (LLM bypass on similar prompts).
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain Anthropic's `cache_control` explicit marking and the two TTL options (5-min vs 1-hour) with their price multipliers.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compute expected monthly savings given hit rate, prompt/response mix, and token prices.
+Keep two runs side by side for **Prompt Caching and Semantic Caching Economics**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
+
+1. **Read the first result.** From `code/`, run `python3 main.py` using tokens=["red","fox"]. Follow `Request`, `Config`, `make_workload`. Expect the attention/embedding shape follows the token count and each valid attention row remains normalized; capture the first printed shape, metric, status, or summary field and state which part supports **Distinguish L2 prompt/prefix caching (KV reuse at provider) from L1 semantic caching (LLM bypass on similar prompts).**.
+2. **Run a two-value comparison.** Repeat the command after changing only the token sequence: use tokens=["red","fox","runs"]. Predict the direction of the change, then compare the two output values. Explain why **Explain Anthropic's `cache_control` explicit marking and the two TTL options (5-min vs 1-hour) with their price multipliers.** says the other inputs should stay fixed.
+3. **Try an adversarial fixture.** Feed the implementation tokens=[]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Compute expected monthly savings given hit rate, prompt/response mix, and token prices.** and record the exception text if the code rejects the case.
+4. **Write the operator note.** Open `outputs/skill-cache-auditor.md` and add a worked example using tokens=["red","fox"]. Include the input contract, one expected output field, and a named acceptance check for **Name the parallelization anti-pattern that inflates bills by 5-10x and the dynamic-content anti-pattern that collapses hit rate.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish L2 prompt/prefix caching (KV reuse at provider) from L1 semantic caching (LLM bypass on similar prompts),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compute expected monthly savings given hit rate, prompt/response mix, and token prices,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Prompt Caching and Semantic Caching Economics** should contain:
+
+- the `python3 main.py` output for tokens=["red","fox"], with `Request`, `Config`, `make_workload` traced to the value or shape that supports **Distinguish L2 prompt/prefix caching (KV reuse at provider) from L1 semantic caching (LLM bypass on similar prompts).**;
+- a before/after comparison for the token sequence, where tokens=["red","fox","runs"] changes the observation in the direction predicted by **Explain Anthropic's `cache_control` explicit marking and the two TTL options (5-min vs 1-hour) with their price multipliers.**;
+- a recorded result for tokens=[] that matches the implementation’s validation or empty-result contract and explains the evidence for **Compute expected monthly savings given hit rate, prompt/response mix, and token prices.**; and
+- an updated `outputs/skill-cache-auditor.md` example with a concrete input, expected output field, and acceptance check tied to **Name the parallelization anti-pattern that inflates bills by 5-10x and the dynamic-content anti-pattern that collapses hit rate.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

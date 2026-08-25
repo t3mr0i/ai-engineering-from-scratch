@@ -54,12 +54,30 @@ With this setup, your daily workflow looks like:
 | Remote SSH | "Working on the server" | VS Code extension that runs a lightweight server on a remote machine and streams the UI to your local editor |
 | Format on save | "Auto-prettier" | The editor runs a formatter (Black, Ruff) every time you save, so code style is always consistent |
 
+## Build It
+
+Reconstruct **Editor Setup** by following `evaluate_editor` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
+
+## Ship It
+
+Hand off `outputs/artifact-card.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
+
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Install VS Code with essential extensions for Python, Jupyter, linting, and remote SSH.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Configure format-on-save, type checking, and notebook output scrolling for AI workflows.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Set up Remote SSH to edit and debug code on remote GPU machines as if they were local.
+This lab follows `evaluate_editor` and `evaluate_editor` on a controlled fixture; write down the value before changing the input.
+
+1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using the demo’s smallest built-in fixture. Follow `evaluate_editor`. Expect the result reports the empty case explicitly or raises the documented validation error; capture the first printed shape, metric, status, or summary field and state which part supports **Install VS Code with essential extensions for Python, Jupyter, linting, and remote SSH**.
+2. **Change the controlled parameter.** Repeat the command after changing only the primary fixture value: use the same fixture with its primary value changed from 1 to 2. Predict the direction of the change, then compare the two output values. Explain why **Configure format-on-save, type checking, and notebook output scrolling for AI workflows** says the other inputs should stay fixed.
+3. **Exercise the guard.** Feed the implementation an empty fixture {}. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Set up Remote SSH to edit and debug code on remote GPU machines as if they were local** and record the exception text if the code rejects the case.
+4. **Prepare the artifact for reuse.** Open `outputs/artifact-card.md` and add a worked example using the demo’s smallest built-in fixture. Include the input contract, one expected output field, and a named acceptance check for **Evaluate editor alternatives (Cursor, Windsurf, Neovim) and their tradeoffs for AI work**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Install VS Code with essential extensions for Python, Jupyter, linting, and remote SSH,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Set up Remote SSH to edit and debug code on remote GPU machines as if they were local,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Editor Setup** should contain:
+
+- the `python3 main.py` output for the demo’s smallest built-in fixture, with `evaluate_editor` traced to the value or shape that supports **Install VS Code with essential extensions for Python, Jupyter, linting, and remote SSH**;
+- a before/after comparison for the primary fixture value, where the same fixture with its primary value changed from 1 to 2 changes the observation in the direction predicted by **Configure format-on-save, type checking, and notebook output scrolling for AI workflows**;
+- a recorded result for an empty fixture {} that matches the implementation’s validation or empty-result contract and explains the evidence for **Set up Remote SSH to edit and debug code on remote GPU machines as if they were local**; and
+- an updated `outputs/artifact-card.md` example with a concrete input, expected output field, and acceptance check tied to **Evaluate editor alternatives (Cursor, Windsurf, Neovim) and their tradeoffs for AI work**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

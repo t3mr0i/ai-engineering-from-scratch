@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the range of the sigmoid function's output?",
+      "question": "What probability does the sigmoid function return when its input z is 0?",
       "options": [
-        "Negative infinity to positive infinity",
-        "0 to 1 (exclusive)",
-        "-1 to 1",
-        "0 to positive infinity"
-      ],
-      "correct": 1,
-      "explanation": "The sigmoid function 1/(1+e^(-z)) outputs values strictly between 0 and 1, which can be interpreted as probabilities."
-    },
-    {
-      "stage": "check",
-      "question": "Why is logistic regression called 'regression' even though it is used for classification?",
-      "options": [
-        "It predicts continuous values that are then rounded",
-        "The name comes from the logistic (sigmoid) function it uses, not from regression analysis",
-        "It was originally designed for regression and later adapted, with no need to inspect intermediate results or test edge cases",
-        "It minimizes mean squared error like linear regression"
-      ],
-      "correct": 1,
-      "explanation": "The name comes from the logistic function (sigmoid). Despite the name, logistic regression is a classification algorithm that outputs class probabilities."
-    },
-    {
-      "stage": "check",
-      "question": "Why is binary cross-entropy used instead of MSE for logistic regression?",
-      "options": [
-        "Cross-entropy is faster to compute",
-        "MSE with sigmoid creates a non-convex cost surface with local minima, while cross-entropy is convex",
-        "MSE can only be used with linear models",
-        "Cross-entropy works only when the dataset is balanced, because one plausible output is sufficient production evidence"
-      ],
-      "correct": 1,
-      "explanation": "MSE combined with the sigmoid activation creates a non-convex cost surface with many local minima. Binary cross-entropy with sigmoid is convex, guaranteeing a single global minimum."
-    },
-    {
-      "stage": "check",
-      "question": "A spam filter has precision = 0.95 and recall = 0.60. What does this mean in practical terms?",
-      "options": [
-        "95% of all emails are correctly classified, and 60% of spam is caught, before defining the measurement, acceptance threshold, or rollback path",
-        "When it flags an email as spam, it is correct 95% of the time, but it only catches 60% of actual spam",
-        "60% of flagged emails are spam, and 95% of all spam is caught",
-        "The model is 95% accurate on the test set and 60% on the training set"
-      ],
-      "correct": 1,
-      "explanation": "Precision = 0.95 means 95% of emails predicted as spam are actually spam (few false alarms). Recall = 0.60 means only 60% of actual spam is caught (40% slips through)."
-    },
-    {
-      "stage": "post",
-      "question": "In softmax regression for 4 classes, what is true about the output probabilities?",
-      "options": [
-        "Each class gets an independent probability between 0 and 1 — and applies unchanged even when the lesson's stated preconditions fail",
-        "The four output probabilities sum to 1, and the class with the highest probability is the prediction",
-        "Only the top-2 classes receive nonzero probabilities",
-        "The outputs are raw scores, not probabilities"
-      ],
-      "correct": 1,
-      "explanation": "Softmax converts a vector of raw scores into probabilities that sum to 1. The predicted class is the one with the highest probability."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Logistic Regression?",
-      "options": [
-        "Compute and interpret precision, recall, F1 score, and the confusion matrix for binary classification",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "0.5",
+        "0",
+        "1",
+        "-0.5"
       ],
       "correct": 0,
-      "explanation": "“Compute and interpret precision, recall, F1 score, and the confusion matrix for binary classification” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "sigmoid(0)=1/(1+exp(0))=1/2."
+    },
+    {
+      "stage": "check",
+      "question": "A logistic model produces z=2 for a positive class. Which statement is correct?",
+      "options": [
+        "Its estimated positive probability is exactly 0",
+        "Its estimated positive probability is greater than 0.5",
+        "It must predict the negative class at every threshold",
+        "The sigmoid output is an unbounded real number"
+      ],
+      "correct": 1,
+      "explanation": "A positive logit maps through the sigmoid to a value above 0.5; the final class still depends on the chosen threshold."
+    },
+    {
+      "stage": "check",
+      "question": "A classifier has TP=8, FP=2, FN=4, and TN=6. What is its precision?",
+      "options": [
+        "0.67",
+        "0.57",
+        "0.80",
+        "0.40"
+      ],
+      "correct": 2,
+      "explanation": "Precision is TP/(TP+FP)=8/(8+2)=0.80."
+    },
+    {
+      "stage": "check",
+      "question": "For a positive label y=1 and predicted probability p=0.9, what is the binary cross-entropy contribution?",
+      "options": [
+        "-log(0.1), about 0.105",
+        "0.9 squared, or 0.81",
+        "Exactly 0 for every p above 0.5",
+        "-log(0.9), about 0.105"
+      ],
+      "correct": 3,
+      "explanation": "For y=1 the loss is -log(p), so a confident correct prediction contributes about 0.105 rather than zero."
+    },
+    {
+      "stage": "post",
+      "question": "A medical screening model lowers its decision threshold. Which change is most likely?",
+      "options": [
+        "More positives are flagged, usually increasing recall and false positives",
+        "Fewer positives are flagged, so recall must increase",
+        "The sigmoid probabilities are recalculated with a different loss",
+        "The confusion matrix no longer depends on the threshold"
+      ],
+      "correct": 0,
+      "explanation": "A lower threshold labels more cases positive. That can catch more true cases while also producing more false alarms."
+    },
+    {
+      "stage": "post",
+      "question": "A softmax model receives logits [2,1,0]. Which class receives the largest probability?",
+      "options": [
+        "Class 2, because zero is the neutral logit",
+        "Class 0, because it has the largest logit",
+        "All three classes equally",
+        "No class, because softmax only handles binary labels"
+      ],
+      "correct": 1,
+      "explanation": "Softmax preserves the ordering of logits, so class 0 gets the largest probability; the three probabilities still sum to one."
     }
   ]
 }

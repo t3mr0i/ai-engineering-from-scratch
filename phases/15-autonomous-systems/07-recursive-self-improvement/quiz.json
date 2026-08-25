@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Recursive Self-Improvement — Capability vs Alignment?",
+      "question": "What does crossing_cycle(records, threshold=1.5) return?",
       "options": [
-        "Explain the autonomy mechanism and assumptions behind Recursive Self-Improvement — Capability vs Alignment",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "The first cycle whose capability-minus-alignment gap reaches 1.5, or -1 if none does",
+        "The cycle with the highest alignment value",
+        "The average cycle count across scenarios",
+        "The last cycle regardless of the gap"
       ],
       "correct": 0,
-      "explanation": "“Explain the autonomy mechanism and assumptions behind Recursive Self-Improvement — Capability vs Alignment” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The function scans the signed C-A gap in order and returns the first cycle with gap >= threshold; it uses -1 when no crossing occurs."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Recursive Self-Improvement — Capability vs Alignment?",
+      "question": "How does run update capability C and alignment A at each cycle?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Model its control loop, state transitions, and stopping conditions explicitly",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It adds the rates once and never uses noise",
+        "It multiplies each value by a noisy rate, clamping each rate to at least .9",
+        "It sets both values to their average",
+        "It subtracts alignment from capability before every update"
       ],
       "correct": 1,
-      "explanation": "“Model its control loop, state transitions, and stopping conditions explicitly” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Each cycle samples a Gaussian perturbation around r_c or r_a, applies max(.9, rate), and multiplies the current C or A by that factor."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Recursive Self-Improvement — Capability vs Alignment?",
+      "question": "What does Scenario B (r_c=1.10, r_a=1.10) demonstrate most directly?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Apply bounded permissions, budgets, and rollback controls",
-        "Treat one successful example as proof that every edge case works"
+        "Capability always outruns alignment",
+        "Alignment is held at exactly zero",
+        "Equal mean growth rates do not create a systematic capability lead, though noise can move the gap",
+        "The threshold can never be evaluated"
       ],
       "correct": 2,
-      "explanation": "“Apply bounded permissions, budgets, and rollback controls” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "With equal expected rates, compounding does not favor one series on average; the sampled noise still permits temporary positive or negative gaps."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Recursive Self-Improvement — Capability vs Alignment?",
+      "question": "When does print_trajectory label a row PAUSE?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate capability and safety claims against reproducible evidence",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate capability and safety claims against reproducible evidence” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Recursive Self-Improvement — Capability vs Alignment?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the autonomy mechanism and assumptions behind Recursive Self-Improvement — Capability vs Alignment"
+        "Whenever cycle is odd",
+        "Whenever alignment is larger than capability",
+        "Only at cycle zero",
+        "When the recorded gap capability - alignment is at least 1.5"
       ],
       "correct": 3,
-      "explanation": "“Explain the autonomy mechanism and assumptions behind Recursive Self-Improvement — Capability vs Alignment” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The display uses the same signed C-A gap threshold as crossing_cycle and marks that trajectory point for a pause."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Recursive Self-Improvement — Capability vs Alignment?",
+      "question": "Why does a higher mean alignment rate in Scenario C not prove that a run is safe?",
       "options": [
-        "Model its control loop, state transitions, and stopping conditions explicitly",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Capability and alignment are compounded through noisy samples, so a particular capability trajectory can still create a large gap",
+        "The code never updates alignment",
+        "Scenario C has no threshold",
+        "The rates are converted to additive scores"
       ],
       "correct": 0,
-      "explanation": "“Model its control loop, state transitions, and stopping conditions explicitly” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Scenario C has r_a=1.13 versus r_c=1.10, but stochastic compounding and the path of each run still determine whether the pause gap is reached."
+    },
+    {
+      "stage": "post",
+      "question": "Which quantity is compared with the threshold 1.5?",
+      "options": [
+        "The ratio C/A",
+        "The signed capability-minus-alignment gap C-A",
+        "The number of Monte Carlo trials",
+        "The sum of the two rates"
+      ],
+      "correct": 1,
+      "explanation": "Both crossing_cycle and the display compare the signed C-A gap, not a ratio or a rate sum."
     }
   ]
 }

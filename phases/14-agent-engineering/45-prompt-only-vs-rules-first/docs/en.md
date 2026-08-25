@@ -54,6 +54,15 @@ one feature, a short allow-list, and commands that prove the definition of done.
 If the first comparison reports no difference, strengthen the acceptance check;
 an evaluator that cannot distinguish the two runs is not protecting the repo.
 
+## Practice notes
+
+The artifact is intentionally deterministic, so the useful question is what evidence a change produces. Before editing it, write down which part of “Compare a prompt-only attempt with a rules-first attempt on the same task” should be visible in the result. Then inspect __post_init__, validate_attempt, prompt_only_attempt rather than treating the final sentence as an explanation.
+
+For “Express allowed files and acceptance checks as executable constraints”, keep the task and acceptance condition fixed while changing one input. A useful receipt has the input, the predicted result, the observed result, and one sentence about the mechanism. For “Separate a plausible artifact from evidence that the task is complete”, choose a boundary the implementation can actually reach and record whether it rejects, pauses, reports, or continues. Finally, use skill-prompt-rules-comparison.md to capture “Record scope violations and missing checks as reviewable receipts” as a reusable decision aid: include an owner and a next action, not only a summary.
+## Ship It
+
+Hand off `outputs/skill-prompt-rules-comparison.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
+
 ## Exercises
 
 - Add a forbidden path that is more specific than the general allow-list.
@@ -68,4 +77,11 @@ an evaluator that cannot distinguish the two runs is not protecting the repo.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Compare a prompt-only attempt with a rules-first attempt on the same task,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Separate a plausible artifact from evidence that the task is complete,” and cite a repeatable check rather than relying on visual inspection alone.
+For Prompt-Only vs Rules-First, run python3 main.py from code/ and keep the output beside the input that produced it. A defensible submission contains:
+
+1. Evidence for “Compare a prompt-only attempt with a rules-first attempt on the same task”: identify the exact field, trace entry, or report line that proves it; a successful process exit alone is not enough.
+2. A one-variable comparison for “Express allowed files and acceptance checks as executable constraints”. State the prediction first and explain why the observed change follows from __post_init__, validate_attempt, prompt_only_attempt.
+3. A boundary or failure result for “Separate a plausible artifact from evidence that the task is complete”. Include the input, the expected guard or refusal, and the observed behavior. If the demo has no guard, record that gap instead of calling a crash a pass.
+4. A practical update to outputs/skill-prompt-rules-comparison.md that applies “Record scope violations and missing checks as reviewable receipts” and names the person or system responsible for the next decision.
+
+Run the relevant tests after the experiment. Keep any mismatch between prediction and observation in the receipt; the purpose of this lesson is to make the reasoning inspectable, not to make every run look successful.

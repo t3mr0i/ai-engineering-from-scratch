@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What makes a prompt clinic more useful than generic prompt tips?",
+      "question": "A request says only 'make this better', names no reader, but asks for three bullet points. Which two clinic signals are present?",
       "options": [
-        "It uses real tasks, reusable prompts, and output review habits",
-        "It avoids reviewing model outputs",
-        "It asks everyone to use the same prompt for every task — and applies unchanged even when the lesson's stated preconditions fail",
-        "It removes context from the prompt"
+        "Weak constraint and no example",
+        "A source check and a prompt brief",
+        "Vague goal and missing audience",
+        "A launch gate and a guided pilot"
       ],
-      "correct": 0,
-      "explanation": "A clinic turns prompting into a repeatable workflow with examples and review controls."
+      "correct": 2,
+      "explanation": "The goal is underspecified, and the intended reader is absent. The other signals require different prompt details."
     },
     {
       "stage": "check",
-      "question": "Which signal is explicitly part of this lesson?",
+      "question": "What does normalize('A  concise-plan') return in the clinic artifact?",
       "options": [
-        "vague goal",
-        "GPU memory pressure",
-        "Network packet loss",
-        "SQL index depth"
+        "A  concise-plan",
+        "a_concise_plan",
+        "concise-plan A",
+        "a concise plan"
       ],
-      "correct": 0,
-      "explanation": "A vague goal is one of the prompt-quality signals."
+      "correct": 3,
+      "explanation": "normalize lowercases, replaces hyphens with spaces, and collapses whitespace."
     },
     {
       "stage": "check",
-      "question": "What does the Python artifact produce?",
+      "question": "A scenario has impact=4, uncertainty=3, and matches two clinic signals. What score does score_scenario compute?",
       "options": [
-        "A ranked prompt-clinic plan with controls and rationale",
-        "A production prompt marketplace, because one plausible output is sufficient production evidence",
-        "A fine-tuned model",
-        "A browser plugin"
+        "15",
+        "11",
+        "9",
+        "20"
       ],
       "correct": 0,
-      "explanation": "The artifact scores prompt scenarios and recommends controls for clinic work."
+      "explanation": "The base is 4*2+3=11, and two matches add 2 each, giving 15."
     },
     {
       "stage": "check",
-      "question": "Which control belongs to the lesson design?",
+      "question": "For that score of 15, which priority does priority_for return?",
       "options": [
-        "prompt brief",
-        "Ignoring the audience",
-        "Skipping source checks",
-        "Treating first drafts as final"
+        "launch gate required",
+        "guided pilot",
+        "team practice",
+        "awareness only"
       ],
-      "correct": 0,
-      "explanation": "A prompt brief captures the task contract before iteration."
+      "correct": 1,
+      "explanation": "Scores from 11 through 15 are labeled guided pilot by the artifact."
     },
     {
       "stage": "post",
-      "question": "When does a prompt scenario need stronger review controls?",
+      "question": "A prompt clinic brief for a client summary should make which change first?",
       "options": [
-        "When impact, uncertainty, and prompt-quality gaps are high",
-        "Only when the prompt is short",
-        "Only when the prompt has examples — and applies unchanged even when the lesson's stated preconditions fail",
-        "Never; prompting has no risk"
+        "Ask for a longer answer without naming the reader",
+        "Remove examples so the model can be more creative",
+        "State the goal, audience, source context, constraints, and desired format",
+        "Skip review because a prompt brief guarantees accuracy"
       ],
-      "correct": 0,
-      "explanation": "High-impact or uncertain work needs more explicit review discipline."
+      "correct": 2,
+      "explanation": "A reusable brief makes the task and acceptance conditions explicit; it gives the later output rubric and source check something concrete to assess."
     },
     {
       "stage": "post",
-      "question": "What should happen to a good prompt after the clinic?",
+      "question": "A scenario matches all four signals and has impact=4 and uncertainty=4. What priority should the artifact assign?",
       "options": [
-        "It should become a maintained reusable asset with review notes",
-        "It should be deleted immediately",
-        "It should never be changed",
-        "It should be used without source material, with no need to inspect intermediate results or test edge cases"
+        "guided pilot",
+        "team practice",
+        "awareness only",
+        "launch gate required"
       ],
-      "correct": 0,
-      "explanation": "The course emphasizes reusable prompt assets that teams can maintain."
+      "correct": 3,
+      "explanation": "The score is min(20, 4*2+4+4*2)=20, and scores of 16 or more require a launch gate."
     }
   ]
 }

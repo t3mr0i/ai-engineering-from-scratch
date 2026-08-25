@@ -1,78 +1,78 @@
 {
   "lesson": "11-audio-generation",
-  "title": "Audio Generation",
+  "title": "Audio Generation — Codec Tokens and Style-Conditioned Sequences",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Audio Generation?",
+      "question": "How does make_tokens(style=0, length=4, rng) define its synthetic speech-like sequence?",
       "options": [
-        "Explain the probabilistic mechanism behind Audio Generation",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It uses (i + random bit) % 16 for each position",
+        "It uses (3*i + random bit) % 16 for each position",
+        "It draws every token uniformly from 0 through 4",
+        "It repeats the start token four times"
       ],
       "correct": 0,
-      "explanation": "“Explain the probabilistic mechanism behind Audio Generation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The style-0 branch returns `[(i + rng.randint(0,1)) % VOCAB ...]` with VOCAB=16; style 1 uses the three-step ramp."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Audio Generation?",
+      "question": "What does init_counts create before any token sequences are observed?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the lesson's core generative step from first principles",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "A [16][2] one-hot table with all rows zero",
+        "A [2][16][16] table filled with 1.0 transition counts",
+        "One scalar count per style and no previous-token dimension",
+        "A probability table with exactly one successor per token"
       ],
       "correct": 1,
-      "explanation": "“Implement the lesson's core generative step from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The nested comprehension allocates one 16-by-16 transition table for each of the two styles and initializes every cell to 1.0."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Audio Generation?",
+      "question": "How does update_counts use a sequence [a,b,c] for one style?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Inspect samples and intermediate states to diagnose generation behavior",
-        "Treat one successful example as proof that every edge case works"
+        "It adds the sequence length to every vocabulary row",
+        "It increments only counts[style][c][a]",
+        "It increments counts[style][a][b] and counts[style][b][c]",
+        "It replaces the row for a with a one-hot vector for c"
       ],
       "correct": 2,
-      "explanation": "“Inspect samples and intermediate states to diagnose generation behavior” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The loop visits adjacent pairs with `range(len(sequence)-1)` and increments the transition from each token to the next."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Audio Generation?",
+      "question": "What does probs(counts, style, prev_tok) guarantee about its returned row?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Compare quality, diversity, stability, and compute trade-offs",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Compare quality, diversity, stability, and compute trade-offs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Audio Generation?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the probabilistic mechanism behind Audio Generation"
+        "It samples a token immediately and returns its integer ID",
+        "Only the most frequent next token has probability one",
+        "It returns raw counts whose sum depends on training volume",
+        "The probabilities sum to one after dividing the selected count row by its total"
       ],
       "correct": 3,
-      "explanation": "“Explain the probabilistic mechanism behind Audio Generation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The helper selects one style/previous-token row, sums it, and divides every entry by that total."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Audio Generation?",
+      "question": "For temperature=0.7, how does generate transform a transition row before sampling?",
       "options": [
-        "Implement the lesson's core generative step from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "It raises each probability to 1/0.7 and renormalizes, sharpening relative differences",
+        "It multiplies every probability by 0.7 without renormalizing",
+        "It discards all tokens except the largest row index",
+        "It adds 0.7 to every token count after sampling"
       ],
       "correct": 0,
-      "explanation": "“Implement the lesson's core generative step from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The code applies `pi ** (1 / temperature)` and then divides by the new total; temperatures below one make the distribution more peaked."
+    },
+    {
+      "stage": "post",
+      "question": "Why does the VALL-E-style continuation keep the five prompt tokens before generating 15 more?",
+      "options": [
+        "The prompt is discarded after its last token is read",
+        "The final prompt token supplies the initial context while the existing prompt remains part of the returned sequence",
+        "Each prompt token is converted into a separate style model",
+        "The continuation length is always equal to the prompt length"
+      ],
+      "correct": 1,
+      "explanation": "main copies `prompt` into continuation and appends one sampled token per step, preserving the five-token acoustic prompt."
     }
   ]
 }

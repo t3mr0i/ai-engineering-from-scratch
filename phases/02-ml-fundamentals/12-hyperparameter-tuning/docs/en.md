@@ -415,6 +415,14 @@ Use `loguniform` from scipy for learning rate and regularization. Use `randint` 
 | Hyperband | "Tournament bracket for configs" | Adaptive resource allocation: start many configs with small budgets, keep the best and increase their budgets |
 | Learning rate scheduler | "Change lr during training" | A function that adjusts the learning rate over the course of training for better convergence |
 
+## Build It
+
+Reconstruct **Hyperparameter Tuning** by following `make_data` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Ship It
+
+Hand off `outputs/prompt-tuning-strategy.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Bergstra & Bengio: Random Search for Hyper-Parameter Optimization (2012)](https://jmlr.org/papers/v13/bergstra12a.html) -- the paper that showed random beats grid
@@ -425,10 +433,20 @@ Use `loguniform` from scipy for learning rate and regularization. Use `randint` 
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement grid search, random search, and Bayesian optimization from scratch and compare their sample efficiency.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why random search outperforms grid search when most hyperparameters have low effective dimensionality.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a Bayesian optimization loop using a surrogate model and acquisition function to guide the search.
+This lab follows `make_data` and `SimpleTree` on a controlled fixture; write down the value before changing the input.
+
+1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using x=0.5 with the demo defaults. Follow `make_data`, `SimpleTree`, `fit`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Implement grid search, random search, and Bayesian optimization from scratch and compare their sample efficiency**.
+2. **Change the controlled parameter.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Explain why random search outperforms grid search when most hyperparameters have low effective dimensionality** says the other inputs should stay fixed.
+3. **Exercise the guard.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Build a Bayesian optimization loop using a surrogate model and acquisition function to guide the search** and record the exception text if the code rejects the case.
+4. **Prepare the artifact for reuse.** Open `outputs/prompt-tuning-strategy.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Design a hyperparameter tuning strategy that avoids overfitting the validation set through proper cross-validation**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement grid search, random search, and Bayesian optimization from scratch and compare their sample efficiency,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a Bayesian optimization loop using a surrogate model and acquisition function to guide the search,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Hyperparameter Tuning** should contain:
+
+- the `python3 main.py` output for x=0.5 with the demo defaults, with `make_data`, `SimpleTree`, `fit` traced to the value or shape that supports **Implement grid search, random search, and Bayesian optimization from scratch and compare their sample efficiency**;
+- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Explain why random search outperforms grid search when most hyperparameters have low effective dimensionality**;
+- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Build a Bayesian optimization loop using a surrogate model and acquisition function to guide the search**; and
+- an updated `outputs/prompt-tuning-strategy.md` example with a concrete input, expected output field, and acceptance check tied to **Design a hyperparameter tuning strategy that avoids overfitting the validation set through proper cross-validation**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

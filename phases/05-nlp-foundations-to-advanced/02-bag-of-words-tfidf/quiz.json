@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does Bag of Words throw away?",
+      "question": "What vocabulary indices does build_vocab assign to [\"cat\", \"dog\"] followed by [\"dog\", \"fish\"]?",
       "options": [
-        "Token order",
-        "Vocabulary size",
-        "Document length",
-        "Punctuation"
-      ],
-      "correct": 0,
-      "explanation": "BoW counts tokens per document but discards their sequence."
-    },
-    {
-      "stage": "check",
-      "question": "Why scale TF by an IDF factor?",
-      "options": [
-        "Words that appear in every document carry little discriminative signal and should be downweighted",
-        "To normalize document length, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "To accelerate training",
-        "To remove punctuation"
-      ],
-      "correct": 0,
-      "explanation": "IDF penalizes ubiquitous words and boosts rare ones."
-    },
-    {
-      "stage": "check",
-      "question": "In the smoothed IDF formula log((N+1)/(df+1)) + 1, what does the trailing +1 ensure?",
-      "options": [
-        "Faster computation",
-        "A word that appears in every document still has IDF 1 instead of 0",
-        "Compatibility with raw counts",
-        "Numerical stability for large N, because one plausible output is sufficient production evidence"
-      ],
-      "correct": 1,
-      "explanation": "The +1 keeps ubiquitous words at IDF=1 so they are not zeroed out, matching scikit-learn's default."
-    },
-    {
-      "stage": "check",
-      "question": "Why L2-normalize TF-IDF rows before cosine similarity?",
-      "options": [
-        "To convert sparse vectors to dense, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "To compress the vocabulary",
-        "To remove zero entries",
-        "Longer documents would otherwise dominate similarity scores; normalization puts all docs on the unit hypersphere"
-      ],
-      "correct": 3,
-      "explanation": "L2 normalization removes document-length bias and turns cosine similarity into a dot product."
-    },
-    {
-      "stage": "post",
-      "question": "Which TfidfVectorizer setting is risky to enable for sentiment analysis?",
-      "options": [
-        "stop_words='english'",
-        "ngram_range=(1, 2) — and applies unchanged even when the lesson's stated preconditions fail",
-        "min_df=2",
-        "sublinear_tf=True"
-      ],
-      "correct": 0,
-      "explanation": "English stopword lists drop negations like 'not', which carry sentiment signal."
-    },
-    {
-      "stage": "post",
-      "question": "Which task does TF-IDF still win in 2026?",
-      "options": [
-        "Open-ended dialogue, with no need to inspect intermediate results or test edge cases",
-        "Machine translation",
-        "Spam detection, log anomaly flagging, and low-latency narrow classification",
-        "Image captioning"
+        "dog=0, cat=1, fish=2",
+        "cat=1, dog=2, fish=3",
+        "cat=0, dog=1, fish=2",
+        "The indices are randomized for every document"
       ],
       "correct": 2,
-      "explanation": "TF-IDF beats embeddings when word presence is the signal and explainability or speed matter."
+      "explanation": "build_vocab inserts unseen tokens in first-seen order and uses the current vocabulary size as the next index."
+    },
+    {
+      "stage": "check",
+      "question": "For a vocabulary [\"cat\", \"dog\"], what row does bag_of_words produce for [\"dog\", \"dog\"]?",
+      "options": [
+        "[2, 0]",
+        "[1, 1]",
+        "[0, 1]",
+        "[0, 2]"
+      ],
+      "correct": 3,
+      "explanation": "The function counts occurrences at each vocabulary index, so dog contributes two to the second column."
+    },
+    {
+      "stage": "check",
+      "question": "What does document_frequency count for one vocabulary term?",
+      "options": [
+        "The number of documents whose count for the term is greater than zero",
+        "The total number of times the term appears in the whole corpus",
+        "The term's character length in each document",
+        "The number of vocabulary entries after normalization"
+      ],
+      "correct": 0,
+      "explanation": "The loop increments df[j] once per row when count > 0, regardless of whether that row contains one or many occurrences."
+    },
+    {
+      "stage": "check",
+      "question": "What IDF does inverse_document_frequency([3], n_docs=3) return?",
+      "options": [
+        "0",
+        "1",
+        "log(4)+1",
+        "3"
+      ],
+      "correct": 1,
+      "explanation": "The smoothed formula is log((3+1)/(3+1))+1 = log(1)+1 = 1."
+    },
+    {
+      "stage": "post",
+      "question": "How does tfidf compute term frequency before multiplying by IDF?",
+      "options": [
+        "It replaces every nonzero count with one",
+        "It divides each count by the vocabulary size",
+        "It divides each count by the total token count in that document",
+        "It uses the raw count and ignores document length"
+      ],
+      "correct": 2,
+      "explanation": "For each row, tf is c/sum(row), with an all-zero row handled as zeros before the IDF product."
+    },
+    {
+      "stage": "post",
+      "question": "Why can cosine_similarity be implemented as a dot product after l2_normalize?",
+      "options": [
+        "L2 normalization makes every vector one-hot",
+        "The dot product automatically counts shared words without weights",
+        "Cosine similarity is defined as the sum of raw token counts",
+        "Both vectors have unit length, so their dot product is cosine similarity"
+      ],
+      "correct": 3,
+      "explanation": "The cosine denominator is the product of the norms; after each norm is one, only the dot product remains."
     }
   ]
 }

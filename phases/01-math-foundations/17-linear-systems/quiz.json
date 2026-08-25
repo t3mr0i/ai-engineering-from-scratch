@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does it mean geometrically when a system Ax = b has no exact solution?",
+      "question": "What solves [[2,1],[1,1]] x = [3,2]?",
       "options": [
-        "The matrix A has all zero entries",
-        "The vector b does not lie in the column space of A",
-        "The system has more unknowns than equations — and applies unchanged even when the lesson's stated preconditions fail",
-        "The matrix A is symmetric"
-      ],
-      "correct": 1,
-      "explanation": "In the column picture, Ax = b asks: what linear combination of A's columns produces b? If b is not in the column space (span of A's columns), no exact solution exists. This happens when the system is overdetermined (more equations than unknowns)."
-    },
-    {
-      "stage": "check",
-      "question": "Why is partial pivoting used in Gaussian elimination?",
-      "options": [
-        "It reduces the time complexity from O(n^3) to O(n^2), with no need to inspect intermediate results or test edge cases",
-        "It selects the largest available pivot to minimize error amplification from dividing by small numbers",
-        "It ensures the result is always an integer",
-        "It eliminates the need for back substitution"
-      ],
-      "correct": 1,
-      "explanation": "Without pivoting, dividing by a small pivot amplifies rounding errors. Partial pivoting swaps rows to place the largest absolute value in the pivot position, keeping the multipliers small and the computation numerically stable."
-    },
-    {
-      "stage": "check",
-      "question": "Why is Cholesky decomposition preferred over LU for solving (X^T X + lambda I) w = X^T y in ridge regression?",
-      "options": [
-        "Cholesky works on any matrix while LU requires square matrices, because one plausible output is sufficient production evidence",
-        "The matrix X^T X + lambda I is symmetric positive definite, so Cholesky is twice as fast as LU and requires half the storage",
-        "Cholesky gives a more accurate answer than LU",
-        "LU decomposition cannot handle regularization terms"
-      ],
-      "correct": 1,
-      "explanation": "When lambda > 0, X^T X + lambda I is always symmetric positive definite. Cholesky factors A = LL^T in O(n^3/3) operations — roughly half the O(2n^3/3) of LU — and needs only the lower triangle. It exploits the symmetry that LU does not."
-    },
-    {
-      "stage": "check",
-      "question": "A matrix has condition number kappa = 10^8. You are using float64 (~15 digits of precision). How many digits of the solution can you trust?",
-      "options": [
-        "About 15 digits",
-        "About 7 digits (15 - log10(10^8) = 15 - 8)",
-        "About 8 digits",
-        "Zero digits — the solution is meaningless, before defining the measurement, acceptance threshold, or rollback path"
-      ],
-      "correct": 1,
-      "explanation": "You lose approximately log10(kappa) digits of precision. With kappa = 10^8, you lose about 8 digits from float64's ~15 digits, leaving about 7 trustworthy digits. If kappa approaches 10^16, the solution becomes meaningless in float64."
-    },
-    {
-      "stage": "post",
-      "question": "What is the main advantage of LU decomposition over Gaussian elimination when you need to solve Ax = b for many different b vectors?",
-      "options": [
-        "LU decomposition is more numerically stable",
-        "The O(n^3) factorization is done once; each subsequent solve with a new b costs only O(n^2)",
-        "LU decomposition works on rectangular matrices — and applies unchanged even when the lesson's stated preconditions fail",
-        "LU always produces a unique solution"
-      ],
-      "correct": 1,
-      "explanation": "LU factors A = LU once in O(n^3). Then for each new b, you solve Ly = b (forward substitution) and Ux = y (back substitution), each O(n^2). Gaussian elimination would redo the full O(n^3) for every new b."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Linear Systems?",
-      "options": [
-        "Factor matrices with LU, QR, and Cholesky decompositions and explain when each is appropriate",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "x = [1, 1]",
+        "x = [2, 1]",
+        "x = [3, 2]",
+        "There is no solution"
       ],
       "correct": 0,
-      "explanation": "“Factor matrices with LU, QR, and Cholesky decompositions and explain when each is appropriate” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The equations 2x1+x2=3 and x1+x2=2 subtract to x1=1, then x2=1."
+    },
+    {
+      "stage": "check",
+      "question": "Why does gaussian_elimination use partial pivoting on a column?",
+      "options": [
+        "It makes every matrix positive definite",
+        "It swaps in the largest available absolute pivot to reduce numerical error",
+        "It removes the right-hand side from the augmented system",
+        "It guarantees a zero condition number"
+      ],
+      "correct": 1,
+      "explanation": "Dividing by a tiny pivot amplifies rounding error. Choosing the largest available magnitude in that column is a simple stabilization step."
+    },
+    {
+      "stage": "check",
+      "question": "When can the lesson's Cholesky routine factor a real symmetric matrix?",
+      "options": [
+        "Whenever it has any negative diagonal entry",
+        "Only when it is rectangular",
+        "When it is positive definite, producing A=L L^T",
+        "When its determinant is exactly zero"
+      ],
+      "correct": 2,
+      "explanation": "The diagonal update must stay positive. For a symmetric positive-definite matrix, the routine builds a lower triangular L whose product with its transpose reconstructs A."
+    },
+    {
+      "stage": "check",
+      "question": "What system does least_squares_normal solve for an overdetermined design matrix A?",
+      "options": [
+        "A A^T x = b",
+        "A x = A^T b without changing dimensions",
+        "A^T x = A b",
+        "A^T A x = A^T b"
+      ],
+      "correct": 3,
+      "explanation": "Setting the gradient of ||Ax-b||^2 to zero gives the normal equations. The implementation forms AtA and Atb before solving."
+    },
+    {
+      "stage": "post",
+      "question": "What does a very large condition_number(A) warn about?",
+      "options": [
+        "Small input or rounding changes can cause large changes in the solution",
+        "A is guaranteed to have an exact integer solution",
+        "The matrix has more rows than columns",
+        "The residual must already be zero"
+      ],
+      "correct": 0,
+      "explanation": "A large ratio of largest to smallest singular value indicates an ill-conditioned problem. Ridge regularization can improve stability by adding lambda I to A^T A."
+    },
+    {
+      "stage": "post",
+      "question": "What does an augmented row [0, 0 | 1] reveal during elimination?",
+      "options": [
+        "The system has a unique solution at the origin",
+        "The system is inconsistent because 0=1 cannot hold",
+        "The matrix has two independent pivots",
+        "The row should be treated as an extra free variable"
+      ],
+      "correct": 1,
+      "explanation": "The coefficient row is zero but the right side is not. No vector can satisfy that equation, so the system has no solution."
     }
   ]
 }

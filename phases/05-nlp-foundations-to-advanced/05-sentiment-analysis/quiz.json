@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is 'The food was not great' a hard case for naive BoW classifiers?",
+      "question": "What tokens does tokenize(\"not great!\") return?",
       "options": [
-        "It has no punctuation",
-        "It mixes English and French — and applies unchanged even when the lesson's stated preconditions fail",
-        "Negation flips meaning, but bag of words discards the link between 'not' and 'great'",
-        "It contains too few tokens"
-      ],
-      "correct": 2,
-      "explanation": "BoW cannot bind 'not' to the word it negates, so the classifier misses the polarity flip."
-    },
-    {
-      "stage": "check",
-      "question": "What two steps make up classical sentiment analysis?",
-      "options": [
-        "Translate, then classify, with no need to inspect intermediate results or test edge cases",
-        "Embed, then cluster",
-        "Represent (vectorize text) and classify (linear model on the vector)",
-        "Search, then rank"
-      ],
-      "correct": 2,
-      "explanation": "Classical sentiment is feature extraction followed by a linear classifier."
-    },
-    {
-      "stage": "check",
-      "question": "Why does Naive Bayes work despite its 'naive' independence assumption?",
-      "options": [
-        "With sparse text features and moderate data the classifier mostly cares which side each word leans toward, not exact joint probabilities",
-        "Naive Bayes secretly learns interactions, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "The assumption is actually true for text",
-        "Laplace smoothing fixes dependence"
+        "[\"not\", \"great\", \"!\"]",
+        "[\"not great\"]",
+        "[\"not\", \"great!\"]",
+        "[\"not\", \"great\", \"positive\"]"
       ],
       "correct": 0,
-      "explanation": "Even with wrong independence, leaning-direction information per word is enough to classify well."
+      "explanation": "TOKEN_RE captures words and the punctuation character ! as separate lowercase tokens."
     },
     {
       "stage": "check",
-      "question": "Why include 'NOT_' prefixed tokens during preprocessing?",
+      "question": "What does apply_negation([\"not\", \"good\", \"!\"]) return?",
       "options": [
-        "To normalize case",
-        "To stem the words",
-        "To turn 'good' versus 'NOT_good' into separate features that the classifier can weight oppositely",
-        "To shrink the vocabulary, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail"
+        "[\"NOT_not\", \"good\", \"!\"]",
+        "[\"not\", \"NOT_good\", \"!\"]",
+        "[\"not\", \"good\", \"!\"]",
+        "[\"good\", \"!\"]"
+      ],
+      "correct": 1,
+      "explanation": "The flag turns on at not, prefixes the following content token, and the exclamation mark then resets the flag."
+    },
+    {
+      "stage": "check",
+      "question": "What happens to negation after a comma in apply_negation?",
+      "options": [
+        "The comma becomes the new negation word",
+        "Negation remains active until the end of the document",
+        "The comma is a terminator, so following tokens are no longer prefixed with NOT_",
+        "Every token before the comma is deleted"
       ],
       "correct": 2,
-      "explanation": "Negation scoping splits negated forms into distinct features so a BoW classifier can model the flip."
+      "explanation": "NEGATION_TERMINATORS includes comma, so the loop sets negate=False when it sees it."
+    },
+    {
+      "stage": "check",
+      "question": "Why does train_nb add alpha to every vocabulary count?",
+      "options": [
+        "It forces both class priors to be exactly one half",
+        "It removes tokens that appear in only one class",
+        "It converts the word probabilities into cosine similarities",
+        "Laplace smoothing gives an unseen token a nonzero class-conditional probability"
+      ],
+      "correct": 3,
+      "explanation": "The numerator counts[w]+alpha and denominator total+alpha*|vocab| prevent zero probabilities for known vocabulary items."
     },
     {
       "stage": "post",
-      "question": "Why is removing stopwords risky for sentiment analysis?",
+      "question": "How does predict_nb compare a document with the two sentiment classes?",
       "options": [
-        "Negation words ('not', 'no', 'never') are usually treated as stopwords but carry sentiment signal",
-        "Stopword lists are too long",
-        "It increases sparsity",
-        "Stopword removal breaks tokenization — and applies unchanged even when the lesson's stated preconditions fail"
+        "It adds the log prior and log probability for each observed token, then chooses the largest score",
+        "It counts positive words only and ignores class priors",
+        "It averages raw token IDs and thresholds the result at zero",
+        "It selects the class whose vocabulary has more unique words"
       ],
       "correct": 0,
-      "explanation": "Default stopword lists drop negations and similar carriers of sentiment."
+      "explanation": "The function accumulates log(class_priors[cls]) plus log word probabilities and returns the argmax."
     },
     {
       "stage": "post",
-      "question": "Which metric should you report when sentiment classes are imbalanced?",
+      "question": "For y_true=[\"+\",\"-\",\"+\",\"-\"] and y_pred=[\"+\",\"+\",\"-\",\"-\"], what F1 does evaluate report?",
       "options": [
-        "Macro-F1 (mean of per-class F1s, equal-weighted)",
-        "Accuracy alone",
-        "Mean squared error, with no need to inspect intermediate results or test edge cases",
-        "Micro-F1 only"
+        "0.25",
+        "0.5",
+        "0.67",
+        "1.0"
       ],
-      "correct": 0,
-      "explanation": "Macro-F1 forces the minority class to count; accuracy or micro-F1 hides it."
+      "correct": 1,
+      "explanation": "There is one true positive, one false positive, and one false negative; precision and recall are both 0.5, so F1 is 0.5."
     }
   ]
 }

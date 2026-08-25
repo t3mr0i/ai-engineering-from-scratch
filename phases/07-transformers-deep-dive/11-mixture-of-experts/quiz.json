@@ -1,78 +1,78 @@
 {
   "lesson": "11-mixture-of-experts",
-  "title": "Mixture of Experts (MoE)",
+  "title": "Mixture of Experts — Routing, Capacity, and Sparse Activation",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Mixture of Experts (MoE)?",
+      "question": "What does route(hidden, W_router, top_k=2, bias) return?",
       "options": [
-        "Derive the mechanism behind Mixture of Experts (MoE) from tensor operations",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
+        "Two selected expert indices and normalized gate weights for those experts",
+        "One expert index and the unnormalized scores for every expert",
+        "A dense output vector with one coordinate per token",
+        "The bias vector after it has been updated for this token"
       ],
       "correct": 0,
-      "explanation": "“Derive the mechanism behind Mixture of Experts (MoE) from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "route sorts biased scores to select top-k indices, then softmaxes the corresponding unbiassed scores into gates."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Mixture of Experts (MoE)?",
+      "question": "How does the bias vector affect routing in this implementation?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the core component without relying on a transformer framework",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "It is added to every expert output after the weighted sum",
+        "It changes which experts enter top-k but does not change the gate weights after selection",
+        "It replaces the router scores before the softmax gates are computed",
+        "It changes only the input hidden vector and never the selected indices"
       ],
       "correct": 1,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The code uses `biased` for top_idx but builds `chosen` from the original scores, matching the auxiliary-loss-free bias trick."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Mixture of Experts (MoE)?",
+      "question": "With 8 experts, top_k=2, and 1,000 tokens, what target usage does main compute for each expert?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Trace tensor shapes and information flow through the implementation",
-        "Treat one successful example as proof that every edge case works"
+        "1,000 routed selections",
+        "125 routed selections",
+        "250 routed selections",
+        "2,000 routed selections"
       ],
       "correct": 2,
-      "explanation": "“Trace tensor shapes and information flow through the implementation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "There are 1,000*2=2,000 expert selections; dividing evenly over eight experts gives target=250."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Mixture of Experts (MoE)?",
+      "question": "What does update_bias do to an expert whose usage_counts[e] is above target?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate the computational and modeling trade-offs introduced by Mixture of Experts (MoE)",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate the computational and modeling trade-offs introduced by Mixture of Experts (MoE)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Mixture of Experts (MoE)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Derive the mechanism behind Mixture of Experts (MoE) from tensor operations"
+        "It changes that expert's gate weight directly",
+        "It adds gamma to make the expert even more likely",
+        "It deletes the expert from the router",
+        "It subtracts gamma from that expert's bias"
       ],
       "correct": 3,
-      "explanation": "“Derive the mechanism behind Mixture of Experts (MoE) from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Overused experts receive bias[e] -= gamma, reducing their chance of appearing in future top-k selections."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Mixture of Experts (MoE)?",
+      "question": "For n_experts=8, what is the maximum entropy printed for a perfectly uniform usage count?",
       "options": [
-        "Implement the core component without relying on a transformer framework",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "ln(8), about 2.079",
+        "8², equal to 64",
+        "ln(2), about 0.693",
+        "1/8, equal to 0.125"
       ],
       "correct": 0,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "entropy computes -sum(p log p); eight equal probabilities produce ln(8), which the demo prints as the maximum."
+    },
+    {
+      "stage": "post",
+      "question": "How do total and active expert parameters differ in dense_active_params(n_experts, expert_params, top_k, d_model)?",
+      "options": [
+        "Both are expert_params because routing never skips an expert",
+        "Total is n_experts*expert_params, while one token activates top_k*expert_params",
+        "Total is top_k*expert_params, while active is n_experts*expert_params",
+        "Active includes the router but total excludes all experts"
+      ],
+      "correct": 1,
+      "explanation": "The helper separates the full resident parameter footprint from the sparse per-token computation."
     }
   ]
 }

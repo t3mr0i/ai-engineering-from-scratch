@@ -1,78 +1,78 @@
 {
   "lesson": "94-internal-knowledge-assistants-with-rag",
-  "title": "Internal Knowledge Assistants with RAG: When the Wrong Document Answers With Full Confidence (2026)",
+  "title": "Internal Knowledge Assistants with RAG",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Internal Knowledge Assistants with RAG: When the Wrong Document Answers With Full Confidence (2026)?",
+      "question": "What structural and evidentiary gates does the final RAG pass apply?",
       "options": [
-        "Explain the production problem addressed by Internal Knowledge Assistants with RAG: When the Wrong Document...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Permission filtering, supersedure filtering, content-hash deduplication, and faithfulness checking",
+        "A larger embedding model, a higher temperature, and a longer context window",
+        "Only a human review after the answer has been sent",
+        "A single cosine-similarity threshold with no source metadata"
       ],
       "correct": 0,
-      "explanation": "“Explain the production problem addressed by Internal Knowledge Assistants with RAG: When the Wrong Document...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The final pass applies pre-filter, supersedure, content deduplication, and then faithfulness checking. Together they catch stale, mis-tagged, and over-extrapolated answers."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Internal Knowledge Assistants with RAG: When the Wrong Document Answers With Full Confidence (2026)?",
+      "question": "What does Pass 2 catch for the three RAG failure-shape scenarios?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Only the adjacent-topic extrapolation",
+        "The stale policy and mis-tagged duplicate, but not the adjacent-topic extrapolation",
+        "All three, because structural metadata proves every answer claim",
+        "None, because gates are applied only after generation"
       ],
       "correct": 1,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Structural gates remove superseded chunks and duplicate content. They cannot tell that a permitted, current employee policy has been extrapolated to contractors."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Internal Knowledge Assistants with RAG: When the Wrong Document Answers With Full Confidence (2026)?",
+      "question": "What does Pass 3 do when the contractor policy answer contains unsupported contractor claims?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Measure quality, cost, latency, and risk with explicit acceptance criteria",
-        "Treat one successful example as proof that every edge case works"
+        "It cites the employee chunk with higher confidence",
+        "It silently rewrites the answer from the nearest current policy",
+        "It returns ABSTAINED because the faithfulness gate finds unsupported terms",
+        "It promotes the claim because the retrieved chunk is in scope"
       ],
       "correct": 2,
-      "explanation": "“Measure quality, cost, latency, and risk with explicit acceptance criteria” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "faithfulness_check requires every content-bearing term in each claim to appear in the retrieved text. Contractors is absent from the employee chunk, so the pass abstains."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Internal Knowledge Assistants with RAG: When the Wrong Document Answers With Full Confidence (2026)?",
+      "question": "Which gate removes the 2019 IT Security Policy v3.1 chunk?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Identify failure modes and define a safe rollback or review path",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Identify failure modes and define a safe rollback or review path” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Internal Knowledge Assistants with RAG: When the Wrong Document Answers With Full Confidence (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the production problem addressed by Internal Knowledge Assistants with RAG: When the Wrong Document..."
+        "gate_content_dedup",
+        "gate_pre_filter",
+        "faithfulness_check",
+        "gate_supersedure"
       ],
       "correct": 3,
-      "explanation": "“Explain the production problem addressed by Internal Knowledge Assistants with RAG: When the Wrong Document...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The stale chunk has superseded_by set to the v5.0 URL. gate_supersedure filters any chunk whose superseded_by is not None."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Internal Knowledge Assistants with RAG: When the Wrong Document Answers With Full Confidence (2026)?",
+      "question": "How does gate_content_dedup catch the Atlas copy with an internal permission tag?",
       "options": [
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It hashes content and drops a non-confidential chunk whose hash matches a confidential canonical chunk",
+        "It trusts the internal tag and returns the copy as the canonical source",
+        "It deletes every duplicate before checking permissions",
+        "It compares only source URLs, so identical text at another URL remains"
       ],
       "correct": 0,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The gate builds canonical hashes from chunks permitted to confidential users. A matching chunk without that role is treated as the mis-tagged duplicate and removed."
+    },
+    {
+      "stage": "post",
+      "question": "Why does faithfulness_check reject the contractor claim from the employee policy chunk?",
+      "options": [
+        "The chunk is stale, even though its date is current",
+        "The content-bearing term contractors is not present in the retrieved employee text",
+        "The user role is not allowed to read the policy",
+        "The query contains more than two terms"
+      ],
+      "correct": 1,
+      "explanation": "The employee chunk is current and permitted, but it says employees, not contractors. The extractive faithfulness gate catches that unsupported noun instead of allowing confident extrapolation."
     }
   ]
 }

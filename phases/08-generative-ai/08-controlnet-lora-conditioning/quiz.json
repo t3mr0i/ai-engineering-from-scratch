@@ -1,78 +1,78 @@
 {
   "lesson": "08-controlnet-lora-conditioning",
-  "title": "ControlNet, LoRA & Conditioning",
+  "title": "ControlNet and LoRA Conditioning",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to ControlNet, LoRA & Conditioning?",
+      "question": "What matrix does lora_forward add to W_frozen before applying it to x?",
       "options": [
-        "Explain the probabilistic mechanism behind ControlNet, LoRA & Conditioning",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Explain the probabilistic mechanism behind ControlNet, LoRA & Conditioning” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of ControlNet, LoRA & Conditioning?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the lesson's core generative step from first principles",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the lesson's core generative step from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through ControlNet, LoRA & Conditioning?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Inspect samples and intermediate states to diagnose generation behavior",
-        "Treat one successful example as proof that every edge case works"
+        "A + B without a matrix product",
+        "alpha * (A @ B)",
+        "alpha * (B @ A)",
+        "The outer product of x with W_frozen"
       ],
       "correct": 2,
-      "explanation": "“Inspect samples and intermediate states to diagnose generation behavior” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The function computes base=W_frozen@x, Ax=A@x, then BAx=B@Ax and returns base+alpha*BAx."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits ControlNet, LoRA & Conditioning?",
+      "question": "For a 6×6 frozen matrix and LoRA rank r=2, what shapes do A and B have in train_lora?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Compare quality, diversity, stability, and compute trade-offs",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Compare quality, diversity, stability, and compute trade-offs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for ControlNet, LoRA & Conditioning?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the probabilistic mechanism behind ControlNet, LoRA & Conditioning"
+        "A is 2×2 and B is 6×6",
+        "A is 6×2 and B is 2×6",
+        "Both are 6×6",
+        "A is 2×6 and B is 6×2"
       ],
       "correct": 3,
-      "explanation": "“Explain the probabilistic mechanism behind ControlNet, LoRA & Conditioning” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "train_lora initializes A with randn_matrix(r,d) and B as d rows of r zeros, making BA a 6×6 rank-at-most-2 update."
+    },
+    {
+      "stage": "check",
+      "question": "Why does the rank-1 target delta in main have the form u[i] * v[j] * 0.5?",
+      "options": [
+        "It is an outer product scaled by 0.5, so its matrix rank is at most one",
+        "It is a diagonal matrix with one nonzero per row",
+        "It applies a different random rank to every matrix entry",
+        "It is the LoRA optimizer's learning-rate matrix"
+      ],
+      "correct": 0,
+      "explanation": "delta_matrix is built from outer(u,v)*0.5; a single outer product is rank one (or lower), matching the lesson's low-rank adaptation example."
+    },
+    {
+      "stage": "check",
+      "question": "Why is B initialized to all zeros in train_lora?",
+      "options": [
+        "It makes A zero as well and prevents any later training",
+        "The initial LoRA update BA is zero, so the frozen model's behavior is preserved at the start",
+        "It stores the target matrix exactly without reading W_target",
+        "It forces every adapted layer to have rank zero forever"
+      ],
+      "correct": 1,
+      "explanation": "With B=0, lora_forward initially returns W_frozen@x while gradients can still update B and subsequently A."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for ControlNet, LoRA & Conditioning?",
+      "question": "What does controlnet_toy's gate=0.0 represent?",
       "options": [
-        "Implement the lesson's core generative step from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "A probability of choosing class zero",
+        "A permanently disabled condition that cannot receive gradients",
+        "A zero gate that initially blocks the side path while leaving the frozen base output unchanged",
+        "A clipping threshold applied to x"
       ],
-      "correct": 0,
-      "explanation": "“Implement the lesson's core generative step from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The toy computes pred=x + gate*w_side*c, so gate zero makes the side signal inert before training ramps it up."
+    },
+    {
+      "stage": "post",
+      "question": "What target does controlnet_toy train its gated side path to match?",
+      "options": [
+        "The frozen base output x only",
+        "0.7*x + c",
+        "x - 0.7*c for every sample",
+        "x + 0.7*c"
+      ],
+      "correct": 3,
+      "explanation": "The code sets target = x + 0.7*c, requiring the learned gate and side weight to reproduce a condition-dependent correction."
     }
   ]
 }

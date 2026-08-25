@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to BERT — Masked Language Modeling?",
+      "question": "Which token IDs are protected from masking by create_mlm_batch?",
       "options": [
-        "Derive the mechanism behind BERT — Masked Language Modeling from tensor operations",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Derive the mechanism behind BERT — Masked Language Modeling from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of BERT — Masked Language Modeling?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the core component without relying on a transformer framework",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through BERT — Masked Language Modeling?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Trace tensor shapes and information flow through the implementation",
-        "Treat one successful example as proof that every edge case works"
+        "All IDs below 100",
+        "Only MASK_ID=0",
+        "MASK_ID=0, CLS_ID=1, and SEP_ID=2",
+        "The final three IDs in the vocabulary"
       ],
       "correct": 2,
-      "explanation": "“Trace tensor shapes and information flow through the implementation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "SPECIAL_IDS is the set {0,1,2}, and the loop skips any token in that set."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits BERT — Masked Language Modeling?",
+      "question": "For a selected ordinary token t, what does labels[i] store?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate the computational and modeling trade-offs introduced by BERT — Masked Language Modeling",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate the computational and modeling trade-offs introduced by BERT — Masked Language Modeling” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for BERT — Masked Language Modeling?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Derive the mechanism behind BERT — Masked Language Modeling from tensor operations"
+        "IGNORE_INDEX=-100 for every selected token",
+        "The replacement ID, always 0 for [MASK]",
+        "The token position i multiplied by vocab_size",
+        "The original token ID t, even if input_ids[i] is replaced by [MASK]"
       ],
       "correct": 3,
-      "explanation": "“Derive the mechanism behind BERT — Masked Language Modeling from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Labels preserve the original target at selected positions; unselected positions alone retain IGNORE_INDEX."
+    },
+    {
+      "stage": "check",
+      "question": "Under the 80/10/10 branch in create_mlm_batch, what happens when the second random draw r is 0.85?",
+      "options": [
+        "The token is replaced by a different non-special random vocabulary ID",
+        "The token is replaced by MASK_ID=0",
+        "The input token is left unchanged and its label is ignored",
+        "The whole sentence is discarded"
+      ],
+      "correct": 0,
+      "explanation": "The branch 0.8 <= r < 0.9 samples a random ID, excluding special IDs and the original token."
+    },
+    {
+      "stage": "check",
+      "question": "What does whole_word_mlm do when a selected span covers two subword IDs?",
+      "options": [
+        "It selects only the first subword and drops the second from the input",
+        "It assigns both original IDs as labels and applies the same masking choice to both positions",
+        "It creates one label for the span and changes neither input token",
+        "It skips the span because only single-token words can be masked"
+      ],
+      "correct": 1,
+      "explanation": "A selected word span is handled as a unit: each position receives its original label and the chosen mask/random/unchanged operation."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for BERT — Masked Language Modeling?",
+      "question": "Why does an unselected position receive IGNORE_INDEX=-100 in this toy MLM batch?",
       "options": [
-        "Implement the core component without relying on a transformer framework",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "It marks a [MASK] token that must be copied to the output",
+        "-100 is the vocabulary ID reserved for punctuation",
+        "The loss can exclude that position instead of asking the model to predict every input token",
+        "It forces the model to predict the [CLS] token twice"
       ],
-      "correct": 0,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The sentinel label distinguishes positions used for the MLM objective from positions that were merely observed."
+    },
+    {
+      "stage": "post",
+      "question": "What distribution does toy_predict(masked_inputs, vocab) return for each input position?",
+      "options": [
+        "A random vector whose entries do not sum to one",
+        "A one-hot vector for MASK_ID",
+        "A vector containing only the original unmasked token",
+        "A uniform vector with one probability 1/len(vocab) for every vocabulary item"
+      ],
+      "correct": 3,
+      "explanation": "toy_predict builds `[1.0 / V for _ in vocab]` independently for every masked input."
     }
   ]
 }

@@ -4,75 +4,45 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Building a Complete LLM Pipeline?",
-      "options": [
-        "Compose the eleven prior lessons (tokenizer, data, pre-training, scaling, SFT, RLHF, DPO, CAI, eval, quanti...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "Which prerequisite stages must complete before Stage 09 `cai_grpo_policy` can run in `STAGES`?",
+      "options": ["Both `reward_ppo_policy` (07) and `dpo_policy` (08).", "Only the tokenizer stages 01 and 02.", "Only the final inference server stage 12.", "No stages; Stage 09 is independent."],
       "correct": 0,
-      "explanation": "“Compose the eleven prior lessons (tokenizer, data, pre-training, scaling, SFT, RLHF, DPO, CAI, eval, quanti...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The DAG lists dependencies `['07_reward_ppo_policy', '08_dpo_policy']` for the Constitutional-AI/GRPO policy stage."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Building a Complete LLM Pipeline?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Define the artifact contract between stages: what each stage consumes, what it produces, and how the next s...",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "What property does `ArtifactStore.put` provide when the same content is stored twice?",
+      "options": ["A new random path for every write.", "The same SHA-256 content address for identical bytes.", "A shorter hash for larger artifacts.", "A hash based only on the stage name."],
       "correct": 1,
-      "explanation": "“Define the artifact contract between stages: what each stage consumes, what it produces, and how the next s...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The store hashes the content and keeps artifacts under that digest, so identical bytes resolve to the same address."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Building a Complete LLM Pipeline?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Build an orchestrator that tracks experiments, hashes artifacts, and gates ship decisions on eval thresholds",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "With the default run metrics, does the `mmlu >= 65` gate pass when MMLU is 68.4?",
+      "options": ["No; the gate requires exactly 65.", "No; MMLU is compared as a cost in dollars.", "Yes; 68.4 meets the inclusive lower bound of 65.", "Only if the safety refusal rate is also above 0.05."],
       "correct": 2,
-      "explanation": "“Build an orchestrator that tracks experiments, hashes artifacts, and gates ship decisions on eval thresholds” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The gate comparator is `>=`, so the simulated MMLU score of 68.4 satisfies the minimum of 65."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Building a Complete LLM Pipeline?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Design the rollback plan: which artifacts are cheap to re-run, which are expensive, and what a corrupted ch...",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Design the rollback plan: which artifacts are cheap to re-run, which are expensive, and what a corrupted ch...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Building a Complete LLM Pipeline?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Compose the eleven prior lessons (tokenizer, data, pre-training, scaling, SFT, RLHF, DPO, CAI, eval, quanti..."
-      ],
+      "question": "What does `run` record when adding the next simulated stage would exceed the manifest budget?",
+      "options": ["It silently doubles the budget.", "It marks every previous stage as failed.", "It returns a shippable manifest anyway.", "It appends a halted record with no output hash and stops further execution."],
       "correct": 3,
-      "explanation": "“Compose the eleven prior lessons (tokenizer, data, pre-training, scaling, SFT, RLHF, DPO, CAI, eval, quanti...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The budget branch creates a `halted` record with an empty output hash and returns before running later stages."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Building a Complete LLM Pipeline?",
-      "options": [
-        "Define the artifact contract between stages: what each stage consumes, what it produces, and how the next s...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "After a successful stage in `run`, which value lets a dependent stage address its input artifact?",
+      "options": ["The stage's content hash stored in `name_to_hash`.", "The wall-clock timestamp only.", "The number of GPUs in the budget.", "The human-readable title from README.md."],
       "correct": 0,
-      "explanation": "“Define the artifact contract between stages: what each stage consumes, what it produces, and how the next s...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Successful outputs are put in the content-addressed store and the resulting hash is recorded by stage name for dependency resolution."
+    },
+    {
+      "stage": "post",
+      "question": "What does the final `Manifest.total_cost` represent after all default stages finish?",
+      "options": ["Only the evaluation stage's cost.", "The sum of the simulated costs for the completed stages.", "The number of tokens in the tokenizer vocabulary.", "The maximum single-stage wall time."],
+      "correct": 1,
+      "explanation": "`run` adds each stage's cost to the manifest total, so the final value is the cumulative simulated pipeline cost."
     }
   ]
 }

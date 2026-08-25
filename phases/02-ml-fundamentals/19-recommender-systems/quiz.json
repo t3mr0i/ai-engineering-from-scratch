@@ -4,45 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does an empty user-item cell usually mean?",
-      "options": ["The preference is unknown or unexposed", "The user definitely dislikes the item", "The item is forbidden for every user", "The matrix factor is mathematically zero in every trained model"],
+      "question": "A user clicks an item but never rates it. Which signal type is that click?",
+      "options": [
+        "Implicit feedback",
+        "An explicit rating",
+        "A confirmed negative preference",
+        "A held-out target by definition"
+      ],
       "correct": 0,
-      "explanation": "Missing feedback combines non-exposure, non-action, and unknown preference; it is not a confirmed negative."
+      "explanation": "A click records an observed action, not a stated rating. It also does not prove that the user disliked every unclicked item."
     },
     {
       "stage": "check",
-      "question": "Why keep a popularity baseline?",
-      "options": ["It guarantees individual fairness", "It is a strong, inspectable fallback and comparison", "It removes exposure bias from historical data", "It makes time-based evaluation unnecessary"],
+      "question": "For an interaction matrix, what does popularity_scores count for each item in the scratch code?",
+      "options": [
+        "The average rating including missing entries as zero",
+        "The number of users with a positive interaction for that item",
+        "The item index multiplied by its price",
+        "The number of latent factors in the model"
+      ],
       "correct": 1,
-      "explanation": "Popularity is simple and robust, especially for cold-start users, so personalization should beat it honestly."
+      "explanation": "The implementation counts rows where the item value is greater than zero, giving a simple popularity baseline."
     },
     {
       "stage": "check",
-      "question": "What does matrix factorization learn?",
-      "options": ["A separate hard-coded rule for every cell", "Only global item counts", "Latent vectors whose interaction estimates affinity", "A guarantee that every unobserved item is irrelevant"],
+      "question": "A user has two relevant held-out items and the recommender places one of them in its top-3 list. What is Recall@3?",
+      "options": [
+        "0.33",
+        "1.0",
+        "0.5",
+        "0.0"
+      ],
       "correct": 2,
-      "explanation": "User and item latent vectors provide a compact representation whose dot product scores affinity."
+      "explanation": "Recall@3 is relevant items retrieved divided by all held-out relevant items: 1/2=0.5."
     },
     {
       "stage": "check",
-      "question": "Which split best protects a next-item evaluation from future leakage?",
-      "options": ["Duplicate every interaction across train and test", "Hold out later interactions per user", "Choose test rows after fitting item popularity", "Use only the users with the highest historical activity"],
-      "correct": 1,
-      "explanation": "A per-user temporal or leave-last-out split better reproduces recommendation from past to future."
-    },
-    {
-      "stage": "post",
-      "question": "Why can offline Recall@K improve while the product worsens?",
-      "options": ["Recall is always random", "Ranked metrics cannot use held-out data", "K must equal the entire catalog", "Relevance can improve while diversity, safety, or long-term satisfaction declines"],
+      "question": "Why does leave_one_out remove an observed item from a user's training row?",
+      "options": [
+        "It turns every observed item into a negative label",
+        "It guarantees that popularity is the best method",
+        "It removes the user from the factorization entirely",
+        "It creates a held-out relevant item for leakage-safe ranking evaluation"
+      ],
       "correct": 3,
-      "explanation": "Offline relevance covers only part of the product objective and can hide concentration or feedback-loop harms."
+      "explanation": "The removed interaction acts as a held-out relevant item; recommendations are made from the remaining history and then compared with it."
     },
     {
       "stage": "post",
-      "question": "What should a new-user fallback do?",
-      "options": ["Use an explicit eligible baseline such as recent popularity", "Return latent-factor scores from an untrained user vector", "Pretend every missing interaction is a negative rating", "Reuse another user's private history without a policy"],
+      "question": "A brand-new user has no interaction history. Which fallback does the demo expose?",
+      "options": [
+        "Recommend the most popular items",
+        "Recommend items the user already clicked",
+        "Fit a personal factor vector from zero observations",
+        "Return every item in random order"
+      ],
       "correct": 0,
-      "explanation": "An explicit, policy-compliant fallback is deterministic and inspectable when personalization has no evidence."
+      "explanation": "Popularity does not require a user history, so it is a practical cold-start fallback in the artifact."
+    },
+    {
+      "stage": "post",
+      "question": "What is a main limitation of an item list ranked only by popularity?",
+      "options": [
+        "It cannot rank items for a user without explicit ratings",
+        "It can reinforce exposure bias and hide less popular but relevant items",
+        "It always produces a personalized ranking",
+        "It evaluates NDCG without needing a held-out set"
+      ],
+      "correct": 1,
+      "explanation": "Popularity reflects prior exposure as well as preference, so a popularity-only list can become self-reinforcing and less diverse."
     }
   ]
 }

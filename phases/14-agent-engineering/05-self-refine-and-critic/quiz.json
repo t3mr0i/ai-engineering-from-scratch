@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What three prompts make up a Self-Refine loop?",
+      "question": "What is the first output produced by `generate(\"world facts\", [])`?",
       "options": [
-        "Generate, feedback, refine",
-        "Plan, execute, solve the task",
-        "Actor, evaluator, reflector",
-        "Search, score, synthesize"
+        "Three bullets, including `Paris is the capital of Germany` and `Mt Everest is in Europe`.",
+        "Three verified bullets about France, Asia, and sea-level boiling.",
+        "An empty string because a topic is required only after critique.",
+        "A single sentence saying that the facts could not be checked."
       ],
       "correct": 0,
-      "explanation": "Self-Refine uses one model in three roles: generate, feedback, refine."
+      "explanation": "With no history, `generate` returns the intentionally flawed three-bullet draft used to demonstrate refinement."
     },
     {
       "stage": "check",
-      "question": "Why does Self-Refine require history on the refine step?",
+      "question": "What does `feedback_self` report for that initial draft?",
       "options": [
-        "Because most providers only apply prompt caching to prompts that carry history",
-        "Without prior outputs and critiques the refine step repeats earlier mistakes",
-        "Because the refine step needs history to bill the call at the right token rate",
-        "Including history in the refine prompt speeds up token generation noticeably"
+        "`no issues`, True",
+        "`first bullet reads wrong, double-check capital`, False",
+        "`verifier: ok`, True",
+        "`second bullet's continent looks off to me`, False"
       ],
       "correct": 1,
-      "explanation": "The refine prompt conditions on the full history so the model does not repeat its earlier errors."
+      "explanation": "The self-critic sees `Paris` and `Germany` together and returns the first-bullet critique with a false verdict."
     },
     {
       "stage": "check",
-      "question": "What does CRITIC change relative to Self-Refine?",
+      "question": "What does `verify_external` flag first in the initial draft?",
       "options": [
-        "It drops the refine step entirely and stops after the first critique",
-        "It swaps in a larger model for the generation step while feedback stays the same",
-        "It replaces the self-feedback step with an external tool-grounded verifier",
-        "It runs the feedback and refine steps in parallel instead of in sequence"
+        "The output has fewer than three bullet lines.",
+        "A bullet is longer than 60 characters.",
+        "`paris is the capital of germany` contradicts the reference data.",
+        "`water boils at 100C` is not in the external fact list."
       ],
       "correct": 2,
-      "explanation": "CRITIC swaps self-critique for a verify step routed through search, code interpreter, calculator, or domain verifiers."
+      "explanation": "The external verifier checks the known wrong Paris/Germany fact before the Everest check and returns that contradiction."
     },
     {
       "stage": "check",
-      "question": "Which Anthropic workflow pattern matches Self-Refine and CRITIC in Claude-friendly language?",
+      "question": "What does the next `generate` call do after history ends with a critique containing `germany`?",
       "options": [
-        "Router - classify the request, then dispatch it to a specialist prompt",
-        "Prompt chain - a fixed sequence of prompts run one after another",
-        "Parallel sampling - run several generations at once and pick the best one",
-        "Evaluator-Optimizer - score the output, then revise it and loop"
+        "It fixes Everest but keeps Paris as Germany.",
+        "It returns the prior output unchanged.",
+        "It emits only the corrected Paris sentence.",
+        "It changes Paris to France but still leaves Everest in Europe."
       ],
       "correct": 3,
-      "explanation": "Anthropic names this pattern Evaluator-Optimizer: an evaluator scores, an optimizer revises, loop until convergence."
+      "explanation": "The `germany` branch changes the first bullet to France; the later Everest correction happens only after another critique."
     },
     {
       "stage": "post",
-      "question": "What is a rubber-stamp loop and how does the lesson recommend avoiding it?",
+      "question": "How many attempts does `run_loop(\"world facts\", use_critic=True)` need before it passes?",
       "options": [
-        "A test that always passes, fixed by removing that test from the suite entirely and moving on",
-        "Same model, same prompt critiquing its own output; use different prompts or a smaller separate critic instead",
-        "A retry that always fails, fixed by raising the retry budget much higher than before",
-        "A guardrail that keeps timing out, fixed by widening its timeout window considerably"
+        "Three attempts: Paris is fixed, then Everest is fixed, then the verifier passes.",
+        "One attempt, because the external verifier edits the draft itself.",
+        "Four attempts, because `max_iters` is always exhausted.",
+        "Two attempts, because both wrong facts are replaced together."
+      ],
+      "correct": 0,
+      "explanation": "CRITIC produces the initial draft, a France-only revision, and an Asia revision that passes all checks on iteration 3."
+    },
+    {
+      "stage": "post",
+      "question": "Why does the demo's self-critique-only run fail to converge within four iterations?",
+      "options": [
+        "The self-critic cannot inspect any output containing bullet points.",
+        "Its generic critique does not contain the keywords that `generate` uses to choose a correction, so the draft repeats.",
+        "The loop disables `generate` after its first failed verification.",
+        "The external verifier rejects every draft before self-feedback runs."
       ],
       "correct": 1,
-      "explanation": "Same-style self-critique converges on 'looks good to me'; differentiate the evaluator from the optimizer."
-    },
-    {
-      "stage": "post",
-      "question": "Which SDK feature in OpenAI Agents SDK is CRITIC-shaped?",
-      "options": [
-        "Handoffs, which transfer a conversation to a different specialist agent",
-        "Sessions, which persist conversation state across separate agent runs",
-        "Output guardrails, which validate the final output and can call tools",
-        "Tracing, which records spans for every step of an agent run"
-      ],
-      "correct": 2,
-      "explanation": "Output guardrails validate the final agent output and can call tools, matching CRITIC's verifier role."
+      "explanation": "`feedback_self` says to double-check the capital, but `generate` only branches on critique text containing `germany` or `everest`; it therefore repeats the initial draft."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Flamingo and Gated Cross-Attention for Few-Shot VLMs?",
+      "question": "What does gated_cross_attention_step return when alpha=0.0?",
       "options": [
-        "Explain how gated cross-attention preserves a frozen LLM's text capability at initialization via tanh(gate)...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "The original text_hidden exactly, because tanh(0)=0 and the visual residual is closed",
+        "Only the visual cross-attention output, because the text residual is removed",
+        "A zero matrix, because both branches are masked",
+        "The visual output multiplied by two, because the gate starts neutral"
       ],
       "correct": 0,
-      "explanation": "“Explain how gated cross-attention preserves a frozen LLM's text capability at initialization via tanh(gate)...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The update is text_hidden + tanh(alpha) * cross. At alpha=0, tanh(alpha)=0, so the returned vectors equal the frozen text input."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Flamingo and Gated Cross-Attention for Few-Shot VLMs?",
+      "question": "What output shape does perceiver_resampler produce for 900 patches and num_latents=8?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Walk through a Perceiver resampler: N image patches → K fixed \"latent\" queries via cross-attention",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "900 latents, because the resampler preserves every patch",
+        "8 latents, with the same feature dimension as the input patches",
+        "72 latents, because each patch contributes to eight blocks",
+        "A scalar, because the cross-attention is pooled globally"
       ],
       "correct": 1,
-      "explanation": "“Walk through a Perceiver resampler: N image patches → K fixed \"latent\" queries via cross-attention” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The function initializes eight latent vectors and repeatedly updates them by attending to the patch list. The input length changes, but the latent count stays eight."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Flamingo and Gated Cross-Attention for Few-Shot VLMs?",
+      "question": "For ['IMG0','t0','IMG1','t1'], which image may text token t1 attend to under interleaved_mask?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Describe how Flamingo handles interleaved image-text sequences with causal masking that respects image plac...",
-        "Treat one successful example as proof that every edge case works"
+        "IMG0 only, because all images share one causal prefix",
+        "Both IMG0 and IMG1, because image tokens are never masked",
+        "IMG1 only, because it is the most recent preceding image",
+        "Neither image, because text-to-image attention is disabled"
       ],
       "correct": 2,
-      "explanation": "“Describe how Flamingo handles interleaved image-text sequences with causal masking that respects image plac...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "interleaved_mask selects the last image position before each text position. t1 follows IMG1, so its row allows IMG1 and blocks the older IMG0."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Flamingo and Gated Cross-Attention for Few-Shot VLMs?",
+      "question": "Which equation does gated_cross_attention_step implement?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Reproduce a few-shot multimodal prompt structure (3 image-caption examples then a query image)",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Reproduce a few-shot multimodal prompt structure (3 image-caption examples then a query image)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Flamingo and Gated Cross-Attention for Few-Shot VLMs?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain how gated cross-attention preserves a frozen LLM's text capability at initialization via tanh(gate)..."
+        "y = cross / tanh(alpha), with no text residual",
+        "y = text_hidden - cross, independent of alpha",
+        "y = softmax(text_hidden) + cross",
+        "y = text_hidden + tanh(alpha) * cross_attention(text_hidden, visual_tokens)"
       ],
       "correct": 3,
-      "explanation": "“Explain how gated cross-attention preserves a frozen LLM's text capability at initialization via tanh(gate)...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The helper computes cross-attention, scales it by math.tanh(alpha), and adds it to each text vector. The residual preserves the language stream while the gate opens."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Flamingo and Gated Cross-Attention for Few-Shot VLMs?",
+      "question": "Which ordering matches Flamingo's few-shot interleaved prompt described in the lesson?",
       "options": [
-        "Walk through a Perceiver resampler: N image patches → K fixed \"latent\" queries via cross-attention",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Three image-caption examples, then a query image whose caption is to be generated",
+        "Three captions with no images, then an image classification label",
+        "One image repeated three times, then an unrelated text-only prompt",
+        "A query image first, followed by captions that explain the answer"
       ],
       "correct": 0,
-      "explanation": "“Walk through a Perceiver resampler: N image patches → K fixed \"latent\" queries via cross-attention” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Flamingo uses in-context multimodal examples: image and caption pairs precede a new image. The model must continue the pattern without a gradient update."
+    },
+    {
+      "stage": "post",
+      "question": "What is approximately true of the visual contribution when alpha=2.0?",
+      "options": [
+        "tanh(2)=0, so the text stream is unchanged",
+        "tanh(2) is about 0.96, so the cross-attention residual is mostly open",
+        "The gate becomes negative and subtracts visual features",
+        "The gate is clipped to exactly 2.0 before the residual is added"
+      ],
+      "correct": 1,
+      "explanation": "math.tanh(2) is approximately 0.964. Compared with alpha=0, the visual residual therefore contributes strongly while the original text representation remains in the sum."
     }
   ]
 }

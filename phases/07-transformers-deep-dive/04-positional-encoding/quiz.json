@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Positional Encoding — Sinusoidal, RoPE, ALiBi?",
+      "question": "What are the first four values of sinusoidal_pe(n=8, d=8)[0]?",
       "options": [
-        "Derive the mechanism behind Positional Encoding — Sinusoidal, RoPE, ALiBi from tensor operations",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Derive the mechanism behind Positional Encoding — Sinusoidal, RoPE, ALiBi from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Positional Encoding — Sinusoidal, RoPE, ALiBi?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the core component without relying on a transformer framework",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Positional Encoding — Sinusoidal, RoPE, ALiBi?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Trace tensor shapes and information flow through the implementation",
-        "Treat one successful example as proof that every edge case works"
+        "[0, 0, 1, 1]",
+        "[1, 0, 1, 0]",
+        "[0, 1, 0, 1]",
+        "[sin(8), cos(8), sin(8), cos(8)]"
       ],
       "correct": 2,
-      "explanation": "“Trace tensor shapes and information flow through the implementation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "At position zero every angle is zero, so the even sine coordinates are 0 and the odd cosine coordinates are 1."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Positional Encoding — Sinusoidal, RoPE, ALiBi?",
+      "question": "What does apply_rope do to each even/odd pair of a vector?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate the computational and modeling trade-offs introduced by Positional Encoding — Sinusoidal, RoPE, ALiBi",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate the computational and modeling trade-offs introduced by Positional Encoding — Sinusoidal, RoPE, ALiBi” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Positional Encoding — Sinusoidal, RoPE, ALiBi?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Derive the mechanism behind Positional Encoding — Sinusoidal, RoPE, ALiBi from tensor operations"
+        "It masks every coordinate after the current position",
+        "It swaps the pair and then sorts its values",
+        "It adds the same scalar position ID to every coordinate",
+        "It applies a 2D rotation whose angle depends on the position and frequency index"
       ],
       "correct": 3,
-      "explanation": "“Derive the mechanism behind Positional Encoding — Sinusoidal, RoPE, ALiBi from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The implementation uses a*cos(theta)-b*sin(theta) and a*sin(theta)+b*cos(theta) for each pair."
+    },
+    {
+      "stage": "check",
+      "question": "Why do the RoPE demo rows for positions (3,5) and (1024,1026) have matching dot products?",
+      "options": [
+        "Both query-key pairs have relative gap 2, which RoPE preserves in the rotated dot product",
+        "The random vectors are regenerated identically for every row",
+        "The dot function ignores the supplied positions",
+        "The base is changed to 2 for those two rows"
+      ],
+      "correct": 0,
+      "explanation": "RoPE encodes position as rotations, making the interaction depend on the relative offset rather than the absolute pair of positions."
+    },
+    {
+      "stage": "check",
+      "question": "What is the first value of alibi_slopes(4) in the Python implementation?",
+      "options": [
+        "0.5",
+        "0.25",
+        "0.0625",
+        "0.00390625"
+      ],
+      "correct": 1,
+      "explanation": "For h=0 and n_heads=4, the formula is 2^(-8*(0+1)/4)=2^-2=0.25."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Positional Encoding — Sinusoidal, RoPE, ALiBi?",
+      "question": "When alibi_bias(2, seq_len=4, causal=True) builds row i=1, what value is placed at future column j=2?",
       "options": [
-        "Implement the core component without relying on a transformer framework",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "-slope",
+        "0.0",
+        "-inf",
+        "+slope"
       ],
-      "correct": 0,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The causal branch marks every j > i as negative infinity so a later token cannot receive attention from row i."
+    },
+    {
+      "stage": "post",
+      "question": "What is the intended effect of increasing the RoPE base from 10,000 to 1,000,000 in the demo?",
+      "options": [
+        "A larger dot-product scale that eliminates normalization",
+        "A wider vocabulary with one position per word",
+        "A causal mask that removes all future keys",
+        "Slower rotation for frequency pairs with i>0, delaying phase wrap in those dimensions"
+      ],
+      "correct": 3,
+      "explanation": "For i=0, theta=pos is independent of the base; for i>0, a larger base increases base^(2i/d), reducing theta and delaying phase wrap in those lower-frequency pairs."
     }
   ]
 }

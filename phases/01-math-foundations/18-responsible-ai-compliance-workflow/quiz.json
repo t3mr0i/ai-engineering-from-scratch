@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why should Responsible AI Compliance Workflow be taught as a workflow instead of only as tool awareness?",
+      "question": "Which scenario signal should trigger a closer compliance review?",
       "options": [
-        "Because tools never change",
-        "Because teams need shared signals, controls, and decision rules they can apply to real work",
-        "Because AI removes the need for review — and applies unchanged even when the lesson's stated preconditions fail",
-        "Because training should avoid examples"
-      ],
-      "correct": 1,
-      "explanation": "The lesson is designed around reusable operating artifacts so teams can apply the topic in project decisions, not just recognize tool names."
-    },
-    {
-      "stage": "check",
-      "question": "Which signal is explicitly part of this lesson?",
-      "options": [
-        "sensitive data",
-        "GPU memory fragmentation",
-        "Image augmentation policy",
-        "Database sharding depth"
+        "Sensitive data, external impact, automated decisions, or a need for explanation",
+        "A short Python file with no users",
+        "A colorful presentation theme",
+        "A model that runs quickly on a laptop"
       ],
       "correct": 0,
-      "explanation": "The lesson uses \"sensitive data\" as one of the concrete signals for deciding what action or control is needed."
+      "explanation": "The artifact's SIGNALS list operational reasons to raise scrutiny. Runtime speed or presentation style does not determine whether a workflow affects people or protected information."
     },
     {
       "stage": "check",
-      "question": "What does the Python artifact produce for Responsible AI Compliance Workflow?",
+      "question": "A Scenario has impact=4, uncertainty=4, and two matched signals. What score_scenario value is produced?",
       "options": [
-        "A trained neural network",
-        "A ranked plan with category, score, priority, controls, and rationale",
-        "A production SaaS backend, because one plausible output is sufficient production evidence",
-        "A browser extension"
+        "11",
+        "16",
+        "9",
+        "20 before applying the cap"
       ],
       "correct": 1,
-      "explanation": "The artifact is a classroom planner that turns scenarios into structured recommendations and reusable controls."
+      "explanation": "The score is impact*2 + uncertainty + 2*matches = 8+4+4 = 16, below the cap of 20."
     },
     {
       "stage": "check",
-      "question": "Which control belongs to the lesson design?",
+      "question": "What priority does priority_for(16) return?",
       "options": [
-        "Ignoring uncertainty to move faster",
-        "PII minimization",
-        "Removing human accountability",
-        "Treating all AI outputs as facts"
+        "guided pilot",
+        "team practice",
+        "launch gate required",
+        "awareness only"
       ],
-      "correct": 1,
-      "explanation": "The control \"PII minimization\" is part of the intended operating model for this topic."
+      "correct": 2,
+      "explanation": "The function assigns scores 16 and above to a launch gate. The lower bands begin at 11 for guided pilot, 7 for team practice, and below 7 for awareness."
+    },
+    {
+      "stage": "check",
+      "question": "Why does recommend select at least two controls even when few signals match?",
+      "options": [
+        "The score is always exactly two",
+        "Controls are chosen randomly so no signal matters",
+        "The list is only a display label and never enters the recommendation",
+        "The artifact keeps a minimum practical control set while adding more controls for more matches"
+      ],
+      "correct": 3,
+      "explanation": "selected_controls takes CONTROLS up to 1+len(matches), bounded to at least two. That makes a lightweight recommendation actionable rather than empty."
     },
     {
       "stage": "post",
-      "question": "When should a scenario become a launch-gate discussion rather than a casual awareness exercise?",
+      "question": "An HR policy assistant handles sensitive employee information and can affect decisions. Which next step fits the artifact?",
       "options": [
-        "When impact, uncertainty, and matched risk signals are high",
-        "Only when the model is open source",
-        "Only when the user interface is complex",
-        "Never; all AI topics should be handled informally — and applies unchanged even when the lesson's stated preconditions fail"
+        "Record the signals, apply PII minimization and human review, and assess whether a launch gate is required",
+        "Ship it immediately because the assistant is only text",
+        "Remove the audit log so the workflow stays lightweight",
+        "Treat the model's confidence score as the accountable decision"
       ],
       "correct": 0,
-      "explanation": "High-impact, uncertain, or risk-heavy scenarios require stronger controls and explicit launch decisions."
+      "explanation": "Sensitive data and external impact are explicit signals. The workflow keeps people accountable and turns the risk assessment into controls and a rollout decision."
     },
     {
       "stage": "post",
-      "question": "What is the main purpose of the output template?",
+      "question": "What does build_plan return for a set of scenarios?",
       "options": [
-        "To replace project ownership",
-        "To create a reusable worksheet or prompt that teams can apply after the course",
-        "To hide assumptions from stakeholders",
-        "To generate certificates automatically, with no need to inspect intermediate results or test edge cases"
+        "Only the highest-scoring scenario name",
+        "Rows containing each scenario, category, score, priority, controls, and rationale sorted by score",
+        "A trained classifier with no explanation fields",
+        "An unordered list of raw Scenario objects without controls"
       ],
       "correct": 1,
-      "explanation": "Each lesson ships an artifact that helps participants apply the capability in their daily workflow."
+      "explanation": "build_plan calls recommend for each scenario, serializes the recommendation fields into dictionaries, and sorts the rows from highest score to lowest."
     }
   ]
 }

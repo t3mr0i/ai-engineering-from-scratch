@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What are the six runtime shapes the lesson lists?",
+      "question": "What does `request_response(\"list project files\")` return?",
       "options": [
-        "Request-response, streaming, durable execution, queue-based, event-driven, scheduled",
-        "Serverless, containerized, monolithic, microservice, edge-native, and hybrid deployment models",
-        "Celery, BullMQ, SQS plus Lambda, LangGraph, CrewAI Flows, and Claude Managed Agents stacks",
-        "Synchronous, asynchronous, batch, polling, webhook-triggered, and cron-triggered execution modes"
+        "`final: answered list project files`",
+        "The five intermediate steps joined with newline characters.",
+        "A generator that yields one step at a time.",
+        "`error: request runtime only supports streaming`"
       ],
       "correct": 0,
-      "explanation": "These are the six runtime shapes; pick a shape before picking a framework."
+      "explanation": "The synchronous wrapper materializes `_agent_fn` and returns only `steps[-1]`, the final answer string."
     },
     {
       "stage": "check",
-      "question": "When is request-response a poor fit?",
+      "question": "Which sequence does `streaming(\"review this PR\")` yield?",
       "options": [
-        "On a 1-second classification task served synchronously through a single Agno or Mastra process",
-        "When the task takes longer than about 30 seconds and users hang up while workers pile up",
-        "On REST APIs that return within a single HTTP round trip without any streaming involved",
-        "On internal services where request and response happen inside the same process boundary"
+        "Only `final: answered review this PR`.",
+        "`parse`, `plan`, `step 1: search`, `step 2: read`, then the final answer.",
+        "The final answer first, followed by parse and plan retries.",
+        "Three queue job IDs rather than agent steps."
       ],
       "correct": 1,
-      "explanation": "Synchronous HTTP is only viable for short tasks; long tasks need queue/durable/event shapes."
+      "explanation": "The generator yields each item from `_agent_fn` in order: parse, plan, two named steps, and the final response."
     },
     {
       "stage": "check",
-      "question": "What is durable execution's core property?",
+      "question": "What happens to `long job B` under the demo's `fail_b` policy?",
       "options": [
-        "Faster inference achieved by batching multiple concurrent agent requests together onto shared GPU hardware pools",
-        "Lower token cost achieved by trimming the context window after each tool call in the agent loop",
-        "State is checkpointed after every step so the runtime can resume from the last successful step on failure",
-        "Native voice support delivered through WebRTC streaming for progressive low-latency audio output"
+        "It succeeds on its first attempt and never re-enters the queue.",
+        "It is sent to the dead-letter queue after one failure.",
+        "It retries twice and then enters the dead-letter queue on attempt three.",
+        "It blocks jobs A and C permanently because the queue is FIFO."
       ],
       "correct": 2,
-      "explanation": "Checkpoint-and-resume is the differentiator; LangGraph is the lesson's reference."
+      "explanation": "The worker requeues a failed job while `attempt < 3`; on its third attempt the same policy still fails, so it appends `j002` to `dlq`."
     },
     {
       "stage": "check",
-      "question": "Which Anthropic observation justifies queue-based runtimes for long-horizon agents?",
+      "question": "What does publishing `pr.opened` with payload `#123 add feature` return?",
       "options": [
-        "Tasks always complete in under five seconds via a synchronous request-response API call",
-        "Tasks must run synchronously so the caller can retry immediately after a timeout",
-        "Cron-shaped scheduling alone solves long-horizon step counts without durable state",
-        "Computer use announcement: dozens-to-hundreds of steps per task is normal"
+        "The scheduled event `eval.nightly`.",
+        "An empty list because EventBus does not retain subscribers.",
+        "A queue job with ID `j001`.",
+        "A result containing `('pr.opened', 'ran checks on #123 add feature')`."
       ],
       "correct": 3,
-      "explanation": "Anthropic flagged dozens-to-hundreds of steps per task as normal; that workload needs queues or durable runtimes."
+      "explanation": "The bus has one subscriber for `pr.opened`; `publish` invokes it and returns a tuple containing the event type and its check result."
     },
     {
       "stage": "post",
-      "question": "What does the lesson mean by 'observability is load-bearing'?",
+      "question": "Why does the failing queue job reach the DLQ rather than retry forever?",
       "options": [
-        "Without OTel GenAI spans and a Langfuse/Phoenix/Opik backend you cannot debug a multi-step agent that failed at step 40",
-        "Logs simply look prettier in a dashboard once OTel GenAI spans are wired into a Langfuse, Phoenix, or Opik backend for viewing",
-        "Disk usage grows large because every OTel GenAI span gets written out to a local log file on the host machine",
-        "Providers require OTel spans and trace export data for billing accuracy and rate-limit enforcement across API calls"
+        "The worker permits at most three attempts; an always-failing job is dead-lettered on the third.",
+        "The queue drops every job whose payload contains the word `long`.",
+        "The event bus removes the job after its first retry.",
+        "A scheduled cron event cancels the queue at 03:00."
       ],
       "correct": 0,
-      "explanation": "Observability is not optional for multi-step agents; it is the difference between debugging and replaying from scratch."
+      "explanation": "`worker` requeues only while `job.attempt < 3`; when attempt three also fails, it appends the job to `dlq` and records `DLQ`."
     },
     {
       "stage": "post",
-      "question": "Why must queue workers have a dead-letter queue (DLQ)?",
+      "question": "Which handler runs for `publish(\"memory.consolidate\", \"session_001\")` in the demo?",
       "options": [
-        "DLQ is a mandatory feature required by AWS SQS",
-        "DLQ makes job processing run faster overall",
-        "Without DLQ, failed jobs vanish silently",
-        "DLQ encrypts job payloads at rest by default"
+        "`on_pr_opened`, returning `ran checks on session_001`.",
+        "`on_memory_consolidate`, returning `consolidated session_001`.",
+        "Both handlers, because EventBus broadcasts every event to every subscriber.",
+        "Neither handler; scheduled events are not publishable."
       ],
-      "correct": 2,
-      "explanation": "Failed jobs without DLQ disappear; DLQ is the parking lot for failed jobs."
+      "correct": 1,
+      "explanation": "Subscribers are keyed by event type. `memory.consolidate` has only `on_memory_consolidate`, whose return string is `consolidated session_001`."
     }
   ]
 }

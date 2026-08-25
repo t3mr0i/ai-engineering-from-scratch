@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to OpenAI Preparedness Framework and DeepMind Frontier Safety Framework?",
+      "question": "How does the local OpenAI PF v2 table label rnd_automation?",
       "options": [
-        "Explain the autonomy mechanism and assumptions behind OpenAI Preparedness Framework and DeepMind Frontier S...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Explain the autonomy mechanism and assumptions behind OpenAI Preparedness Framework and DeepMind Frontier S...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of OpenAI Preparedness Framework and DeepMind Frontier Safety Framework?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Model its control loop, state transitions, and stopping conditions explicitly",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Model its control loop, state transitions, and stopping conditions explicitly” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through OpenAI Preparedness Framework and DeepMind Frontier Safety Framework?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Apply bounded permissions, budgets, and rollback controls",
-        "Treat one successful example as proof that every edge case works"
+        "Research",
+        "Missing from the table",
+        "Tracked",
+        "Hardcoded prohibition"
       ],
       "correct": 2,
-      "explanation": "“Apply bounded permissions, budgets, and rollback controls” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The OpenAI table in this lesson marks rnd_automation, cyber_uplift, and bio_uplift as Tracked, while several other capabilities are Research."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits OpenAI Preparedness Framework and DeepMind Frontier Safety Framework?",
+      "question": "What label does the local Anthropic RSP table give undermining_safeguards?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate capability and safety claims against reproducible evidence",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate capability and safety claims against reproducible evidence” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for OpenAI Preparedness Framework and DeepMind Frontier Safety Framework?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the autonomy mechanism and assumptions behind OpenAI Preparedness Framework and DeepMind Frontier S..."
+        "AI R&D4",
+        "Named risk only",
+        "Not covered",
+        "Hardcoded prohibition"
       ],
       "correct": 3,
-      "explanation": "“Explain the autonomy mechanism and assumptions behind OpenAI Preparedness Framework and DeepMind Frontier S...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The comparison table records undermining_safeguards as a hardcoded prohibition for Anthropic rather than as an ordinary RSP level."
+    },
+    {
+      "stage": "check",
+      "question": "How does the local DeepMind FSF table represent autonomous_replication?",
+      "options": [
+        "Folded into ML R&D with a CCL",
+        "Tracked only as cyber uplift",
+        "Absent from every policy",
+        "The same Research label as OpenAI"
+      ],
+      "correct": 0,
+      "explanation": "The DeepMind entry folds autonomous replication into ML R&D and marks that category with a capability control level."
+    },
+    {
+      "stage": "check",
+      "question": "How does diff(capability) display a policy that has no entry for a capability?",
+      "options": [
+        "It silently copies OpenAI's label",
+        "It prints that the capability is not in the table with an em dash",
+        "It raises a KeyError",
+        "It marks the capability Tracked"
+      ],
+      "correct": 1,
+      "explanation": "The comparison uses a missing-value display rather than inferring a control category from another framework."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for OpenAI Preparedness Framework and DeepMind Frontier Safety Framework?",
+      "question": "What is the safest way to compare these three frameworks in this lesson?",
       "options": [
-        "Model its control loop, state transitions, and stopping conditions explicitly",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Treat labels with similar words as identical controls",
+        "Infer missing categories from the framework's reputation",
+        "Read each exact local table entry and report differences without inventing equivalences",
+        "Use only the OpenAI column"
       ],
-      "correct": 0,
-      "explanation": "“Model its control loop, state transitions, and stopping conditions explicitly” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The demo is a literal policy-table diff; its purpose is to expose naming and coverage differences, not to normalize unlike governance systems."
+    },
+    {
+      "stage": "post",
+      "question": "Which pairing matches the local OpenAI table?",
+      "options": [
+        "long_range_autonomy=Tracked and cyber_uplift=Research",
+        "Both are Hardcoded prohibition",
+        "long_range_autonomy=Missing and cyber_uplift=Research",
+        "long_range_autonomy=Research and cyber_uplift=Tracked"
+      ],
+      "correct": 3,
+      "explanation": "OpenAI's local entries put long_range_autonomy in Research and cyber_uplift in Tracked, illustrating that the categories are not interchangeable."
     }
   ]
 }

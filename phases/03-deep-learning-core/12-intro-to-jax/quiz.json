@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the fundamental design difference between PyTorch and JAX?",
+      "question": "What shape does init_params create for layer3's weight matrix?",
       "options": [
-        "PyTorch is faster",
-        "PyTorch mutates tensors eagerly while JAX compiles pure functions without side effects",
-        "JAX doesn't support GPUs",
-        "PyTorch doesn't support automatic differentiation — and applies unchanged even when the lesson's stated preconditions fail"
+        "(10,128)",
+        "(784,256)",
+        "(128,10)",
+        "(256,128)"
       ],
-      "correct": 1,
-      "explanation": "PyTorch uses eager execution with mutable state (e.g., tensor.grad is modified in place). JAX embraces functional programming: functions are pure, state is explicit, and jit compilation optimizes entire computation graphs."
+      "correct": 2,
+      "explanation": "The final affine map takes 128 hidden features to 10 logits, so its weight array has shape (128,10)."
     },
     {
       "stage": "check",
-      "question": "What does jax.jit do?",
+      "question": "If x has shape (32,784), what shape does forward return before loss_fn applies log_softmax?",
       "options": [
-        "It adds dropout regularization, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "It compiles a Python function into optimized XLA code that runs much faster than interpreted Python",
-        "It initializes model weights",
-        "It computes gradients"
+        "(784,32)",
+        "(32,784)",
+        "(10,32)",
+        "(32,10)"
       ],
-      "correct": 1,
-      "explanation": "jax.jit traces a function and compiles it to XLA (Accelerated Linear Algebra) machine code. The first call is slow (compilation), but subsequent calls run the optimized compiled version."
+      "correct": 3,
+      "explanation": "The dot products map 784 to 256, then 256 to 128, then 128 to 10 for each of the 32 rows."
     },
     {
       "stage": "check",
-      "question": "What does jax.vmap do?",
+      "question": "In demo_grad, what does jax.grad(lambda x: x**3)(2.0) return?",
       "options": [
-        "Vectorizes a function to run over a batch dimension without writing explicit loops",
-        "Validates model architecture",
-        "Manages GPU memory",
-        "Computes second-order gradients, because one plausible output is sufficient production evidence"
+        "12",
+        "8",
+        "6",
+        "3"
       ],
       "correct": 0,
-      "explanation": "jax.vmap automatically vectorizes a function written for a single example to process an entire batch. You write code for one sample and vmap handles batching, often more efficiently than manual batch loops."
+      "explanation": "The derivative of x^3 is 3x^2, so at x=2 it is 12."
     },
     {
       "stage": "check",
-      "question": "How does JAX handle model state (weights) differently than PyTorch?",
+      "question": "In demo_vmap, what does in_axes=(None,0) mean for params and a batch of five vectors?",
       "options": [
-        "JAX stores weights on CPU only",
-        "JAX requires explicit state passing -- weights are function arguments, not mutable object attributes",
-        "JAX doesn't support trainable weights",
-        "JAX and PyTorch handle state identically, before defining the measurement, acceptance threshold, or rollback path"
+        "Map params over axis 0 and keep every input vector fixed",
+        "Reuse params for every row and map the function over axis 0 of the vectors",
+        "Map both arguments over their last axes",
+        "Drop the parameter dictionary before calling predict_single"
       ],
       "correct": 1,
-      "explanation": "In PyTorch, weights live inside nn.Module objects and are mutated in place. In JAX, weights are passed explicitly as function arguments and returned as new values. No mutation, no hidden state."
+      "explanation": "None broadcasts the same parameter tree, while 0 supplies one row of batch_x per mapped call, producing five predictions."
     },
     {
       "stage": "post",
-      "question": "When would you choose JAX over PyTorch?",
+      "question": "Why does train_step return updated params and opt_state instead of mutating a model object?",
       "options": [
-        "For quick prototyping of small models",
-        "When training at massive scale on TPU pods, where compilation and functional transforms provide significant speedups",
-        "When you need the largest ecosystem of pretrained models — and applies unchanged even when the lesson's stated preconditions fail",
-        "For deployment on mobile devices"
+        "JAX cannot represent arrays inside dictionaries",
+        "optax updates labels rather than parameters",
+        "The functional loop makes the full training state explicit for JAX transformations",
+        "Returning state prevents jax.grad from computing derivatives"
       ],
-      "correct": 1,
-      "explanation": "JAX excels at scale: jit compilation eliminates Python overhead, pmap handles multi-device parallelism naturally, and XLA optimization across the full computation graph gives significant speedups on TPU clusters."
+      "correct": 2,
+      "explanation": "The function receives state, computes gradients and updates, then returns new state. This explicit data flow fits jit and value_and_grad."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Introduction to JAX?",
+      "question": "Why does demo_jit call block_until_ready() when timing the compiled function?",
       "options": [
-        "Explain the key design difference between PyTorch's eager mutation and JAX's functional compilation model",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "It converts JAX arrays into Python lists",
+        "It disables compilation for the next call",
+        "It splits the random key into two new keys",
+        "It waits for asynchronous device work to finish before reading the elapsed time"
       ],
-      "correct": 0,
-      "explanation": "“Explain the key design difference between PyTorch's eager mutation and JAX's functional compilation model” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 3,
+      "explanation": "JAX dispatch can be asynchronous. Blocking ensures the timed interval includes completion of the computation."
     }
   ]
 }

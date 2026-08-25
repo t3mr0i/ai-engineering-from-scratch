@@ -205,6 +205,18 @@ This is why Llama 3 quadrupled its vocabulary from 32K to 128K. More tokens dedi
 
 
 
+## Build It
+
+Reconstruct **Tokenizers: BPE, WordPiece, SentencePiece** by following `BPETokenizer` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `BPETokenizer` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-tokenizer-analyzer.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Sennrich et al., 2016 -- "Neural Machine Translation of Rare Words with Subword Units"](https://arxiv.org/abs/1508.07909) -- the paper that introduced BPE for NLP, turning a 1994 compression algorithm into the foundation of modern tokenization
@@ -214,14 +226,23 @@ This is why Llama 3 quadrupled its vocabulary from 32K to 128K. More tokens dedi
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement BPE, WordPiece, and Unigram tokenization algorithms from scratch and compare their merge strategies.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain how vocabulary size affects model efficiency: too small creates long sequences, too large wastes embedding parameters.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Analyze tokenization artifacts across languages and code, identifying where specific tokenizers break down.
+This lab follows `BPETokenizer` and `train` on a controlled fixture; write down the value before changing the input.
+
+1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using tokens=["red","fox"]. Follow `BPETokenizer`, `train`, `encode`. Expect the attention/embedding shape follows the token count and each valid attention row remains normalized; capture the first printed shape, metric, status, or summary field and state which part supports **Implement BPE, WordPiece, and Unigram tokenization algorithms from scratch and compare their merge strategies**.
+2. **Change the controlled parameter.** Repeat the command after changing only the token sequence: use tokens=["red","fox","runs"]. Predict the direction of the change, then compare the two output values. Explain why **Explain how vocabulary size affects model efficiency: too small creates long sequences, too large wastes embedding parameters** says the other inputs should stay fixed.
+3. **Exercise the guard.** Feed the implementation tokens=[]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Analyze tokenization artifacts across languages and code, identifying where specific tokenizers break down** and record the exception text if the code rejects the case.
+4. **Prepare the artifact for reuse.** Open `outputs/prompt-tokenizer-analyzer.md` and add a worked example using tokens=["red","fox"]. Include the input contract, one expected output field, and a named acceptance check for **Use the tiktoken and sentencepiece libraries to tokenize text and inspect the resulting token IDs**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement BPE, WordPiece, and Unigram tokenization algorithms from scratch and compare their merge strategies,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Analyze tokenization artifacts across languages and code, identifying where specific tokenizers break down,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Tokenizers: BPE, WordPiece, SentencePiece** should contain:
 
+- the `python3 main.py` output for tokens=["red","fox"], with `BPETokenizer`, `train`, `encode` traced to the value or shape that supports **Implement BPE, WordPiece, and Unigram tokenization algorithms from scratch and compare their merge strategies**;
+- a before/after comparison for the token sequence, where tokens=["red","fox","runs"] changes the observation in the direction predicted by **Explain how vocabulary size affects model efficiency: too small creates long sequences, too large wastes embedding parameters**;
+- a recorded result for tokens=[] that matches the implementation’s validation or empty-result contract and explains the evidence for **Analyze tokenization artifacts across languages and code, identifying where specific tokenizers break down**; and
+- an updated `outputs/prompt-tokenizer-analyzer.md` example with a concrete input, expected output field, and acceptance check tied to **Use the tiktoken and sentencepiece libraries to tokenize text and inspect the resulting token IDs**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
 ## Guided Demo
 
 Use the [10–15 minute guided demo](demo.md) to predict an invariant, run the canonical entrypoint, change one variable, and probe a failure case.

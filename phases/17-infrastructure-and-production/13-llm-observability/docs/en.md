@@ -102,6 +102,18 @@ At >1M requests/day, full-trace retention costs more than the LLM calls. Sample 
 
 
 
+## Build It
+
+Reconstruct **LLM Observability Stack Selection** by following `ARIZE_AX_PER_GB` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
+
+## Use It
+
+Call `ARIZE_AX_PER_GB` from a small caller with the text "red fox". Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-observability-stack.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [SigNoz — Top LLM Observability Tools 2026](https://signoz.io/comparisons/llm-observability-tools/)
@@ -113,10 +125,20 @@ At >1M requests/day, full-trace retention costs more than the LLM calls. Sample 
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Distinguish development platforms (bundled: evals + prompts + sessions) from gateway/telemetry tools (traces + metrics only).
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Map six major tools (Langfuse, LangSmith, Phoenix, Arize AX, Helicone, Opik) to their licensing, pricing, and sweet-spot use cases.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain the OpenTelemetry-glue pattern that lets you combine a gateway tool with a separate eval platform.
+This lab follows `ARIZE_AX_PER_GB` and `Strategy` on a controlled fixture; write down the value before changing the input.
+
+1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using the text "red fox". Follow `ARIZE_AX_PER_GB`, `Strategy`, `simulate_day`. Expect the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text; capture the first printed shape, metric, status, or summary field and state which part supports **Distinguish development platforms (bundled: evals + prompts + sessions) from gateway/telemetry tools (traces + metrics only).**.
+2. **Change the controlled parameter.** Repeat the command after changing only the input text: use the text "red fox runs". Predict the direction of the change, then compare the two output values. Explain why **Map six major tools (Langfuse, LangSmith, Phoenix, Arize AX, Helicone, Opik) to their licensing, pricing, and sweet-spot use cases.** says the other inputs should stay fixed.
+3. **Exercise the guard.** Feed the implementation an empty string. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Explain the OpenTelemetry-glue pattern that lets you combine a gateway tool with a separate eval platform.** and record the exception text if the code rejects the case.
+4. **Prepare the artifact for reuse.** Open `outputs/skill-observability-stack.md` and add a worked example using the text "red fox". Include the input contract, one expected output field, and a named acceptance check for **Explain why the zero-copy / own-the-storage model (Arize AX) shifts cost away from ingest toward compute; specific multipliers vary by workload.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish development platforms (bundled: evals + prompts + sessions) from gateway/telemetry tools (traces + metrics only),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain the OpenTelemetry-glue pattern that lets you combine a gateway tool with a separate eval platform,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **LLM Observability Stack Selection** should contain:
+
+- the `python3 main.py` output for the text "red fox", with `ARIZE_AX_PER_GB`, `Strategy`, `simulate_day` traced to the value or shape that supports **Distinguish development platforms (bundled: evals + prompts + sessions) from gateway/telemetry tools (traces + metrics only).**;
+- a before/after comparison for the input text, where the text "red fox runs" changes the observation in the direction predicted by **Map six major tools (Langfuse, LangSmith, Phoenix, Arize AX, Helicone, Opik) to their licensing, pricing, and sweet-spot use cases.**;
+- a recorded result for an empty string that matches the implementation’s validation or empty-result contract and explains the evidence for **Explain the OpenTelemetry-glue pattern that lets you combine a gateway tool with a separate eval platform.**; and
+- an updated `outputs/skill-observability-stack.md` example with a concrete input, expected output field, and acceptance check tied to **Explain why the zero-copy / own-the-storage model (Arize AX) shifts cost away from ingest toward compute; specific multipliers vary by workload.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

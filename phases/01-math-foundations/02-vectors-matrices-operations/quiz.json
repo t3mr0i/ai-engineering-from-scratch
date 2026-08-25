@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For matrix multiplication (m x n) @ (n x p), what must be true about the dimensions?",
+      "question": "If A has shape (2, 3) and B has shape (3, 2), what shape does A @ B have?",
       "options": [
-        "m must equal p",
-        "The inner dimensions n must match",
-        "All dimensions must be equal — and applies unchanged even when the lesson's stated preconditions fail",
-        "m must be greater than p"
+        "(3, 3)",
+        "(2, 3)",
+        "(2, 2)",
+        "The multiplication is invalid"
       ],
-      "correct": 1,
-      "explanation": "Matrix multiplication requires the number of columns in the first matrix (n) to equal the number of rows in the second matrix (n). The result has shape (m x p)."
+      "correct": 2,
+      "explanation": "The inner dimensions 3 and 3 agree, and the outer dimensions remain: two rows from A and two columns from B."
     },
     {
       "stage": "check",
-      "question": "What is the identity matrix?",
+      "question": "What is the element-wise product of [[1, 2], [3, 4]] and [[5, 6], [7, 8]]?",
       "options": [
-        "A matrix of all ones",
-        "A square matrix with ones on the diagonal and zeros elsewhere that acts as the multiplicative identity",
-        "A matrix where every element is unique, with no need to inspect intermediate results or test edge cases",
-        "The transpose of any given matrix"
+        "[[19, 22], [43, 50]]",
+        "[[6, 8], [10, 12]]",
+        "[[1, 2], [3, 4]]",
+        "[[5, 12], [21, 32]]"
       ],
-      "correct": 1,
-      "explanation": "The identity matrix I has ones on the diagonal and zeros everywhere else. Multiplying any matrix by I returns the original matrix unchanged, like multiplying a number by 1."
+      "correct": 3,
+      "explanation": "Multiply entries at matching positions: 1*5, 2*6, 3*7, and 4*8. Matrix multiplication would sum products instead."
     },
     {
       "stage": "check",
-      "question": "What is the key difference between element-wise multiplication and matrix multiplication?",
+      "question": "For A = [[4, 7], [2, 6]], what are det(A) and A inverse?",
       "options": [
-        "Element-wise is faster while matrix multiplication is more accurate",
-        "Element-wise multiplies matching positions (same shape required), matrix multiplication takes dot products of rows and columns (inner dimensions must match)",
-        "They produce the same result but use different notation",
-        "Element-wise only works on vectors while matrix multiplication works on matrices, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path"
-      ],
-      "correct": 1,
-      "explanation": "Element-wise (Hadamard) product multiplies corresponding elements and requires identical shapes. Matrix multiplication computes dot products between rows and columns with the rule (m,n)@(n,p)=(m,p)."
-    },
-    {
-      "stage": "check",
-      "question": "In the expression 'output = relu(W @ x + b)', what role does broadcasting play?",
-      "options": [
-        "It broadcasts the computation across multiple GPUs, before defining the measurement, acceptance threshold, or rollback path",
-        "It automatically stretches the bias vector b to match the shape of W @ x so they can be added",
-        "It converts the data types of W and x to match",
-        "It repeats the relu activation across all elements"
-      ],
-      "correct": 1,
-      "explanation": "W @ x produces a column vector, and b is also a vector. Broadcasting stretches b across the batch dimension if needed, allowing element-wise addition without explicit shape matching."
-    },
-    {
-      "stage": "post",
-      "question": "What does a determinant of zero for a matrix indicate?",
-      "options": [
-        "The matrix has all zero entries",
-        "The matrix is singular: it crushes at least one dimension, cannot be inverted, and has no unique solution",
-        "The matrix is the identity matrix — and applies unchanged even when the lesson's stated preconditions fail",
-        "The matrix performs a rotation"
-      ],
-      "correct": 1,
-      "explanation": "A zero determinant means the transformation collapses space by at least one dimension (e.g., mapping 2D to a line). The matrix has no inverse, and linear systems using it have either no solution or infinitely many."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Vectors, Matrices & Operations?",
-      "options": [
-        "Distinguish element-wise multiplication from matrix multiplication and explain when each applies",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "det(A)=10 and A inverse = [[0.6, -0.7], [-0.2, 0.4]]",
+        "det(A)=24 and A inverse = [[6, 7], [2, 4]]",
+        "det(A)=0, so every 2x2 matrix is singular",
+        "det(A)=2 and A inverse = [[4, -7], [-2, 6]]"
       ],
       "correct": 0,
-      "explanation": "“Distinguish element-wise multiplication from matrix multiplication and explain when each applies” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The determinant is 4*6 - 7*2 = 10. The inverse is (1/10)[[6,-7],[-2,4]], which is the displayed decimal matrix."
+    },
+    {
+      "stage": "check",
+      "question": "How does the Matrix class add a bias of shape (1, 3) to an output of shape (2, 3)?",
+      "options": [
+        "It repeats the output row to make a (1, 3) matrix",
+        "It adds the bias row to each output row",
+        "It multiplies the two matrices element by element",
+        "It rejects the shapes because they are not identical"
+      ],
+      "correct": 1,
+      "explanation": "The implementation explicitly broadcasts a one-row bias across the two output rows, matching the common dense-layer operation."
+    },
+    {
+      "stage": "post",
+      "question": "In a dense layer with W shape (4, 3), x shape (3, 1), and b shape (4, 1), what is the shape after relu(W @ x + b)?",
+      "options": [
+        "(3, 3)",
+        "(4, 3)",
+        "(4, 1)",
+        "(1, 4)"
+      ],
+      "correct": 2,
+      "explanation": "W @ x produces (4,1), b has the same shape, and ReLU changes values but not shape."
+    },
+    {
+      "stage": "post",
+      "question": "The Matrix class raises an inner-dimensions error for (2, 3) @ (2, 1). What is the direct fix?",
+      "options": [
+        "Add the matrices element by element instead",
+        "Change the output shape label without changing either matrix",
+        "Take the determinant of the rectangular operands",
+        "Use a right operand with shape (3, n), or transpose it if that matches the data"
+      ],
+      "correct": 3,
+      "explanation": "The left matrix has three columns, so the right matrix must have three rows. A transpose is appropriate only when it produces that compatible orientation."
     }
   ]
 }

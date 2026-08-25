@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to GPT — Causal Language Modeling?",
+      "question": "In causal_mask(4), which positions remain finite in row i=2?",
       "options": [
-        "Derive the mechanism behind GPT — Causal Language Modeling from tensor operations",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
+        "Columns 0, 1, and 2",
+        "Only column 2",
+        "Columns 2 and 3",
+        "All four columns"
       ],
       "correct": 0,
-      "explanation": "“Derive the mechanism behind GPT — Causal Language Modeling from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The mask sets 0.0 when j<=i and -inf otherwise, so row 2 can attend to its prefix through column 2."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of GPT — Causal Language Modeling?",
+      "question": "Which target does cross_entropy_shifted compare with logits_per_pos[i]?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the core component without relying on a transformer framework",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "target_ids[i]",
+        "target_ids[i+1]",
+        "target_ids[i-1] for every i",
+        "The most frequent target in the sequence"
       ],
       "correct": 1,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The next-token loop runs to len(target_ids)-1 and explicitly indexes target_ids[i+1]."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through GPT — Causal Language Modeling?",
+      "question": "What does sample_top_k(logits, k=3, ...) do before sampling?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Trace tensor shapes and information flow through the implementation",
-        "Treat one successful example as proof that every edge case works"
+        "It selects the third-largest ID deterministically",
+        "It keeps three random IDs and copies their original probabilities without renormalizing",
+        "It keeps the three largest logits, applies softmax to those values, and samples among their IDs",
+        "It removes the three most probable IDs and samples the remainder"
       ],
       "correct": 2,
-      "explanation": "“Trace tensor shapes and information flow through the implementation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The function sorts logits descending, retains the first k, softmaxes the retained logits, and maps the sampled local index back to its vocabulary ID."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits GPT — Causal Language Modeling?",
+      "question": "How does temperature t=2.0 affect the logits before sample_temperature draws?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate the computational and modeling trade-offs introduced by GPT — Causal Language Modeling",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate the computational and modeling trade-offs introduced by GPT — Causal Language Modeling” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for GPT — Causal Language Modeling?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Derive the mechanism behind GPT — Causal Language Modeling from tensor operations"
+        "It adds 2.0 to every probability after softmax",
+        "It multiplies each logit by 2, making the distribution sharper",
+        "It keeps only the top two vocabulary entries",
+        "It divides each logit by 2, flattening the resulting distribution"
       ],
       "correct": 3,
-      "explanation": "“Derive the mechanism behind GPT — Causal Language Modeling from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "softmax(logits, temperature=t) divides logits by t; values above one reduce relative contrasts."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for GPT — Causal Language Modeling?",
+      "question": "What distinguishes top-p sampling from top-k sampling in this implementation?",
       "options": [
-        "Implement the core component without relying on a transformer framework",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Top-p keeps the smallest probability prefix whose cumulative mass reaches p, rather than a fixed number of IDs",
+        "Top-p always keeps exactly p vocabulary entries",
+        "Top-p chooses the largest logit and ignores all probabilities",
+        "Top-p applies a causal mask to the vocabulary indices"
       ],
       "correct": 0,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "sample_top_p sorts probabilities, stops when cumulative mass reaches p, renormalizes the retained prefix, and samples from it."
+    },
+    {
+      "stage": "post",
+      "question": "Why is the trained-ish loss in demo_ce_loss expected to be below the random baseline ln(10)?",
+      "options": [
+        "The code removes one of the ten classes from the denominator",
+        "Each position's next-token logit is boosted by 2.0, increasing its target probability relative to random logits",
+        "The shifted loss compares every position with its own input, making it zero",
+        "Random logits are sampled with a negative temperature"
+      ],
+      "correct": 1,
+      "explanation": "The demo adds 2.0 to the correct next-token logit for each training target, so its negative log probability should improve over unbiased random logits."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Capstone — Build a Complete Tool Ecosystem?",
+      "question": "What does research_arxiv_search return for the demo query agent protocol?",
       "options": [
-        "Compose an MCP server exposing tools, resources, prompts, and a task with a `ui://` app",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Compose an MCP server exposing tools, resources, prompts, and a task with a `ui://` app” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Capstone — Build a Complete Tool Ecosystem?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Front the server with an OAuth 2.1 gateway that enforces RBAC and pinned hashes",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Front the server with an OAuth 2.1 gateway that enforces RBAC and pinned hashes” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Capstone — Build a Complete Tool Ecosystem?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Write a multi-server client that traces with OTel GenAI attributes end-to-end",
-        "Treat one successful example as proof that every edge case works"
+        "All three papers, regardless of their titles",
+        "Only the task paper because every query is a task query",
+        "empty hit list",
+        "A report task with a UI resource"
       ],
       "correct": 2,
-      "explanation": "“Write a multi-server client that traces with OTel GenAI attributes end-to-end” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The search lowercases the query and performs a title substring check; none of the three fixture titles contains the exact phrase agent protocol."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Capstone — Build a Complete Tool Ecosystem?",
+      "question": "What does Alice receive from research_generate_report?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Delegate part of a workload to an A2A sub-agent; verify opacity is preserved",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Delegate part of a workload to an A2A sub-agent; verify opacity is preserved” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Capstone — Build a Complete Tool Ecosystem?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Package the whole stack with AGENTS.md + SKILL.md so other agents can drive it"
+        "A 401 because report tools are never authenticated",
+        "Only a list of paper ids",
+        "A pending task with no resource URI",
+        "completed task + report + ui://report/current"
       ],
       "correct": 3,
-      "explanation": "“Package the whole stack with AGENTS.md + SKILL.md so other agents can drive it” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Alice has research:read and research:write, so the capstone returns a completed report task plus the UI resource and CSP metadata."
+    },
+    {
+      "stage": "check",
+      "question": "Why does Bob's report request fail?",
+      "options": [
+        "missing research:write",
+        "Bob lacks research:read, even for search",
+        "Bob's token has the wrong issuer",
+        "The report tool is unknown to the registry"
+      ],
+      "correct": 0,
+      "explanation": "Bob is granted only research:read; REQUIRED_SCOPE maps report generation to research:write, so the call is denied before report creation."
+    },
+    {
+      "stage": "check",
+      "question": "Which UI metadata accompanies the generated report?",
+      "options": [
+        "ui://notes/timeline and filesystem permissions",
+        "ui://report/current + CSP + permissions=[]",
+        "No UI metadata; the report is text only",
+        "A browser redirect and an OAuth refresh token"
+      ],
+      "correct": 1,
+      "explanation": "research_generate_report returns the report UI URI, CSP, and permissions [] alongside the text result."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Capstone — Build a Complete Tool Ecosystem?",
+      "question": "Which cross-protocol operation is represented by the report span?",
       "options": [
-        "Compose an MCP server exposing tools, resources, prompts, and a task with a `ui://` app",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "An INTERNAL HTTP server span named notes.list",
+        "A root span created for each paper",
+        "CLIENT a2a.tasks.send to writer-agent",
+        "A UI-only span with no task id"
       ],
-      "correct": 0,
-      "explanation": "“Compose an MCP server exposing tools, resources, prompts, and a task with a `ui://` app” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The report creates an INTERNAL mcp.task.working span and a CLIENT A2A tasks.send span for writer-agent, carrying the report task context."
+    },
+    {
+      "stage": "post",
+      "question": "What trace relationship should the orchestrator preserve across search and report?",
+      "options": [
+        "Each gateway call starts a separate trace",
+        "Only the UI resource has a trace id",
+        "A2A spans must never have a parent",
+        "one trace across root, LLM, MCP, A2A"
+      ],
+      "correct": 3,
+      "explanation": "The capstone orchestrator propagates one trace through the root, LLM decisions, gateway/MCP calls, and A2A handoff so the workflow is correlated end to end."
     }
   ]
 }

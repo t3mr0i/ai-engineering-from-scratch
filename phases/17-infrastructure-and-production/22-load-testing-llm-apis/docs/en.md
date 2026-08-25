@@ -84,6 +84,18 @@ Build from real traffic samples (if you have them) or from published distributio
 
 
 
+## Build It
+
+Reconstruct **Load Testing LLM APIs — Why k6 and Locust Lie** by following `Request` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `Request` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-load-test-plan.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [TianPan — Load Testing LLM Applications](https://tianpan.co/blog/2026-03-19-load-testing-llm-applications)
@@ -95,10 +107,20 @@ Build from real traffic samples (if you have them) or from published distributio
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the two anti-patterns (GIL trap, prompt-uniformity trap) that make generic load testers lie for LLM APIs.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Pick a tool for a given purpose: LLMPerf (benchmark run), k6 + streaming extension (CI gate), guidellm (large-scale synthetic), GenAI-Perf (NVIDIA reference).
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Design four load patterns (steady, ramp, spike, soak) and name the failure mode each catches.
+Use `Request` as the trace: start from tokens=["red","fox"], keep the raw output, and tie each observation to a named objective.
+
+1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using tokens=["red","fox"]. Follow `Request`, `make_uniform_workload`, `make_realistic_workload`. Expect the attention/embedding shape follows the token count and each valid attention row remains normalized; capture the first printed shape, metric, status, or summary field and state which part supports **Explain the two anti-patterns (GIL trap, prompt-uniformity trap) that make generic load testers lie for LLM APIs.**.
+2. **Vary one named input.** Repeat the command after changing only the token sequence: use tokens=["red","fox","runs"]. Predict the direction of the change, then compare the two output values. Explain why **Pick a tool for a given purpose: LLMPerf (benchmark run), k6 + streaming extension (CI gate), guidellm (large-scale synthetic), GenAI-Perf (NVIDIA reference).** says the other inputs should stay fixed.
+3. **Probe the empty case.** Feed the implementation tokens=[]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Design four load patterns (steady, ramp, spike, soak) and name the failure mode each catches.** and record the exception text if the code rejects the case.
+4. **Package a usable handoff.** Open `outputs/skill-load-test-plan.md` and add a worked example using tokens=["red","fox"]. Include the input contract, one expected output field, and a named acceptance check for **Build a realistic prompt distribution using mean + stddev of input tokens rather than fixed length.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the two anti-patterns (GIL trap, prompt-uniformity trap) that make generic load testers lie for LLM APIs,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Design four load patterns (steady, ramp, spike, soak) and name the failure mode each catches,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Load Testing LLM APIs — Why k6 and Locust Lie** should contain:
+
+- the `python3 main.py` output for tokens=["red","fox"], with `Request`, `make_uniform_workload`, `make_realistic_workload` traced to the value or shape that supports **Explain the two anti-patterns (GIL trap, prompt-uniformity trap) that make generic load testers lie for LLM APIs.**;
+- a before/after comparison for the token sequence, where tokens=["red","fox","runs"] changes the observation in the direction predicted by **Pick a tool for a given purpose: LLMPerf (benchmark run), k6 + streaming extension (CI gate), guidellm (large-scale synthetic), GenAI-Perf (NVIDIA reference).**;
+- a recorded result for tokens=[] that matches the implementation’s validation or empty-result contract and explains the evidence for **Design four load patterns (steady, ramp, spike, soak) and name the failure mode each catches.**; and
+- an updated `outputs/skill-load-test-plan.md` example with a concrete input, expected output field, and acceptance check tied to **Build a realistic prompt distribution using mean + stddev of input tokens rather than fixed length.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

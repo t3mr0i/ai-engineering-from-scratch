@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why should Consultative Prompting be taught as a workflow instead of only as tool awareness?",
+      "question": "What makes a consultative prompt different from a request for more polished prose?",
       "options": [
-        "Because teams need shared signals, controls, and decision rules they can apply to real work",
-        "Because a professional-looking workshop agenda is proof the prompt improved the consulting work",
-        "Because asking the model for more text is the reliable way to sharpen a weak hypothesis",
-        "Because client context only matters once the recommendation has already been drafted"
+        "It makes the decision, assumptions, counterargument, audience, and evidence explicit before asking for a recommendation",
+        "It asks for a longer answer so uncertainty is less visible to the client",
+        "It removes stakeholder context so the model can stay neutral about the meeting",
+        "It treats the first plausible hypothesis as the final brief for every audience"
       ],
       "correct": 0,
-      "explanation": "The lesson is built around reusable operating artifacts — shared signals, controls, and decision rules — not the idea that a polished agenda proves better consulting, that more generated text sharpens a hypothesis, or that client context can wait until after the recommendation."
+      "explanation": "Consultative prompting structures thinking: clarify the decision, surface assumptions, challenge the hypothesis, fit the audience, and ground claims. It supports judgment rather than replacing it."
     },
     {
       "stage": "check",
-      "question": "In the lesson's opening example, what was missing from the professional-looking workshop agenda the assistant drafted?",
+      "question": "What does normalize(\"Client - Decision\\n\") return?",
       "options": [
-        "Stakeholder tension, decision criteria, risks, and the specific client context the work depended on",
-        "A source-grounded reading list, which the consultant had planned to attach to the agenda later",
-        "A summary of the six consulting moves: clarify, diagnose, structure, challenge, synthesize, recommend",
-        "An audience-fit rewrite for the steering committee, which was scheduled for the following week"
-      ],
-      "correct": 0,
-      "explanation": "The lesson's opening example is an agenda that reads professionally but reflects none of the stakeholder tension, decision criteria, risks, or client context — the prompt produced output without improving the consulting work. A missing reading list, a list of consulting moves, or an audience rewrite are not what the example turns on."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Python artifact produce for Consultative Prompting?",
-      "options": [
-        "A ranked plan with category, score, priority, controls, and rationale",
-        "A finished workshop agenda that needs no further consultant review at all",
-        "A single quality score for a prompt, with no rationale attached",
-        "A transcript of the client meeting that the prompt prepared for"
-      ],
-      "correct": 0,
-      "explanation": "The lesson's Python artifact outputs a ranked plan — category, score, priority, controls, and rationale — not a review-free workshop agenda, a bare prompt-quality score, or a meeting transcript."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to the lesson design?",
-      "options": [
-        "Skipping the counterargument step because the agenda already reads as balanced and professional",
-        "An assumption check, so the prompt forces the model to reveal what it took for granted",
-        "Dropping source grounding once the model's answer matches the consultant's own hypothesis",
-        "Writing every prompt for the same audience so the wording stays consistent across clients"
+        "Client - Decision with the line break preserved",
+        "client decision, with the hyphen changed to a space and whitespace collapsed",
+        "CLIENT DECISION, because normalization only changes case",
+        "client-decision, because the hyphen is retained as a word separator"
       ],
       "correct": 1,
-      "explanation": "The lesson's controls include an assumption check that makes the model reveal what it took for granted — the opposite of skipping the counterargument, dropping source grounding when the answer is agreeable, or ignoring audience fit."
+      "explanation": "normalize lowercases the text, replaces hyphens with spaces, and joins split whitespace. The resulting string is client decision."
+    },
+    {
+      "stage": "check",
+      "question": "The client workshop fixture has two matched signals, impact=4, and uncertainty=3. Which category does recommend choose?",
+      "options": [
+        "discover",
+        "challenge",
+        "structure",
+        "synthesize"
+      ],
+      "correct": 2,
+      "explanation": "The index is (2 + 4 + 3) modulo 4, which is 1. CATEGORIES[1] is structure; the same fixture receives score 15 and guided pilot priority."
+    },
+    {
+      "stage": "check",
+      "question": "Which control set is selected when a consultative Scenario matches three signals?",
+      "options": [
+        "assumption check only",
+        "assumption check and counterargument",
+        "audience fit and source grounding only",
+        "assumption check, counterargument, audience fit, and source grounding"
+      ],
+      "correct": 3,
+      "explanation": "recommend takes the first 1 + match count controls, capped at the four-item CONTROLS list. Three matches therefore include every listed control."
     },
     {
       "stage": "post",
-      "question": "When should a scenario become a launch-gate discussion rather than a casual awareness exercise?",
+      "question": "How should teams use outputs/prompt-pack-consultative-prompting.md after the lesson?",
       "options": [
-        "Only when the client happens to be an external customer rather than an internal team",
-        "When impact, uncertainty, and matched risk signals such as stakeholder tension are all high",
-        "Only when the prompt pack is being used for a proposal rather than a regular meeting",
-        "Never — a generic AI-drafted agenda can always be fixed in the room during the workshop — and applies unchanged even when the lesson's stated preconditions fail"
+        "Adapt its discovery, synthesis, and recommendation prompts to a real meeting while recording assumptions and sources",
+        "Copy it unchanged into every client engagement and omit the consultant's review",
+        "Use it as a substitute for the decision owner and stakeholder conversation",
+        "Treat a fluent generated agenda as evidence that the hypothesis is already true"
       ],
-      "correct": 1,
-      "explanation": "High-impact, uncertain, tension-heavy consulting situations need a launch gate regardless of whether the client is external, which document the prompt pack feeds, or whether the facilitator expects to fix things live."
+      "correct": 0,
+      "explanation": "The prompt pack is a reusable starting point. Its value comes from making the actual audience, evidence, and open assumptions visible in the next engagement."
     },
     {
       "stage": "post",
-      "question": "What is the main purpose of the output template?",
+      "question": "A proposal scenario contains stakeholder tension and a weak hypothesis. Which response follows the lesson's controls?",
       "options": [
-        "To create a reusable prompt pack that teams can keep applying after the course ends",
-        "To formally replace the consultant's own judgment about the client recommendation, with no need to inspect intermediate results or test edge cases",
-        "To keep the weakest assumptions in a hypothesis away from the steering committee",
-        "To automatically generate completion certificates once the workshop has finished"
+        "Ask for a confident recommendation and hide the tension from the client",
+        "Record the assumptions, request a counterargument, fit the output to its audience, and ground claims in sources",
+        "Drop source grounding because the consultant already knows the market",
+        "Use the same prompt for the proposal and the steering update so no wording changes"
       ],
-      "correct": 0,
-      "explanation": "The output template is a consultative prompt pack for discovery, synthesis, and recommendation work that teams keep applying after the course — not a substitute for the consultant's judgment, a way to hide weak assumptions from steering, or an automatic certificate generator."
+      "correct": 1,
+      "explanation": "The matched signals call for the controls that make reasoning inspectable. The prompt should expose what is uncertain and tailor the synthesis rather than smoothing over disagreement."
     }
   ]
 }

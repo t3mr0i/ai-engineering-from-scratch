@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the most common mistake people make when writing prompts for LLMs?",
+      "question": "In `buildPrompt(\"persona\", variables)`, what happens if the `variables` object omits a required placeholder such as `task`?",
       "options": [
-        "Over-constraining the prompt with so many rules that the model has little room left for the actual task",
-        "Assuming a technique that works in one model, like ChatGPT-specific formatting, transfers unchanged to every other model",
-        "Writing vague, underspecified instructions that leave the model guessing about format, scope, and constraints",
-        "Giving contradictory instructions, such as demanding both extreme brevity and coverage of every edge case"
-      ],
-      "correct": 2,
-      "explanation": "LLMs follow instructions literally. 'Write me a marketing email' gives the model no constraints. Specifying tone, audience, length, format, and constraints produces dramatically better results."
-    },
-    {
-      "stage": "check",
-      "question": "What are the four core components of an effective prompt?",
-      "options": [
-        "Temperature, top-p, max output tokens, and the stop sequence used to end generation",
-        "Role, context, constraints, and output format, the four pieces every effective prompt specifies",
-        "System message, user message, and assistant prefill, the three parts of a prompt anatomy",
-        "Positive constraints, negative constraints, few-shot examples, and a chain-of-thought instruction"
-      ],
-      "correct": 1,
-      "explanation": "Effective prompts specify: who the model should be (role), what it should know (context), what it should and shouldn't do (constraints), and how to structure the response (output format)."
-    },
-    {
-      "stage": "check",
-      "question": "Why should you include output format instructions in your prompts?",
-      "options": [
-        "Without format instructions, the model's output structure varies between calls, making it hard to parse",
-        "Naming the format shortens the prompt, which frees more of the context window for the actual task content",
-        "It prevents the model from hallucinating facts that were never present in its training data",
-        "It substitutes for a system message, so the conversation no longer needs one at all to stay on track"
+        "It throws a missing-variable error before returning a prompt",
+        "The placeholder stays in the user message as literal `{task}` text",
+        "The function silently chooses an empty string for the missing value",
+        "The model configuration supplies a default value for the missing variable"
       ],
       "correct": 0,
-      "explanation": "LLMs are non-deterministic. Without explicit format instructions, one call might return bullet points, the next prose, the next markdown. Specifying format ensures consistent, parseable outputs."
+      "explanation": "`buildPrompt` checks every variable listed by the selected pattern and throws `Missing template variable: ...` before rendering. A model call is never made with an unresolved required placeholder."
     },
     {
       "stage": "check",
-      "question": "What is the purpose of a system prompt?",
+      "question": "A simulated response has 18 words, contains both `cache` and `latency`, and includes no forbidden phrase. With criteria `{maxWords: 20, requiredKeywords: [\"cache\", \"latency\"], forbiddenPhrases: [\"in conclusion\"]}`, what is its composite score?",
       "options": [
-        "To compress the conversation history so more of the context window is free for the user's task",
-        "To set persistent behavioral rules, role, and constraints that apply to the entire conversation",
-        "To authenticate the API call, proving to the provider that the request comes from a paying account",
-        "To define which model architecture and parameter count the request should be routed to at runtime"
+        "0.50, because only the keyword component contributes to the score",
+        "1.00, because all three criteria pass",
+        "0.67, because the word limit and keywords pass but the forbidden-phrase check is ignored",
+        "0.33, because the score is based only on the number of required keywords found"
       ],
       "correct": 1,
-      "explanation": "The system prompt establishes the model's persona, rules, and constraints for the entire session. It runs before every user turn and is the primary mechanism for controlling model behavior in production."
+      "explanation": "`scoreResponse` adds one component for each supplied criterion: length, keyword coverage, and absence of forbidden phrases. All three are 1 here, so their mean is 1.00."
+    },
+    {
+      "stage": "check",
+      "question": "Which `expectedFormat` value makes `scoreResponse` parse the response with `JSON.parse`?",
+      "options": [
+        "`numbered_list`, which checks for a line beginning with a number and a period",
+        "`bullet_points`, which counts lines beginning with `-`, `*`, or `+`",
+        "`json`, which sets `formatValid` only when the whole string parses as JSON",
+        "`object`, which accepts any string containing curly braces"
+      ],
+      "correct": 2,
+      "explanation": "The `json` branch calls `JSON.parse(text)` and catches parsing errors. `bullet_points` and `numbered_list` use line-pattern checks instead."
+    },
+    {
+      "stage": "check",
+      "question": "A prompt built for the Anthropic formatter has system text `You are a tutor` and user text `Explain vectors`. Which request shape does the formatter produce?",
+      "options": [
+        "`{model, messages: [{role: \"system\"}, {role: \"user\"}], temperature}`",
+        "`{model, contents: [{role: \"user\", parts: [{text: user}]}], generationConfig}`",
+        "`{model, prompt: system + user, max_tokens}`",
+        "`{model, system, messages: [{role: \"user\", content: user}], temperature, max_tokens}`"
+      ],
+      "correct": 3,
+      "explanation": "The Anthropic formatter keeps the system prompt in a top-level `system` field and sends the user turn in `messages`. OpenAI puts both roles in `messages`, while Google uses `contents` and `generationConfig`."
     },
     {
       "stage": "post",
-      "question": "How should you test whether a prompt change actually improved output quality?",
+      "question": "What does `runPromptTest(prompt, [\"gpt-4o\"])` return for the known model in the catalog?",
       "options": [
-        "Read a handful of outputs from the new prompt and make a subjective judgment call",
-        "Ask the model itself whether the new prompt is performing better than the old one",
-        "Run the prompt on a diverse test set and measure changes in defined metrics like accuracy",
-        "Compare the API response latency before and after the prompt change, treating speed as quality"
+        "A `gpt-4o` row with response, tokens, latency, and request payload",
+        "Only the response string, because token and request details are discarded by the test runner",
+        "A sorted array of all three models, because the supplied model list is treated as a filter hint",
+        "An error, because model comparison requires all provider formatters at once"
       ],
-      "correct": 2,
-      "explanation": "Evaluating prompt changes on a handful of examples is unreliable. A systematic evaluation harness with diverse test cases and defined metrics shows whether changes help across the distribution, not just cherry-picked examples."
+      "correct": 0,
+      "explanation": "`runPromptTest` iterates over the requested model names and records `response`, `tokens`, `apiLatencyMs`, `wallTimeMs`, `finishReason`, and `requestPayload` under each key."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Prompt Engineering: Techniques & Patterns?",
+      "question": "After `compareModels(results, criteria)`, how are models ordered?",
       "options": [
-        "Construct system prompts with explicit behavioral rules that produce consistent, high-quality outputs",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "By increasing token count, so the cheapest generation is first",
+        "By descending composite score, while retaining model, tokens, and latency",
+        "By provider name, because the formatter determines the ranking",
+        "By API latency alone, with the fastest simulated request first"
       ],
-      "correct": 0,
-      "explanation": "“Construct system prompts with explicit behavioral rules that produce consistent, high-quality outputs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 1,
+      "explanation": "`compareModels` scores every model with the supplied criteria, builds a row containing score/tokens/latency, and sorts rows with the highest composite score first."
     }
   ]
 }

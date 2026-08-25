@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the Society of Minds protocol have N model instances do?",
+      "question": "How many peer operations do three debaters perform in a full mesh over three rounds?",
       "options": [
-        "Each independently runs a different benchmark suite and reports separate scores without cross-reading",
-        "Independently propose answers, then over R rounds read and critique each other's proposals until they converge",
-        "Each trains on a shared dataset assembled from the other instances' prior transcripts and logs",
-        "Each negotiates a shared compute budget before any proposals are generated or read at all"
-      ],
-      "correct": 1,
-      "explanation": "N proposers, R rounds, cross-critique, convergence is the canonical Du et al. debate."
-    },
-    {
-      "stage": "check",
-      "question": "Why does cross-model debate (e.g. ChatGPT + Bard) outperform single-model debate?",
-      "options": [
-        "Different vendors negotiate lower API prices when their models are combined in one pipeline",
-        "It is cheaper because mixed-vendor requests are billed at a discounted combined rate",
-        "Heterogeneity reduces shared blind spots so cross-critique catches more errors",
-        "The vendors share model weights internally once a debate session begins"
+        "6",
+        "9",
+        "18",
+        "24"
       ],
       "correct": 2,
-      "explanation": "Mixing models brings independent error distributions, which raises the ceiling of debate."
+      "explanation": "Each of three debaters sees the other two, giving six directed peer operations per round; three rounds therefore produce 18 operations."
     },
     {
       "stage": "check",
-      "question": "What is the main token-cost win of a sparse topology over full mesh?",
+      "question": "How many operations does the sparse-star topology use for the same three debaters and three rounds?",
       "options": [
-        "Sparse topology requires no models at all, replacing debate entirely with a single deterministic rule",
-        "Sparse topology doubles the number of rounds so every debater eventually sees every peer",
-        "It removes the LLM entirely and routes proposals through a fixed lookup table instead",
-        "Each debater reads only a subset of peers, so critique-op count drops while accuracy often matches"
+        "6",
+        "8",
+        "9",
+        "12"
       ],
       "correct": 3,
-      "explanation": "Sparse (star, ring, hub-and-spoke) reduces critique ops without losing accuracy on many tasks."
+      "explanation": "The star has two hub-to-spoke and two spoke-to-hub operations per round, four total; over three rounds it uses 12."
     },
     {
       "stage": "check",
-      "question": "Which case does the lesson list as where debate hurts?",
+      "question": "What answer do the scripted debaters converge on for the capital-of-Portugal question?",
       "options": [
-        "A simple factual lookup, because one lookup is cheaper than five debates",
-        "Open-ended reasoning tasks where multiple framings help narrow in on the right answer",
-        "Chess move validity checks where one model catching a missed rule matters most",
-        "Biography generation tasks that benefit from independent cross-checked proposals"
+        "Lisbon, with convergence reported in round 1.",
+        "Porto, after three rounds of majority voting.",
+        "Madrid, because the hub's answer dominates.",
+        "No answer, because the debaters never share their first proposals."
       ],
       "correct": 0,
-      "explanation": "Latency- and cost-sensitive trivial lookups do not benefit from N x R debate."
+      "explanation": "All three scripted drift functions settle on `Lisbon` in the first round, so the final majority answer is Lisbon and convergence is round 1."
     },
     {
-      "stage": "post",
-      "question": "What is convergence collapse?",
+      "stage": "check",
+      "question": "How does `run_debate` define `converged_round`?",
       "options": [
-        "A network outage that drops the connection between debating agents mid-round",
-        "All agents converge on the first wrong answer; mitigate with required disagreement rounds",
-        "A process crash in the orchestrator that halts the debate before convergence",
-        "A TLS handshake failure between the agent and its model provider's API endpoint"
+        "It is always the configured final round.",
+        "It is the first round in which all current answers are identical.",
+        "It is the round with the most peer operations.",
+        "It is set only when a human approves the majority answer."
       ],
       "correct": 1,
-      "explanation": "Early agreement on a wrong answer is mitigated by forcing distinct round-1 proposals."
+      "explanation": "After each round the implementation tests whether the current answer set has one value; the first all-equal round is stored as `converged_round`."
     },
     {
       "stage": "post",
-      "question": "Why does prompt homogenization undermine debate?",
+      "question": "What does a debater receive in its peer list during a full-mesh round?",
       "options": [
-        "It violates the Apache 2.0 license terms that most debate frameworks ship under",
-        "It uses too many tokens because identical prompts are never cached by the provider",
-        "Identical prompts produce nearly identical answers, removing the cross-critique signal",
-        "It bypasses the supervisor's routing logic, sending proposals directly between all peer agents"
+        "Only the hub's answer, regardless of topology.",
+        "Its own answer twice, to stabilize self-consistency.",
+        "The current answers from every other debater, excluding itself.",
+        "A random sample that may include no other debater."
       ],
       "correct": 2,
-      "explanation": "Diverse prompts (and ideally diverse models) keep the proposal distribution wide."
+      "explanation": "`full_mesh_round` builds peers by filtering out the current debater's name, so each model sees the other two answers but not a duplicate of its own."
+    },
+    {
+      "stage": "post",
+      "question": "How does the debate runtime choose the final answer after the last round?",
+      "options": [
+        "It always returns the first debater's initial proposal.",
+        "It returns the answer from the hub, even in full mesh.",
+        "It concatenates every final answer for a human to choose.",
+        "It takes the most common value in the final answer mapping."
+      ],
+      "correct": 3,
+      "explanation": "The final result uses `Counter(prior.values()).most_common(1)[0][0]`, so it selects the majority value among the answers at the end of the configured rounds."
     }
   ]
 }

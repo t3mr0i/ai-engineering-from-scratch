@@ -1,78 +1,78 @@
 {
   "lesson": "13-scaling-laws",
-  "title": "Scaling Laws",
+  "title": "Scaling Laws — Compute-Optimal Training and Over-Training",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Scaling Laws?",
+      "question": "Which expression does chinchilla_loss(N, D) evaluate?",
       "options": [
-        "Derive the mechanism behind Scaling Laws from tensor operations",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "A/N^alpha + B/D^beta + E",
+        "A*N^alpha + B*D^beta - E",
+        "6*N*D + A + B + E",
+        "log(N+D) divided by the compute budget"
       ],
       "correct": 0,
-      "explanation": "“Derive the mechanism behind Scaling Laws from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The implementation returns A / N**alpha + B / D**beta + E, using the fitted constants as defaults."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Scaling Laws?",
+      "question": "Under the compute constraint 6*N*D=C_flops, how does compute_optimal derive D for a candidate N?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the core component without relying on a transformer framework",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "D = 6*C_flops*N",
+        "D = C_flops / (6*N)",
+        "D = N / (6*C_flops)",
+        "D = C_flops - 6*N"
       ],
       "correct": 1,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The grid search enforces 6ND=C by solving directly for D at each candidate N."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Scaling Laws?",
+      "question": "Why does compute_optimal skip a candidate when D < 1e6?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Trace tensor shapes and information flow through the implementation",
-        "Treat one successful example as proof that every edge case works"
+        "The model parameter count is forced to zero below 1e6",
+        "The loss formula becomes negative for every small D",
+        "The implementation imposes a minimum training-token count before comparing its loss",
+        "The grid contains no logarithms for small datasets"
       ],
       "correct": 2,
-      "explanation": "“Trace tensor shapes and information flow through the implementation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The `if D < 1e6: continue` branch excludes candidates with fewer than one million training tokens."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Scaling Laws?",
+      "question": "What change does the over-training example make relative to its compute-optimal pair?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate the computational and modeling trade-offs introduced by Scaling Laws",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate the computational and modeling trade-offs introduced by Scaling Laws” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Scaling Laws?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Derive the mechanism behind Scaling Laws from tensor operations"
+        "It replaces the Chinchilla loss with a classification accuracy",
+        "It uses N×10 parameters and D/10 tokens, making inference 10× more expensive",
+        "It keeps N and D fixed but changes alpha and beta",
+        "It uses N/10 parameters and D×10 tokens, making inference roughly 10× cheaper in N"
       ],
       "correct": 3,
-      "explanation": "“Derive the mechanism behind Scaling Laws from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "main defines N_under=N_opt/10 and D_over=D_opt*10, then reports N_opt/N_under as the inference saving."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Scaling Laws?",
+      "question": "What does pretty(1_500_000) return?",
       "options": [
-        "Implement the core component without relying on a transformer framework",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "1.5M",
+        "1500K",
+        "1.5B",
+        "1500000"
       ],
       "correct": 0,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "pretty checks units from trillions down to thousands and formats 1,500,000 as 1.5M."
+    },
+    {
+      "stage": "post",
+      "question": "Why can a model trained past the compute-optimal D/N ratio still be attractive in deployment?",
+      "options": [
+        "More training tokens always remove the irreducible loss E",
+        "Extra training can improve quality while a smaller N lowers the per-token inference cost",
+        "Inference cost depends only on D, never on parameter count N",
+        "The loss equation guarantees over-training has zero compute cost"
+      ],
+      "correct": 1,
+      "explanation": "The lesson's over-training example trades additional pretraining compute for a smaller model, and the demo explicitly reports savings proportional to N."
     }
   ]
 }

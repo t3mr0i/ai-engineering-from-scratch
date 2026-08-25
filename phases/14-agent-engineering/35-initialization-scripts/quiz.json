@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does an init script eliminate?",
+      "question": "What happens when `prereqs.lock` has a matching, fresh fingerprint?",
       "options": [
-        "The per-session setup tax: probing runtime, listing the repo, retrying the same checks each new session",
-        "Latency from inference calls made directly against the model provider's own completion endpoint each turn",
-        "Provider rate limits imposed on concurrent requests during a busy production traffic period",
-        "Authentication tokens that expire partway through a long-running multi-hour agent session"
-      ],
-      "correct": 0,
-      "explanation": "The script pays the tax once and writes the answers into init_report.json the agent reads."
-    },
-    {
-      "stage": "check",
-      "question": "What is the init script's failure-mode contract?",
-      "options": [
-        "Fail soft and continue working around whatever probe came back unhealthy or incomplete",
-        "Always succeed by falling back to sensible defaults whenever a probe cannot complete",
-        "Fail loud, fail fast, fail in one place; refuse to start when the workbench is broken",
-        "Retry forever with exponential backoff until every probe eventually reports healthy"
+        "It marks every probe failed because cached results are forbidden.",
+        "It deletes the lock and runs only the environment probe.",
+        "The script prints that the lock is fresh and skips the probes.",
+        "It launches the agent without checking the lock age."
       ],
       "correct": 2,
-      "explanation": "The whole point is to refuse to start when the workbench is broken; silent fallback defeats the purpose."
+      "explanation": "`main` checks `lock_is_fresh()` before `run_probes`; a matching fingerprint younger than the 24-hour TTL prints the fresh-lock message and returns 0."
     },
     {
       "stage": "check",
-      "question": "Which is NOT one of the probes the lesson lists?",
+      "question": "What status does `probe_state_freshness` return when `agent_state.json` does not exist?",
       "options": [
-        "Runtime versions and interpreter checks",
-        "Dependency availability checks",
-        "Test command resolvability check",
-        "Token-by-token sampling temperature"
+        "`fail`, because initialization cannot continue without state.",
+        "`pass`, because missing state is treated as a fresh file.",
+        "It raises `FileNotFoundError`.",
+        "`warn`, with a first-run message."
       ],
       "correct": 3,
-      "explanation": "Probes include runtime versions, deps, test command, paths, env vars, state freshness, last-known-good commit."
+      "explanation": "The probe explicitly returns `Probe(\"state_freshness\", \"warn\", \"no state file yet; first run\")` when the state path is absent."
     },
     {
       "stage": "check",
-      "question": "Why does the lesson say init must be idempotent?",
+      "question": "What does the empty `REQUIRED_ENV_VARS` list imply for `probe_env`?",
       "options": [
-        "It satisfies SOC 2 audit requirements for reproducible, auditable build and deployment pipelines across every environment the team ships to",
-        "Running it twice should be a no-op except for a fresh timestamp, so it can be wired into CI, hooks, or a pre-task slash command",
-        "Idempotence saves money by reducing the number of billable model calls made during each agent session significantly",
-        "It is required by the JSON Schema specification for any state file that the workbench manager validates on every load"
+        "It passes with detail indicating that the empty required set is present.",
+        "It fails because at least one environment variable is required.",
+        "It skips all other probes and exits with code 2.",
+        "It treats every shell variable as a missing requirement."
+      ],
+      "correct": 0,
+      "explanation": "The missing-variable comprehension over `[]` is empty, so the probe returns pass and formats the detail using `REQUIRED_ENV_VARS or '[]'`."
+    },
+    {
+      "stage": "check",
+      "question": "What does `probe_lkg_diff` do when a valid baseline differs in more than 50 files?",
+      "options": [
+        "It returns a warning and writes a new baseline automatically.",
+        "It returns a failure because the file-diff budget is exceeded.",
+        "It ignores the baseline and reports only the Python version.",
+        "It deletes `last_known_good.json` before continuing."
       ],
       "correct": 1,
-      "explanation": "Idempotence makes init safe to call from many entry points (hooks, CI, slash command)."
+      "explanation": "`LKG_FILE_DIFF_BUDGET` is 50; a valid `git diff --name-only` result above that count produces a fail probe and refuses the launch."
     },
     {
       "stage": "post",
-      "question": "What is last-known-good commit anchoring?",
+      "question": "What does `main([\"--write-lkg\"])` do when Git can resolve `HEAD`?",
       "options": [
-        "The most recent commit by the team lead",
-        "Probe the current commit against an LKG file; refuse to start if the diff exceeds a budget without human ratification",
-        "The earliest commit in the repo",
-        "The merge base of HEAD and main"
+        "It runs every probe but does not write a commit value.",
+        "It refreshes only `prereqs.lock` and returns 1.",
+        "It writes the current commit to `last_known_good.json` and returns 0.",
+        "It fails unless `VERIFY_DEMO_MODE=1` is set."
       ],
-      "correct": 1,
-      "explanation": "Cloudflare's AI Code Review scopes reviewers against the LKG to prevent drift compounding across sessions."
+      "correct": 2,
+      "explanation": "The `--write-lkg` branch calls `git rev-parse HEAD`, writes the commit and timestamp to `LKG_PATH`, prints the pin, and returns zero without running probes."
     },
     {
       "stage": "post",
-      "question": "What does the lock file with TTL pattern do?",
+      "question": "When does the initialization script ignore a cached lock and rerun probes?",
       "options": [
-        "Locks the repo from edits",
-        "Writes prereqs.lock after a successful probe pass; subsequent runs trust the lock for 24h and skip expensive probes if the manifest hash matches",
-        "Blocks all writes for 24 hours",
-        "Disables CI"
+        "Whenever `REQUIRED_ENV_VARS` is empty.",
+        "Only when Python is at least version 3.10.",
+        "When the lock is fresh and the fingerprint matches exactly.",
+        "When the lock is missing, expired, malformed, or has a different fingerprint."
       ],
-      "correct": 1,
-      "explanation": "Same shape as Docker layer caches: idempotent probe + content hash = skip."
+      "correct": 3,
+      "explanation": "`lock_is_fresh` returns false for absent/invalid JSON, fingerprint mismatch, or age at least 24 hours; those cases fall through to `run_probes`."
     }
   ]
 }

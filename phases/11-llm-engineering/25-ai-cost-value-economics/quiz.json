@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why should AI Cost and Value Economics be taught as a workflow instead of only as tool awareness?",
+      "question": "Which statement best captures why a cheap model call is not yet an AI business case?",
       "options": [
-        "Because a low per-call model price is on its own enough proof that a business case holds",
-        "Because teams need shared signals, controls, and decision rules they can apply to real work",
-        "Because a claimed time saving per employee already counts as value before adoption is measured",
-        "Because integration, review, and support effort can be estimated once and never revisited"
-      ],
-      "correct": 1,
-      "explanation": "The lesson is built around reusable operating artifacts — shared signals, controls, and decision rules — not the idea that a low token price proves a case, that a claimed time saving is value before adoption, or that integration and review effort can be estimated once and left alone."
-    },
-    {
-      "stage": "check",
-      "question": "In the lesson's opening example, why did the approved assistant's promised savings never show up in operations metrics?",
-      "options": [
-        "The token bill for the assistant turned out to be far larger than the original estimate suggested",
-        "The license cost of the assistant was renegotiated upward halfway through the rollout period",
-        "Operations had no monitoring in place at all, so the gain did happen but stayed invisible in the metrics",
-        "Adoption stayed low, reviewers still checked every output, and integration work ran higher than planned"
-      ],
-      "correct": 3,
-      "explanation": "The lesson's opening example approves the project because model cost looks small, then value never materializes: adoption is low, reviewers still check every output, and integration work exceeds the estimate — not a token bill overrun, a renegotiated license, or a missing monitoring setup."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Python artifact produce for AI Cost and Value Economics?",
-      "options": [
-        "A finished business case ready to submit for funding without review, because one plausible output is sufficient production evidence",
-        "A ranked plan with category, score, priority, controls, and rationale",
-        "A single cost-of-ownership figure with no assumptions attached",
-        "An invoice reconciling token spend against the license budget"
-      ],
-      "correct": 1,
-      "explanation": "The lesson's Python artifact outputs a ranked plan — category, score, priority, controls, and rationale — not a submit-ready business case, a bare cost-of-ownership figure, or a token-spend invoice."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to the lesson design?",
-      "options": [
-        "Counting the promised time saving as realized value before any baseline is measured",
-        "A baseline metric, so the team can tell whether the operations number actually moved",
-        "Leaving the adoption-rate assumption out of the log because the pilot felt convincing",
-        "Treating a single low token price as the sensitivity range for the whole business case"
-      ],
-      "correct": 1,
-      "explanation": "The lesson's controls include a baseline metric — the reference point that shows whether the operations number actually moved — the opposite of counting promised savings as realized value, leaving adoption assumptions out of the log, or collapsing a sensitivity range into one token price."
-    },
-    {
-      "stage": "post",
-      "question": "When should a scenario become a launch-gate discussion rather than a casual awareness exercise?",
-      "options": [
-        "When impact, uncertainty, and matched risk signals such as adoption rate are all running high",
-        "Only when the license cost of the tool crosses a specific annual spending threshold agreed upfront",
-        "Only when the value case is presented to leadership rather than to the delivery team",
-        "Never — a weak value case can always be corrected at the next budget review round"
-      ],
-      "correct": 0,
-      "explanation": "High-impact, uncertain, risk-heavy value cases need a launch gate regardless of the license spend, who the case is presented to, or whether another budget review is already scheduled."
-    },
-    {
-      "stage": "post",
-      "question": "What is the main purpose of the output template?",
-      "options": [
-        "To formally replace the benefits owner's accountability for the value case after funding",
-        "To keep shaky cost assumptions out of sight of the people making the funding call",
-        "To create a reusable worksheet or prompt that teams can keep applying after the course ends",
-        "To automatically generate completion certificates for participants once the workshop ends, with no need to inspect intermediate results or test edge cases"
+        "Model calls are never relevant because all AI value comes from licensing",
+        "A model with a low token price automatically pays for integration and support",
+        "Realized value also depends on adoption, review effort, integration, ownership, and a moving baseline",
+        "The only reliable business-case input is the number of tokens in the prompt"
       ],
       "correct": 2,
-      "explanation": "The output template is a value case calculator and assumption log teams keep applying after the course — not a substitute for the benefits owner's accountability, a way to hide cost assumptions, or an automatic certificate generator."
+      "explanation": "The lesson separates cost structure from value realization. A forecast must include the operating work around the model and show that people adopt it and the target metric improves."
+    },
+    {
+      "stage": "check",
+      "question": "The demo's assistant rollout has two matched signals, impact=4, and uncertainty=3. What score and priority does it receive?",
+      "options": [
+        "11 and awareness only",
+        "13 and team practice",
+        "17 and launch gate required",
+        "15 and guided pilot"
+      ],
+      "correct": 3,
+      "explanation": "The score is 4*2 + 3 + 2*2 = 15. priority_for maps scores from 11 through 15 to guided pilot."
+    },
+    {
+      "stage": "check",
+      "question": "With two matched economics signals, which controls does recommend include?",
+      "options": [
+        "baseline metric, assumption log, and sensitivity range",
+        "benefits owner only, because the owner can supply the other controls later",
+        "pilot test and exit plan, which belong to the vendor lesson",
+        "no controls until adoption has already reached its target"
+      ],
+      "correct": 0,
+      "explanation": "The controls list is sliced to 1 + len(matches), with at least two entries. Two matches therefore select the first three economics controls."
+    },
+    {
+      "stage": "check",
+      "question": "What label does priority_for(16) return in this lesson?",
+      "options": [
+        "awareness only",
+        "launch gate required",
+        "team practice",
+        "guided pilot"
+      ],
+      "correct": 1,
+      "explanation": "The threshold is inclusive: scores of 16 or more require a launch gate. The lower bands begin at 11 and 7."
+    },
+    {
+      "stage": "post",
+      "question": "A pilot has low token spend but reviewers still check every answer and adoption is weak. What conclusion follows?",
+      "options": [
+        "The small model bill proves the promised operational value has been realized",
+        "Review effort and adoption are irrelevant once the assistant is available",
+        "The value case is still an assumption; measure adoption, reviewer work, and the baseline outcome",
+        "The team should remove the review step immediately to make the savings visible"
+      ],
+      "correct": 2,
+      "explanation": "A low direct cost does not establish a benefit. The worksheet should make adoption and review effort explicit and compare the target metric with a baseline before scaling."
+    },
+    {
+      "stage": "post",
+      "question": "What does each row from build_plan contain for a cost-and-value scenario?",
+      "options": [
+        "Only the token count and the model's invoice total",
+        "A funding approval with no record of the assumptions behind it",
+        "A single value estimate that discards the scenario name and controls",
+        "The scenario name, category, score, priority, selected controls, and rationale"
+      ],
+      "correct": 3,
+      "explanation": "build_plan converts each Recommendation into a dictionary with those six fields and sorts the rows by descending score. It supports review; it does not approve funding."
     }
   ]
 }

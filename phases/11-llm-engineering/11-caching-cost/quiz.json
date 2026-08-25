@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why do AI startups often fail from cost issues rather than model quality?",
+      "question": "Using `MODEL_PRICING`, what is the total cost for `gpt-4o` with 1,000 input tokens and 500 output tokens, with no cached input?",
       "options": [
-        "Models are always good enough that startups can skip evaluation and cost tracking once the demo looks convincing — and applies unchanged even when the lesson's stated preconditions fail",
-        "Cost optimization is easy because provider prompt caching alone cuts most bills by 90% with zero code changes",
-        "API providers offer unlimited free tiers for production traffic once a startup passes a few thousand daily users",
-        "Per-call costs compound rapidly: 10K users making 10 calls/day costs $250/day in tokens before charging a single dollar"
-      ],
-      "correct": 3,
-      "explanation": "LLM API costs scale linearly with usage. A feature that costs fractions of a cent per call seems cheap until it's called hundreds of thousands of times a day. Without cost optimization, many AI products are unprofitable at scale."
-    },
-    {
-      "stage": "check",
-      "question": "What is semantic caching for LLM applications?",
-      "options": [
-        "Caching the model's weights in memory between requests so the same GPU doesn't reload them for every call",
-        "Storing responses for previous queries and serving cached responses when a new query is semantically similar (not just exactly matching)",
-        "Caching only the query embeddings themselves, without ever storing or reusing the LLM's generated response",
-        "Pre-generating every possible response ahead of time and serving from that fixed table instead of calling the API, with no need to inspect intermediate results or test edge cases"
-      ],
-      "correct": 1,
-      "explanation": "Exact-match caching only helps with identical queries. Semantic caching embeds queries and serves cached responses when cosine similarity exceeds a threshold. 'What's the weather in NYC?' matches 'NYC weather today?'."
-    },
-    {
-      "stage": "check",
-      "question": "What is model routing as a cost optimization strategy?",
-      "options": [
-        "Load balancing identical requests across multiple servers running the same model to reduce latency under traffic",
-        "Sending simple queries to cheap/fast models and complex queries to expensive/powerful models based on query classification",
-        "Routing every request between different API providers at random purely to average out each vendor's per-token pricing, because one plausible output is sufficient production evidence",
-        "Caching responses from multiple models and returning whichever cached answer arrives first regardless of quality"
-      ],
-      "correct": 1,
-      "explanation": "Not every query needs the most expensive model. A classifier routes simple questions (FAQ, greetings) to a cheap model and complex questions (reasoning, analysis) to an expensive model. This can cut costs 40-70%."
-    },
-    {
-      "stage": "check",
-      "question": "What is prompt compression and how does it reduce costs?",
-      "options": [
-        "Making prompts shorter by deleting words at random until the token count falls under a fixed per-request budget, without regard to meaning",
-        "Compressing the prompt text with a binary algorithm like gzip before sending it as the request payload, the same way you would compress a file, before defining the measurement, acceptance threshold, or rollback path",
-        "Using shorter variable and function names in the application code that builds the prompt, which has no effect on the billed input tokens",
-        "Removing redundant tokens, summarizing long contexts, and eliminating boilerplate to reduce input token count while preserving essential information"
-      ],
-      "correct": 3,
-      "explanation": "Input tokens dominate cost in RAG applications (large retrieved contexts). Prompt compression removes filler words, summarizes verbose passages, and trims low-relevance chunks to reduce token count without losing key information."
-    },
-    {
-      "stage": "post",
-      "question": "What is prefix caching and which provider feature enables it?",
-      "options": [
-        "Caching only the first generated word of each response so the model can start streaming the rest of the answer faster next time — and applies unchanged even when the lesson's stated preconditions fail",
-        "Caching DNS lookups for the provider's API endpoint so every request skips domain name resolution before it even starts",
-        "Browser-side caching of API responses so a user's second identical request never reaches the provider's servers at all",
-        "Reusing KV-cache computation for shared prompt prefixes (system prompt + tool definitions), reducing latency and cost for repeated patterns"
-      ],
-      "correct": 3,
-      "explanation": "If your system prompt + tool definitions are 5000 tokens and identical across requests, prefix caching computes the KV-cache once and reuses it. Anthropic's prompt caching and OpenAI's cached tokens both support this."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Caching, Rate Limiting & Cost Optimization?",
-      "options": [
-        "Calculate per-request costs across providers and implement token-aware rate limiting and budget alerts",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "`$0.0075`: `$0.0025` for input plus `$0.0050` for output",
+        "`$0.00075`, because both prices are quoted per 100,000 tokens",
+        "`$0.0125`, because input and output rates are added before token scaling",
+        "`$7.50`, because the pricing table is already expressed per request"
       ],
       "correct": 0,
-      "explanation": "“Calculate per-request costs across providers and implement token-aware rate limiting and budget alerts” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "`calculate_cost` divides each token count by 1,000,000: `1000 * 2.50 / 1e6 = 0.0025` and `500 * 10.00 / 1e6 = 0.005`. Their sum is `$0.0075`."
+    },
+    {
+      "stage": "check",
+      "question": "Why does `ExactCache.get(model, messages, temperature=0.7)` return `None` even after the same request was stored?",
+      "options": [
+        "The hash excludes temperature, so every nonzero-temperature request collides with a zero-temperature entry",
+        "The cache intentionally bypasses exact reuse when temperature is above zero, incrementing misses instead",
+        "The cache stores only responses from `gpt-4o-mini`, not responses from the selected model",
+        "TTL is measured in request count, and the first lookup always expires immediately"
+      ],
+      "correct": 1,
+      "explanation": "Both `get` and `put` treat nonzero temperature as non-cacheable. This avoids reusing a stochastic response when the caller asked the model to sample."
+    },
+    {
+      "stage": "check",
+      "question": "A `SemanticCache` contains the query `What is the return policy?`. What happens on an exact repeat before its TTL expires?",
+      "options": [
+        "It is always a miss because semantic caching requires different wording",
+        "It evicts the old entry first so each query has at most one miss and one hit",
+        "An exact repeat has similarity 1.0 and can hit",
+        "It calls the model again and stores the second response under a new vector"
+      ],
+      "correct": 2,
+      "explanation": "`simple_embed` normalizes the same word-count vector on both calls, giving a dot product of 1.0. If the entry is fresh and the threshold is no greater than 1.0, `get` records a hit and returns the original response."
+    },
+    {
+      "stage": "check",
+      "question": "A new free-tier user has a full token bucket. What does `TokenBucketRateLimiter.check(\"u1\", 1000)` report before any requests are consumed?",
+      "options": [
+        "`allowed: false`, because free users cannot spend tokens until they authenticate",
+        "`allowed: true` with 500 tokens available, because the refill rate is the bucket capacity",
+        "A rate-limit error, because the first call is counted before the check",
+        "`allowed: true` with the initial 50,000 tokens"
+      ],
+      "correct": 3,
+      "explanation": "A new free bucket starts at capacity 50,000. A 1,000-token request fits and no timestamp has reached the 10-RPM ceiling, so the check permits it; `consume` must be called separately."
+    },
+    {
+      "stage": "post",
+      "question": "How does `classify_complexity(\"What time are you open?\")` route this query?",
+      "options": [
+        "`simple`, because it is short and matches `what time`",
+        "`medium`, because all questions are medium until a model sees the answer",
+        "`complex`, because the word `open` implies a multi-step operation",
+        "`simple` only after a semantic cache miss; cache state changes the classifier"
+      ],
+      "correct": 0,
+      "explanation": "The classifier first checks short queries and `SIMPLE_KEYWORDS`, which includes `what time`. It returns `simple` without consulting cache state or a model."
+    },
+    {
+      "stage": "post",
+      "question": "For `route_model(\"Design a retrieval architecture and explain the trade-off\", tier=\"pro\")`, which model is selected?",
+      "options": [
+        "`gpt-4.1-nano`, because all pro traffic is routed to the cheapest model",
+        "`gpt-4o`, because the query is classified as complex",
+        "`claude-haiku-3.5`, because complex questions always use the smallest Claude model",
+        "`gpt-4o-mini`, because the word count is greater than five but no simple keyword appears"
+      ],
+      "correct": 1,
+      "explanation": "`design` and `trade-off` are in `COMPLEX_KEYWORDS`, so complexity is `complex`. The routing table maps a complex pro request to `gpt-4o`."
     }
   ]
 }

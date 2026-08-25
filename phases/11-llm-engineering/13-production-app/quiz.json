@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the biggest gap between an LLM demo and a production LLM application?",
+      "question": "How does `select_prompt(\"general_chat\", user_id, variables)` assign the 10% A/B variant?",
       "options": [
-        "The model quality, since GPT-5-class models already handle timeouts and rate limits without any application code",
-        "Infrastructure: error handling, streaming, cost tracking, rate limiting, fallbacks, observability, and graceful degradation under load",
-        "The prompt quality, because a well-tuned system prompt automatically produces retries, streaming, and cost tracking",
-        "The choice of API provider, since switching from OpenAI to Anthropic alone resolves most production reliability issues — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "A demo calls an API and prints the response. Production must handle timeouts, provider outages, concurrent users, cost budgets, streaming delivery, logging, and graceful degradation. The model is the easy part."
-    },
-    {
-      "stage": "check",
-      "question": "Why is streaming token delivery important in production LLM applications?",
-      "options": [
-        "It reduces cost, since Server-Sent Events are billed by providers at a lower per-token rate than a single non-streamed response",
-        "Users perceive the first token arriving quickly as faster, even if total generation time is the same -- reducing perceived latency from seconds to milliseconds",
-        "It uses less server memory, because streamed tokens are discarded immediately instead of being buffered for the full response",
-        "It improves model accuracy, since streaming lets the model revise and correct earlier tokens once more context becomes available later, with no need to inspect intermediate results or test edge cases"
-      ],
-      "correct": 1,
-      "explanation": "Without streaming, users wait 3-8 seconds seeing nothing before the full response appears. With streaming, the first token arrives in 200-500ms and text flows continuously, making the experience feel responsive."
-    },
-    {
-      "stage": "check",
-      "question": "What should happen when your LLM API provider has an outage?",
-      "options": [
-        "The application should automatically fall back to an alternative provider or return a graceful degraded response",
-        "Show users a generic error page and wait for the on-call engineer to manually restart the affected service",
-        "Retry the failing request indefinitely with no backoff or limit until the provider's API eventually recovers",
-        "Switch every request to a locally-hosted model automatically, without any fallback chain or cost consideration, because one plausible output is sufficient production evidence"
+        "It hashes `user_id` with the experiment name and chooses `v2` for buckets below 10",
+        "It alternates v1 and v2 on every request from the same user",
+        "It chooses v2 whenever the query contains the word `test`, regardless of the user",
+        "It samples a random number for each call, so a user can switch versions within one request"
       ],
       "correct": 0,
-      "explanation": "Production systems need fallback strategies: a chain like sonnet -> gpt-4o -> gpt-4o-mini -> cached response -> a helpful 'temporarily unavailable' message. Never let a provider outage crash your application."
+      "explanation": "The experiment bucket is `md5(f\"{user_id}:{exp_name}\").hexdigest()` interpreted as an integer modulo 100. Stable hashing keeps a user in the same control/variant bucket for the experiment."
     },
     {
       "stage": "check",
-      "question": "What observability metrics should a production LLM application track?",
+      "question": "What does `SemanticCache.get(query)` return for an exact, fresh query already stored in the cache?",
       "options": [
-        "Request latency (P50/P95/P99), cost per request, error rates, token usage, cache hit rates, and quality scores from automated evals",
-        "Only error counts, treating latency, cost per request, cache hit rate, and eval quality scores as unnecessary detail, before defining the measurement, acceptance threshold, or rollback path",
-        "Only model accuracy scores from automated evals, ignoring latency percentiles, cache hit rate, and per-request cost",
-        "Only the aggregate monthly cost total, without breaking it down by request, latency, or which feature caused it"
+        "`None`, because the cache accepts only paraphrases with less than 1.0 similarity",
+        "A record with the cached response, similarity, original query, and timestamp",
+        "The model's prompt template and a new request ID, but not the response",
+        "A list of every entry whose embedding has a nonzero dot product with the query"
       ],
-      "correct": 0,
-      "explanation": "Comprehensive observability covers: latency percentiles (for SLA compliance), cost tracking (for budget management), error rates (for reliability), token usage (for optimization), and quality metrics (for regression detection)."
+      "correct": 1,
+      "explanation": "`simple_embedding` produces the same normalized vector for an exact repeat, yielding similarity 1.0. If the entry is within TTL and meets the threshold, the cache returns a metadata record and increments hits."
     },
     {
-      "stage": "post",
-      "question": "Why should you implement rate limiting in your LLM application?",
+      "stage": "check",
+      "question": "What happens when `check_input_guardrails` sees `\"My SSN is 123-45-6789\"` without an injection phrase?",
       "options": [
-        "To make the application feel more exclusive to users, the same way a waitlist creates demand for a premium product — and applies unchanged even when the lesson's stated preconditions fail",
-        "To reduce model accuracy deliberately for free-tier users so they upgrade to a paid plan with a stronger model",
-        "Rate limiting is only needed for free tiers, since paying enterprise customers can never exhaust an API budget",
-        "To prevent individual users from exhausting your API budget, protect against abuse, and ensure fair access during high traffic"
+        "It fails the request immediately and never returns a modified text",
+        "It removes the whole sentence because any detected PII is treated as an injection",
+        "It passes, records `ssn`, and redacts the number",
+        "It passes unchanged because the production service scrubs only model output"
+      ],
+      "correct": 2,
+      "explanation": "The input checker separates injection from PII. A PII match is collected, then each matching pattern is replaced with `[REDACTED_SSN]`; `passed` remains true so the service can continue with the safer query."
+    },
+    {
+      "stage": "check",
+      "question": "If every model in `call_with_fallback` raises `ConnectionError`, what does the function return?",
+      "options": [
+        "The last exception is re-raised without a response object",
+        "The first model's partial text, even though no call completed",
+        "An empty dictionary so the caller can choose a provider itself",
+        "A `fallback` response with an apology and the last error"
       ],
       "correct": 3,
-      "explanation": "Without rate limiting, a single user (or bot) can exhaust your daily API budget in minutes. Rate limiting protects your costs, prevents abuse, and ensures all users get reasonable response times during peak load."
+      "explanation": "The function walks the configured fallback chain and retains the last connection error. After exhaustion it returns a user-facing temporary-unavailability message, model `fallback`, token estimates, and the error string."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Building a Production LLM Application?",
+      "question": "What does a second `ProductionLLMService.handle_request` for the same fresh query normally report?",
       "options": [
-        "Implement streaming token delivery, graceful error handling, and request timeout management",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "`cache_hit: true` with zero model cost after the first response was stored",
+        "A new model call with the same cost, because semantic cache entries are used only for analytics",
+        "A blocked response, because repeating a query is treated as prompt injection",
+        "A different A/B prompt version, because cache hits bypass the user ID"
       ],
       "correct": 0,
-      "explanation": "“Implement streaming token delivery, graceful error handling, and request timeout management” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "After a successful miss, `handle_request` stores the response. A fresh semantic match increments cache hits, records a cache request with zero token cost, and returns the cached response without selecting a model template."
+    },
+    {
+      "stage": "post",
+      "question": "Which evidence does `ProductionLLMService.health_check()` expose for an operational dashboard?",
+      "options": [
+        "Only the latest response text, because request logs are intentionally hidden",
+        "Status, cache stats, cost summary, request count, and eval count",
+        "The provider API keys, complete user prompts, and every cached embedding",
+        "A single boolean derived from whether the last LLM call succeeded"
+      ],
+      "correct": 1,
+      "explanation": "`health_check` returns `status`, a cache stats object, the cost tracker summary, `total_requests`, and `eval_entries`. It gives observability signals without exposing raw credentials or prompt contents."
     }
   ]
 }

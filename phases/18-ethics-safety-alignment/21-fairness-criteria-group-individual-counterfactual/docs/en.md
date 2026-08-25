@@ -62,6 +62,18 @@ Lesson 20 is bias measurement. Lesson 21 is fairness definition. Lesson 22 is pr
 
 
 
+## Build It
+
+Reconstruct **Fairness Criteria — Group, Individual, Counterfactual** by following `gen` on a graph with edges (0,1) and (1,2). Run `python3 main.py` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.
+
+## Use It
+
+Call `gen` from a small caller with a graph with edges (0,1) and (1,2). Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-fairness-criterion.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Dwork et al. — Fairness through Awareness (arXiv:1104.3913)](https://arxiv.org/abs/1104.3913) — individual fairness
@@ -71,10 +83,20 @@ Lesson 20 is bias measurement. Lesson 21 is fairness definition. Lesson 22 is pr
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: State the three group-fairness criteria (demographic parity, equalized odds, conditional use accuracy equality) and one impossibility result.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe individual fairness via the Dwork et al. 2012 Lipschitz formulation.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe counterfactual fairness and its causal-graph dependency.
+This lab follows `gen` and `train` on a controlled fixture; write down the value before changing the input.
+
+1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using a graph with edges (0,1) and (1,2). Follow `gen`, `train`, `predict`. Expect degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly; capture the first printed shape, metric, status, or summary field and state which part supports **State the three group-fairness criteria (demographic parity, equalized odds, conditional use accuracy equality) and one impossibility result.**.
+2. **Change the controlled parameter.** Repeat the command after changing only the edge list: use the same graph with an isolated node 3. Predict the direction of the change, then compare the two output values. Explain why **Describe individual fairness via the Dwork et al. 2012 Lipschitz formulation.** says the other inputs should stay fixed.
+3. **Exercise the guard.** Feed the implementation a graph with no edges. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Describe counterfactual fairness and its causal-graph dependency.** and record the exception text if the code rejects the case.
+4. **Prepare the artifact for reuse.** Open `outputs/skill-fairness-criterion.md` and add a worked example using a graph with edges (0,1) and (1,2). Include the input contract, one expected output field, and a named acceptance check for **Explain backtracking counterfactuals and why they sidestep the intervention-on-protected-attribute problem.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “State the three group-fairness criteria (demographic parity, equalized odds, conditional use accuracy equality) and one impossibility result,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe counterfactual fairness and its causal-graph dependency,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Fairness Criteria — Group, Individual, Counterfactual** should contain:
+
+- the `python3 main.py` output for a graph with edges (0,1) and (1,2), with `gen`, `train`, `predict` traced to the value or shape that supports **State the three group-fairness criteria (demographic parity, equalized odds, conditional use accuracy equality) and one impossibility result.**;
+- a before/after comparison for the edge list, where the same graph with an isolated node 3 changes the observation in the direction predicted by **Describe individual fairness via the Dwork et al. 2012 Lipschitz formulation.**;
+- a recorded result for a graph with no edges that matches the implementation’s validation or empty-result contract and explains the evidence for **Describe counterfactual fairness and its causal-graph dependency.**; and
+- an updated `outputs/skill-fairness-criterion.md` example with a concrete input, expected output field, and acceptance check tied to **Explain backtracking counterfactuals and why they sidestep the intervention-on-protected-attribute problem.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

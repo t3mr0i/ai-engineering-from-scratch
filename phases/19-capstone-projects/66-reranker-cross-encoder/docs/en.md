@@ -67,6 +67,18 @@ Pick N from the eval curve plus the latency budget. The cross-encoder cannot rai
 
 
 
+## Build It
+
+Reconstruct **Cross-Encoder Reranker** by following `tokenize_pair` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `tokenize_pair` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/artifact-card.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - Nogueira, Cho, "Passage Re-ranking with BERT", 2019 - the canonical cross-encoder ranker paper
@@ -78,10 +90,20 @@ Pick N from the eval curve plus the latency budget. The cross-encoder cannot rai
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Distinguish a bi-encoder retriever from a cross-encoder reranker by their input shape, parameter count, and per-query cost.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement a small cross-encoder from scratch as a transformer block that consumes a packed (query, document) sequence and emits a single relevance scalar.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Wire a two-stage retrieve-then-rerank pipeline: retrieve top-N with a cheap retriever, rerank N to top-K with the cross-encoder, return K.
+Keep two runs side by side for **Cross-Encoder Reranker**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
+
+1. **Read the first result.** From `code/`, run `python3 main.py` using tokens=["red","fox"]. Follow `tokenize_pair`, `CrossEncoder`, `forward`. Expect the attention/embedding shape follows the token count and each valid attention row remains normalized; capture the first printed shape, metric, status, or summary field and state which part supports **Distinguish a bi-encoder retriever from a cross-encoder reranker by their input shape, parameter count, and per-query cost.**.
+2. **Run a two-value comparison.** Repeat the command after changing only the token sequence: use tokens=["red","fox","runs"]. Predict the direction of the change, then compare the two output values. Explain why **Implement a small cross-encoder from scratch as a transformer block that consumes a packed (query, document) sequence and emits a single relevance scalar.** says the other inputs should stay fixed.
+3. **Try an adversarial fixture.** Feed the implementation tokens=[]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Wire a two-stage retrieve-then-rerank pipeline: retrieve top-N with a cheap retriever, rerank N to top-K with the cross-encoder, return K.** and record the exception text if the code rejects the case.
+4. **Write the operator note.** Open `outputs/artifact-card.md` and add a worked example using tokens=["red","fox"]. Include the input contract, one expected output field, and a named acceptance check for **Measure the latency-vs-quality trade-off on a small fixture corpus and pick the right N for a given latency budget.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish a bi-encoder retriever from a cross-encoder reranker by their input shape, parameter count, and per-query cost,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Wire a two-stage retrieve-then-rerank pipeline: retrieve top-N with a cheap retriever, rerank N to top-K with the cross-encoder, return K,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Cross-Encoder Reranker** should contain:
+
+- the `python3 main.py` output for tokens=["red","fox"], with `tokenize_pair`, `CrossEncoder`, `forward` traced to the value or shape that supports **Distinguish a bi-encoder retriever from a cross-encoder reranker by their input shape, parameter count, and per-query cost.**;
+- a before/after comparison for the token sequence, where tokens=["red","fox","runs"] changes the observation in the direction predicted by **Implement a small cross-encoder from scratch as a transformer block that consumes a packed (query, document) sequence and emits a single relevance scalar.**;
+- a recorded result for tokens=[] that matches the implementation’s validation or empty-result contract and explains the evidence for **Wire a two-stage retrieve-then-rerank pipeline: retrieve top-N with a cheap retriever, rerank N to top-K with the cross-encoder, return K.**; and
+- an updated `outputs/artifact-card.md` example with a concrete input, expected output field, and acceptance check tied to **Measure the latency-vs-quality trade-off on a small fixture corpus and pick the right N for a given latency budget.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

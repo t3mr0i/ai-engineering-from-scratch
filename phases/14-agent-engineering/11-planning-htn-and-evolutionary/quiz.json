@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does an HTN add over a free-form LLM plan?",
+      "question": "What condition must hold for `Operator.applicable(state)` to return `True`?",
       "options": [
-        "Shorter prompts, since the planner skips few-shot worked examples",
-        "Provable correctness when operator preconditions and effects are enforced",
-        "Better embeddings for retrieving semantically similar past plans",
-        "Cheaper inference because the plan skips redundant LLM calls at every step"
-      ],
-      "correct": 1,
-      "explanation": "HTN's symbolic operators with preconditions and effects guarantee soundness by construction."
-    },
-    {
-      "stage": "check",
-      "question": "Which problem class is AlphaEvolve built for?",
-      "options": [
-        "Multi-turn chat memory management across very long conversations",
-        "Vector search ranking over dense semantic embedding spaces",
-        "Optimizations with a machine-checkable, deterministic fitness function",
-        "Free-form prose generation tasks with no objective scoring function at all"
+        "At least one precondition appears in `state`.",
+        "The operator has no effects to apply.",
+        "Every precondition appears in `state`.",
+        "The LLM has already proposed the operator in its cache."
       ],
       "correct": 2,
-      "explanation": "Evolutionary search needs a deterministic evaluator; AlphaEvolve targets domains where one exists."
+      "explanation": "The method returns `all(p in state for p in self.preconditions)`, so every declared precondition is required."
     },
     {
       "stage": "check",
-      "question": "How does ChatHTN preserve plan soundness while using an LLM?",
+      "question": "How does `Operator.apply` change its input state?",
       "options": [
-        "It fine-tunes the LLM directly on recorded HTN planning traces until its suggestions become reliable",
-        "It uses a vector database to retrieve the closest previously-validated plan and reuses it verbatim",
-        "It does not guarantee soundness at all; ChatHTN treats plan correctness as a best-effort heuristic to be refined through repeated user feedback",
-        "LLM suggestions only enter as candidate decompositions, validated against the operator schema; the symbolic layer owns correctness"
+        "It mutates the original set while deleting all unrelated facts.",
+        "It returns the original set unchanged and records effects in the LLM.",
+        "It replaces the state with only `effects_add`.",
+        "It copies the set, discards `effects_remove`, and adds `effects_add`."
       ],
       "correct": 3,
-      "explanation": "The LLM expands the method library but cannot bypass operator preconditions and effects."
+      "explanation": "`apply` starts with `new_state = set(state)`, then removes declared negative effects and adds positive effects."
     },
     {
       "stage": "check",
-      "question": "Which AlphaEvolve result does the lesson cite?",
+      "question": "What plan does the built-in method for `ship_change` produce from `{\"logged_in\"}`?",
       "options": [
-        "First improvement over Strassen for 4x4 complex matrix multiplication in 56 years",
-        "A 10x inference speedup on Gemini achieved purely through evolutionary prompt search",
-        "Beating GPT-4's score on the HumanEval code-generation benchmark",
-        "The first widely accepted computer-verified proof that P equals NP"
+        "`open_editor`, `write_tests`, `run_tests`, `open_pr`",
+        "`write_tests`, `open_editor`, `open_pr`, `run_tests`",
+        "`open_editor`, `run_tests`, `write_tests`, `open_pr`",
+        "No plan, because `ship_change` requires `tests_passing` initially."
       ],
       "correct": 0,
-      "explanation": "AlphaEvolve found 48 scalar multiplications for 4x4 complex matmul, the first improvement on Strassen in 56 years."
+      "explanation": "The matching method decomposes the task in that order, and each operator's effects satisfy the next operator's preconditions."
     },
     {
-      "stage": "post",
-      "question": "Which element of an HTN is a primitive directly-executable action with preconditions and effects?",
+      "stage": "check",
+      "question": "What happens when `HTNPlanner.plan` sees `ship_feature_with_migration`, which has no stored method initially?",
       "options": [
-        "A task — compound (to be decomposed) or primitive",
-        "An operator — a primitive action with preconditions and effects",
-        "A state — a set of facts describing the world at a point in planning",
-        "A method — one of several ways to decompose a compound task into subtasks"
+        "It returns an empty list without consulting the LLM.",
+        "It asks `ScriptedLLM` for a decomposition, validates the names, caches it, and expands it.",
+        "It directly executes the first suggested operator without checking preconditions.",
+        "It raises `KeyError` because unknown compound tasks are forbidden."
       ],
       "correct": 1,
-      "explanation": "Operators are the primitives; methods decompose compound tasks; state is a set of facts."
+      "explanation": "The no-method branch calls `llm.decompose`, rejects unknown symbols, stores the valid tuple in `cached_methods`, and expands it symbolically."
     },
     {
       "stage": "post",
-      "question": "What is the lesson's warning about AlphaEvolve without a real evaluator?",
+      "question": "What happens on the second `ship_feature_with_migration` planning call?",
       "options": [
-        "Running AlphaEvolve without a machine-checkable evaluator violates the Apache 2.0 license terms",
-        "Without a dedicated evaluator, AlphaEvolve cannot execute candidate mutations on GPU hardware",
-        "Asking an LLM whether the code is better is not a fitness function; the evaluator must be deterministic and fast",
-        "AlphaEvolve without a real evaluator simply runs somewhat slower than with one, but the search still converges to a correct answer eventually"
+        "The planner clears the cache and asks the LLM for a different method.",
+        "The planner returns `None` because cached plans are single-use.",
+        "The cached decomposition is used, so the LLM call count increases by zero.",
+        "The planner skips operator preconditions because the plan was already validated."
       ],
       "correct": 2,
-      "explanation": "Without a deterministic evaluator the search has no signal to converge on."
+      "explanation": "The scripted demo computes `new_calls` as zero: the cached tuple is expanded directly on the second call."
+    },
+    {
+      "stage": "post",
+      "question": "What candidate minimizes the evolutionary demo's deterministic fitness function?",
+      "options": [
+        "`a=0, b=7`, because the intercept dominates the target",
+        "`a=2, b=3`, because it is the first seeded survivor",
+        "`a=3, b=0`, because only the slope is evaluated",
+        "`a=3, b=7`, with fitness `0.00`"
+      ],
+      "correct": 3,
+      "explanation": "The evaluator compares `a*x+b` to `3*x+7` for x from -5 through 5; the exact pair `(3, 7)` has zero squared error."
     }
   ]
 }

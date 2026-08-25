@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What advantage does SVD have over eigendecomposition?",
+      "question": "For a full SVD of A with shape (3, 2), which shapes are valid for U, Sigma, and V^T?",
       "options": [
-        "SVD is always faster to compute",
-        "SVD works on any matrix of any shape, while eigendecomposition requires square matrices with full eigenvector sets",
-        "SVD produces smaller output matrices",
-        "SVD does not require numerical computation — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "Eigendecomposition only works on square matrices that have n linearly independent eigenvectors. SVD decomposes ANY m x n matrix into U * Sigma * V^T with no restrictions on shape or rank."
-    },
-    {
-      "stage": "check",
-      "question": "What does 'low-rank approximation' mean?",
-      "options": [
-        "Removing rows with low values from a matrix",
-        "Approximating a matrix by keeping only its most important components, producing a simpler matrix with fewer independent directions",
-        "Converting a matrix to a lower precision data type, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "Sorting the rows of a matrix by their magnitude"
-      ],
-      "correct": 1,
-      "explanation": "A rank-k approximation keeps only the top k singular values and their vectors, discarding the rest. The Eckart-Young theorem proves this is the BEST possible approximation of that rank."
-    },
-    {
-      "stage": "check",
-      "question": "In SVD A = U * Sigma * V^T, what geometric operation does each factor represent?",
-      "options": [
-        "U scales, Sigma rotates, V^T translates",
-        "V^T rotates in input space, Sigma scales along principal axes, U rotates into output space",
-        "U compresses, Sigma expands, V^T normalizes",
-        "All three factors perform the same operation: rotation, because one plausible output is sufficient production evidence"
-      ],
-      "correct": 1,
-      "explanation": "SVD reveals that every matrix performs: (1) V^T rotates inputs to align with principal directions, (2) Sigma stretches/compresses along each axis, (3) U rotates the result into the output space. Rotate, scale, rotate."
-    },
-    {
-      "stage": "check",
-      "question": "Why does sklearn implement PCA using SVD instead of eigendecomposition of the covariance matrix?",
-      "options": [
-        "SVD produces different results that are more accurate for ML, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "SVD works directly on the data matrix without forming the covariance matrix, avoiding squaring the condition number and improving numerical stability",
-        "SVD is easier to parallelize on GPUs",
-        "SVD does not require centering the data"
-      ],
-      "correct": 1,
-      "explanation": "Forming A^T*A squares the singular values (and condition number). If A has singular values [1000, 0.001], A^T*A has eigenvalues [10^6, 10^-6] -- 6 digits of precision lost. SVD avoids this by working directly on A."
-    },
-    {
-      "stage": "post",
-      "question": "How does truncated SVD enable recommendation systems to predict missing ratings?",
-      "options": [
-        "It fills missing entries with the average rating",
-        "It decomposes the ratings matrix into latent user and movie profiles; the dot product of a user profile with a movie profile predicts the missing rating",
-        "It clusters similar users together and copies their ratings — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "It trains a neural network on the observed ratings"
-      ],
-      "correct": 1,
-      "explanation": "SVD decomposes the ratings matrix into user profiles (U), latent factor importance (Sigma), and movie profiles (V^T). The low-rank reconstruction fills in missing entries based on the latent factors (genre, era, style) that explain user preferences."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Singular Value Decomposition?",
-      "options": [
-        "Apply truncated SVD for image compression and measure the compression ratio vs reconstruction error",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "U (3,3), Sigma (3,2), V^T (2,2)",
+        "U (2,2), Sigma (3,3), V^T (3,2)",
+        "U (3,2), Sigma (3,3), V^T (2,3)",
+        "U (2,3), Sigma (2,2), V^T (3,3)"
       ],
       "correct": 0,
-      "explanation": "“Apply truncated SVD for image compression and measure the compression ratio vs reconstruction error” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The full factors preserve the output and input bases: U is m by m, Sigma is m by n, and V^T is n by n."
+    },
+    {
+      "stage": "check",
+      "question": "How can singular values be obtained from A^T A?",
+      "options": [
+        "They are the eigenvalues of A added to its diagonal",
+        "They are the square roots of the nonnegative eigenvalues of A^T A",
+        "They are the row sums of A",
+        "They are the reciprocals of all entries in A^T A"
+      ],
+      "correct": 1,
+      "explanation": "A^T A has eigenvalues sigma_i^2. Taking nonnegative square roots gives the singular values, ordered from largest to smallest."
+    },
+    {
+      "stage": "check",
+      "question": "What does a rank-k truncated SVD keep for image compression?",
+      "options": [
+        "The k smallest pixels in each row",
+        "Only the diagonal of the original image",
+        "The k largest singular values and their matching singular vectors",
+        "Every singular value, but no singular vector"
+      ],
+      "correct": 2,
+      "explanation": "The leading singular triplets carry the greatest squared reconstruction energy. Dropping the rest gives the best rank-k approximation in the standard Frobenius norm."
+    },
+    {
+      "stage": "check",
+      "question": "How does the Moore-Penrose pseudoinverse solve an overdetermined least-squares problem?",
+      "options": [
+        "It solves only if A is square and exactly invertible",
+        "It deletes the extra equations before solving",
+        "It chooses x=b regardless of A",
+        "It returns x=A+ b, the minimum-residual solution when the relevant rank conditions hold"
+      ],
+      "correct": 3,
+      "explanation": "For a tall full-column-rank matrix, A+ b gives the least-squares minimizer. SVD handles rank deficiency by inverting only nonzero singular values."
+    },
+    {
+      "stage": "post",
+      "question": "In A=U Sigma V^T, which factor acts first on an input vector?",
+      "options": [
+        "V^T rotates it in the input space",
+        "U rotates it before any other factor",
+        "Sigma adds a constant bias",
+        "The factors act in the written left-to-right order"
+      ],
+      "correct": 0,
+      "explanation": "Matrix multiplication applies the rightmost factor first: V^T changes coordinates, Sigma scales them, and U maps the result into output space."
+    },
+    {
+      "stage": "post",
+      "question": "How is SVD connected to PCA after data is centered?",
+      "options": [
+        "PCA uses only the left singular vectors of an uncentered data matrix",
+        "The right singular vectors are PCA directions, and squared singular values give variance up to scaling",
+        "PCA replaces all singular values with one",
+        "SVD and PCA cannot be related because one is supervised"
+      ],
+      "correct": 1,
+      "explanation": "For centered data X, the covariance is proportional to X^T X. Its eigenvectors are the right singular vectors of X, with eigenvalues proportional to sigma_i^2."
     }
   ]
 }

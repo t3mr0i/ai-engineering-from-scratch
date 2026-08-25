@@ -89,6 +89,18 @@ All four are valid. The deciding question is whether you are constrained on toke
 
 
 
+## Build It
+
+Reconstruct **From CLIP to BLIP-2 — Q-Former as Modality Bridge** by following `vec` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `vec` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-modality-bridge-picker.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Li et al. — BLIP-2 (arXiv:2301.12597)](https://arxiv.org/abs/2301.12597) — the core paper.
@@ -100,10 +112,20 @@ All four are valid. The deciding question is whether you are constrained on toke
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain why a trainable bottleneck between a frozen vision encoder and frozen LLM beats end-to-end finetuning in cost and stability.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement a cross-attention block where a fixed set of learnable queries attend to external image features.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Walk through BLIP-2's two-stage pretraining: representation (ITC + ITM + ITG) then generative (LM loss with frozen decoder).
+This lab follows `vec` and `mat` on a controlled fixture; write down the value before changing the input.
+
+1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using tokens=["red","fox"]. Follow `vec`, `mat`, `matmul_vec`. Expect the attention/embedding shape follows the token count and each valid attention row remains normalized; capture the first printed shape, metric, status, or summary field and state which part supports **Explain why a trainable bottleneck between a frozen vision encoder and frozen LLM beats end-to-end finetuning in cost and stability.**.
+2. **Change the controlled parameter.** Repeat the command after changing only the token sequence: use tokens=["red","fox","runs"]. Predict the direction of the change, then compare the two output values. Explain why **Implement a cross-attention block where a fixed set of learnable queries attend to external image features.** says the other inputs should stay fixed.
+3. **Exercise the guard.** Feed the implementation tokens=[]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Walk through BLIP-2's two-stage pretraining: representation (ITC + ITM + ITG) then generative (LM loss with frozen decoder).** and record the exception text if the code rejects the case.
+4. **Prepare the artifact for reuse.** Open `outputs/skill-modality-bridge-picker.md` and add a worked example using tokens=["red","fox"]. Include the input contract, one expected output field, and a named acceptance check for **Compare Q-Former to the simpler MLP projector used in LLaVA and argue when each choice wins.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain why a trainable bottleneck between a frozen vision encoder and frozen LLM beats end-to-end finetuning in cost and stability,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Walk through BLIP-2's two-stage pretraining: representation (ITC + ITM + ITG) then generative (LM loss with frozen decoder),” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **From CLIP to BLIP-2 — Q-Former as Modality Bridge** should contain:
+
+- the `python3 main.py` output for tokens=["red","fox"], with `vec`, `mat`, `matmul_vec` traced to the value or shape that supports **Explain why a trainable bottleneck between a frozen vision encoder and frozen LLM beats end-to-end finetuning in cost and stability.**;
+- a before/after comparison for the token sequence, where tokens=["red","fox","runs"] changes the observation in the direction predicted by **Implement a cross-attention block where a fixed set of learnable queries attend to external image features.**;
+- a recorded result for tokens=[] that matches the implementation’s validation or empty-result contract and explains the evidence for **Walk through BLIP-2's two-stage pretraining: representation (ITC + ITM + ITG) then generative (LM loss with frozen decoder).**; and
+- an updated `outputs/skill-modality-bridge-picker.md` example with a concrete input, expected output field, and acceptance check tied to **Compare Q-Former to the simpler MLP projector used in LLaVA and argue when each choice wins.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

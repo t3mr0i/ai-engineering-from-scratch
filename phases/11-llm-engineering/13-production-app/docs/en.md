@@ -979,6 +979,18 @@ print(f"  Cost: ${result2.get('cost_usd', 0):.8f} (zero, cache hit)")
 print(f"\nSavings: Avoided redundant LLM call, saved ${result1.get('cost_usd', 0):.8f}")
 ```
 
+## Build It
+
+Reconstruct **Building a Production LLM Application** by following `call` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `call` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-architecture-reviewer.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Eugene Yan, "Patterns for Building LLM-based Systems"](https://eugeneyan.com/writing/llm-patterns/) -- architectural patterns (guardrails, RAG, caching, routing) seen across production LLM deployments.
@@ -987,10 +999,20 @@ print(f"\nSavings: Avoided redundant LLM call, saved ${result1.get('cost_usd', 0
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Wire all Phase 11 components (prompts, RAG, function calling, caching, guardrails) into a single production-ready service.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement streaming token delivery, graceful error handling, and request timeout management.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build observability into the application: request logging, cost tracking, latency percentiles, and error rate dashboards.
+Make the experiment auditable. Save the input, output, and one sentence explaining how the result bears on the claim.
+
+1. **Reproduce the control run.** Run [main.py](../code/main.py) with `python3 main.py` from the lesson's `code/` directory. Record the smallest input that demonstrates “Wire all Phase 11 components (prompts, RAG, function calling, caching, guardrails) into a single production-ready service”. Point to `main.py` and name the returned field or printed value that serves as evidence.
+2. **Change one decision.** Change exactly one input, threshold, or option that affects “Implement streaming token delivery, graceful error handling, and request timeout management”. Predict the direction of the change before running it, then compare the two outputs and explain why the other fields should stay stable.
+3. **Probe a boundary.** Construct a case that stresses “Build observability into the application: request logging, cost tracking, latency percentiles, and error rate dashboards”: choose an empty collection, missing field, maximum-sized value, malformed record, or another boundary that fits this lesson. Write the expected behavior first and distinguish an intentional guard from an accidental crash.
+4. **Transfer the result.** Open outputs/prompt-architecture-reviewer.md and adapt one example to a real workflow. State the owner, evidence, and next decision required for “Deploy the application with health checks, rate limiting, and a fallback strategy for provider outages”; mark any assumption that the demo does not establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Wire all Phase 11 components (prompts, RAG, function calling, caching, guardrails) into a single production-ready service,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build observability into the application: request logging, cost tracking, latency percentiles, and error rate dashboards,” and cite a repeatable check rather than relying on visual inspection alone.
+A useful submission records python3 main.py, the observed output, and the conclusion drawn from it. It should contain:
+
+- evidence for “Wire all Phase 11 components (prompts, RAG, function calling, caching, guardrails) into a single production-ready service” with the relevant input and returned field;
+- a one-variable comparison that makes “Implement streaming token delivery, graceful error handling, and request timeout management” visible;
+- a predicted and observed boundary result for “Build observability into the application: request logging, cost tracking, latency percentiles, and error rate dashboards”, including why the behavior is safe; and
+- one concrete update to outputs/prompt-architecture-reviewer.md that applies “Deploy the application with health checks, rate limiting, and a fallback strategy for provider outages” without hiding uncertainty.
+
+Use main.py to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.

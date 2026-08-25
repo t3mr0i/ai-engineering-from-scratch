@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the durability test that decides whether a piece of information belongs in repo memory?",
+      "question": "What state does the demo persist after selecting the first board task?",
       "options": [
-        "Whether it is valid JSON that parses cleanly under the repo's existing schema validator every time",
-        "Whether the user explicitly marked the information as important during the chat session",
-        "Whether it would be useful three months from now in a CI rerun; if yes, repo; if no, telemetry",
-        "Whether the state file fits within a 4 kB budget before compression is applied"
+        "`active_task_id` is null and `next_action` is empty.",
+        "`active_task_id` is `T-002` and the board has no owner.",
+        "`active_task_id` is `T-001` and `next_action` is `read existing /signup handler`.",
+        "The state is rejected because `T-001` is not a valid ID."
       ],
       "correct": 2,
-      "explanation": "Repo memory is for durable, three-months-from-now-useful state; transient data is telemetry."
+      "explanation": "The demo commits the initial state, loads the board's first ID `T-001`, changes the next action, and commits the valid state again."
     },
     {
       "stage": "check",
-      "question": "What schema field carries the agent's contract version?",
+      "question": "Why does committing `active_task_id=\"T-bogus\"` raise `SchemaError`?",
       "options": [
-        "schema_version",
-        "manifest_version",
-        "runtime_version",
-        "config_version"
+        "The state schema forbids all string task IDs.",
+        "Atomic writes reject values that are not already on disk.",
+        "Only board IDs may contain a hyphen.",
+        "The task ID does not match the required `T-` plus at least three digits pattern."
+      ],
+      "correct": 3,
+      "explanation": "The `active_task_id` pattern is `^(T-\\d{3,}|)$`; `T-bogus` fails that pattern during `StateManager.commit` validation."
+    },
+    {
+      "stage": "check",
+      "question": "What does `StateManager.commit` do before replacing the target file?",
+      "options": [
+        "It validates the value against the schema, then calls `atomic_write`.",
+        "It writes the value first and validates only after the rename.",
+        "It silently drops unexpected fields so validation cannot fail.",
+        "It loads a board schema even when committing agent state."
       ],
       "correct": 0,
-      "explanation": "schema_version is the integer contract; the manager refuses to load from an unknown version."
+      "explanation": "`commit` calls `validate(state, self.schema)` first; only a valid value reaches `atomic_write`, which prevents a bad write from replacing the file."
     },
     {
       "stage": "check",
-      "question": "How does atomic write work?",
+      "question": "Which value is accepted for a task-board `owner`?",
       "options": [
-        "Truncate the target file in place, then write the new bytes directly over the old contents",
-        "Append each new state update to the end of the file, guarded by a trailing CRC checksum",
-        "Encrypt the new state payload and overwrite the target file in place before releasing the file lock",
-        "tempfile.mkstemp in the same directory, write, fsync, os.replace (atomic rename) over the target"
-      ],
-      "correct": 3,
-      "explanation": "Atomic rename on POSIX and Windows is what prevents partial-write corruption."
-    },
-    {
-      "stage": "check",
-      "question": "Per the lesson's repo-memory table, which of these does NOT belong in repo memory?",
-      "options": [
-        "The active task id, tracked so the next session knows where to resume",
-        "Raw chat transcripts, which stay in the conversation, not the repo",
-        "Any open blockers, tracked so nobody re-discovers a known problem",
-        "The next action, tracked so the next session has a concrete start"
+        "`operator`",
+        "`reviewer`",
+        "`agent`",
+        "`maintainer`"
       ],
       "correct": 1,
-      "explanation": "The lesson's table lists raw chat transcripts under 'Does not belong'; active task id, open blockers, and next action all belong in repo memory."
+      "explanation": "`BOARD_SCHEMA` restricts `owner` to the enum `builder`, `reviewer`, or `human`; `reviewer` is one of the accepted values."
     },
     {
       "stage": "post",
-      "question": "What does the lesson say schema-first state buys you?",
+      "question": "How does `atomic_write` make a state update safer?",
       "options": [
-        "It lets the agent skip validation once the schema has been defined once",
-        "It compresses the state file so checkpoints load faster across sessions",
-        "Without a schema, agents invent fields; with one, bad writes are refused",
-        "It replaces atomic writes, since the schema already guarantees durability"
+        "It appends a second JSON document so the old value remains readable.",
+        "It writes directly to the target and relies on the process not being interrupted.",
+        "It writes and fsyncs a temporary file in the target directory, then uses `os.replace`.",
+        "It stores the state only in memory until the next Python process starts."
       ],
       "correct": 2,
-      "explanation": "The lesson says: without a schema, every agent invents new fields, every reviewer learns a new shape, and every CI script has to special-case past versions; with it, a bad write is a refused write."
+      "explanation": "The function creates a same-directory temporary file, flushes and fsyncs it, then atomically replaces the destination with `os.replace`."
     },
     {
       "stage": "post",
-      "question": "What four things does the schema constrain, per the lesson?",
+      "question": "Which status is allowed by the task-board schema even though the demo does not use it?",
       "options": [
-        "File size limits, text encoding, line endings, and commit message format",
-        "The model provider, token budget, temperature, and system prompt used",
-        "Branch name, commit author, timestamp format, and total diff size",
-        "Required keys, allowed statuses, forbidden values, and pattern rules"
+        "`paused`",
+        "`queued`",
+        "`running`",
+        "`blocked`"
       ],
       "correct": 3,
-      "explanation": "The lesson lists what the schema covers: required keys, allowed status values, forbidden values (e.g. null for arrays), and pattern constraints (task ids match T-\\d{3,})."
+      "explanation": "The board status enum is `todo`, `in_progress`, `done`, or `blocked`; `blocked` is valid even though the seeded board starts with `todo`."
     }
   ]
 }

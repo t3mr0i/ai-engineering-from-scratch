@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Synthetic and Masked Test Data: Coverage, Leakage, and Governance (2026)?",
+      "question": "Which check takes precedence in classify_leakage when an evaluation record's fingerprint is in the training corpus?",
       "options": [
-        "Explain the production problem addressed by Synthetic and Masked Test Data: Coverage, Leakage, and Governan...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Explain the production problem addressed by Synthetic and Masked Test Data: Coverage, Leakage, and Governan...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Synthetic and Masked Test Data: Coverage, Leakage, and Governance (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Synthetic and Masked Test Data: Coverage, Leakage, and Governance (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Measure quality, cost, latency, and risk with explicit acceptance criteria",
-        "Treat one successful example as proof that every edge case works"
+        "The record is CLEAN because synthetic text cannot leak",
+        "The record is NGRAM_FLAG only when at least 30% of tokens overlap",
+        "The record is EXACT_MATCH with contamination_score=1.0",
+        "The record is discarded without a verdict because hashes are advisory"
       ],
       "correct": 2,
-      "explanation": "“Measure quality, cost, latency, and risk with explicit acceptance criteria” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "classify_leakage checks the SHA-256 fingerprint first. A matching fingerprint immediately produces EXACT_MATCH and score 1.0, before any 13-gram calculation."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Synthetic and Masked Test Data: Coverage, Leakage, and Governance (2026)?",
+      "question": "What threshold does k_anonymity_report use when the generated records are checked?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Identify failure modes and define a safe rollback or review path",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Identify failure modes and define a safe rollback or review path” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Synthetic and Masked Test Data: Coverage, Leakage, and Governance (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the production problem addressed by Synthetic and Masked Test Data: Coverage, Leakage, and Governan..."
+        "K=13, matching the n-gram size",
+        "K=0.30, matching the contamination threshold",
+        "K=0.05, matching the adversarial target",
+        "K=3, so each age_band/region group should contain at least three records"
       ],
       "correct": 3,
-      "explanation": "“Explain the production problem addressed by Synthetic and Masked Test Data: Coverage, Leakage, and Governan...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "K_ANONYMITY is 3. The report counts each generalised age and region pair and marks a group FAIL when its count is below three."
+    },
+    {
+      "stage": "check",
+      "question": "When does classify_leakage label a non-exact record NGRAM_FLAG?",
+      "options": [
+        "When its 13-gram contamination score is at least 0.30",
+        "When any single token appears in the training corpus",
+        "When its label is NEGATIVE or adversarial",
+        "When the record has fewer than 13 tokens"
+      ],
+      "correct": 0,
+      "explanation": "For non-exact records, the classifier compares 13-gram overlap with NGRAM_THRESHOLD=0.30. Scores at or above the threshold become NGRAM_FLAG; lower scores remain CLEAN."
+    },
+    {
+      "stage": "check",
+      "question": "Does generate_synthetic_records(n=18) meet the adversarial coverage target?",
+      "options": [
+        "No; the generator creates only one adversarial record, below 5%",
+        "Yes; three of the 18 deterministic templates are adversarial, about 16.7%",
+        "No; adversarial records are excluded from coverage_report",
+        "Yes only when n is at least 100 because the target is an absolute count"
+      ],
+      "correct": 1,
+      "explanation": "The template list contains three adversarial entries and 18 records are selected cyclically, giving 3/18 ≈ 16.7%. coverage_report compares that fraction with the 5% target."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Synthetic and Masked Test Data: Coverage, Leakage, and Governance (2026)?",
+      "question": "Why can an exact copy receive EXACT_MATCH even if its n-gram score would have been different?",
       "options": [
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "13-gram checks are disabled for all positive labels",
+        "The hash is used only for logging after the n-gram verdict",
+        "The fingerprint branch returns immediately with score 1.0 before n-gram scoring",
+        "Exact copies are always treated as CLEAN when they came from synthetic templates"
       ],
-      "correct": 0,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The exact fingerprint branch appends an EXACT_MATCH result and continues to the next record. It never reaches contamination_score for that record, so the reported score is exactly 1.0."
+    },
+    {
+      "stage": "post",
+      "question": "What contamination score does contamination_score return for a non-exact record shorter than 13 tokens?",
+      "options": [
+        "1.0, because a short record is assumed to be copied",
+        "0.30, the configured threshold by default",
+        "An exception, because ngrams requires exactly 13 tokens",
+        "0.0, because ngrams produces no 13-gram tuples"
+      ],
+      "correct": 3,
+      "explanation": "ngrams returns an empty set when the token list is shorter than NGRAM_N. contamination_score explicitly returns 0.0 for that empty record-ngram set."
     }
   ]
 }

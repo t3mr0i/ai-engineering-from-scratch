@@ -48,6 +48,18 @@ The trick: softmax over 100k words is prohibitively expensive. Word2Vec uses **n
 
 
 
+## Build It
+
+Reconstruct **Word Embeddings — Word2Vec from Scratch** by following `tokenize` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `tokenize` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/.gitkeep` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Mikolov et al. (2013). Distributed Representations of Words and Phrases and their Compositionality](https://arxiv.org/abs/1310.4546) — the negative-sampling paper. Short and readable.
@@ -56,10 +68,20 @@ The trick: softmax over 100k words is prohibitively expensive. Word2Vec uses **n
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the core mechanism in Word Embeddings — Word2Vec from Scratch and place it in an NLP pipeline.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement the central transformation behind Word Embeddings — Word2Vec from Scratch from first principles.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Inspect intermediate representations to connect the algorithm to its output.
+Use `tokenize` as the trace: start from tokens=["red","fox"], keep the raw output, and tie each observation to a named objective.
+
+1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using tokens=["red","fox"]. Follow `tokenize`, `build_vocab`, `skipgram_pairs`. Expect the attention/embedding shape follows the token count and each valid attention row remains normalized; capture the first printed shape, metric, status, or summary field and state which part supports **Explain the core mechanism in Word Embeddings — Word2Vec from Scratch and place it in an NLP pipeline**.
+2. **Vary one named input.** Repeat the command after changing only the token sequence: use tokens=["red","fox","runs"]. Predict the direction of the change, then compare the two output values. Explain why **Implement the central transformation behind Word Embeddings — Word2Vec from Scratch from first principles** says the other inputs should stay fixed.
+3. **Probe the empty case.** Feed the implementation tokens=[]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Inspect intermediate representations to connect the algorithm to its output** and record the exception text if the code rejects the case.
+4. **Package a usable handoff.** Open `outputs/.gitkeep` and add a worked example using tokens=["red","fox"]. Include the input contract, one expected output field, and a named acceptance check for **Evaluate failure cases and choose appropriate metrics for Word Embeddings — Word2Vec from Scratch**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the core mechanism in Word Embeddings — Word2Vec from Scratch and place it in an NLP pipeline,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Inspect intermediate representations to connect the algorithm to its output,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Word Embeddings — Word2Vec from Scratch** should contain:
+
+- the `python3 main.py` output for tokens=["red","fox"], with `tokenize`, `build_vocab`, `skipgram_pairs` traced to the value or shape that supports **Explain the core mechanism in Word Embeddings — Word2Vec from Scratch and place it in an NLP pipeline**;
+- a before/after comparison for the token sequence, where tokens=["red","fox","runs"] changes the observation in the direction predicted by **Implement the central transformation behind Word Embeddings — Word2Vec from Scratch from first principles**;
+- a recorded result for tokens=[] that matches the implementation’s validation or empty-result contract and explains the evidence for **Inspect intermediate representations to connect the algorithm to its output**; and
+- an updated `outputs/.gitkeep` example with a concrete input, expected output field, and acceptance check tied to **Evaluate failure cases and choose appropriate metrics for Word Embeddings — Word2Vec from Scratch**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

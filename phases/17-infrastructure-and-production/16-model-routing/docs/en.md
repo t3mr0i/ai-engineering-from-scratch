@@ -75,6 +75,18 @@ Gate routes by online quality metrics:
 
 
 
+## Build It
+
+Reconstruct **Model Routing as a Cost-Reduction Primitive** by following `Query` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `Query` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-router-plan.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [AbhyashSuchi — Model Routing LLM 2026 Best Practices](https://abhyashsuchi.in/model-routing-llm-2026-best-practices/)
@@ -85,10 +97,20 @@ Gate routes by online quality metrics:
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain model cascading: cheap-first with confidence check, escalate on low confidence.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Enumerate the four routing signals (task classification, prompt length, embedding similarity to known-hard set, self-confidence from first-pass).
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compute expected blended cost at target routing split and quality loss tolerance.
+Keep two runs side by side for **Model Routing as a Cost-Reduction Primitive**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
+
+1. **Read the first result.** From `code/`, run `python3 main.py` using tokens=["red","fox"]. Follow `Query`, `make_workload`, `cost_of`. Expect the attention/embedding shape follows the token count and each valid attention row remains normalized; capture the first printed shape, metric, status, or summary field and state which part supports **Explain model cascading: cheap-first with confidence check, escalate on low confidence.**.
+2. **Run a two-value comparison.** Repeat the command after changing only the token sequence: use tokens=["red","fox","runs"]. Predict the direction of the change, then compare the two output values. Explain why **Enumerate the four routing signals (task classification, prompt length, embedding similarity to known-hard set, self-confidence from first-pass).** says the other inputs should stay fixed.
+3. **Try an adversarial fixture.** Feed the implementation tokens=[]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Compute expected blended cost at target routing split and quality loss tolerance.** and record the exception text if the code rejects the case.
+4. **Write the operator note.** Open `outputs/skill-router-plan.md` and add a worked example using tokens=["red","fox"]. Include the input contract, one expected output field, and a named acceptance check for **Name the drift-monitoring metric (online quality gate) that catches cheap-model creep.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain model cascading: cheap-first with confidence check, escalate on low confidence,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compute expected blended cost at target routing split and quality loss tolerance,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Model Routing as a Cost-Reduction Primitive** should contain:
+
+- the `python3 main.py` output for tokens=["red","fox"], with `Query`, `make_workload`, `cost_of` traced to the value or shape that supports **Explain model cascading: cheap-first with confidence check, escalate on low confidence.**;
+- a before/after comparison for the token sequence, where tokens=["red","fox","runs"] changes the observation in the direction predicted by **Enumerate the four routing signals (task classification, prompt length, embedding similarity to known-hard set, self-confidence from first-pass).**;
+- a recorded result for tokens=[] that matches the implementation’s validation or empty-result contract and explains the evidence for **Compute expected blended cost at target routing split and quality loss tolerance.**; and
+- an updated `outputs/skill-router-plan.md` example with a concrete input, expected output field, and acceptance check tied to **Name the drift-monitoring metric (online quality gate) that catches cheap-model creep.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

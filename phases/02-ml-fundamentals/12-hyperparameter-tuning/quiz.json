@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the difference between a parameter and a hyperparameter?",
+      "question": "Which value is a hyperparameter rather than a parameter learned inside a linear model?",
       "options": [
-        "Parameters are set by the user; hyperparameters are learned during training",
-        "Parameters are learned during training (weights, biases); hyperparameters are set before training starts (learning rate, max depth)",
-        "There is no difference; they are synonyms",
-        "Parameters apply to neural networks only; hyperparameters apply to tree models — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "Parameters are learned by the optimization algorithm during training (e.g., weights). Hyperparameters are set before training and control how learning happens (e.g., learning rate, regularization strength)."
-    },
-    {
-      "stage": "check",
-      "question": "Grid search over 4 hyperparameters with 5 values each requires how many evaluations?",
-      "options": [
-        "20, with no need to inspect intermediate results or test edge cases",
-        "25",
-        "625",
-        "4"
+        "A fitted regression weight",
+        "The intercept after optimization",
+        "The learning rate chosen before training",
+        "A residual computed from a training row"
       ],
       "correct": 2,
-      "explanation": "Grid search evaluates every combination: 5^4 = 625. This exponential scaling is why grid search becomes impractical with many hyperparameters."
+      "explanation": "The learning rate controls the optimization procedure and is selected outside the fitted model parameters."
     },
     {
       "stage": "check",
-      "question": "Why does random search often outperform grid search with the same evaluation budget?",
+      "question": "A grid contains 3 learning rates and 2 regularization strengths. How many combinations does a full grid search evaluate?",
       "options": [
-        "Random search uses a better optimization algorithm",
-        "Most hyperparameters have low effective dimensionality, so random search covers the important ones more densely",
-        "Random search always finds the global optimum",
-        "Grid search cannot handle continuous hyperparameters, because one plausible output is sufficient production evidence"
+        "5",
+        "3",
+        "9",
+        "6"
       ],
-      "correct": 1,
-      "explanation": "Usually only 1-2 hyperparameters matter for a given problem. Grid search wastes evaluations varying unimportant ones. Random search gives unique values for every parameter per trial, covering important dimensions more densely."
+      "correct": 3,
+      "explanation": "The Cartesian product has 3*2=6 combinations."
     },
     {
       "stage": "check",
-      "question": "In Bayesian optimization, what does the acquisition function balance?",
+      "question": "Why can random search be more efficient than a grid when only one of many hyperparameters matters strongly?",
       "options": [
-        "Training speed and model accuracy",
-        "Exploitation (searching near known good points) and exploration (searching uncertain regions)",
-        "The number of features and the number of samples, before defining the measurement, acceptance threshold, or rollback path",
-        "Bias and variance in the surrogate model"
-      ],
-      "correct": 1,
-      "explanation": "The acquisition function decides where to evaluate next by balancing exploitation (near known good results) and exploration (where the surrogate model is uncertain). This directs search more efficiently than random."
-    },
-    {
-      "stage": "post",
-      "question": "You tune hyperparameters using the test set and report the best test performance. What is wrong with this approach?",
-      "options": [
-        "Nothing -- this is standard practice",
-        "You overfitted to the test set; the reported performance is optimistic and will not generalize",
-        "The test set should be used for training, not tuning — and applies unchanged even when the lesson's stated preconditions fail",
-        "Hyperparameters should only be integers"
-      ],
-      "correct": 1,
-      "explanation": "Tuning on the test set means you selected hyperparameters that happen to perform well on those specific samples. This is overfitting to the test set. Use a validation set for tuning and reserve the test set for final evaluation."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Hyperparameter Tuning?",
-      "options": [
-        "Explain why random search outperforms grid search when most hyperparameters have low effective dimensionality",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Random draws explore more distinct values along the important dimension",
+        "Random search always evaluates fewer models than the requested budget",
+        "A grid cannot tune a numeric learning rate",
+        "Random search uses the test labels to select each draw"
       ],
       "correct": 0,
-      "explanation": "“Explain why random search outperforms grid search when most hyperparameters have low effective dimensionality” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "A grid spends many trials repeating similar values in unimportant dimensions; random samples cover the influential dimension more broadly."
+    },
+    {
+      "stage": "check",
+      "question": "In Bayesian optimization, what does an acquisition function choose?",
+      "options": [
+        "The final test label for the current model",
+        "The next hyperparameter point by trading off predicted value and uncertainty",
+        "The number of classes from the training set",
+        "A preprocessing column without evaluating a model"
+      ],
+      "correct": 1,
+      "explanation": "The surrogate predicts promising regions and uncertainty; the acquisition rule balances exploiting high predictions with exploring uncertain points."
+    },
+    {
+      "stage": "post",
+      "question": "You tried hundreds of settings on one validation set. What protects the final estimate from tuning overfit?",
+      "options": [
+        "Choose the configuration with the largest training error",
+        "Use the same validation labels as the model's training targets",
+        "Keep a test set untouched until the selected configuration is finalized",
+        "Report the best validation score as an unbiased test score"
+      ],
+      "correct": 2,
+      "explanation": "Repeatedly selecting on a validation set adapts to its noise. A held-out test set or nested cross-validation gives a cleaner final estimate."
+    },
+    {
+      "stage": "post",
+      "question": "What does patience in early stopping control?",
+      "options": [
+        "How many features are permanently removed before the first epoch",
+        "How many test examples are relabeled after each epoch",
+        "How many random seeds are averaged in one gradient",
+        "How many non-improving validation checks are tolerated before stopping"
+      ],
+      "correct": 3,
+      "explanation": "Patience prevents a temporary plateau from ending training immediately while still stopping once validation performance fails to improve for long enough."
     }
   ]
 }

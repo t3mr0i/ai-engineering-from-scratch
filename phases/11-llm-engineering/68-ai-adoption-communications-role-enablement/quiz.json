@@ -1,78 +1,78 @@
 {
   "lesson": "68-ai-adoption-communications-role-enablement",
-  "title": "AI Adoption Communications and Role-Based Enablement",
+  "title": "AI Adoption Communications and Role Enablement",
   "questions": [
     {
       "stage": "pre",
-      "question": "Why should AI adoption communication be role-specific?",
+      "question": "What does role enablement add to an AI adoption announcement?",
       "options": [
-        "It makes messages longer without adding role-specific guidance",
-        "It avoids practice tasks so people learn purely from reading",
-        "Different roles experience different workflow and decision changes",
-        "It replaces manager briefs with a single company-wide awareness memo"
+        "A larger distribution list, without changing the message for different roles",
+        "A promise that resistance will disappear once the tool is available",
+        "A role narrative, manager brief, practice task, and feedback channel tied to the change",
+        "A usage target that measures adoption before people know what good use looks like"
       ],
       "correct": 2,
-      "explanation": "Each role needs to know what changes, what remains human, and how to practice safely."
+      "explanation": "Enablement makes adoption practical. People need to understand their changed work, managers need a usable message, and teams need a safe practice route and feedback channel."
     },
     {
       "stage": "check",
-      "question": "Which control helps managers support local adoption?",
+      "question": "The claims team rollout fixture matches three signals and has adoption_value=5 and change_friction=5. What priority does recommend return?",
       "options": [
-        "A company-wide memo that lists what the new tool can already do",
-        "A manager brief with talking points and escalation triggers",
-        "A practice task assigned to each role after adoption has settled",
-        "A feedback channel that routes concerns straight past managers"
-      ],
-      "correct": 1,
-      "explanation": "A manager brief gives leaders talking points, concerns, and escalation triggers."
-    },
-    {
-      "stage": "check",
-      "question": "What does a practice task add to an AI rollout?",
-      "options": [
-        "A guarantee that every role will adopt the tool perfectly",
-        "A security exemption for the team running the rollout campaign",
-        "A replacement for the feedback channel opened after launch",
-        "A concrete way to turn communication into practiced behavior"
+        "prepare manager brief with score 15",
+        "clarify role message with score 17",
+        "monitor with score 13",
+        "launch enablement plan with score 20"
       ],
       "correct": 3,
-      "explanation": "Practice tasks help people learn the new behavior in a concrete workflow."
+      "explanation": "The base is 5*2 + 5 = 15. Three matches add 6 and the capped score 20 reaches launch enablement plan."
     },
     {
       "stage": "check",
-      "question": "What should happen when the message gap is high?",
+      "question": "With three matched signals, which controls does recommend select for the claims team rollout?",
       "options": [
-        "Clarify the role narrative before scaling communication further",
-        "Launch silently and wait for adoption to happen on its own",
-        "Remove the feedback channel so that concerns stop surfacing at all",
-        "Skip managers and communicate directly to every role at once"
+        "role narrative, manager brief, practice task, and feedback channel",
+        "role narrative and manager brief only",
+        "practice task and feedback channel only",
+        "a launch message without a practice task"
       ],
       "correct": 0,
-      "explanation": "A message gap means the audience does not yet understand the change."
+      "explanation": "Three matches select the complete four-control list, so the role story, manager support, practice task, and feedback route are all present."
     },
     {
-      "stage": "post",
-      "question": "Which rollout needs a full enablement plan?",
+      "stage": "check",
+      "question": "The finance assistant update has one match, adoption_value=3, and change_friction=4. Which result is correct?",
       "options": [
-        "A personal prompt tip shared informally between colleagues",
-        "High role impact with resistance signals and manager dependency",
-        "A hidden prototype still being tested by a single engineer",
-        "A completed archival task with no active users and no manager brief"
+        "launch enablement plan with score 12",
+        "prepare manager brief with score 12",
+        "clarify role message with score 10",
+        "monitor with score 8"
       ],
       "correct": 1,
-      "explanation": "High role impact and friction require structured communication and enablement."
+      "explanation": "The score is 3*2 + 4 + 2 = 12, which is in the prepare manager brief band from 11 through 15."
     },
     {
       "stage": "post",
-      "question": "Why is a feedback channel part of adoption communication?",
+      "question": "A no-match Scenario has adoption_value=1 and change_friction=1. Which priority follows?",
       "options": [
-        "It replaces the need for structured role-based practice tasks",
-        "It removes the need for managers to give a local brief",
-        "It makes questions, risks, and adoption blockers visible",
-        "It guarantees every role will fully adopt the new tool"
+        "launch enablement plan with score 3",
+        "prepare manager brief with score 7",
+        "monitor with score 3",
+        "clarify role message with score 11"
       ],
       "correct": 2,
-      "explanation": "Feedback channels keep concerns and adoption blockers visible after launch."
+      "explanation": "The no-match score is 1*2 + 1 = 3, below the score-7 clarify threshold, so monitor is the result."
+    },
+    {
+      "stage": "post",
+      "question": "What should plan-adoption-communications.md give managers before a team rollout?",
+      "options": [
+        "A launch date and usage target without role-specific guidance",
+        "A generic slogan that avoids naming changes to responsibilities",
+        "A model score that replaces questions from affected staff",
+        "The role narrative, manager brief, practice task, feedback channel, and adoption message"
+      ],
+      "correct": 3,
+      "explanation": "The plan makes communication actionable. Managers get a clear role story and practical support, while the feedback channel surfaces friction that a broadcast announcement would miss."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the learning rate control in gradient descent?",
+      "question": "For the line y=2x+1, what prediction is made at x=3?",
       "options": [
-        "The number of features used by the model",
-        "How many epochs the model trains for",
-        "The size of each parameter update step",
-        "The ratio of training to test data"
+        "5",
+        "6",
+        "7",
+        "9"
       ],
       "correct": 2,
-      "explanation": "The learning rate is a scalar that controls how much weights change per gradient descent step. Too large causes divergence, too small causes slow convergence."
+      "explanation": "Substitute x=3: y=2(3)+1=7."
     },
     {
       "stage": "check",
-      "question": "What does R-squared = 0 mean for a regression model?",
+      "question": "The true values are [2,4] and predictions are [1,5]. What is the mean squared error?",
       "options": [
-        "The model makes perfect predictions, with no need to inspect intermediate results or test edge cases",
-        "The model is no better than always predicting the mean of the target",
-        "The model has negative error",
-        "The model has not been trained yet"
+        "2",
+        "0.5",
+        "4",
+        "1"
       ],
-      "correct": 1,
-      "explanation": "R-squared = 0 means the model explains none of the variance in the target. It performs exactly as well as simply predicting the mean every time."
+      "correct": 3,
+      "explanation": "The squared errors are 1 and 1; their mean is (1+1)/2=1."
     },
     {
       "stage": "check",
-      "question": "Why is feature scaling important for gradient descent in multiple linear regression?",
+      "question": "With one example x=2, y=5, w=1, b=0, the prediction is 2. Using MSE gradients and learning rate 0.1, what are the updated parameters?",
       "options": [
-        "It makes the model more interpretable",
-        "It prevents the cost surface from being elongated, allowing faster convergence",
-        "It reduces the number of features needed",
-        "It guarantees the model will find the global minimum, because one plausible output is sufficient production evidence"
-      ],
-      "correct": 1,
-      "explanation": "When features have very different scales, the cost surface becomes elongated. Gradient descent takes many more steps to converge. Standardizing features makes the surface more spherical."
-    },
-    {
-      "stage": "check",
-      "question": "The normal equation gives optimal weights directly. Why would you prefer gradient descent instead?",
-      "options": [
-        "Gradient descent always gives more accurate results",
-        "The normal equation does not work for linear regression",
-        "Matrix inversion in the normal equation is O(n^3) in features, which is too slow for thousands of features",
-        "Gradient descent requires less memory than storing the data, before defining the measurement, acceptance threshold, or rollback path"
-      ],
-      "correct": 2,
-      "explanation": "The normal equation requires inverting X^T * X, which is O(n^3) in the number of features. For large feature counts, gradient descent is more efficient."
-    },
-    {
-      "stage": "post",
-      "question": "A degree-10 polynomial regression model fits training data perfectly (R^2 = 1.0) but has R^2 = 0.3 on test data. What should you do?",
-      "options": [
-        "Increase the polynomial degree to 20 for even better training fit — and applies unchanged even when the lesson's stated preconditions fail",
-        "Reduce model complexity (lower degree) or add regularization (Ridge) to prevent overfitting",
-        "Collect less training data so the model cannot memorize",
-        "Remove the test set and report training R^2 only"
-      ],
-      "correct": 1,
-      "explanation": "Perfect training fit with poor test fit is overfitting. The fix is to reduce complexity (lower polynomial degree) or add regularization to penalize large weights."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Linear Regression?",
-      "options": [
-        "Compare gradient descent and the normal equation in terms of computational complexity and when to use each",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "w=2.2, b=0.6",
+        "w=0.4, b=-0.3",
+        "w=1.6, b=0.3",
+        "w=2.2, b=-0.6"
       ],
       "correct": 0,
-      "explanation": "“Compare gradient descent and the normal equation in terms of computational complexity and when to use each” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The error is -3. For one example, dw=2(-3)(2)=-12 and db=2(-3)=-6. Subtracting 0.1 times each gradient gives w=2.2 and b=0.6."
+    },
+    {
+      "stage": "check",
+      "question": "When is the normal equation especially attractive compared with many gradient-descent steps?",
+      "options": [
+        "When the model must update after every streaming example",
+        "When the feature matrix is modest and a direct solution is practical",
+        "When no target values are available",
+        "When the loss is a classification cross-entropy"
+      ],
+      "correct": 1,
+      "explanation": "The normal equation solves the least-squares system directly, but its matrix operations become costly for very many features or repeated online updates."
+    },
+    {
+      "stage": "post",
+      "question": "A feature has mean 10 and standard deviation 5. What standardized value does x=15 receive?",
+      "options": [
+        "5",
+        "3",
+        "1",
+        "0.5"
+      ],
+      "correct": 2,
+      "explanation": "Standardization uses (x-mean)/standard deviation, so (15-10)/5=1."
+    },
+    {
+      "stage": "post",
+      "question": "What does Ridge regression add to the ordinary least-squares objective?",
+      "options": [
+        "An L1 penalty that forces many weights to zero",
+        "A term that removes the intercept from every prediction",
+        "A cross-entropy term for class probabilities",
+        "An L2 penalty that discourages large weights"
+      ],
+      "correct": 3,
+      "explanation": "Ridge adds a squared-weight penalty. It usually shrinks coefficients without producing the sparse exact zeros associated with L1 regularization."
     }
   ]
 }

@@ -1,78 +1,78 @@
 {
   "lesson": "92-data-literacy-for-ai-projects",
-  "title": "Data Readiness for AI Projects: Assess Before You Build (2026)",
+  "title": "Data Literacy for AI Projects",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Data Readiness for AI Projects: Assess Before You Build (2026)?",
+      "question": "Which dimensions does score_source combine into its 0-to-10 data-readiness total?",
       "options": [
-        "Explain the production problem addressed by Data Readiness for AI Projects: Assess Before You Build (2026)",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Label quality, freshness, sensitivity, provenance, and evaluation coverage",
+        "Only label accuracy and the number of records",
+        "Latency, model size, prompt length, and vendor price",
+        "Provenance and freshness only, because sensitivity is handled after training"
       ],
       "correct": 0,
-      "explanation": "“Explain the production problem addressed by Data Readiness for AI Projects: Assess Before You Build (2026)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The engine scores five dimensions at 0, 1, or 2: label accuracy, freshness lag, sensitivity, provenance, and held-out evaluation coverage."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Data Readiness for AI Projects: Assess Before You Build (2026)?",
+      "question": "What verdict does score_source return when every DataSource dimension is at its strongest enum value?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "STOP with total 5",
+        "PROCEED with total 10",
+        "CONDITIONAL with total 7",
+        "No verdict until a model has been trained"
       ],
       "correct": 1,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Each of the five strongest values scores 2, giving total 10. Totals from 8 through 10 map to PROCEED."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Data Readiness for AI Projects: Assess Before You Build (2026)?",
+      "question": "How does score_source identify the blocking_dimension?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Measure quality, cost, latency, and risk with explicit acceptance criteria",
-        "Treat one successful example as proof that every edge case works"
+        "It chooses the dimension with the highest score",
+        "It chooses the last dimension in the report regardless of score",
+        "It returns the first zero-scored dimension in the score dictionary",
+        "It returns None whenever the total is below 8"
       ],
       "correct": 2,
-      "explanation": "“Measure quality, cost, latency, and risk with explicit acceptance criteria” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The function uses next over scores.items() and selects the first dimension whose score is zero. A low total without a zero can therefore have no blocking dimension."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Data Readiness for AI Projects: Assess Before You Build (2026)?",
+      "question": "What verdict corresponds to a total score of 6 or 7?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Identify failure modes and define a safe rollback or review path",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Identify failure modes and define a safe rollback or review path” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Data Readiness for AI Projects: Assess Before You Build (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the production problem addressed by Data Readiness for AI Projects: Assess Before You Build (2026)"
+        "STOP",
+        "PROCEED",
+        "BLOCKED_BY_PROVENANCE",
+        "CONDITIONAL"
       ],
       "correct": 3,
-      "explanation": "“Explain the production problem addressed by Data Readiness for AI Projects: Assess Before You Build (2026)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "VERDICT_THRESHOLDS maps 6-7 to CONDITIONAL. The source can move forward only with the caveats shown by its dimension scores."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Data Readiness for AI Projects: Assess Before You Build (2026)?",
+      "question": "Which score does SensitivityLevel.PII_PRESENT contribute?",
       "options": [
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "0",
+        "1",
+        "2",
+        "It contributes no score but creates a separate warning"
       ],
       "correct": 0,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The sensitivity map assigns NONE_DETECTED=2, INDIRECT_RISK=1, and PII_PRESENT=0. The zero can also become the first blocking dimension."
+    },
+    {
+      "stage": "post",
+      "question": "What is the effect of EvalCoverage.MISSING_OR_CONTAMINATED?",
+      "options": [
+        "It scores 2 because a contaminated set is still representative",
+        "It scores 0 and can pull the overall verdict into STOP",
+        "It scores 1 but never affects the verdict",
+        "It is ignored until after deployment"
+      ],
+      "correct": 1,
+      "explanation": "Missing or contaminated evaluation coverage receives zero. If the total then falls below 6, score_source returns STOP and identifies the first zero dimension."
     }
   ]
 }

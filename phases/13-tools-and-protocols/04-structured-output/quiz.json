@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Structured Output — JSON Schema, Pydantic, Zod, Constrained Decoding?",
+      "question": "Which fields are required by INVOICE_SCHEMA at the root?",
       "options": [
-        "Write a JSON Schema 2020-12 for an extraction target using the right constraints (enum, min/max, required,...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "customer, line_items, total_usd, and currency",
+        "customer and discount only",
+        "sku, qty, and unit_usd",
+        "currency plus a free-form metadata object is required"
       ],
       "correct": 0,
-      "explanation": "“Write a JSON Schema 2020-12 for an extraction target using the right constraints (enum, min/max, required,...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The root required list contains customer, line_items, total_usd, and currency; discount and metadata are not part of the schema."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Structured Output — JSON Schema, Pydantic, Zod, Constrained Decoding?",
+      "question": "How does process_model_output classify text beginning with __REFUSAL__?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Explain why strict mode and constrained decoding give different guarantees from \"validate after generation\"",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "As valid invoice JSON after stripping the prefix",
+        "A refusal with its stripped reason",
+        "As a schema violation caused by an unknown field",
+        "As a parse_error because refusal text is not JSON"
       ],
       "correct": 1,
-      "explanation": "“Explain why strict mode and constrained decoding give different guarantees from \"validate after generation\"” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The refusal marker is handled before JSON parsing, producing kind refusal and preserving the text after the marker as the reason."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Structured Output — JSON Schema, Pydantic, Zod, Constrained Decoding?",
+      "question": "What kind does the trailing-comma invoice fixture produce?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Distinguish the three failure modes: parse error, schema violation, model refusal",
-        "Treat one successful example as proof that every edge case works"
+        "ok, because JSON parsers ignore trailing commas",
+        "violation, because total_usd is not numeric",
+        "parse_error",
+        "refusal, because the model declined the invoice"
       ],
       "correct": 2,
-      "explanation": "“Distinguish the three failure modes: parse error, schema violation, model refusal” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The fixture is syntactically invalid JSON, so decoding fails before schema validation can run."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Structured Output — JSON Schema, Pydantic, Zod, Constrained Decoding?",
+      "question": "Why does the bad line-item fixture fail validation?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Ship an extraction pipeline with typed repair and typed refusal handling",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Ship an extraction pipeline with typed repair and typed refusal handling” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Structured Output — JSON Schema, Pydantic, Zod, Constrained Decoding?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Write a JSON Schema 2020-12 for an extraction target using the right constraints (enum, min/max, required,..."
+        "USD is not one of the allowed currencies",
+        "The customer string is too long",
+        "line_items must be a scalar number",
+        "bad SKU plus an extra discount field"
       ],
       "correct": 3,
-      "explanation": "“Write a JSON Schema 2020-12 for an extraction target using the right constraints (enum, min/max, required,...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "SKUs must match uppercase letters, digits, and hyphens, and line items disallow the undeclared discount property."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Structured Output — JSON Schema, Pydantic, Zod, Constrained Decoding?",
+      "question": "What result kind and total should the happy Acme fixture produce?",
       "options": [
-        "Explain why strict mode and constrained decoding give different guarantees from \"validate after generation\"",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "kind ok with total_usd 219.98 and currency USD",
+        "kind refusal with total 0",
+        "kind parse_error because line_items is an array",
+        "kind violation because customer is a string"
       ],
       "correct": 0,
-      "explanation": "“Explain why strict mode and constrained decoding give different guarantees from \"validate after generation\"” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The happy fixture satisfies the schema and reports the stated 219.98 USD invoice, so processing returns kind ok."
+    },
+    {
+      "stage": "post",
+      "question": "What does strict provider mode change in this lesson?",
+      "options": [
+        "It converts typed refusals into successful invoices",
+        "Strict blocks parse/schema errors, not refusals",
+        "It removes the currency enum and accepts arbitrary keys",
+        "It validates only the customer field"
+      ],
+      "correct": 1,
+      "explanation": "Constrained decoding prevents malformed or schema-invalid model output, but the provider can still explicitly refuse the request."
     }
   ]
 }

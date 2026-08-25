@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In the lesson's opening example, why did the RAG assistant cite a superseded process document even though offline recall@5 was 0.82?",
+      "question": "What disposition does score_source give a T1 source with a named owner, current date, no contradiction, and in-scope content?",
       "options": [
-        "The chunking strategy split the document at the wrong boundaries",
-        "The embedding model was outdated relative to the current vocabulary — and applies unchanged even when the lesson's stated preconditions fail",
-        "The governance failure happened upstream, before indexing — the stale document was never filtered out of the source corpus",
-        "The retrieval index had not been rebuilt in over a year"
+        "ADMIT, because all four quality dimensions pass the AND gate",
+        "DEFER, because T1 sources always need human sign-off",
+        "REJECT, because an authoritative source cannot enter retrieval directly",
+        "ADMIT only when its domain is a case study"
+      ],
+      "correct": 0,
+      "explanation": "A named owner satisfies authority for T1, and the current, consistent, in-scope candidate passes currency, consistency, and scope. With no failed dimension, the disposition is ADMIT."
+    },
+    {
+      "stage": "check",
+      "question": "What happens to a T3 source whose currency, consistency, and scope checks pass?",
+      "options": [
+        "ADMIT, because passing the three objective checks outweighs its tier",
+        "DEFER, because T3 authority requires human review before admission",
+        "REJECT, because every informal source is permanently unusable",
+        "ADMIT only if it has no named owner"
+      ],
+      "correct": 1,
+      "explanation": "T3 always fails the authority dimension by policy, but score_source uses DEFER for T3 so a human can review it. The other dimensions are still reported for that reviewer."
+    },
+    {
+      "stage": "check",
+      "question": "Why is 'EU AI Act Compliance Checklist 2022' rejected by score_source?",
+      "options": [
+        "It is T1, so named ownership is not allowed for compliance sources",
+        "Its case-study domain has a 9999-month expiry that the source exceeds",
+        "At 28 months old it exceeds the six-month compliance recency window",
+        "Its scope is always outside retrieval because compliance is not a domain"
       ],
       "correct": 2,
-      "explanation": "Retrieval metrics measured how well the system found relevant chunks — not whether those chunks came from an authoritative, current source. The three-year-old document was indexed in the first place because nothing gated source quality before embedding."
+      "explanation": "The compliance window is six months. The candidate is 28 months old, so currency fails and the AND gate returns REJECT even though authority, consistency, and scope pass."
     },
     {
       "stage": "check",
-      "question": "Under the four quality dimensions, how does a source get disqualified if it scores well on three of them?",
+      "question": "What disposition does the 2019 case-study report receive when its owner, consistency, and scope are valid?",
       "options": [
-        "It cannot be disqualified as long as the average across all four is above threshold, with no need to inspect intermediate results or test edge cases",
-        "A single failing dimension disqualifies it — all four must independently clear a minimum threshold",
-        "Only the authority dimension can disqualify a source; the other three are advisory",
-        "Disqualification requires failing at least two of the four dimensions"
+        "REJECT, because every source older than 36 months fails currency",
+        "DEFER, because historical reports cannot be authoritative",
+        "REJECT, because case studies have no recency window and therefore no score",
+        "ADMIT, because case_study uses the 9999-month recency window"
       ],
-      "correct": 1,
-      "explanation": "The lesson is explicit that this is an AND-gate, not a weighted average: authority, currency, consistency, and scope fit are each independently measured, and any one disqualifying condition removes the source regardless of the other three scores."
-    },
-    {
-      "stage": "check",
-      "question": "Under the tiered authority classification, what distinguishes a T2 'Reference' source from a T1 'Authoritative' source?",
-      "options": [
-        "T2 sources are always older than T1 sources",
-        "T2 is maintained by identifiable contributors but is not formally version-controlled, unlike T1's documented change process",
-        "T2 sources can never be indexed under any circumstances, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "T2 sources are exclusively AI-generated content"
-      ],
-      "correct": 1,
-      "explanation": "T1 requires a named group with review authority and a documented, version-controlled change process. T2 still has identifiable contributors and high subject-matter relevance, but lacks that formal version control — both can normally enter a production corpus, unlike T3."
-    },
-    {
-      "stage": "check",
-      "question": "Why does the lesson reject a single 'documents older than two years are stale' rule for currency?",
-      "options": [
-        "Because currency should never be measured at all, only authority",
-        "Because it fails on both ends: it excludes still-correct stable technical references and passes already-outdated fast-moving compliance documents",
-        "Because two years is too short a window for any domain",
-        "Because currency can only be assessed by a human reviewer, never a rule, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "The domain recency window table shows why a single threshold is wrong: regulatory compliance needs a 6-month window while core methodology tolerates 36 months, and historical case studies need no expiry at all — one rule cannot serve all of them."
+      "correct": 3,
+      "explanation": "The case-study window is intentionally effectively unbounded. Seventy-two months is within 9999 months, so the T2 candidate passes all four dimensions and is admitted."
     },
     {
       "stage": "post",
-      "question": "According to the lesson, what can Sonnet 4.6 or Opus 4.x NOT reliably do in the governance pipeline?",
+      "question": "What single dimension rejects the Team Wiki: RAG Architecture Notes candidate?",
       "options": [
-        "Extract a document's claimed owner and review date for pre-classification — and applies unchanged even when the lesson's stated preconditions fail",
-        "Detect potential contradictions between two documents provided in context",
-        "Make the final admitted-or-rejected governance decision without a human review loop",
-        "Classify whether a document's content fits a declared scope description"
+        "Currency, because 30 months exceeds the 24-month architecture window",
+        "Authority, because a T2 source can never have a named owner",
+        "Consistency, because every wiki note contradicts the corpus",
+        "Scope fit, because architecture is not a declared task domain"
       ],
-      "correct": 2,
-      "explanation": "The lesson lists three subtasks the models can assist with, but is explicit that the final governance decision must carry organizational accountability signed by a human or a formally approved automated policy — using an LLM to make that call unsupervised is a governance failure even when the model is usually right."
+      "correct": 0,
+      "explanation": "The wiki has a named owner, is consistent, and is in scope. Its 30-month age exceeds the architecture window of 24 months, so currency is the failing dimension."
     },
     {
       "stage": "post",
-      "question": "In the common failure modes table, what causes a superseded document to remain indexed?",
+      "question": "What does the AND-gate policy imply when a source has strong scores on three dimensions but fails one?",
       "options": [
-        "The scorer weighted authority too heavily against currency",
-        "No supersession registry exists, so the old version is never removed when a new one is added",
-        "The governance log was stored in plain text instead of JSON, with no need to inspect intermediate results or test edge cases",
-        "The document was never assigned a recency window"
+        "The weighted average decides; three strong dimensions can compensate",
+        "The source is rejected for T1/T2 or deferred for T3, because one failed dimension is sufficient",
+        "The source is admitted but marked with a low-confidence citation",
+        "Only scope failure matters; authority and currency are advisory"
       ],
       "correct": 1,
-      "explanation": "Without a document ID registry tracking supersession links, adding a replacement document does nothing to remove the one it replaces — both stay in the index unless a supersession registry explicitly deletes the superseded one."
+      "explanation": "The policy is deliberately stricter than a weighted average. Any failed dimension rejects a T1/T2 candidate, while a T3 candidate is held for human review rather than silently admitted."
     }
   ]
 }

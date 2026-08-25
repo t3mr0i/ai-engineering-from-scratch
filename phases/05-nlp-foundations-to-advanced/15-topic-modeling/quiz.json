@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does LDA assume about each document?",
+      "question": "Which token does this lesson tokenize retain?",
       "options": [
-        "Each document belongs to exactly one topic — and applies unchanged even when the lesson's stated preconditions fail",
-        "Documents are sentences",
-        "Each document is a mixture of topics; each topic is a distribution over words",
-        "Documents are independent of topics"
+        "\"ai\"",
+        "\"to\"",
+        "\"of\"",
+        "\"a\""
+      ],
+      "correct": 0,
+      "explanation": "SHORT_ALLOWLIST preserves ai even though its length is two; ordinary alphabetic tokens must be longer than two characters."
+    },
+    {
+      "stage": "check",
+      "question": "What happens when collapsed_gibbs_lda receives n_topics=0?",
+      "options": [
+        "It returns one empty topic",
+        "It raises ValueError because n_topics must be a positive integer",
+        "It silently changes the value to one",
+        "It creates a topic for every vocabulary word"
+      ],
+      "correct": 1,
+      "explanation": "The first guard rejects non-positive or non-integer n_topics."
+    },
+    {
+      "stage": "check",
+      "question": "What does the seed control in the initial LDA assignment?",
+      "options": [
+        "The number of words returned per topic",
+        "The vocabulary alphabetical ordering",
+        "The reproducible random topic assigned to each token before Gibbs updates",
+        "The smoothing constants alpha and beta"
       ],
       "correct": 2,
-      "explanation": "LDA's generative story is mixed-membership: each doc has a topic distribution, each topic a word distribution."
+      "explanation": "random.Random(seed) drives the initial z assignments and later sampling decisions."
     },
     {
       "stage": "check",
-      "question": "What does BERTopic use to form topic clusters?",
+      "question": "Which expression is the token-topic probability used during a Gibbs update?",
       "options": [
-        "Direct softmax over the vocabulary, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "Encode docs with a sentence transformer, reduce dimensionality with UMAP, then cluster with HDBSCAN",
-        "Run BM25 followed by k-means",
-        "Train an LSTM end-to-end"
-      ],
-      "correct": 1,
-      "explanation": "BERTopic = embeddings + UMAP + HDBSCAN, with class-based TF-IDF for topic words."
-    },
-    {
-      "stage": "check",
-      "question": "Why does scikit-learn's LDA expect raw counts (CountVectorizer), not TF-IDF?",
-      "options": [
-        "TF-IDF is too slow",
-        "LDA's probabilistic model is defined over integer term counts; TF-IDF distorts the underlying distribution",
-        "LDA cannot handle floats, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "Memory limits"
-      ],
-      "correct": 1,
-      "explanation": "LDA likelihood assumes counts; feeding TF-IDF values violates the model assumption."
-    },
-    {
-      "stage": "check",
-      "question": "What does HDBSCAN's -1 label mean in a BERTopic output?",
-      "options": [
-        "A reserved category, before defining the measurement, acceptance threshold, or rollback path",
-        "An outlier cluster of documents the density-based algorithm could not confidently assign",
-        "Stopword cluster",
-        "Top topic"
-      ],
-      "correct": 1,
-      "explanation": "HDBSCAN marks unclustered points with -1; in BERTopic these are documents that did not fit any topic."
-    },
-    {
-      "stage": "post",
-      "question": "Which coherence metric is the common default for topic-model evaluation?",
-      "options": [
-        "BLEU",
-        "Accuracy",
-        "Perplexity only — and applies unchanged even when the lesson's stated preconditions fail",
-        "c_v coherence via NPMI over sliding windows of top topic words"
+        "ndt[d][k] / ntw[k][w] without smoothing",
+        "alpha + beta + n_topics + V",
+        "The cosine similarity between two document vectors",
+        "(ndt[d][k]+alpha)*(ntw[k][w]+beta)/(nt[k]+V*beta)"
       ],
       "correct": 3,
-      "explanation": "c_v coherence (Roder et al., 2015) is the canonical automatic topic-coherence metric."
+      "explanation": "The collapsed sampler combines document-topic counts and topic-word counts with Dirichlet smoothing."
     },
     {
       "stage": "post",
-      "question": "When is LDA usually a better fit than BERTopic?",
+      "question": "How are the displayed words for each topic selected?",
       "options": [
-        "On short tweets",
-        "Long documents where mixed-membership topic distributions are useful and embeddings would truncate input",
-        "When embeddings are noisy",
-        "When you need a single topic per document, with no need to inspect intermediate results or test edge cases"
+        "The eight vocabulary IDs with the largest ntw counts for that topic",
+        "The eight words that occur in the most documents overall",
+        "Random words drawn after the final iteration",
+        "Words sorted by character length only"
+      ],
+      "correct": 0,
+      "explanation": "For each topic k, the code sorts vocabulary IDs by -ntw[k][i] and keeps the first eight."
+    },
+    {
+      "stage": "post",
+      "question": "What does each row of doc_topic represent after sampling?",
+      "options": [
+        "A one-hot topic ID for every token in the corpus",
+        "A smoothed mixture of topic probabilities for one document",
+        "The raw vocabulary count with no topic dimension",
+        "The probability that the document is empty"
       ],
       "correct": 1,
-      "explanation": "Long documents benefit from LDA's mixed-membership model; BERT encoders truncate inputs."
+      "explanation": "Each row normalizes ndt[d][k]+alpha across topics, producing a distribution rather than a single hard label."
     }
   ]
 }

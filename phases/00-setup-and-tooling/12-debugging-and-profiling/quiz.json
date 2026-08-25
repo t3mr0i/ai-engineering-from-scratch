@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What makes debugging AI/ML code fundamentally different from debugging a typical web application?",
+      "question": "What does debug_print report that an ordinary print(tensor) often omits?",
       "options": [
-        "AI code uses different programming languages",
-        "AI bugs often don't crash -- they silently produce incorrect results with no error messages",
-        "AI code cannot be debugged with standard tools like print statements — and applies unchanged even when the lesson's stated preconditions fail",
-        "AI code always requires a GPU to debug"
+        "The model's intended accuracy on the test set",
+        "The exact source-code line that created the tensor",
+        "Shape, dtype, device, range, mean, and NaN status",
+        "A guarantee that the next optimizer step will succeed"
       ],
-      "correct": 1,
-      "explanation": "The worst AI bugs produce valid-looking output. A misconfigured training loop might run for hours without errors while the model learns nothing useful, unlike web apps that crash with stack traces."
+      "correct": 2,
+      "explanation": "debug_print makes the tensor properties that commonly cause silent AI failures visible. It is an observation tool, not a correctness proof or source tracer."
     },
     {
       "stage": "check",
-      "question": "What does a profiler measure?",
+      "question": "Which standard-library tools are used by this lesson to inspect time and Python allocations?",
       "options": [
-        "Whether the code produces correct output, with no need to inspect intermediate results or test edge cases",
-        "How much time and memory each part of the code consumes",
-        "How many bugs exist in the codebase",
-        "The code coverage of unit tests"
+        "Only print statements and a browser extension",
+        "Use cProfile alone to obtain Python allocation snapshots",
+        "Git hooks and the CUDA compiler",
+        "Timer with time.perf_counter() and tracemalloc snapshots"
       ],
-      "correct": 1,
-      "explanation": "Profilers measure resource consumption -- execution time per function, memory allocation, and GPU utilization -- helping you find bottlenecks and optimize performance."
+      "correct": 3,
+      "explanation": "Timer measures a code region with a monotonic clock, while tracemalloc records Python allocation statistics. The lesson keeps these demonstrations available without adding those external tools."
     },
     {
       "stage": "check",
-      "question": "Your model achieves 99% accuracy on the test set. What AI-specific bug should you suspect first?",
+      "question": "In demo_nan_detection(), what happens when fake_nan_loss is passed to detect_nan?",
       "options": [
-        "The model has too many parameters, because one plausible output is sufficient production evidence",
-        "Data leakage -- test samples may have leaked into the training set",
-        "The learning rate is too high",
-        "The batch size is too large"
-      ],
-      "correct": 1,
-      "explanation": "Suspiciously high accuracy often indicates data leakage -- overlap between training and test data, or features that contain the target label. Always check for train/test overlap."
-    },
-    {
-      "stage": "check",
-      "question": "What is the most common finding when profiling a training loop's time breakdown?",
-      "options": [
-        "The backward pass takes 90% of the time, before defining the measurement, acceptance threshold, or rollback path",
-        "Data loading takes more time than the forward and backward passes combined",
-        "Writing logs takes the most time",
-        "GPU memory allocation is the bottleneck"
-      ],
-      "correct": 1,
-      "explanation": "Data loading often takes 60%+ of training time when num_workers=0 in the DataLoader. The fix is setting num_workers > 0 to load data in parallel with GPU computation."
-    },
-    {
-      "stage": "post",
-      "question": "You see NaN loss at step 500. Which approach will help you find the root cause?",
-      "options": [
-        "Restart training from scratch with a different random seed — and applies unchanged even when the lesson's stated preconditions fail",
-        "Use detect_nan to check for NaN/Inf in gradients and add breakpoint() at the failure point",
-        "Increase the batch size to stabilize gradients",
-        "Switch from Adam to SGD optimizer"
-      ],
-      "correct": 1,
-      "explanation": "First identify WHERE the NaN originates by checking gradients for each parameter. A conditional breakpoint at the NaN step lets you inspect tensor values interactively. Common causes: learning rate too high, log(0), or division by zero."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Debugging and Profiling?",
-      "options": [
-        "Profile training loops with `cProfile`, `line_profiler`, and `tracemalloc` to find bottlenecks",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "It reports a NaN loss at step 99 and returns True",
+        "It silently converts the loss to zero and returns False",
+        "It changes the optimizer from SGD to Adam",
+        "It raises a shape error before checking the loss"
       ],
       "correct": 0,
-      "explanation": "“Profile training loops with `cProfile`, `line_profiler`, and `tracemalloc` to find bottlenecks” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "detect_nan checks torch.isnan(loss), prints the step when true, and returns True. The simulated loss demonstrates the failure path without changing the model."
+    },
+    {
+      "stage": "check",
+      "question": "What does check_devices compare in the lesson's mixed-device example?",
+      "options": [
+        "Tensor names with the names of optimizer slots",
+        "Compare each tensor with the model device",
+        "The learning rate with the batch size",
+        "CPU memory with the number of model layers"
+      ],
+      "correct": 1,
+      "explanation": "check_devices obtains the model parameter device and labels each supplied tensor OK or MISMATCH. A mismatch can explain a runtime error before changing model code."
+    },
+    {
+      "stage": "post",
+      "question": "A loss becomes NaN at step 500. Which first response preserves the evidence needed to find the cause?",
+      "options": [
+        "Change the random seed and discard the failing run",
+        "Increase the learning rate so the loss leaves the NaN region",
+        "Check loss and gradients at the failing step",
+        "Replace every tensor with a Python list before measuring anything"
+      ],
+      "correct": 2,
+      "explanation": "The failure step and gradient values identify where the invalid value first appears. A conditional breakpoint or the tool's checks can reveal an overflow, invalid operation, or unstable gradient."
+    },
+    {
+      "stage": "post",
+      "question": "What should a concise debugging note contain after a shape or performance failure?",
+      "options": [
+        "Only the final loss value after restarting several times",
+        "A list of every installed package with no failing input",
+        "The model name without the batch shape or traceback",
+        "Record the first failure, shapes, devices, and fix"
+      ],
+      "correct": 3,
+      "explanation": "Those observations let another engineer reproduce and localize the failure. A final metric alone cannot distinguish a shape mismatch, allocation problem, or gradient-health issue."
     }
   ]
 }

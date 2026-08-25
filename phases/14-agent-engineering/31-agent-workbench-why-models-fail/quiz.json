@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the lesson identify as the root cause of agent failures on real tasks?",
+      "question": "Which unrelated files does the prompt-only run touch for the signup task?",
       "options": [
-        "Insufficient model parameters compared to a larger frontier checkpoint from the same vendor",
-        "Slow network latency between the agent runtime and the model provider's API endpoint",
-        "Workbench failures: missing surfaces around the model, not LLM limitations",
-        "Outdated training data that predates the repository's current dependency versions"
-      ],
-      "correct": 2,
-      "explanation": "The model is not wrong about Python; it is wrong about the work. Surfaces around the model are missing."
-    },
-    {
-      "stage": "check",
-      "question": "What are the seven workbench surfaces the lesson names?",
-      "options": [
-        "Train, eval, deploy, monitor, retrain, scale, and retire model versions across releases",
-        "Plan, act, reflect, refine, debate, vote, and ship as a multi-agent consensus loop",
-        "Read, write, exec, fork, exit, wait, and kill as POSIX process primitives",
-        "Instructions, state, scope, feedback, verification, review, handoff"
-      ],
-      "correct": 3,
-      "explanation": "The seven surfaces are instructions, state, scope, feedback, verification, review, handoff."
-    },
-    {
-      "stage": "check",
-      "question": "Which is NOT one of the eight distributed-systems primitives the lesson maps surfaces to?",
-      "options": [
-        "Backpropagation",
-        "Function primitive",
-        "Worker primitive",
-        "Trigger primitive"
+        "`README.md` and `scripts/release.sh`.",
+        "Only `app.py` and `test_app.py`.",
+        "`agent_state.json` and `task_board.json`.",
+        "No files, because a prompt-only run cannot produce a diff."
       ],
       "correct": 0,
-      "explanation": "The eight primitives are function, worker, trigger, runtime, HTTP/RPC, queue, session persistence, authorization policy."
+      "explanation": "Without the scope surface, `stub_agent` appends `README.md` and `scripts/release.sh` to the two allowed files and records the off-scope note."
     },
     {
       "stage": "check",
-      "question": "What did Vercel's reported harness change move success rate from and to?",
+      "question": "What does adding the `feedback` surface change in the stub run?",
       "options": [
-        "20% to 60%, by adding a second reviewer worker to the pipeline",
-        "80% to 100%, by deleting 80% of the agent's tools",
-        "0% to 100%, by switching to Claude Opus with more parameters",
-        "50% to 70%, by adding retrieval-augmented generation"
+        "It marks every file as allowed without consulting the task.",
+        "It sets `tests_run=True` and records that stdout, stderr, and exit code were captured.",
+        "It makes the agent's declared success false even when tests pass.",
+        "It removes the need for a verification surface."
       ],
       "correct": 1,
-      "explanation": "Deleting 80% of tools moved Vercel's agent from 80% to 100% success."
+      "explanation": "`stub_agent` sets `tests_run` and appends the captured-output note only when `feedback` is present; feedback does not itself control scope or verification."
     },
     {
-      "stage": "post",
-      "question": "What does Terminal Bench 2.0 demonstrate about model vs harness?",
+      "stage": "check",
+      "question": "What does the fully equipped workbench report about acceptance?",
       "options": [
-        "Models alone determine ranking regardless of tool count or harness configuration used",
-        "Harness changes do not matter once the underlying model has enough training data",
-        "Same model moved from outside top 30 to rank five by changing only the harness",
-        "Only GPU throughput and inference speed determine an agent's benchmark ranking"
+        "It declares success but leaves `actually_passing=False`.",
+        "It skips acceptance because review is sufficient.",
+        "It sets `actually_passing=True` and records that the verification gate proved acceptance.",
+        "It marks the task blocked until a new model is selected."
       ],
       "correct": 2,
-      "explanation": "LangChain's Anatomy of an Agent Harness: same model, harness change, 25+ rank jump."
+      "explanation": "With the `verification` surface present, the stub sets both actual and declared success and notes that the gate proved the acceptance criteria."
+    },
+    {
+      "stage": "check",
+      "question": "What does `missing_surfaces()` return for the prompt-only result?",
+      "options": [
+        "An empty list, because no surfaces means no required checks.",
+        "Only `scope` and `feedback`.",
+        "Only `review` and `handoff`.",
+        "All seven workbench surfaces: instructions, state, scope, feedback, verification, review, and handoff."
+      ],
+      "correct": 3,
+      "explanation": "The prompt-only result has an empty `surfaces_present` list, so the method returns every entry in `WORKBENCH_SURFACES`."
     },
     {
       "stage": "post",
-      "question": "What does the lesson recommend doing when you hear new harness vocabulary?",
+      "question": "How does `failure_report` identify an off-scope write?",
       "options": [
-        "Adopt the vocabulary verbatim from whichever vendor, blog post, or conference talk introduced the new harness term this quarter",
-        "Reject any new vocabulary outright and continue using only the original agent-loop terminology forever",
-        "Wait for OpenAI to standardize the vocabulary across every vendor before using any harness term at all",
-        "Translate back to primitives (function, worker, trigger, runtime, HTTP/RPC, queue, persistence, policy) before adopting"
+        "It filters out the allowed `app.py` and `test_app.py`, leaving unrelated touched paths.",
+        "It reports every touched file as off scope, including allowed files.",
+        "It checks only whether a test command was run.",
+        "It compares file contents against the acceptance sentence instead of paths."
       ],
-      "correct": 3,
-      "explanation": "Reason from primitives, not vendor taxonomies; the vocabulary changes but the engineering does not."
+      "correct": 0,
+      "explanation": "The report comprehension keeps touched files not in `{\"app.py\", \"test_app.py\"}`, so the prompt-only README and release-script writes are surfaced."
+    },
+    {
+      "stage": "post",
+      "question": "What note is recorded when the workbench has no `state` surface?",
+      "options": [
+        "`verification gate proved acceptance criteria met`",
+        "`no state file written, next session restarts from zero`",
+        "`captured stdout/stderr/exit code from the test run`",
+        "`touched unrelated files because scope was missing`"
+      ],
+      "correct": 1,
+      "explanation": "The stub appends the state note only when `has_state` is false, highlighting that the next session cannot resume from durable state."
     }
   ]
 }

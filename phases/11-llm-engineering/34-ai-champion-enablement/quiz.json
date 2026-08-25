@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the primary value of an AI champion?",
+      "question": "What is the useful role of an AI champion in a growing community?",
       "options": [
-        "Becoming the single approver so every AI use case passes through one consistent reviewer",
-        "Turning scattered experiments into reusable assets, shared standards, and better team habits",
-        "Taking over the governance team's mandate for policy, compliance sign-off, and risk decisions",
-        "Keeping the team's best prompts in a private library so quality stays under one person's control"
+        "Becoming the sole approver for every prompt and use case",
+        "Keeping the best material private so one person controls quality",
+        "Turning repeated questions and blockers into reusable assets, learning sessions, and safe escalation paths",
+        "Taking over the governance team's policy and risk decisions"
+      ],
+      "correct": 2,
+      "explanation": "Champions scale learning rather than centralize approval. A backlog makes repeated needs visible, assigns ownership, and routes risks to the right decision makers."
+    },
+    {
+      "stage": "check",
+      "question": "The prompt pack request fixture has two matched signals, impact=4, and uncertainty=3. Which priority does it receive?",
+      "options": [
+        "awareness only",
+        "team practice",
+        "launch gate required",
+        "guided pilot"
+      ],
+      "correct": 3,
+      "explanation": "Its score is 4*2 + 3 + 2*2 = 15. The priority band for 11 through 15 is guided pilot."
+    },
+    {
+      "stage": "check",
+      "question": "Which category does choose_category return for the prompt pack request?",
+      "options": [
+        "asset",
+        "support",
+        "risk",
+        "community"
+      ],
+      "correct": 0,
+      "explanation": "There are two matched signals, so (2+4+3) modulo 4 is 1. The second category in the list is asset."
+    },
+    {
+      "stage": "check",
+      "question": "A champion Scenario matches two signals. Which controls does recommend select?",
+      "options": [
+        "office hours plan and contribution backlog",
+        "office hours plan, contribution backlog, and quality rubric",
+        "escalation path only, because it is the last control",
+        "A private prompt library with no review step"
       ],
       "correct": 1,
-      "explanation": "Champions scale learning and reuse without becoming the only decision point. The lesson is explicit that a champion helps the team reuse what works rather than owning every AI decision."
-    },
-    {
-      "stage": "check",
-      "question": "Three people ask the same prompt question in meetings this month. What does the enablement loop do with that?",
-      "options": [
-        "It is answered individually each time, keeping the champion close to the team's daily work",
-        "It is escalated to governance, since repeated confusion signals a policy gap to be closed",
-        "It is logged as a training request and passed to the vendor's own enablement programme",
-        "It becomes a backlog item, so the answer is built once as a reviewed, shareable asset"
-      ],
-      "correct": 3,
-      "explanation": "The enablement loop starts at recurring questions and turns them into backlog items, so learning becomes a reusable asset instead of staying local and fragile. Escalation is reserved for risks, not for repetition."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Python artifact produce?",
-      "options": [
-        "A certificate engine that issues completion badges to session attendees",
-        "A fine-tuned model trained on the team's collected prompts and answers",
-        "A cloud deployment of the shared prompt library as an internal service",
-        "A ranked champion backlog with priority, controls, and rationale"
-      ],
-      "correct": 3,
-      "explanation": "The artifact prioritizes champion activities - office hours, reusable assets, brown bags, and escalation support - and returns priority, controls, and rationale for each."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to this lesson?",
-      "options": [
-        "An office hours plan that gives the team a regular, predictable slot to bring questions",
-        "An open channel where every request is answered ad hoc, whenever it happens to arrive",
-        "A rule that shared assets are published immediately, so review does not slow reuse down",
-        "A standing agreement that the champion absorbs risky questions instead of passing them on"
-      ],
-      "correct": 0,
-      "explanation": "Office hours are one practical champion enablement control. The backlog and the quality rubric exist so enablement does not decay into random support work or unreviewed publishing."
+      "explanation": "The implementation takes the first three controls for two matches: office hours plan, contribution backlog, and quality rubric."
     },
     {
       "stage": "post",
-      "question": "When should champion work escalate rather than stay as informal support?",
+      "question": "How is a champion Scenario with no matched signals, impact=2, and uncertainty=2 classified?",
       "options": [
-        "When impact, uncertainty, or risk signals are high enough to need the right owner",
-        "When the same question has already been answered in a previous office hours session",
-        "When the request comes from outside the champion's own team and department",
-        "When the reusable asset has not yet passed its quality review with the community"
+        "guided pilot with score 10",
+        "team practice with score 8",
+        "awareness only with score 6",
+        "launch gate required because champions handle risk"
       ],
-      "correct": 0,
-      "explanation": "Champions should escalate high-risk or unclear issues to the right owners rather than silently absorbing them."
+      "correct": 2,
+      "explanation": "With no matches, the score is 2*2 + 2 = 6. The common priority bands classify that result as awareness only; a separate matched signal would add two points."
     },
     {
       "stage": "post",
-      "question": "Why does the course use a champion backlog?",
+      "question": "What should backlog-ai-champion-enablement.md help a community decide?",
       "options": [
-        "To focus enablement on repeated team needs and turn them into reusable assets",
-        "To keep incoming requests out of the community channel so the queue stays short",
-        "To let assets be shared before quality review, since speed matters more than polish",
-        "To replace office hours with a written queue that the champion works through alone"
+        "Which champion alone should approve every team's AI use",
+        "Which vendor should supply the next model",
+        "Which requests can be ignored because they are not production incidents",
+        "Which repeated needs become assets or sessions, who owns them, and when a risk is escalated"
       ],
-      "correct": 0,
-      "explanation": "The backlog keeps champion work focused and reusable, which prevents enablement from becoming random support work."
+      "correct": 3,
+      "explanation": "The backlog keeps reusable prompts, office hours, contribution reviews, and escalation work visible. It prevents champions from becoming an untracked help desk."
     }
   ]
 }

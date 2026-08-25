@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why do AI pipelines fail differently from traditional analytics pipelines when data quality is poor?",
+      "question": "Which dimension has the largest weight in DomainProfile.weighted_score?",
       "options": [
-        "AI pipelines are interpolative — they fill in plausible-looking values for gaps instead of surfacing nulls or errors",
-        "AI pipelines do not use SQL joins, so broken keys never appear",
-        "AI pipelines always run on smaller datasets, hiding the defect statistically — and applies unchanged even when the lesson's stated preconditions fail",
-        "AI pipelines re-validate every input against a schema before inference"
+        "Uniqueness, weighted 0.45 because duplicate master records are especially harmful",
+        "Completeness, weighted 0.50 because null fields dominate every workflow",
+        "Timeliness, weighted 0.45 because stale records are always blocking",
+        "All three dimensions are weighted equally at one third"
       ],
       "correct": 0,
-      "explanation": "A broken SQL join fails loudly with a null or an 'unknown' label. A generative model instead interpolates a plausible-looking answer from noisy input, so the failure is invisible until someone inspects the input data directly."
+      "explanation": "WEIGHTS assigns 0.30 to completeness, 0.45 to uniqueness, and 0.25 to timeliness. The scorer deliberately gives duplicate-record risk the greatest influence."
     },
     {
       "stage": "check",
-      "question": "Of the four data quality dimensions the lesson ranks as most impactful for AI, which one means 'one real-world entity equals one master record'?",
+      "question": "What verdict does assess assign to the Supplier / vendor domain at HIGH criticality?",
       "options": [
-        "Completeness, with no need to inspect intermediate results or test edge cases",
-        "Uniqueness / deduplication",
-        "Consistency",
-        "Timeliness"
+        "DEPLOY, because its completeness score is above 0.80",
+        "CONDITIONAL, because its weighted score is about 0.700: above the 0.65 floor but below 0.90",
+        "BLOCK, because any duplicate rate above 30% bypasses the aggregate score",
+        "DEPLOY, because high criticality lowers the deploy threshold"
       ],
       "correct": 1,
-      "explanation": "Uniqueness/deduplication is specifically about duplicate records for the same real-world entity. Duplicate customer or product records inject contradictory signal that the model averages across, which is why entity resolution is its detection method."
+      "explanation": "The supplier scores 0.82 completeness, 0.62 uniqueness, and 0.70 timeliness, for 0.700 overall. HIGH criticality makes 0.90 the deploy threshold and 0.65 the block floor, so the result is CONDITIONAL."
     },
     {
       "stage": "check",
-      "question": "Why does the lesson rank accuracy and referential integrity as mattering less for AI than the other four dimensions?",
+      "question": "Why is Customer / party CONDITIONAL at HIGH criticality even though its score is close to 0.90?",
       "options": [
-        "They are impossible to measure in any pipeline",
-        "AI models are immune to inaccurate data by design",
-        "Accuracy is hard to measure without ground truth, and referential integrity is usually already enforced at the ETL layer before the AI sees the data",
-        "They only apply to structured relational databases, never to AI workflows, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path"
+        "Its 4% null rate is below the completeness floor, so the domain is blocked",
+        "Timeliness is the weakest dimension and requires a daily refresh before any pilot",
+        "Its weighted score is about 0.892, below the 0.90 deploy threshold; uniqueness is weakest and calls for entity resolution",
+        "The high-criticality policy ignores weighted scores and always returns CONDITIONAL"
       ],
       "correct": 2,
-      "explanation": "The lesson doesn't claim these dimensions don't matter — only that AI evaluation catches some accuracy issues downstream, and referential integrity constraints are typically enforced upstream in the ETL layer, so they add less new risk than completeness, uniqueness, consistency, and timeliness."
+      "explanation": "Customer / party scores 0.892 from 0.96 completeness, 0.82 uniqueness, and 0.94 timeliness. It misses the HIGH deploy threshold by a small margin, with uniqueness identified as the weakest dimension and the mitigation target."
     },
     {
       "stage": "check",
-      "question": "In the quality threshold model, what determines whether a data defect is a blocker for deployment?",
+      "question": "What verdict does the Product catalogue receive at HIGH criticality?",
       "options": [
-        "Only the total row count of the affected table",
-        "Use case criticality, defect exposure rate, and recoverability",
-        "Whether the defect was introduced in the last data migration",
-        "Whether the vendor tool used for profiling is open-source or commercial"
+        "CONDITIONAL, because every high-criticality domain needs an inference-time filter",
+        "BLOCK, because its 8% stale rate exceeds the 6% compliance window",
+        "CONDITIONAL, because uniqueness is below 1.0",
+        "DEPLOY, because its weighted score is about 0.961 and clears the 0.90 threshold"
       ],
-      "correct": 1,
-      "explanation": "The threshold model weighs three variables: how high-stakes a wrong answer is, what fraction of production queries the defect actually touches, and whether a wrong output can be cheaply corrected or triggers a hard-to-undo automated action."
+      "correct": 3,
+      "explanation": "The product catalogue scores 0.98 completeness, 0.97 uniqueness, and 0.92 timeliness, yielding roughly 0.961. That exceeds the HIGH deploy threshold, so no conditional mitigation is added."
     },
     {
       "stage": "post",
-      "question": "How does this lesson's data quality assessment relate to Phase 11 · 10 (Evaluation)?",
+      "question": "A new high-criticality domain has null_rate=0.10, duplicate_rate=0.20, and stale_rate=0.05. What verdict follows?",
       "options": [
-        "They measure the same thing and one supersedes the other",
-        "Evaluation measures output quality after deployment; this lesson's data quality dimensions are the input levers, and low eval scores should prompt a look at upstream completeness and uniqueness",
-        "Evaluation only applies to fine-tuned models, while data quality only applies to RAG systems — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "This lesson replaces the need for an evaluation loop entirely"
-      ],
-      "correct": 1,
-      "explanation": "The lesson frames data quality as an upstream gate and evaluation as the downstream outcome measure: if evaluation scores are low without a model regression, the first place to check is completeness and uniqueness in the retrieval corpus."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Diagnosing Data Quality Before AI Workflows Scale (2026)?",
-      "options": [
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "CONDITIONAL, because its weighted score is about 0.868, below the 0.90 deploy threshold",
+        "DEPLOY, because every dimension is at least 0.80",
+        "BLOCK, because a 20% duplicate rate is below the hard block floor",
+        "DEPLOY, because timeliness carries the largest weight"
       ],
       "correct": 0,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The component scores are 0.90, 0.80, and 0.95. The weighted total is 0.30*0.90 + 0.45*0.80 + 0.25*0.95 = 0.8675, which is conditional at HIGH criticality."
+    },
+    {
+      "stage": "post",
+      "question": "What mitigation does assess recommend when uniqueness is the weakest dimension in a CONDITIONAL result?",
+      "options": [
+        "Add a null-field filter and expose confidence when required fields are absent",
+        "Run entity resolution before indexing and restrict retrieval to golden-record IDs",
+        "Refresh the source daily and filter records newer than 90 days",
+        "Raise the deploy threshold until duplicate records disappear from the report"
+      ],
+      "correct": 1,
+      "explanation": "_mitigation_advice maps uniqueness to entity-resolution preprocessing and golden-record filtering. That addresses duplicate master records before they create contradictory retrieval evidence."
     }
   ]
 }

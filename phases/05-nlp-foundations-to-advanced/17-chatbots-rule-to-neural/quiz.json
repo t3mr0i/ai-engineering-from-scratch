@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does a slot-filling state machine do in a rule-based chatbot?",
+      "question": "Which response does rule_based_respond(\"My name is Alex\") produce?",
       "options": [
-        "Detects sarcasm",
-        "Picks the most fluent reply — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "Embeds the user message",
-        "Tracks which required parameters (date, destination, amount) are still missing and asks for them in sequence"
-      ],
-      "correct": 3,
-      "explanation": "Slot filling iteratively collects the structured parameters a task handler needs."
-    },
-    {
-      "stage": "check",
-      "question": "Why is retrieval-based chat resistant to hallucination?",
-      "options": [
-        "It uses embeddings",
-        "It rejects all queries, with no need to inspect intermediate results or test edge cases",
-        "It returns a canned response from a curated set rather than generating new text",
-        "It uses BM25"
-      ],
-      "correct": 2,
-      "explanation": "Retrieval surfaces pre-written answers; no generation means no fabricated content."
-    },
-    {
-      "stage": "check",
-      "question": "What defines an LLM agent loop versus a single-shot LLM call?",
-      "options": [
-        "Use of greedy decoding, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "Use of softmax",
-        "A controller that interleaves LLM calls with tool invocations until the model returns a final answer or the step budget is hit",
-        "Bigger context window"
-      ],
-      "correct": 2,
-      "explanation": "Agents add a plan-act-observe loop with tool calls and a termination condition."
-    },
-    {
-      "stage": "check",
-      "question": "Why is hybrid routing (rules + retrieval + LLM agent) the 2026 production default?",
-      "options": [
-        "It is cheaper to maintain",
-        "It removes the need for evaluation, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "No single architecture handles every request well; rules cover destructive actions, retrieval covers FAQ, agents handle ambiguous open-ended queries",
-        "It avoids embeddings"
-      ],
-      "correct": 2,
-      "explanation": "Hybrid systems use deterministic rules for risky actions and reserve LLM agents for open-ended queries."
-    },
-    {
-      "stage": "post",
-      "question": "What is prompt injection?",
-      "options": [
-        "A SQL injection variant only",
-        "A type of tokenizer attack",
-        "Injecting tokens into embeddings — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "User-supplied (direct) or document-supplied (indirect) text that tries to override the system prompt or hijack the agent's behavior"
-      ],
-      "correct": 3,
-      "explanation": "Prompt injection rewrites the agent's behavior via untrusted text in user input or tool outputs."
-    },
-    {
-      "stage": "post",
-      "question": "Which OWASP Top 10 (LLM Apps 2025) risk is ranked LLM01?",
-      "options": [
-        "Prompt injection (direct and indirect)",
-        "Insecure deserialization, with no need to inspect intermediate results or test edge cases",
-        "Broken access control",
-        "SQL injection"
+        "Nice to meet you, Alex.",
+        "Hello. How can I help?",
+        "Why do you name Alex?",
+        "Tell me more about that."
       ],
       "correct": 0,
-      "explanation": "Prompt injection is LLM01 in the OWASP LLM Apps Top 10 (2025)."
+      "explanation": "The first matching RulePattern captures the name and formats it into the greeting template."
+    },
+    {
+      "stage": "check",
+      "question": "Why are the RulePattern entries checked in their listed order?",
+      "options": [
+        "Regex matching always ignores the order of a list",
+        "The catch-all .* pattern would otherwise match before more specific patterns",
+        "The last pattern is the only one that can capture groups",
+        "Order controls the FAQ Jaccard threshold, not rule selection"
+      ],
+      "correct": 1,
+      "explanation": "rule_based_respond returns on the first match, and the final catch-all would swallow every input if placed first."
+    },
+    {
+      "stage": "check",
+      "question": "What similarity does faq_respond use to compare a user question with an FAQ question?",
+      "options": [
+        "Cosine similarity between trained sentence embeddings",
+        "Character edit distance divided by sentence length",
+        "Jaccard similarity between their lowercase alphabetic token sets",
+        "The number of FAQ entries already answered today"
+      ],
+      "correct": 2,
+      "explanation": "token_set builds sets, and faq_respond scores intersection size divided by union size."
+    },
+    {
+      "stage": "check",
+      "question": "Which input does is_destructive(\"Please cancel my order\") identify as destructive?",
+      "options": [
+        "False, because only delete is destructive",
+        "True only if the FAQ also matches",
+        "False until a neural classifier sees the input",
+        "True, because cancel is in danger_words"
+      ],
+      "correct": 3,
+      "explanation": "is_destructive lowercases the text and checks whether any word in its fixed danger list occurs."
+    },
+    {
+      "stage": "post",
+      "question": "Which route does hybrid_respond choose for \"what is the weather like\"?",
+      "options": [
+        "agent",
+        "rule",
+        "faq",
+        "It raises because weather is not in FAQ"
+      ],
+      "correct": 0,
+      "explanation": "The message is not destructive and does not reach the FAQ threshold, so the fallback response labels it agent."
+    },
+    {
+      "stage": "post",
+      "question": "Why should a destructive request be routed before an LLM answer in this toy hybrid?",
+      "options": [
+        "Rules understand every open-domain question better than a language model",
+        "A structured confirmation path can gate actions such as cancel, refund, or transfer",
+        "Routing first guarantees the requested transaction already succeeded",
+        "It avoids tokenizing the user input entirely"
+      ],
+      "correct": 1,
+      "explanation": "The code deliberately returns the rule route for danger words, separating action authorization from free-form generation."
     }
   ]
 }

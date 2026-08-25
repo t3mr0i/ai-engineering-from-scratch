@@ -4,75 +4,45 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Native Sparse Attention (DeepSeek NSA)?",
-      "options": [
-        "State the three NSA attention branches and what each one captures",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "How does `compress_mean(K, l)` form the compressed keys?",
+      "options": ["It averages each consecutive block of up to `l` rows.", "It keeps only the last `l` keys.", "It selects random individual rows.", "It concatenates every block into one longer vector."],
       "correct": 0,
-      "explanation": "“State the three NSA attention branches and what each one captures” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The pedagogical compressed branch mean-pools each consecutive block, including a shorter final block when N is not divisible by l."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Native Sparse Attention (DeepSeek NSA)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Explain why NSA is \"natively trainable\" where prior sparse-attention methods were inference-only",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "How are raw keys for the selected branch chosen in `nsa_step`?",
+      "options": ["The last k tokens in the sequence.", "The top-k compressed blocks, then all raw tokens in those blocks.", "Every token whose gate is below 0.5.", "A single random block regardless of q."],
       "correct": 1,
-      "explanation": "“Explain why NSA is \"natively trainable\" where prior sparse-attention methods were inference-only” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The query attends to compressed keys first, `top_k_blocks` selects their highest scores, and `fine_grained_keys` expands those block indices back to raw K/V rows."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Native Sparse Attention (DeepSeek NSA)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Compute the attention compute savings of NSA versus full attention at 64k context as a function of compress...",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "Which keys does the sliding branch use when `W=128` and the sequence is longer than 128 tokens?",
+      "options": ["The first 128 keys.", "One mean key for the whole sequence.", "The final 128 keys.", "All keys except the final 128."],
       "correct": 2,
-      "explanation": "“Compute the attention compute savings of NSA versus full attention at 64k context as a function of compress...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "`sliding_window` starts at `max(0, n-W)`, so it retains the most recent W keys and values."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Native Sparse Attention (DeepSeek NSA)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the three-branch combination in stdlib Python on a short synthetic sequence and verify the gating...",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the three-branch combination in stdlib Python on a short synthetic sequence and verify the gating...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Native Sparse Attention (DeepSeek NSA)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "State the three NSA attention branches and what each one captures"
-      ],
+      "question": "What does `gate(q, Wg)` return for the three NSA branches?",
+      "options": ["A softmax vector that always sums to one.", "One hard 0/1 branch choice.", "The raw query vector unchanged.", "Three independent sigmoid values between zero and one."],
       "correct": 3,
-      "explanation": "“State the three NSA attention branches and what each one captures” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The gate computes three dot-product logits and applies sigmoid to each separately; it does not normalize them with a softmax."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Native Sparse Attention (DeepSeek NSA)?",
-      "options": [
-        "Explain why NSA is \"natively trainable\" where prior sparse-attention methods were inference-only",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "Which expression does `count_nsa(N, l, k, W)` use for the per-query key count?",
+      "options": ["`N // l + k*l + W`.", "`N * l * k * W`.", "`N - l - k - W`.", "`N // (l*k*W)` only."],
       "correct": 0,
-      "explanation": "“Explain why NSA is \"natively trainable\" where prior sparse-attention methods were inference-only” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The compressed branch contributes N//l, selected raw blocks contribute k*l, and the sliding window contributes W."
+    },
+    {
+      "stage": "post",
+      "question": "With `N=65536`, `l=64`, `k=16`, and `W=512`, how many keys does `count_nsa` report?",
+      "options": ["65,536", "2,560", "1,536", "512"],
+      "correct": 1,
+      "explanation": "The count is 65536//64 + 16*64 + 512 = 1024 + 1024 + 512 = 2560 keys."
     }
   ]
 }

@@ -73,6 +73,18 @@ Lesson 26 is model-level documentation. Lesson 27 is dataset-level governance. T
 
 
 
+## Build It
+
+Reconstruct **Data Provenance and Training-Data Governance** by following `flag_followups` on a graph with edges (0,1) and (1,2). Run `python3 main.py` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.
+
+## Use It
+
+Call `flag_followups` from a small caller with a graph with edges (0,1) and (1,2). Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-provenance-check.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [California AB 2013](https://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id=202320240AB2013) — Generative AI training-data transparency law
@@ -82,10 +94,20 @@ Lesson 26 is model-level documentation. Lesson 27 is dataset-level governance. T
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Describe California AB 2013's 12 mandated fields for Generative AI training-data transparency.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: State the 2025 DPA position on legitimate-interest LLM training (Irish DPC, UK ICO, Hamburg, Cologne).
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe the irreversibility problem: why GDPR right-to-erasure has no practical equivalent for trained neural networks.
+Work from the smallest fixture that the Data Provenance and Training-Data Governance demo already understands, then make one deliberate change and record what moved.
+
+1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using a graph with edges (0,1) and (1,2). Follow `flag_followups`, `render_markdown`. Expect degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly; capture the first printed shape, metric, status, or summary field and state which part supports **Describe California AB 2013's 12 mandated fields for Generative AI training-data transparency.**.
+2. **Perturb one field.** Repeat the command after changing only the edge list: use the same graph with an isolated node 3. Predict the direction of the change, then compare the two output values. Explain why **State the 2025 DPA position on legitimate-interest LLM training (Irish DPC, UK ICO, Hamburg, Cologne).** says the other inputs should stay fixed.
+3. **Check the failure boundary.** Feed the implementation a graph with no edges. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Describe the irreversibility problem: why GDPR right-to-erasure has no practical equivalent for trained neural networks.** and record the exception text if the code rejects the case.
+4. **Make the result repeatable.** Open `outputs/skill-provenance-check.md` and add a worked example using a graph with edges (0,1) and (1,2). Include the input contract, one expected output field, and a named acceptance check for **State the Data Provenance Initiative's "Consent in Crisis" finding.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Describe California AB 2013's 12 mandated fields for Generative AI training-data transparency,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe the irreversibility problem: why GDPR right-to-erasure has no practical equivalent for trained neural networks,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Data Provenance and Training-Data Governance** should contain:
+
+- the `python3 main.py` output for a graph with edges (0,1) and (1,2), with `flag_followups`, `render_markdown` traced to the value or shape that supports **Describe California AB 2013's 12 mandated fields for Generative AI training-data transparency.**;
+- a before/after comparison for the edge list, where the same graph with an isolated node 3 changes the observation in the direction predicted by **State the 2025 DPA position on legitimate-interest LLM training (Irish DPC, UK ICO, Hamburg, Cologne).**;
+- a recorded result for a graph with no edges that matches the implementation’s validation or empty-result contract and explains the evidence for **Describe the irreversibility problem: why GDPR right-to-erasure has no practical equivalent for trained neural networks.**; and
+- an updated `outputs/skill-provenance-check.md` example with a concrete input, expected output field, and acceptance check tied to **State the Data Provenance Initiative's "Consent in Crisis" finding.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

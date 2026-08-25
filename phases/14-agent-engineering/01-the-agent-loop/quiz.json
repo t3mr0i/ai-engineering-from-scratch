@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does an LLM on its own behave like an autocomplete rather than an agent?",
+      "question": "What does the built demo return after storing 120, calculating 15% tax, and reading the base value back?",
       "options": [
-        "It cannot read files, run queries, or verify claims against the outside world",
-        "Its context window is too small to fit a tool registry and a message buffer together",
-        "It has no turn budget configured, so the loop exits after a single exchange",
-        "It can only emit one token at a time, so it cannot interleave thought and action within a turn"
+        "the total including 15% tax is 138.0, after five tool actions",
+        "the total including 15% tax is 120.0, after one tool action",
+        "budget exhausted, after ten tool actions",
+        "the total including 15% tax is 156.0, after six tool actions"
       ],
       "correct": 0,
-      "explanation": "An LLM with no loop and no tools can only produce text from its weights; it cannot observe state or act on it."
+      "explanation": "The scripted policy performs five actions and then finishes with the literal final answer `the total including 15% tax is 138.0`."
     },
     {
       "stage": "check",
-      "question": "Which three labels appear in the canonical ReAct trace from Yao et al. 2022?",
+      "question": "What string does `calculator(\"120 * 0.15\")` return in `main.py`?",
       "options": [
-        "Prompt, Response, Reward",
-        "Plan, Execute, Reflect steps",
-        "Thought, Action, Observation",
-        "System, User, Assistant labels"
-      ],
-      "correct": 2,
-      "explanation": "ReAct interleaves Thought, Action, and Observation lines in a single stream."
-    },
-    {
-      "stage": "check",
-      "question": "Which item is NOT one of the five ingredients the lesson lists for an agent loop?",
-      "options": [
-        "The message buffer",
-        "The tool registry",
-        "Observation formatter",
-        "Gradient optimizer"
-      ],
-      "correct": 3,
-      "explanation": "The five ingredients are message buffer, tool registry, stop condition, turn budget, and observation formatter. Gradient optimizers belong to training, not the inference loop."
-    },
-    {
-      "stage": "check",
-      "question": "What is the role of a turn budget in the loop?",
-      "options": [
-        "It caps the number of tokens the model may emit in a single assistant turn",
-        "It hard-caps how many loop iterations the agent can run before the runtime stops it",
-        "It controls how many tools the tool registry exposes to the model at every single turn",
-        "It rate-limits how many requests per minute the loop sends to the LLM provider"
+        "15%",
+        "18.0",
+        "120",
+        "error: illegal character in expr"
       ],
       "correct": 1,
-      "explanation": "Turn budget is a cap on loop iterations; 2026 agents commonly run 40-400 steps and need a task-appropriate cap."
+      "explanation": "The allowed-character check passes, and the restricted expression evaluates to the string `18.0`."
     },
     {
-      "stage": "post",
-      "question": "What changed in the 2025-2026 native-reasoning shift compared to prompt-based Thought tokens?",
+      "stage": "check",
+      "question": "What happens when the calculator receives `2 + x`?",
       "options": [
-        "Thought tokens are now emitted on a separate reasoning channel passed through turns",
-        "The loop control flow was replaced end to end with a DAG of planner and worker nodes",
-        "Models stopped using tool calls entirely and now rely on chain-of-thought text alone",
-        "Observations are removed from the prompt and replaced by a separate memory store"
-      ],
-      "correct": 0,
-      "explanation": "Reasoning content moves to a dedicated channel (often encrypted across providers), but the observe-think-act control flow is unchanged."
-    },
-    {
-      "stage": "post",
-      "question": "Why does the lesson say tool outputs are untrusted input?",
-      "options": [
-        "Tool runtimes in agent harnesses are slow and unreliable compared to direct model calls",
-        "Tool results are always larger than the model's context window and get truncated",
-        "Retrieved content can carry hidden instructions, and only direct user input counts as permission",
-        "The provider strips tool output bytes by default before they reach the model"
+        "It returns `2` because unknown names are ignored.",
+        "It raises `NameError` out of the agent loop.",
+        "It returns `error: illegal character in expr` before calling `eval`.",
+        "It stores `x` in the key-value store and returns `2`."
       ],
       "correct": 2,
-      "explanation": "OpenAI CUA docs state explicitly that only direct user instructions count as permission; tool outputs can carry adversarial instructions and must be treated as untrusted."
+      "explanation": "`x` is not in the calculator allowlist, so the guard returns the error string without evaluating the expression."
+    },
+    {
+      "stage": "check",
+      "question": "What observation does `ToolRegistry.dispatch(ToolCall(\"subtract\", {}))` produce when no such tool is registered?",
+      "options": [
+        "error: bad args for subtract",
+        "missing:subtract",
+        "error: KeyError: subtract",
+        "error: unknown tool 'subtract'"
+      ],
+      "correct": 3,
+      "explanation": "The registry checks the tool name first and formats an unknown name as `error: unknown tool 'subtract'`."
+    },
+    {
+      "stage": "post",
+      "question": "If an `AgentLoop` is created with `max_turns=0`, what does `run(\"hello\")` return?",
+      "options": [
+        "budget exhausted",
+        "no more actions",
+        "hello",
+        "error: no turn budget"
+      ],
+      "correct": 0,
+      "explanation": "The loop executes zero iterations, appends a final turn with `budget exhausted`, and returns that exact string."
+    },
+    {
+      "stage": "post",
+      "question": "What happens when `kv_get` is dispatched without its required `key` argument?",
+      "options": [
+        "The registry returns `missing:key`.",
+        "It returns an `error: bad args for kv_get: ...` observation.",
+        "The exception escapes and terminates `AgentLoop.run`.",
+        "The registry silently supplies an empty key."
+      ],
+      "correct": 1,
+      "explanation": "Calling the bound `KVStore.get` without `key` raises `TypeError`, which `dispatch` converts into a retryable bad-arguments string."
     }
   ]
 }

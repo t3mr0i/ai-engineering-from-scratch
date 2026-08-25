@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Conditional GANs & Pix2Pix?",
+      "question": "How does g_forward inject class c into the generator input?",
       "options": [
-        "Explain the probabilistic mechanism behind Conditional GANs & Pix2Pix",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Explain the probabilistic mechanism behind Conditional GANs & Pix2Pix” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Conditional GANs & Pix2Pix?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the lesson's core generative step from first principles",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the lesson's core generative step from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Conditional GANs & Pix2Pix?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Inspect samples and intermediate states to diagnose generation behavior",
-        "Treat one successful example as proof that every edge case works"
+        "It replaces z with a one-hot vector and discards noise",
+        "It adds c as a scalar to every generated output after the second layer",
+        "It concatenates z with one_hot(c, num_classes) before the first matrix multiply",
+        "It conditions only the discriminator, leaving G independent of c"
       ],
       "correct": 2,
-      "explanation": "“Inspect samples and intermediate states to diagnose generation behavior” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "g_forward forms `inp = z + one_hot(c, num_classes)`, so the generator receives both stochastic noise and a class code."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Conditional GANs & Pix2Pix?",
+      "question": "What does one_hot(c=2, num=4) return?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Compare quality, diversity, stability, and compute trade-offs",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Compare quality, diversity, stability, and compute trade-offs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Conditional GANs & Pix2Pix?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the probabilistic mechanism behind Conditional GANs & Pix2Pix"
+        "[0.0, 0.0, 0.0, 1.0]",
+        "[1.0, 1.0, 0.0, 0.0]",
+        "[2.0, 0.0, 0.0, 0.0]",
+        "[0.0, 0.0, 1.0, 0.0]"
       ],
       "correct": 3,
-      "explanation": "“Explain the probabilistic mechanism behind Conditional GANs & Pix2Pix” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "one_hot initializes four zeros and sets index c to 1.0, so class 2 occupies the third coordinate."
+    },
+    {
+      "stage": "check",
+      "question": "What pattern does sample_real_conditional use for class 0 versus the other class IDs?",
+      "options": [
+        "Class 0 is centered near -2.0; every other class is centered near +2.0",
+        "Class 0 is centered near +2.0; every other class is centered near -2.0",
+        "All classes share a zero-centered Gaussian",
+        "The class selects a different latent dimension but not the real value"
+      ],
+      "correct": 0,
+      "explanation": "The branch `if c == 0` samples -2.0; its else branch samples +2.0, both with standard deviation 0.3."
+    },
+    {
+      "stage": "check",
+      "question": "What extra gradient does update_g add when l1_w>0 and targets is provided?",
+      "options": [
+        "The squared error multiplied by the discriminator probability",
+        "l1_w times the sign of x_hat[k]-targets[i][k]",
+        "A gradient that changes only the class one-hot vector",
+        "A KL divergence between the two target distributions"
+      ],
+      "correct": 1,
+      "explanation": "The code adds `l1_w * (1.0 if x_hat[k] > targets[i][k] else -1.0)` to dL_dxhat, the subgradient of an L1 term."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Conditional GANs & Pix2Pix?",
+      "question": "Why does d_forward receive c as well as x?",
       "options": [
-        "Implement the lesson's core generative step from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "It replaces the sigmoid with a class-specific activation but ignores x",
+        "It uses c to choose the generator's learning rate",
+        "The discriminator judges whether x is realistic for the supplied condition, not just whether x looks real in isolation",
+        "It lets the discriminator reconstruct the target image pixel by pixel"
       ],
-      "correct": 0,
-      "explanation": "“Implement the lesson's core generative step from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "d_forward concatenates x with one_hot(c), allowing D to distinguish a sample that has the wrong class from a valid conditional sample."
+    },
+    {
+      "stage": "post",
+      "question": "What is the practical distinction between paired Pix2Pix training and an unpaired CycleGAN setup?",
+      "options": [
+        "They are identical objectives with different names",
+        "Pix2Pix never uses a discriminator, while CycleGAN uses two classifiers only",
+        "CycleGAN requires one-hot labels for every pixel, while Pix2Pix uses no conditioning",
+        "Pix2Pix can use aligned input-target pairs; CycleGAN relies on cycle consistency when matching pairs are unavailable"
+      ],
+      "correct": 3,
+      "explanation": "The lesson uses conditional adversarial training for paired translation and contrasts it with CycleGAN's cycle-consistency strategy for unpaired domains."
     }
   ]
 }

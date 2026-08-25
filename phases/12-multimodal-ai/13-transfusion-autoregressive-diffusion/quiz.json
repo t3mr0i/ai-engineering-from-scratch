@@ -1,78 +1,78 @@
 {
   "lesson": "13-transfusion-autoregressive-diffusion",
-  "title": "Transfusion: Autoregressive Text + Diffusion Image in One Transformer",
+  "title": "Transfusion: Autoregressive Text and Diffusion Images",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Transfusion: Autoregressive Text + Diffusion Image in One Transformer?",
+      "question": "What attention pattern does build_mask use for image patches inside one image span?",
       "options": [
-        "Wire a transformer that runs two losses (NTP on text tokens, diffusion MSE on image patches) on one backbone",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Bidirectional attention among patches in the same image, while text remains causal",
+        "Only each patch attending to its immediate predecessor",
+        "A fully bidirectional mask over every text and image token in the batch",
+        "No attention between image patches because diffusion is independent"
       ],
       "correct": 0,
-      "explanation": "“Wire a transformer that runs two losses (NTP on text tokens, diffusion MSE on image patches) on one backbone” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "build_mask identifies image ranges between SEP_OPEN and SEP_CLOSE. Tokens in the same range attend to one another, while text-to-text positions obey j <= i."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Transfusion: Autoregressive Text + Diffusion Image in One Transformer?",
+      "question": "How does two_loss_step combine the text and image objectives?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Explain why bidirectional attention across image patches plus causal attention over text tokens is the righ...",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It discards image loss whenever text loss is nonzero",
+        "It computes text_w*text_loss + img_w*img_loss as the total",
+        "It averages the two raw logits before either loss is computed",
+        "It uses only MSE for both modalities"
       ],
       "correct": 1,
-      "explanation": "“Explain why bidirectional attention across image patches plus causal attention over text tokens is the righ...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The returned total is weights['text_w'] * text_loss plus weights['img_w'] * img_loss. The two terms retain their modality-specific objectives."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Transfusion: Autoregressive Text + Diffusion Image in One Transformer?",
+      "question": "What does patch_to_vec([1,2,3,4]) return with HIDDEN=8?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Compare Transfusion-style (continuous images, diffusion loss) to Chameleon-style (discrete images, NTP) on...",
-        "Treat one successful example as proof that every edge case works"
+        "A four-element normalized vector",
+        "Eight copies of the first patch value",
+        "[1,2,3,4,0,0,0,0], padding the short patch to HIDDEN",
+        "A scalar MSE value"
       ],
       "correct": 2,
-      "explanation": "“Compare Transfusion-style (continuous images, diffusion loss) to Chameleon-style (discrete images, NTP) on...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "patch_to_vec keeps the four input values and appends max(0, 8-4)=4 zeros. It is a width adapter, not a normalization or loss function."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Transfusion: Autoregressive Text + Diffusion Image in One Transformer?",
+      "question": "What shape of training pair does make_dataset create by default?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Name MMDiT's contribution: modality-specific weights at each block, joint attention at the residual stream",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Name MMDiT's contribution: modality-specific weights at each block, joint attention at the residual stream” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Transfusion: Autoregressive Text + Diffusion Image in One Transformer?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Wire a transformer that runs two losses (NTP on text tokens, diffusion MSE on image patches) on one backbone"
+        "Eight text tokens and a 16x16 RGB image",
+        "One scalar label and a list of patch IDs",
+        "A caption string and a variable-length audio waveform",
+        "24 Pair objects, each with caption [1,2,cls,3] and a 4x4 grayscale image"
       ],
       "correct": 3,
-      "explanation": "“Wire a transformer that runs two losses (NTP on text tokens, diffusion MSE on image patches) on one backbone” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "make_dataset(24) creates 24 Pair instances. Each caption has four integer tokens and each image is a 4x4 list whose shade depends on cls."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Transfusion: Autoregressive Text + Diffusion Image in One Transformer?",
+      "question": "How does mse(a, b) normalize its squared error?",
       "options": [
-        "Explain why bidirectional attention across image patches plus causal attention over text tokens is the righ...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It sums squared differences and divides by the number of coordinates",
+        "It returns the largest coordinate error only",
+        "It computes cross-entropy over the two vectors",
+        "It divides by the batch size even when the vectors are empty"
       ],
       "correct": 0,
-      "explanation": "“Explain why bidirectional attention across image patches plus causal attention over text tokens is the righ...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "mse sums (x-y)^2 over zipped coordinates and divides by max(1, len(a)). For normal non-empty vectors this is the mean squared error."
+    },
+    {
+      "stage": "post",
+      "question": "Which comparison in the driver correctly characterizes Transfusion versus Chameleon?",
+      "options": [
+        "Both use discrete image codes and only a masked diffusion loss",
+        "Transfusion keeps continuous image patches with a diffusion/flow loss while Chameleon uses discrete image tokens with NTP",
+        "Chameleon uses a frozen vision encoder and Transfusion has no text objective",
+        "Transfusion is text-only and Chameleon is the only multimodal model"
+      ],
+      "correct": 1,
+      "explanation": "The driver contrasts continuous image patches plus an image flow/diffusion objective in Transfusion with Chameleon's discrete image tokens trained under next-token prediction."
     }
   ]
 }

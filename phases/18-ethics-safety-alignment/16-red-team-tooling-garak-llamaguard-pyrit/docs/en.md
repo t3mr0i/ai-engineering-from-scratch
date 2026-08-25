@@ -67,6 +67,18 @@ Lessons 12-15 are the attack families. Lesson 16 is the production tooling. Less
 
 
 
+## Build It
+
+Reconstruct **Red-Team Tooling — Garak, Llama Guard, PyRIT** by following `guard_classify` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
+
+## Use It
+
+Call `guard_classify` from a small caller with the demo’s smallest built-in fixture. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-red-team-stack.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Meta — Llama Guard 3 (in Llama 3 Herd paper, arXiv:2407.21783)](https://arxiv.org/abs/2407.21783) — the 8B classifier
@@ -76,10 +88,20 @@ Lessons 12-15 are the attack families. Lesson 16 is the production tooling. Less
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Describe Llama Guard 3/4's position in the safety stack: input classifier, output classifier, or both.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Name the 14 MLCommons hazard categories and state one non-obvious one (Code Interpreter Abuse).
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe Garak's probe architecture: probes, detectors, harnesses.
+Use `guard_classify` as the trace: start from the demo’s smallest built-in fixture, keep the raw output, and tie each observation to a named objective.
+
+1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using the demo’s smallest built-in fixture. Follow `guard_classify`, `is_unsafe`, `Probe`. Expect the result reports the empty case explicitly or raises the documented validation error; capture the first printed shape, metric, status, or summary field and state which part supports **Describe Llama Guard 3/4's position in the safety stack: input classifier, output classifier, or both.**.
+2. **Vary one named input.** Repeat the command after changing only the primary fixture value: use the same fixture with its primary value changed from 1 to 2. Predict the direction of the change, then compare the two output values. Explain why **Name the 14 MLCommons hazard categories and state one non-obvious one (Code Interpreter Abuse).** says the other inputs should stay fixed.
+3. **Probe the empty case.** Feed the implementation an empty fixture {}. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Describe Garak's probe architecture: probes, detectors, harnesses.** and record the exception text if the code rejects the case.
+4. **Package a usable handoff.** Open `outputs/skill-red-team-stack.md` and add a worked example using the demo’s smallest built-in fixture. Include the input contract, one expected output field, and a named acceptance check for **Describe PyRIT's multi-turn campaign structure and how it composes with Garak probes.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Describe Llama Guard 3/4's position in the safety stack: input classifier, output classifier, or both,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe Garak's probe architecture: probes, detectors, harnesses,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Red-Team Tooling — Garak, Llama Guard, PyRIT** should contain:
+
+- the `python3 main.py` output for the demo’s smallest built-in fixture, with `guard_classify`, `is_unsafe`, `Probe` traced to the value or shape that supports **Describe Llama Guard 3/4's position in the safety stack: input classifier, output classifier, or both.**;
+- a before/after comparison for the primary fixture value, where the same fixture with its primary value changed from 1 to 2 changes the observation in the direction predicted by **Name the 14 MLCommons hazard categories and state one non-obvious one (Code Interpreter Abuse).**;
+- a recorded result for an empty fixture {} that matches the implementation’s validation or empty-result contract and explains the evidence for **Describe Garak's probe architecture: probes, detectors, harnesses.**; and
+- an updated `outputs/skill-red-team-stack.md` example with a concrete input, expected output field, and acceptance check tied to **Describe PyRIT's multi-turn campaign structure and how it composes with Garak probes.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

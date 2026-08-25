@@ -83,12 +83,30 @@ The output template in `outputs/canvas-ai-use-case-discovery.md` can be copied i
 - The right control level depends on workflow risk, uncertainty, business impact, and role accountability.
 - AI can accelerate analysis, but the team still owns the decision, review, and rollout.
 
+## Build It
+
+Reconstruct **AI Use Case Spotting and Automation Discovery** by following `Scenario` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Ship It
+
+Hand off `outputs/canvas-ai-use-case-discovery.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Identify the operational signals that make this capability relevant in day-to-day LHIND work.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a lightweight Python artifact that turns an ambiguous AI idea into a structured plan.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Map risk, value, uncertainty, and controls into a practical course exercise.
+Start with the smallest reproducible run. Keep the input, output, and interpretation together so another reader can repeat the check.
+
+1. **Start with a known input.** Run [main.py](../code/main.py) with `python3 main.py` from the lesson's `code/` directory. Record the smallest input that demonstrates “Identify the operational signals that make this capability relevant in day-to-day LHIND work”. Point to `normalize()`, `signal_matches()`, `score_scenario()` and name the returned field or printed value that serves as evidence.
+2. **Run a controlled comparison.** Change exactly one input, threshold, or option that affects “Build a lightweight Python artifact that turns an ambiguous AI idea into a structured plan”. Predict the direction of the change before running it, then compare the two outputs and explain why the other fields should stay stable.
+3. **Try the smallest valid counterexample.** Construct a case that stresses “Map risk, value, uncertainty, and controls into a practical course exercise”: choose an empty collection, missing field, maximum-sized value, malformed record, or another boundary that fits this lesson. Write the expected behavior first and distinguish an intentional guard from an accidental crash.
+4. **Transfer the result.** Open outputs/canvas-ai-use-case-discovery.md and adapt one example to a real workflow. State the owner, evidence, and next decision required for “Use the generated worksheet as a reusable starting point for team enablement”; mark any assumption that the demo does not establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Identify the operational signals that make this capability relevant in day-to-day LHIND work,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Map risk, value, uncertainty, and controls into a practical course exercise,” and cite a repeatable check rather than relying on visual inspection alone.
+Your solution is complete when it records python3 main.py, the captured output, and a short interpretation. Show:
+
+- evidence for “Identify the operational signals that make this capability relevant in day-to-day LHIND work” with the relevant input and returned field;
+- a one-variable comparison that makes “Build a lightweight Python artifact that turns an ambiguous AI idea into a structured plan” visible;
+- a predicted and observed boundary result for “Map risk, value, uncertainty, and controls into a practical course exercise”, including why the behavior is safe; and
+- one concrete update to outputs/canvas-ai-use-case-discovery.md that applies “Use the generated worksheet as a reusable starting point for team enablement” without hiding uncertainty.
+
+Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.

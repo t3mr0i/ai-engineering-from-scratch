@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the primary difference between a Docker container and a virtual machine?",
+      "question": "Which Docker object should hold model files that must survive rebuilding an image?",
       "options": [
-        "Containers are slower but more secure than VMs",
-        "Containers share the host OS kernel while VMs run their own full OS",
-        "Containers can only run Linux while VMs support any OS — and applies unchanged even when the lesson's stated preconditions fail",
-        "There is no practical difference"
-      ],
-      "correct": 1,
-      "explanation": "Containers share the host kernel and isolate at the process level, making them start in seconds. VMs run a complete guest OS with its own kernel, requiring more resources and slower startup."
-    },
-    {
-      "stage": "check",
-      "question": "What is a Dockerfile?",
-      "options": [
-        "A configuration file for the Docker daemon, with no need to inspect intermediate results or test edge cases",
-        "A set of instructions for building a Docker image layer by layer",
-        "A log file that records container activity",
-        "A file that lists running containers"
-      ],
-      "correct": 1,
-      "explanation": "A Dockerfile contains sequential instructions (FROM, RUN, COPY, etc.) that Docker executes to build an image. Each instruction creates a cached layer."
-    },
-    {
-      "stage": "check",
-      "question": "Why are volume mounts critical for AI development with Docker?",
-      "options": [
-        "Volumes make containers run faster by using host disk speed",
-        "Volumes persist data (models, datasets, code) across container rebuilds so you don't re-download gigabytes each time",
-        "Volumes are required for Python packages to install correctly, because one plausible output is sufficient production evidence",
-        "Volumes allow multiple containers to share the same GPU"
-      ],
-      "correct": 1,
-      "explanation": "Without volumes, everything inside a container is lost when it stops. Volume mounts map host directories into the container, so model weights (14+ GB) and datasets survive rebuilds."
-    },
-    {
-      "stage": "check",
-      "question": "What does the NVIDIA Container Toolkit enable?",
-      "options": [
-        "Installing CUDA drivers inside the container",
-        "Exposing host GPUs to Docker containers via the --gpus flag",
-        "Running NVIDIA GPU containers on AMD hardware",
-        "Compiling CUDA code during the Docker build process, before defining the measurement, acceptance threshold, or rollback path"
-      ],
-      "correct": 1,
-      "explanation": "The NVIDIA Container Toolkit is a runtime hook that exposes host GPUs to containers. The CUDA toolkit lives inside the container, but the GPU driver is shared from the host."
-    },
-    {
-      "stage": "post",
-      "question": "In a Docker Compose file for AI, how does the 'ai-dev' service reach the 'qdrant' vector database?",
-      "options": [
-        "By using the host machine's IP address and port",
-        "By using the service name 'qdrant' as the hostname, since Compose creates a shared network",
-        "By mounting a shared volume between the two containers — and applies unchanged even when the lesson's stated preconditions fail",
-        "By configuring a VPN between the containers"
-      ],
-      "correct": 1,
-      "explanation": "Docker Compose automatically creates a shared network where services can reach each other by name. The ai-dev container connects to 'http://qdrant:6333' using the service name as hostname."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Docker for AI?",
-      "options": [
-        "Mount host directories as volumes to persist models, datasets, and code across container rebuilds",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "A mounted volume",
+        "A temporary container layer only",
+        "The Dockerfile comment",
+        "The image tag name"
       ],
       "correct": 0,
-      "explanation": "“Mount host directories as volumes to persist models, datasets, and code across container rebuilds” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "A volume or host bind mount stores data outside the disposable container layer. Rebuilding the image can then replace software without deleting the model or index."
+    },
+    {
+      "stage": "check",
+      "question": "What combination lets a container use the host NVIDIA GPU?",
+      "options": [
+        "Only a larger Dockerfile and the Python standard library",
+        "A driver, toolkit, and --gpus all",
+        "A bind mount for the README and an exposed HTTP port",
+        "A CPU-only image with CUDA disabled"
+      ],
+      "correct": 1,
+      "explanation": "The host driver and container runtime integration expose the device; the run or Compose configuration must request GPU capability. Installing a Python package alone cannot create that access."
+    },
+    {
+      "stage": "check",
+      "question": "What does inspect_container_config() report as persistent in the lesson's Compose file?",
+      "options": [
+        "Every file copied into the image",
+        "The container's stdout buffer",
+        "The qdrant_data volume",
+        "The EXPOSE declaration"
+      ],
+      "correct": 2,
+      "explanation": "The demo checks for qdrant_data: in the Compose configuration. EXPOSE documents a port; it does not persist data."
+    },
+    {
+      "stage": "check",
+      "question": "An inference service needs the vector database in Compose. Which hostname should it use?",
+      "options": [
+        "localhost on the developer's laptop",
+        "The ephemeral container ID copied from an old run",
+        "The host's public DNS name even when both services share a network",
+        "The Compose service name for the vector database"
+      ],
+      "correct": 3,
+      "explanation": "Compose supplies service-name DNS on its application network. localhost inside the inference container refers to that same container, not its database peer."
+    },
+    {
+      "stage": "post",
+      "question": "The lesson script prints a pinned base image but the Compose inspection says gpu_reservation is false. What should you change?",
+      "options": [
+        "Add the GPU reservation to Compose",
+        "Change the image's WORKDIR to /tmp",
+        "Expose another TCP port",
+        "Remove the qdrant_data volume"
+      ],
+      "correct": 0,
+      "explanation": "A pinned image improves reproducibility but does not request a device. The Compose service needs its GPU reservation so the runtime can pass the device through."
+    },
+    {
+      "stage": "post",
+      "question": "Which small deployment plan keeps this AI stack reproducible and recoverable?",
+      "options": [
+        "Use latest for every image and keep the index inside a disposable container",
+        "Pin the image, mount volumes, and use service DNS",
+        "Bake API keys and downloaded checkpoints into each image rebuild",
+        "Run the database on localhost and omit its health check"
+      ],
+      "correct": 1,
+      "explanation": "Pinned software makes rebuilds comparable, volumes preserve state, and service DNS keeps the two containers connected. Secrets should be supplied at runtime rather than baked into images."
     }
   ]
 }

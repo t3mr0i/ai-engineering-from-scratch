@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why should you never tune hyperparameters based on test set performance?",
+      "question": "A classifier has TP=8, FP=2, FN=4, and TN=6. What is its recall?",
       "options": [
-        "Adjusting the model based on test results effectively trains on the test set, making the reported performance meaningless",
-        "The test set is generally too small in most real-world datasets to give reliable performance estimates at all",
-        "Hyperparameters cannot legally be changed once a model has finished its initial training run",
-        "The test set always contains different features than the training set entirely, so any comparison between the two is invalid"
+        "0.67",
+        "0.80",
+        "0.57",
+        "0.40"
       ],
       "correct": 0,
-      "explanation": "Every time you adjust your model based on test performance, you leak test information into your modeling decisions. The test set must be used exactly once at the end for an unbiased estimate."
+      "explanation": "Recall is TP/(TP+FN)=8/(8+4)=2/3, approximately 0.67."
     },
     {
       "stage": "check",
-      "question": "A dataset has 95% negative and 5% positive samples. A model predicts 'negative' for every sample. What is its accuracy?",
+      "question": "Using TP=8, FP=2, and FN=4, what is the F1 score to two decimal places?",
       "options": [
-        "50%, the random-guess baseline you'd expect for a balanced two-class problem",
-        "5%, equal to the positive-class rate since the model misses every positive sample",
-        "95%, since predicting the majority class every time gets every negative sample right",
-        "0%, since a model that never predicts positive should score no better than random chance"
-      ],
-      "correct": 2,
-      "explanation": "Accuracy = correct predictions / total = 950/1000 = 95%. This shows why accuracy is misleading for imbalanced data -- a useless model looks great."
-    },
-    {
-      "stage": "check",
-      "question": "In K-fold cross-validation with K=5, how many times is each data point used for validation?",
-      "options": [
-        "5 times, once for every fold, since each fold reuses the full dataset for validation purposes",
-        "It depends entirely on which random seed was used to shuffle the data before it gets split into the five folds",
-        "Never -- with K-fold CV all data is reserved for training and no data is ever held out for validation",
-        "Exactly once, since each of the K folds serves as the validation set for one round and training data the rest"
-      ],
-      "correct": 3,
-      "explanation": "In K-fold CV, data is split into K equal folds. Each fold is used as the validation set exactly once while the remaining K-1 folds are used for training."
-    },
-    {
-      "stage": "check",
-      "question": "A learning curve shows training score = 0.95 and validation score = 0.60 that does not improve with more data. What should you try?",
-      "options": [
-        "Collect more training data, since a wider validation gap always means the model just hasn't seen enough examples",
-        "Use a simpler model or add regularization to reduce variance, since this is a classic overfitting signature",
-        "Remove the validation set entirely so the model can train on all of the available data instead",
-        "Increase the learning rate so the model converges to a better optimum more quickly than before"
+        "0.80",
+        "0.73",
+        "0.67",
+        "0.50"
       ],
       "correct": 1,
-      "explanation": "A large gap between training (high) and validation (low) scores is high variance (overfitting). The fix is a simpler model, more regularization, or techniques like dropout -- not more data if the gap persists."
+      "explanation": "Precision is 0.80 and recall is 0.67, so F1=2PR/(P+R) is about 0.73."
     },
     {
-      "stage": "post",
-      "question": "AUC-ROC = 0.5 for a binary classifier. What does this indicate?",
+      "stage": "check",
+      "question": "Why use stratified K-fold rather than ordinary K-fold for a rare positive class?",
       "options": [
-        "The model perfectly separates the two classes across every possible decision threshold",
-        "The model has exactly 50% accuracy on the evaluation set regardless of the chosen threshold",
-        "The model performs no better than random guessing at ranking positives above negatives",
-        "The model has equal precision and recall values at its default classification threshold"
+        "It guarantees that every model has zero validation error",
+        "It removes the need for a final test set",
+        "Each fold keeps approximately the same class proportions",
+        "It converts classification into regression"
       ],
       "correct": 2,
-      "explanation": "AUC-ROC = 0.5 means the model's ranking of positive and negative examples is no better than random. AUC = 1.0 would be perfect separation. The metric is threshold-independent."
+      "explanation": "Stratification prevents a fold from having too few or no positive examples, making metric comparisons more stable."
+    },
+    {
+      "stage": "check",
+      "question": "What does an ROC AUC of 0.5 mean for a scoring classifier?",
+      "options": [
+        "It predicts every positive case correctly",
+        "Its precision is exactly 0.5 at every threshold",
+        "It has a mean squared error of 0.5",
+        "Its ranking is no better than random ordering"
+      ],
+      "correct": 3,
+      "explanation": "AUC measures ranking across thresholds. An AUC of 0.5 is the expected value for random rankings; it does not fix precision at every threshold."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Model Evaluation?",
+      "question": "Which regression metric is most directly affected by one very large residual?",
       "options": [
-        "Compute precision, recall, F1, AUC-ROC, and regression metrics (MSE, RMSE, MAE, R-squared) from scratch",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "MSE, because the residual is squared",
+        "MAE, because it squares residuals",
+        "R-squared, because it ignores all residuals",
+        "Accuracy, because it is a regression metric"
       ],
       "correct": 0,
-      "explanation": "“Compute precision, recall, F1, AUC-ROC, and regression metrics (MSE, RMSE, MAE, R-squared) from scratch” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Squaring makes a large error contribute disproportionately to MSE. MAE grows linearly with its magnitude."
+    },
+    {
+      "stage": "post",
+      "question": "You standardize a feature before cross-validation. Which procedure avoids leakage?",
+      "options": [
+        "Fit one scaler on all rows before making the folds",
+        "Fit the scaler on each training fold and transform that fold's validation rows",
+        "Fit the scaler on the test labels",
+        "Use the validation mean to transform the training rows"
+      ],
+      "correct": 1,
+      "explanation": "Each validation fold must remain unseen when its preprocessing statistics are estimated; a pipeline applies this fit-transform order per fold."
     }
   ]
 }

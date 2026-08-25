@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the difference between a probability mass function (PMF) and a probability density function (PDF)?",
+      "question": "A Bernoulli variable has P(X=1)=0.7. What are its expected value and variance?",
       "options": [
-        "PMFs are used for continuous variables, PDFs for discrete variables",
-        "PMFs give exact probabilities for discrete outcomes, while PDFs give densities for continuous variables that must be integrated over an interval to get probability",
-        "There is no difference; they are the same concept with different names — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "PMFs always sum to 0.5, PDFs integrate to 1"
+        "E[X]=1 and Var(X)=0.7",
+        "E[X]=0.3 and Var(X)=0.49",
+        "E[X]=0.7 and Var(X)=0.21",
+        "E[X]=0.7 and Var(X)=0.7"
       ],
-      "correct": 1,
-      "explanation": "For discrete variables, the PMF gives P(X=k) directly. For continuous variables, the PDF f(x) is a density -- P(a<=X<=b) requires integrating f(x) from a to b. The density at a single point is not a probability."
+      "correct": 2,
+      "explanation": "For Bernoulli(p), E[X]=p and Var(X)=p(1-p). Here 0.7*0.3=0.21."
     },
     {
       "stage": "check",
-      "question": "What does the Central Limit Theorem state?",
+      "question": "Which statement about a continuous PDF is correct?",
       "options": [
-        "All data follows a normal distribution",
-        "The mean of many independent random samples converges to a normal distribution regardless of the source distribution",
-        "Large datasets always have low variance",
-        "The probability of rare events decreases as sample size increases, with no need to inspect intermediate results or test edge cases"
+        "The density at x is the probability of exactly x",
+        "All PDF values must be integers between 0 and 1",
+        "A PDF's values must sum to 1 when sampled at two points",
+        "A density can exceed 1; probability comes from area over an interval"
       ],
-      "correct": 1,
-      "explanation": "The CLT says that the average of many independent random variables approaches a Gaussian, no matter what the original distribution looks like. This explains why the normal distribution appears everywhere."
+      "correct": 3,
+      "explanation": "A density is not itself a point probability. Its integral over a region is the probability, and a narrow distribution may have density above 1."
     },
     {
       "stage": "check",
-      "question": "Why does softmax subtract the maximum logit before exponentiating (the 'softmax trick')?",
+      "question": "What does stable softmax produce for logits [1000, 1001]?",
       "options": [
-        "To make all probabilities equal",
-        "To prevent numerical overflow from exponentiating large numbers while producing mathematically identical results",
-        "To normalize the logits to have mean zero",
-        "To speed up the computation by reducing the number of exponentiations, because one plausible output is sufficient production evidence"
-      ],
-      "correct": 1,
-      "explanation": "exp(100) overflows to infinity. Subtracting max(logits) shifts all values so the largest is 0. exp(0)=1 is safe. The subtraction cancels out in the normalization, giving identical probabilities."
-    },
-    {
-      "stage": "check",
-      "question": "Cross-entropy loss for classification simplifies to -log(q(true_class)). What does this mean intuitively?",
-      "options": [
-        "Multiply the predicted probabilities by the true labels, before defining the measurement, acceptance threshold, or rollback path",
-        "Penalize the model based on how low its predicted probability is for the correct class -- lower prediction means higher loss",
-        "Average the log probabilities across all classes",
-        "Compute the entropy of the true distribution"
-      ],
-      "correct": 1,
-      "explanation": "If the model predicts 0.9 for the correct class, loss = -log(0.9) = 0.105 (low). If it predicts 0.01, loss = -log(0.01) = 4.6 (high). The loss punishes low confidence in the correct answer."
-    },
-    {
-      "stage": "post",
-      "question": "Why do language models work with log probabilities instead of raw probabilities?",
-      "options": [
-        "Log probabilities are easier to interpret visually",
-        "Multiplying many small probabilities causes numerical underflow to zero; log probabilities convert products to sums, avoiding this",
-        "Log probabilities are required by the transformer architecture — and applies unchanged even when the lesson's stated preconditions fail",
-        "Raw probabilities cannot represent values less than 0.01"
-      ],
-      "correct": 1,
-      "explanation": "P(sentence) = P(word1) * P(word2) * ... quickly underflows to 0.0 with float64. Log P(sentence) = log P(word1) + log P(word2) + ... stays in a finite range. Products become sums."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Probability and Distributions?",
-      "options": [
-        "Compute expected value, variance, and use the Central Limit Theorem to explain why Gaussians dominate",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Approximately [0.269, 0.731]",
+        "[0.5, 0.5] because the logits are close",
+        "[1000/2001, 1001/2001] because softmax is linear",
+        "An overflow error in every implementation"
       ],
       "correct": 0,
-      "explanation": "“Compute expected value, variance, and use the Central Limit Theorem to explain why Gaussians dominate” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Subtracting the maximum gives [−1,0], so the ratio is [exp(-1),1] normalized: about [0.269,0.731]."
+    },
+    {
+      "stage": "check",
+      "question": "For a one-hot target whose true-class probability is 0.25, what is cross-entropy loss?",
+      "options": [
+        "-log(0.75), about 0.288",
+        "-log(0.25), about 1.386",
+        "0.25",
+        "4, because the reciprocal is used without a logarithm"
+      ],
+      "correct": 1,
+      "explanation": "The one-hot cross-entropy selects the true class: -sum(y_i log q_i) = -log(0.25) = log(4), approximately 1.386."
+    },
+    {
+      "stage": "post",
+      "question": "If independent samples have variance sigma^2, what happens to the variance of their mean as n grows?",
+      "options": [
+        "It becomes n*sigma^2, so the mean gets noisier",
+        "It stays exactly sigma^2 for every n",
+        "It becomes sigma^2/n, supporting the Central Limit Theorem",
+        "It becomes zero after the first sample"
+      ],
+      "correct": 2,
+      "explanation": "Averaging n independent variables divides variance by n. The standardized mean approaches a normal distribution under the Central Limit Theorem."
+    },
+    {
+      "stage": "post",
+      "question": "For a Poisson variable with lambda=3, what is P(X=0)?",
+      "options": [
+        "3",
+        "1-exp(-3)",
+        "exp(3)/3",
+        "exp(-3)"
+      ],
+      "correct": 3,
+      "explanation": "The Poisson PMF is exp(-lambda) lambda^k / k!. Setting k=0 leaves exp(-3)."
     }
   ]
 }

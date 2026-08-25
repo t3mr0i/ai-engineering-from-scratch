@@ -4,75 +4,45 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Differential Attention (V2)?",
-      "options": [
-        "State precisely why softmax attention has a noise floor and why it grows with context length",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“State precisely why softmax attention has a noise floor and why it grows with context length” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Differential Attention (V2)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Derive the differential attention formula and explain why the subtraction cancels the shared noise componen...",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Derive the differential attention formula and explain why the subtraction cancels the shared noise componen...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Differential Attention (V2)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Walk the V1-to-V2 diff: what got faster, what got simpler, what got more stable, and why each change was ne...",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "Which weight row does `diff_attention` apply to the value matrix?",
+      "options": ["The average of the two softmax rows.", "The second softmax row only.", "`softmax(Q1K1ᵀ) - lambda * softmax(Q2K2ᵀ)`.", "The first softmax row divided by lambda."],
       "correct": 2,
-      "explanation": "“Walk the V1-to-V2 diff: what got faster, what got simpler, what got more stable, and why each change was ne...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The implementation computes two separately normalized rows and forms `a - lam * b` before the weighted value sum."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Differential Attention (V2)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement differential attention from scratch in pure Python and empirically verify the noise-cancellation...",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement differential attention from scratch in pure Python and empirically verify the noise-cancellation...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Differential Attention (V2)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "State precisely why softmax attention has a noise floor and why it grows with context length"
-      ],
+      "question": "What does `diff_attention` reduce to when `lam=0`?",
+      "options": ["An all-zero output.", "The second attention branch with negative weights.", "A uniform average over V.", "Standard attention using the first Q/K branch."],
       "correct": 3,
-      "explanation": "“State precisely why softmax attention has a noise floor and why it grows with context length” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "With lambda zero, the second row contributes nothing, leaving the first softmax row and its value-weighted output."
+    },
+    {
+      "stage": "check",
+      "question": "How does `snr(weights_row, signal_pos)` define its signal-to-noise ratio?",
+      "options": ["The absolute signal weight divided by the mean absolute weight at all other positions.", "The signal weight divided by the number of query heads.", "The sum of all weights divided by the signal position.", "The variance of the value vectors."],
+      "correct": 0,
+      "explanation": "The helper takes `abs(weights_row[signal_pos])` and divides it by the mean of the absolute weights at every other position."
+    },
+    {
+      "stage": "check",
+      "question": "What shape does `random_projection(d_in, d_out, rng)` return?",
+      "options": ["`d_out` vectors of length `d_in` stored column-wise.", "A `d_in × d_out` list-of-lists.", "A square `d_in × d_in` matrix.", "One scalar per input row."],
+      "correct": 1,
+      "explanation": "The outer loop runs `d_in` times and each inner row has `d_out` Gaussian entries, giving a d_in-by-d_out projection."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Differential Attention (V2)?",
-      "options": [
-        "Derive the differential attention formula and explain why the subtraction cancels the shared noise componen...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Derive the differential attention formula and explain why the subtraction cancels the shared noise componen...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "question": "What structural change does the code's DIFF V2 parameter count make relative to V1?",
+      "options": ["It removes both value and output projections.", "It uses one KV head for every query head and no lambda parameters.", "It gives the query path 2*n_heads*d_head output features and uses the configured KV-head count for K/V.", "It replaces attention with a convolution over tokens."],
+      "correct": 2,
+      "explanation": "The V2 count explicitly doubles the Q width, keeps K and V at `kv_heads * d_head`, and counts a corresponding output projection plus lambda parameters."
+    },
+    {
+      "stage": "post",
+      "question": "In `build_signal_plus_noise`, why is the query vector aligned with the special `signal_pos` embedding?",
+      "options": ["It guarantees every random noise key has the same dot product.", "It makes the sequence length zero at the signal.", "It removes the value vectors from attention.", "It gives the trained branch a pattern it can score more strongly than unrelated noise."],
+      "correct": 3,
+      "explanation": "The signal position contains the normalized pattern and q is that pattern, while other positions are Gaussian noise, creating a controlled retrieval test."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to CLIP and Contrastive Vision-Language Pretraining?",
+      "question": "What does cosine(normalize([3, 4]), normalize([0, 1])) return?",
       "options": [
-        "Derive InfoNCE loss from mutual information and implement a numerically-stable vectorized version",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "0.8, because [3,4] normalizes to [0.6,0.8]",
+        "1.0, because cosine compares only vector lengths",
+        "4.0, because the second vector selects the last coordinate",
+        "0.6, because the first coordinate is the surviving match"
       ],
       "correct": 0,
-      "explanation": "“Derive InfoNCE loss from mutual information and implement a numerically-stable vectorized version” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "normalize([3,4]) gives [0.6,0.8], while [0,1] is unchanged. Their dot product is therefore 0.8."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of CLIP and Contrastive Vision-Language Pretraining?",
+      "question": "Why does infonce_loss average both image-to-text rows and text-to-image columns?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Explain why sigmoid pairwise loss (SigLIP) scales to batch 32768+ without the all-gather overhead softmax d...",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "To discard the diagonal and train only on hard negatives",
+        "To make the dual encoder symmetric: each image finds its text and each text finds its image",
+        "To turn every negative pair into a positive pair",
+        "To avoid dividing by the batch size"
       ],
       "correct": 1,
-      "explanation": "“Explain why sigmoid pairwise loss (SigLIP) scales to batch 32768+ without the all-gather overhead softmax d...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The function computes a row loss and a column loss, then averages them over 2N. This trains both retrieval directions rather than only image-to-text."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through CLIP and Contrastive Vision-Language Pretraining?",
+      "question": "What changes when similarity_matrix uses a smaller temperature tau?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Run zero-shot ImageNet classification by constructing text templates (`a photo of a {class}`) and taking ar...",
-        "Treat one successful example as proof that every edge case works"
+        "All normalized cosine similarities become zero",
+        "The positive diagonal is removed from the InfoNCE target",
+        "Logits are divided by a smaller value, sharpening softmax and emphasizing hard negatives",
+        "SigLIP switches from pairwise BCE to a column softmax"
       ],
       "correct": 2,
-      "explanation": "“Run zero-shot ImageNet classification by constructing text templates (`a photo of a {class}`) and taking ar...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "similarity_matrix divides every cosine similarity by tau. Lower tau spreads the logits farther apart, making the contrastive softmax more selective."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits CLIP and Contrastive Vision-Language Pretraining?",
+      "question": "How does sigmoid_loss label a similarity matrix S?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Name the four levers CLIP / SigLIP pretraining gives you: batch size, temperature, prompt template, data qu...",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Name the four levers CLIP / SigLIP pretraining gives you: batch size, temperature, prompt template, data qu...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for CLIP and Contrastive Vision-Language Pretraining?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Derive InfoNCE loss from mutual information and implement a numerically-stable vectorized version"
+        "Every entry in a row is positive, because captions share an image batch",
+        "Only the largest entry in the full matrix is positive",
+        "The matrix is converted to ranks before a loss is applied",
+        "Diagonal pairs have y=1 and off-diagonal pairs have y=0, with independent sigmoid BCE terms"
       ],
       "correct": 3,
-      "explanation": "“Derive InfoNCE loss from mutual information and implement a numerically-stable vectorized version” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "sigmoid_loss sets y to 1 only when i == j and computes a binary-cross-entropy term for every pair. It does not normalize a row with a softmax."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for CLIP and Contrastive Vision-Language Pretraining?",
+      "question": "What decision does zero_shot_classify make for an image and class_texts dictionary?",
       "options": [
-        "Explain why sigmoid pairwise loss (SigLIP) scales to batch 32768+ without the all-gather overhead softmax d...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It ranks class names by cosine(image, normalized class prompt), highest first",
+        "It chooses the class whose text vector has the largest raw norm",
+        "It samples a class according to the sigmoid loss",
+        "It compares only the first coordinate of each embedding"
       ],
       "correct": 0,
-      "explanation": "“Explain why sigmoid pairwise loss (SigLIP) scales to batch 32768+ without the all-gather overhead softmax d...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The function normalizes the image and each class vector, computes cosine similarity, sorts descending, and returns the ranked list."
+    },
+    {
+      "stage": "post",
+      "question": "Why does demo_prompt_ensemble average embeddings for several templates such as 'a photo of a {class}'?",
+      "options": [
+        "Averaging makes every class vector exactly orthogonal",
+        "It reduces sensitivity to one prompt wording by combining several views of the class description",
+        "It removes the need for a text encoder during zero-shot classification",
+        "It changes the image encoder's patch size before cosine scoring"
+      ],
+      "correct": 1,
+      "explanation": "The demo builds three prompt embeddings and averages their coordinates. The ensemble is intended to reduce wording noise before comparing the image to the class representation."
     }
   ]
 }

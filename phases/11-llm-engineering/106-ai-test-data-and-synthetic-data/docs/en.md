@@ -5,7 +5,7 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 11 · 10 (LLM evaluation), Phase 18 · 27 (Data provenance and training governance)
-**Time:** ~45 minutes
+**Time:** ~60 minutes
 
 ## Learning Objectives
 
@@ -93,6 +93,18 @@ The governance layer connects them: a test-data policy without a training-data p
 
 
 
+## Build It
+
+Reconstruct **Synthetic and Masked Test Data: Coverage, Leakage, and Governance (2026)** by following `Label` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
+
+## Use It
+
+Call `Label` from a small caller with the text "red fox". Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-synthetic-test-data-governance.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [EU AI Act — Official text, Annex IV](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689) — Article 10 (data governance) and Annex IV (technical documentation requirements).
@@ -103,10 +115,20 @@ The governance layer connects them: a test-data policy without a training-data p
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by Synthetic and Masked Test Data: Coverage, Leakage, and Governance (2026).
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+Use the demo as evidence, not as a ceremony: record what went in, what came out, and why that observation supports the objective.
+
+1. **Trace the happy path.** Run [main.py](../code/main.py) with `python3 main.py` from the lesson's `code/` directory. Record the smallest input that demonstrates “Explain the production problem addressed by Synthetic and Masked Test Data: Coverage, Leakage, and Governance (2026)”. Point to `tokens()`, `fingerprint()`, `_generalise_age()` and name the returned field or printed value that serves as evidence.
+2. **Perturb the input.** Change exactly one input, threshold, or option that affects “Apply the lesson's decision or implementation workflow to a concrete case”. Predict the direction of the change before running it, then compare the two outputs and explain why the other fields should stay stable.
+3. **Test a failure case.** Construct a case that stresses “Measure quality, cost, latency, and risk with explicit acceptance criteria”: choose an empty collection, missing field, maximum-sized value, malformed record, or another boundary that fits this lesson. Write the expected behavior first and distinguish an intentional guard from an accidental crash.
+4. **Transfer the result.** Open outputs/skill-synthetic-test-data-governance.md and adapt one example to a real workflow. State the owner, evidence, and next decision required for “Identify failure modes and define a safe rollback or review path”; mark any assumption that the demo does not establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by Synthetic and Masked Test Data: Coverage, Leakage, and Governance (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.
+The reference run should leave a small receipt: python3 main.py, its captured output, and your interpretation. Include:
+
+- evidence for “Explain the production problem addressed by Synthetic and Masked Test Data: Coverage, Leakage, and Governance (2026)” with the relevant input and returned field;
+- a one-variable comparison that makes “Apply the lesson's decision or implementation workflow to a concrete case” visible;
+- a predicted and observed boundary result for “Measure quality, cost, latency, and risk with explicit acceptance criteria”, including why the behavior is safe; and
+- one concrete update to outputs/skill-synthetic-test-data-governance.md that applies “Identify failure modes and define a safe rollback or review path” without hiding uncertainty.
+
+Use tokens(), fingerprint(), _generalise_age() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.

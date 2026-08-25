@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is getting structured JSON output from LLMs challenging?",
+      "question": "`PRODUCT_SCHEMA` requires `product`, `price`, and `in_stock`. What should `validate_schema({\"product\": \"headphones\", \"price\": -2, \"in_stock\": true}, PRODUCT_SCHEMA)` report?",
       "options": [
-        "JSON Schema cannot express enums, nested objects, or typed array items, so most real output shapes cannot be described",
-        "Markdown code fences are appended by the API after generation, so the returned string is always wrapped and unparseable — and applies unchanged even when the lesson's stated preconditions fail",
-        "LLMs generate free-form text token by token and can produce invalid JSON (missing brackets, wrong types, extra text) at any point",
-        "Providers emit JSON only through tool use, so a plain completion call can never return an object however you prompt it"
+        "A validation error because `price` violates the schema's minimum of zero",
+        "A valid object because numeric fields accept negative values unless they are integers",
+        "A validation error only when `categories` is present, because optional fields control all numeric checks",
+        "A valid object because schema validation checks required keys but not numeric bounds"
       ],
-      "correct": 2,
-      "explanation": "LLMs generate tokens autoregressively. They might add a trailing comma, forget a closing bracket, include markdown formatting around JSON, or hallucinate extra fields. Each token is independent, so structural validity isn't guaranteed."
+      "correct": 0,
+      "explanation": "The product schema sets `minimum: 0` for `price`. The recursive validator reaches that field and rejects `-2`, even though all three required keys and their basic types are present."
     },
     {
       "stage": "check",
-      "question": "What is constrained decoding?",
+      "question": "What is the purpose of `next_valid_tokens('{\"price\":')` in this lesson's constrained-decoding sketch?",
       "options": [
-        "Validating the finished response against a Pydantic model and retrying with the error message when parsing fails",
-        "Restricting which tokens the model can generate at each step to ensure the output conforms to a grammar or schema",
-        "Stripping markdown fences and preamble text out of the response before handing the remaining string to a JSON parser",
-        "Passing the JSON Schema inside the prompt text so the model can read the required keys and types before it answers"
+        "It parses the partial object and returns the final answer token `<EOS>`",
+        "It lists legal value-token classes after a colon",
+        "It repairs the partial JSON by inserting a missing closing brace",
+        "It validates the eventual numeric value against `minimum` and `maximum` before generation"
       ],
       "correct": 1,
-      "explanation": "Constrained decoding masks out invalid tokens at each generation step. After an opening brace, only valid JSON keys are allowed. After a colon, only valid value tokens. This guarantees structural validity at the token level."
+      "explanation": "The helper inspects the unfinished JSON context and returns allowed token categories for a value position. It is a small illustration of masking illegal next tokens; it does not complete or validate the final object."
     },
     {
       "stage": "check",
-      "question": "What is the benefit of using Pydantic models for LLM output validation?",
+      "question": "Which field does `python_type_to_schema(list[str])` use for the array's element contract?",
       "options": [
-        "They define typed schemas that automatically validate, parse, and reject malformed LLM outputs with clear error messages",
-        "They mask invalid tokens during generation, so the model is physically unable to emit a value of the wrong type",
-        "They catch hallucinated values by checking each extracted field against the source text before returning the object, because one plausible output is sufficient production evidence",
-        "They let the model pick which extraction function to call when several different schemas could apply to one input"
+        "`required`, with the list length used as the required-field count",
+        "`enum`, containing every string that has appeared in the input list",
+        "`items`, whose schema describes each element as a string",
+        "`minimum`, set to the number of elements currently in the list"
       ],
-      "correct": 0,
-      "explanation": "Pydantic enforces types, required fields, value constraints, and nested structures. When the LLM produces invalid output, Pydantic gives specific error messages that can be fed back to the model for self-correction."
+      "correct": 2,
+      "explanation": "For a list annotation, the helper emits an array schema with an `items` schema. `list[str]` therefore produces string validation for each element rather than an enum or a length bound."
     },
     {
       "stage": "check",
-      "question": "What should you do when the LLM returns invalid JSON despite instructions?",
+      "question": "`extract_with_retry` receives an invalid first JSON attempt and a valid second attempt. What does it return when `max_retries=1`?",
       "options": [
-        "Raise the temperature on the retry so the model samples a different, less truncated continuation of the object",
-        "Flatten the schema to a single level and drop every required field so that any output the model produces validates",
-        "Repair the string with a regex that closes unbalanced brackets and strips the preamble text before parsing again",
-        "Implement a retry loop that sends the validation error back to the model as context for a corrected attempt"
+        "`None`, because any invalid first attempt permanently marks the extraction as failed",
+        "The first parsed dictionary, even if it misses a required field",
+        "Both attempts concatenated into one JSON string for the caller to inspect",
+        "The validated dictionary from the second attempt"
       ],
       "correct": 3,
-      "explanation": "A retry loop with error feedback works well: parse the output, catch validation errors, send the error message back as context ('Your output had this error: ... Please fix it'). Most models self-correct on the second attempt."
+      "explanation": "The retry loop permits the initial attempt plus one retry. It parses and validates each response, returning the first valid object; in this case that is the second attempt."
     },
     {
       "stage": "post",
-      "question": "When should you use the API's native JSON mode vs prompt-based JSON extraction?",
+      "question": "A model response is a JSON object but has `in_stock: \"yes\"` instead of a boolean. Which layer is responsible for rejecting it?",
       "options": [
-        "Use native mode when valid structure must be guaranteed; use prompt-based when the model has to reason about what to extract",
-        "Use native JSON mode only for arrays and prompt-based for objects, since token masking cannot enforce item counts",
-        "Use prompt-based extraction for high-volume jobs, because native mode adds a second validation call and doubles cost — and applies unchanged even when the lesson's stated preconditions fail",
-        "Both paths end up equivalent once a Pydantic model validates the result, so pick whichever reads better in the code"
+        "`validate_schema`, because JSON parsing succeeded but the declared field type does not",
+        "`next_valid_tokens`, because it runs after the complete response has already been generated",
+        "`model_to_schema`, because it rewrites the response into the expected Python object",
+        "`simulate_llm_extraction`, because only the simulator can see the original product text"
       ],
       "correct": 0,
-      "explanation": "Native JSON mode (OpenAI's response_format, Anthropic's tool_use) guarantees valid JSON structure. Prompt-based extraction is more flexible for complex reasoning about which fields to populate. Use native mode when structure matters most."
+      "explanation": "`json.loads` can produce a valid object containing a string, but the recursive schema validator compares that value with the boolean type and returns a type error."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Structured Outputs: JSON, Schema Validation, Constrained Decoding?",
+      "question": "In the demo, why is an omitted `categories` field accepted while an omitted `price` field is rejected?",
       "options": [
-        "Build a Pydantic validation layer that rejects malformed LLM outputs and retries with error feedback",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Arrays are always optional in JSON Schema, whereas numbers are always required",
+        "The three core fields are required; `categories` is optional",
+        "The simulator adds a default price but never adds a default category list",
+        "`categories` is validated only by the parser, while `price` is checked by Python's type system"
       ],
-      "correct": 0,
-      "explanation": "“Build a Pydantic validation layer that rejects malformed LLM outputs and retries with error feedback” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 1,
+      "explanation": "Requiredness comes from the schema's `required` array, not from the JSON type. `categories` appears under `properties` without being required, so the validator allows it to be absent."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Llama Guard and Input/Output Classification?",
+      "question": "What does classify_normalized add to the raw keyword check?",
       "options": [
-        "Explain the autonomy mechanism and assumptions behind Llama Guard and Input/Output Classification",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Explain the autonomy mechanism and assumptions behind Llama Guard and Input/Output Classification” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Llama Guard and Input/Output Classification?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Model its control loop, state transitions, and stopping conditions explicitly",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Model its control loop, state transitions, and stopping conditions explicitly” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Llama Guard and Input/Output Classification?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Apply bounded permissions, budgets, and rollback controls",
-        "Treat one successful example as proof that every edge case works"
+        "It removes every non-ASCII character and skips regexes",
+        "It checks only output strings",
+        "It applies NFKC, the partial homoglyph map, and invisible-character removal before classify_raw",
+        "It replaces S1 with S14"
       ],
       "correct": 2,
-      "explanation": "“Apply bounded permissions, budgets, and rollback controls” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "normalize runs NFKC, _homoglyph_map, and the explicit invisible-codepoint filter; classify_normalized then applies the same taxonomy regexes."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Llama Guard and Input/Output Classification?",
+      "question": "Which statement matches the lesson's invisible-character policy?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate capability and safety claims against reproducible evidence",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate capability and safety claims against reproducible evidence” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Llama Guard and Input/Output Classification?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the autonomy mechanism and assumptions behind Llama Guard and Input/Output Classification"
+        "Every Unicode combining mark is removed",
+        "Invisible characters are never removed",
+        "NFKC alone maps every confusable glyph",
+        "Only the listed zero-width, variation-selector, and BOM code points are removed"
       ],
       "correct": 3,
-      "explanation": "“Explain the autonomy mechanism and assumptions behind Llama Guard and Input/Output Classification” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The implementation uses a fixed _INVISIBLE_CODEPOINTS set, not a blanket category deletion, so unrelated Unicode characters remain."
+    },
+    {
+      "stage": "check",
+      "question": "Which output does output_rail flag?",
+      "options": [
+        "token: sk-superlongkeymaterial0123456789",
+        "A benign summary of the docs",
+        "How do pipe organs work?",
+        "A short word such as hello"
+      ],
+      "correct": 0,
+      "explanation": "The output rail includes a sk-[a-z0-9]{10,} pattern and therefore catches the long API-key-shaped token."
+    },
+    {
+      "stage": "check",
+      "question": "Why can the raw classifier miss the homoglyph demo while classify_normalized finds S1_violent_crimes?",
+      "options": [
+        "The normalized path never lowercases text",
+        "The Cyrillic lookalike is mapped to a Latin character before the pipe bomb regex runs",
+        "S1 is checked only for outputs",
+        "The raw path always returns every taxonomy category"
+      ],
+      "correct": 1,
+      "explanation": "The raw text contains a Cyrillic 'р' in pipe; the partial map turns it into Latin p, allowing the lowercased S1 regex to match."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Llama Guard and Input/Output Classification?",
+      "question": "Why are input classification and output_rail both present?",
       "options": [
-        "Model its control loop, state transitions, and stopping conditions explicitly",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "They are duplicate names for one regex pass",
+        "Input checks eliminate the need for any output check",
+        "An input can look benign while a generated response leaks a key, so the output needs its own patterns",
+        "Output rails are used only to normalize URLs"
       ],
-      "correct": 0,
-      "explanation": "“Model its control loop, state transitions, and stopping conditions explicitly” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The two rails inspect different directions of the interaction: taxonomy patterns screen requests, while OUTPUT_DISALLOWED screens generated text for secrets."
+    },
+    {
+      "stage": "post",
+      "question": "What does classify_raw return for the benign pipe-organs question?",
+      "options": [
+        "S1_violent_crimes",
+        "S14_code_interpreter_abuse",
+        "S8_privacy",
+        "An empty list"
+      ],
+      "correct": 3,
+      "explanation": "The word pipe is not followed by bomb or another S1 pattern, so the benign organ question matches none of the configured categories."
     }
   ]
 }

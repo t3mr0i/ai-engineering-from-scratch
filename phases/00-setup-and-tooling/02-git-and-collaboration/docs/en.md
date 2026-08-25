@@ -65,6 +65,14 @@ That's it. You don't need rebase, cherry-pick, or submodules for this course.
 | Merge | "Combining code" | Taking changes from one branch and applying them to another |
 | Remote | "The cloud" | A copy of your repo hosted somewhere else (GitHub, GitLab) |
 
+## Build It
+
+Reconstruct **Git & Collaboration** by following `main` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
+
+## Ship It
+
+Hand off `outputs/artifact-card.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
+
 ## Exercises
 
 1. **Explain the mechanism.** Give a concrete example and a counterexample that demonstrate this objective: Configure git identity and use the daily workflow of add, commit, and push.

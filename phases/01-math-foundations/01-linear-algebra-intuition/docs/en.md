@@ -216,6 +216,14 @@ LoRA deserves special mention. It fine-tunes large language models by decomposin
 | Basis | "The coordinate axes" | A minimal set of independent vectors that span the space |
 | Orthonormal | "Perpendicular unit vectors" | Vectors that are mutually perpendicular and each have length 1 |
 
+## Build It
+
+Reconstruct **Linear Algebra Intuition** by following `Vector` on tokens=["red","fox"]. Run `run main.text` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `Vector` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
 ## Exercises
 
 1. **Explain the mechanism.** Give a concrete example and a counterexample that demonstrate this objective: Implement vector and matrix operations (addition, dot product, matrix multiply) from scratch in Python.

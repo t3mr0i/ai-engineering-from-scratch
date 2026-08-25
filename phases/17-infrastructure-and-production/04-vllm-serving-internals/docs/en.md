@@ -95,6 +95,18 @@ while True:
 
 
 
+## Build It
+
+Reconstruct **vLLM Serving Internals: PagedAttention, Continuous Batching, Chunked Prefill** by following `Request` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `Request` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-vllm-scheduler-reader.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [vLLM documentation — Speculative Decoding](https://docs.vllm.ai/en/latest/features/spec_decode/) — official source on chunked-prefill and speculative-decoding compatibility.
@@ -105,14 +117,23 @@ while True:
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain PagedAttention as a KV cache allocator: blocks, block tables, and why fragmentation stays under 4% at production load.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Diagram continuous batching at the iteration level: how finished sequences leave the batch and new ones join without draining.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe chunked prefill in one sentence and name which latency metric it protects (hint: it is TTFT tail, not mean throughput).
+Use `Request` as the trace: start from tokens=["red","fox"], keep the raw output, and tie each observation to a named objective.
+
+1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using tokens=["red","fox"]. Follow `Request`, `in_prefill`, `done`. Expect the attention/embedding shape follows the token count and each valid attention row remains normalized; capture the first printed shape, metric, status, or summary field and state which part supports **Explain PagedAttention as a KV cache allocator: blocks, block tables, and why fragmentation stays under 4% at production load.**.
+2. **Vary one named input.** Repeat the command after changing only the token sequence: use tokens=["red","fox","runs"]. Predict the direction of the change, then compare the two output values. Explain why **Diagram continuous batching at the iteration level: how finished sequences leave the batch and new ones join without draining.** says the other inputs should stay fixed.
+3. **Probe the empty case.** Feed the implementation tokens=[]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Describe chunked prefill in one sentence and name which latency metric it protects (hint: it is TTFT tail, not mean throughput).** and record the exception text if the code rejects the case.
+4. **Package a usable handoff.** Open `outputs/skill-vllm-scheduler-reader.md` and add a worked example using tokens=["red","fox"]. Include the input contract, one expected output field, and a named acceptance check for **Name the 2026 vLLM v0.18.0 gotcha that bites teams enabling every optimization at once.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain PagedAttention as a KV cache allocator: blocks, block tables, and why fragmentation stays under 4% at production load,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe chunked prefill in one sentence and name which latency metric it protects (hint: it is TTFT tail, not mean throughput),” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **vLLM Serving Internals: PagedAttention, Continuous Batching, Chunked Prefill** should contain:
 
+- the `python3 main.py` output for tokens=["red","fox"], with `Request`, `in_prefill`, `done` traced to the value or shape that supports **Explain PagedAttention as a KV cache allocator: blocks, block tables, and why fragmentation stays under 4% at production load.**;
+- a before/after comparison for the token sequence, where tokens=["red","fox","runs"] changes the observation in the direction predicted by **Diagram continuous batching at the iteration level: how finished sequences leave the batch and new ones join without draining.**;
+- a recorded result for tokens=[] that matches the implementation’s validation or empty-result contract and explains the evidence for **Describe chunked prefill in one sentence and name which latency metric it protects (hint: it is TTFT tail, not mean throughput).**; and
+- an updated `outputs/skill-vllm-scheduler-reader.md` example with a concrete input, expected output field, and acceptance check tied to **Name the 2026 vLLM v0.18.0 gotcha that bites teams enabling every optimization at once.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
 ## Guided Demo
 
 Use the [10–15 minute guided demo](demo.md) to predict an invariant, run the canonical entrypoint, change one variable, and probe a failure case.

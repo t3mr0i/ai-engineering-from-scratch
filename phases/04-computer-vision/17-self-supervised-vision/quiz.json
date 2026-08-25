@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does SimCLR need batch sizes of 512-8192 while supervised ImageNet training works with batch 256?",
+      "question": "For z1 and z2 shaped (16,32), how many rows are in the similarity matrix inside info_nce?",
       "options": [
-        "SimCLR is slower",
-        "Each sample needs many negative examples to produce a useful contrastive signal; the batch itself is the pool of negatives. Small batches starve the InfoNCE loss of negatives and training collapses or stalls",
-        "Batch norm requires it",
-        "Contrastive loss divides by batch size — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence"
-      ],
-      "correct": 1,
-      "explanation": "InfoNCE loss ranks the positive pair against all other samples in the batch. A batch of 32 gives 30 negatives per positive; 1024 gives 2046. More negatives = sharper contrastive signal. MoCo introduced a momentum queue of past features so effective negatives scale beyond the batch size; this is the standard trick when GPU memory limits batch size."
-    },
-    {
-      "stage": "check",
-      "question": "What prevents DINO from collapsing to a constant output?",
-      "options": [
-        "Strong augmentation alone, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "A combination of centring (subtract per-dimension EMA mean from the teacher output) and sharpening (low teacher temperature); centring stops one dimension from dominating, sharpening stops the output collapsing to uniform",
-        "Large batch size",
-        "The momentum schedule"
-      ],
-      "correct": 1,
-      "explanation": "DINO does not use explicit negatives. Without centring, one output dimension can dominate and the student learns to always predict it. Without sharpening (low teacher temperature), the teacher's output becomes near-uniform and the student learns to match uniform, which is also collapse. The two together keep the output diverse across dimensions and peaked per sample."
-    },
-    {
-      "stage": "check",
-      "question": "MAE masks 75% of patches. BERT masks 15% of tokens. Why the difference?",
-      "options": [
-        "75% is arbitrary",
-        "Image patches have low entropy — neighbours are highly correlated — so masking only 15% would be trivially solvable by local extrapolation. Masking 75% forces the encoder to learn global semantic features to reconstruct the missing patches",
-        "BERT requires 15% by design",
-        "Text tokens are larger than image patches, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "The mask ratio should match the information density of the modality. Text: 15% is enough because each token has many plausible completions. Images: neighbouring pixels almost determine each other, so low mask ratios are solvable without real representation learning. MAE's 75% is calibrated to force semantic understanding."
-    },
-    {
-      "stage": "check",
-      "question": "After self-supervised pretraining, the 'linear probe' evaluation trains only what?",
-      "options": [
-        "The entire encoder",
-        "A single linear classifier on top of the frozen encoder features; this isolates feature quality from fine-tuning dynamics",
-        "A full MLP classifier head, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "The positional embedding"
-      ],
-      "correct": 1,
-      "explanation": "Linear probe freezes the encoder and fits Linear(features -> num_classes) on a labelled downstream dataset. The accuracy is a direct measure of the feature space's linear separability — a proxy for feature quality. Fine-tuning the whole backbone adds nonlinear capacity and usually lifts accuracy a few points, but mixes in optimisation effects. Both numbers are reported in SSL papers."
-    },
-    {
-      "stage": "post",
-      "question": "Why does MAE use an asymmetric encoder-decoder design (big encoder on 25% visible patches, small decoder on all tokens)?",
-      "options": [
-        "Memory constraints",
-        "The encoder never processes mask tokens; a small decoder only handles reconstruction. This makes encoder FLOPs proportional to visible patches (1/4 of full input) and lets pretraining run 3x faster than naive designs that process all tokens through the full encoder",
-        "Masked tokens confuse self-attention — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "The decoder needs its own backbone"
-      ],
-      "correct": 1,
-      "explanation": "The key efficiency win in MAE: the expensive encoder only ever sees visible patches, which is 25% of the input. Mask tokens appear only in the shallow decoder. This makes pretraining roughly 3x faster than BEiT (which processes all tokens through the encoder) with equal or better downstream accuracy."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Self-Supervised Vision — SimCLR, DINO, MAE?",
-      "options": [
-        "Implement an InfoNCE loss from scratch and explain why a batch of 512 works but a batch of 32 fails",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "32",
+        "16",
+        "64",
+        "2"
       ],
       "correct": 0,
-      "explanation": "“Implement an InfoNCE loss from scratch and explain why a batch of 512 works but a batch of 32 fails” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "info_nce concatenates the two views along the batch axis, so z has 2N=32 rows and sim is 32 by 32."
+    },
+    {
+      "stage": "check",
+      "question": "For the first view row i in info_nce, where is its positive target located?",
+      "options": [
+        "At column i in the same view",
+        "At column i+N in the second view",
+        "At the diagonal column i, which is masked",
+        "At the final column for every row"
+      ],
+      "correct": 1,
+      "explanation": "The targets concatenate [N,...,2N-1] for the first half and [0,...,N-1] for the second, pairing the two augmentations."
+    },
+    {
+      "stage": "check",
+      "question": "With num_patches=196 and mask_ratio=0.75, how many patches does random_mask_indices keep visible?",
+      "options": [
+        "147",
+        "75",
+        "49",
+        "196"
+      ],
+      "correct": 2,
+      "explanation": "n_keep=int(196*(1-0.75))=49; the remaining 147 indices are masked."
+    },
+    {
+      "stage": "check",
+      "question": "What is the effect of lowering tau in info_nce while similarities stay fixed?",
+      "options": [
+        "It removes the positive pair from the target list",
+        "It turns the loss into pixel-wise MSE",
+        "It makes every row of sim identical",
+        "It sharpens the similarity logits, emphasizing the relative positive-versus-negative gap"
+      ],
+      "correct": 3,
+      "explanation": "The code divides similarities by tau before cross-entropy; a smaller temperature makes high and low similarities more separated."
+    },
+    {
+      "stage": "post",
+      "question": "How does the toy DINO teacher differ from the student output?",
+      "options": [
+        "The teacher centers and sharpens with softmax, then detaches its output",
+        "The teacher uses argmax labels and backpropagates through them",
+        "The student is centered but the teacher returns raw RGB pixels",
+        "Both branches always use the same temperature and gradients"
+      ],
+      "correct": 0,
+      "explanation": "teacher subtracts centre, divides by a lower temperature, applies softmax, and calls detach; student returns log_softmax with its own temperature."
+    },
+    {
+      "stage": "post",
+      "question": "Which objective family matches each self-supervised example in the lesson?",
+      "options": [
+        "SimCLR reconstructs pixels, DINO detects boxes, and MAE uses class labels",
+        "SimCLR contrasts two views, DINO matches teacher/student views, and MAE reconstructs masked patches",
+        "All three optimize the same supervised cross-entropy target",
+        "MAE requires a discriminator while SimCLR requires optical flow"
+      ],
+      "correct": 1,
+      "explanation": "The three families use different pretext signals: instance-level contrast, teacher-student consistency, and masked reconstruction."
     }
   ]
 }

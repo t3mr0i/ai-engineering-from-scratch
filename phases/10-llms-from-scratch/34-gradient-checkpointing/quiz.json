@@ -4,75 +4,45 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Gradient Checkpointing and Activation Recomputation?",
-      "options": [
-        "Explain the architecture or training mechanism behind Gradient Checkpointing and Activation Recomputation",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Explain the architecture or training mechanism behind Gradient Checkpointing and Activation Recomputation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Gradient Checkpointing and Activation Recomputation?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the central operation with explicit tensors and state",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the central operation with explicit tensors and state” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Gradient Checkpointing and Activation Recomputation?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Validate intermediate values against the lesson's stated invariants",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "What does `model_forward_checkpointed` keep instead of retaining every layer activation?",
+      "options": ["Only the final scalar loss.", "Every ReLU mask and no layer input.", "The initial input, selected segment-boundary inputs, and the final output.", "Only parameter gradients computed during the forward pass."],
       "correct": 2,
-      "explanation": "“Validate intermediate values against the lesson's stated invariants” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The checkpointed forward stores the input and outputs at segment boundaries, then the backward pass recomputes the layers inside each segment."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Gradient Checkpointing and Activation Recomputation?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate quality, memory, and throughput trade-offs",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate quality, memory, and throughput trade-offs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Gradient Checkpointing and Activation Recomputation?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the architecture or training mechanism behind Gradient Checkpointing and Activation Recomputation"
-      ],
+      "question": "What does `model_backward_checkpointed` do before backpropagating through each saved segment?",
+      "options": ["It discards the segment's parameters.", "It replaces the segment with a random layer.", "It uses the saved output as if every intermediate were present.", "It runs `model_forward` on that segment to rebuild its activations."],
       "correct": 3,
-      "explanation": "“Explain the architecture or training mechanism behind Gradient Checkpointing and Activation Recomputation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "For each segment in reverse order, the function recomputes forward activations from the saved segment input and then calls ordinary backward."
+    },
+    {
+      "stage": "check",
+      "question": "What does `checkpoint_cost(n_layers, segment_size=1)` report for recompute FLOPs when `selective=False`?",
+      "options": ["0, because each one-layer segment already has its needed input.", "One full extra forward per layer.", "Twice the backward cost.", "The number of saved parameters."],
+      "correct": 0,
+      "explanation": "The recompute factor is `(segment_size - 1) / segment_size`, which is zero for segment size one."
+    },
+    {
+      "stage": "check",
+      "question": "What heuristic does `optimal_segment(n_layers)` use?",
+      "options": ["The number of layers divided by two.", "The rounded square root of the layer count, with a minimum of one.", "Always the full model depth.", "The vocabulary size modulo the layer count."],
+      "correct": 1,
+      "explanation": "The function returns `max(1, int(round(np.sqrt(n_layers))))`, a simple square-root segment heuristic."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Gradient Checkpointing and Activation Recomputation?",
-      "options": [
-        "Implement the central operation with explicit tensors and state",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Implement the central operation with explicit tensors and state” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "question": "When does `should_recompute('attention', activation_bytes_mb, ...)` immediately recommend recomputation?",
+      "options": ["When the attention activation is below 1 MB.", "Only when the layer has no parameters.", "When attention activations exceed 100 MB.", "When the sequence length is zero."],
+      "correct": 2,
+      "explanation": "The first branch checks for an attention layer with `activation_bytes_mb > 100` and returns True."
+    },
+    {
+      "stage": "post",
+      "question": "What should `verify_equivalence` show when full and checkpointed backward use the same parameters?",
+      "options": ["Different outputs because recomputation changes the function.", "A missing gradient for every checkpoint boundary.", "A random output match with no gradient comparison.", "`output_match=True` and a very small maximum gradient difference."],
+      "correct": 3,
+      "explanation": "Recomputation should reproduce the same forward values and derivatives; the helper checks all gradient arrays with `allclose` and reports their maximum difference."
     }
   ]
 }

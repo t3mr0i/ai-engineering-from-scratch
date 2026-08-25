@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In Failure Shape 1 (the contract reviewer at an insurer), what was the actual audit finding?",
+      "question": "Which level does classify_output assign when regulatory_exposure=True but a human review still precedes action?",
       "options": [
-        "The team never wrote down a consequence level for the feature",
-        "The classification was correct, but the stated human-review control never actually operated as designed",
-        "The model's accuracy was below the required threshold for legal text — and applies unchanged even when the lesson's stated preconditions fail",
-        "No risk owner had ever been named for the feature"
+        "L3, because regulatory exposure is a high-stakes trigger that review does not downgrade",
+        "L1, because a human decision is required before the output is used",
+        "L2, because financial and regulatory attributes are treated identically",
+        "L0, because the output never acts automatically"
       ],
-      "correct": 1,
-      "explanation": "The L1 classification and 'lawyer reviews before it goes out' control were correctly designed on paper. In practice, a junior associate rubber-stamped ~80% of summaries within the same window the LLM produced them — a confirmation-bias loop, not a real review. The audit finding was that the evidence showed the control as defined did not run."
+      "correct": 0,
+      "explanation": "classify_output checks irreversible or regulatory exposure first. Either flag returns L3, so a human gate does not turn a regulatory consequence into an operational one."
     },
     {
       "stage": "check",
-      "question": "Which consequence level requires a named human sign-off and documented rationale before an output takes effect?",
+      "question": "What level fits a client-facing summary that is reversible and always requires a human decision?",
       "options": [
-        "L0 — Informational",
-        "L1 — Operational",
-        "L2 — Consequential",
-        "L3 — High-stakes"
+        "L0, because a human removes every external consequence",
+        "L1, because external_facing plus human_decision_required matches the operational rule",
+        "L2, because all customer-facing outputs influence money",
+        "L3, because external-facing text is automatically regulatory"
+      ],
+      "correct": 1,
+      "explanation": "With no irreversible, regulatory, or financial flag, the external-facing plus human-decision branch returns Level.L1."
+    },
+    {
+      "stage": "check",
+      "question": "Which gaps does analyze_gaps find for the Contract clause extractor sample?",
+      "options": [
+        "Only a missing owner, because legal controls do not need evidence",
+        "A missing evidence type and an expired exception",
+        "A missing control description and an open-ended exception with no expiry",
+        "No gaps, because the owner and legal review ticket are present"
+      ],
+      "correct": 2,
+      "explanation": "The sample has an owner and evidence type, but control is empty. Its exception has expiry=None, so analyze_gaps reports the missing control and the permanent-exception risk."
+    },
+    {
+      "stage": "check",
+      "question": "Why does analyze_gaps flag the AML risk flag's exception?",
+      "options": [
+        "The exception is open-ended because every batch exception lacks an owner",
+        "The use case is L3, and L3 cases cannot contain any exception",
+        "The evidence type is missing from the AML sample",
+        "Its 2026-03-01 expiry precedes TODAY=2026-06-22, so the exception is expired"
       ],
       "correct": 3,
-      "explanation": "L3 covers irreversible or safety-adjacent outputs with regulatory or legal exposure — medical triage, legal documents, AML alerts, production code. The table maps it to named human sign-off with documented rationale, escalated to a VP or risk owner."
-    },
-    {
-      "stage": "check",
-      "question": "According to the lesson, what determines an AI output's consequence level?",
-      "options": [
-        "Which model generated the output",
-        "The output's downstream effect on a decision, not a property of the model itself",
-        "The benchmark score the model achieved during evaluation, because one plausible output is sufficient production evidence",
-        "How much the API call for that output cost"
-      ],
-      "correct": 1,
-      "explanation": "The lesson is explicit that consequence level is a property of the output's downstream effect, not the model. That's why events like a new downstream consumer or a change in reversibility should trigger re-classification even when the model hasn't changed at all."
-    },
-    {
-      "stage": "check",
-      "question": "Why does the lesson say an undated policy exception is one of the most common audit findings?",
-      "options": [
-        "Because exceptions are always illegal under ISO 42001",
-        "Because without an expiry, the exception silently becomes permanent instead of being periodically re-justified",
-        "Because policy exceptions require board-level sign-off in every case, before defining the measurement, acceptance threshold, or rollback path",
-        "Because undated exceptions cannot be logged in any system"
-      ],
-      "correct": 1,
-      "explanation": "A written exception without an expiry date is never forced back into review. The lesson's audit-sample data found the median age of an undated exception was 11 months at the time an auditor flagged it — nobody had been forced to re-justify the risk."
+      "explanation": "The exception has an owner and a concrete expiry, but that date is before the fixed TODAY value. The analyzer reports the elapsed days and requires review rather than silently continuing the control removal."
     },
     {
       "stage": "post",
-      "question": "In Failure Shape 3 (the prompt workshop), why did the auditor reject the shared notion page as a risk register?",
+      "question": "What findings does detect_silent_reclassification produce for the CRM RAG after it starts auto-populating a pricing tier?",
       "options": [
-        "It contained too few use cases to be statistically meaningful",
-        "It had no schema — no field for consequence level, owner, evidence type, or exception status — so no row could be audited",
-        "It was stored in a wiki instead of a spreadsheet",
-        "None of the forty prompt templates had been tested for accuracy — and applies unchanged even when the lesson's stated preconditions fail"
+        "Exactly three findings: LEVEL ESCALATION L0→L2, OWNER UNCHANGED, and NO NEW EXCEPTION recorded",
+        "No findings, because the code path and registered level stayed the same",
+        "Only a level downgrade, because the new workflow removes human review",
+        "A missing evidence artifact, but no consequence-level finding"
       ],
-      "correct": 1,
-      "explanation": "The auditor's finding was structural: a backlog of rich prose with no schema cannot be audited at any volume, while an empty register that has the right fields is still auditable because the auditor can verify no use cases were deployed off-register."
+      "correct": 0,
+      "explanation": "The original output is L0, while financial impact and no human gate make the current output L2. The detector returns exactly three findings: LEVEL ESCALATION L0→L2, OWNER UNCHANGED, and NO NEW EXCEPTION recorded."
     },
     {
       "stage": "post",
-      "question": "Which event does the lesson list as a trigger that should force a consequence-level re-classification?",
+      "question": "What does detect_silent_reclassification return when original and current outputs classify to the same level?",
       "options": [
-        "The model provider releases a new model version with the same API, with no need to inspect intermediate results or test edge cases",
-        "The output gains a new downstream consumer, such as a CRM RAG tool being wired into a quoting workflow",
-        "The team's on-call rotation changes",
-        "The cost per token for the model decreases"
+        "A level escalation finding for every unchanged owner",
+        "An empty list, because there is no consequence-level change to audit",
+        "A mandatory new exception for every stable control",
+        "A downgrade finding because unchanged behavior is undocumented"
       ],
       "correct": 1,
-      "explanation": "A new downstream consumer is one of three explicit reclassification triggers, alongside a change in the data the output influences and a change in reversibility. The CRM RAG example is exactly this: informational suggestions quietly became inputs to pricing decisions with no governance change."
+      "explanation": "The function returns immediately when current_level.value equals original_level.value. It does not invent a governance finding when the classified consequence has not changed."
     }
   ]
 }

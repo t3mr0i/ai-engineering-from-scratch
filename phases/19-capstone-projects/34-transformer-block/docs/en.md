@@ -87,6 +87,14 @@ They make the gradient path additive across depth, which keeps the gradient norm
 | Fused QKV | "Combined projection" | One linear of width 3D instead of three linears of width D; one kernel, one matmul |
 | Residual stream | "Skip connection" | The unnormalized tensor that flows top to bottom through every block; what each block adds to |
 
+## Build It
+
+Reconstruct **Transformer Block from Scratch** by following `BlockConfig` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Ship It
+
+Hand off `outputs/artifact-card.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - Phase 7 lesson 02 (self attention from scratch) for the attention math underneath this block.
@@ -96,10 +104,20 @@ They make the gradient path additive across depth, which keeps the gradient norm
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build a transformer block in PyTorch from the four moving pieces: LayerNorm, multi head causal attention, residual connections, position wise MLP.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Place the LayerNorms in two configurations (pre-LN and post-LN) and explain why one trains stably without warmup.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement causal masking inside the multi head attention so token `i` cannot see tokens `j > i`.
+Keep two runs side by side for **Transformer Block from Scratch**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
+
+1. **Read the first result.** From `code/`, run `python3 main.py` using tokens=["red","fox"]. Follow `BlockConfig`, `LayerNorm`, `forward`. Expect the attention/embedding shape follows the token count and each valid attention row remains normalized; capture the first printed shape, metric, status, or summary field and state which part supports **Build a transformer block in PyTorch from the four moving pieces: LayerNorm, multi head causal attention, residual connections, position wise MLP.**.
+2. **Run a two-value comparison.** Repeat the command after changing only the token sequence: use tokens=["red","fox","runs"]. Predict the direction of the change, then compare the two output values. Explain why **Place the LayerNorms in two configurations (pre-LN and post-LN) and explain why one trains stably without warmup.** says the other inputs should stay fixed.
+3. **Try an adversarial fixture.** Feed the implementation tokens=[]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Implement causal masking inside the multi head attention so token `i` cannot see tokens `j > i`.** and record the exception text if the code rejects the case.
+4. **Write the operator note.** Open `outputs/artifact-card.md` and add a worked example using tokens=["red","fox"]. Include the input contract, one expected output field, and a named acceptance check for **Track gradient flow through both variants on a 12 layer stack and read the result without hand waving.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build a transformer block in PyTorch from the four moving pieces: LayerNorm, multi head causal attention, residual connections, position wise MLP,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement causal masking inside the multi head attention so token `i` cannot see tokens `j > i`,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Transformer Block from Scratch** should contain:
+
+- the `python3 main.py` output for tokens=["red","fox"], with `BlockConfig`, `LayerNorm`, `forward` traced to the value or shape that supports **Build a transformer block in PyTorch from the four moving pieces: LayerNorm, multi head causal attention, residual connections, position wise MLP.**;
+- a before/after comparison for the token sequence, where tokens=["red","fox","runs"] changes the observation in the direction predicted by **Place the LayerNorms in two configurations (pre-LN and post-LN) and explain why one trains stably without warmup.**;
+- a recorded result for tokens=[] that matches the implementation’s validation or empty-result contract and explains the evidence for **Implement causal masking inside the multi head attention so token `i` cannot see tokens `j > i`.**; and
+- an updated `outputs/artifact-card.md` example with a concrete input, expected output field, and acceptance check tied to **Track gradient flow through both variants on a 12 layer stack and read the result without hand waving.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What are the five primitives of the OpenAI Agents SDK?",
+      "question": "Where does the demo route the input `Please refund invoice 42`?",
       "options": [
-        "Node, Edge, Reducer, Checkpointer, Subgraph",
-        "Plan, Worker, Solver, Evaluator, Reflector",
-        "Tool, Prompt, Model, Memory, Trace",
-        "Agent, Handoff, Guardrail, Session, Tracing"
-      ],
-      "correct": 3,
-      "explanation": "The SDK ships these five primitives."
-    },
-    {
-      "stage": "check",
-      "question": "How does the model see a handoff?",
-      "options": [
-        "As a tool named transfer_to_<agent_name> that the model can call",
-        "As a custom HTTP endpoint the runtime posts the conversation body to",
-        "As a system message injected before the next model turn begins",
-        "As a special reserved token the tokenizer emits mid-stream"
+        "The triage agent hands it to `billing`, whose final output starts `billing handled:`.",
+        "The triage agent hands it to `support`, whose output starts `support handled:`.",
+        "The input guardrail rejects it because every number is treated as PII.",
+        "The runner returns the default `i'm not sure` response without a handoff."
       ],
       "correct": 0,
-      "explanation": "Handoffs are exposed as tools with the transfer_to_<agent> name shape."
+      "explanation": "`_triage_policy` maps `refund` and `invoice` to the billing handoff; the billing agent then produces its `billing handled:` response."
     },
     {
       "stage": "check",
-      "question": "Which three guardrail types does the SDK ship?",
+      "question": "What happens for an input containing `ssn`?",
       "options": [
-        "Pre, post, and inline guardrails",
-        "Input, output, and tool guardrails",
-        "Hard, soft, and best-effort guardrails",
-        "Static, dynamic, and federated guardrails"
+        "It is handed to support after the output guardrail removes the number.",
+        "The input guardrail raises `GuardrailTripped` with a refusal to process social security numbers.",
+        "The runner runs all three hops and only then rejects the final response.",
+        "The SDK replaces `ssn` with a billing keyword and continues normally."
       ],
       "correct": 1,
-      "explanation": "Input (first agent), output (last agent), and tool (per function tool) guardrails."
+      "explanation": "The `_pii_check` input guardrail fails before the agent loop starts and raises `GuardrailTripped(\"input\", \"refuses to process social security numbers\")`."
     },
     {
       "stage": "check",
-      "question": "What is the difference between parallel and blocking guardrails?",
+      "question": "A custom agent emits a tool policy for `lookup`, but no such tool is registered. What output does the runner produce?",
       "options": [
-        "Blocking guardrails run in a background worker pool; parallel guardrails run inline with the main model call",
-        "Parallel guardrails always cost strictly more money than blocking guardrails do, regardless of whether a tripwire ever fires",
-        "Parallel runs alongside the main LLM (lower latency, wastes tokens on trip); blocking runs first (no wasted tokens on trip)",
-        "Blocking guardrails only validate the output of the last agent; parallel guardrails validate every single agent's output"
+        "It silently skips the policy and returns an empty string.",
+        "It creates a handoff named `transfer_to_lookup` automatically.",
+        "It returns `error: unknown tool lookup` in the agent output.",
+        "It raises an input guardrail error before creating an agent span."
       ],
       "correct": 2,
-      "explanation": "Parallel optimizes latency at the cost of wasted tokens when tripped; blocking saves tokens but adds latency."
+      "explanation": "Tool policies look up the requested `FunctionTool`; a missing name is represented in the loop output as `error: unknown tool lookup` and is traced with a `tool_error` child span."
     },
     {
-      "stage": "post",
-      "question": "How is tracing enabled in the SDK?",
+      "stage": "check",
+      "question": "What tool name is exposed for a handoff from triage to the billing agent?",
       "options": [
-        "Off by default; each individual agent must opt in via a config flag",
-        "Only via OpenTelemetry collector, with no built-in span exporter",
-        "Only on the hosted dashboard; there is no way to disable it locally",
-        "On by default; OPENAI_AGENTS_DISABLE_TRACING=1 opts out of it"
+        "`handoff.billing`",
+        "`billing.transfer`",
+        "`delegate_to_billing`",
+        "`transfer_to_billing`"
       ],
       "correct": 3,
-      "explanation": "Spans for LLM, tool, handoff, and guardrail emit by default; an env var disables them."
+      "explanation": "`Handoff.tool_name` is constructed as `transfer_to_<target.name>`, so the billing target is exposed as `transfer_to_billing`."
     },
     {
       "stage": "post",
-      "question": "What is handoff drift and how does the lesson recommend mitigating it?",
+      "question": "When does `_length_check` accept an output, and what does it report on failure?",
       "options": [
-        "Agent A hands off to B which hands back to A in a loop; add a hop counter",
-        "Tracing falls behind the run under span volume; reduce spans emitted",
-        "Sessions overflow their backend storage; archive the oldest ones first",
-        "Guardrails desync from the deployed model version; retrain the guardrail LLM"
+        "Only text shorter than 200 characters passes; a longer value reports `output N chars`.",
+        "Only text longer than 200 characters passes; a shorter value reports `output too short`.",
+        "It checks token count rather than characters and never returns a reason.",
+        "It accepts every output from a handoff and checks length only for tool calls."
       ],
       "correct": 0,
-      "explanation": "A hop counter caps transfer chains before they loop indefinitely."
+      "explanation": "The fixture uses `len(text) < 200`; an overlong response fails with the concrete reason `output N chars`, where N is its character length."
+    },
+    {
+      "stage": "post",
+      "question": "Which span order does a successful billing request have in the runner trace?",
+      "options": [
+        "Billing agent, output guardrail, input guardrail, then triage.",
+        "Input guardrail, triage hop, billing hop, then output guardrail.",
+        "Output guardrail first, followed by the two agents only if it fails.",
+        "Triage and billing execute without spans; only the final output is traced."
+      ],
+      "correct": 1,
+      "explanation": "The runner records the input guardrail before the loop, then the triage and billing agent spans for the handoff hops, and finally the output guardrail span."
     }
   ]
 }

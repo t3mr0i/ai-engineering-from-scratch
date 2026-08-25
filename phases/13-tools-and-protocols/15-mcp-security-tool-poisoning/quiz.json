@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to MCP Security I — Tool Poisoning, Rug Pulls, Cross-Server Shadowing?",
+      "question": "Which static pattern hits does scan_description find in calculator_add?",
       "options": [
-        "Name the seven attack classes: tool poisoning, rug pulls, cross-server shadowing, MPMA, parasitic toolchain...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Name the seven attack classes: tool poisoning, rug pulls, cross-server shadowing, MPMA, parasitic toolchain...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of MCP Security I — Tool Poisoning, Rug Pulls, Cross-Server Shadowing?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Understand why every attack works despite the tool interface looking correct",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Understand why every attack works despite the tool interface looking correct” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through MCP Security I — Tool Poisoning, Rug Pulls, Cross-Server Shadowing?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Run `mcp-scan` (or equivalent) with hash pinning to detect description mutations",
-        "Treat one successful example as proof that every edge case works"
+        "Only a long-word nit",
+        "Only a duplicate-name warning",
+        "SYSTEM and secret-read pattern hits",
+        "No finding until a user executes the tool"
       ],
       "correct": 2,
-      "explanation": "“Run `mcp-scan` (or equivalent) with hash pinning to detect description mutations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The scanner matches the lowercased <system> tag and the ~/.ssh/id_rsa read request in calculator_add's description."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits MCP Security I — Tool Poisoning, Rug Pulls, Cross-Server Shadowing?",
+      "question": "What does the second scan of the mutated approved tool demonstrate?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Write a static detector for common injection patterns inside tool descriptions",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Write a static detector for common injection patterns inside tool descriptions” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for MCP Security I — Tool Poisoning, Rug Pulls, Cross-Server Shadowing?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Name the seven attack classes: tool poisoning, rug pulls, cross-server shadowing, MPMA, parasitic toolchain..."
+        "A new tool is pinned as clean",
+        "The scanner forgets the first hash",
+        "The mutation is accepted because the name is unchanged",
+        "The changed description is detected as a RUG PULL"
       ],
       "correct": 3,
-      "explanation": "“Name the seven attack classes: tool poisoning, rug pulls, cross-server shadowing, MPMA, parasitic toolchain...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "An approved tool's stored description hash no longer matches after mutation, so the hash layer blocks it as a rug pull."
+    },
+    {
+      "stage": "check",
+      "question": "What is the default result for an unseen clean description when approve_new is false?",
+      "options": [
+        "A warning that the tool is unknown",
+        "An automatic approval and saved hash",
+        "A RUG PULL block",
+        "A JSON-RPC parse error"
+      ],
+      "correct": 0,
+      "explanation": "Unknown tools are not automatically trusted; without approval the scanner reports an unknown warning rather than pinning the hash."
+    },
+    {
+      "stage": "check",
+      "question": "Which digest does hash_description compute?",
+      "options": [
+        "MD5 of the tool name",
+        "SHA-256 of the description text",
+        "A random UUID per process",
+        "SHA-1 of the schema only"
+      ],
+      "correct": 1,
+      "explanation": "The implementation hashes the description with SHA-256 and stores the resulting hex digest for later comparison."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for MCP Security I — Tool Poisoning, Rug Pulls, Cross-Server Shadowing?",
+      "question": "Why are both static patterns and hash pinning useful here?",
       "options": [
-        "Understand why every attack works despite the tool interface looking correct",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Hashes replace all need for reviewing new tools",
+        "Patterns prove that a tool's backend is safe",
+        "patterns catch poison text; hashes catch mutations",
+        "They are duplicate checks with identical blind spots"
       ],
-      "correct": 0,
-      "explanation": "“Understand why every attack works despite the tool interface looking correct” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "Pattern scanning catches recognizable poison strings, while hash comparison detects a trusted description changing after approval."
+    },
+    {
+      "stage": "post",
+      "question": "What happens when an unseen clean tool is scanned with approve_new=True?",
+      "options": [
+        "It is rejected as a rug pull",
+        "It is silently ignored",
+        "It receives a hard-coded OAuth scope",
+        "It pins the hash and reports newly pinned"
+      ],
+      "correct": 3,
+      "explanation": "The approval path stores the first hash and emits a nit describing that the tool was newly pinned."
     }
   ]
 }

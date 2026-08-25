@@ -4,75 +4,45 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the primary purpose of a tokenizer in an LLM pipeline?",
-      "options": [
-        "To remove stop words from text",
-        "To convert text into a sequence of integers that the model can process",
-        "To translate text between languages — and applies unchanged even when the lesson's stated preconditions fail",
-        "To compress text for storage"
-      ],
-      "correct": 1,
-      "explanation": "LLMs process numbers, not text. The tokenizer converts every character, word, and symbol into integer IDs from a fixed vocabulary. This conversion is not neutral -- it determines how the model 'sees' language."
-    },
-    {
-      "stage": "check",
-      "question": "What does BPE (Byte Pair Encoding) do to build its vocabulary?",
-      "options": [
-        "Splits text into individual characters only, with no need to inspect intermediate results or test edge cases",
-        "Iteratively merges the most frequent adjacent pair of tokens until reaching the target vocabulary size",
-        "Uses a dictionary lookup for whole words",
-        "Randomly assigns IDs to substrings"
-      ],
-      "correct": 1,
-      "explanation": "BPE starts with individual bytes/characters and repeatedly merges the most common adjacent pair. 'th' + 'e' becomes 'the'. After thousands of merges, common words become single tokens while rare words are split into subword pieces."
-    },
-    {
-      "stage": "check",
-      "question": "Why does vocabulary size create a tradeoff in LLM design?",
-      "options": [
-        "Larger vocabularies always perform better",
-        "Too small creates long sequences (more computation); too large wastes embedding parameters on rare tokens",
-        "Vocabulary size doesn't affect model performance, because one plausible output is sufficient production evidence",
-        "Smaller vocabularies are always more efficient"
-      ],
-      "correct": 1,
-      "explanation": "Small vocabulary (e.g., character-level) means every word is many tokens, increasing sequence length and computation. Large vocabulary wastes parameters on tokens that rarely appear in training data. Most LLMs use 32K-100K tokens."
-    },
-    {
-      "stage": "check",
-      "question": "What problem does byte-level fallback solve in tokenization?",
-      "options": [
-        "It speeds up tokenization",
-        "It ensures any input (emoji, rare scripts, binary data) can be encoded without 'unknown' tokens",
-        "It reduces vocabulary size, before defining the measurement, acceptance threshold, or rollback path",
-        "It improves model accuracy"
-      ],
-      "correct": 1,
-      "explanation": "With byte-level fallback, the tokenizer can fall back to raw byte values (256 possible) for any character not in the vocabulary. This guarantees complete coverage -- no input is ever 'unknown.'"
-    },
-    {
-      "stage": "post",
-      "question": "How does the tokenizer affect non-English language performance in LLMs?",
-      "options": [
-        "Tokenizers work equally well for all languages",
-        "Languages underrepresented in training data get worse token merges, requiring more tokens per word and wasting context window",
-        "Non-English text is always character-tokenized",
-        "Tokenization doesn't affect language performance — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases"
-      ],
-      "correct": 1,
-      "explanation": "BPE merges are learned from training data. If Japanese text is 5% of the corpus, Japanese characters get fewer merges, requiring 2-5x more tokens per word than English. This effectively shrinks the context window for non-English text."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Tokenizers: BPE, WordPiece, SentencePiece?",
-      "options": [
-        "Explain how vocabulary size affects model efficiency: too small creates long sequences, too large wastes em...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "In `BPETokenizer.train`, which ID is assigned to the first learned merge after the 256 byte values?",
+      "options": ["256", "2", "0", "255, the last reserved byte ID"],
       "correct": 0,
-      "explanation": "“Explain how vocabulary size affects model efficiency: too small creates long sequences, too large wastes em...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The tokenizer reserves IDs 0 through 255 for raw bytes, so the first merge receives ID 256."
+    },
+    {
+      "stage": "check",
+      "question": "How does `BPETokenizer.train` choose the pair to merge at each iteration?",
+      "options": ["It chooses the pair with the smallest token IDs.", "It chooses the most frequent adjacent pair.", "It chooses the final pair in the text.", "It samples a pair uniformly at random."],
+      "correct": 1,
+      "explanation": "`_get_pairs` counts adjacent pairs and training selects the pair with the largest count before applying a greedy non-overlapping merge."
+    },
+    {
+      "stage": "check",
+      "question": "What quantity is the denominator of `compression_ratio(encoded, raw)` in the demo?",
+      "options": ["The number of words in the input.", "The number of learned merges.", "The number of raw UTF-8 bytes.", "The tokenizer vocabulary size."],
+      "correct": 2,
+      "explanation": "The function compares the encoded token count with `len(raw.encode('utf-8'))`, so the denominator is the raw byte count."
+    },
+    {
+      "stage": "check",
+      "question": "Why does `BPETokenizer.decode` use UTF-8 with `errors='replace'`?",
+      "options": ["To discard every non-ASCII token before joining the bytes.", "To turn every token into a decimal string.", "To force all text to lowercase.", "To avoid a decode exception on invalid UTF-8."],
+      "correct": 3,
+      "explanation": "The vocabulary stores byte strings. Replacement decoding keeps a malformed byte sequence from raising an exception while making the damaged text visible."
+    },
+    {
+      "stage": "post",
+      "question": "If `vocabulary_stats` reports 100 vocabulary IDs and 73 distinct IDs used by the encoded corpus, what should its unused count represent?",
+      "options": ["The 27 IDs absent from the encoded corpus.", "The 73 words with the highest frequency.", "The number of characters removed during cleaning.", "The number of merge iterations still available."],
+      "correct": 0,
+      "explanation": "Unused vocabulary is the difference between the vocabulary size and the distinct token IDs observed in the encoded data: 100 - 73 = 27."
+    },
+    {
+      "stage": "post",
+      "question": "What does `CharTokenizer.encode('A')` return, and how does its decoder recover the character?",
+      "options": ["The BPE merge ID for `A`, then it looks up a merge table.", "`ord` gives the code point; `chr` reverses it.", "The UTF-8 length of `A`, then it repeats the byte that many times.", "The word index of `A`, then it searches the original sentence."],
+      "correct": 1,
+      "explanation": "`CharTokenizer` stores each character as `ord(character)` and decodes by joining `chr(token)` for each integer."
     }
   ]
 }

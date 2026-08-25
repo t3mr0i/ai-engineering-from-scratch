@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to ColPali and Vision-Native Document RAG?",
+      "question": "What operation does maxsim(query_tokens, patches) compute?",
       "options": [
-        "Explain the difference between bi-encoder retrieval (one vector per document) and late-interaction retrieva...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Explain the difference between bi-encoder retrieval (one vector per document) and late-interaction retrieva...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of ColPali and Vision-Native Document RAG?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Describe ColBERT's MaxSim operation and how ColPali generalizes it from text tokens to image patches",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Describe ColBERT's MaxSim operation and how ColPali generalizes it from text tokens to image patches” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through ColPali and Vision-Native Document RAG?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Build a tiny ColPali-like indexer: page → patch embeddings → MaxSim over query-term embeddings → top-k pages",
-        "Treat one successful example as proof that every edge case works"
+        "One average vector for each page, followed by one cosine score",
+        "The minimum cosine over all query-patch pairs",
+        "For each query token, the best patch cosine, summed across query tokens",
+        "A dot product between the first query token and the first patch only"
       ],
       "correct": 2,
-      "explanation": "“Build a tiny ColPali-like indexer: page → patch embeddings → MaxSim over query-term embeddings → top-k pages” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "maxsim implements ColBERT late interaction: for each q it takes max(cosine(q,p)) over page patches, then sums those maxima."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits ColPali and Vision-Native Document RAG?",
+      "question": "What does retrieve(query, pages, k=3) return?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Compare ColPali + Qwen2.5-VL generator vs text-RAG + GPT-4 on an invoices / financial reports use case",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Compare ColPali + Qwen2.5-VL generator vs text-RAG + GPT-4 on an invoices / financial reports use case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for ColPali and Vision-Native Document RAG?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the difference between bi-encoder retrieval (one vector per document) and late-interaction retrieva..."
+        "All pages with their patch matrices unchanged",
+        "One mean embedding for the entire corpus",
+        "The single page with the lowest MaxSim score",
+        "Three (doc_id, score) pairs sorted by descending MaxSim"
       ],
       "correct": 3,
-      "explanation": "“Explain the difference between bi-encoder retrieval (one vector per document) and late-interaction retrieva...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "retrieve scores every Page with maxsim, sorts by negative score, and returns scored[:k]. With k=3, the result contains the top three page IDs and scores."
+    },
+    {
+      "stage": "check",
+      "question": "What document IDs does build_pages(n_pages=5, ...) create for its topic list?",
+      "options": [
+        "page_0_finance through page_4_engineering",
+        "finance_0 through medical_4 with no page prefix",
+        "page_1_text through page_5_image",
+        "Only one page, because n_pages is ignored"
+      ],
+      "correct": 0,
+      "explanation": "The topics are finance, science, legal, medical, and engineering. build_pages formats each as page_{i}_{topic}, producing page_0_finance through page_4_engineering."
+    },
+    {
+      "stage": "check",
+      "question": "What storage comparison does storage_estimate make for one page?",
+      "options": [
+        "ColPali raw is 3.0KB and text-RAG is 365KB",
+        "Text-RAG is 3.0KB while ColPali raw 729x128 is 365KB",
+        "Both systems store one 768-dimensional vector at exactly 3.0KB",
+        "ColPali is smaller because it drops patch embeddings"
+      ],
+      "correct": 1,
+      "explanation": "The table contrasts one text-RAG vector at 3.0KB with 729 patch vectors at 128 dimensions, listed as 365KB for raw ColPali."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for ColPali and Vision-Native Document RAG?",
+      "question": "Why can MaxSim preserve a strong match that mean similarity washes out?",
       "options": [
-        "Describe ColBERT's MaxSim operation and how ColPali generalizes it from text tokens to image patches",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "MaxSim ignores every query token except the first",
+        "Mean similarity always selects the page with the most patches",
+        "Each query token can select its best matching patch, so irrelevant patches do not dilute every term equally",
+        "MaxSim uses Euclidean distance while mean uses exact string matching"
       ],
-      "correct": 0,
-      "explanation": "“Describe ColBERT's MaxSim operation and how ColPali generalizes it from text tokens to image patches” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The comparison toy includes one strong patch and several irrelevant ones. MaxSim keeps the best patch per query token, while averaging all pairwise similarities dilutes that evidence."
+    },
+    {
+      "stage": "post",
+      "question": "What generator follows ColPali retrieval in the end-to-end pipeline?",
+      "options": [
+        "A text-only BM25 decoder that receives OCR chunks",
+        "A speech tokenizer that reads page waveforms",
+        "A classifier that returns only the top page ID",
+        "Qwen2.5-VL, given the top-k page images together with the user query"
+      ],
+      "correct": 3,
+      "explanation": "The pipeline caches page patch vectors for retrieval, then passes the retrieved page images and query to Qwen2.5-VL to generate a grounded answer without OCR or chunking."
     }
   ]
 }

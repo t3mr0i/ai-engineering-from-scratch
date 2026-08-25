@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Building an MCP Server — Python + TypeScript SDKs?",
+      "question": "What capabilities does handle_initialize advertise for this notes server?",
       "options": [
-        "Implement `initialize`, `tools/list`, `tools/call`, `resources/list`, `resources/read`, `prompts/list`, and...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "tools, resources, prompts",
+        "sampling only, because servers cannot expose tools",
+        "roots with subscribe true and no tools",
+        "a UI resource with no protocol capabilities"
       ],
       "correct": 0,
-      "explanation": "“Implement `initialize`, `tools/list`, `tools/call`, `resources/list`, `resources/read`, `prompts/list`, and...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The initializer reports the three implemented MCP primitives and sets their listChanged flags to false."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Building an MCP Server — Python + TypeScript SDKs?",
+      "question": "What does a successful notes_create call return besides its confirmation text?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Write a dispatch loop that reads JSON-RPC messages from stdin and writes responses to stdout",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Only a numeric database id",
+        "a resource block at notes://<new-id>",
+        "A prompt named review_note with no note",
+        "A shutdown response"
       ],
       "correct": 1,
-      "explanation": "“Write a dispatch loop that reads JSON-RPC messages from stdin and writes responses to stdout” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Creating a note returns text plus a resource block pointing at the newly created notes:// URI."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Building an MCP Server — Python + TypeScript SDKs?",
+      "question": "What does dispatch return for a notification with no id?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Emit structured error responses per the JSON-RPC 2.0 spec and MCP's additional codes",
-        "Treat one successful example as proof that every edge case works"
+        "A response with id null for every notification",
+        "The server's entire tool registry",
+        "None",
+        "A -32601 error even for known methods"
       ],
       "correct": 2,
-      "explanation": "“Emit structured error responses per the JSON-RPC 2.0 spec and MCP's additional codes” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Notifications are deliberately one-way; dispatch does not emit a JSON-RPC response when the id is absent."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Building an MCP Server — Python + TypeScript SDKs?",
+      "question": "What happens when resources_read receives an unknown notes:// URI?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Graduate a stdlib implementation to FastMCP (Python SDK) or the TypeScript SDK without rewriting tool logic",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Graduate a stdlib implementation to FastMCP (Python SDK) or the TypeScript SDK without rewriting tool logic” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Building an MCP Server — Python + TypeScript SDKs?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Implement `initialize`, `tools/list`, `tools/call`, `resources/list`, `resources/read`, `prompts/list`, and..."
+        "It returns the first note as a fallback",
+        "It silently creates the requested note",
+        "It returns a prompt message",
+        "ValueError, mapped by dispatch to -32603"
       ],
       "correct": 3,
-      "explanation": "“Implement `initialize`, `tools/list`, `tools/call`, `resources/list`, `resources/read`, `prompts/list`, and...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The resource reader rejects an unknown URI; the dispatcher turns that handler exception into an internal-error response."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Building an MCP Server — Python + TypeScript SDKs?",
+      "question": "What is the observable result of calling notes_search with query MCP?",
       "options": [
-        "Write a dispatch loop that reads JSON-RPC messages from stdin and writes responses to stdout",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "JSON text containing matching notes",
+        "It always returns an empty binary resource",
+        "It creates a new note before searching",
+        "It raises because query must be a number"
       ],
       "correct": 0,
-      "explanation": "“Write a dispatch loop that reads JSON-RPC messages from stdin and writes responses to stdout” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The search lowercases the query, finds matching title/body text, and serializes the hit list into a text content block."
+    },
+    {
+      "stage": "post",
+      "question": "Which argument is required by the review_note prompt?",
+      "options": [
+        "tag",
+        "note_id",
+        "units",
+        "targetLength"
+      ],
+      "correct": 1,
+      "explanation": "prompts_list declares review_note with the required note_id argument; prompt retrieval uses that id to build the user message."
     }
   ]
 }

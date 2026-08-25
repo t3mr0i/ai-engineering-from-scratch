@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is a Jupyter notebook?",
+      "question": "What does a Jupyter notebook add to an ordinary Python file?",
       "options": [
-        "A text editor for writing Python scripts",
-        "An interactive document that mixes executable code cells with markdown text and inline outputs",
-        "A version control system for data science projects — and applies unchanged even when the lesson's stated preconditions fail",
-        "A package manager for Python libraries"
-      ],
-      "correct": 1,
-      "explanation": "A Jupyter notebook (.ipynb) is an interactive environment where you can write and execute code in cells, see outputs inline, and mix code with formatted text explanations."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Jupyter kernel do?",
-      "options": [
-        "Formats markdown cells into HTML",
-        "Runs the code in cells and keeps variables in memory between executions",
-        "Manages file storage for the notebook",
-        "Connects the notebook to GitHub for version control, with no need to inspect intermediate results or test edge cases"
-      ],
-      "correct": 1,
-      "explanation": "The kernel is a separate Python process that executes cell code and maintains state (variables, imports) in memory. All cells in a notebook share the same kernel."
-    },
-    {
-      "stage": "check",
-      "question": "What is the difference between %timeit and %%time magic commands?",
-      "options": [
-        "%timeit measures wall time, %%time measures CPU time",
-        "%timeit runs code many times and averages, %%time runs code once",
-        "%timeit works on single lines, %%time works on the whole notebook",
-        "There is no difference, they are aliases"
-      ],
-      "correct": 1,
-      "explanation": "%timeit runs the statement many times for a statistical average (good for microbenchmarks). %%time runs the cell once and reports wall time (good for training runs)."
-    },
-    {
-      "stage": "check",
-      "question": "What is the most common cause of a notebook working on your machine but failing when someone runs it top to bottom?",
-      "options": [
-        "Using a different Python version",
-        "Out-of-order cell execution creating hidden dependencies on execution order",
-        "Missing the %matplotlib inline magic command, before defining the measurement, acceptance threshold, or rollback path",
-        "Using too many markdown cells"
-      ],
-      "correct": 1,
-      "explanation": "Running cells out of order creates hidden state dependencies. A variable might exist because you ran cell 5 before cell 2. Kernel > Restart & Run All verifies linear execution."
-    },
-    {
-      "stage": "post",
-      "question": "When should you move code from a notebook into a .py script?",
-      "options": [
-        "As soon as you write more than 10 lines of code",
-        "When the code is a reusable utility, training pipeline, or production code",
-        "Never -- notebooks are always better for AI work — and applies unchanged even when the lesson's stated preconditions fail",
-        "Only when you need to run on a GPU"
-      ],
-      "correct": 1,
-      "explanation": "The rule is 'explore in notebooks, ship in scripts.' Reusable utilities, training pipelines, and anything running in production should be .py files. Notebooks are for exploration and prototyping."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Jupyter Notebooks?",
-      "options": [
-        "Use magic commands (`%timeit`, `%%time`, `%matplotlib inline`) to benchmark and visualize inline",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Interactive code, Markdown, and outputs",
+        "A replacement for the operating system shell",
+        "A database that stores model weights automatically",
+        "A compiler that turns Python into Rust"
       ],
       "correct": 0,
-      "explanation": "“Use magic commands (`%timeit`, `%%time`, `%matplotlib inline`) to benchmark and visualize inline” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Notebook cells share a running kernel, so code, Markdown, and visible outputs can be developed together. The notebook does not replace the Python interpreter or provide automatic model storage."
+    },
+    {
+      "stage": "check",
+      "question": "In the lesson's NotebookKernel, what remains after executing samples = [2, 4, 8] in one cell?",
+      "options": [
+        "Only the printed text remains; variables are discarded",
+        "It keeps samples available to later cells",
+        "The kernel writes samples to a new Git branch",
+        "The next cell starts in a separate process by default"
+      ],
+      "correct": 1,
+      "explanation": "NotebookKernel keeps a namespace between execute calls. A later cell can evaluate sum(samples) until restart clears that namespace."
+    },
+    {
+      "stage": "check",
+      "question": "Which statement correctly distinguishes %timeit from %%time?",
+      "options": [
+        "%timeit displays plots; %%time saves them as PNG files",
+        "%timeit restarts the kernel; %%time preserves variables",
+        "Repeated line timing versus one cell timing",
+        "They are aliases with different spellings"
+      ],
+      "correct": 2,
+      "explanation": "Repeated measurements make %timeit useful for small operations. %%time measures one complete cell, which is more suitable for observing a training or data-loading pass."
+    },
+    {
+      "stage": "check",
+      "question": "A notebook succeeds only after you ran cell 7 before cell 3. What should you try before sharing it?",
+      "options": [
+        "Add more output to cell 7 without restarting",
+        "Copy the hidden variable into every Markdown cell",
+        "Turn off the kernel so the stale state remains",
+        "Restart, then Run All"
+      ],
+      "correct": 3,
+      "explanation": "Restarting removes variables created by accidental execution order. Run All then exposes missing imports, definitions, or data preparation in the order a reader will follow."
+    },
+    {
+      "stage": "post",
+      "question": "In the demo, what does kernel.execute('samples') return immediately after kernel.restart()?",
+      "options": [
+        "A CellResult with a NameError",
+        "The list [2, 4, 8]",
+        "An empty display value with no error",
+        "A Git conflict marker"
+      ],
+      "correct": 0,
+      "explanation": "restart replaces the namespace with only the notebook marker. Since samples has not been defined again, execute reports the NameError rather than a stale value."
+    },
+    {
+      "stage": "post",
+      "question": "You have explored a preprocessing idea in a notebook and now need a nightly training job. What is the sound handoff?",
+      "options": [
+        "Keep hidden cell order and ask the scheduler to run cells by their visible position",
+        "Extract reusable code into a tested script",
+        "Paste the final plot into a shell script and remove the data-loading code",
+        "Export only the notebook outputs because the source cells are no longer needed"
+      ],
+      "correct": 1,
+      "explanation": "A scheduled job needs an explicit, repeatable entrypoint. Extracting reusable code into a script makes imports, arguments, and tests visible while the notebook can still document experiments."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does BM25 score a document on?",
+      "question": "How does BM25 IDF treat a term that appears in fewer corpus documents?",
       "options": [
-        "Edit distance to the query",
-        "Term frequency, IDF, and document-length-normalized presence of query terms",
-        "Embedding cosine to the query — and applies unchanged even when the lesson's stated preconditions fail",
-        "PageRank over the corpus"
-      ],
-      "correct": 1,
-      "explanation": "BM25 weighs TF saturation, IDF, and length normalization to score lexical matches."
-    },
-    {
-      "stage": "check",
-      "question": "What is the main weakness of dense-only retrieval that BM25 catches?",
-      "options": [
-        "Multilingual queries, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "Latency",
-        "Long documents",
-        "Exact keyword and identifier matches (product codes, error strings, named entities) that semantic embeddings can miss"
-      ],
-      "correct": 3,
-      "explanation": "Dense embeddings can blur identifiers and exact strings; BM25 nails them."
-    },
-    {
-      "stage": "check",
-      "question": "Why does Reciprocal Rank Fusion (RRF) ignore raw scores from each retriever?",
-      "options": [
-        "RRF requires probabilities",
-        "Raw scores are illegal to use, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "Speeds up sorting",
-        "BM25 and dense scores live in different scales; using only rank positions makes the fusion robust to calibration"
-      ],
-      "correct": 3,
-      "explanation": "RRF uses 1/(k + rank), so the two scoring systems' scales do not have to match."
-    },
-    {
-      "stage": "check",
-      "question": "Why run a cross-encoder reranker only on the top-30 fused results?",
-      "options": [
-        "Rerankers reduce recall",
-        "Top-30 is required by FAISS",
-        "Cross-encoders are required at every step, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "Cross-encoders are slow per pair; amortizing them on a small candidate pool gives high accuracy with acceptable latency"
-      ],
-      "correct": 3,
-      "explanation": "Cross-encoders score query+doc jointly; running them only on the small fused candidate pool keeps latency manageable."
-    },
-    {
-      "stage": "post",
-      "question": "Which metric is most important to optimize for RAG retrievers?",
-      "options": [
-        "BLEU",
-        "Throughput — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "Recall@k, since the reader cannot answer if the correct passage is missing from the top-k",
-        "Latency"
+        "It gives every term exactly the same IDF",
+        "It removes rare terms before scoring",
+        "It gives the rarer term a larger IDF contribution",
+        "It makes a rare term count only when its frequency is zero"
       ],
       "correct": 2,
-      "explanation": "If the right passage is not in the retrieved top-k, the reader is guaranteed to fail."
+      "explanation": "idf(term)=log(1+(N-n+0.5)/(n+0.5)); as document frequency n decreases, the ratio increases."
+    },
+    {
+      "stage": "check",
+      "question": "What role does b=0.75 play in the BM25 score?",
+      "options": [
+        "It is the number of top documents returned",
+        "It sets the number of query terms allowed",
+        "It is a threshold that discards all scores below 0.75",
+        "It controls how strongly document length changes the term-frequency denominator"
+      ],
+      "correct": 3,
+      "explanation": "The denominator uses 1-b+b*dl/avg_dl, interpolating between no length effect and full normalization."
+    },
+    {
+      "stage": "check",
+      "question": "What ordering does BM25.rank return?",
+      "options": [
+        "Pairs sorted by descending score, each carrying (score, document index)",
+        "Document text sorted alphabetically with no scores",
+        "Only query terms that occur in every document",
+        "Pairs sorted by ascending document index regardless of score"
+      ],
+      "correct": 0,
+      "explanation": "rank computes every score, sorts in reverse order, and returns the first top_k pairs."
+    },
+    {
+      "stage": "check",
+      "question": "What is fake_dense_rank similarity before its substring expansion term?",
+      "options": [
+        "The BM25 score using IDF and document length",
+        "Jaccard overlap between the query-token set and document-token set",
+        "The edit distance between complete sentences",
+        "The number of characters in the document"
+      ],
+      "correct": 1,
+      "explanation": "It computes len(q_tokens & d_tokens) / len(q_tokens | d_tokens), then optionally adds a substring expansion."
     },
     {
       "stage": "post",
-      "question": "Where do most production RAG failures originate, per 2026 industry experience?",
+      "question": "With k=60, what contribution does a document at zero-based rank 0 make in reciprocal_rank_fusion?",
       "options": [
-        "Reranker tuning",
-        "Ingestion and chunking, not the model; bad context defeats good readers",
-        "Prompt verbosity, with no need to inspect intermediate results or test edge cases",
-        "The LLM choice"
+        "1/60",
+        "60",
+        "1/61",
+        "0"
       ],
-      "correct": 1,
-      "explanation": "Roughly 80% of RAG failures trace to chunking and ingestion quality, not the generative model."
+      "correct": 2,
+      "explanation": "The loop enumerates rank from zero and adds 1/(k+rank+1), which is 1/61 at the top rank."
+    },
+    {
+      "stage": "post",
+      "question": "Why fuse BM25 and a dense-style ranking instead of trusting one list?",
+      "options": [
+        "RRF turns all documents into identical scores",
+        "Fusion removes the need to inspect the corpus",
+        "BM25 and dense rankings measure the same signal by definition",
+        "Lexical matches and semantic-like matches can recover different relevant documents"
+      ],
+      "correct": 3,
+      "explanation": "The two rankers have complementary failure modes; RRF rewards documents appearing high in either ranking."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Audio-Language Models: the Whisper to Audio Flamingo 3 Arc?",
+      "question": "How many samples are in one window_frames frame for sr=16000 and win_ms=25?",
       "options": [
-        "Compute a log-Mel spectrogram from a waveform: windowing, FFT, filter banks, log transform",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Compute a log-Mel spectrogram from a waveform: windowing, FFT, filter banks, log transform” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Audio-Language Models: the Whisper to Audio Flamingo 3 Arc?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Compare encoder options: Whisper encoder, BEATs, AF-Whisper hybrid. When each wins",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Compare encoder options: Whisper encoder, BEATs, AF-Whisper hybrid. When each wins” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Audio-Language Models: the Whisper to Audio Flamingo 3 Arc?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Build an audio Q-former: N learnable queries cross-attending to spectrogram patches",
-        "Treat one successful example as proof that every edge case works"
+        "25 samples, because win_ms is used directly",
+        "160 samples, matching the 10ms hop",
+        "400 samples, from 16,000 * 25/1,000",
+        "16,000 samples, because one frame spans the full second"
       ],
       "correct": 2,
-      "explanation": "“Build an audio Q-former: N learnable queries cross-attending to spectrogram patches” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "window_frames converts milliseconds to samples: int(16000*25/1000) = 400. The separate hop_ms=10 produces a 160-sample stride."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Audio-Language Models: the Whisper to Audio Flamingo 3 Arc?",
+      "question": "What length does apply_mel return when given a 64-bin spectrum and the default mel_filterbank(n_bins=64, n_mels=20)?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Explain cascaded (Whisper-then-LLM) vs end-to-end audio-LLM training: why end-to-end scales better for reas...",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Explain cascaded (Whisper-then-LLM) vs end-to-end audio-LLM training: why end-to-end scales better for reas...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Audio-Language Models: the Whisper to Audio Flamingo 3 Arc?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Compute a log-Mel spectrogram from a waveform: windowing, FFT, filter banks, log transform"
+        "64, because each mel filter preserves one spectrum bin",
+        "10, because the hop size is 10ms",
+        "1, because all frequencies are pooled into one energy",
+        "20, one energy value for each triangular filter row"
       ],
       "correct": 3,
-      "explanation": "“Compute a log-Mel spectrogram from a waveform: windowing, FFT, filter banks, log transform” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "mel_filterbank creates 20 rows, and apply_mel computes one weighted sum per row. The log-Mel vector therefore has length 20."
+    },
+    {
+      "stage": "check",
+      "question": "What does log_compress([0.0]) return?",
+      "options": [
+        "[0.0], because log(1 + 0) is zero",
+        "[0.0, 0.0], because every value is duplicated",
+        "[1.0], because log compression adds a unit floor",
+        "An exception, because logarithms cannot receive zero"
+      ],
+      "correct": 0,
+      "explanation": "The helper applies math.log(1+x), not log(x). At x=0, log(1)=0, so the compressed value remains zero."
+    },
+    {
+      "stage": "check",
+      "question": "What shape does QFormer(n_queries=8, hidden=20).forward(frames) return for 99 frames?",
+      "options": [
+        "99 vectors of dimension 20, because every frame is preserved",
+        "8 vectors of dimension 20, each query pooling over all frames",
+        "20 vectors of dimension 8, because hidden is the query count",
+        "One scalar, because attention averages every dimension"
+      ],
+      "correct": 1,
+      "explanation": "Each of the eight learnable queries computes weights over the 99 frames and produces one 20-dimensional weighted aggregate."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Audio-Language Models: the Whisper to Audio Flamingo 3 Arc?",
+      "question": "Which task in task_coverage_table is marked unavailable to the cascaded Whisper-then-LLM path but available end-to-end?",
       "options": [
-        "Compare encoder options: Whisper encoder, BEATs, AF-Whisper hybrid. When each wins",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Transcription",
+        "Keyword extraction",
+        "Emotion inference",
+        "Summarization"
       ],
-      "correct": 0,
-      "explanation": "“Compare encoder options: Whisper encoder, BEATs, AF-Whisper hybrid. When each wins” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "Emotion inference is listed as 'no' for cascaded and 'yes' for end-to-end. The acoustic cue is not recoverable from a transcript alone."
+    },
+    {
+      "stage": "post",
+      "question": "Why does the lesson favor end-to-end audio-LLM training for acoustic-only tasks?",
+      "options": [
+        "Whisper cannot produce any text tokens",
+        "A cascaded pipeline always has lower latency and higher coverage",
+        "The Q-Former removes all temporal information from audio",
+        "Transcripts lose cues such as emotion, instruments, environment, and deepfake artifacts that remain in the waveform"
+      ],
+      "correct": 3,
+      "explanation": "The coverage table marks acoustic-only tasks such as emotion, instrument, environmental sound, and deepfake detection as unavailable or partial in the cascade. End-to-end features retain those cues."
     }
   ]
 }

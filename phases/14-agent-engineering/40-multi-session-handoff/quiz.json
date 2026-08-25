@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which field is the load-bearing one in a handoff packet?",
+      "question": "For the built-in T-001 fixture, what summary does generate_handoff produce?",
       "options": [
-        "commands_run, since the next session cannot start without a full command history",
-        "summary, since every other field in the packet is derived from that one paragraph",
-        "next_action; without it the document is a status report, not a handoff",
-        "verdict_pointer, since the next session cannot trust a packet without a verdict link"
-      ],
-      "correct": 2,
-      "explanation": "A handoff with everything except next_action is a status report; the next concrete step is what makes the next session productive."
-    },
-    {
-      "stage": "check",
-      "question": "Why are handoffs generated, not written?",
-      "options": [
-        "Hand-written handoffs get skipped on a hard day; the generator reads workbench artifacts instead",
-        "Generated handoffs compress to a much smaller file size than an equivalent hand-written packet ever could",
-        "Generated handoffs are the only format the next session's loader is able to parse at all",
-        "Hand-written handoffs cannot legally be distributed under the project's open-source license"
+        "task T-001: review=pass, gate=True",
+        "task T-001: review=warn, gate=False",
+        "T-001 completed with no remaining risks",
+        "review=pass; gate=True; next_action=none"
       ],
       "correct": 0,
-      "explanation": "Automation closes the gap between intention and consistency."
+      "explanation": "The fixture has a passed verification verdict and a review verdict of pass, so the generated summary is exactly task T-001: review=pass, gate=True."
     },
     {
       "stage": "check",
-      "question": "Which two forms does the packet ship in?",
+      "question": "Which failed attempt appears in the T-001 handoff?",
       "options": [
-        "handoff.md rendered as a printable PDF and handoff.json compiled into one compressed archive file",
-        "handoff.md and handoff.json, both from the same source artifacts; JSON wins on divergence",
-        "An email sent to the next operator and a Slack message posted to the team channel",
-        "handoff.yaml for humans to read and handoff.toml for the next agent session to load"
+        "ruff check . -> exit 1",
+        "pytest test_signup.py -> exit 1",
+        "pytest -> exit 2",
+        "python3 main.py -> exit 1"
       ],
       "correct": 1,
-      "explanation": "Markdown for humans, JSON for the next agent; both come from the same generator."
+      "explanation": "The feedback fixture contains a pytest test_signup.py record with exit_code 1; the other listed commands either pass or never appear."
     },
     {
       "stage": "check",
-      "question": "What does the open_risks field in a handoff packet answer, per the lesson?",
+      "question": "What does trim_feedback return for the four feedback records in the demo fixture?",
       "options": [
-        "What model was used to generate the handoff packet itself",
-        "What could bite next session, plus a severity for each",
-        "How long the previous session ran before handing off",
-        "Which reviewer signed off on the previous session's work"
-      ],
-      "correct": 1,
-      "explanation": "The lesson's seven-field table lists open_risks as answering 'what could bite next session, with severity'."
-    },
-    {
-      "stage": "post",
-      "question": "What does the lesson say the cleanup phase emits before a handoff can be written?",
-      "options": [
-        "A signed approval token issued by the verification gate",
-        "A full diff of every touched file, attached to handoff.json",
-        "A rollback script the next session can run automatically",
-        "An empty clean_state.json list required before a packet"
-      ],
-      "correct": 3,
-      "explanation": "The lesson says the cleanup phase emits a clean_state.json of blocking issues, and an empty list is the precondition the handoff generator asserts before it writes a packet."
-    },
-    {
-      "stage": "post",
-      "question": "What does the lesson recommend trimming the feedback log to in the packet?",
-      "options": [
-        "The first K entries only, since later entries matter less than how the run began",
-        "A random sample of N entries, so the packet stays representative without growing large",
-        "The last K entries plus every entry with a non-zero exit, so failures still survive",
-        "Only the single most recent entry, discarding every earlier command in the log"
+        "Only the first pytest record, because the tail is discarded",
+        "Only the non-zero pytest record, because successful commands are noise",
+        "All four records, with the failed record retained without a duplicate",
+        "The two final records, regardless of their exit codes"
       ],
       "correct": 2,
-      "explanation": "Asymmetric trim: failures must survive; trivia at the tail is cheap to keep."
+      "explanation": "The tail limit is five, so all four records are candidates; the non-zero record is already in that tail and identity-based de-duplication keeps it once."
+    },
+    {
+      "stage": "check",
+      "question": "Which two risks does derive_risks report for the T-001 snapshot?",
+      "options": [
+        "A review score below 7 and a missing verdict pointer",
+        "A failed gate and an absent next action",
+        "A stale feedback log and a malformed task id",
+        "The off-scope README warning and the awaiting-rate-limit blocker"
+      ],
+      "correct": 3,
+      "explanation": "The verdict contributes its warn finding for README.md, and the state blocker becomes an open-blocker warning. Review total 8 does not add a low-score risk."
+    },
+    {
+      "stage": "post",
+      "question": "If a snapshot has no next_action, what value does generate_handoff place in the packet?",
+      "options": [
+        "no next_action recorded; needs human",
+        "inspect the latest changed file",
+        "rerun the last failed command",
+        "continue from the first unfinished test"
+      ],
+      "correct": 0,
+      "explanation": "The generator uses state.get('next_action') and falls back to the explicit string no next_action recorded; needs human."
+    },
+    {
+      "stage": "post",
+      "question": "Which paths are placed in the T-001 verdict_pointer object?",
+      "options": [
+        "outputs/review/T-001.json and outputs/verification/T-001.json",
+        "outputs/verification/T-001.json and outputs/review/T-001.json",
+        "outputs/handoff/T-001.json and outputs/state/T-001.json",
+        "outputs/diff/T-001.json and outputs/feedback/T-001.json"
+      ],
+      "correct": 1,
+      "explanation": "generate_handoff stores the verification receipt under verdict and the review receipt under review, in that order."
     }
   ]
 }

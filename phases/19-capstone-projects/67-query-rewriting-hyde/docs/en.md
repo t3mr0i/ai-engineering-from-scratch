@@ -102,6 +102,18 @@ The shape of the mock is what matters, not the data. In production you swap the 
 
 
 
+## Build It
+
+Reconstruct **Query Rewriting: HyDE, Multi-Query, and Decomposition** by following `tokenize` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `tokenize` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/artifact-card.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - Gao, Ma, Lin, Callan, "Precise Zero-Shot Dense Retrieval without Relevance Labels" (HyDE), 2023
@@ -114,10 +126,20 @@ The shape of the mock is what matters, not the data. In production you swap the 
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement Hypothetical Document Embeddings (HyDE): generate a fake answer, embed it, retrieve against that vector instead of the query vector.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement multi-query expansion: rewrite one query into N paraphrases, retrieve with each, merge the union by reciprocal rank fusion.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement query decomposition: split a complex question into sub-questions, retrieve per sub-question, merge.
+Work from the smallest fixture that the Query Rewriting: HyDE, Multi-Query, and Decomposition demo already understands, then make one deliberate change and record what moved.
+
+1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using tokens=["red","fox"]. Follow `tokenize`, `mock_embed`, `cosine`. Expect the attention/embedding shape follows the token count and each valid attention row remains normalized; capture the first printed shape, metric, status, or summary field and state which part supports **Implement Hypothetical Document Embeddings (HyDE): generate a fake answer, embed it, retrieve against that vector instead of the query vector.**.
+2. **Perturb one field.** Repeat the command after changing only the token sequence: use tokens=["red","fox","runs"]. Predict the direction of the change, then compare the two output values. Explain why **Implement multi-query expansion: rewrite one query into N paraphrases, retrieve with each, merge the union by reciprocal rank fusion.** says the other inputs should stay fixed.
+3. **Check the failure boundary.** Feed the implementation tokens=[]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Implement query decomposition: split a complex question into sub-questions, retrieve per sub-question, merge.** and record the exception text if the code rejects the case.
+4. **Make the result repeatable.** Open `outputs/artifact-card.md` and add a worked example using tokens=["red","fox"]. Include the input contract, one expected output field, and a named acceptance check for **Compare the three rewriters head to head on a fixture and explain when each strategy wins.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement Hypothetical Document Embeddings (HyDE): generate a fake answer, embed it, retrieve against that vector instead of the query vector,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement query decomposition: split a complex question into sub-questions, retrieve per sub-question, merge,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Query Rewriting: HyDE, Multi-Query, and Decomposition** should contain:
+
+- the `python3 main.py` output for tokens=["red","fox"], with `tokenize`, `mock_embed`, `cosine` traced to the value or shape that supports **Implement Hypothetical Document Embeddings (HyDE): generate a fake answer, embed it, retrieve against that vector instead of the query vector.**;
+- a before/after comparison for the token sequence, where tokens=["red","fox","runs"] changes the observation in the direction predicted by **Implement multi-query expansion: rewrite one query into N paraphrases, retrieve with each, merge the union by reciprocal rank fusion.**;
+- a recorded result for tokens=[] that matches the implementation’s validation or empty-result contract and explains the evidence for **Implement query decomposition: split a complex question into sub-questions, retrieve per sub-question, merge.**; and
+- an updated `outputs/artifact-card.md` example with a concrete input, expected output field, and acceptance check tied to **Compare the three rewriters head to head on a fixture and explain when each strategy wins.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

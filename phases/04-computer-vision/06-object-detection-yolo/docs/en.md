@@ -138,6 +138,18 @@ Report all four. A detector that is strong on mAP@0.5 but weak on mAP@0.5:0.95 i
 
 
 
+## Build It
+
+Reconstruct **Object Detection — YOLO from Scratch** by following `sigmoid` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+
+## Use It
+
+Call `sigmoid` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-detection-metric-reader.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [YOLOv1: You Only Look Once (Redmon et al., 2016)](https://arxiv.org/abs/1506.02640) — the founding paper; every YOLO since is a refinement of this structure
@@ -147,10 +159,20 @@ Report all four. A detector that is strong on mAP@0.5 but weak on mAP@0.5:0.95 i
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the grid-and-anchor design that turns detection into a dense prediction problem and state what every number in the output tensor means.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compute Intersection-over-Union between boxes and implement non-maximum suppression from scratch.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a minimal YOLO-style head on top of a pretrained backbone, including the classification, objectness, and box-regression losses.
+This lab follows `sigmoid` and `box_iou` on a controlled fixture; write down the value before changing the input.
+
+1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using an 8x8 synthetic image. Follow `sigmoid`, `box_iou`, `nms`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **Explain the grid-and-anchor design that turns detection into a dense prediction problem and state what every number in the output tensor means**.
+2. **Change the controlled parameter.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Compute Intersection-over-Union between boxes and implement non-maximum suppression from scratch** says the other inputs should stay fixed.
+3. **Exercise the guard.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Build a minimal YOLO-style head on top of a pretrained backbone, including the classification, objectness, and box-regression losses** and record the exception text if the code rejects the case.
+4. **Prepare the artifact for reuse.** Open `outputs/prompt-detection-metric-reader.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **Read a detection metric row (precision@0.5, recall, mAP@0.5, mAP@0.5:0.95) and pick which knob to turn next**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the grid-and-anchor design that turns detection into a dense prediction problem and state what every number in the output tensor means,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a minimal YOLO-style head on top of a pretrained backbone, including the classification, objectness, and box-regression losses,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Object Detection — YOLO from Scratch** should contain:
+
+- the `python3 main.py` output for an 8x8 synthetic image, with `sigmoid`, `box_iou`, `nms` traced to the value or shape that supports **Explain the grid-and-anchor design that turns detection into a dense prediction problem and state what every number in the output tensor means**;
+- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Compute Intersection-over-Union between boxes and implement non-maximum suppression from scratch**;
+- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Build a minimal YOLO-style head on top of a pretrained backbone, including the classification, objectness, and box-regression losses**; and
+- an updated `outputs/prompt-detection-metric-reader.md` example with a concrete input, expected output field, and acceptance check tied to **Read a detection metric row (precision@0.5, recall, mAP@0.5, mAP@0.5:0.95) and pick which knob to turn next**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

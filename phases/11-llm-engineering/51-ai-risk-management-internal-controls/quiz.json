@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What makes AI risk management actionable?",
+      "question": "What does an AI internal-control review need in addition to a policy statement?",
       "options": [
-        "A broad governance principle stated without any supporting control evidence",
-        "A policy exception that gets approved quietly without visible review",
-        "An AI use case that moves to production without any named control owner",
-        "A named owner, a specific control, and evidence tied to that risk"
+        "A risk label that is never revisited after the first workshop",
+        "A model accuracy number without evidence of who approved the use",
+        "A named risk owner, testable controls, audit evidence, exception handling, and approval responsibility",
+        "A promise that policy language alone prevents a control failure"
       ],
-      "correct": 3,
-      "explanation": "Governance becomes actionable with a named owner, a control, and evidence — not a principle with no evidence, a policy exception approved without review, or a use case with no owner at all."
+      "correct": 2,
+      "explanation": "The register makes governance operational: owners, tests, audit trails, policy exceptions, and approval duties can be inspected and updated."
     },
     {
       "stage": "check",
-      "question": "A team is granted a one-off exemption from the standard model-review process to hit a launch date, and the exemption is never logged or reviewed by anyone else. Which of the lesson's four signals does this match most directly?",
+      "question": "The customer-data assistant fixture matches three signals, impact=5, and control_maturity=2. What priority does it receive?",
       "options": [
-        "Policy exception — a deviation from standard governance that hasn't gone through visible review",
-        "Control owner — no one is named as accountable for maintaining this control",
-        "Audit evidence — the records needed to prove a control ran are missing or incomplete, with no need to inspect intermediate results or test edge cases",
-        "High impact — the use case affects a large number of people or a lot of money"
+        "risk register update",
+        "control design sprint",
+        "monitor",
+        "risk committee review"
+      ],
+      "correct": 3,
+      "explanation": "Maturity gap is max(0, 6-2)=4, so the score is 5*2 + 4 + 3*2 = 20. That requires risk committee review."
+    },
+    {
+      "stage": "check",
+      "question": "Which controls does recommend select for a risk Scenario with three matched signals?",
+      "options": [
+        "risk register, control test, audit trail, and approval owner",
+        "risk register and control test only",
+        "approval owner alone, because the owner can supply evidence later",
+        "A policy exception note without a control test"
       ],
       "correct": 0,
-      "explanation": "An unlogged, unreviewed exemption from standard review is the lesson's policy-exception signal — distinct from a missing control owner, missing audit evidence, or a use case simply being high impact."
+      "explanation": "Three matches select all four controls. The register, test, trail, and approval owner form the evidence chain for the risk decision."
     },
     {
       "stage": "check",
-      "question": "What does the Python artifact produce?",
+      "question": "What does a no-match Scenario with impact=3 and control_maturity=6 score, and which priority follows?",
       "options": [
-        "A signed legal waiver that removes the need for further governance review",
-        "A ranked risk and control plan with governance next steps for each scenario",
-        "A complete, ready-to-file audit report covering the full use case",
-        "A neural network trained to automatically approve or reject risk exceptions unattended"
+        "6 and risk register update",
+        "6 and monitor",
+        "10 and control design sprint",
+        "12 and risk committee review"
       ],
       "correct": 1,
-      "explanation": "The artifact ranks scenarios into a risk-and-control plan with governance next steps — it doesn't issue a legal waiver, produce a finished audit report, or train a model to approve risks."
+      "explanation": "The maturity gap is zero and no signals add points, leaving 3*2 = 6. Scores below 7 use monitor."
     },
     {
-      "stage": "check",
-      "question": "Which control belongs to this lesson?",
+      "stage": "post",
+      "question": "The finance summary fixture matches control owner and audit evidence, with impact=4 and control_maturity=3. What result is correct?",
       "options": [
-        "Hiding control evidence so a later audit can't find gaps in the process, before defining the measurement, acceptance threshold, or rollback path",
-        "Skipping control tests because the use case seemed low risk at the time",
-        "Removing the approval owner once the risk register entry is closed",
-        "Audit trail — a record that lets someone later verify a control actually ran"
+        "11 and risk register update",
+        "13 and risk register update",
+        "15 and control design sprint",
+        "20 and risk committee review"
+      ],
+      "correct": 2,
+      "explanation": "The maturity gap is 3. The score is 4*2 + 3 + 2*2 = 15, which maps to control design sprint."
+    },
+    {
+      "stage": "post",
+      "question": "What should register-ai-risk-controls.md let an approver inspect?",
+      "options": [
+        "Only the risk title, because evidence belongs in a separate audit system",
+        "A model leaderboard and the vendor's preferred control language",
+        "A final approval without recording the conditions under which the risk changes",
+        "The risk, owner, control test, audit trail, exception handling, approval owner, and evidence"
       ],
       "correct": 3,
-      "explanation": "The lesson's controls are risk register, control test, audit trail, and approval owner — an audit trail lets someone verify later that a control ran, unlike hiding evidence, skipping tests, or removing the owner."
-    },
-    {
-      "stage": "post",
-      "question": "When should an AI use case be escalated for governance review?",
-      "options": [
-        "Only when there is no identifiable risk in the use case at all",
-        "Only after all control evidence has already been fully collected",
-        "When impact is high, control maturity is low, or a policy exception exists",
-        "Never — keeping a risk register is entirely optional for AI use cases — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 2,
-      "explanation": "High impact, weak control maturity, or a live policy exception are exactly when governance review should escalate — not the absence of risk, complete evidence, or treating the risk register as optional."
-    },
-    {
-      "stage": "post",
-      "question": "What should be captured during delivery, not after launch?",
-      "options": [
-        "Only informal chat comments exchanged during the sprint, with no record kept",
-        "Only a launch announcement sent to stakeholders once the feature is live",
-        "Control evidence and an audit trail that a reviewer can check later",
-        "No approvals, since the delivery team can self-certify the release"
-      ],
-      "correct": 2,
-      "explanation": "Control evidence and an audit trail are easier and safer to capture during delivery than after launch — not informal comments, a launch announcement, or skipping approvals."
+      "explanation": "The evidence register keeps a risk decision auditable. It makes control operation and exceptions visible instead of treating governance as a one-time declaration."
     }
   ]
 }

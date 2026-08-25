@@ -232,6 +232,18 @@ The chain is guaranteed to converge to p(x) under mild conditions. But convergen
 
 
 
+## Build It
+
+Reconstruct **Stochastic Processes** by following `random_walk_1d` on the demo’s smallest built-in fixture. Run `run main.text` and verify that the result reports the empty case explicitly or raises the documented validation error.
+
+## Use It
+
+Call `random_walk_1d` from a small caller with the demo’s smallest built-in fixture. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-stochastic-process-advisor.md` with the command `run main.text`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - **Ho, Jain, Abbeel (2020)** -- "Denoising Diffusion Probabilistic Models." The DDPM paper that launched the diffusion model revolution. Clear derivation of the forward and reverse Markov chains.

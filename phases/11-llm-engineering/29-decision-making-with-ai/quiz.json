@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why should Decision Making with AI be taught as a workflow instead of only as tool awareness?",
+      "question": "What boundary must an AI-supported decision process preserve?",
       "options": [
-        "Because a confident, well-reasoned answer from the model is a sound basis for stopping a project",
-        "Because the model can carry accountability for a decision once it has compared the scenarios",
-        "Because political constraints stop mattering as soon as the evidence has been structured",
-        "Because teams need shared signals, controls, and decision rules they can apply to real work"
-      ],
-      "correct": 3,
-      "explanation": "The lesson is built around reusable operating artifacts — shared signals, controls, and decision rules — not the idea that a confident answer justifies stopping a project, that the model can carry accountability, or that political constraints stop mattering once evidence is structured."
-    },
-    {
-      "stage": "check",
-      "question": "In the lesson's opening example, why would treating the assistant's stop-the-project answer as a recommendation be a governance failure?",
-      "options": [
-        "Because the assistant's reasoning contradicted itself between the paragraphs the manager read",
-        "Because the model owns no budget, cannot see political constraints, and does not know which evidence is missing",
-        "Because the manager had not yet worked through the scenario review that the steering committee formally required",
-        "Because the decision was reversible, which puts it below the confidence threshold for escalation"
-      ],
-      "correct": 1,
-      "explanation": "The lesson's opening example turns on accountability, not answer quality: the assistant sounds confident but owns no budget, cannot see the political constraints, and cannot tell which evidence is incomplete. A self-contradicting answer, a skipped scenario review, or reversibility are not the point being made."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Python artifact produce for Decision Making with AI?",
-      "options": [
-        "A final go/no-go verdict the steering committee can adopt unchanged, because one plausible output is sufficient production evidence",
-        "A ranked plan with category, score, priority, controls, and rationale",
-        "A confidence percentage for each option, with no evidence attached",
-        "A record of every decision the team made in the last quarter"
-      ],
-      "correct": 1,
-      "explanation": "The lesson's Python artifact outputs a ranked plan — category, score, priority, controls, and rationale — not an adoptable go/no-go verdict, a bare confidence percentage, or a decision log."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to the lesson design?",
-      "options": [
-        "Letting the model's stated confidence set the threshold for when the team is ready to act",
-        "Skipping the evidence gap log because the assistant's answer already listed several reasons",
-        "A named decision owner, so accountability for the call stays with a person, not the model",
-        "Running the scenario review only after the irreversible option has already been committed to"
-      ],
-      "correct": 2,
-      "explanation": "The lesson's controls include a named decision owner keeping accountability with a person — the opposite of letting the model set the confidence threshold, skipping the evidence gap log, or running the scenario review after the commitment is made."
-    },
-    {
-      "stage": "post",
-      "question": "When should a scenario become a launch-gate discussion rather than a casual awareness exercise?",
-      "options": [
-        "When impact, uncertainty, and matched risk signals such as an irreversible decision are all high",
-        "Only when the decision is escalated to leadership rather than settled inside the delivery team — and applies unchanged even when the lesson's stated preconditions fail",
-        "Only when the assistant's answer disagrees with what the decision owner already believed",
-        "Never — a contested decision can always be revisited at the next steering committee meeting"
+        "The model can structure evidence and scenarios, but a named human owns the decision and accountability",
+        "A confident answer can become the decision whenever the model lists at least three reasons",
+        "The assistant should set the risk appetite because it can compare more alternatives",
+        "Political constraints can be ignored once the evidence has been placed in a table"
       ],
       "correct": 0,
-      "explanation": "High-impact, uncertain, irreversible decisions need a launch gate regardless of who escalates them, whether the model agrees with the owner, or whether another steering meeting is scheduled."
+      "explanation": "The artifact helps frame options, uncertainty, and evidence gaps. It does not own budgets, risk appetite, or the final call."
+    },
+    {
+      "stage": "check",
+      "question": "The project stop/go fixture has two matched signals, impact=4, and uncertainty=3. What score does score_scenario compute?",
+      "options": [
+        "11",
+        "15",
+        "17",
+        "20"
+      ],
+      "correct": 1,
+      "explanation": "The base is 4*2 + 3 = 11. Two matched signals add 4, producing 15 and a guided pilot priority."
+    },
+    {
+      "stage": "check",
+      "question": "For the project stop/go fixture, which category does choose_category select?",
+      "options": [
+        "frame",
+        "stress-test",
+        "compare",
+        "decide"
+      ],
+      "correct": 2,
+      "explanation": "With two matches, impact 4, and uncertainty 3, the index is (2+4+3) modulo 4 = 1. CATEGORIES[1] is compare."
+    },
+    {
+      "stage": "check",
+      "question": "A decision Scenario matches two signals. Which controls are included in its Recommendation?",
+      "options": [
+        "decision owner only",
+        "decision owner and confidence threshold",
+        "scenario review and evidence gap log only",
+        "decision owner, confidence threshold, and scenario review"
+      ],
+      "correct": 3,
+      "explanation": "The recommendation selects the first 1 + len(matches) controls, with at least two. Two matches therefore return the first three controls."
     },
     {
       "stage": "post",
-      "question": "What is the main purpose of the output template?",
+      "question": "What belongs in memo-ai-supported-decision.md before a steering decision?",
       "options": [
-        "To formally replace the decision owner's accountability for making the final call",
-        "To keep the open evidence gaps out of view of the steering committee entirely",
-        "To automatically generate completion certificates for participants once the workshop ends and the debrief is filed",
-        "To create a reusable memo or checklist that teams can keep applying after the course ends"
+        "The decision owner, evidence supporting each option, open gaps, uncertainty, and the next review",
+        "Only the model's preferred option, so the steering group can move quickly",
+        "A promise that the chosen option will work without a confidence threshold",
+        "A list of prompts that hides which person is accountable for the call"
       ],
-      "correct": 3,
-      "explanation": "The output template is a decision memo and scenario checklist teams keep applying after the course — not a substitute for the decision owner's accountability, a way to hide evidence gaps from steering, or an automatic certificate generator."
+      "correct": 0,
+      "explanation": "The memo is useful when it makes assumptions and evidence inspectable. The human decision owner can then accept, reject, or request more analysis."
+    },
+    {
+      "stage": "post",
+      "question": "What category does an empty-signal Scenario receive from choose_category?",
+      "options": [
+        "decide, because every scenario eventually needs a decision",
+        "frame, the first entry in CATEGORIES",
+        "compare, because an empty evidence set implies competing options",
+        "stress-test, because uncertainty is assumed to be high"
+      ],
+      "correct": 1,
+      "explanation": "The no-match branch returns CATEGORIES[0], which is frame for this lesson. Missing signals are not treated as proof that a scenario should be decided or stress-tested."
     }
   ]
 }

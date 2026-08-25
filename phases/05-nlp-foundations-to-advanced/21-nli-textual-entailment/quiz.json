@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What three labels does NLI assign to a (premise, hypothesis) pair?",
+      "question": "What label does predict_nli assign to premise \"A cat is sleeping on the couch.\" and hypothesis \"There is a cat in the room.\"?",
       "options": [
-        "Positive / negative / neutral — and applies unchanged even when the lesson's stated preconditions fail",
-        "True / false / unknown",
-        "Entailment / contradiction / neutral",
-        "Cause / effect / unrelated"
-      ],
-      "correct": 2,
-      "explanation": "NLI is a 3-way classification over entailment, contradiction, and neutral."
-    },
-    {
-      "stage": "check",
-      "question": "How is NLI used as a zero-shot text classifier?",
-      "options": [
-        "Verbalize each candidate label as a hypothesis (e.g. 'This text is about sports') and pick the label with the highest entailment score",
-        "By averaging embeddings, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "By computing TF-IDF",
-        "By prompting an LLM"
+        "entailment",
+        "contradiction",
+        "neutral",
+        "unsupported because the words are not identical"
       ],
       "correct": 0,
-      "explanation": "NLI-as-classifier turns labels into hypotheses; the model picks the max-entailment label."
+      "explanation": "The hypothesis content has 50% lexical overlap with the premise and no negation mismatch, meeting the entailment rule."
     },
     {
       "stage": "check",
-      "question": "Why is NLI a faithfulness check for RAG outputs?",
+      "question": "How is lexical_overlap computed for a hypothesis?",
       "options": [
-        "It uses tokenizers, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "Checking whether the retrieved context entails each answer claim is exactly the formulation NLI was trained on",
-        "It is cheap",
-        "It is multilingual"
+        "The number of matching punctuation marks divided by sentence length",
+        "The number of hypothesis content words found in the premise content set divided by hypothesis content-word count",
+        "A cosine score between two learned sentence vectors",
+        "The count of premise words divided by the vocabulary size"
       ],
       "correct": 1,
-      "explanation": "Hallucination = answer claims not entailed by retrieved context; NLI directly measures entailment."
+      "explanation": "content_words removes stop words and negations, then the function counts covered hypothesis tokens against the premise set."
     },
     {
       "stage": "check",
-      "question": "What does the hypothesis-only baseline expose?",
+      "question": "What does has_negation([\"the\", \"cat\", \"is\", \"not\", \"sleeping\"]) return?",
       "options": [
-        "Multilingual gaps, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "Slow inference",
-        "Datasets where the hypothesis alone (without the premise) is predictive of the label, signalling label leakage",
-        "Tokenizer drift"
+        "False because not is removed before checking",
+        "0.5",
+        "True",
+        "The string \"not\""
       ],
       "correct": 2,
-      "explanation": "A high hypothesis-only score on SNLI revealed annotation artifacts; useful for debugging your data."
+      "explanation": "has_negation tests membership in NEGATIONS, which includes not."
+    },
+    {
+      "stage": "check",
+      "question": "What label does the toy classifier give when overlap is 0.6 and the premise has a negation but the hypothesis does not?",
+      "options": [
+        "entailment",
+        "neutral",
+        "both entailment and neutral",
+        "contradiction"
+      ],
+      "correct": 3,
+      "explanation": "With overlap at least 0.5 and different negation flags, the first branch returns contradiction."
     },
     {
       "stage": "post",
-      "question": "Which NLI model family tops 2026 leaderboards as the standard workhorse?",
+      "question": "What does evaluate return after printing its NLI examples?",
       "options": [
-        "fastText",
-        "Plain Word2Vec — and applies unchanged even when the lesson's stated preconditions fail",
-        "DeBERTa-v3 variants fine-tuned on MNLI/FEVER/ANLI",
-        "GPT-2"
-      ],
-      "correct": 2,
-      "explanation": "DeBERTa-v3 fine-tuned on MNLI and related corpora is the open NLI workhorse in 2026."
-    },
-    {
-      "stage": "post",
-      "question": "Why do sentence-level NLI models drop accuracy on document-length premises?",
-      "options": [
-        "They were trained on short premises and fail at multi-sentence and multi-hop inference; DocNLI-tuned models handle longer inputs",
-        "Larger inputs run slower",
-        "Documents trigger tokenizer drift, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "Cosine similarity decays"
+        "The number correct, the number of examples, and a confusion Counter keyed by (gold, prediction)",
+        "Only the average lexical-overlap confidence",
+        "A list of corrected hypotheses with their punctuation removed",
+        "The vocabulary and all learned model weights"
       ],
       "correct": 0,
-      "explanation": "Training distribution mismatch: single-sentence NLI models lose 20+ F1 on document-length inputs."
+      "explanation": "The function accumulates correct predictions and confusion[(gold, pred)] and returns correct, len(examples), confusion."
+    },
+    {
+      "stage": "post",
+      "question": "Why is lexical overlap plus negation not a complete NLI system?",
+      "options": [
+        "It always handles pronouns and numerical reasoning exactly",
+        "It can miss paraphrases and world knowledge, and shared words do not by themselves prove entailment",
+        "It requires no premise or hypothesis text at inference time",
+        "It guarantees that every contradiction contains the word not"
+      ],
+      "correct": 1,
+      "explanation": "The toy features are useful diagnostics but cannot establish entailment when wording, references, or implied facts differ."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to MCP Gateways and Registries — Enterprise Control Planes?",
+      "question": "How many tools does gateway_tools_list expose to Alice and Bob in the fixture?",
       "options": [
-        "Explain where an MCP gateway sits (between MCP clients and multiple backend MCP servers)",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Explain where an MCP gateway sits (between MCP clients and multiple backend MCP servers)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of MCP Gateways and Registries — Enterprise Control Planes?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the five gateway responsibilities: auth, RBAC, audit, rate limit, policy",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the five gateway responsibilities: auth, RBAC, audit, rate limit, policy” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through MCP Gateways and Registries — Enterprise Control Planes?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Enforce a pinned-tool-hash manifest at the gateway layer",
-        "Treat one successful example as proof that every edge case works"
+        "Both see all six backend tools",
+        "Alice sees two and Bob sees four",
+        "Alice sees four and Bob sees two",
+        "Neither sees tools until a call is made"
       ],
       "correct": 2,
-      "explanation": "“Enforce a pinned-tool-hash manifest at the gateway layer” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Alice's developer role can use notes search/create and all two GitHub tools, while Bob's auditor role gets notes search and GitHub list_issues: four versus two."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits MCP Gateways and Registries — Enterprise Control Planes?",
+      "question": "What does the TokenBucket's initial capacity of five permit before refill is considered?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Differentiate the Official MCP Registry from metaregistries (Glama, MCPMarket, MCP.so, Smithery, LobeHub)",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Differentiate the Official MCP Registry from metaregistries (Glama, MCPMarket, MCP.so, Smithery, LobeHub)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for MCP Gateways and Registries — Enterprise Control Planes?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain where an MCP gateway sits (between MCP clients and multiple backend MCP servers)"
+        "All calls in the burst, regardless of count",
+        "Only one call per second",
+        "No calls until a token is externally granted",
+        "Five immediate calls can consume the initial tokens"
       ],
       "correct": 3,
-      "explanation": "“Explain where an MCP gateway sits (between MCP clients and multiple backend MCP servers)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The bucket starts with five tokens and refills at one token per second; an immediate burst can therefore consume five before rate limiting."
+    },
+    {
+      "stage": "check",
+      "question": "What happens when Bob calls github.open_pr?",
+      "options": [
+        "HTTP-style 403 plus a forbidden audit entry",
+        "The gateway grants a temporary developer role",
+        "It routes to notes.create",
+        "It returns 429 before checking authorization"
+      ],
+      "correct": 0,
+      "explanation": "Bob's RBAC entry includes GitHub list_issues but not open_pr, so the call is denied with 403 and audited as forbidden."
+    },
+    {
+      "stage": "check",
+      "question": "What does the gateway do after notes.search's description changes from its pinned hash?",
+      "options": [
+        "It updates the manifest automatically",
+        "tools/list drops it; call returns 409 hash_mismatch",
+        "It keeps the tool visible but ignores calls",
+        "It changes the tool's canonical name"
+      ],
+      "correct": 1,
+      "explanation": "The registry verifies the pinned description hash; a mismatch removes the tool from discovery and returns conflict 409 on invocation."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for MCP Gateways and Registries — Enterprise Control Planes?",
+      "question": "What status does gateway_tools_call return for an invalid bearer token?",
       "options": [
-        "Implement the five gateway responsibilities: auth, RBAC, audit, rate limit, policy",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "403",
+        "409",
+        "401",
+        "429"
       ],
-      "correct": 0,
-      "explanation": "“Implement the five gateway responsibilities: auth, RBAC, audit, rate limit, policy” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "Authentication is checked before RBAC, rate limits, or manifest lookup, so an unknown bearer receives HTTP-style status 401."
+    },
+    {
+      "stage": "post",
+      "question": "Which canonical name identifies the GitHub pull-request tool?",
+      "options": [
+        "open_pr.github",
+        "notes.open_pr",
+        "github/list_issues",
+        "github.open_pr"
+      ],
+      "correct": 3,
+      "explanation": "The gateway namespaces the backend name with the server prefix, yielding github.open_pr for the pull-request operation."
     }
   ]
 }

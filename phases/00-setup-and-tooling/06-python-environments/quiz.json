@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What problem do virtual environments solve?",
+      "question": "What problem does a project-local Python environment solve?",
       "options": [
-        "They make Python code run faster by optimizing the interpreter — and applies unchanged even when the lesson's stated preconditions fail",
-        "They isolate project dependencies so different projects can use different package versions",
-        "They provide a graphical interface for managing Python scripts",
-        "They automatically update packages to the latest versions"
+        "It guarantees every installed package has GPU support",
+        "It turns Python scripts into standalone binaries",
+        "It isolates this project's dependencies",
+        "It removes the need to record dependencies"
       ],
-      "correct": 1,
-      "explanation": "Virtual environments give each project its own isolated set of packages. Without them, installing PyTorch 2.4 for one project would overwrite PyTorch 2.1 needed by another."
+      "correct": 2,
+      "explanation": "An isolated environment gives a project its own prefix and site-packages. Reproducible dependency files are still needed; isolation alone does not guarantee compatible CUDA or package versions."
     },
     {
       "stage": "check",
-      "question": "What is a lockfile in the context of Python dependency management?",
+      "question": "Which setup records both an isolated interpreter and repeatable project dependencies?",
       "options": [
-        "A file that prevents other users from editing your code, with no need to inspect intermediate results or test edge cases",
-        "A file that pins every package to an exact version for reproducible installs",
-        "A file that locks the Python interpreter version",
-        "A file that encrypts your project dependencies"
+        "Install into the system interpreter and copy its site-packages by hand",
+        "Put the package list in a notebook output cell only",
+        "Use conda and pip interchangeably without recording which environment is active",
+        "Use an environment, pyproject.toml, and a lockfile"
       ],
-      "correct": 1,
-      "explanation": "A lockfile records the exact version of every package (including transitive dependencies) so anyone installing from it gets identical packages, ensuring reproducibility."
+      "correct": 3,
+      "explanation": "The environment isolates installation, while pyproject.toml and a lockfile describe the requested and resolved dependencies for another machine."
     },
     {
       "stage": "check",
-      "question": "How can you verify that your pip and python commands are using the virtual environment and not the system Python?",
+      "question": "Which symptom most strongly suggests that pip and conda installations have been mixed accidentally?",
       "options": [
-        "Run 'pip --version' and check the version number",
-        "Run 'which python' and confirm it shows .venv/bin/python, not /usr/bin/python",
-        "Check if the terminal background color has changed, because one plausible output is sufficient production evidence",
-        "Run 'python --check-env' to verify"
-      ],
-      "correct": 1,
-      "explanation": "'which python' (or 'where python' on Windows) shows the full path to the interpreter. If it points to .venv/bin/python, you are in the virtual environment."
-    },
-    {
-      "stage": "check",
-      "question": "Why is mixing pip and conda in the same environment problematic?",
-      "options": [
-        "Pip packages are incompatible with conda's Python interpreter, before defining the measurement, acceptance threshold, or rollback path",
-        "Pip installs can break conda's dependency tracking, causing hard-to-debug conflicts",
-        "Conda cannot install packages that pip has already installed",
-        "It doubles the disk space used by every package"
-      ],
-      "correct": 1,
-      "explanation": "Conda maintains its own dependency solver. Pip installs bypass it, so conda no longer knows the true state of the environment. This leads to dependency conflicts that are painful to resolve."
-    },
-    {
-      "stage": "post",
-      "question": "Your PyTorch code reports 'CUDA not available' despite having an NVIDIA GPU. What is the most likely cause?",
-      "options": [
-        "Your GPU does not support CUDA",
-        "PyTorch was installed with a CUDA version incompatible with your GPU driver",
-        "You forgot to import the torch.cuda module",
-        "Virtual environments cannot access GPU hardware — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "PyTorch ships CUDA bindings compiled for specific CUDA versions. If the PyTorch CUDA version exceeds your driver's CUDA version, CUDA will not be available. Check with nvidia-smi and torch.version.cuda."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Python Environments?",
-      "options": [
-        "Write a `pyproject.toml` with optional dependency groups and generate lockfiles for reproducibility",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "The import path and package metadata disagree",
+        "The shell prompt shows the environment name",
+        "A project has a pyproject.toml file",
+        "The interpreter prints its own version"
       ],
       "correct": 0,
-      "explanation": "“Write a `pyproject.toml` with optional dependency groups and generate lockfiles for reproducibility” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Checking sys.executable, sys.prefix, and package metadata reveals whether the command and import are using the same environment. A CUDA mismatch can then be addressed in that environment instead of globally."
+    },
+    {
+      "stage": "check",
+      "question": "What does environment_report() use to decide whether the active interpreter is isolated?",
+      "options": [
+        "Whether the current directory contains a README",
+        "Compare sys.prefix with sys.base_prefix",
+        "Whether torch.cuda.is_available() is True",
+        "Whether the shell has more than one PATH entry"
+      ],
+      "correct": 1,
+      "explanation": "The demo resolves sys.prefix and sys.base_prefix and reports isolated as true when they differ, which is the usual virtual-environment signal."
+    },
+    {
+      "stage": "post",
+      "question": "A test imports torch from a global path even though the project environment is activated. What should you inspect first?",
+      "options": [
+        "The editor's color theme",
+        "The number of CPU cores in the machine",
+        "Print sys.executable and torch.__file__",
+        "The model's validation accuracy"
+      ],
+      "correct": 2,
+      "explanation": "Printing the interpreter and module path identifies which environment actually ran the test. It is more direct than assuming the shell prompt or editor selected the intended Python."
+    },
+    {
+      "stage": "post",
+      "question": "How would you prepare a clean environment for a new phase that needs a different torch build?",
+      "options": [
+        "Upgrade torch in the system interpreter until every phase imports it",
+        "Copy the previous phase's site-packages and delete its lockfile",
+        "Install packages while the environment is inactive, then rely on PATH order",
+        "Create a phase environment and record its versions"
+      ],
+      "correct": 3,
+      "explanation": "Per-phase isolation lets an experiment choose its own torch and CUDA compatibility. Recording the resolution makes the choice reproducible without disturbing other lessons."
     }
   ]
 }

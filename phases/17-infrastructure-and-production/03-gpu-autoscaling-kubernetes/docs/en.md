@@ -96,6 +96,18 @@ Cold-start mitigation (Phase 17 · 10) is where node provisioning time becomes u
 
 
 
+## Build It
+
+Reconstruct **GPU Autoscaling on Kubernetes — Karpenter, KAI Scheduler, Gang Scheduling** by following `Request` on the reported device check on CPU. Run `python3 main.py` and verify that the report distinguishes an available device from an unavailable one and records the selected backend.
+
+## Use It
+
+Call `Request` from a small caller with the reported device check on CPU. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-gpu-autoscaler-plan.md` with the command `python3 main.py`, the accepted input shape (the reported device check on CPU), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [KAI Scheduler GitHub](https://github.com/kai-scheduler/KAI-Scheduler) — design docs and configuration examples.
@@ -107,10 +119,20 @@ Cold-start mitigation (Phase 17 · 10) is where node provisioning time becomes u
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Diagram the three autoscaling layers (node provisioning, gang scheduling, application-level) and name the tool used at each layer.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why `DCGM_FI_DEV_GPU_UTIL` is the wrong HPA signal for vLLM and name two replacements (queue depth, KV cache utilization).
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe gang scheduling and the partial-allocation failure mode KAI Scheduler prevents (7 of 8 GPUs idle).
+Work from the smallest fixture that the GPU Autoscaling on Kubernetes — Karpenter, KAI Scheduler, Gang Scheduling demo already understands, then make one deliberate change and record what moved.
+
+1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using the reported device check on CPU. Follow `Request`, `make_workload`, `simulate`. Expect the report distinguishes an available device from an unavailable one and records the selected backend; capture the first printed shape, metric, status, or summary field and state which part supports **Diagram the three autoscaling layers (node provisioning, gang scheduling, application-level) and name the tool used at each layer.**.
+2. **Perturb one field.** Repeat the command after changing only the selected device backend: use the same check with CUDA/MPS unavailable. Predict the direction of the change, then compare the two output values. Explain why **Explain why `DCGM_FI_DEV_GPU_UTIL` is the wrong HPA signal for vLLM and name two replacements (queue depth, KV cache utilization).** says the other inputs should stay fixed.
+3. **Check the failure boundary.** Feed the implementation a machine with no visible accelerator. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Describe gang scheduling and the partial-allocation failure mode KAI Scheduler prevents (7 of 8 GPUs idle).** and record the exception text if the code rejects the case.
+4. **Make the result repeatable.** Open `outputs/skill-gpu-autoscaler-plan.md` and add a worked example using the reported device check on CPU. Include the input contract, one expected output field, and a named acceptance check for **Name the Karpenter consolidation policy (`WhenEmptyOrUnderutilized`) that terminates running GPU jobs and state the 2026 safe alternative.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Diagram the three autoscaling layers (node provisioning, gang scheduling, application-level) and name the tool used at each layer,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe gang scheduling and the partial-allocation failure mode KAI Scheduler prevents (7 of 8 GPUs idle),” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **GPU Autoscaling on Kubernetes — Karpenter, KAI Scheduler, Gang Scheduling** should contain:
+
+- the `python3 main.py` output for the reported device check on CPU, with `Request`, `make_workload`, `simulate` traced to the value or shape that supports **Diagram the three autoscaling layers (node provisioning, gang scheduling, application-level) and name the tool used at each layer.**;
+- a before/after comparison for the selected device backend, where the same check with CUDA/MPS unavailable changes the observation in the direction predicted by **Explain why `DCGM_FI_DEV_GPU_UTIL` is the wrong HPA signal for vLLM and name two replacements (queue depth, KV cache utilization).**;
+- a recorded result for a machine with no visible accelerator that matches the implementation’s validation or empty-result contract and explains the evidence for **Describe gang scheduling and the partial-allocation failure mode KAI Scheduler prevents (7 of 8 GPUs idle).**; and
+- an updated `outputs/skill-gpu-autoscaler-plan.md` example with a concrete input, expected output field, and acceptance check tied to **Name the Karpenter consolidation policy (`WhenEmptyOrUnderutilized`) that terminates running GPU jobs and state the 2026 safe alternative.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

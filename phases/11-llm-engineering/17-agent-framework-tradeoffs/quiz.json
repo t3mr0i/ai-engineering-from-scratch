@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which framework is the right first pick for a workflow that must resume after a crash, accept a human approval mid-run, and fan out to three retrievers in parallel?",
+      "question": "What does `recommend(Problem(total_llm_calls=2))` return when all state, role, dialogue, fanout, resume, and human-interrupt flags are false?",
       "options": [
-        "CrewAI",
-        "LangGraph",
-        "AutoGen — and applies unchanged even when the lesson's stated preconditions fail",
-        "Agno"
-      ],
-      "correct": 1,
-      "explanation": "LangGraph is the only one of the four with a first-class checkpointer, `interrupt_before`/`interrupt_after` for human approval, and `Send` for parallel fanout with reducer-based merging."
-    },
-    {
-      "stage": "check",
-      "question": "Why does LLM-selected routing cost more tokens per turn than explicit routing?",
-      "options": [
-        "It pre-fetches the next node's tool results in parallel purely to hedge against network latency spikes., with no need to inspect intermediate results or test edge cases",
-        "It duplicates the full tool list and system prompt for every single agent in the crew on each turn.",
-        "A planner LLM call picks the next step each turn, adding prompt and completion tokens for every decision.",
-        "It sends the whole conversation history to a separate verifier model before accepting the next step."
-      ],
-      "correct": 2,
-      "explanation": "CrewAI's hierarchical manager and AutoGen's GroupChatManager both spend an LLM call deciding who goes next. LangGraph and Agno only spend tokens where you explicitly write `llm.invoke`."
-    },
-    {
-      "stage": "check",
-      "question": "Proposer-critic dialogue in code review naturally maps to which framework's core abstraction?",
-      "options": [
-        "AutoGen's GroupChat / ConversableAgent pair for multi-agent dialogue",
-        "CrewAI's sequential Crew with roles, tasks, and a linear process, because one plausible output is sufficient production evidence",
-        "LangGraph's StateGraph with typed state and conditional edges",
-        "Agno's single Agent abstraction composed with tools and memory"
+        "`plain python`, because two calls have no coordination signal",
+        "`langgraph`, because every multi-call task needs a checkpointer",
+        "`crewai`, because two calls are treated as a short role-driven pipeline",
+        "`agno`, because a low call count implies persistent session memory"
       ],
       "correct": 0,
-      "explanation": "AutoGen's core abstraction is two or more agents speaking in turns until an exit condition -- the native shape for a proposer-critic or teacher-student dialogue."
+      "explanation": "The first branch treats two or fewer calls with no other coordination needs as ordinary application code. It returns `plain python` before consulting the framework-specific branches."
     },
     {
       "stage": "check",
-      "question": "Which framework has built-in storage drivers (SQLite, Postgres, Redis, Mongo, DynamoDB) attached directly to the Agent class for session and memory persistence?",
+      "question": "Which signal makes `recommend` choose LangGraph before it considers dialogue or role-based branches?",
       "options": [
-        "LangGraph, via its Postgres/Redis/SQLite checkpointer classes",
-        "Agno, via storage drivers attached directly to the Agent class",
-        "CrewAI, via the `context` field passed between sequential tasks",
-        "AutoGen, via chat history and user-defined context objects"
+        "`has_roles=True` with no typed state",
+        "Resume, human-interrupt, or parallel-fanout needs",
+        "`needs_session_memory=True` with no roles and no dialogue",
+        "`has_dialogue=True` with no typed state"
       ],
       "correct": 1,
-      "explanation": "Agno attaches storage drivers (SQLite, Postgres, Mongo, Redis, DynamoDB) directly to an `Agent` via `storage=` -- conversation sessions and user memories persist automatically as a session store, not a full graph checkpointer."
+      "explanation": "The durable-workflow branch checks resume, human interrupts, and parallel fanout and returns LangGraph immediately. Those features require explicit state, checkpointing, or graph fanout in this decision tree."
+    },
+    {
+      "stage": "check",
+      "question": "What recommendation does `Problem(has_dialogue=True, total_llm_calls=10)` receive when `has_typed_state` is false?",
+      "options": [
+        "`plain python`, because dialogue is not a state transition",
+        "`autogen`, only if `needs_resume` is also true",
+        "`autogen`, because proposer/critic dialogue is its native shape",
+        "`crewai`, because every multi-agent conversation is modeled as specialist roles"
+      ],
+      "correct": 2,
+      "explanation": "After the early LangGraph branch, the code checks `has_dialogue and not has_typed_state` and returns `autogen`. The ten-call count keeps the task out of the small plain-Python shortcut."
+    },
+    {
+      "stage": "check",
+      "question": "Why does a `Problem(has_roles=True, total_llm_calls=4)` select CrewAI in the bundled cases?",
+      "options": [
+        "CrewAI is selected for every task with more than two LLM calls, regardless of roles",
+        "Roles are ignored unless the task also needs a durable checkpoint",
+        "The session-memory branch runs first and maps all role-based tasks to Agno",
+        "Specialist roles without typed state match CrewAI's pipeline branch"
+      ],
+      "correct": 3,
+      "explanation": "The role branch requires `has_roles` and `not has_typed_state`. Four calls avoid the plain-code shortcut, and no earlier resume, interrupt, fanout, or dialogue branch applies."
     },
     {
       "stage": "post",
-      "question": "You have a two-call summarizer: fetch text, summarize. Which option is the right framework choice?",
+      "question": "What is the recommendation for `Problem(needs_session_memory=True, total_llm_calls=6)` with no roles or dialogue?",
       "options": [
-        "LangGraph StateGraph — always reach for a framework first, since reliability requires checkpointing.",
-        "CrewAI with researcher + summarizer roles — separate roles make a two-step pipeline easier to reason about.",
-        "Plain Python with the provider SDK — no framework is the fastest framework for tiny pipelines.",
-        "AutoGen GroupChat — let two agents argue about the best summary until they converge on one answer."
+        "`agno`, because the single-agent session-memory branch matches",
+        "`langgraph`, because persistent memory is always represented as typed graph state",
+        "`plain python`, because session memory is not a workflow feature",
+        "`crewai`, because memory implies multiple specialist roles"
       ],
-      "correct": 2,
-      "explanation": "Every framework is another dependency. If the task is two LLM calls and a tool, plain Python is cheaper than any framework's setup cost -- no framework is the fastest framework."
+      "correct": 0,
+      "explanation": "With more than two calls and no role/dialogue/typed-state signals, the `needs_session_memory` branch selects Agno for its built-in storage-oriented single-agent shape."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Agent Framework Tradeoffs — LangGraph vs CrewAI vs AutoGen vs Agno?",
+      "question": "If `Problem(has_typed_state=True, total_llm_calls=5)` has no resume, interrupt, fanout, roles, dialogue, or session memory, which fallback applies?",
       "options": [
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "`plain python`, because typed state is only an annotation and never affects the tree",
+        "`langgraph`, because typed state maps to `StateGraph`",
+        "`autogen`, because any unknown case is a dialogue problem",
+        "`agno`, because no role signal means a single agent"
       ],
-      "correct": 0,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 1,
+      "explanation": "The final typed-state check returns LangGraph with a reason to map the `TypedDict` onto a `StateGraph`. The generic fallback is also LangGraph, but this case reaches the typed-state branch explicitly."
     }
   ]
 }

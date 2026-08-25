@@ -65,6 +65,11 @@ Product experiment feedback canvas.
 
 The template in `outputs/canvas-product-experiment-feedback.md` can be used before an AI product idea moves from discovery into delivery.
 
+## Worked scenario
+
+The demo's first case is **copilot onboarding test**: User feedback is strong but hypothesis unclear and metric missing. Treat the labels user feedback, hypothesis unclear, metric missing, experiment risk as evidence to inspect, not as an automatic approval. The implementation's signal matcher looks for those terms in the scenario name, description, and explicit signal list; then the scorer combines impact, uncertainty, and two points per matched signal (capped at 20). The priority function maps that score to a control level: launch gate at 16 or above, guided pilot at 11–15, team practice at 7–10, and awareness below 7.
+
+Run the case and check which of the controls — hypothesis statement, success metric, feedback sample, stop rule — appear in the returned row. Ask three questions: Which signal is supported by an observable source? Which control has an owner who can act this week? What evidence would move the case to a different priority? Then change one signal or impact value and rerun it. If the priority changes, explain whether the change came from the score, the matching rule, or both. The score is a triage aid; it does not replace domain approval, privacy review, or a pilot metric. Keep that distinction in the artifact and in the handoff.
 ## Key Takeaways
 
 - AI product work should start with a hypothesis.
@@ -72,12 +77,30 @@ The template in `outputs/canvas-product-experiment-feedback.md` can be used befo
 - Metrics should decide what happens after the pilot.
 - Stop rules protect teams from scaling weak evidence.
 
+## Build It
+
+Reconstruct **AI Product Experiment Design and Feedback Analytics** by following `Scenario` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
+
+## Ship It
+
+Hand off `outputs/canvas-product-experiment-feedback.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
+
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Identify product AI ideas that should be tested as experiments.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a product experiment triage artifact in Python.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Map user feedback, unclear hypotheses, missing metrics, and rollout risk to controls.
+Make the experiment auditable. Save the input, output, and one sentence explaining how the result bears on the claim.
+
+1. **Trace the happy path.** Run [main.py](../code/main.py) with `python3 main.py` from the lesson's `code/` directory. Record the smallest input that demonstrates “Identify product AI ideas that should be tested as experiments”. Point to `normalize()`, `signal_matches()`, `score_scenario()` and name the returned field or printed value that serves as evidence.
+2. **Perturb the input.** Change exactly one input, threshold, or option that affects “Build a product experiment triage artifact in Python”. Predict the direction of the change before running it, then compare the two outputs and explain why the other fields should stay stable.
+3. **Test a failure case.** Construct a case that stresses “Map user feedback, unclear hypotheses, missing metrics, and rollout risk to controls”: choose an empty collection, missing field, maximum-sized value, malformed record, or another boundary that fits this lesson. Write the expected behavior first and distinguish an intentional guard from an accidental crash.
+4. **Transfer the result.** Open outputs/canvas-product-experiment-feedback.md and adapt one example to a real workflow. State the owner, evidence, and next decision required for “Select hypothesis, metric, feedback-sample, and stop-rule controls”; mark any assumption that the demo does not establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Identify product AI ideas that should be tested as experiments,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Map user feedback, unclear hypotheses, missing metrics, and rollout risk to controls,” and cite a repeatable check rather than relying on visual inspection alone.
+A useful submission records python3 main.py, the observed output, and the conclusion drawn from it. It should contain:
+
+- evidence for “Identify product AI ideas that should be tested as experiments” with the relevant input and returned field;
+- a one-variable comparison that makes “Build a product experiment triage artifact in Python” visible;
+- a predicted and observed boundary result for “Map user feedback, unclear hypotheses, missing metrics, and rollout risk to controls”, including why the behavior is safe; and
+- one concrete update to outputs/canvas-product-experiment-feedback.md that applies “Select hypothesis, metric, feedback-sample, and stop-rule controls” without hiding uncertainty.
+
+Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.

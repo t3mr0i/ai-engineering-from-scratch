@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does Anthropic distinguish a workflow from an agent?",
+      "question": "What does `prompt_chain` pass into the second template in the demo?",
       "options": [
-        "Workflows are engineer-owned predefined graphs; agents are model-owned dynamic tool direction",
-        "Workflows always use embeddings for retrieval, while agents always call tools directly without any retrieval step",
-        "Workflows run only on CPU instances; agents require dedicated GPU inference hardware",
-        "Workflows are always stateless between calls; agents automatically persist state across every call"
+        "The original input plus the first prompt text",
+        "A list containing every previous `(label, output)` pair",
+        "The output returned by the first `summarize` call",
+        "The classifier label produced by `route`"
+      ],
+      "correct": 2,
+      "explanation": "The chain replaces `current` with each step's output, so the `title` template receives the summarizer's string."
+    },
+    {
+      "stage": "check",
+      "question": "What does `route` do when the classifier returns a label with no matching handler and no `default` handler?",
+      "options": [
+        "It retries classification until a known label appears.",
+        "It raises `KeyError` while indexing `handlers`.",
+        "It sends the input to every registered handler.",
+        "It returns the label and `no handler for <label>`."
+      ],
+      "correct": 3,
+      "explanation": "`handlers.get(label) or handlers.get(\"default\")` is checked once; if both are absent, the function returns the explicit no-handler message."
+    },
+    {
+      "stage": "check",
+      "question": "What result does the demo's five-vote `parallel_vote` produce for `is this code safe to ship?`?",
+      "options": [
+        "Winner `yes`, with counts `yes: 3` and `no: 2`.",
+        "Winner `no`, with counts `no: 5`.",
+        "A tie, because the same prompt is called only four times.",
+        "The first response `yes`, without counting later votes."
       ],
       "correct": 0,
-      "explanation": "Workflow = predefined code path the engineer owns; agent = the model owns the graph."
+      "explanation": "The scripted list is `yes, yes, no, yes, no`; `Counter.most_common` therefore selects `yes` at 3–2."
     },
     {
       "stage": "check",
-      "question": "What are the three capabilities of the augmented LLM that underpins all five patterns?",
+      "question": "How many workers handle the orchestrator demo task `review this python change for style and security`?",
       "options": [
-        "Embeddings, fine-tuning, and retrieval-augmented generation pipelines",
-        "Search (retrieval), tools (actions), memory (persistence)",
-        "Vector, KV, and graph stores, wired together behind one retrieval interface",
-        "Plan, execute, and reflect, cycling through a fixed three-step loop each turn"
+        "One: only the first matching worker is run.",
+        "Three: Python, security, and style workers all match.",
+        "Two: the style worker is excluded because security has priority.",
+        "Zero: the orchestrator requires an exact task string."
       ],
       "correct": 1,
-      "explanation": "The atomic unit is one LLM with retrieval, tools, and memory wired in."
-    },
-    {
-      "stage": "check",
-      "question": "Which is NOT one of the five Anthropic workflow patterns?",
-      "options": [
-        "Prompt chaining, where output of one call feeds the next",
-        "Routing, where a classifier LLM picks the downstream handler",
-        "Gradient distillation, a model-compression training technique",
-        "Evaluator-optimizer, where one LLM iteratively critiques another's draft"
-      ],
-      "correct": 2,
-      "explanation": "The five are prompt chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer. Gradient distillation is a training concept."
-    },
-    {
-      "stage": "check",
-      "question": "Which two shapes does parallelization come in?",
-      "options": [
-        "Sync and async calls, chosen based on whether the caller can block",
-        "Hot and cold paths, split by how frequently each branch executes",
-        "Sectioning (different chunks) and voting (same prompt N times, aggregate)",
-        "Stateful and stateless workers, split by whether they persist between calls"
-      ],
-      "correct": 2,
-      "explanation": "Parallelization is sectioning or voting; both fan out N calls and aggregate."
+      "explanation": "The task contains `python` and `style`, while the security worker always returns `True`; all three outputs are synthesized."
     },
     {
       "stage": "post",
-      "question": "Which workflow pattern is Self-Refine generalized?",
+      "question": "What does `evaluator_optimizer` do after the first candidate receives `FAIL: missing observations`?",
       "options": [
-        "Evaluator-optimizer, where one LLM proposes and another critiques",
-        "Prompt chaining, where each call's output feeds directly into the next",
-        "Routing, where a classifier decides which downstream handler runs",
-        "Orchestrator-workers, where one LLM dynamically assigns work to others"
+        "It returns the failed candidate immediately because `max_iter` is only a cap.",
+        "It discards the feedback and generates the same candidate with a new random seed.",
+        "It passes that feedback into the next proposer prompt, which then produces the passing candidate.",
+        "It sends the candidate to every orchestrator worker before trying again."
       ],
-      "correct": 0,
-      "explanation": "Evaluator-optimizer is the Anthropic name for the Self-Refine / CRITIC iterative pattern."
+      "correct": 2,
+      "explanation": "A failed iteration stores the evaluator's judge in `feedback`; the next `proposer` appends it as `(fix: ...)` to its prompt."
     },
     {
       "stage": "post",
-      "question": "When do workflows beat agents according to the lesson?",
+      "question": "How many scripted LLM calls does the complete demo report after running all five patterns?",
       "options": [
-        "Always, since workflows strictly dominate agents in every situation, regardless of how unpredictable the task is",
-        "On predictable, cost-bounded, or compliance-bounded tasks where the graph can be enumerated and audited",
-        "Only for simple, single-turn chat interfaces with no tool use",
-        "Only when the deployment runs entirely on dedicated GPU hardware"
+        "5",
+        "15",
+        "25",
+        "20"
       ],
-      "correct": 1,
-      "explanation": "Workflows are cheaper, easier to debug, and auditable; pick them when steps are knowable."
+      "correct": 3,
+      "explanation": "The final line of the demo reports `total llm calls across all five patterns: 20`, including routing, voting, workers, and evaluation retries."
     }
   ]
 }

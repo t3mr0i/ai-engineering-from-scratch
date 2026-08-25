@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does a language model need preprocessing before training?",
+      "question": "What tokens does tokenize(\"The cats were running at 3pm.\") return?",
       "options": [
-        "Preprocessing improves GPU utilization",
-        "Models consume discrete integer tokens, not raw text",
-        "Models read strings directly",
-        "Preprocessing is required only for languages without whitespace"
-      ],
-      "correct": 1,
-      "explanation": "Models operate on integer token IDs; preprocessing bridges continuous language to discrete inputs."
-    },
-    {
-      "stage": "check",
-      "question": "Which preprocessing operation is rule-based suffix stripping?",
-      "options": [
-        "Stemming",
-        "POS tagging",
-        "Lemmatization",
-        "Tokenization"
+        "The, cats, were, running, at, 3, pm, .",
+        "The, cats, were, running, at, 3pm.",
+        "The, catswere, runningat, 3pm",
+        "One token containing the entire sentence"
       ],
       "correct": 0,
-      "explanation": "Stemming chops suffixes with rules; it is fast but can be wrong."
+      "explanation": "WORD_RE keeps words, numbers, and punctuation; the adjacent digits and letters in 3pm become separate tokens."
     },
     {
       "stage": "check",
-      "question": "What does the Porter stemmer step 1a return for the word 'ponies'?",
+      "question": "What does stem_step_1a(\"studies\") return?",
       "options": [
-        "ponies",
-        "ponie",
-        "pony",
-        "poni"
+        "study",
+        "studi",
+        "studies",
+        "stud"
       ],
-      "correct": 3,
-      "explanation": "The 'ies' rule replaces the suffix with 'i', producing 'poni'; step 1b in real Porter cleans it up."
+      "correct": 1,
+      "explanation": "The small rule removes the final two characters for an \"ies\" ending, so the literal implementation returns studi."
     },
     {
       "stage": "check",
-      "question": "Why does lemmatization usually need a POS tag?",
+      "question": "What does lemmatize(\"running\", \"VERB\") return with the lesson's table?",
       "options": [
-        "Unicode handling",
-        "Speed",
-        "Grammatical context disambiguates forms like 'better' (ADJ) versus 'better' (VERB)",
-        "To reduce memory usage, before defining the measurement, acceptance threshold, or rollback path"
+        "running",
+        "runn",
+        "run",
+        "verb"
       ],
       "correct": 2,
-      "explanation": "Lemmas depend on grammatical role; without the tag the lookup is ambiguous."
+      "explanation": "The (running, VERB) entry maps directly to the lemma run."
+    },
+    {
+      "stage": "check",
+      "question": "With demo_pos_tagger, which lemma is produced for \"were\"?",
+      "options": [
+        "were",
+        "are",
+        "was",
+        "be"
+      ],
+      "correct": 3,
+      "explanation": "The demo tags were as VERB, and LEMMA_TABLE maps (were, VERB) to be."
     },
     {
       "stage": "post",
-      "question": "When translating NLTK Penn Treebank POS tags to WordNet tags, what does a tag starting with 'V' map to?",
+      "question": "How does the tokenizer treat \"don't\"?",
       "options": [
-        "'n' (noun)",
-        "'v' (verb)",
-        "'r' (adverb)",
-        "'a' (adjective)"
+        "It keeps don't as one token",
+        "It always returns do, n, and t",
+        "It drops the apostrophe and returns dont",
+        "It removes the word as punctuation"
       ],
-      "correct": 1,
-      "explanation": "Verb-prefixed Penn Treebank tags map to WordNet 'v'."
+      "correct": 0,
+      "explanation": "The word pattern allows an apostrophe followed by letters, so don't matches as a single token."
     },
     {
       "stage": "post",
-      "question": "What is 'training/inference mismatch' in NLP preprocessing?",
+      "question": "Which distinction best describes stemming versus lemmatization here?",
       "options": [
-        "Different batch sizes between train and test, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "Training and serving apply different preprocessing, so the model sees an unfamiliar distribution at inference",
-        "A GPU memory issue",
-        "Mixing tokenizer libraries within a notebook"
+        "Stemming needs a POS tag while lemmatization only deletes punctuation",
+        "Stemming applies surface suffix rules; lemmatization uses a word and POS to select a dictionary form",
+        "Both methods always return the same string for every word",
+        "Lemmatization converts text to integers, while stemming builds a vocabulary"
       ],
       "correct": 1,
-      "explanation": "Different preprocessing at training vs inference is the most common production NLP failure."
+      "explanation": "stem_step_1a is a crude suffix rewrite, whereas lemmatize can use entries such as (better, ADJ) to return good."
     }
   ]
 }

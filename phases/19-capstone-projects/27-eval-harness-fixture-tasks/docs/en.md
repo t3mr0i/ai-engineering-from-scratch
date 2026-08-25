@@ -440,12 +440,34 @@ python3 -m pytest code/tests/ -v
 
 The demo prints the EvalReport in JSON, including pass@1, pass@5, mean latency, and per-task breakdown. The exit code is zero. The tests cover the verifier functions, the pass@k math, fixture loading, and the harness end-to-end against the bundled reference candidate.
 
+## Build It
+
+Reconstruct **Eval Harness with Fixture Tasks** by following `call` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
+
+## Use It
+
+Call `call` from a small caller with the demo’s smallest built-in fixture. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/artifact-card.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
+
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Define a fixture task as a triple of goal, setup, and verifier.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Score multiple sample runs per task and compute pass@1 and pass@k.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Aggregate latency and cost into mean and 95th-percentile metrics.
+Work from the smallest fixture that the Eval Harness with Fixture Tasks demo already understands, then make one deliberate change and record what moved.
+
+1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using the demo’s smallest built-in fixture. Follow `call`, `text`, `usage`. Expect the result reports the empty case explicitly or raises the documented validation error; capture the first printed shape, metric, status, or summary field and state which part supports **Define a fixture task as a triple of goal, setup, and verifier.**.
+2. **Perturb one field.** Repeat the command after changing only the primary fixture value: use the same fixture with its primary value changed from 1 to 2. Predict the direction of the change, then compare the two output values. Explain why **Score multiple sample runs per task and compute pass@1 and pass@k.** says the other inputs should stay fixed.
+3. **Check the failure boundary.** Feed the implementation an empty fixture {}. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Aggregate latency and cost into mean and 95th-percentile metrics.** and record the exception text if the code rejects the case.
+4. **Make the result repeatable.** Open `outputs/artifact-card.md` and add a worked example using the demo’s smallest built-in fixture. Include the input contract, one expected output field, and a named acceptance check for **Wire deterministic verifiers (file diff, exit code, regex match) into reusable functions.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define a fixture task as a triple of goal, setup, and verifier,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Aggregate latency and cost into mean and 95th-percentile metrics,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Eval Harness with Fixture Tasks** should contain:
+
+- the `python3 main.py` output for the demo’s smallest built-in fixture, with `call`, `text`, `usage` traced to the value or shape that supports **Define a fixture task as a triple of goal, setup, and verifier.**;
+- a before/after comparison for the primary fixture value, where the same fixture with its primary value changed from 1 to 2 changes the observation in the direction predicted by **Score multiple sample runs per task and compute pass@1 and pass@k.**;
+- a recorded result for an empty fixture {} that matches the implementation’s validation or empty-result contract and explains the evidence for **Aggregate latency and cost into mean and 95th-percentile metrics.**; and
+- an updated `outputs/artifact-card.md` example with a concrete input, expected output field, and acceptance check tied to **Wire deterministic verifiers (file diff, exit code, regex match) into reusable functions.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

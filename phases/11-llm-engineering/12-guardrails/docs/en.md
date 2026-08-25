@@ -446,6 +446,18 @@ else:
     print(f"{result['response']}")
 ```
 
+## Build It
+
+Reconstruct **Guardrails, Safety & Content Filtering** by following `GuardrailResult` on the text "red fox". Run `npx tsx main.ts` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
+
+## Use It
+
+Call `GuardrailResult` from a small caller with the text "red fox". Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-safety-auditor.md` with the command `npx tsx main.ts`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Greshake et al., 2023 -- "Not What You Signed Up For: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection"](https://arxiv.org/abs/2302.12173) -- the foundational paper on indirect prompt injection.
@@ -454,10 +466,20 @@ else:
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement input guardrails that detect and block prompt injection, jailbreak attempts, and toxic content before reaching the model.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build output guardrails that validate responses for PII leakage, hallucinated URLs, and policy violations.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Design a layered defense system combining input filtering, system prompt hardening, and output validation.
+Use the demo as evidence, not as a ceremony: record what went in, what came out, and why that observation supports the objective.
+
+1. **Start with a known input.** Run [main.ts](../code/main.ts) with `npx tsx main.ts` from the lesson's `code/` directory. Record the smallest input that demonstrates “Implement input guardrails that detect and block prompt injection, jailbreak attempts, and toxic content before reaching the model”. Point to `hashShort()`, `now()`, `detectInjection()` and name the returned field or printed value that serves as evidence.
+2. **Run a controlled comparison.** Change exactly one input, threshold, or option that affects “Build output guardrails that validate responses for PII leakage, hallucinated URLs, and policy violations”. Predict the direction of the change before running it, then compare the two outputs and explain why the other fields should stay stable.
+3. **Try the smallest valid counterexample.** Construct a case that stresses “Design a layered defense system combining input filtering, system prompt hardening, and output validation”: choose an empty collection, missing field, maximum-sized value, malformed record, or another boundary that fits this lesson. Write the expected behavior first and distinguish an intentional guard from an accidental crash.
+4. **Transfer the result.** Open outputs/prompt-safety-auditor.md and adapt one example to a real workflow. State the owner, evidence, and next decision required for “Test guardrails against a red-team prompt set and measure the false positive/negative rate”; mark any assumption that the demo does not establish.
 
 ## Reference Solution
 
-Use the canonical [main.ts](../code/main.ts) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement input guardrails that detect and block prompt injection, jailbreak attempts, and toxic content before reaching the model,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Design a layered defense system combining input filtering, system prompt hardening, and output validation,” and cite a repeatable check rather than relying on visual inspection alone.
+The reference run should leave a small receipt: npx tsx main.ts, its captured output, and your interpretation. Include:
+
+- evidence for “Implement input guardrails that detect and block prompt injection, jailbreak attempts, and toxic content before reaching the model” with the relevant input and returned field;
+- a one-variable comparison that makes “Build output guardrails that validate responses for PII leakage, hallucinated URLs, and policy violations” visible;
+- a predicted and observed boundary result for “Design a layered defense system combining input filtering, system prompt hardening, and output validation”, including why the behavior is safe; and
+- one concrete update to outputs/prompt-safety-auditor.md that applies “Test guardrails against a red-team prompt set and measure the false positive/negative rate” without hiding uncertainty.
+
+Use hashShort(), now(), detectInjection() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.

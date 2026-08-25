@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to LLM Routing Layer — LiteLLM, OpenRouter, Portkey?",
+      "question": "Which fallback chain does the smart alias use?",
       "options": [
-        "Distinguish self-hosted, managed, and production-grade routing options",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Distinguish self-hosted, managed, and production-grade routing options” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of LLM Routing Layer — LiteLLM, OpenRouter, Portkey?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement a fallback chain that retries on provider failures in a defined priority order",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement a fallback chain that retries on provider failures in a defined priority order” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through LLM Routing Layer — LiteLLM, OpenRouter, Portkey?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Track per-request cost and token usage across providers",
-        "Treat one successful example as proof that every edge case works"
+        "anthropic/claude-haiku, then openai/gpt-4o-mini",
+        "The smart alias has no fallback",
+        "openai/gpt-4o -> anthropic/claude-sonnet -> google/gemini-pro",
+        "google/gemini-pro, then openai/gpt-4o, then anthropic/claude-haiku"
       ],
       "correct": 2,
-      "explanation": "“Track per-request cost and token usage across providers” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "ROUTES maps smart to openai/gpt-4o, anthropic/claude-sonnet, then google/gemini-pro, so an outage can advance through those providers in order."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits LLM Routing Layer — LiteLLM, OpenRouter, Portkey?",
+      "question": "What model chain does the fast alias select?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Decide between LiteLLM, OpenRouter, and Portkey for a given production constraint",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Decide between LiteLLM, OpenRouter, and Portkey for a given production constraint” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for LLM Routing Layer — LiteLLM, OpenRouter, Portkey?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Distinguish self-hosted, managed, and production-grade routing options"
+        "openai/gpt-4o -> anthropic/claude-sonnet",
+        "anthropic/claude-sonnet -> google/gemini-pro",
+        "anthropic/claude-haiku -> openai/gpt-4o",
+        "openai/gpt-4o-mini -> anthropic/claude-haiku"
       ],
       "correct": 3,
-      "explanation": "“Distinguish self-hosted, managed, and production-grade routing options” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The fast route starts with openai/gpt-4o-mini and falls back to anthropic/claude-haiku."
+    },
+    {
+      "stage": "check",
+      "question": "What happens to an SSN in messages before provider_call?",
+      "options": [
+        "redacts to [REDACTED]; redacted=True",
+        "It is sent unchanged to every fallback",
+        "It is hashed but still shown in the prompt",
+        "It causes routing to fail before any attempt"
+      ],
+      "correct": 0,
+      "explanation": "redact_pii replaces the SSN pattern (and card pattern) before the provider request, and the invocation records that redaction occurred."
+    },
+    {
+      "stage": "check",
+      "question": "What result does route return when every provider in an alias chain is in OUTAGE?",
+      "options": [
+        "The last provider's stale response",
+        "all providers failed",
+        "A successful empty completion",
+        "A 403 scope error"
+      ],
+      "correct": 1,
+      "explanation": "Each provider failure is recorded; if none succeeds, the invocation returns the explicit all-providers-failed error."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for LLM Routing Layer — LiteLLM, OpenRouter, Portkey?",
+      "question": "How is a successful invocation cost computed?",
       "options": [
-        "Implement a fallback chain that retries on provider failures in a defined priority order",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "By counting only prompt characters",
+        "As a flat fee per route",
+        "token rates per million applied to usage",
+        "By using the number of fallback attempts as dollars"
       ],
-      "correct": 0,
-      "explanation": "“Implement a fallback chain that retries on provider failures in a defined priority order” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The pricing table is per million tokens, so route combines prompt and completion usage with the selected model's input/output rates."
+    },
+    {
+      "stage": "post",
+      "question": "Why does the route alias help the application?",
+      "options": [
+        "It makes every provider return identical hidden states",
+        "It removes the need to measure latency",
+        "It guarantees the first provider is always available",
+        "alias owns selection and fallback"
+      ],
+      "correct": 3,
+      "explanation": "Aliases decouple the caller from concrete provider names, allowing routing, outage fallback, and pricing policy to change centrally."
     }
   ]
 }

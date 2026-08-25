@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is MASFT's central claim?",
+      "question": "Which label does the detector assign when a trace calls the unknown tool `magic_scanner`?",
       "options": [
-        "Multi-agent failures are fundamental design flaws, not LLM limitations to be fixed with better base models",
-        "Failures are random noise that averages out once you collect enough production traces",
-        "Failures vanish once you swap in a larger, more capable base model for every agent",
-        "Failures are caused by transient network outages between agents and their tool APIs"
-      ],
-      "correct": 0,
-      "explanation": "Berkeley's MASFT categorizes failures as design flaws; they do not disappear by scaling the base model."
-    },
-    {
-      "stage": "check",
-      "question": "Which is NOT one of the five recurring industry failure modes the lesson lists?",
-      "options": [
-        "Scope creep, where the agent expands the task beyond what the user asked for",
-        "Embedding versioning, which the lesson never lists as one of the five modes",
-        "Cascading errors, where one wrong call triggers downstream effects across systems",
-        "Tool misuse, where the right tool is called with the wrong arguments"
-      ],
-      "correct": 1,
-      "explanation": "The five are hallucinated actions, scope creep, cascading errors, context loss, tool misuse."
-    },
-    {
-      "stage": "check",
-      "question": "What is a cascading error in this lesson?",
-      "options": [
-        "An LLM rate-limit cascade that throttles every downstream tool call for the remainder of that session",
-        "A cron scheduling failure that skips the agent's nightly maintenance run entirely without warning",
-        "One wrong call triggers downstream effects across systems (a phantom SKU triggers four downstream API calls)",
-        "A YAML parser error in the agent's configuration file that blocks the whole startup sequence"
+        "`tool_misuse`",
+        "`scope_creep`",
+        "`hallucinated_action`",
+        "`context_loss`"
       ],
       "correct": 2,
-      "explanation": "Cascades amplify a single bad call into a multi-system incident; especially severe when agents fake success."
+      "explanation": "`magic_scanner` is not in `KNOWN_TOOLS`, so the first detector flags the action as a hallucinated tool call before later checks run."
     },
     {
       "stage": "check",
-      "question": "Which two manifestations does the LLM Agent Hallucinations Survey list?",
+      "question": "Why is the `write_file` action in task `t002` tagged `scope_creep`?",
       "options": [
-        "Hot-token sampling and cold-token suppression during autoregressive decoding",
-        "Greedy search collapse and beam-width starvation during response generation",
-        "Soft-prompt drift and hard-prompt override during in-context tool selection",
-        "Instruction-following Deviation and Long-range Contextual Misuse"
+        "The tool name is misspelled and cannot be parsed.",
+        "The trace contains an error followed by two downstream calls.",
+        "The action omits the required `path` argument.",
+        "The request asks to find configuration, without explicitly authorizing a write."
       ],
       "correct": 3,
-      "explanation": "Hallucinations show up as either ignoring system prompt or forgetting/misapplying earlier-turn context."
+      "explanation": "The scope detector treats `write_file` as mutating and checks for explicit write/create/save/update/edit language. `t002` has none, so the mutation exceeds the request scope."
     },
     {
-      "stage": "post",
-      "question": "What does success hallucination mean?",
+      "stage": "check",
+      "question": "What makes task `t004` qualify for `cascading_errors`?",
       "options": [
-        "The agent returns a success message even though the target state did not change (often on a 400 from a tool)",
-        "The model reports overconfident scores on public benchmark leaderboards despite weak production accuracy",
-        "The user simply assumes the task succeeded when in fact no agent action was ever taken at all",
-        "A unit test in the CI pipeline still passes even though the underlying feature is broken"
+        "An earlier tool error is followed by at least two downstream tool calls.",
+        "It calls an unlisted tool before any other action.",
+        "It modifies a file without an explicit write request.",
+        "Its final claim says success while the target state is unchanged."
       ],
       "correct": 0,
-      "explanation": "Re-probe environment state; agents commonly fake completion when they cannot distinguish 'I failed' from 'impossible'."
+      "explanation": "The cascade detector requires both conditions: an error in the trace and two or more later tool calls that continue from that failed state; `t004` has both."
+    },
+    {
+      "stage": "check",
+      "question": "What does the context-loss detector look for in `do not modify src/`?",
+      "options": [
+        "It extracts `src/` and checks whether the directory exists.",
+        "It extracts `modify` and searches serialized tool arguments for that token.",
+        "It ignores negated instructions because they are not tool calls.",
+        "It extracts `do` and requires every tool argument to contain it."
+      ],
+      "correct": 1,
+      "explanation": "The detector takes the first token after `do not`—`modify`—and checks for that forbidden token in the serialized tool arguments to identify a violated constraint."
     },
     {
       "stage": "post",
-      "question": "Why is tagging only crashes insufficient?",
+      "question": "Why is task `t006` tagged `tool_misuse`?",
       "options": [
-        "Crashes are slower to detect than content-level regressions in a typical monitoring pipeline",
-        "Most agent failures produce valid-looking output that does not crash; content-level checks are needed",
-        "Crashes leak PII more often than successful runs that silently return wrong answers",
-        "Logging every crash is a paid feature in most observability platforms' pricing tiers"
+        "It calls `read_file`, which is never an allowed tool.",
+        "It writes to a path even though the request is read-only.",
+        "Its `read_file` call supplies `file` instead of the required `path` argument.",
+        "It calls two tools after an earlier error."
       ],
-      "correct": 1,
-      "explanation": "Crash-based monitoring misses the bulk of agent failures, which are content-shaped."
+      "correct": 2,
+      "explanation": "`read_file` is known, but its schema requires `path`; the fixture passes `file`, so the required-argument detector reports tool misuse."
+    },
+    {
+      "stage": "post",
+      "question": "What triggers `success_hallucination` in task `t007`?",
+      "options": [
+        "A known search tool returns an empty result.",
+        "The request contains a negated instruction about a directory.",
+        "A tool call has an unknown name and no final response.",
+        "The trace claims a write succeeded, but the requested target state did not change."
+      ],
+      "correct": 3,
+      "explanation": "The detector combines write intent, a final success claim, and `target_state_changed=False`; that mismatch is the lesson's success-hallucination case."
     }
   ]
 }

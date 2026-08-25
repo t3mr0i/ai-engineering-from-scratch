@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the chain rule in calculus state?",
+      "question": "For y=(3x+1)^2 at x=2, what derivative should a reverse-mode engine produce?",
       "options": [
-        "The derivative of a sum is the sum of derivatives",
-        "The derivative of composed functions is the product of their individual derivatives",
-        "The integral of a product is the product of integrals",
-        "Functions can only be differentiated if they are linear — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "For y = f(g(x)), the chain rule says dy/dx = f'(g(x)) * g'(x). You multiply the derivatives at each link in the chain. This is the mathematical basis of backpropagation."
-    },
-    {
-      "stage": "check",
-      "question": "What is a computational graph?",
-      "options": [
-        "A plot of loss vs training steps",
-        "A directed graph where nodes are operations and edges carry values forward or gradients backward",
-        "A diagram showing the architecture of a neural network, with no need to inspect intermediate results or test edge cases",
-        "A graph database used for storing training data"
-      ],
-      "correct": 1,
-      "explanation": "A computational graph represents the sequence of operations in a computation. Data flows forward through the graph, and gradients flow backward during backpropagation."
-    },
-    {
-      "stage": "check",
-      "question": "Why does PyTorch use reverse-mode autodiff (backpropagation) instead of forward-mode?",
-      "options": [
-        "Reverse mode is more numerically accurate",
-        "Reverse mode computes all gradients in one backward pass, while forward mode needs one pass per input variable -- neural networks have millions of inputs but one loss output",
-        "Reverse mode uses less memory",
-        "Forward mode cannot handle non-linear functions, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path"
-      ],
-      "correct": 1,
-      "explanation": "Neural networks have millions of weight inputs but produce a single scalar loss. Reverse mode needs one backward pass total. Forward mode would need one pass per weight -- millions of passes -- making it impractical."
-    },
-    {
-      "stage": "check",
-      "question": "In the Value class autograd engine, why does the backward function use '+=' instead of '=' for accumulating gradients?",
-      "options": [
-        "To average the gradients across multiple samples",
-        "Because a value used in multiple operations receives gradient contributions from each one, which must be summed",
-        "To prevent numerical overflow in the gradients",
-        "Because Python does not support the '=' operator in closures, before defining the measurement, acceptance threshold, or rollback path"
-      ],
-      "correct": 1,
-      "explanation": "When a value feeds into multiple operations (e.g., x used in both x*y and x+z), its total gradient is the sum of all incoming gradient contributions. Using '=' would overwrite earlier contributions."
-    },
-    {
-      "stage": "post",
-      "question": "What is gradient checking and when should you use it?",
-      "options": [
-        "Checking that gradients are below a threshold to prevent exploding gradients — and applies unchanged even when the lesson's stated preconditions fail",
-        "Comparing autodiff gradients against numerical finite-difference gradients to verify correctness of the backward pass",
-        "Checking that all parameters received non-zero gradients during training",
-        "Monitoring gradient magnitudes during training to detect vanishing gradients"
-      ],
-      "correct": 1,
-      "explanation": "Gradient checking computes numerical derivatives via (f(x+h) - f(x-h)) / 2h and compares them to autodiff gradients. Use it when adding new operations to your autograd engine or debugging training failures."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Chain Rule & Automatic Differentiation?",
-      "options": [
-        "Implement forward and backward passes through a computation graph using topological sort",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "42",
+        "14",
+        "12",
+        "49"
       ],
       "correct": 0,
-      "explanation": "“Implement forward and backward passes through a computation graph using topological sort” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Let u=3x+1=7. The chain rule gives dy/dx=2u*3=42."
+    },
+    {
+      "stage": "check",
+      "question": "In the demo y=relu(x1*x2+1) with x1=2 and x2=3, what are dy/dx1 and dy/dx2?",
+      "options": [
+        "2 and 3",
+        "3 and 2",
+        "1 and 1",
+        "0 and 0"
+      ],
+      "correct": 1,
+      "explanation": "The preactivation is 7, so ReLU's derivative is 1. The product rule then gives dy/dx1=x2=3 and dy/dx2=x1=2."
+    },
+    {
+      "stage": "check",
+      "question": "Why does reverse mode suit a scalar loss produced from many parameters?",
+      "options": [
+        "It avoids recording the forward computation graph",
+        "It computes only the largest parameter gradient",
+        "One backward pass propagates the scalar output gradient to every input",
+        "It requires one complete forward pass per parameter"
+      ],
+      "correct": 2,
+      "explanation": "Reverse mode starts with dL/dL=1 and applies local derivatives in reverse topological order, efficiently producing gradients for many inputs."
+    },
+    {
+      "stage": "check",
+      "question": "How does gradient_check compare an autodiff gradient with a numerical gradient?",
+      "options": [
+        "It compares two random model initializations",
+        "It checks only whether the final loss is positive",
+        "It replaces backward() with a matrix inverse",
+        "It evaluates the expression at x+h and x-h and divides their difference by 2h"
+      ],
+      "correct": 3,
+      "explanation": "The centered finite difference provides an independent approximation. A small absolute difference between it and autodiff helps catch a faulty local backward rule."
+    },
+    {
+      "stage": "post",
+      "question": "A Value has a negative ReLU preactivation. What gradient reaches its input in this implementation?",
+      "options": [
+        "Zero",
+        "The positive preactivation itself",
+        "One regardless of the input",
+        "The square of the loss"
+      ],
+      "correct": 0,
+      "explanation": "The ReLU backward closure adds out.grad only when out.data > 0. A negative branch therefore blocks the gradient."
+    },
+    {
+      "stage": "post",
+      "question": "Why does the XOR training loop set every parameter's grad to 0 before loss.backward()?",
+      "options": [
+        "Zeroing gradients changes tanh into ReLU",
+        "The engine accumulates gradients, so each update must start from a clean sum",
+        "Backward can run only after all parameters are deleted",
+        "The optimizer needs gradients to remain constant across steps"
+      ],
+      "correct": 1,
+      "explanation": "Each backward call adds into grad. Resetting prevents gradients from earlier examples or steps from being applied again, allowing the MLP to learn the XOR targets."
     }
   ]
 }

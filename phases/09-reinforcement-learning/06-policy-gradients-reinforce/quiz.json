@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Policy Gradient — REINFORCE from Scratch?",
+      "question": "What is the shape and encoding of features((2, 1)) in the 4x4 policy-gradient demo?",
       "options": [
-        "Formulate Policy Gradient — REINFORCE from Scratch in terms of states, actions, rewards, and objectives",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Formulate Policy Gradient — REINFORCE from Scratch in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Policy Gradient — REINFORCE from Scratch?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the central update rule from first principles",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Policy Gradient — REINFORCE from Scratch?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Trace learning signals through a self-terminating experiment",
-        "Treat one successful example as proof that every edge case works"
+        "A four-element vector with the action logits",
+        "A scalar equal to 2*1",
+        "A length-16 one-hot state vector with its 1 at index 9",
+        "A length-100 vector for the rollout horizon"
       ],
       "correct": 2,
-      "explanation": "“Trace learning signals through a self-terminating experiment” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "features uses r*GRID+c as the active coordinate in a GRID*GRID vector, so (2,1) activates index 9 of 16."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Policy Gradient — REINFORCE from Scratch?",
+      "question": "Why does softmax(z) subtract max(z) before exponentiating?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate convergence, stability, and exploration trade-offs",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate convergence, stability, and exploration trade-offs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Policy Gradient — REINFORCE from Scratch?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Formulate Policy Gradient — REINFORCE from Scratch in terms of states, actions, rewards, and objectives"
+        "To force the largest action probability to zero",
+        "To remove the action selected by the rollout",
+        "To turn logits into integer action IDs",
+        "To improve numerical stability while preserving the normalized probabilities"
       ],
       "correct": 3,
-      "explanation": "“Formulate Policy Gradient — REINFORCE from Scratch in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Subtracting the same maximum from every logit leaves softmax ratios unchanged and keeps exponentials in a safer numerical range."
+    },
+    {
+      "stage": "check",
+      "question": "How does returns_to_go compute the return associated with each time step?",
+      "options": [
+        "It walks rewards backward with G = r + gamma*G and then reverses the list",
+        "It assigns the final reward unchanged to every step",
+        "It sorts rewards by action before discounting them",
+        "It uses only the first reward and ignores all later steps"
+      ],
+      "correct": 0,
+      "explanation": "The reverse loop accumulates discounted future rewards; out.reverse() restores the original trajectory order."
+    },
+    {
+      "stage": "check",
+      "question": "What baseline is used when reinforce(..., use_baseline=True) updates an episode?",
+      "options": [
+        "The maximum action probability in the current state",
+        "baseline = 0.95*baseline + 0.05*returns[0], and each advantage subtracts it",
+        "The terminal reward only, without any return estimate",
+        "A separate target network copied from theta"
+      ],
+      "correct": 1,
+      "explanation": "The moving scalar baseline is updated from the episode's first return, and the code uses G-baseline as adv at every step."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Policy Gradient — REINFORCE from Scratch?",
+      "question": "Which gradient factor does reinforce use for action i at a visited state?",
       "options": [
-        "Implement the central update rule from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "The raw reward multiplied by theta[i][j]",
+        "Only probs[i], with no dependence on the sampled action",
+        "((1 if i==a else 0) - probs[i]) multiplied by adv and the state feature",
+        "The derivative of a Q-learning max over the next state"
       ],
-      "correct": 0,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "This is the softmax log-policy gradient; reinforce scales it by the return or advantage and by x[j] before ascending theta."
+    },
+    {
+      "stage": "post",
+      "question": "What variance-reduction effect is the baseline intended to provide?",
+      "options": [
+        "It makes every action deterministic after one episode",
+        "It removes the need to sample complete trajectories",
+        "It changes the environment reward from -1.0 to zero",
+        "It subtracts a state-independent estimate from returns without changing the expected policy-gradient direction"
+      ],
+      "correct": 3,
+      "explanation": "A baseline that does not depend on the chosen action reduces the spread of the multiplier while preserving the unbiased gradient expectation."
     }
   ]
 }

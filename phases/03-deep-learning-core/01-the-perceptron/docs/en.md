@@ -115,6 +115,18 @@ The fix: stack perceptrons into layers. A multi-layer perceptron can solve XOR b
 
 
 
+## Build It
+
+Reconstruct **The Perceptron** by following `Perceptron` on a graph with edges (0,1) and (1,2). Run `julia main.jl` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.
+
+## Use It
+
+Call `Perceptron` from a small caller with a graph with edges (0,1) and (1,2). Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-perceptron.md` with the command `julia main.jl`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - Frank Rosenblatt, "The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain" (1958) -- the original paper that started it all
@@ -123,10 +135,20 @@ The fix: stack perceptrons into layers. A multi-layer perceptron can solve XOR b
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement a perceptron from scratch in Python, including the weight update rule and step activation function.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why a single perceptron can only solve linearly separable problems and demonstrate the XOR failure case.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Construct a multi-layer perceptron by composing OR, NAND, and AND gates to solve XOR.
+This lab follows `Perceptron` and `predict` on a controlled fixture; write down the value before changing the input.
+
+1. **Trace the canonical fixture.** From `code/`, run `julia main.jl` using a graph with edges (0,1) and (1,2). Follow `Perceptron`, `predict`, `train`. Expect degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly; capture the first printed shape, metric, status, or summary field and state which part supports **Implement a perceptron from scratch in Python, including the weight update rule and step activation function**.
+2. **Change the controlled parameter.** Repeat the command after changing only the edge list: use the same graph with an isolated node 3. Predict the direction of the change, then compare the two output values. Explain why **Explain why a single perceptron can only solve linearly separable problems and demonstrate the XOR failure case** says the other inputs should stay fixed.
+3. **Exercise the guard.** Feed the implementation a graph with no edges. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Construct a multi-layer perceptron by composing OR, NAND, and AND gates to solve XOR** and record the exception text if the code rejects the case.
+4. **Prepare the artifact for reuse.** Open `outputs/skill-perceptron.md` and add a worked example using a graph with edges (0,1) and (1,2). Include the input contract, one expected output field, and a named acceptance check for **Train a two-layer network with sigmoid activation and backpropagation to learn XOR automatically**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.jl](../code/main.jl) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement a perceptron from scratch in Python, including the weight update rule and step activation function,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Construct a multi-layer perceptron by composing OR, NAND, and AND gates to solve XOR,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **The Perceptron** should contain:
+
+- the `julia main.jl` output for a graph with edges (0,1) and (1,2), with `Perceptron`, `predict`, `train` traced to the value or shape that supports **Implement a perceptron from scratch in Python, including the weight update rule and step activation function**;
+- a before/after comparison for the edge list, where the same graph with an isolated node 3 changes the observation in the direction predicted by **Explain why a single perceptron can only solve linearly separable problems and demonstrate the XOR failure case**;
+- a recorded result for a graph with no edges that matches the implementation’s validation or empty-result contract and explains the evidence for **Construct a multi-layer perceptron by composing OR, NAND, and AND gates to solve XOR**; and
+- an updated `outputs/skill-perceptron.md` example with a concrete input, expected output field, and acceptance check tied to **Train a two-layer network with sigmoid activation and backpropagation to learn XOR automatically**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

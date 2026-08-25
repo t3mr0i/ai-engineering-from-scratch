@@ -75,12 +75,30 @@ The template in `outputs/checklist-ai-security-triage.md` can be used before an 
 - Security controls should be proportional to impact and uncertainty.
 - AI security work belongs in the design phase, not only at go-live.
 
+## Build It
+
+Reconstruct **AI Security and Prompt Injection Defense** by following `Scenario` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
+
+## Ship It
+
+Hand off `outputs/checklist-ai-security-triage.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
+
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Identify common AI security signals in prompts, tools, retrieval, and outputs.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a lightweight threat-triage artifact in Python.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Map prompt injection, data leakage, unsafe tool use, and audit gaps to controls.
+Begin with a control run and leave a short receipt: input, output, and the reasoning that connects them to the objective.
+
+1. **Trace the happy path.** Run [main.py](../code/main.py) with `python3 main.py` from the lesson's `code/` directory. Record the smallest input that demonstrates “Identify common AI security signals in prompts, tools, retrieval, and outputs”. Point to `normalize()`, `signal_matches()`, `score_scenario()` and name the returned field or printed value that serves as evidence.
+2. **Perturb the input.** Change exactly one input, threshold, or option that affects “Build a lightweight threat-triage artifact in Python”. Predict the direction of the change before running it, then compare the two outputs and explain why the other fields should stay stable.
+3. **Test a failure case.** Construct a case that stresses “Map prompt injection, data leakage, unsafe tool use, and audit gaps to controls”: choose an empty collection, missing field, maximum-sized value, malformed record, or another boundary that fits this lesson. Write the expected behavior first and distinguish an intentional guard from an accidental crash.
+4. **Transfer the result.** Open outputs/checklist-ai-security-triage.md and adapt one example to a real workflow. State the owner, evidence, and next decision required for “Choose when an AI workflow needs team practice, a guided pilot, or a launch gate”; mark any assumption that the demo does not establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Identify common AI security signals in prompts, tools, retrieval, and outputs,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Map prompt injection, data leakage, unsafe tool use, and audit gaps to controls,” and cite a repeatable check rather than relying on visual inspection alone.
+Keep the solution auditable: run python3 main.py, save the output, and explain what it demonstrates. Include:
+
+- evidence for “Identify common AI security signals in prompts, tools, retrieval, and outputs” with the relevant input and returned field;
+- a one-variable comparison that makes “Build a lightweight threat-triage artifact in Python” visible;
+- a predicted and observed boundary result for “Map prompt injection, data leakage, unsafe tool use, and audit gaps to controls”, including why the behavior is safe; and
+- one concrete update to outputs/checklist-ai-security-triage.md that applies “Choose when an AI workflow needs team practice, a guided pilot, or a launch gate” without hiding uncertainty.
+
+Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.

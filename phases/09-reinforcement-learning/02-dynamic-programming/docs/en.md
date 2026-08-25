@@ -48,6 +48,18 @@ Repeat until `max_s |V_{new}(s) - V(s)| < ε`. Extract the policy at the end by 
 
 
 
+## Build It
+
+Reconstruct **Dynamic Programming — Policy Iteration & Value Iteration** by following `states` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.
+
+## Use It
+
+Call `states` from a small caller with the smallest valid record {"id": 1}. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-dp-solver.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Sutton & Barto (2018). Ch. 4 — Dynamic Programming](http://incompleteideas.net/book/RLbook2020.pdf) — the canonical presentation of policy iteration and value iteration.
@@ -58,10 +70,20 @@ Repeat until `max_s |V_{new}(s) - V(s)| < ε`. Extract the policy at the end by 
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Formulate Dynamic Programming — Policy Iteration & Value Iteration in terms of states, actions, rewards, and objectives.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement the central update rule from first principles.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Trace learning signals through a self-terminating experiment.
+Use `states` as the trace: start from the smallest valid record {"id": 1}, keep the raw output, and tie each observation to a named objective.
+
+1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using the smallest valid record {"id": 1}. Follow `states`, `apply_move`, `perpendiculars`. Expect validation names the missing field or rejects the request; it must not silently accept an incomplete record; capture the first printed shape, metric, status, or summary field and state which part supports **Formulate Dynamic Programming — Policy Iteration & Value Iteration in terms of states, actions, rewards, and objectives**.
+2. **Vary one named input.** Repeat the command after changing only the optional field: use the same record with one optional field changed. Predict the direction of the change, then compare the two output values. Explain why **Implement the central update rule from first principles** says the other inputs should stay fixed.
+3. **Probe the empty case.** Feed the implementation a record missing the required "id" field. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Trace learning signals through a self-terminating experiment** and record the exception text if the code rejects the case.
+4. **Package a usable handoff.** Open `outputs/skill-dp-solver.md` and add a worked example using the smallest valid record {"id": 1}. Include the input contract, one expected output field, and a named acceptance check for **Evaluate convergence, stability, and exploration trade-offs**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Formulate Dynamic Programming — Policy Iteration & Value Iteration in terms of states, actions, rewards, and objectives,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Trace learning signals through a self-terminating experiment,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Dynamic Programming — Policy Iteration & Value Iteration** should contain:
+
+- the `python3 main.py` output for the smallest valid record {"id": 1}, with `states`, `apply_move`, `perpendiculars` traced to the value or shape that supports **Formulate Dynamic Programming — Policy Iteration & Value Iteration in terms of states, actions, rewards, and objectives**;
+- a before/after comparison for the optional field, where the same record with one optional field changed changes the observation in the direction predicted by **Implement the central update rule from first principles**;
+- a recorded result for a record missing the required "id" field that matches the implementation’s validation or empty-result contract and explains the evidence for **Trace learning signals through a self-terminating experiment**; and
+- an updated `outputs/skill-dp-solver.md` example with a concrete input, expected output field, and acceptance check tied to **Evaluate convergence, stability, and exploration trade-offs**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

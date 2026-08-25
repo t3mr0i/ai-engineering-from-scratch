@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why do AI projects need a separate virtual environment?",
+      "question": "Which command gives a reproducible first check of this lesson's Rust entrypoint?",
       "options": [
-        "Virtual environments make code run faster",
-        "They isolate dependencies so different projects don't conflict",
-        "Python requires virtual environments to import packages — and applies unchanged even when the lesson's stated preconditions fail",
-        "Virtual environments provide GPU access"
-      ],
-      "correct": 1,
-      "explanation": "Virtual environments isolate package versions per project. Without them, upgrading PyTorch for one project can break another that depends on an older version."
-    },
-    {
-      "stage": "check",
-      "question": "What does CUDA provide for AI workloads?",
-      "options": [
-        "A Python package manager for ML libraries, with no need to inspect intermediate results or test edge cases",
-        "A web framework for deploying models",
-        "Parallel computing on NVIDIA GPUs for matrix operations",
-        "A container runtime for model serving"
-      ],
-      "correct": 2,
-      "explanation": "CUDA is NVIDIA's parallel computing platform that lets you run matrix operations on thousands of GPU cores simultaneously. PyTorch and TensorFlow use it under the hood."
-    },
-    {
-      "stage": "check",
-      "question": "In the four-layer environment stack, which layer must be installed first?",
-      "options": [
-        "AI/ML Libraries (PyTorch, JAX)",
-        "Package Managers (pip, npm, cargo)",
-        "Language Runtimes (Python, Node.js), because one plausible output is sufficient production evidence",
-        "System Foundation (OS, shell, GPU drivers)"
-      ],
-      "correct": 3,
-      "explanation": "You install bottom-up: system foundation first (OS, drivers), then package managers, then language runtimes, then AI libraries. Each layer depends on the one below."
-    },
-    {
-      "stage": "check",
-      "question": "What is the purpose of uv in a Python AI project?",
-      "options": [
-        "A GPU monitoring tool",
-        "An ultra-fast Python package installer and resolver",
-        "A neural network visualization library, before defining the measurement, acceptance threshold, or rollback path",
-        "A CUDA compiler for custom kernels"
-      ],
-      "correct": 1,
-      "explanation": "uv is a fast Python package installer written in Rust. It replaces pip with much faster dependency resolution and installation, often 10-100x faster."
-    },
-    {
-      "stage": "post",
-      "question": "How do you verify that PyTorch can access your GPU?",
-      "options": [
-        "import torch; print(torch.__version__) — and applies unchanged even when the lesson's stated preconditions fail",
-        "nvidia-smi --query",
-        "import torch; print(torch.cuda.is_available())",
-        "python -c 'import gpu'"
-      ],
-      "correct": 2,
-      "explanation": "torch.cuda.is_available() returns True if PyTorch can access CUDA GPUs. On Apple Silicon, use torch.backends.mps.is_available() for Metal Performance Shaders."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Dev Environment?",
-      "options": [
-        "Configure virtual environments and package managers for reproducible builds",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "rustc --edition 2021 code/main.rs -o /tmp/env-check && /tmp/env-check",
+        "python3 code/main.rs",
+        "cargo add torch",
+        "Run nvidia-smi and assume it validates every language runtime"
       ],
       "correct": 0,
-      "explanation": "“Configure virtual environments and package managers for reproducible builds” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The lesson is a standalone Rust program, so rustc compiles the file and the resulting binary runs the environment checks."
+    },
+    {
+      "stage": "check",
+      "question": "What does parse_minor_python(\"Python 3.11.8\") return?",
+      "options": [
+        "Some((11, 8))",
+        "Some((3, 11))",
+        "Some((3, 8))",
+        "None, because the version has three numeric components"
+      ],
+      "correct": 1,
+      "explanation": "The helper removes the Python prefix, splits on periods, and parses the first two components as the major and minor versions."
+    },
+    {
+      "stage": "check",
+      "question": "Why does main.rs check the four environment layers from the system upward?",
+      "options": [
+        "AI libraries can install before their runtime exists",
+        "Rust only supports four installed programs",
+        "Upper layers depend on lower-layer tools",
+        "The order makes optional tools become required"
+      ],
+      "correct": 2,
+      "explanation": "The program presents system foundation, package managers, runtimes, and AI libraries as dependent layers. A missing lower layer explains failures above it."
+    },
+    {
+      "stage": "check",
+      "question": "A machine reports a passing NVIDIA driver in nvidia-smi, but torch.cuda.is_available() is False. What is the next useful check?",
+      "options": [
+        "Rename the Python file to gpu.py",
+        "Increase the notebook font size",
+        "Delete the GPU driver so PyTorch can choose one",
+        "Install a compatible CUDA build and inspect torch.version.cuda"
+      ],
+      "correct": 3,
+      "explanation": "nvidia-smi verifies the driver can see the device; PyTorch still needs a compatible CUDA build in the environment. Printing its CUDA build and reinstalling that environment if needed separates the two layers."
+    },
+    {
+      "stage": "post",
+      "question": "The Rust report marks Python as failed with a version of Python 3.9. What should you fix before installing the AI libraries?",
+      "options": [
+        "Install or select Python 3.10 or newer, then rerun the report",
+        "Make Julia a required check instead",
+        "Ignore the line because optional tools determine Python support",
+        "Compile the Rust binary with a different optimization level"
+      ],
+      "correct": 0,
+      "explanation": "Python is a required check and the code rejects versions below 3.10. Fixing the runtime first prevents package installation from targeting an unsupported interpreter."
+    },
+    {
+      "stage": "post",
+      "question": "You need to compare two machines before starting Phase 1. Which record is most useful?",
+      "options": [
+        "A screenshot of the editor theme",
+        "Version lines, pass/fail counts, and a backend test result",
+        "The number of files in the home directory",
+        "Only the name of the installed AI framework"
+      ],
+      "correct": 1,
+      "explanation": "The check is useful when it records the versions and pass/fail status for the required layers, plus a real backend operation. That evidence makes differences between machines actionable."
     }
   ]
 }

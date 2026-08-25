@@ -215,6 +215,18 @@ flowchart TD
 
 
 
+## Build It
+
+Reconstruct **Handling Imbalanced Data** by following `make_imbalanced_data` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Use It
+
+Call `make_imbalanced_data` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-imbalanced-data.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [SMOTE: Synthetic Minority Over-sampling Technique (Chawla et al., 2002)](https://arxiv.org/abs/1106.1813) -- the original SMOTE paper, still the most cited work on imbalanced learning
@@ -224,10 +236,20 @@ flowchart TD
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement SMOTE from scratch and explain how synthetic oversampling differs from random duplication.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Evaluate imbalanced classifiers using F1, AUPRC, and Matthews Correlation Coefficient instead of accuracy.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compare class weighting, threshold tuning, and resampling strategies and select the right approach for a given imbalance ratio.
+Keep two runs side by side for **Handling Imbalanced Data**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
+
+1. **Read the first result.** From `code/`, run `python3 main.py` using x=0.5 with the demo defaults. Follow `make_imbalanced_data`, `euclidean_distance`, `find_k_neighbors`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Implement SMOTE from scratch and explain how synthetic oversampling differs from random duplication**.
+2. **Run a two-value comparison.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Evaluate imbalanced classifiers using F1, AUPRC, and Matthews Correlation Coefficient instead of accuracy** says the other inputs should stay fixed.
+3. **Try an adversarial fixture.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Compare class weighting, threshold tuning, and resampling strategies and select the right approach for a given imbalance ratio** and record the exception text if the code rejects the case.
+4. **Write the operator note.** Open `outputs/skill-imbalanced-data.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Build a complete imbalanced data pipeline that combines SMOTE, class weights, and threshold optimization**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement SMOTE from scratch and explain how synthetic oversampling differs from random duplication,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compare class weighting, threshold tuning, and resampling strategies and select the right approach for a given imbalance ratio,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Handling Imbalanced Data** should contain:
+
+- the `python3 main.py` output for x=0.5 with the demo defaults, with `make_imbalanced_data`, `euclidean_distance`, `find_k_neighbors` traced to the value or shape that supports **Implement SMOTE from scratch and explain how synthetic oversampling differs from random duplication**;
+- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Evaluate imbalanced classifiers using F1, AUPRC, and Matthews Correlation Coefficient instead of accuracy**;
+- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Compare class weighting, threshold tuning, and resampling strategies and select the right approach for a given imbalance ratio**; and
+- an updated `outputs/skill-imbalanced-data.md` example with a concrete input, expected output field, and acceptance check tied to **Build a complete imbalanced data pipeline that combines SMOTE, class weights, and threshold optimization**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

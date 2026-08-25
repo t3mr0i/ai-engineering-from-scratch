@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is anomaly detection typically framed as an unsupervised problem rather than classification?",
+      "question": "A feature has mean 10 and standard deviation 2. What is the z-score of x=16?",
       "options": [
-        "Anomaly detection does not require any data",
-        "Labeled anomalies are extremely rare, and novel anomaly types differ from previously seen ones",
-        "Supervised classification is always less accurate — and applies unchanged even when the lesson's stated preconditions fail",
-        "Anomaly detection only works on time series data"
+        "8",
+        "12",
+        "3",
+        "0.33"
       ],
-      "correct": 1,
-      "explanation": "Anomalies are rare (often <0.1% of data), so there are too few labeled examples to train a classifier. Also, future anomalies may be of types never seen before. Modeling 'normal' and flagging deviations handles both problems."
+      "correct": 2,
+      "explanation": "The z-score is (16-10)/2=3."
     },
     {
       "stage": "check",
-      "question": "A temperature of 90F is normal in summer but anomalous in winter. What type of anomaly is this?",
+      "question": "For Q1=10 and Q3=14, the IQR is 4. Which value is above the usual upper fence Q3+1.5*IQR?",
       "options": [
-        "Point anomaly",
-        "Contextual anomaly",
+        "18",
+        "19",
+        "20",
+        "22"
+      ],
+      "correct": 3,
+      "explanation": "The upper fence is 14+1.5(4)=20. A value of 22 is beyond it."
+    },
+    {
+      "stage": "check",
+      "question": "Fifty login failures in a row are normal individually but unusual as a sequence. What kind of anomaly is this?",
+      "options": [
         "Collective anomaly",
-        "Statistical anomaly"
-      ],
-      "correct": 1,
-      "explanation": "A contextual anomaly is a value that is unusual given its context (time, location). The value itself might be normal in a different context. Same data point, different interpretation based on surrounding conditions."
-    },
-    {
-      "stage": "check",
-      "question": "The Z-score method flags points more than 3 standard deviations from the mean. When does this approach fail?",
-      "options": [
-        "When the data is perfectly normally distributed",
-        "When the data is multimodal, skewed, or when outliers in the training data inflate the mean and std",
-        "When there are exactly 3 anomalies in the dataset, because one plausible output is sufficient production evidence",
-        "When the features are standardized"
-      ],
-      "correct": 1,
-      "explanation": "Z-score assumes a single Gaussian distribution. It fails on multimodal data (multiple clusters), skewed distributions, and when outliers in training data shift the mean/std, making real anomalies harder to detect."
-    },
-    {
-      "stage": "check",
-      "question": "How does Isolation Forest detect anomalies differently from distance-based methods?",
-      "options": [
-        "It uses neural networks instead of trees",
-        "It isolates points using random splits; anomalies require fewer splits to isolate because they are few and different",
-        "It computes distances to every other point in the dataset, before defining the measurement, acceptance threshold, or rollback path",
-        "It only works on text data"
-      ],
-      "correct": 1,
-      "explanation": "Isolation Forest randomly partitions data with tree splits. Anomalies, being rare and different, end up isolated (in their own leaf) with fewer splits. Short average path length = more anomalous."
-    },
-    {
-      "stage": "post",
-      "question": "You build both an unsupervised anomaly detector and a supervised fraud classifier. When should you prefer the unsupervised approach?",
-      "options": [
-        "Always -- unsupervised is always better for anomaly detection — and applies unchanged even when the lesson's stated preconditions fail",
-        "When you need to detect novel fraud patterns that differ from historical labeled examples",
-        "When you have millions of labeled fraud examples",
-        "When you only care about precision, not recall"
-      ],
-      "correct": 1,
-      "explanation": "Supervised classifiers only catch fraud types present in training data. Unsupervised detectors flag any deviation from normal, catching novel fraud schemes. The tradeoff is higher false positive rate."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Anomaly Detection?",
-      "options": [
-        "Distinguish between point, contextual, and collective anomalies and select the appropriate detection method...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Point anomaly",
+        "A missing-value error",
+        "A class-prior shift"
       ],
       "correct": 0,
-      "explanation": "“Distinguish between point, contextual, and collective anomalies and select the appropriate detection method...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The unusual behavior comes from the group or temporal pattern, so it is collective rather than a single isolated point."
+    },
+    {
+      "stage": "check",
+      "question": "How does an Isolation Forest tend to identify an outlier?",
+      "options": [
+        "It has the largest class label in a supervised training set",
+        "It is isolated by random splits in fewer steps than typical points",
+        "It is always the point with the highest z-score on feature one",
+        "It receives a probability of exactly one from every tree"
+      ],
+      "correct": 1,
+      "explanation": "Anomalies are often easier to separate, giving them shorter average path lengths in the random partition trees."
+    },
+    {
+      "stage": "post",
+      "question": "An unsupervised detector flags many novel events but also many legitimate ones. Which tradeoff is being exposed?",
+      "options": [
+        "Recall and precision must always rise together",
+        "The detector has become a supervised classifier",
+        "Higher anomaly coverage can come with lower precision",
+        "A larger feature matrix guarantees fewer false positives"
+      ],
+      "correct": 2,
+      "explanation": "A broad detector may catch more unknown anomalies while producing more false alarms; the operating threshold must reflect the response cost."
+    },
+    {
+      "stage": "post",
+      "question": "When fitting an unsupervised detector for a stable service, which training data are safest?",
+      "options": [
+        "Only the most extreme alerts from last month",
+        "A mixture of future incidents and normal rows with no time split",
+        "The labels of a different classification task",
+        "A period believed to contain normal behavior"
+      ],
+      "correct": 3,
+      "explanation": "Modeling a clean normal baseline makes unusual observations stand out; contaminating it with many anomalies shifts that baseline."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Diffusion Models — DDPM from Scratch?",
+      "question": "What is sin_embed(t=0, T=40, dim=8)?",
       "options": [
-        "Explain the probabilistic mechanism behind Diffusion Models — DDPM from Scratch",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Explain the probabilistic mechanism behind Diffusion Models — DDPM from Scratch” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Diffusion Models — DDPM from Scratch?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the lesson's core generative step from first principles",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the lesson's core generative step from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Diffusion Models — DDPM from Scratch?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Inspect samples and intermediate states to diagnose generation behavior",
-        "Treat one successful example as proof that every edge case works"
+        "A length-40 one-hot vector",
+        "[1, 0, 1, 0, 1, 0, 1, 0]",
+        "[0, 1, 0, 1, 0, 1, 0, 1]",
+        "Eight random values from the current noise sample"
       ],
       "correct": 2,
-      "explanation": "“Inspect samples and intermediate states to diagnose generation behavior” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "At t=0 every sine term is 0 and every cosine term is 1, so the interleaved embedding has that repeated pattern."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Diffusion Models — DDPM from Scratch?",
+      "question": "What endpoints does make_schedule(T=40) assign to the linear beta schedule?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Compare quality, diversity, stability, and compute trade-offs",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Compare quality, diversity, stability, and compute trade-offs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Diffusion Models — DDPM from Scratch?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the probabilistic mechanism behind Diffusion Models — DDPM from Scratch"
+        "Every beta is exactly 0.5",
+        "beta_0=0 and beta_39=1",
+        "beta_0=0.02 and beta_39=1e-4",
+        "beta_0=1e-4 and beta_39=0.02"
       ],
       "correct": 3,
-      "explanation": "“Explain the probabilistic mechanism behind Diffusion Models — DDPM from Scratch” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The list uses 1e-4 + (0.02-1e-4)*t/(T-1), so the first and last entries are the two stated endpoints."
+    },
+    {
+      "stage": "check",
+      "question": "What input width does init_net(x_dim=1, t_dim=8, hidden=24) give to W1?",
+      "options": [
+        "9",
+        "24",
+        "8",
+        "1"
+      ],
+      "correct": 0,
+      "explanation": "forward concatenates the one-dimensional noisy sample with the eight-dimensional timestep embedding, and W1 has width x_dim+t_dim=9."
+    },
+    {
+      "stage": "check",
+      "question": "What target does train pass to backward for a noisy scalar x_t?",
+      "options": [
+        "The clean x0 after it has been normalized to zero",
+        "The sampled noise eps that was used to construct x_t",
+        "The timestep integer t as a one-hot class",
+        "The predicted eps_hat itself"
+      ],
+      "correct": 1,
+      "explanation": "The forward model predicts epsilon, so train calls backward([eps], eps_hat, cache, net) for the squared noise-prediction loss."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Diffusion Models — DDPM from Scratch?",
+      "question": "In sample, in what order are timesteps traversed?",
       "options": [
-        "Implement the lesson's core generative step from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Only at t=0, because the schedule is not used during generation",
+        "From 0 up to T-1, adding fresh noise until the final sample",
+        "From T-1 down to 0, applying the learned reverse update at each step",
+        "In a random permutation to avoid temporal bias"
       ],
-      "correct": 0,
-      "explanation": "“Implement the lesson's core generative step from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The loop is `for t in range(T - 1, -1, -1)`, reversing the forward noising process."
+    },
+    {
+      "stage": "post",
+      "question": "Why does sample skip adding random noise when t==0?",
+      "options": [
+        "At t=0 beta_t is always exactly 1",
+        "The code has no random generator available at the final step",
+        "Noise would change the timestep embedding dimension",
+        "The final reverse step is deterministic in this toy sampler, so it sets x to mean directly"
+      ],
+      "correct": 3,
+      "explanation": "For t>0 the sampler adds sqrt(beta_t)*Gaussian noise; at t=0 it uses the denoised mean without another stochastic perturbation."
     }
   ]
 }

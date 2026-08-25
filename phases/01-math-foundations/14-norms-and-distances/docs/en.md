@@ -484,6 +484,14 @@ When you call `model.encode(text)` and then search a vector database, this is wh
 | L2 regularization | "Ridge" or "weight decay" | Adding the squared L2 norm of weights to the loss. Shrinks weights toward zero without sparsity |
 | Elastic Net | "L1 + L2" | Combines L1 and L2 regularization. Handles correlated feature groups better than either alone |
 
+## Build It
+
+Reconstruct **Norms and Distances** by following `l1_norm` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Ship It
+
+Hand off `outputs/prompt-distance-chooser.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [FAISS: A Library for Efficient Similarity Search](https://github.com/facebookresearch/faiss) - Meta's library for billion-scale ANN search
@@ -494,10 +502,20 @@ When you call `model.encode(text)` and then search a vector database, this is wh
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement L1, L2, cosine, Mahalanobis, Jaccard, and edit distance functions from scratch.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Select the appropriate distance metric for a given ML task and explain why alternatives fail.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Connect L1 and L2 norms to LASSO and Ridge regularization and their geometric constraint regions.
+This lab follows `l1_norm` and `l2_norm` on a controlled fixture; write down the value before changing the input.
+
+1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using x=0.5 with the demo defaults. Follow `l1_norm`, `l2_norm`, `lp_norm`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Implement L1, L2, cosine, Mahalanobis, Jaccard, and edit distance functions from scratch**.
+2. **Change the controlled parameter.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Select the appropriate distance metric for a given ML task and explain why alternatives fail** says the other inputs should stay fixed.
+3. **Exercise the guard.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Connect L1 and L2 norms to LASSO and Ridge regularization and their geometric constraint regions** and record the exception text if the code rejects the case.
+4. **Prepare the artifact for reuse.** Open `outputs/prompt-distance-chooser.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Demonstrate how the same dataset produces different nearest neighbors under different metrics**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement L1, L2, cosine, Mahalanobis, Jaccard, and edit distance functions from scratch,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Connect L1 and L2 norms to LASSO and Ridge regularization and their geometric constraint regions,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Norms and Distances** should contain:
+
+- the `python3 main.py` output for x=0.5 with the demo defaults, with `l1_norm`, `l2_norm`, `lp_norm` traced to the value or shape that supports **Implement L1, L2, cosine, Mahalanobis, Jaccard, and edit distance functions from scratch**;
+- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Select the appropriate distance metric for a given ML task and explain why alternatives fail**;
+- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Connect L1 and L2 norms to LASSO and Ridge regularization and their geometric constraint regions**; and
+- an updated `outputs/prompt-distance-chooser.md` example with a concrete input, expected output field, and acceptance check tied to **Demonstrate how the same dataset produces different nearest neighbors under different metrics**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

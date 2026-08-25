@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Omni Models: Qwen2.5-Omni and the Thinker-Talker Split?",
+      "question": "What TTFAB does ttfab(StreamConfig(7, 300, include_vision=True)) return with the default 16kHz microphone?",
       "options": [
-        "Split the inference pipeline into Thinker (text reasoning) and Talker (speech synthesis) and explain why pa...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Split the inference pipeline into Thinker (text reasoning) and Talker (speech synthesis) and explain why pa...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Omni Models: Qwen2.5-Omni and the Thinker-Talker Split?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Compute the time-to-first-audio-byte (TTFAB) budget for a conversational interaction, component by component",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Compute the time-to-first-audio-byte (TTFAB) budget for a conversational interaction, component by component” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Omni Models: Qwen2.5-Omni and the Thinker-Talker Split?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Describe TMRoPE's time-aligned position encoding across vision, audio, and text within the Thinker",
-        "Treat one successful example as proof that every edge case works"
+        "270 ms, because vision is ignored by the Thinker",
+        "350 ms, because the Talker adds no speech decode cost",
+        "390 ms, from 50 mic + 180 prefill + 40 first text + 20 Talker + 30 RVQ + 70 waveform",
+        "470 ms, because all visual tokens are generated serially twice"
       ],
       "correct": 2,
-      "explanation": "“Describe TMRoPE's time-aligned position encoding across vision, audio, and text within the Thinker” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "At 16kHz mic_ms=50. A 7B Thinker has 100ms prefill plus 80ms vision cost, first text is 40ms, and the remaining components are 20+30+70ms. The sum is 390ms."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Omni Models: Qwen2.5-Omni and the Thinker-Talker Split?",
+      "question": "What TTFAB does the 7B/200M no-vision configuration in the driver produce?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Name the three real-time conversational patterns: half-duplex, turn-taking, full-duplex",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Name the three real-time conversational patterns: half-duplex, turn-taking, full-duplex” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Omni Models: Qwen2.5-Omni and the Thinker-Talker Split?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Split the inference pipeline into Thinker (text reasoning) and Talker (speech synthesis) and explain why pa..."
+        "250 ms",
+        "270 ms",
+        "350 ms",
+        "305 ms, with a 15ms minimum Talker-first stage"
       ],
       "correct": 3,
-      "explanation": "“Split the inference pipeline into Thinker (text reasoning) and Talker (speech synthesis) and explain why pa...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The components are 50ms mic, 100ms prefill, 40ms first text, max(15, 20*200/300)=15ms Talker, 30ms RVQ, and 70ms waveform. Total: 305ms."
+    },
+    {
+      "stage": "check",
+      "question": "With silence_threshold_ms=200, which event does simulate_turn_taking place at 4,000ms?",
+      "options": [
+        "VAD triggers the end of the user's turn",
+        "The user starts speaking",
+        "The Talker emits its first audio",
+        "The Thinker finishes the full response"
+      ],
+      "correct": 0,
+      "explanation": "The simulated user stops at 3,800ms. Adding the 200ms silence threshold yields the VAD end-of-turn event at 4,000ms."
+    },
+    {
+      "stage": "check",
+      "question": "Which mode allows the user and model to speak at the same time?",
+      "options": [
+        "Half-duplex, where the active speaker owns the channel",
+        "Full-duplex, which supports simultaneous speech and possible backchannels",
+        "Turn-taking, which waits for a silence boundary before every token",
+        "Batch mode, which emits audio only after the recording ends"
+      ],
+      "correct": 1,
+      "explanation": "duplex_modes describes full-duplex as simultaneous speaking, unlike half-duplex and VAD-based turn-taking. It is harder because interruption and backchannel behavior must be learned."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Omni Models: Qwen2.5-Omni and the Thinker-Talker Split?",
+      "question": "What does TMRoPE contribute to the Thinker in an omni model?",
       "options": [
-        "Compute the time-to-first-audio-byte (TTFAB) budget for a conversational interaction, component by component",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "A fixed image-only positional table with no audio axis",
+        "A second waveform decoder for residual-VQ layers",
+        "A shared timestamp coordinate that aligns vision, audio, and text positions",
+        "A vocabulary that removes the need for a Talker"
       ],
-      "correct": 0,
-      "explanation": "“Compute the time-to-first-audio-byte (TTFAB) budget for a conversational interaction, component by component” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The lesson describes time-aligned multimodal positions: TMRoPE lets the Thinker relate visual and audio events to text through a common temporal coordinate."
+    },
+    {
+      "stage": "post",
+      "question": "What is the defining split in the Qwen2.5-Omni-style design?",
+      "options": [
+        "One encoder for text and a separate database for images",
+        "A diffusion image model followed by a speech-only classifier",
+        "A single Talker that performs all reasoning and waveform decoding",
+        "A large Thinker produces text reasoning tokens while a smaller Talker converts them into streaming speech tokens"
+      ],
+      "correct": 3,
+      "explanation": "The Thinker consumes multimodal inputs and decides what to say. The Talker consumes its text tokens plus speech context and emits discrete speech tokens for the streaming decoder."
     }
   ]
 }

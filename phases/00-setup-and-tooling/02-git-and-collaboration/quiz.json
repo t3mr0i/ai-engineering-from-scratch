@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does 'version control' primarily help you do?",
+      "question": "You changed train.py and want the change on the shared remote. Which order is correct?",
       "options": [
-        "Speed up code execution",
-        "Track changes to files over time and collaborate with others",
-        "Compress files to save disk space",
-        "Automatically fix bugs in your code — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "Version control systems like git track every change made to files, allowing you to revert to previous states and collaborate with others on the same codebase."
-    },
-    {
-      "stage": "check",
-      "question": "What is a 'repository' in the context of software development?",
-      "options": [
-        "A cloud storage service like Google Drive",
-        "A collection of files and their complete change history managed by version control",
-        "A database for storing user data",
-        "A package manager for installing libraries, with no need to inspect intermediate results or test edge cases"
-      ],
-      "correct": 1,
-      "explanation": "A repository (repo) is a directory tracked by git that contains all project files along with the full history of changes made to those files."
-    },
-    {
-      "stage": "check",
-      "question": "What is the correct sequence for saving and backing up your work in git?",
-      "options": [
-        "git push, git add, git commit, because one plausible output is sufficient production evidence",
-        "git commit, git add, git push",
-        "git add, git commit, git push",
-        "git clone, git add, git push"
+        "git push, git commit, git add",
+        "git clone train.py, git push, git commit",
+        "Stage, commit, then push",
+        "git commit, git add, git push"
       ],
       "correct": 2,
-      "explanation": "First you stage changes with 'git add', then save a snapshot with 'git commit', then upload to the remote with 'git push'. This is the daily workflow."
+      "explanation": "git add stages the file, git commit records a local snapshot, and git push sends that snapshot to the configured remote."
     },
     {
       "stage": "check",
-      "question": "What does 'git checkout -b experiment/new-optimizer' do?",
+      "question": "What happens when you run git checkout -b experiment/new-optimizer?",
       "options": [
-        "Downloads a branch from GitHub called experiment/new-optimizer, before defining the measurement, acceptance threshold, or rollback path",
-        "Creates a new branch named experiment/new-optimizer and switches to it",
-        "Deletes the branch experiment/new-optimizer",
-        "Reverts all files to match the experiment/new-optimizer branch"
+        "Git downloads a remote branch with that name",
+        "Git deletes the current branch and renames it",
+        "Git merges the branch into main",
+        "Creates and checks out that branch"
       ],
-      "correct": 1,
-      "explanation": "The '-b' flag creates a new branch with the given name and immediately switches to it, allowing you to experiment without affecting the main branch."
+      "correct": 3,
+      "explanation": "The -b option asks Git to create experiment/new-optimizer from the current commit and check it out immediately."
     },
     {
-      "stage": "post",
-      "question": "Why should you add '.pt', '.pth', and '.safetensors' to your .gitignore?",
+      "stage": "check",
+      "question": "Why should .pt, .pth, and .safetensors usually be listed in .gitignore?",
       "options": [
-        "They are Python test files that should not be committed — and applies unchanged even when the lesson's stated preconditions fail",
-        "They are model checkpoint files that are too large for git and can be re-generated",
-        "They contain sensitive API keys",
-        "Git cannot track binary files of any kind"
-      ],
-      "correct": 1,
-      "explanation": "Model checkpoint files (.pt, .pth, .safetensors) are often gigabytes in size. Git is not designed for large binary files, so these should be excluded and re-generated or stored separately."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Git & Collaboration?",
-      "options": [
-        "Create and merge branches for isolated experiments without breaking main",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "They are large model checkpoints",
+        "Git refuses to track any binary file",
+        "They are shell scripts that need execute permission",
+        "They contain the commit history for the repository"
       ],
       "correct": 0,
-      "explanation": "“Create and merge branches for isolated experiments without breaking main” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Checkpoint files can consume hundreds of megabytes or more. Ignoring them keeps source history usable; a project can publish them through dedicated artifact storage instead."
+    },
+    {
+      "stage": "check",
+      "question": "Which command shows a compact branch graph with commit decorations?",
+      "options": [
+        "git status --history --branches",
+        "A compact decorated commit graph",
+        "git diff --remote --compact",
+        "git branch --commit-files"
+      ],
+      "correct": 1,
+      "explanation": "git log accepts these options to show abbreviated commits, the parent graph, and names such as branches and tags."
+    },
+    {
+      "stage": "post",
+      "question": "After git add ., you notice that model.pt is staged. What is the safest immediate fix?",
+      "options": [
+        "git push model.pt and delete it from the remote later",
+        "git commit --amend --no-edit without changing the index",
+        "Unstage it, ignore it, and recheck status",
+        "git branch -D main"
+      ],
+      "correct": 2,
+      "explanation": "Unstaging the checkpoint prevents it from entering the next commit. Adding the ignore rule and checking status prevents the same mistake on the next add."
+    },
+    {
+      "stage": "post",
+      "question": "A teammate wants to merge an optimizer experiment without disturbing main. Which sequence best preserves an inspectable history?",
+      "options": [
+        "Edit directly on main and force-push every intermediate file",
+        "Delete the experiment branch before anyone can inspect it",
+        "Copy the repository directory and never record which version was used",
+        "Use a reviewed experiment branch, then merge it"
+      ],
+      "correct": 3,
+      "explanation": "An isolated branch keeps the experiment reversible. A focused commit and passing tests give collaborators something concrete to review before the merge."
     }
   ]
 }

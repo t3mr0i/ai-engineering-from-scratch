@@ -228,6 +228,18 @@ The accuracy hit is around 5-10% on retrieval recall. The common pattern: binary
 
 
 
+## Build It
+
+Reconstruct **Embeddings & Vector Representations** by following `chunk_text` on tokens=["red","fox"]. Run `npx tsx main.ts` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `chunk_text` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-embedding-advisor.md` with the command `npx tsx main.ts`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - Mikolov et al., "Efficient Estimation of Word Representations in Vector Space" (2013) -- the Word2Vec paper that started the embedding revolution with the king-queen analogy
@@ -241,10 +253,20 @@ The accuracy hit is around 5-10% on retrieval recall. The common pattern: binary
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Generate text embeddings using API providers and open-source models, and compute cosine similarity between them.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why embeddings solve the vocabulary mismatch problem that keyword search cannot handle.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a semantic search index that retrieves documents by meaning rather than exact keyword match.
+Begin with a control run and leave a short receipt: input, output, and the reasoning that connects them to the objective.
+
+1. **Reproduce the control run.** Run [`main.ts`](../code/main.ts) with `npx tsx main.ts` from the lesson's `code/` directory. Record the smallest input that demonstrates “Generate text embeddings using API providers and open-source models, and compute cosine similarity between them”. Point to `chunkText()`, `chunkBySentences()`, `cosineSimilarity()` and name the returned field or printed value that serves as evidence.
+2. **Change one decision.** Change exactly one input, threshold, or option that affects “Explain why embeddings solve the vocabulary mismatch problem that keyword search cannot handle”. Predict the direction of the change before running it, then compare the two outputs and explain why the other fields should stay stable.
+3. **Probe a boundary.** Construct a case that stresses “Build a semantic search index that retrieves documents by meaning rather than exact keyword match”: choose an empty collection, missing field, maximum-sized value, malformed record, or another boundary that fits this lesson. Write the expected behavior first and distinguish an intentional guard from an accidental crash.
+4. **Transfer the result.** Open `outputs/prompt-embedding-advisor.md` and adapt one example to a real workflow. State the owner, evidence, and next decision required for “Evaluate embedding quality using retrieval benchmarks (precision@k, recall) and choose the right embedding model for your task”; mark any assumption that the demo does not establish.
 
 ## Reference Solution
 
-Use the canonical [main.ts](../code/main.ts) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Generate text embeddings using API providers and open-source models, and compute cosine similarity between them,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a semantic search index that retrieves documents by meaning rather than exact keyword match,” and cite a repeatable check rather than relying on visual inspection alone.
+Keep the solution auditable: run `npx tsx main.ts`, save the output, and explain what it demonstrates. Include:
+
+- evidence for “Generate text embeddings using API providers and open-source models, and compute cosine similarity between them” with the relevant input and returned field;
+- a one-variable comparison that makes “Explain why embeddings solve the vocabulary mismatch problem that keyword search cannot handle” visible;
+- a predicted and observed boundary result for “Build a semantic search index that retrieves documents by meaning rather than exact keyword match”, including why the behavior is safe; and
+- one concrete update to `outputs/prompt-embedding-advisor.md` that applies “Evaluate embedding quality using retrieval benchmarks (precision@k, recall) and choose the right embedding model for your task” without hiding uncertainty.
+
+Use `chunkText()`, `chunkBySentences()`, `cosineSimilarity()` to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.

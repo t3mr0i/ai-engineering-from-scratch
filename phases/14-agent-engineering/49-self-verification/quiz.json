@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Who should own the completion decision?",
+      "question": "Why does the main verification demo print passed=false?",
       "options": [
-        "The artifact's maker",
-        "The longest response",
-        "The last session only",
-        "Independent checks"
-      ],
-      "correct": 3,
-      "explanation": "Verification separates making from judging."
-    },
-    {
-      "stage": "check",
-      "question": "What should each check return?",
-      "options": [
-        "Only a paragraph of prose",
-        "A brand new prompt to retry",
-        "A boolean and evidence detail",
-        "An instruction to delete a file"
+        "The implementation check raises RuntimeError",
+        "The scope check returns a malformed tuple",
+        "tests/test_app.py is missing even though src/app.py exists",
+        "The temporary workspace contains a forbidden symlink"
       ],
       "correct": 2,
-      "explanation": "Structured evidence makes the verdict inspectable."
+      "explanation": "The demo creates src/app.py but not tests/test_app.py; file_exists therefore contributes failed evidence and the aggregate report fails closed."
     },
     {
       "stage": "check",
-      "question": "What should an empty check list do?",
+      "question": "What evidence does verify([]) return for an empty check list?",
       "options": [
-        "Pass the task automatically",
-        "Fail closed rather than pass",
-        "Let the maker self-approve it",
-        "Skip the task without a record"
-      ],
-      "correct": 1,
-      "explanation": "No checks means no evidence of completion."
-    },
-    {
-      "stage": "check",
-      "question": "How should a check exception be handled?",
-      "options": [
-        "Ignore it and move on",
-        "Convert it to a pass",
-        "Retry the check forever",
-        "Record failed evidence"
+        "A ValueError before any report exists",
+        "An empty evidence tuple with passed=True",
+        "Evidence('checks', True, 'nothing to verify')",
+        "Evidence('checks', False, 'no checks supplied')"
       ],
       "correct": 3,
-      "explanation": "An exception is evidence that verification did not complete."
+      "explanation": "verify explicitly returns a failed VerificationReport with one Evidence item named checks and detail no checks supplied."
     },
     {
-      "stage": "post",
-      "question": "Why keep checks orthogonal?",
+      "stage": "check",
+      "question": "How is a RuntimeError raised inside a check represented?",
       "options": [
-        "To make the final report longer",
-        "To route each failure to its owner",
-        "To avoid naming any check at all",
-        "To hide dependencies between checks"
-      ],
-      "correct": 1,
-      "explanation": "Separate checks make repair more targeted."
-    },
-    {
-      "stage": "post",
-      "question": "Which is stronger evidence than artifact presence?",
-      "options": [
-        "A passing end-to-end acceptance command",
-        "A confident note from the maker",
-        "A somewhat larger diff than the last one",
-        "A prompt that has been repeated"
+        "As Evidence(name, False, 'check error: RuntimeError: ...')",
+        "As a passing Evidence item with the exception text",
+        "By retrying the check until it stops raising",
+        "By dropping the check from the report"
       ],
       "correct": 0,
-      "explanation": "Presence does not prove behavior; acceptance evidence does."
+      "explanation": "verify catches exceptions and records failed evidence with the exception type and message, so the verification report remains inspectable."
+    },
+    {
+      "stage": "check",
+      "question": "What does verify report when two entries use the same check name?",
+      "options": [
+        "Both entries pass independently because their callables differ",
+        "The duplicate entry becomes failed evidence mentioning unique names",
+        "The second entry silently replaces the first",
+        "The whole process exits without a VerificationReport"
+      ],
+      "correct": 1,
+      "explanation": "Names must be unique and non-empty; the duplicate is recorded as failed evidence rather than being silently ignored."
+    },
+    {
+      "stage": "post",
+      "question": "What does file_exists return for an absolute path to an existing app.py?",
+      "options": [
+        "(True, 'absolute path accepted')",
+        "(True, '<absolute path>: present')",
+        "(False, 'file path must be a non-empty relative path without traversal')",
+        "(False, '<absolute path>: missing')"
+      ],
+      "correct": 2,
+      "explanation": "_normalize_relative rejects absolute paths before checking the filesystem, so file_exists returns False with its relative-path validation detail."
+    },
+    {
+      "stage": "post",
+      "question": "Which result is stronger than merely finding src/app.py on disk?",
+      "options": [
+        "A longer implementation file",
+        "The maker's note saying 'ready'",
+        "A second copy of the same source file",
+        "A passing end-to-end acceptance check"
+      ],
+      "correct": 3,
+      "explanation": "Presence proves an artifact exists; an acceptance check exercises the required behavior and supplies independent evidence of completion."
     }
   ]
 }

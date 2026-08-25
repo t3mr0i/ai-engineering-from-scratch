@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Vision Transformers and the Patch-Token Primitive?",
+      "question": "For ViT-B/16 at 224x224 with a CLS token, what does seq_length return?",
       "options": [
-        "Convert an HxWx3 image into a sequence of patch tokens with correct positional encoding",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "197: 14x14 patches plus one CLS token",
+        "196: the patch grid without any extra token",
+        "224: one token for each image row",
+        "14: one token for each patch-grid row"
       ],
       "correct": 0,
-      "explanation": "“Convert an HxWx3 image into a sequence of patch tokens with correct positional encoding” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "grid_shape gives 224/16 = 14 in each direction, so there are 196 patches. seq_length adds the configured CLS token and returns 197."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Vision Transformers and the Patch-Token Primitive?",
+      "question": "What sequence length does the Qwen2.5-VL entry in ZOO use for 896x896, patch size 14, and no registers?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Compute sequence length, parameter count, and FLOPs for a ViT of a given (patch size, resolution, hidden di...",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "4096, because 64x64 patches fill the sequence",
+        "4097, because 64x64 patches are followed by one CLS token",
+        "896, because the image side is the sequence length",
+        "4160, because one position is added per patch row"
       ],
       "correct": 1,
-      "explanation": "“Compute sequence length, parameter count, and FLOPs for a ViT of a given (patch size, resolution, hidden di...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "896/14 = 64, giving 4096 patch tokens. The Qwen2.5-VL config keeps cls_token=True, so seq_length is 4096 + 1 = 4097."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Vision Transformers and the Patch-Token Primitive?",
+      "question": "What does seq_length return for SigLIP SO400m/14 at 378 with four registers and cls_token=False?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Name the three upgrades that took ViT from 2020 research to 2026 production: self-supervised pretraining (D...",
-        "Treat one successful example as proof that every edge case works"
+        "729, counting only the 27x27 patch grid",
+        "730, because a CLS token is always implicit",
+        "733, adding four registers to the 729 patch tokens",
+        "756, adding four registers to each grid row"
       ],
       "correct": 2,
-      "explanation": "“Name the three upgrades that took ViT from 2020 research to 2026 production: self-supervised pretraining (D...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "378/14 = 27, so the patch grid contributes 27x27 = 729 tokens. With CLS disabled, only the four register tokens are added, for 733."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Vision Transformers and the Patch-Token Primitive?",
+      "question": "What patch-embedding parameter count does total_params compute for ViT-B/16?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Pick between CLS pooling, mean pooling, and register tokens for a downstream task",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Pick between CLS pooling, mean pooling, and register tokens for a downstream task” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Vision Transformers and the Patch-Token Primitive?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Convert an HxWx3 image into a sequence of patch tokens with correct positional encoding"
+        "589,824, omitting the projection bias",
+        "590,080, using 16x16 pixels without the RGB factor",
+        "591,360, adding a second hidden bias",
+        "590,592, from 3x16x16x768 weights plus 768 bias values"
       ],
       "correct": 3,
-      "explanation": "“Convert an HxWx3 image into a sequence of patch tokens with correct positional encoding” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "patch_embed_params uses 3 * 16 * 16 * 768 + 768. The weights contribute 589,824 and the bias contributes 768, totaling 590,592."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Vision Transformers and the Patch-Token Primitive?",
+      "question": "In patch_toy_image, how many tokens are produced from the 8x8 grayscale image with patch_size=4?",
       "options": [
-        "Compute sequence length, parameter count, and FLOPs for a ViT of a given (patch size, resolution, hidden di...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "4 tokens, each flattening a 4x4 patch of 16 pixels",
+        "8 tokens, one for each image row",
+        "16 tokens, one for each pixel in a patch",
+        "2 tokens, one for each grid dimension"
       ],
       "correct": 0,
-      "explanation": "“Compute sequence length, parameter count, and FLOPs for a ViT of a given (patch size, resolution, hidden di...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "An 8x8 image split by P=4 has a 2x2 patch grid. The toy therefore emits four projected tokens, and each source patch contains 16 pixels."
+    },
+    {
+      "stage": "post",
+      "question": "How many sequence positions does the DINOv2 ViT-g/14 config use with four registers?",
+      "options": [
+        "256, because 224/14 gives a 16x16 patch grid with no extra tokens",
+        "261, from 16x16 patches, one CLS token, and four registers",
+        "260, because the four registers replace the CLS token",
+        "265, because each register adds a full grid row"
+      ],
+      "correct": 1,
+      "explanation": "For 224/14, the grid is 16x16 = 256. DINOv2 keeps one CLS token and adds four registers, so seq_length is 261."
     }
   ]
 }

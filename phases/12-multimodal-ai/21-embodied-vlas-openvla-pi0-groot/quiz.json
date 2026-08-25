@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Embodied VLAs: RT-2, OpenVLA, π0, GR00T?",
+      "question": "What does discretize([-1.0, 1.0], bins=256) return?",
       "options": [
-        "Describe action tokenization: discrete bin encoding (RT-2), FAST efficient action tokens, continuous flow-m...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Describe action tokenization: discrete bin encoding (RT-2), FAST efficient action tokens, continuous flow-m...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Embodied VLAs: RT-2, OpenVLA, π0, GR00T?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Explain why co-fine-tuning on web + robot data preserves general-knowledge transfer to novel tasks",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Explain why co-fine-tuning on web + robot data preserves general-knowledge transfer to novel tasks” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Embodied VLAs: RT-2, OpenVLA, π0, GR00T?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Compare OpenVLA (open 7B Llama+VLM), π0 (flow-matching), and GR00T N1 (dual-system) on the same robot task",
-        "Treat one successful example as proof that every edge case works"
+        "[1, 256], because the endpoints are one-indexed",
+        "[127, 128], because both values map to the center",
+        "[0, 255], the two endpoints of the 256-bin action range",
+        "[-1, 1], because discretize preserves continuous actions"
       ],
       "correct": 2,
-      "explanation": "“Compare OpenVLA (open 7B Llama+VLM), π0 (flow-matching), and GR00T N1 (dual-system) on the same robot task” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The formula int((a+1)/2*(bins-1)) maps -1 to 0 and +1 to 255, followed by clamping to that same range."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Embodied VLAs: RT-2, OpenVLA, π0, GR00T?",
+      "question": "What does undiscretize([0,255], bins=256) approximately recover?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Name the Open X-Embodiment dataset and its role as the RT-X training corpus",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Name the Open X-Embodiment dataset and its role as the RT-X training corpus” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Embodied VLAs: RT-2, OpenVLA, π0, GR00T?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Describe action tokenization: discrete bin encoding (RT-2), FAST efficient action tokens, continuous flow-m..."
+        "[0.0, 1.0]",
+        "[-0.5, 0.5]",
+        "[1.0, 255.0]",
+        "[-1.0, 1.0]"
       ],
       "correct": 3,
-      "explanation": "“Describe action tokenization: discrete bin encoding (RT-2), FAST efficient action tokens, continuous flow-m...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "undiscretize applies (2*t/(bins-1))-1. For t=0 it returns -1, and for t=255 it returns +1."
+    },
+    {
+      "stage": "check",
+      "question": "How many tokens does fast_compress produce for the 30-step, 10-DOF trajectory with keep_coeff=4?",
+      "options": [
+        "40, four low-frequency DCT coefficients for each of ten dimensions",
+        "300, one 256-bin token per action coordinate and time step",
+        "10, one coefficient per degree of freedom",
+        "4, one token for each retained frequency"
+      ],
+      "correct": 0,
+      "explanation": "fast_compress loops over D=10 dimensions and appends four quantized coefficients per dimension. The flat token list therefore has 10*4 = 40 entries."
+    },
+    {
+      "stage": "check",
+      "question": "What compression ratio does the demo's FAST representation achieve versus 300 discrete action tokens?",
+      "options": [
+        "1.0x, because DCT changes values but not sequence length",
+        "7.5x, because 300 discrete tokens become 40 FAST tokens",
+        "30x, because only one time step remains",
+        "75x, because each coefficient uses a 32-bin codebook"
+      ],
+      "correct": 1,
+      "explanation": "The discrete baseline is 30*10=300 tokens, while FAST emits 40. compare_formats prints 300/40 = 7.5x."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Embodied VLAs: RT-2, OpenVLA, π0, GR00T?",
+      "question": "What does dct implement before fast_compress keeps low-frequency coefficients?",
       "options": [
-        "Explain why co-fine-tuning on web + robot data preserves general-knowledge transfer to novel tasks",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "A random permutation of action dimensions",
+        "A softmax over the robot's joints",
+        "A naive type-II discrete cosine transform over one trajectory dimension",
+        "A continuous flow-matching denoising step"
       ],
-      "correct": 0,
-      "explanation": "“Explain why co-fine-tuning on web + robot data preserves general-knowledge transfer to novel tasks” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "dct loops over frequency k and time index i using cos(pi/n*(i+0.5)*k), which is the type-II DCT basis. fast_compress keeps its first coefficients."
+    },
+    {
+      "stage": "post",
+      "question": "Which lineage entry uses a flow-matching action head rather than discrete-bin actions?",
+      "options": [
+        "RT-2",
+        "OpenVLA",
+        "Octo",
+        "pi0"
+      ],
+      "correct": 3,
+      "explanation": "lineage_table labels pi0 as a flow-matching head. RT-2 and OpenVLA use discrete bins, while Octo is listed as a small diffusion head."
     }
   ]
 }

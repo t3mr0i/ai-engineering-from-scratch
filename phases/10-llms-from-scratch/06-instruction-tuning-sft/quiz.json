@@ -4,75 +4,45 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the fundamental difference between a base language model and an instruction-tuned model?",
-      "options": [
-        "They have different architectures",
-        "A base model continues text patterns; an instruction-tuned model follows instructions and answers questions",
-        "Instruction-tuned models are larger — and applies unchanged even when the lesson's stated preconditions fail",
-        "Base models are faster"
-      ],
-      "correct": 1,
-      "explanation": "A base model trained with next-token prediction continues text patterns. Ask it a question and it may generate more questions. SFT teaches it to produce answers by training on (instruction, response) pairs."
+      "question": "Which tokens contribute a nonzero weight in `create_loss_mask` for an instruction pair?",
+      "options": ["All prompt and response tokens equally.", "Only `INST_START` and `INST_END`.", "Response tokens after `RESP_START`.", "Padding tokens before the instruction."],
+      "correct": 2,
+      "explanation": "The mask stays zero through the prompt and separator, then switches to one for tokens in the response."
     },
     {
       "stage": "check",
-      "question": "What is the purpose of masking loss on non-assistant tokens during SFT?",
-      "options": [
-        "To speed up training",
-        "To train the model only to generate responses, not to memorize the instruction format or system prompts",
-        "To reduce memory usage, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "To prevent overfitting"
-      ],
-      "correct": 1,
-      "explanation": "During SFT, you want the model to learn how to respond, not how to reproduce the instruction. Loss masking sets the loss to 0 for system/user tokens so gradients only come from the assistant's response tokens."
+      "question": "Why does `sft_train` use `mask[1:]` alongside `tokens[1:]`?",
+      "options": ["It removes every response token from the loss.", "It converts masks to attention scores.", "It ensures every sequence has exactly `seq_len` targets.", "It aligns the shifted response labels."],
+      "correct": 3,
+      "explanation": "Inputs are `tokens[:-1]` and targets are `tokens[1:]`; shifting the mask by the same amount labels the target positions correctly."
     },
     {
       "stage": "check",
-      "question": "What format does SFT training data typically follow?",
-      "options": [
-        "Raw text documents",
-        "Chat template with system, user, and assistant roles marked by special tokens",
-        "Key-value pairs",
-        "SQL queries and results, because one plausible output is sufficient production evidence"
-      ],
-      "correct": 1,
-      "explanation": "SFT data uses a structured chat format: a system prompt setting behavior, a user instruction, and an assistant response. Special tokens mark role boundaries so the model learns the conversational structure."
-    },
-    {
-      "stage": "check",
-      "question": "Why might an SFT model produce lower perplexity on benchmarks but worse conversational quality?",
-      "options": [
-        "The benchmarks are wrong",
-        "SFT optimizes for pattern matching on training examples, not for the nuanced quality judgments humans care about -- that requires RLHF/DPO",
-        "The model is too small",
-        "The learning rate was wrong, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "SFT teaches the model to follow formats and produce plausible responses. It doesn't teach which response is better when multiple valid options exist. Human preference alignment (RLHF/DPO) addresses this gap."
-    },
-    {
-      "stage": "post",
-      "question": "How many high-quality instruction-response pairs are typically needed for effective SFT?",
-      "options": [
-        "Millions",
-        "10,000 to 100,000 high-quality examples",
-        "Fewer than 100 — and applies unchanged even when the lesson's stated preconditions fail",
-        "Billions"
-      ],
-      "correct": 1,
-      "explanation": "SFT is surprisingly data-efficient. Studies show that 10K-100K high-quality examples (like the Alpaca or LIMA datasets) can effectively teach instruction following. Quality matters far more than quantity."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Instruction Tuning (SFT)?",
-      "options": [
-        "Format training data using chat templates with system, user, and assistant roles, and mask loss on non-assi...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "Which IDs does this lesson reserve for `INST_START`, `INST_END`, and `RESP_START`?",
+      "options": ["IDs 253, 254, 255.", "0, 1, and 2, respectively.", "256, 257, and 258, respectively.", "255, 254, and 253, respectively."],
       "correct": 0,
-      "explanation": "“Format training data using chat templates with system, user, and assistant roles, and mask loss on non-assi...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The `SPECIAL_TOKENS` mapping explicitly assigns 253 to the instruction start, 254 to the instruction end, and 255 to the response start."
+    },
+    {
+      "stage": "check",
+      "question": "What does `masked_cross_entropy_loss` return when the response mask contains no ones?",
+      "options": ["The unmasked loss over the prompt.", "`0.0`.", "Positive infinity.", "The number of prompt tokens."],
+      "correct": 1,
+      "explanation": "The function checks the masked token count and returns `0.0` when there are no response targets to average."
+    },
+    {
+      "stage": "post",
+      "question": "If a formatted instruction sequence exceeds `seq_len`, which part is retained by `sft_train`?",
+      "options": ["Only the response, re-tokenized from scratch.", "The last `seq_len` tokens.", "The first `seq_len` tokens.", "The entire sequence, because `seq_len` is advisory."],
+      "correct": 2,
+      "explanation": "The training loop slices the complete formatted token list with `tokens[:seq_len]` before constructing shifted inputs, targets, and masks."
+    },
+    {
+      "stage": "post",
+      "question": "With the same logits, what is the usual effect of lowering the positive `temperature` passed to `generate_response`?",
+      "options": ["It makes every token equally likely, regardless of its logit.", "It reverses the token ranking.", "It removes the response mask.", "Lower temperature sharpens sampling."],
+      "correct": 3,
+      "explanation": "The generator divides logits by temperature before softmax, so a value below one increases their separation and reduces sampling entropy."
     }
   ]
 }

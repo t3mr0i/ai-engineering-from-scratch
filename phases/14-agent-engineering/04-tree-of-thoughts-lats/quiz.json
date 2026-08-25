@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does chain-of-thought struggle on Game of 24?",
+      "question": "What root state does the demo create for `NUMBERS = [4, 6, 4, 1]`?",
       "options": [
-        "A linear walk cannot backtrack when an early step is wrong, so later steps compound the error",
-        "The model cannot multiply or divide integers accurately enough for this puzzle",
-        "The prompt given to the model is too short to describe the Game of 24 rules",
-        "CoT requires a calculator tool that the paper's GPT-4 setup does not have access to"
+        "`(6, 4, 4, 1)`",
+        "`(1, 4, 4, 6)`",
+        "`(4, 6, 4, 1)`",
+        "`(24,)`"
       ],
       "correct": 0,
-      "explanation": "Without branching, a wrong early subexpression poisons the rest of the chain; the paper measures only 4 percent for CoT."
+      "explanation": "Both searches start from `tuple(sorted(NUMBERS, reverse=True))`, which is `(6, 4, 4, 1)`."
     },
     {
       "stage": "check",
-      "question": "What is a node in a Tree of Thoughts search?",
+      "question": "What does `evaluate(4, \"/\", 0)` return?",
       "options": [
-        "A single token produced by the model during autoregressive decoding",
-        "A coherent intermediate step or thought, with K possible child expansions",
-        "A weight update applied to the model during a fine-tuning pass",
-        "A tool registered with the runtime that the search itself can call at each node"
+        "`0`",
+        "`None`",
+        "`inf`",
+        "It raises `ZeroDivisionError`."
       ],
       "correct": 1,
-      "explanation": "ToT treats reasoning as a tree where each node is an intermediate thought that can expand into K children."
+      "explanation": "The division branch explicitly returns `None` when `b == 0`, allowing `expand` to skip that child."
     },
     {
       "stage": "check",
-      "question": "Which of these three is NOT one of LATS's roles for the LLM?",
+      "question": "What value does `value(Node(state=(24,), trace=[]))` return?",
       "options": [
-        "A policy that proposes candidate next actions in a ReAct-style manner",
-        "A value function that scores how promising a partial trajectory is",
-        "An optimizer that updates model weights between rollouts",
-        "A self-reflector that writes a reflection on failure to reseed rollouts"
+        "`0.0`",
+        "`0.24`",
+        "`1.0`",
+        "`-0.24`"
       ],
       "correct": 2,
-      "explanation": "LATS is gradient-free; the three LLM roles are policy, value, and self-reflector. There are no weight updates."
+      "explanation": "A one-element state exactly equal to `TARGET` receives the terminal reward `1.0`."
     },
     {
       "stage": "check",
-      "question": "Name the four MCTS phases the lesson lists.",
+      "question": "What does `uct(parent, child)` return for an unvisited child?",
       "options": [
-        "Sample, Score, Sort, Submit, run per candidate thought",
-        "Plan, Execute, Reflect, Stop, the Reflexion-style phases",
-        "Search, Synthesize, Synthesize-Again, Stop each round",
-        "Select, Expand, Simulate, Backpropagate, repeated every iteration"
+        "The parent value `Q` only",
+        "Zero, so unvisited children are ignored",
+        "The child state distance from 24",
+        "Positive infinity, forcing the child to be explored"
       ],
       "correct": 3,
-      "explanation": "MCTS proceeds in select, expand, simulate, backpropagate per iteration."
+      "explanation": "The first branch of `uct` returns `float(\"inf\")` when `child.visits == 0`."
     },
     {
       "stage": "post",
-      "question": "In UCT, what is the role of the exploration constant c?",
+      "question": "After `backprop([root, child], 1.0)`, what changes on both nodes?",
       "options": [
-        "It weights the exploration term sqrt(ln N / n) against the exploitation term Q",
-        "It scales the value estimate Q before it gets compared across every sibling node pair",
-        "It sets the maximum depth the tree search is allowed to reach during a run",
-        "It controls how many rollouts run per iteration of the search loop overall"
+        "Each gets `visits += 1` and `value_sum += 1.0`.",
+        "Only `root.visits` changes; child statistics are recomputed later.",
+        "Each state is replaced by `(24,)` and its trace is cleared.",
+        "The reward is divided by depth before it reaches the root."
       ],
       "correct": 0,
-      "explanation": "c balances exploitation (Q) against the exploration term; tune per task."
+      "explanation": "`backprop` loops over every node in the path and adds one visit plus the supplied reward to each node."
     },
     {
       "stage": "post",
-      "question": "When is search actively harmful compared to a single trajectory?",
+      "question": "When does `tot_bfs` return early instead of scoring the remaining frontier?",
       "options": [
-        "When the task genuinely has multiple correct answers that the evaluator can accept as right",
-        "When the evaluator is noisy and there is a single right answer, so the search converges on a good-scoring wrong answer",
-        "Whenever tokens are cheap enough that the extra search budget barely matters for the budget",
-        "When the task being solved is code generation with unit tests serving as the value function"
+        "When the frontier contains exactly eight nodes.",
+        "When a child has `value(child) > 0.99`.",
+        "When a division operation returns `None`.",
+        "When `max_depth` reaches zero before expansion."
       ],
       "correct": 1,
-      "explanation": "A noisy value function plus a single correct answer is exactly when search overfits to the noise."
+      "explanation": "The implementation checks each expanded child and immediately returns it when its value exceeds `0.99`, which denotes an exact target."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to MCP Fundamentals — Primitives, Lifecycle, JSON-RPC Base?",
+      "question": "How does Message.kind classify a JSON-RPC object with method and id fields?",
       "options": [
-        "Name all six MCP primitives (tools, resources, prompts on the server; roots, sampling, elicitation on the c...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "As a request",
+        "As a notification",
+        "As a response result",
+        "As an unknown message"
       ],
       "correct": 0,
-      "explanation": "“Name all six MCP primitives (tools, resources, prompts on the server; roots, sampling, elicitation on the c...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "A method paired with an id is a request; the id lets the peer correlate the eventual response."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of MCP Fundamentals — Primitives, Lifecycle, JSON-RPC Base?",
+      "question": "What distinguishes notifications/initialized from a normal request?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Walk through the three-phase lifecycle (initialize, operation, shutdown) and state who sends which message...",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It uses a negative id",
+        "no id; no JSON-RPC response",
+        "It must contain a result field",
+        "It is sent only after shutdown"
       ],
       "correct": 1,
-      "explanation": "“Walk through the three-phase lifecycle (initialize, operation, shutdown) and state who sends which message...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The helper omits id for a notification, and MCP notifications are one-way messages without a response."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through MCP Fundamentals — Primitives, Lifecycle, JSON-RPC Base?",
+      "question": "Which protocol version does the lesson's initialize response negotiate?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Parse and emit JSON-RPC 2.0 request, response, and notification envelopes",
-        "Treat one successful example as proof that every edge case works"
+        "2024-06-01",
+        "1.0",
+        "2025-11-25",
+        "latest"
       ],
       "correct": 2,
-      "explanation": "“Parse and emit JSON-RPC 2.0 request, response, and notification envelopes” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "PROTOCOL_VERSION is the concrete string 2025-11-25, which appears in the initialize exchange."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits MCP Fundamentals — Primitives, Lifecycle, JSON-RPC Base?",
+      "question": "What does the sample tools/call notes_search response contain?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Explain what capability negotiation at `initialize` is and what breaks without it",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Explain what capability negotiation at `initialize` is and what breaks without it” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for MCP Fundamentals — Primitives, Lifecycle, JSON-RPC Base?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Name all six MCP primitives (tools, resources, prompts on the server; roots, sampling, elicitation on the c..."
+        "One binary block and isError true",
+        "A server shutdown instruction",
+        "A prompt template with no content",
+        "three text blocks; isError false"
       ],
       "correct": 3,
-      "explanation": "“Name all six MCP primitives (tools, resources, prompts on the server; roots, sampling, elicitation on the c...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The run sequence calls notes_search with limit 5 and returns three text blocks in a successful tool result."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for MCP Fundamentals — Primitives, Lifecycle, JSON-RPC Base?",
+      "question": "What error does the unknown notes_delete request demonstrate?",
       "options": [
-        "Walk through the three-phase lifecycle (initialize, operation, shutdown) and state who sends which message...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "-32601 Method not found",
+        "HTTP 403 with no JSON-RPC envelope",
+        "A successful empty result",
+        "JSON-RPC error code -32700, Parse error"
       ],
       "correct": 0,
-      "explanation": "“Walk through the three-phase lifecycle (initialize, operation, shutdown) and state who sends which message...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The server recognizes the envelope but not the method, so it returns the standard -32601 method-not-found error."
+    },
+    {
+      "stage": "post",
+      "question": "Which capability set belongs to the server in the initialize exchange?",
+      "options": [
+        "roots, sampling, and elicitation only",
+        "tools, resources, prompts",
+        "Only a sampling model preference",
+        "No capabilities until tools/call succeeds"
+      ],
+      "correct": 1,
+      "explanation": "The learner client advertises roots, sampling, and elicitation; the notes server advertises tools, resources, and prompts."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What license does Langfuse ship under after the June 2025 open-sourcing of formerly commercial modules?",
+      "question": "What score and verdict does the fixture for session `s002` receive?",
       "options": [
-        "GPLv3, a copyleft license requiring derivative works to stay open source",
-        "Elastic License 2.0, the license Phoenix uses, not Langfuse",
-        "MIT, a permissive license with no copyleft requirement at all",
-        "Apache 2.0, the permissive license Opik uses, not Langfuse"
+        "1.0 and PASS",
+        "0.8 and PASS",
+        "0.2 and FAIL",
+        "0.5 and WARN"
       ],
       "correct": 2,
-      "explanation": "Langfuse is MIT, including LLM-as-a-judge, annotation queues, prompt experiments, and Playground after June 2025."
+      "explanation": "The judge subtracts points for the recorded error, missing final reference, and missing tool call; `s002` ends at 0.2, below the 0.5 WARN threshold, so it is FAIL."
     },
     {
       "stage": "check",
-      "question": "What is Arize Phoenix strongest at according to the lesson?",
+      "question": "What verdict does the evaluator assign to session `s003`?",
       "options": [
-        "Prompt versioning with a built-in playground and fine-grained version diffing across deployed prompt revisions",
-        "An automated optimization loop that runs A/B experiments and rewrites prompts to raise eval scores over time",
-        "Static analysis of code that flags unsafe tool-call argument types before the agent is ever executed",
-        "Deep agent-specific evaluation: trace clustering, anomaly detection, RAG retrieval relevancy, OpenInference auto-instrumentation"
+        "FAIL at 0.2",
+        "WARN at 0.8",
+        "PASS at 1.0",
+        "PASS at 0.8"
       ],
       "correct": 3,
-      "explanation": "Phoenix focuses on behavioral drift and RAG evaluation with OpenInference auto-instrumentation."
+      "explanation": "`s003` retains a final output reference and a tool call without an error or token-budget violation, yielding 0.8; the PASS threshold is `>= 0.8`."
     },
     {
       "stage": "check",
-      "question": "Which platform pairs automated prompt optimization with guardrails (PII redaction, topical constraints) and LLM-judge hallucination detection?",
+      "question": "What failure count does `categorize_failures` report for the demo's rate-limited event?",
       "options": [
-        "Opik, which centers on the optimization and guardrail enforcement loop",
-        "Langfuse, which centers on tracing plus prompt management and session replay",
-        "Phoenix, which centers on RAG retrieval relevancy and behavioral drift detection",
-        "Jaeger, a general distributed-tracing backend with no GenAI-specific evaluation"
+        "`rate_limited: 1`",
+        "`rate_limited: 2`",
+        "`tool_error: 1`",
+        "No category, because only PASS sessions are counted."
       ],
       "correct": 0,
-      "explanation": "Opik centers on the optimization + guardrail loop."
+      "explanation": "Only one ingested span carries the `rate_limited` error reason, so the `Counter` contains one occurrence under that exact category."
     },
     {
       "stage": "check",
-      "question": "Which platform does the lesson recommend for an all-in-one with prompt management?",
+      "question": "In what order does `summarize` sort the demo's session summaries?",
       "options": [
-        "Phoenix, which has no prompt versioning and instead focuses on drift and anomaly detection",
-        "Langfuse, which covers tracing, prompt management, evals, and session replay end-to-end",
-        "Opik, which focuses on automated optimization experiments rather than prompt management",
-        "Datadog APM, a general infrastructure monitoring tool without native prompt versioning"
+        "`s001`, `s002`, `s003`, from best to worst score.",
+        "`s002`, `s003`, `s001`, from lowest to highest evaluation score.",
+        "`s003`, `s001`, `s002`, by ingestion time.",
+        "The order is nondeterministic because summaries use a set."
       ],
       "correct": 1,
-      "explanation": "Langfuse covers tracing + prompt management + evals + session replay end-to-end."
+      "explanation": "The summaries are sorted by ascending evaluation score: 0.2 (`s002`), 0.8 (`s003`), then 1.0 (`s001`)."
     },
     {
       "stage": "post",
-      "question": "What does the lesson say about vendor-published platform benchmarks?",
+      "question": "What does `TraceCollector.by_session` provide for the demo data?",
       "options": [
-        "They are definitive and need no validation against your own workload",
-        "They are forbidden under the OpenTelemetry GenAI semantic conventions spec",
-        "Take them as directional, not definitive; measure your own corpus first",
-        "Only Opik's self-reported numbers count; ignore every other vendor's claim"
+        "One global list with no session keys.",
+        "A mapping that keeps only failed spans.",
+        "Groups of ingested spans keyed by the three session IDs.",
+        "A sorted list of evaluation scores without span objects."
       ],
       "correct": 2,
-      "explanation": "Even the cited 14x gap between Opik and Langfuse should be measured on your own data before deciding."
+      "explanation": "`ingest` indexes each `SpanEvent` by `session_id`, so the collector exposes separate groups for `s001`, `s002`, and `s003`."
     },
     {
       "stage": "post",
-      "question": "Why is tracing without evaluation considered expensive logging?",
+      "question": "What must be true for the judge's `has_final` check to pass?",
       "options": [
-        "Disk storage costs more per gigabyte than the CPU time spent running the entire agent pipeline itself",
-        "Providers charge a per-span fee that scales faster than per-token model pricing does",
-        "Spans cannot be replayed once the trace exporter batches and flushes them to storage",
-        "You see runs but you do not score them, so regressions are invisible and bisection is impossible"
+        "Any span has an `output` key, even if its value is empty.",
+        "The trace contains at least one chat span.",
+        "The session has a tool call and no error event.",
+        "A truthy `gen_ai.output.reference_id` is present in the span attributes."
       ],
       "correct": 3,
-      "explanation": "Evals are what turn traces into actionable quality signals."
+      "explanation": "The evaluator tests the value of `gen_ai.output.reference_id`, not mere key presence; an empty or missing reference incurs the final-output penalty."
     }
   ]
 }

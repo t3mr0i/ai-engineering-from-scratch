@@ -627,6 +627,14 @@ Edit the code below to experiment with different tool declarations or prompts. T
 print("(Try adding another tool and translating it to all three formats!)")
 ```
 
+## Build It
+
+Reconstruct **Function Calling Deep Dive — OpenAI, Anthropic, Gemini** by following `call` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Ship It
+
+Hand off `outputs/skill-provider-portability-audit.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [OpenAI — Function calling guide](https://platform.openai.com/docs/guides/function-calling) — canonical reference including strict mode and parallel calls
@@ -637,10 +645,20 @@ print("(Try adding another tool and translating it to all three formats!)")
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: State the three shape differences between OpenAI, Anthropic, and Gemini function-calling payloads (declaration, call, result).
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Translate one tool declaration across all three provider formats and predict where strict-mode constraints will differ.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Use `tool_choice` in each provider to force, forbid, or auto-pick tool calls.
+Work from the smallest fixture that the Function Calling Deep Dive — OpenAI, Anthropic, Gemini demo already understands, then make one deliberate change and record what moved.
+
+1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using x=0.5 with the demo defaults. Follow `call`, `text`, `usage`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **State the three shape differences between OpenAI, Anthropic, and Gemini function-calling payloads (declaration, call, result).**.
+2. **Perturb one field.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Translate one tool declaration across all three provider formats and predict where strict-mode constraints will differ.** says the other inputs should stay fixed.
+3. **Check the failure boundary.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Use `tool_choice` in each provider to force, forbid, or auto-pick tool calls.** and record the exception text if the code rejects the case.
+4. **Make the result repeatable.** Open `outputs/skill-provider-portability-audit.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Know the per-provider hard limits (tool count, schema depth, argument length) and the error signatures each one emits when limits are violated.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “State the three shape differences between OpenAI, Anthropic, and Gemini function-calling payloads (declaration, call, result),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Use `tool_choice` in each provider to force, forbid, or auto-pick tool calls,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Function Calling Deep Dive — OpenAI, Anthropic, Gemini** should contain:
+
+- the `python3 main.py` output for x=0.5 with the demo defaults, with `call`, `text`, `usage` traced to the value or shape that supports **State the three shape differences between OpenAI, Anthropic, and Gemini function-calling payloads (declaration, call, result).**;
+- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Translate one tool declaration across all three provider formats and predict where strict-mode constraints will differ.**;
+- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Use `tool_choice` in each provider to force, forbid, or auto-pick tool calls.**; and
+- an updated `outputs/skill-provider-portability-audit.md` example with a concrete input, expected output field, and acceptance check tied to **Know the per-provider hard limits (tool count, schema depth, argument length) and the error signatures each one emits when limits are violated.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

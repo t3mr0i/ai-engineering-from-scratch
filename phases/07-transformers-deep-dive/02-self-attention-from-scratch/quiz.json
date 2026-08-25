@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does vanilla self-attention scale the dot product by 1/sqrt(d_k)?",
+      "question": "In the Rust demo with 6 tokens, d_model=16, dk=8, and dv=8, what shapes are printed for output and attention weights?",
       "options": [
-        "To make the output values between 0 and 1",
-        "To prevent dot products from growing large in high dimensions, which would push softmax into regions with tiny gradients",
-        "To normalize the query and key vectors to unit length",
-        "To reduce the computational cost of the matrix multiplication — and applies unchanged even when the lesson's stated preconditions fail"
+        "Output (8, 6) and weights (16, 6)",
+        "Output (6, 16) and weights (8, 8)",
+        "Output (6, 8) and weights (6, 6)",
+        "Output (6, 6) and weights (6, 8)"
       ],
-      "correct": 1,
-      "explanation": "When d_k is large, the dot product of random vectors grows proportionally to sqrt(d_k). Without scaling, softmax receives large inputs, producing near-one-hot outputs where gradients vanish."
+      "correct": 2,
+      "explanation": "Q and K have width 8, so QKᵀ gives a 6×6 weight matrix; multiplying it by V of width 8 yields a 6×8 output."
     },
     {
       "stage": "check",
-      "question": "What are the three projections in self-attention?",
+      "question": "What divisor does scaled_dot_product_attention use when dk=8?",
       "options": [
-        "Input, hidden, and output",
-        "Query, key, and value -- each a learned linear projection of the same input",
-        "Encoder, decoder, and cross-attention, with no need to inspect intermediate results or test edge cases",
-        "Embedding, position, and segment"
+        "1/8",
+        "8",
+        "sqrt(16)",
+        "sqrt(8)"
       ],
-      "correct": 1,
-      "explanation": "Self-attention projects the input through three different weight matrices to produce queries (what am I looking for?), keys (what do I contain?), and values (what do I output if matched?)."
+      "correct": 3,
+      "explanation": "The scores are multiplied by 1/sqrt(dk), so dk=8 gives a divisor of sqrt(8)."
     },
     {
       "stage": "check",
-      "question": "In multi-head attention with 8 heads and d_model=512, what is the dimension of each head?",
+      "question": "Which sequence describes the Q, K, V computation in SelfAttention.forward?",
       "options": [
-        "512 -- each head sees the full dimension",
-        "64 -- d_model is split evenly across heads (512/8=64)",
-        "8 -- one dimension per head",
-        "4096 -- each head expands the representation, because one plausible output is sufficient production evidence"
-      ],
-      "correct": 1,
-      "explanation": "Multi-head attention splits d_model into h heads, each operating on d_k = d_model/h dimensions. With 512/8 = 64 dimensions per head, the total computation cost equals single-head attention at full dimension."
-    },
-    {
-      "stage": "check",
-      "question": "What does the causal mask in autoregressive attention prevent?",
-      "options": [
-        "It prevents the model from attending to padding tokens",
-        "It prevents each position from attending to future positions, ensuring the model can only use past context when predicting the next token",
-        "It prevents attention weights from becoming too large",
-        "It prevents the model from attending to its own position, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "In autoregressive generation, token t must not see tokens t+1, t+2, etc. The causal mask sets future positions to -infinity before softmax, zeroing out their attention weights."
-    },
-    {
-      "stage": "post",
-      "question": "Why does self-attention have O(n^2) complexity in sequence length n?",
-      "options": [
-        "Because the model has n layers stacked on top of each other",
-        "Because every token computes attention scores with every other token, producing an n x n attention matrix",
-        "Because the feedforward layers after attention are quadratic",
-        "Because backpropagation through attention requires n^2 gradient computations — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "The QK^T matrix multiplication produces an n x n attention matrix where entry (i,j) is the attention from token i to token j. Both computation and memory scale as O(n^2), which is why long-context models need techniques like FlashAttention."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Self-Attention from Scratch?",
-      "options": [
-        "Build a multi-head attention layer that splits heads, computes parallel attention, and concatenates results",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Q=XWq, K=XWk, V=XWv, then scaled attention",
+        "Q=X+Wq, K=X+Wk, V=X+Wv, then an argmax",
+        "Q=WqWk, K=WkWv, V=WvWq, without X",
+        "Q=XWv, K=XWq, V=XWk, then concatenate tokens"
       ],
       "correct": 0,
-      "explanation": "“Build a multi-head attention layer that splits heads, computes parallel attention, and concatenates results” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The Rust and Julia implementations project the same input X with Wq, Wk, and Wv before computing QKᵀ and the weighted V sum."
+    },
+    {
+      "stage": "check",
+      "question": "What invariant should each row of the stable softmax weights satisfy?",
+      "options": [
+        "Its entries sum to the largest logit",
+        "Its entries sum to 1",
+        "Every entry is exactly 0.5",
+        "The row sum equals dk"
+      ],
+      "correct": 1,
+      "explanation": "softmax_rows exponentiates shifted logits and divides by their row sum, producing a probability distribution for each query."
+    },
+    {
+      "stage": "post",
+      "question": "What is the shape of Wq created by SelfAttention::new(16, 8, 8, ...)?",
+      "options": [
+        "16×16",
+        "8×16",
+        "16×8",
+        "8×8"
+      ],
+      "correct": 2,
+      "explanation": "The Rust constructor calls randn(d_model, dk), so Wq maps a 16-wide input to an 8-wide query representation."
+    },
+    {
+      "stage": "post",
+      "question": "Why does softmax_vec([100.0, 200.0, 300.0]) subtract the row maximum before exponentiating?",
+      "options": [
+        "It removes the largest probability from the output",
+        "It forces every logit to become negative and changes the ranking",
+        "It makes the output sum to the original logits",
+        "It avoids overflow while leaving the normalized probabilities unchanged"
+      ],
+      "correct": 3,
+      "explanation": "Subtracting the maximum shifts all logits by a constant; normalization is unchanged, while exp(0) and exp(negative values) remain finite."
     }
   ]
 }

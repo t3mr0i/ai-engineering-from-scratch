@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the derivative of a function at a point tell you?",
+      "question": "What is the derivative of f(x)=x^2 at x=3?",
       "options": [
-        "The value of the function at that point",
-        "The rate of change (slope) of the function at that point",
-        "The area under the function up to that point — and applies unchanged even when the lesson's stated preconditions fail",
-        "The maximum value the function can reach"
-      ],
-      "correct": 1,
-      "explanation": "The derivative f'(x) measures how much the output changes per unit change in input. Geometrically, it is the slope of the tangent line at that point."
-    },
-    {
-      "stage": "check",
-      "question": "What is a gradient in the context of machine learning?",
-      "options": [
-        "A measure of model accuracy",
-        "A vector of all partial derivatives that points in the direction of steepest ascent",
-        "The learning rate used during training",
-        "The difference between predicted and actual values, with no need to inspect intermediate results or test edge cases"
-      ],
-      "correct": 1,
-      "explanation": "The gradient collects every partial derivative into one vector. It points in the direction that increases the function fastest. To minimize loss, you move opposite the gradient."
-    },
-    {
-      "stage": "check",
-      "question": "In gradient descent, what does the update rule 'w = w - lr * dL/dw' accomplish?",
-      "options": [
-        "It increases the loss to test model robustness",
-        "It adjusts each weight in the direction that reduces the loss, scaled by the learning rate",
-        "It resets the weight to its initial value minus the gradient, because one plausible output is sufficient production evidence",
-        "It normalizes the weight to have magnitude 1"
-      ],
-      "correct": 1,
-      "explanation": "dL/dw tells you which direction increases the loss. Subtracting it (times the learning rate) moves the weight in the direction that decreases the loss. This is repeated for every weight in the model."
-    },
-    {
-      "stage": "check",
-      "question": "Why can't Newton's method (which uses the Hessian matrix) be directly applied to neural networks with millions of parameters?",
-      "options": [
-        "Newton's method only works for convex functions",
-        "The Hessian is an N x N matrix, requiring O(N^2) storage and O(N^3) computation per step, which is intractable for millions of parameters",
-        "Newton's method requires analytical derivatives which cannot be computed for neural networks, before defining the measurement, acceptance threshold, or rollback path",
-        "Newton's method converges too slowly for deep networks"
-      ],
-      "correct": 1,
-      "explanation": "For N=1 million parameters, the Hessian has 1 trillion entries. Computing and inverting it is impossible. This is why we use first-order methods (SGD, Adam) that approximate second-order information cheaply."
-    },
-    {
-      "stage": "post",
-      "question": "What is the numerical (central difference) approximation for f'(x)?",
-      "options": [
-        "f(x+h) / h",
-        "(f(x+h) - f(x)) / h — and applies unchanged even when the lesson's stated preconditions fail",
-        "(f(x+h) - f(x-h)) / (2*h)",
-        "f(x) * h"
+        "9",
+        "3",
+        "6",
+        "1"
       ],
       "correct": 2,
-      "explanation": "The central difference (f(x+h) - f(x-h)) / (2h) is more accurate than the forward difference because it averages the slope on both sides of x, canceling out the leading error term."
+      "explanation": "f'(x)=2x, so f'(3)=6. The function value f(3)=9 is not its slope."
+    },
+    {
+      "stage": "check",
+      "question": "Which formula does numerical_derivative use for a centered finite difference?",
+      "options": [
+        "(f(x+h) - f(x)) / h",
+        "(f(x) + f(x+h)) / (2h)",
+        "(f(x-h) - f(x+h)) / h",
+        "(f(x+h) - f(x-h)) / (2h)"
+      ],
+      "correct": 3,
+      "explanation": "The centered formula samples on both sides of x and has smaller truncation error than a one-sided difference for a smooth function."
+    },
+    {
+      "stage": "check",
+      "question": "For f(x,y)=x^2+3xy+y^2, what is the gradient at (1,2)?",
+      "options": [
+        "[8, 7]",
+        "[7, 8]",
+        "[4, 5]",
+        "[2, 3]"
+      ],
+      "correct": 0,
+      "explanation": "The partials are 2x+3y and 3x+2y. Substitution gives 2+6=8 and 3+4=7."
+    },
+    {
+      "stage": "check",
+      "question": "One gradient-descent step on f(x)=x^2 from x=5 with learning rate 0.1 gives which x?",
+      "options": [
+        "4.9",
+        "4",
+        "5.2",
+        "0.1"
+      ],
+      "correct": 1,
+      "explanation": "The gradient at 5 is 10, so x_new = 5 - 0.1*10 = 4."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Calculus for Machine Learning?",
+      "question": "What does the Hessian of f(x,y)=x^2-y^2 at (0,0) reveal?",
       "options": [
-        "Implement gradient descent from scratch to minimize a loss function in 1D and 2D",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Two positive eigenvalues, so the point is a strict minimum",
+        "Two negative eigenvalues, so the point is a strict maximum",
+        "Eigenvalues 2 and -2, so the point is a saddle",
+        "A zero Hessian, so no curvature exists"
       ],
-      "correct": 0,
-      "explanation": "“Implement gradient descent from scratch to minimize a loss function in 1D and 2D” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The Hessian is diag(2,-2). Curvature is upward in x and downward in y, which is the signature of a saddle point."
+    },
+    {
+      "stage": "post",
+      "question": "What is the first-order Taylor approximation of e^x around x0=0 at x=0.1?",
+      "options": [
+        "e^0.1 exactly",
+        "0.1",
+        "1.01",
+        "1.1"
+      ],
+      "correct": 3,
+      "explanation": "At x0=0, f=1 and f'=1. The first-order approximation is 1 + 1*0.1 = 1.1; it is close to, but not exactly, e^0.1."
     }
   ]
 }

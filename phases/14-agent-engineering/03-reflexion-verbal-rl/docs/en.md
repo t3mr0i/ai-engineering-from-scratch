@@ -314,6 +314,18 @@ summarize(trials_exp, f"EXPERIMENT (TARGET={TARGET_EXPERIMENT})")
 print(f"\n=== Final: {'✅ Success' if trials_exp[-1].success else '❌ Failed'} in {len(trials_exp)} trials (target={TARGET_EXPERIMENT}) ===")
 ```
 
+## Build It
+
+Reconstruct **Reflexion: Verbal Reinforcement Learning** by following `call` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Use It
+
+Call `call` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-reflexion-buffer.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Shinn et al., Reflexion: Language Agents with Verbal Reinforcement Learning (arXiv:2303.11366)](https://arxiv.org/abs/2303.11366) — the canonical paper
@@ -323,10 +335,20 @@ print(f"\n=== Final: {'✅ Success' if trials_exp[-1].success else '❌ Failed'}
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Name the three components of Reflexion (Actor, Evaluator, Self-Reflector) and the role of episodic memory.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement a stdlib Reflexion loop with binary evaluator, reflection buffer, and fresh re-attempts.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Choose between scalar, heuristic, and self-evaluated feedback sources for a given task.
+This lab follows `call` and `text` on a controlled fixture; write down the value before changing the input.
+
+1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using x=0.5 with the demo defaults. Follow `call`, `text`, `usage`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Name the three components of Reflexion (Actor, Evaluator, Self-Reflector) and the role of episodic memory.**.
+2. **Change the controlled parameter.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Implement a stdlib Reflexion loop with binary evaluator, reflection buffer, and fresh re-attempts.** says the other inputs should stay fixed.
+3. **Exercise the guard.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Choose between scalar, heuristic, and self-evaluated feedback sources for a given task.** and record the exception text if the code rejects the case.
+4. **Prepare the artifact for reuse.** Open `outputs/skill-reflexion-buffer.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Explain why verbal reinforcement catches errors that gradient-based RL would need thousands of trials to fix.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name the three components of Reflexion (Actor, Evaluator, Self-Reflector) and the role of episodic memory,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Choose between scalar, heuristic, and self-evaluated feedback sources for a given task,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Reflexion: Verbal Reinforcement Learning** should contain:
+
+- the `python3 main.py` output for x=0.5 with the demo defaults, with `call`, `text`, `usage` traced to the value or shape that supports **Name the three components of Reflexion (Actor, Evaluator, Self-Reflector) and the role of episodic memory.**;
+- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Implement a stdlib Reflexion loop with binary evaluator, reflection buffer, and fresh re-attempts.**;
+- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Choose between scalar, heuristic, and self-evaluated feedback sources for a given task.**; and
+- an updated `outputs/skill-reflexion-buffer.md` example with a concrete input, expected output field, and acceptance check tied to **Explain why verbal reinforcement catches errors that gradient-based RL would need thousands of trials to fix.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

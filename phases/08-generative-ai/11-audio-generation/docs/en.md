@@ -66,6 +66,18 @@ The 2024-2026 trend: flow matching is winning for music (faster inference, clean
 
 
 
+## Build It
+
+Reconstruct **Audio Generation** by following `make_tokens` on a 160-sample 16 kHz waveform. Run `python3 main.py` and verify that the duration/frame count is zero or the documented validation path is used; no plausible speech label should be fabricated.
+
+## Use It
+
+Call `make_tokens` from a small caller with a 160-sample 16 kHz waveform. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-audio-brief.md` with the command `python3 main.py`, the accepted input shape (a 160-sample 16 kHz waveform), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Défossez et al. (2022). Encodec: High Fidelity Neural Audio Compression](https://arxiv.org/abs/2210.13438) — the codec standard.
@@ -78,10 +90,20 @@ The 2024-2026 trend: flow matching is winning for music (faster inference, clean
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the probabilistic mechanism behind Audio Generation.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement the lesson's core generative step from first principles.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Inspect samples and intermediate states to diagnose generation behavior.
+Keep two runs side by side for **Audio Generation**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
+
+1. **Read the first result.** From `code/`, run `python3 main.py` using a 160-sample 16 kHz waveform. Follow `make_tokens`, `init_counts`, `update_counts`. Expect the duration/frame count is zero or the documented validation path is used; no plausible speech label should be fabricated; capture the first printed shape, metric, status, or summary field and state which part supports **Explain the probabilistic mechanism behind Audio Generation**.
+2. **Run a two-value comparison.** Repeat the command after changing only the waveform amplitude: use the same waveform with its amplitude halved. Predict the direction of the change, then compare the two output values. Explain why **Implement the lesson's core generative step from first principles** says the other inputs should stay fixed.
+3. **Try an adversarial fixture.** Feed the implementation an empty waveform (zero samples). Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Inspect samples and intermediate states to diagnose generation behavior** and record the exception text if the code rejects the case.
+4. **Write the operator note.** Open `outputs/skill-audio-brief.md` and add a worked example using a 160-sample 16 kHz waveform. Include the input contract, one expected output field, and a named acceptance check for **Compare quality, diversity, stability, and compute trade-offs**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the probabilistic mechanism behind Audio Generation,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Inspect samples and intermediate states to diagnose generation behavior,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Audio Generation** should contain:
+
+- the `python3 main.py` output for a 160-sample 16 kHz waveform, with `make_tokens`, `init_counts`, `update_counts` traced to the value or shape that supports **Explain the probabilistic mechanism behind Audio Generation**;
+- a before/after comparison for the waveform amplitude, where the same waveform with its amplitude halved changes the observation in the direction predicted by **Implement the lesson's core generative step from first principles**;
+- a recorded result for an empty waveform (zero samples) that matches the implementation’s validation or empty-result contract and explains the evidence for **Inspect samples and intermediate states to diagnose generation behavior**; and
+- an updated `outputs/skill-audio-brief.md` example with a concrete input, expected output field, and acceptance check tied to **Compare quality, diversity, stability, and compute trade-offs**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

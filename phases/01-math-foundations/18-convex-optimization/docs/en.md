@@ -458,6 +458,14 @@ print(f"Support vectors: {svm.n_support_}")
 | Saddle point | A point where the gradient is zero but it is a minimum in some directions and a maximum in others |
 | Overparameterization | Using more parameters than training examples. Smooths the loss landscape and reduces bad local minima |
 
+## Build It
+
+Reconstruct **Convex Optimization** by following `check_convexity` on a graph with edges (0,1) and (1,2). Run `python3 main.py` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.
+
+## Ship It
+
+Hand off `outputs/skill-convexity-checker.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Boyd & Vandenberghe: Convex Optimization](https://web.stanford.edu/~boyd/cvxbook/) - the standard textbook, freely available online
@@ -467,10 +475,20 @@ print(f"Support vectors: {svm.n_support_}")
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Test whether a function is convex using the definition, second derivative, and Hessian criteria.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement Newton's method and compare its quadratic convergence against gradient descent.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Solve constrained optimization problems using Lagrange multipliers and interpret KKT conditions.
+This lab follows `check_convexity` and `hessian_eigenvalues_2d` on a controlled fixture; write down the value before changing the input.
+
+1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using a graph with edges (0,1) and (1,2). Follow `check_convexity`, `hessian_eigenvalues_2d`, `is_positive_semidefinite_2d`. Expect degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly; capture the first printed shape, metric, status, or summary field and state which part supports **Test whether a function is convex using the definition, second derivative, and Hessian criteria**.
+2. **Change the controlled parameter.** Repeat the command after changing only the edge list: use the same graph with an isolated node 3. Predict the direction of the change, then compare the two output values. Explain why **Implement Newton's method and compare its quadratic convergence against gradient descent** says the other inputs should stay fixed.
+3. **Exercise the guard.** Feed the implementation a graph with no edges. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Solve constrained optimization problems using Lagrange multipliers and interpret KKT conditions** and record the exception text if the code rejects the case.
+4. **Prepare the artifact for reuse.** Open `outputs/skill-convexity-checker.md` and add a worked example using a graph with edges (0,1) and (1,2). Include the input contract, one expected output field, and a named acceptance check for **Explain why neural network loss landscapes are non-convex yet SGD still finds good solutions**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Test whether a function is convex using the definition, second derivative, and Hessian criteria,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Solve constrained optimization problems using Lagrange multipliers and interpret KKT conditions,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Convex Optimization** should contain:
+
+- the `python3 main.py` output for a graph with edges (0,1) and (1,2), with `check_convexity`, `hessian_eigenvalues_2d`, `is_positive_semidefinite_2d` traced to the value or shape that supports **Test whether a function is convex using the definition, second derivative, and Hessian criteria**;
+- a before/after comparison for the edge list, where the same graph with an isolated node 3 changes the observation in the direction predicted by **Implement Newton's method and compare its quadratic convergence against gradient descent**;
+- a recorded result for a graph with no edges that matches the implementation’s validation or empty-result contract and explains the evidence for **Solve constrained optimization problems using Lagrange multipliers and interpret KKT conditions**; and
+- an updated `outputs/skill-convexity-checker.md` example with a concrete input, expected output field, and acceptance check tied to **Explain why neural network loss landscapes are non-convex yet SGD still finds good solutions**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

@@ -624,6 +624,18 @@ print(answer)
 print("-" * 55)
 ```
 
+## Build It
+
+Reconstruct **Context Engineering: Windows, Budgets, Memory, and Retrieval** by following `call` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `call` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-context-optimizer.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Liu et al., 2023 -- "Lost in the Middle: How Language Models Use Long Contexts"](https://arxiv.org/abs/2307.03172) -- the definitive study on position-dependent attention.
@@ -632,10 +644,20 @@ print("-" * 55)
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Calculate token budgets across all context window components (system prompt, tools, history, retrieved docs, generation headroom).
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement context window management strategies: truncation, summarization, and sliding window for conversation history.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Prioritize and order context components to maximize the model's attention on the most relevant information.
+Treat this as a lab exercise. Preserve the setup and result, then explain which observation is doing the evidentiary work.
+
+1. **Trace the happy path.** Run [`main.ts`](../code/main.ts) with `npx tsx main.ts` from the lesson's `code/` directory. Record the smallest input that demonstrates “Calculate token budgets across all context window components (system prompt, tools, history, retrieved docs, generation headroom)”. Point to `countTokens()`, `reorderLostInMiddle()`, `scoreRelevance()` and name the returned field or printed value that serves as evidence.
+2. **Perturb the input.** Change exactly one input, threshold, or option that affects “Implement context window management strategies: truncation, summarization, and sliding window for conversation history”. Predict the direction of the change before running it, then compare the two outputs and explain why the other fields should stay stable.
+3. **Test a failure case.** Construct a case that stresses “Prioritize and order context components to maximize the model's attention on the most relevant information”: choose an empty collection, missing field, maximum-sized value, malformed record, or another boundary that fits this lesson. Write the expected behavior first and distinguish an intentional guard from an accidental crash.
+4. **Transfer the result.** Open `outputs/prompt-context-optimizer.md` and adapt one example to a real workflow. State the owner, evidence, and next decision required for “Build a context assembler that dynamically allocates tokens based on query type and available window space”; mark any assumption that the demo does not establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Calculate token budgets across all context window components (system prompt, tools, history, retrieved docs, generation headroom),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Prioritize and order context components to maximize the model's attention on the most relevant information,” and cite a repeatable check rather than relying on visual inspection alone.
+A complete handoff records `npx tsx main.ts`, the observed output, and the reasoning behind it. Check:
+
+- evidence for “Calculate token budgets across all context window components (system prompt, tools, history, retrieved docs, generation headroom)” with the relevant input and returned field;
+- a one-variable comparison that makes “Implement context window management strategies: truncation, summarization, and sliding window for conversation history” visible;
+- a predicted and observed boundary result for “Prioritize and order context components to maximize the model's attention on the most relevant information”, including why the behavior is safe; and
+- one concrete update to `outputs/prompt-context-optimizer.md` that applies “Build a context assembler that dynamically allocates tokens based on query type and available window space” without hiding uncertainty.
+
+Use `countTokens()`, `reorderLostInMiddle()`, `scoreRelevance()` to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.

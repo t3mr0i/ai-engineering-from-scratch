@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the main risk of AI-generated project reports?",
+      "question": "What makes an AI-generated project status useful in a steering conversation?",
       "options": [
-        "AI-generated reports always include too much source evidence, slowing steering groups down",
-        "AI cannot summarize project notes into a status update without manual rewriting first",
-        "AI status reports automatically strip out dependencies before steering groups ever see them",
-        "Old data and unclear risks can become a confident but unactionable narrative"
-      ],
-      "correct": 3,
-      "explanation": "AI reports need current evidence and explicit steering asks — the risk is old data and unclear risk turning into a confident narrative, not report bloat, an inability to summarize, or dependencies getting silently dropped."
-    },
-    {
-      "stage": "check",
-      "question": "A weekly status update reports \"on track,\" but delivery depends on an API from another team that hasn't confirmed a delivery date, and nobody has been assigned to chase it. Which of the lesson's four signals does this match most directly?",
-      "options": [
-        "Status drift — reported progress no longer matches the underlying delivery reality",
-        "Risk unclear — a known risk exists but has no named owner or clear next step",
-        "Dependency gap — delivery depends on another team's unconfirmed, unowned commitment",
-        "Decision request — the report is quietly asking steering to make a call it hasn't stated"
-      ],
-      "correct": 2,
-      "explanation": "The scenario is a delivery that depends on another team's unconfirmed commitment with no one chasing it — that's the lesson's dependency gap signal, distinct from status drift (progress not matching reality), risk unclear (a risk with no owner), or a decision request (an unstated ask for a steering call)."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Python artifact produce?",
-      "options": [
-        "A finished, ready-to-send status report that needs no further review before steering, because one plausible output is sufficient production evidence",
-        "A ranked project reporting plan that maps signals like dependency gaps to steering controls",
-        "A new ticketing system that auto-closes dependency and risk tickets across teams",
-        "A line-item invoice for the token cost of every AI-generated status update"
-      ],
-      "correct": 1,
-      "explanation": "The lesson's Python artifact is a reporting triage tool — it ranks scenarios and maps signals like dependency gaps to controls such as source snapshot or steering question. It doesn't produce a send-ready report, manage tickets, or track AI token costs."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to this lesson?",
-      "options": [
-        "Source snapshot — cite the exact ticket, message, or document a status claim is based on",
-        "Hiding the risk owner's name so steering can't trace accountability for a stalled risk, before defining the measurement, acceptance threshold, or rollback path",
-        "Skipping the decision question so steering has to guess what it's actually being asked",
-        "Stripping out the status evidence so the report reads cleaner in the deck"
+        "It ties source evidence to status drift, risks, dependencies, owners, and a decision question",
+        "It produces a confident traffic-light color without showing where the status came from",
+        "It replaces the steering group by choosing which dependency the project should accept",
+        "It reports only completed work because unfinished decisions belong outside the status pack"
       ],
       "correct": 0,
-      "explanation": "The lesson's controls are source snapshot, RAG status, risk owner, and steering question — the opposite of hiding the risk owner, skipping the decision question, or stripping out status evidence."
+      "explanation": "The reporting artifact is designed for a human decision. A source snapshot, named risk owner, dependency context, and explicit steering question make the generated summary actionable."
     },
     {
-      "stage": "post",
-      "question": "What should a steering report make explicit?",
+      "stage": "check",
+      "question": "The steering pack fixture matches three signals and has delivery_impact=5 and ambiguity=5. What does recommend return for its score and priority?",
       "options": [
-        "Only polished, well-edited prose, since steering groups mainly judge reports on writing quality",
-        "Only historical notes from past updates, without connecting them to the current decision",
-        "Status evidence, risks, owners, dependencies, and the decision steering is being asked to make",
-        "No specific actions or owners, since naming individuals risks over-assigning blame"
+        "15 and managed report",
+        "20 and steering escalation",
+        "18 and team follow-up",
+        "10 and monitor"
+      ],
+      "correct": 1,
+      "explanation": "The raw score is 5*2 + 5 + 3*2 = 21, capped at 20. Scores of 16 or more use the steering escalation priority."
+    },
+    {
+      "stage": "check",
+      "question": "Which category does choose_category select for the steering pack fixture?",
+      "options": [
+        "status report",
+        "dependency map",
+        "risk log",
+        "steering brief"
       ],
       "correct": 2,
-      "explanation": "A steering-ready report ties status evidence to risks, named owners, dependencies, and an explicit decision ask — not polish alone, stale notes disconnected from the decision, or a report that avoids naming owners."
+      "explanation": "Three matches plus delivery impact 5 and ambiguity 5 give index 13 modulo 4 = 1. CATEGORIES[1] is risk log."
+    },
+    {
+      "stage": "check",
+      "question": "What controls are selected for a reporting Scenario with three matched signals?",
+      "options": [
+        "source snapshot and rag status only",
+        "risk owner and steering question only",
+        "a steering question without a source snapshot",
+        "source snapshot, rag status, risk owner, and steering question"
+      ],
+      "correct": 3,
+      "explanation": "recommend selects the first 1 + match count controls, capped at four. Three signals therefore select the complete reporting control list."
     },
     {
       "stage": "post",
-      "question": "When should project reporting escalate to steering?",
+      "question": "What result does Scenario(\"routine note\", \"Routine note with no listed signals.\", (), delivery_impact=2, ambiguity=1) receive?",
       "options": [
-        "Only when delivery is fully on track and no risks or dependencies remain open, with no need to inspect intermediate results or test edge cases",
-        "Only when a project has zero dependencies left on any other team or system",
-        "Never — reports should stay purely informational and never request a decision",
-        "When a decision request, an unclear risk, a dependency gap, or strong status drift shows up"
+        "monitor with score 5",
+        "team follow-up with score 7",
+        "managed report with score 11",
+        "steering escalation with score 16"
       ],
-      "correct": 3,
-      "explanation": "These four signals — a decision request, an unclear risk, a dependency gap, or strong status drift — are exactly when the lesson says a report should escalate to steering, not only when everything is already fine or never."
+      "correct": 0,
+      "explanation": "With no matches, the score is 2*2 + 1 = 5. The priority bands classify that small, low-ambiguity item as monitor."
+    },
+    {
+      "stage": "post",
+      "question": "What should sheet-project-reporting-steering.md preserve before an AI-assisted status pack is sent?",
+      "options": [
+        "Only a polished summary, because the steering group can ask for evidence later",
+        "The source snapshot, current status, risk owner, dependency context, and the question requiring a steering decision",
+        "A new project baseline that hides the previous status drift",
+        "A model confidence score instead of an accountable project owner"
+      ],
+      "correct": 1,
+      "explanation": "The control sheet keeps the report traceable and decision-ready. It supports steering without pretending that generated wording is the source of truth."
     }
   ]
 }

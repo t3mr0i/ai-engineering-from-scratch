@@ -53,6 +53,15 @@ triggers for repeatable observation work, not for tasks pretending to have a
 single completion state. Keep approval and rollback outside the loop until the
 evaluator and scope contract have independent tests.
 
+## Practice notes
+
+The artifact is intentionally deterministic, so the useful question is what evidence a change produces. Before editing it, write down which part of “Distinguish manual, goal, timer, and event triggers” should be visible in the result. Then inspect __post_init__, trigger_due, _coerce_evaluation rather than treating the final sentence as an explanation.
+
+For “Run a bounded maker/evaluator loop with structured feedback”, keep the task and acceptance condition fixed while changing one input. A useful receipt has the input, the predicted result, the observed result, and one sentence about the mechanism. For “Compare human interventions with an automated run on the same fixture task”, choose a boundary the implementation can actually reach and record whether it rejects, pauses, reports, or continues. Finally, use skill-automated-loop.md to capture “Stop on success, exhaustion, or stalled progress instead of looping forever” as a reusable decision aid: include an owner and a next action, not only a summary.
+## Ship It
+
+Hand off `outputs/skill-automated-loop.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
+
 ## Exercises
 
 - Add a command-backed evaluator with a bounded output excerpt.
@@ -66,4 +75,11 @@ evaluator and scope contract have independent tests.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish manual, goal, timer, and event triggers,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compare human interventions with an automated run on the same fixture task,” and cite a repeatable check rather than relying on visual inspection alone.
+For Automated Loop, run python3 main.py from code/ and keep the output beside the input that produced it. A defensible submission contains:
+
+1. Evidence for “Distinguish manual, goal, timer, and event triggers”: identify the exact field, trace entry, or report line that proves it; a successful process exit alone is not enough.
+2. A one-variable comparison for “Run a bounded maker/evaluator loop with structured feedback”. State the prediction first and explain why the observed change follows from __post_init__, trigger_due, _coerce_evaluation.
+3. A boundary or failure result for “Compare human interventions with an automated run on the same fixture task”. Include the input, the expected guard or refusal, and the observed behavior. If the demo has no guard, record that gap instead of calling a crash a pass.
+4. A practical update to outputs/skill-automated-loop.md that applies “Stop on success, exhaustion, or stalled progress instead of looping forever” and names the person or system responsible for the next decision.
+
+Run the relevant tests after the experiment. Keep any mismatch between prediction and observation in the receipt; the purpose of this lesson is to make the reasoning inspectable, not to make every run look successful.

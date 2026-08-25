@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "KNN is called a 'lazy learner.' What does that mean?",
+      "question": "A 3-neighbor classifier sees labels [cat, cat, dog] among the nearest points. What label does majority voting return?",
       "options": [
-        "It converges slowly during training",
-        "It does no computation at training time and computes everything at prediction time",
-        "It uses a simplified version of the loss function — and applies unchanged even when the lesson's stated preconditions fail",
-        "It only works on small datasets"
-      ],
-      "correct": 1,
-      "explanation": "Lazy learning means KNN stores the training data and does no work during 'training.' All computation (distance calculations, voting) happens when a prediction is requested."
-    },
-    {
-      "stage": "check",
-      "question": "Why is feature scaling critical for KNN?",
-      "options": [
-        "KNN cannot handle negative numbers without scaling",
-        "Distance calculations are dominated by features with larger ranges, making scaling necessary for fair comparisons",
-        "Feature scaling reduces the number of neighbors needed",
-        "KNN uses gradient descent which requires normalized inputs, with no need to inspect intermediate results or test edge cases"
-      ],
-      "correct": 1,
-      "explanation": "KNN relies on distances. A feature ranging 0-1000 will dominate a feature ranging 0-1 in distance calculations. Scaling puts all features on comparable ranges."
-    },
-    {
-      "stage": "check",
-      "question": "In 100 dimensions with uniform random points, what happens to the ratio of max distance to min distance?",
-      "options": [
-        "It increases dramatically, making neighbors more distinct, because one plausible output is sufficient production evidence",
-        "It approaches 1, making all points nearly equidistant from each other",
-        "It stays the same as in 2 dimensions",
-        "It becomes negative due to numerical overflow"
-      ],
-      "correct": 1,
-      "explanation": "This is the curse of dimensionality. In high dimensions, distances converge: max_dist / min_dist approaches 1. When all points are equidistant, 'nearest' becomes meaningless."
-    },
-    {
-      "stage": "check",
-      "question": "Which distance metric is most appropriate for comparing text documents represented as TF-IDF vectors?",
-      "options": [
-        "L2 (Euclidean) distance",
-        "L1 (Manhattan) distance",
-        "Cosine distance",
-        "Chebyshev distance"
+        "dog",
+        "A continuous average of the two labels",
+        "cat",
+        "No label until a neural network is trained"
       ],
       "correct": 2,
-      "explanation": "Cosine distance measures the angle between vectors, ignoring magnitude. For text, document length (magnitude) is noise -- direction captures meaning. Cosine consistently outperforms L1/L2 for text."
+      "explanation": "Two of the three neighbors are cats, so an unweighted majority vote returns cat."
     },
     {
-      "stage": "post",
-      "question": "What happens to the KNN decision boundary as K increases from 1 to N (the full dataset size)?",
+      "stage": "check",
+      "question": "A dataset combines age (0-100) with annual income (0-200000). Why can raw Euclidean KNN be misleading?",
       "options": [
-        "The boundary becomes more complex and detailed — and applies unchanged even when the lesson's stated preconditions fail",
-        "The boundary stays the same regardless of K",
-        "The boundary smooths out, eventually predicting the majority class for every point",
-        "The boundary becomes circular"
+        "Euclidean distance ignores every numeric feature",
+        "KNN always converts regression targets into classes",
+        "Large values make every pair of points equally close",
+        "Income differences can dominate the distance because its numeric scale is much larger"
       ],
-      "correct": 2,
-      "explanation": "K=1 produces jagged boundaries that follow every point (overfitting). As K increases, boundaries smooth out. K=N means every query considers all points, always predicting the majority class (maximum bias)."
+      "correct": 3,
+      "explanation": "The feature with the larger unit range contributes more to squared distance. Scaling puts features on comparable ranges."
     },
     {
-      "stage": "post",
-      "question": "What is the best completion criterion for K-Nearest Neighbors and Distances?",
+      "stage": "check",
+      "question": "Vectors [1,1,0] and [2,2,0] point in the same direction. What is their cosine similarity?",
       "options": [
-        "Compare L1, L2, cosine, and Minkowski distance metrics and select the appropriate one for a given data type",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "1",
+        "0",
+        "2",
+        "4"
       ],
       "correct": 0,
-      "explanation": "“Compare L1, L2, cosine, and Minkowski distance metrics and select the appropriate one for a given data type” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Cosine similarity ignores magnitude; positive multiples in the same direction have similarity 1."
+    },
+    {
+      "stage": "check",
+      "question": "Why can a KD-tree lose its speed advantage as the number of features grows?",
+      "options": [
+        "The tree can only store binary labels",
+        "Many regions cannot be pruned, so searches approach brute force",
+        "Higher dimensions make L1 distance undefined",
+        "KD-trees require a neural-network embedding first"
+      ],
+      "correct": 1,
+      "explanation": "In high dimensions, points become hard to separate with axis-aligned bounds; many branches remain candidates."
+    },
+    {
+      "stage": "post",
+      "question": "A KNN regressor finds target values [10,14,16] with equal weights. What prediction does it make?",
+      "options": [
+        "10",
+        "14",
+        "13.33",
+        "40"
+      ],
+      "correct": 2,
+      "explanation": "The equal-weight regression prediction is the mean: (10+14+16)/3=13.33."
+    },
+    {
+      "stage": "post",
+      "question": "How should you choose K for a new KNN classifier?",
+      "options": [
+        "Always choose K=1 because it has the lowest training error",
+        "Choose K equal to the number of features",
+        "Pick the largest K without checking class proportions",
+        "Compare candidate values on validation data after fitting the feature scaling on the training split"
+      ],
+      "correct": 3,
+      "explanation": "Validation compares the bias-variance tradeoff. K=1 can memorize noise, while an overly large K washes out local structure."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Multimodal Agents and Computer-Use (Capstone)?",
+      "question": "Which fields does ACTION_SCHEMA require for a click action?",
       "options": [
-        "Design a multimodal agent loop: perceive → reason → act → observe → repeat",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Design a multimodal agent loop: perceive → reason → act → observe → repeat” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Multimodal Agents and Computer-Use (Capstone)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Build a GUI grounding output schema (click coordinates, type text, scroll, drag) the VLM can emit as JSON",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Build a GUI grounding output schema (click coordinates, type text, scroll, drag) the VLM can emit as JSON” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Multimodal Agents and Computer-Use (Capstone)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Compare screenshot-only agents vs accessibility-tree agents vs hybrid agents",
-        "Treat one successful example as proof that every edge case works"
+        "url and ms",
+        "text, x, and y",
+        "x, y, and element_desc",
+        "option_index and success"
       ],
       "correct": 2,
-      "explanation": "“Compare screenshot-only agents vs accessibility-tree agents vs hybrid agents” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "ACTION_SCHEMA maps click to ['x', 'y', 'element_desc']. Type actions use text plus coordinates, while navigation and waits have their own fields."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Multimodal Agents and Computer-Use (Capstone)?",
+      "question": "What does apply_action do when it receives {'action':'done','success':True,...}?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Set up a multimodal agent benchmark evaluation on a small VisualWebArena slice",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Set up a multimodal agent benchmark evaluation on a small VisualWebArena slice” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Multimodal Agents and Computer-Use (Capstone)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Design a multimodal agent loop: perceive → reason → act → observe → repeat"
+        "It always changes the page to confirmation",
+        "It clears all filled form fields before returning",
+        "It raises an error because done is not in ACTION_SCHEMA",
+        "It treats done as a terminal signal and leaves the current workflow page unchanged"
       ],
       "correct": 3,
-      "explanation": "“Design a multimodal agent loop: perceive → reason → act → observe → repeat” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The done branch contains only pass. run_task determines success afterward by comparing state.page to expected_page, so the terminal action does not overwrite navigation state."
+    },
+    {
+      "stage": "check",
+      "question": "How many tasks does mock_tasks return to run_benchmark?",
+      "options": [
+        "2, the Tokyo flight booking and the Alice password reset",
+        "10, one for each benchmark row",
+        "5, one for each action type",
+        "0, because tasks must be loaded from a browser"
+      ],
+      "correct": 0,
+      "explanation": "mock_tasks constructs exactly two Task objects. The benchmark prints a 2-task score, even though the lesson discusses larger external benchmark suites."
+    },
+    {
+      "stage": "check",
+      "question": "What condition makes run_task mark a mock task successful?",
+      "options": [
+        "The final action is named done, regardless of the page",
+        "The resulting BrowserState.page equals task.expected_page after all actions",
+        "At least one click has occurred",
+        "The VLM emits a natural-language explanation longer than ten words"
+      ],
+      "correct": 1,
+      "explanation": "run_task applies every planned action and sets success = (state.page == task.expected_page). A done action alone cannot compensate for a wrong page transition."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Multimodal Agents and Computer-Use (Capstone)?",
+      "question": "Why is a hybrid computer-use agent generally stronger than a screenshot-only agent for atomic GUI actions?",
       "options": [
-        "Build a GUI grounding output schema (click coordinates, type text, scroll, drag) the VLM can emit as JSON",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It removes the need to inspect screenshots entirely",
+        "It can act only on pages with no accessibility metadata",
+        "It uses the accessibility tree for reliable grounding and the screenshot for visual context",
+        "It replaces every action with a fixed coordinate table"
       ],
-      "correct": 0,
-      "explanation": "“Build a GUI grounding output schema (click coordinates, type text, scroll, drag) the VLM can emit as JSON” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The lesson contrasts the tree's structural reliability with the screenshot's broad semantic coverage. A hybrid can ground atomic controls while still understanding visual context."
+    },
+    {
+      "stage": "post",
+      "question": "What does the summary-chain memory strategy do after every five steps?",
+      "options": [
+        "It stores every old screenshot forever and drops the action log",
+        "It restarts the browser at the fifth step",
+        "It replaces the VLM with an accessibility tree",
+        "It summarizes what happened and drops older screenshots to control context growth"
+      ],
+      "correct": 3,
+      "explanation": "The capstone lists summary-chain as periodic text summarization after five steps, followed by dropping old screenshots. This trades raw visual history for bounded context."
     }
   ]
 }

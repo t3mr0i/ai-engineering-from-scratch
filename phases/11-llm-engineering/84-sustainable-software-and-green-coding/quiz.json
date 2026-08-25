@@ -1,78 +1,78 @@
 {
   "lesson": "84-sustainable-software-and-green-coding",
-  "title": "Sustainable AI Engineering: Measuring and Reducing the Footprint of LLM Systems (2026)",
+  "title": "Sustainable Software and Green Coding",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Sustainable AI Engineering: Measuring and Reducing the Footprint of LLM Systems (2026)?",
+      "question": "Which change most directly improves the prompt-efficiency score for a support-ticket task?",
       "options": [
-        "Explain the production problem addressed by Sustainable AI Engineering: Measuring and Reducing the Footprin...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Remove filler language and add a bounded output format such as the JSON contract",
+        "Add more polite phrases while leaving response length unconstrained",
+        "Move the same long context into a second paragraph",
+        "Use a larger model before measuring token count or output shape"
       ],
       "correct": 0,
-      "explanation": "“Explain the production problem addressed by Sustainable AI Engineering: Measuring and Reducing the Footprin...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The scorer looks for verbose padding, an explicit length or format signal, and context stuffing. Removing filler and constraining the output addresses two common inefficiencies without changing the task."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Sustainable AI Engineering: Measuring and Reducing the Footprint of LLM Systems (2026)?",
+      "question": "What grade does the Efficient prompt variant receive?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "POOR, because every JSON response is considered context stuffing",
+        "EXCELLENT, because it has no filler, includes JSON, and stays below the context threshold",
+        "GOOD, because every prompt has at least one detected issue",
+        "UNCLASSIFIED, because token counts are only estimates"
       ],
       "correct": 1,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The efficient variant contains a JSON contract, no listed filler phrase, and is far below 300 approximate tokens. detect_inefficiency_patterns returns no issues, so the grade is EXCELLENT."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Sustainable AI Engineering: Measuring and Reducing the Footprint of LLM Systems (2026)?",
+      "question": "What grade does the Padded variant receive after filler phrases are removed but no output-length signal is added?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Measure quality, cost, latency, and risk with explicit acceptance criteria",
-        "Treat one successful example as proof that every edge case works"
+        "EXCELLENT, because the prompt is short",
+        "POOR, because a short prompt always has two issues",
+        "GOOD, because the only detected issue is unconstrained output length",
+        "POOR, because it contains a JSON contract"
       ],
       "correct": 2,
-      "explanation": "“Measure quality, cost, latency, and risk with explicit acceptance criteria” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The Padded text has no listed filler and is under 300 tokens, but it contains neither JSON nor a length/format directive. One issue maps to GOOD."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Sustainable AI Engineering: Measuring and Reducing the Footprint of LLM Systems (2026)?",
+      "question": "What SCI value does compute_sci_per_1k_tokens return for Germany at 340 gCO2/kWh?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Identify failure modes and define a safe rollback or review path",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Identify failure modes and define a safe rollback or review path” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Sustainable AI Engineering: Measuring and Reducing the Footprint of LLM Systems (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the production problem addressed by Sustainable AI Engineering: Measuring and Reducing the Footprin..."
+        "0.051 gCO2e per 1,000 tokens",
+        "5.10 gCO2e per 1,000 tokens",
+        "0.0034 gCO2e per 1,000 tokens",
+        "0.510 gCO2e per 1,000 tokens"
       ],
       "correct": 3,
-      "explanation": "“Explain the production problem addressed by Sustainable AI Engineering: Measuring and Reducing the Footprin...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "SCI is energy per 1,000 tokens multiplied by grid intensity: 0.0015*340 = 0.510 gCO2e per 1,000 tokens."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Sustainable AI Engineering: Measuring and Reducing the Footprint of LLM Systems (2026)?",
+      "question": "Which region becomes the carbon baseline in compare_regions for the supplied catalog?",
       "options": [
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Northern Europe (Sweden/Norway), at 27 gCO2/kWh",
+        "Western Europe (France), at 58 gCO2/kWh",
+        "Germany (Central Europe), at 340 gCO2/kWh",
+        "Australia (Sydney), at 620 gCO2/kWh"
       ],
       "correct": 0,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "compare_regions chooses the RegionProfile with the lowest grid_carbon_intensity. Northern Europe is the minimum at 27 gCO2/kWh."
+    },
+    {
+      "stage": "post",
+      "question": "At 1,000,000 calls/month and 1,000 tokens/call, approximately how much CO2 does switching from Australia to the Northern Europe baseline save?",
+      "options": [
+        "89.0 kg/month",
+        "889.5 kg/month",
+        "0.8895 kg/month",
+        "8,895 kg/month"
+      ],
+      "correct": 1,
+      "explanation": "Australia emits 0.93 g per 1,000 tokens and Northern Europe 0.0405 g. Across 1,000,000 such calls the difference is 889,500 g, or 889.5 kg."
     }
   ]
 }

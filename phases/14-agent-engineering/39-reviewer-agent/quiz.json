@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why cannot the builder reliably grade its own work?",
+      "question": "What verdict does the reviewer assign to the demo's wrong `T-002` artifact?",
       "options": [
-        "Acceptance is necessary but not sufficient; problem fit and handoff readiness need a different role",
-        "It simply runs out of tokens partway through the diff and cannot finish reading its own proposed changes",
-        "It loses its authentication session before it can read the verification report back",
-        "The underlying model refuses any request that asks it to grade its own prior output"
+        "`hard_fail`, because its problem-fit dimension scores zero.",
+        "`pass`, because its feedback exit code is zero.",
+        "`soft_fail`, because the total is exactly 5.",
+        "`pass`, because an off-scope warning is not a block."
       ],
       "correct": 0,
-      "explanation": "The gap between builder and reviewer is where reliability lives; acceptance only proves a weaker version."
+      "explanation": "The wrong case totals 5 but has a zero problem-fit score; `review` makes any zero a `hard_fail`, regardless of the total threshold."
     },
     {
       "stage": "check",
-      "question": "Which is NOT one of the five rubric dimensions?",
+      "question": "What total and verdict does the clean `T-001` review produce?",
       "options": [
-        "Problem fit, since the rubric asks whether the change solved the task as stated",
-        "Scope discipline, since the rubric asks whether edits stayed inside the contract",
-        "Inference latency, a cost the five scored rubric dimensions never mention at all",
-        "Verification quality, since the rubric asks whether acceptance proved the real goal"
-      ],
-      "correct": 2,
-      "explanation": "The five are problem fit, scope discipline, assumptions, verification quality, handoff readiness."
-    },
-    {
-      "stage": "check",
-      "question": "What does role separation require?",
-      "options": [
-        "A different system prompt and different inputs; the same model can play both roles if posture changes",
-        "A completely different underlying model, since the builder and reviewer are never allowed to share one",
-        "Different physical hardware, since the reviewer must run on an isolated machine",
-        "A brand-new account, since role separation is enforced entirely at the account level"
-      ],
-      "correct": 0,
-      "explanation": "Discipline is in posture and inputs, not in the model identity."
-    },
-    {
-      "stage": "check",
-      "question": "What score turns a reviewer run into a hard fail, per the lesson?",
-      "options": [
-        "Any single rubric dimension scoring 0 is an automatic hard fail",
-        "A total under 5 of 10 is a hard fail; under 7 is a soft fail",
-        "A total below 8 out of 10 is a hard fail; below 9 is a soft fail",
-        "There is no fail threshold; every run needs a human tie-break"
+        "5/10 and `soft_fail`.",
+        "9/10 and `pass`.",
+        "10/10 and `pass`.",
+        "9/10 and `hard_fail`."
       ],
       "correct": 1,
-      "explanation": "The lesson says the rubric totals out of 10: a run below 7 is a soft fail, a run below 5 is a hard fail."
+      "explanation": "The clean dimensions score 1, 2, 2, 2, and 2, totaling 9; there are no zero scores and the total is at least 7, so the verdict is `pass`."
+    },
+    {
+      "stage": "check",
+      "question": "Why does `score_problem_fit` give clean `T-001` a score of 1 rather than 2?",
+      "options": [
+        "Only one keyword longer than four characters appears in a touched filename.",
+        "The clean verdict contains a scope warning.",
+        "Problem fit is capped at zero for every Python file.",
+        "The goal is empty in the clean inputs."
+      ],
+      "correct": 0,
+      "explanation": "The scorer extracts goal words longer than four characters and counts keywords appearing in touched paths; the clean paths produce one hit, then `min(2, hits)` returns 1."
+    },
+    {
+      "stage": "check",
+      "question": "What score does `score_scope_discipline` give `T-002` when it has only an off-scope warning?",
+      "options": [
+        "0, because every scope finding is a hard block.",
+        "1, because warnings are visible but there is no forbidden write.",
+        "2, because warnings are ignored entirely.",
+        "It cannot score scope without a diff summary."
+      ],
+      "correct": 1,
+      "explanation": "The scorer returns 0 for `scope.forbidden`, otherwise 1 when a `scope.off_scope` warning exists; `T-002` has the latter only."
     },
     {
       "stage": "post",
-      "question": "What is the reviewer forbidden from doing, per the lesson?",
+      "question": "What does `score_verification` return when any feedback record has `exit_code=None`?",
       "options": [
-        "Reading the builder's feedback log before writing its report",
-        "Scoring more than one rubric dimension in a single review pass",
-        "Patching the diff; it only writes a report for the next turn",
-        "Running the acceptance command again to double-check the result"
+        "0 with a note that the feedback log has missing exit codes.",
+        "2, because a missing exit is treated as success.",
+        "1, because missing exits are mixed results.",
+        "It skips the verification dimension."
+      ],
+      "correct": 0,
+      "explanation": "The first branch checks `any(code is None for code in exits)` and returns a zero verification score before considering whether the other records exited zero."
+    },
+    {
+      "stage": "post",
+      "question": "What handoff score is returned when `active_task_id` is empty but `next_action` is set?",
+      "options": [
+        "0, because a closed task cannot have a next action.",
+        "1, because the next task is not yet active.",
+        "2, with the note `next_action set, task closed`.",
+        "It raises because the state must contain an active task."
       ],
       "correct": 2,
-      "explanation": "The lesson says the reviewer reads the diff, state, feedback, and verdict, and writes a report, but does not patch the diff; mixing roles defeats the gap."
-    },
-    {
-      "stage": "post",
-      "question": "How does the lesson distinguish the verification gate from the reviewer?",
-      "options": [
-        "The gate runs before the builder starts; the reviewer only runs on request",
-        "The gate is optional; only the reviewer is required before a merge",
-        "The gate scores 0-2 per dimension; the reviewer only returns pass or fail",
-        "The gate checks deterministic facts; the reviewer makes qualitative calls"
-      ],
-      "correct": 3,
-      "explanation": "The lesson says the gate checks deterministic facts (did acceptance run, did rules pass, did scope hold) while the reviewer makes qualitative judgments (was this the right work, is it documented, is the handoff usable)."
+      "explanation": "`score_handoff` first checks for an active task; when none exists, a truthy `next_action` earns score 2 and the handoff-readiness note."
     }
   ]
 }

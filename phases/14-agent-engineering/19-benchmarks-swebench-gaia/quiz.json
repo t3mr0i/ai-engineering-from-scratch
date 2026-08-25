@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does SWE-bench's evaluator check on a candidate patch?",
+      "question": "What does `run_task` report for SWE-bench fixture `t001`?",
       "options": [
-        "Previously failing tests now pass (FAIL_TO_PASS) and previously passing tests still pass (PASS_TO_PASS)",
-        "BLEU score computed against the original reference maintainer-authored fix text word for word",
-        "Whether the submitted patch stays strictly under a fixed 200-line total length limit",
-        "Whether a separate LLM judge model rates the whole finished patch as plausible, clean, and idiomatic"
+        "Resolved: its one FAIL_TO_PASS test passes after the patch and its one PASS_TO_PASS test remains green.",
+        "Unresolved: any changed file automatically fails PASS_TO_PASS.",
+        "Resolved only when every test in the repository is listed in the task.",
+        "Unresolved because a patch may not change the copied task state."
       ],
       "correct": 0,
-      "explanation": "The harness gates on test transitions: bug-revealing tests must flip while regression tests must stay green."
+      "explanation": "The fixture's patch changes the copied state so the single FAIL_TO_PASS test passes while the single PASS_TO_PASS test does not break; `resolved` is therefore true."
     },
     {
       "stage": "check",
-      "question": "Why does SWE-bench Verified exist?",
+      "question": "Why is fixture `t003` unresolved even though its FAIL_TO_PASS test passes?",
       "options": [
-        "It runs on a noticeably faster evaluation harness than the full benchmark does",
-        "OpenAI's 500-task human-curated subset removes ambiguous issues and unreliable tests",
-        "It extends test coverage to repos written in several more programming languages today",
-        "It requires agents to submit patches in a completely different diff format"
+        "Its patch has no changed files, so FTP is ignored.",
+        "One of its two PASS_TO_PASS tests breaks after the patch.",
+        "GAIA assigns it level 3 before SWE-bench evaluation.",
+        "The task has two FTP tests and only one passes."
       ],
       "correct": 1,
-      "explanation": "Verified is the cleaner subset for credible reporting."
+      "explanation": "`t003` satisfies its one FAIL_TO_PASS test but breaks one of two PASS_TO_PASS tests. The resolver requires all FTP tests to pass and zero PTP regressions."
     },
     {
       "stage": "check",
-      "question": "What did SWE-bench+ find about successful patches?",
+      "question": "What GAIA level does a question asking only for the capital of France receive?",
       "options": [
-        "All successful patches in the sample were flagged as fully memorized from training data",
-        "There is no measurable contamination anywhere across the whole benchmark sample",
-        "32.67% leaked solution text in the issue and 31.08% had suspiciously weak test coverage",
-        "Patches that ultimately succeeded always exceeded 1000 lines of changed code"
+        "L3",
+        "L2",
+        "L1",
+        "It cannot be scored without a tool trace."
       ],
       "correct": 2,
-      "explanation": "SWE-bench+ flagged solution leakage and weak coverage on a large fraction of successful patches."
+      "explanation": "The fixture counts no multi-step connector words, modalities, or tool verbs in this short question, giving a score within the `<=2` L1 band."
     },
     {
       "stage": "check",
-      "question": "What is GAIA's design philosophy?",
+      "question": "Which level does the long arXiv/GitHub/issues question receive in the demo?",
       "options": [
-        "Hard for humans to solve reliably but comparatively easy for capable AI systems",
-        "A pure benchmark of vector retrieval accuracy across long, dense documents",
-        "Restricted entirely to single-turn questions with absolutely no tool use allowed at all",
-        "Conceptually simple for humans (about 92%) but hard for AI (early GPT-4 with plugins: about 15%)"
+        "L1, because all research questions are treated as single-step.",
+        "L2, because only the word `search` contributes.",
+        "No level, because GAIA excludes URLs.",
+        "L3, because its counted steps, modalities, and tool verbs push the score above 5."
       ],
       "correct": 3,
-      "explanation": "GAIA is intentionally easy-for-humans, hard-for-AI, testing reasoning + tools + modality."
+      "explanation": "The long question contains several connector words, multiple content modalities, and search/extraction tool verbs; the combined score exceeds five, so `gaia_level` returns L3."
     },
     {
       "stage": "post",
-      "question": "Which is NOT one of AgentBench's environment categories?",
+      "question": "What condition does the SWE-bench-shaped resolver use for `resolved=True`?",
       "options": [
-        "Gradient (RL, IRL)",
-        "Code (Bash, DB, KG)",
-        "Games (Alfworld, LTP)",
-        "Web (WebShop, Mind2Web)"
+        "Every FAIL_TO_PASS test passes and no PASS_TO_PASS test breaks.",
+        "At least one FAIL_TO_PASS test passes, even if a regression appears.",
+        "The patch has more added lines than removed lines.",
+        "The task's natural-language issue contains the word `fixed`."
       ],
       "correct": 0,
-      "explanation": "AgentBench covers code, games, web, and open-ended generation. There is no gradient category."
+      "explanation": "The implementation checks `ftp_post == len(fail_to_pass)` and `ptp_broke == 0`; both gates are required for a resolved result."
     },
     {
       "stage": "post",
-      "question": "What does the lesson identify as the wrong way to report SWE-bench numbers?",
+      "question": "How does the lesson's `gaia_level` score combine question features?",
       "options": [
-        "Reporting per-repo breakdowns instead of ever computing a single blended number score",
-        "Reporting one aggregate number without mentioning Verified or SWE-bench+ context",
-        "Reporting the step counts an agent took instead of pass/fail outcomes",
-        "Reporting wall-clock duration instead of the number of tasks solved"
+        "It uses only the number of answer choices.",
+        "It adds connector-word steps, modality keywords, and tool-action keywords, then applies L1/L2/L3 thresholds.",
+        "It divides token count by the number of cited papers.",
+        "It assigns L1 to every question and reserves L3 for failed tool calls."
       ],
       "correct": 1,
-      "explanation": "Single-number fixation hides contamination and cost; always report Verified and per-distribution context."
+      "explanation": "The heuristic adds the connector count plus one, modality matches, and tool-verb matches; scores `<=2`, `<=5`, and above that map to L1, L2, and L3."
     }
   ]
 }

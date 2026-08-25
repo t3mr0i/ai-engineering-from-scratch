@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In Bayes' theorem, what is the 'prior'?",
+      "question": "A disease has prevalence 1%, sensitivity 90%, and specificity 95%. What is P(disease | positive)?",
       "options": [
-        "The probability of the evidence",
-        "Your belief about a hypothesis before observing any evidence",
-        "The probability of the evidence given the hypothesis — and applies unchanged even when the lesson's stated preconditions fail",
-        "The final updated probability after seeing evidence"
-      ],
-      "correct": 1,
-      "explanation": "The prior P(A) represents your initial belief about hypothesis A before seeing any data. It gets updated to the posterior P(A|B) after observing evidence B."
-    },
-    {
-      "stage": "check",
-      "question": "A rare disease affects 1 in 10,000 people. A 99% accurate test returns positive. What is the approximate probability you have the disease?",
-      "options": [
-        "99%, with no need to inspect intermediate results or test edge cases",
-        "About 1%",
-        "50%",
-        "10%"
-      ],
-      "correct": 1,
-      "explanation": "Despite 99% test accuracy, the disease is so rare (0.01%) that most positive results come from healthy people (false positives). Bayes' theorem gives P(sick|positive) = ~0.98%, not 99%."
-    },
-    {
-      "stage": "check",
-      "question": "What is Laplace smoothing in a Naive Bayes classifier and why is it necessary?",
-      "options": [
-        "It normalizes feature values to have zero mean and unit variance, because one plausible output is sufficient production evidence",
-        "It adds a small count to every feature to prevent zero probabilities from unseen words, which would zero out the entire product",
-        "It smooths the decision boundary between classes",
-        "It reduces the dimensionality of the feature space"
-      ],
-      "correct": 1,
-      "explanation": "Without smoothing, a word never seen in spam training data gets P(word|spam)=0, making the entire product zero regardless of other strong spam indicators. Adding 1 to each count prevents this."
-    },
-    {
-      "stage": "check",
-      "question": "How does MAP (Maximum A Posteriori) estimation differ from MLE (Maximum Likelihood Estimation)?",
-      "options": [
-        "MAP uses a larger dataset than MLE",
-        "MAP incorporates a prior distribution over parameters, equivalent to adding regularization, while MLE only uses the likelihood",
-        "MAP is faster to compute than MLE",
-        "MLE always produces better results than MAP, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "MAP maximizes P(data|params) * P(params) while MLE maximizes P(data|params) alone. The prior P(params) acts as regularization -- a Gaussian prior equals L2 regularization, a Laplace prior equals L1."
-    },
-    {
-      "stage": "post",
-      "question": "In sequential Bayesian updating, you start with Beta(1,1) and observe 7 heads and 3 tails. What is the posterior?",
-      "options": [
-        "Beta(7, 3)",
-        "Beta(8, 4)",
-        "Beta(1.7, 1.3)",
-        "Normal(0.7, 0.1)"
-      ],
-      "correct": 1,
-      "explanation": "The Beta-Binomial conjugate update adds successes to the first parameter and failures to the second: Beta(1+7, 1+3) = Beta(8, 4). The posterior mean is 8/12 = 0.667."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Bayes' Theorem?",
-      "options": [
-        "Build a Naive Bayes text classifier from scratch with Laplace smoothing and log-space computation",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "About 15.4%",
+        "90%",
+        "95%",
+        "About 1.0%"
       ],
       "correct": 0,
-      "explanation": "“Build a Naive Bayes text classifier from scratch with Laplace smoothing and log-space computation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The true-positive mass is 0.01*0.90=0.009. False positives contribute 0.99*0.05=0.0495, so the posterior is 0.009/(0.0585), about 15.4%."
+    },
+    {
+      "stage": "check",
+      "question": "A word appears zero times in a class with 10 observed tokens and vocabulary size 5. What does add-one Laplace smoothing give its probability?",
+      "options": [
+        "0",
+        "1/15",
+        "1/10",
+        "5/10"
+      ],
+      "correct": 1,
+      "explanation": "Add-one smoothing changes the numerator from 0 to 1 and the denominator from 10 to 10+5, preventing a single unseen word from making a whole document probability zero."
+    },
+    {
+      "stage": "check",
+      "question": "How does a zero-mean Gaussian prior change MAP estimation compared with MLE?",
+      "options": [
+        "It removes the likelihood and keeps only the prior mean",
+        "It forces every weight to exactly zero",
+        "It adds an L2 penalty that shrinks weights toward zero",
+        "It adds an L1 penalty and creates sparse coefficients"
+      ],
+      "correct": 2,
+      "explanation": "Maximizing likelihood plus the log Gaussian prior adds a squared-weight penalty. That is the connection between MAP with a Gaussian prior and L2 regularization."
+    },
+    {
+      "stage": "check",
+      "question": "Starting with Beta(1,1), what posterior follows from 3 successes and 1 failure?",
+      "options": [
+        "Beta(3,1)",
+        "Beta(1,1)",
+        "Beta(2,4)",
+        "Beta(4,2)"
+      ],
+      "correct": 3,
+      "explanation": "The Beta-Binomial update adds successes to alpha and failures to beta: (1+3, 1+1) = (4,2)."
+    },
+    {
+      "stage": "post",
+      "question": "Why does a Naive Bayes text classifier add log likelihoods for words?",
+      "options": [
+        "Conditional independence turns a product into a sum in log space",
+        "Logarithms make every word equally likely",
+        "Adding logs removes the class prior from Bayes' rule",
+        "The classifier cannot represent probabilities below one"
+      ],
+      "correct": 0,
+      "explanation": "The model multiplies conditional word probabilities under its independence assumption. Logs improve numerical stability and convert that product to a sum alongside log priors."
+    },
+    {
+      "stage": "post",
+      "question": "The same positive test gives a lower posterior disease probability in a low-prevalence population than in a high-prevalence clinic. What changed?",
+      "options": [
+        "Sensitivity must have become zero",
+        "The prior prevalence changed, so Bayes' posterior changed even with the same test",
+        "Specificity is irrelevant to positive results",
+        "The likelihood and prior are always interchangeable"
+      ],
+      "correct": 1,
+      "explanation": "Bayes' denominator includes both true and false positives. Changing the base rate changes their mixture, which can substantially change the posterior."
     }
   ]
 }

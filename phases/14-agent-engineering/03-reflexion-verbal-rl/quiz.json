@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does Reflexion replace in standard reinforcement learning?",
+      "question": "With `TARGET = 20`, how does the memory-enabled demo finish?",
       "options": [
-        "Reward shaping, replacing a sparse reward signal with a constant reward every single step",
-        "Policy networks, replacing the actor with a random search over candidate actions",
-        "Episodic memory, replacing parametric weights with a lookup table of past states",
-        "Gradient updates, replacing them with natural-language reflections stored between trials"
+        "It reaches `[6, 7, 7]` on trial 3 and succeeds.",
+        "It repeats `[1, 2, 3]` for four trials and fails.",
+        "It reaches `[5, 6, 7]` on trial 2 and succeeds.",
+        "It uses five trials because the target is not reachable."
       ],
-      "correct": 3,
-      "explanation": "Reflexion uses natural-language reflections in episodic memory instead of weight updates."
+      "correct": 0,
+      "explanation": "The actor changes its proposal after two stored reflections: `[6, 7, 7]` sums to 20 on trial 3."
     },
     {
       "stage": "check",
-      "question": "What three components define a Reflexion system?",
+      "question": "What are the attempt, sum, and delta for memory-enabled trial 1?",
       "options": [
-        "The Planner, Worker, Solver split",
-        "Actor, Evaluator, Self-Reflector",
-        "Generator, Critic, Optimizer",
-        "Selector, Expander, Backprop"
+        "`[5, 6, 7]`, sum 18, delta -2",
+        "`[1, 2, 3]`, sum 6, delta -14",
+        "`[6, 7, 7]`, sum 20, delta 0",
+        "`[1, 2, 3]`, sum 6, delta +14"
       ],
       "correct": 1,
-      "explanation": "Reflexion factors the agent into an Actor that runs trajectories, an Evaluator that scores them, and a Self-Reflector that writes lessons."
+      "explanation": "The empty episodic memory makes `Actor.act` choose `[1, 2, 3]`; `binary_evaluator` computes `6 - 20 = -14`."
     },
     {
       "stage": "check",
-      "question": "Which evaluator type uses an external binary signal like a unit test or a known correct answer?",
+      "question": "What does the actor try on memory-enabled trial 2?",
       "options": [
-        "Heuristic - matching a predefined failure signature such as a repeated action",
-        "Gradient-scored - a signal backpropagated through the trajectory's weights",
-        "Scalar - an external pass or fail signal such as a unit test result",
-        "Self-evaluated - the model scoring its own trajectory with no ground truth"
+        "`[1, 2, 3]`, because the first reflection is ignored",
+        "`[6, 7, 7]`, because two reflections already exist",
+        "`[5, 6, 7]`, because one reflection is present",
+        "`[5, 5, 5]`, because it averages the target across three values"
       ],
       "correct": 2,
-      "explanation": "Scalar evaluators read pass/fail signals from ground truth (ALFWorld success, HumanEval tests)."
+      "explanation": "After trial 1, memory has one item, and `Actor.act` returns `[5, 6, 7]`, whose sum is 18."
     },
     {
       "stage": "check",
-      "question": "Why is self-evaluation a weaker signal than scalar feedback?",
+      "question": "What happens in `run_reflexion(max_trials=4, use_memory=False)`?",
       "options": [
-        "The model judging itself has no external grounding, so it can rubber-stamp its own wrong answer",
-        "Self-evaluation is slower to compute than reading a scalar pass or fail signal",
-        "Self-evaluation always requires a larger model than the one generating the trajectory",
-        "Self-evaluation cannot run inside a loop that also calls out to external tools at all"
-      ],
-      "correct": 0,
-      "explanation": "Self-eval lacks an external check, so a confident hallucination scores well; pair it with tool-grounded verification."
-    },
-    {
-      "stage": "post",
-      "question": "Which case does the lesson list as a place where Reflexion does NOT help?",
-      "options": [
-        "Code generation, where unit tests give the evaluator a clean pass or fail score",
-        "ALFWorld navigation tasks, where episode success is already a scalar signal",
-        "HotpotQA multi-hop questions, where retrieval grounds each reasoning step",
-        "An external transient failure like the network being down for that one trial"
+        "It succeeds on trial 3 by reading the previous reflection.",
+        "It stops after trial 1 because the evaluator is binary.",
+        "It cycles through three different attempts and succeeds on trial 4.",
+        "It repeats `[1, 2, 3]` for all four trials and ends failed."
       ],
       "correct": 3,
-      "explanation": "Reflecting on a transient external outage produces a reflection that does not help future runs."
+      "explanation": "With memory disabled, each call gives the actor a fresh empty buffer, so every attempt sums to 6 and misses 20."
     },
     {
       "stage": "post",
-      "question": "What is memory rot in the Reflexion pattern?",
+      "question": "If an `EpisodicMemory(max_len=2)` receives three reflections, which entries remain?",
       "options": [
-        "The episodic buffer fills with obsolete or wrong reflections and slows or biases future trials",
-        "Reflections are lost every time the agent process restarts between sessions",
-        "The provider silently encrypts stored reflections so they cannot be read back",
-        "The reflection prompt keeps growing until it exceeds the model's context window"
+        "Only the two newest reflections; `add` pops the oldest.",
+        "All three reflections, because `max_len` is only a display hint.",
+        "Only the first reflection, because new items overwrite the buffer.",
+        "No reflections, because the buffer clears after every trial."
       ],
       "correct": 0,
-      "explanation": "Accumulated stale or wrong reflections degrade behavior; mitigate with compaction or TTL."
+      "explanation": "`add` appends and then removes index 0 whenever the list exceeds `max_len`, keeping the newest two here."
+    },
+    {
+      "stage": "post",
+      "question": "What reflection does `SelfReflector.reflect([8, 8, 8], 4)` produce?",
+      "options": [
+        "`sum 24 is 4 short; pick larger values`",
+        "`sum 24 overshoots by 4; pick smaller values`",
+        "`succeeded`",
+        "`sum 20 is 4 short; pick larger values`"
+      ],
+      "correct": 1,
+      "explanation": "A positive delta means the attempt is above the target; the reflector reports the sum and says to pick smaller values."
     }
   ]
 }

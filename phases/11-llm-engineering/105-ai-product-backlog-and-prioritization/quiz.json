@@ -1,78 +1,78 @@
 {
   "lesson": "105-ai-product-backlog-and-prioritization",
-  "title": "AI-Assisted Backlog Scoring: Value, Effort, Risk, and Dependencies (2026)",
+  "title": "AI-Assisted Backlog Scoring: Value, Effort, Risk, and Dependencies",
   "questions": [
     {
       "stage": "pre",
-      "question": "According to the lesson, what can an LLM NOT supply when scoring a backlog?",
+      "question": "Which formula does score_and_rank use for a backlog item's composite score?",
       "options": [
-        "A ranked list of items",
-        "The weights that reflect business priorities across value, risk, effort, and dependencies",
-        "A breakdown of a vague epic into scoreable stories",
-        "A first-pass extraction of business impact from a feature description — and applies unchanged even when the lesson's stated preconditions fail"
+        "(value/5 * value_weight + (1-risk) * risk_weight) / adjusted_effort * 10",
+        "(value + risk + effort + blocker_count) / 4, with no normalization",
+        "value * risk_weight / effort, ignoring dependencies",
+        "value/5 * effort plus risk, so expensive work always ranks higher"
       ],
-      "correct": 1,
-      "explanation": "The lesson's core claim: LLMs can do the scoring arithmetic explicitly and consistently, but the weights themselves are a product and business decision that has to come from humans — the model has no access to the strategy those weights encode."
+      "correct": 0,
+      "explanation": "The scorer rewards normalized value and low risk, then divides by effort adjusted by 1 + 0.3 per blocker. Multiplying the quotient by 10 only makes the result easier to read."
     },
     {
       "stage": "check",
-      "question": "Why does the lesson call the actual deliverable of a prioritization session a 'decision record' rather than a ranked list?",
+      "question": "What adjusted effort does score_and_rank compute for item E, which is blocked by A and D and has effort=4?",
       "options": [
-        "Because Jira cannot store ranked lists natively",
-        "Because a ranked list alone loses the weights, score breakdown, and reasoning behind the order, leaving nothing to defend when challenged later",
-        "Because decision records are required by the EU AI Act for all software projects, with no need to inspect intermediate results or test edge cases",
-        "Because ranked lists cannot be version-controlled"
+        "4.0, because blocked_by is used only for graph depth",
+        "6.4, because two blockers multiply effort by 1 + 2*0.3",
+        "5.2, because each blocker adds 0.3 effort points",
+        "8.0, because every blocker doubles the work"
       ],
       "correct": 1,
-      "explanation": "The lesson's running example is a team that pastes 40 items into a chat and gets back a rank with no record of the weights or assumptions used. Three months later, when a stakeholder challenges the roadmap, there's no reasoning to point to — only the rank."
+      "explanation": "Item E has two blockers, so its multiplier is 1.6. The adjusted effort is 4 * 1.6 = 6.4; the same dependency list is also used later for graph metrics."
     },
     {
       "stage": "check",
-      "question": "In the RICE variant formula Score = (Value × w_v + (1 - Risk) × w_r) / (Effort × DependencyMultiplier), what does the DependencyMultiplier do?",
+      "question": "Which sample backlog item has the highest fan-in in build_dependency_graph?",
       "options": [
-        "It reduces the score for high-value items to keep rankings balanced, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "It scales the denominator up (1.5-2.0x) for items blocked by three or more unresolved dependencies, effectively penalizing items that can't ship independently",
-        "It replaces the Effort term entirely for items with no dependencies",
-        "It is only applied during a compliance quarter"
+        "D, because it blocks the audit export only",
+        "B, because compliance items receive an implicit dependency bonus",
+        "A, because C, E, and G list it as a blocker",
+        "E, because it is the deepest item in the graph"
       ],
-      "correct": 1,
-      "explanation": "DependencyMultiplier is 1.0 for independent items and rises to 1.5-2.0 for heavily blocked ones. Since it multiplies the denominator, a high multiplier lowers the score — reflecting that an item entangled in unresolved dependencies is effectively more costly to ship."
+      "correct": 2,
+      "explanation": "Fan-in counts how many items name an item as a blocker. A is listed by C, E, and G, giving it fan-in 3; D has fan-in 2 and B has fan-in 1."
     },
     {
       "stage": "check",
-      "question": "In the table of where LLMs help in the scoring workflow, what is the human gate for the 'Risk profiling' step?",
+      "question": "What dependency depth does item E receive in the sample graph?",
       "options": [
-        "Approve the model's chosen weights for the quarter",
-        "Decide the risk severity — the model surfaces risks, but does not get to decide how severe they are",
-        "Re-run the dependency graph analysis manually",
-        "Confirm the item was correctly decomposed from its parent epic, before defining the measurement, acceptance threshold, or rollback path"
+        "0, because E has no dependents",
+        "1, because it is directly blocked by A",
+        "3, because E has two blockers and one compliance dependency",
+        "2, because the longest chain is B -> D -> E"
       ],
-      "correct": 1,
-      "explanation": "The lesson's table pairs each LLM contribution with an explicit human gate. For risk profiling, the model surfaces non-obvious risks (data pipeline dependency, regulatory exposure), but a human must decide how severe each one actually is."
+      "correct": 3,
+      "explanation": "B is a root, D depends on B, and E depends on D, producing depth 2. A also blocks E directly, but the longest blocker chain remains B -> D -> E."
     },
     {
       "stage": "post",
-      "question": "Why does the lesson insist the scoring layer be a deterministic function rather than a model call?",
+      "question": "Which item ranks first under the sample weights and backlog?",
       "options": [
-        "Deterministic functions run faster than any LLM call — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "So the ranking doesn't change just because the team switched model versions, and any past ranking can be replayed by re-running the function against stored inputs",
-        "Because LLMs cannot output numeric scores reliably",
-        "Because Jira only accepts CSV input, not JSON"
+        "F — Dark mode, because its low effort and low risk produce the highest composite",
+        "A — SSO integration, because it has the highest value",
+        "E — ML-based anomaly alerts, because it is the most sophisticated feature",
+        "C — Realtime collaboration, because shared cursors have broad user appeal"
       ],
-      "correct": 1,
-      "explanation": "The model populates inputs (value, effort, risk, dependencies as structured output); a deterministic formula applies the weights and produces the order. That separation is what makes the ranking auditable — you can reproduce any historical ranking exactly from its stored inputs."
+      "correct": 0,
+      "explanation": "F has value 2, risk 0.05, effort 1, and no blockers. Its composite is 6.2, higher than the more valuable but riskier or more expensive candidates."
     },
     {
       "stage": "post",
-      "question": "What does high 'fan-in' mean for an item in the dependency graph, and why does the lesson say it should be scheduled early even at a moderate value score?",
+      "question": "How does the driver treat compliance items B and D after scoring?",
       "options": [
-        "High fan-in means the item has the deepest path from a root item, so it is inherently the most valuable, with no need to inspect intermediate results or test edge cases",
-        "High fan-in means many other items are blocked by it, so delaying it delays everything downstream — a force multiplier the WSJF insight favors scheduling early",
-        "High fan-in means the item requires the most engineering effort to complete",
-        "High fan-in is only relevant for items with no dependencies at all"
+        "It removes them whenever their composite is below the top item",
+        "It lists them in a separate mandatory section and says to schedule them regardless of score",
+        "It doubles their effort before ranking because compliance work is always blocked",
+        "It marks them as risk flags only when risk is at least 0.5"
       ],
       "correct": 1,
-      "explanation": "Fan-in counts how many items this one blocks. A high-fan-in item is a force multiplier: delaying it delays every item behind it. The WSJF insight the lesson cites is that the goal is maximizing the rate value flows through the backlog, not point-in-time value of any single item."
+      "explanation": "The compliance flag is reported separately after ranking. B and D remain in the ranked table, but the driver explicitly says mandatory compliance items must be scheduled regardless of composite score."
     }
   ]
 }

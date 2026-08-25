@@ -167,12 +167,34 @@ Two extensions you will want once you wire this to a real model. First, partial-
 
 Both add real complexity. Both are easier to add once the linear executor is pinned. That is what this lesson does.
 
+## Build It
+
+Reconstruct **Plan-Execute Control Flow** by following `call` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+
+## Use It
+
+Call `call` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/artifact-card.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
+
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Represent a plan as an ordered list of typed steps so the executor can reason about progress and outcome.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Execute steps sequentially with a controlled failure handoff back to the planner.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Replan from the current cursor with the prior error in the context so the next plan is informed.
+Use `call` as the trace: start from an 8x8 synthetic image, keep the raw output, and tie each observation to a named objective.
+
+1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using an 8x8 synthetic image. Follow `call`, `text`, `usage`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **Represent a plan as an ordered list of typed steps so the executor can reason about progress and outcome.**.
+2. **Vary one named input.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Execute steps sequentially with a controlled failure handoff back to the planner.** says the other inputs should stay fixed.
+3. **Probe the empty case.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Replan from the current cursor with the prior error in the context so the next plan is informed.** and record the exception text if the code rejects the case.
+4. **Package a usable handoff.** Open `outputs/artifact-card.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **Emit a plan diff on each revision so a downstream tracer or UI can show why the plan changed.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Represent a plan as an ordered list of typed steps so the executor can reason about progress and outcome,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Replan from the current cursor with the prior error in the context so the next plan is informed,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Plan-Execute Control Flow** should contain:
+
+- the `python3 main.py` output for an 8x8 synthetic image, with `call`, `text`, `usage` traced to the value or shape that supports **Represent a plan as an ordered list of typed steps so the executor can reason about progress and outcome.**;
+- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Execute steps sequentially with a controlled failure handoff back to the planner.**;
+- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Replan from the current cursor with the prior error in the context so the next plan is informed.**; and
+- an updated `outputs/artifact-card.md` example with a concrete input, expected output field, and acceptance check tied to **Emit a plan diff on each revision so a downstream tracer or UI can show why the plan changed.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

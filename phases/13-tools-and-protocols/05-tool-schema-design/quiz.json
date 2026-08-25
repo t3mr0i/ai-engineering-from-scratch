@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Tool Schema Design — Naming, Descriptions, Parameter Constraints?",
+      "question": "Which registry passes the lesson's naming and description guidance?",
       "options": [
-        "Write a tool description using the \"Use when X. Do not use for Y.\" pattern, under 1024 characters",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "GOOD_REGISTRY",
+        "BAD_REGISTRY, because one DoEverything tool is easier to discover",
+        "BAD_REGISTRY, because duplicate names improve cross-server routing",
+        "GOOD_REGISTRY, because notes_search accepts every possible parameter"
       ],
       "correct": 0,
-      "explanation": "“Write a tool description using the \"Use when X. Do not use for Y.\" pattern, under 1024 characters” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The good registry contains focused notes_list, notes_search, and notes_create definitions with clear usage boundaries."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Tool Schema Design — Naming, Descriptions, Parameter Constraints?",
+      "question": "What warning does lint_name report for get_weather_in_tokyo?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Name tools in a way that is stable, `snake_case`, and unambiguous across a large registry",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "A missing lowercase letter error",
+        "An embedded argument warning",
+        "A forbidden enum warning",
+        "No finding, because every snake_case name is ideal"
       ],
       "correct": 1,
-      "explanation": "“Name tools in a way that is stable, `snake_case`, and unambiguous across a large registry” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The name is syntactically snake_case, but the linter warns that a location has been embedded in the operation name."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Tool Schema Design — Naming, Descriptions, Parameter Constraints?",
+      "question": "What happens when lint_description sees a hidden <system> instruction?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Choose between atomic tools and a single monolithic tool for a given task surface",
-        "Treat one successful example as proof that every edge case works"
+        "It adds a helpful-use warning and accepts the text",
+        "It only checks the description length",
+        "It blocks the description as an injection pattern",
+        "It changes the tool name to system"
       ],
       "correct": 2,
-      "explanation": "“Choose between atomic tools and a single monolithic tool for a given task surface” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Injection-like tags and instruction overrides are blocking findings in the description linter."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Tool Schema Design — Naming, Descriptions, Parameter Constraints?",
+      "question": "What constraint does the GOOD_REGISTRY notes_search limit schema express?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Run a tool-schema linter against a registry and fix the findings",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Run a tool-schema linter against a registry and fix the findings” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Tool Schema Design — Naming, Descriptions, Parameter Constraints?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Write a tool description using the \"Use when X. Do not use for Y.\" pattern, under 1024 characters"
+        "A string with no bounds",
+        "A boolean that defaults to false",
+        "An arbitrary object whose keys are ignored",
+        "integer 1..50"
       ],
       "correct": 3,
-      "explanation": "“Write a tool description using the \"Use when X. Do not use for Y.\" pattern, under 1024 characters” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The search limit is an integer with minimum 1 and maximum 50, making the pagination contract explicit."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Tool Schema Design — Naming, Descriptions, Parameter Constraints?",
+      "question": "Which finding is caused by the duplicate notes_list entries in BAD_REGISTRY?",
       "options": [
-        "Name tools in a way that is stable, `snake_case`, and unambiguous across a large registry",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "A blocking duplicate-name finding",
+        "A harmless style nit about long words",
+        "A currency enum warning",
+        "A prompt-sampling capability error"
       ],
       "correct": 0,
-      "explanation": "“Name tools in a way that is stable, `snake_case`, and unambiguous across a large registry” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "lint_registry requires unique names and blocks the registry when a name appears more than once."
+    },
+    {
+      "stage": "post",
+      "question": "Why does the linter flag a monolithic action enum with more than three values?",
+      "options": [
+        "Enums are never valid in JSON Schema",
+        "A large action switch hides multiple tools and weakens routing clarity",
+        "The linter cannot parse strings",
+        "Only numeric parameters may be required"
+      ],
+      "correct": 1,
+      "explanation": "The action heuristic encourages separate, focused operations instead of one tool that bundles many unrelated modes."
     }
   ]
 }

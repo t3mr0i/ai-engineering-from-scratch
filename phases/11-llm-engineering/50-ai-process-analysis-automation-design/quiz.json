@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why should AI automation start with process analysis?",
+      "question": "What should be understood before a team calls a process an AI automation candidate?",
       "options": [
-        "Because process maps are never useful once a team has decided to automate",
-        "Because AI automation removes every exception a manual process used to handle",
-        "Because automation can make an unclear process faster but less reliable",
-        "Because a human fallback plan is never needed once automation is running"
-      ],
-      "correct": 2,
-      "explanation": "The lesson starts with process understanding because automating an unclear process just makes it faster and less reliable — process maps stay useful, AI doesn't remove exceptions, and a human fallback is still needed."
-    },
-    {
-      "stage": "check",
-      "question": "Every invoice above a certain amount has to be manually re-typed from a PDF into three separate systems before anyone can approve it. Which of the lesson's four signals does this match most directly?",
-      "options": [
-        "Process pain — the workflow is slow or frustrating, without pointing to one specific cause",
-        "Manual handoff — the same information is retyped by hand between systems or people",
-        "Exception volume — the workflow has to branch into unusual cases that are hard to plan for",
-        "Automation risk — automating this step could plausibly cause real, hard-to-reverse harm"
-      ],
-      "correct": 1,
-      "explanation": "Re-typing the same invoice data by hand into three systems is the lesson's manual-handoff signal — distinct from general process pain, exception volume (branching edge cases), or automation risk (harm from automating)."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Python artifact produce?",
-      "options": [
-        "A finished workflow engine that can be deployed to production without a pilot test run",
-        "A process map that stays hidden from the team until automation is complete",
-        "A physical robot configured to perform the manual handoff automatically",
-        "A ranked automation triage plan with controls and rationale for each scenario"
-      ],
-      "correct": 3,
-      "explanation": "The artifact ranks process scenarios into an automation triage plan with controls and rationale — it doesn't ship a workflow engine, hide the process map, or produce physical automation."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to this lesson?",
-      "options": [
-        "Skipping exception logging because most cases are expected to be routine, before defining the measurement, acceptance threshold, or rollback path",
-        "Removing the process owner once the automation pilot has been approved",
-        "Hiding the value check so the pilot can start before impact is estimated",
-        "Human fallback — a person who can step in whenever automation hits an exception"
-      ],
-      "correct": 3,
-      "explanation": "The lesson's controls are process map, value check, exception log, and human fallback — human fallback keeps a person able to step in on exceptions, unlike skipping exception logs, removing the owner, or hiding the value check."
-    },
-    {
-      "stage": "post",
-      "question": "When should an automation idea receive stronger review?",
-      "options": [
-        "When exception volume, automation risk, or manual handoffs are present",
-        "Only when the process has already been automated and is running in production",
-        "Only when the process has no measurable value to the business at all",
-        "Never — a convincing tool demo is enough evidence to greenlight automation"
+        "The workflow, handoffs, exception volume, value potential, and a human fallback",
+        "The model vendor with the largest feature list",
+        "A successful happy-path demo without a record of exceptions",
+        "A promise to remove manual review before the process has been mapped"
       ],
       "correct": 0,
-      "explanation": "High exception volume, automation risk, manual handoffs, or high value potential are exactly the signals that call for stronger review — not an already-automated process, zero measured value, or a demo standing in for review."
+      "explanation": "Automation design starts with the process and its failure paths. A map, value check, exception log, and fallback keep a pilot bounded and testable."
+    },
+    {
+      "stage": "check",
+      "question": "The invoice handoff fixture matches three signals with value_potential=5 and complexity=4. What score and priority does it receive?",
+      "options": [
+        "18 and guided pilot design",
+        "20 and automation discovery workshop",
+        "14 and process mapping",
+        "10 and observe"
+      ],
+      "correct": 1,
+      "explanation": "The raw score is 5*2 + 4 + 3*2 = 20. The top priority band is automation discovery workshop."
+    },
+    {
+      "stage": "check",
+      "question": "Which category does choose_category select for the invoice handoff fixture?",
+      "options": [
+        "automation candidate",
+        "exception process",
+        "workflow triage",
+        "pilot design"
+      ],
+      "correct": 2,
+      "explanation": "Three matches plus value potential 5 and complexity 4 produce index 12 modulo 4 = 0. The first category is workflow triage."
+    },
+    {
+      "stage": "check",
+      "question": "Which controls are selected for a process Scenario with three matched signals?",
+      "options": [
+        "process map and value check only",
+        "exception log and human fallback only",
+        "a human fallback without mapping the process",
+        "process map, value check, exception log, and human fallback"
+      ],
+      "correct": 3,
+      "explanation": "The recommendation includes all four controls when three signals match. That keeps both the value case and exception handling visible."
     },
     {
       "stage": "post",
-      "question": "What should teams know before piloting AI automation?",
+      "question": "What priority does Scenario(\"routine note\", \"Routine note with no listed signals.\", (), value_potential=2, complexity=1) receive?",
       "options": [
-        "Only the name of the model that will power the automated workflow",
-        "Only the length of the prompt used to drive the automated workflow, with no need to inspect intermediate results or test edge cases",
-        "The process map, value check, exception log, and human fallback plan",
-        "No details about the current manual process before automating it"
+        "observe with score 5",
+        "process mapping with score 7",
+        "guided pilot design with score 11",
+        "automation discovery workshop with score 16"
       ],
-      "correct": 2,
-      "explanation": "Before piloting, teams need the process map, a value check, an exception log, and a fallback plan — not just a model name, a prompt length, or no knowledge of the current process."
+      "correct": 0,
+      "explanation": "No matches add no bonus, so the score is 2*2 + 1 = 5. The artifact keeps that low-evidence idea in observe."
+    },
+    {
+      "stage": "post",
+      "question": "What should sheet-process-automation-triage.md make explicit before a pilot is approved?",
+      "options": [
+        "Only the happy-path time saving, because exceptions can be handled after launch",
+        "The process map, value check, exception log, human fallback, owner, and next experiment",
+        "A launch date without a metric for whether automation helped",
+        "A model selection that replaces the process owner's judgment"
+      ],
+      "correct": 1,
+      "explanation": "The triage sheet turns a broad automation idea into a bounded experiment. It gives reviewers a way to challenge value and safety assumptions before choosing a tool."
     }
   ]
 }

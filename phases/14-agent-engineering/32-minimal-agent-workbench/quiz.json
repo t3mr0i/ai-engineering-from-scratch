@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What three files form the smallest useful workbench?",
+      "question": "After the demo completes its current turn, what durable state is shown?",
       "options": [
-        "README.md for onboarding, CHANGELOG.md for history, and LICENSE for legal terms",
-        "model.py for the model client, prompts.py for templates, and tools.py for function defs",
-        "Dockerfile for the build, Makefile for commands, and .gitignore for excluded paths",
-        "AGENTS.md (router), agent_state.json (state), task_board.json (queue)"
-      ],
-      "correct": 3,
-      "explanation": "A short router, durable state, and a task queue are the floor."
-    },
-    {
-      "stage": "check",
-      "question": "What is the lesson's framing of AGENTS.md?",
-      "options": [
-        "A short router that points at deeper docs and the state and board",
-        "A 3000-line onboarding manual covering every edge case the agent could hit",
-        "A pure prompt-cache key used only to reduce token cost on repeated calls",
-        "A secret kept out of the repo and injected only at deployment time"
-      ],
-      "correct": 0,
-      "explanation": "AGENTS.md is a router, not a manual; long manuals get ignored."
-    },
-    {
-      "stage": "check",
-      "question": "What does Augment Code's data say about a good AGENTS.md?",
-      "options": [
-        "It has no measurable effect on task success once the underlying model is already capable enough for the task",
-        "A good AGENTS.md gives a quality jump equivalent to upgrading from Haiku to Opus; a bad one is worse than no file",
-        "Length always helps; the longer and more exhaustive the AGENTS.md file, the better the agent performs on every task",
-        "Only Claude reads it; other coding agents like Codex, Cursor, and Copilot ignore the file entirely"
-      ],
-      "correct": 1,
-      "explanation": "Augment Code's measurement: best files are model-upgrade-shaped, worst are worse than nothing."
-    },
-    {
-      "stage": "check",
-      "question": "Why does the lesson recommend file-backed state over chat-history state?",
-      "options": [
-        "Disk is cheaper than paying for extra context tokens on every single model call inside the agent loop",
-        "Files are smaller than the equivalent chat transcript once compressed with gzip",
-        "Chat history is volatile; the file survives session death, conversation trimming, and tool resets",
-        "It is required by SOC 2 compliance audits for every production agent deployment"
+        "`T-001` is still active and waiting for its test command.",
+        "Both `T-001` and `T-002` are marked done.",
+        "No active task; `T-001` is done, `T-002` remains todo, and the next action is to pick the next task.",
+        "The board is empty because completed tasks are deleted."
       ],
       "correct": 2,
-      "explanation": "Sessions die and chat gets trimmed; the file is the durable system of record."
+      "explanation": "With both touched files already recorded, `run_one_turn` closes `T-001`, clears `active_task_id` and `touched_files`, and leaves `T-002` for the next turn."
     },
     {
-      "stage": "post",
-      "question": "What does the lesson say happens when conflicting instructions land in AGENTS.md?",
+      "stage": "check",
+      "question": "What happens when `run_one_turn` starts with `active_task_id=None` and a todo board?",
       "options": [
-        "Latency drops",
-        "Conflicting instructions silently drop the agent from interactive to greedy mode (AMBIG-SWE: 48.8% to 28% resolve rate)",
-        "Cost rises slightly",
-        "Nothing"
+        "It marks every todo task done without selecting one.",
+        "It sets the state to idle and leaves all tasks todo.",
+        "It raises because a state file must always name an active task.",
+        "It selects the first todo task, marks it `in_progress`, and records it as active."
       ],
-      "correct": 1,
-      "explanation": "AMBIG-SWE measured a large resolve-rate drop when contradictions appear; number priorities instead."
+      "correct": 3,
+      "explanation": "The method uses `next` over board tasks with status `todo`; the selected task becomes `in_progress`, and its ID is stored in `active_task_id`."
     },
     {
-      "stage": "post",
-      "question": "Why does the lesson recommend cross-tool symlinks like CLAUDE.md -> AGENTS.md?",
+      "stage": "check",
+      "question": "How does `run_one_turn` recover when the active task ID is absent from the board?",
       "options": [
-        "So a single source of truth fans out to every coding agent without forking",
-        "To save bytes by avoiding duplicate copies of the same instructions across tool directories",
-        "To pass auditing requirements that mandate a single canonical instructions file per repo",
-        "To satisfy the MIT license terms attached to the agents.md open specification"
+        "It clears `active_task_id` and sets `next_action` to reset and pick new work.",
+        "It creates a new task with the missing ID.",
+        "It marks the whole board blocked and stops permanently.",
+        "It silently keeps the stale ID so a later turn can find it."
       ],
       "correct": 0,
-      "explanation": "Symlinks (or Nx-style generators) keep one canonical source across Claude Code, Codex, Cursor, Copilot, etc."
+      "explanation": "If the lookup returns `None`, the implementation resets `active_task_id` and records `active task missing from board; resetting and picking new work`."
+    },
+    {
+      "stage": "check",
+      "question": "What is the first work action for an active task whose state has no `app.py` entry?",
+      "options": [
+        "Mark the task done and clear the board.",
+        "Append `app.py` to `touched_files` and set the next action to add its acceptance test.",
+        "Run the verification command before touching any file.",
+        "Create a new `T-003` task instead of modifying state."
+      ],
+      "correct": 1,
+      "explanation": "The first active-task branch appends `app.py` when it is absent and sets `next_action` to `add test for <active id> acceptance`."
+    },
+    {
+      "stage": "post",
+      "question": "What happens when an active task already lists both `app.py` and `test_app.py` as touched?",
+      "options": [
+        "It remains `in_progress` until another session opens the board.",
+        "It adds a third touched file for the verification report.",
+        "It marks the task `done`, clears the active task and touched files, and points to the next board task.",
+        "It deletes the task's acceptance command from the board."
+      ],
+      "correct": 2,
+      "explanation": "The final branch sets `active.status = \"done\"`, clears the active ID and touched list, and sets `next_action` to `pick next task from board`."
+    },
+    {
+      "stage": "post",
+      "question": "What does the generated `AGENTS.md` call the definition of done?",
+      "options": [
+        "The agent has written at least one source file.",
+        "The task has a non-empty chat transcript.",
+        "The board contains no todo tasks, regardless of tests.",
+        "The active task is `done` on the board and its listed verification command exits 0."
+      ],
+      "correct": 3,
+      "explanation": "The router says completion requires the task referenced by `agent_state.active_task_id` to be `done` and its acceptance verification command to exit zero."
     }
   ]
 }

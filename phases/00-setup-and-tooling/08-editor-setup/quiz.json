@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is a Language Server Protocol (LSP)?",
+      "question": "What does a language server add to an AI coding workflow?",
       "options": [
-        "A protocol for transferring files between editors — and applies unchanged even when the lesson's stated preconditions fail",
-        "A standard for editors to receive type info, completions, and diagnostics from a language-specific server",
-        "A compression format for source code files",
-        "A network protocol for remote pair programming"
-      ],
-      "correct": 1,
-      "explanation": "LSP is a standardized protocol that lets editors communicate with language servers for features like autocomplete, type checking, and error diagnostics, regardless of the editor used."
-    },
-    {
-      "stage": "check",
-      "question": "Why is format-on-save useful for team projects?",
-      "options": [
-        "It reduces file sizes by removing whitespace",
-        "It ensures consistent code style across all contributors without manual formatting",
-        "It catches runtime bugs before the code is executed, with no need to inspect intermediate results or test edge cases",
-        "It compresses the code for faster git operations"
-      ],
-      "correct": 1,
-      "explanation": "Format-on-save runs a formatter (like Black or Ruff) every time you save, ensuring all code follows the same style conventions regardless of who wrote it."
-    },
-    {
-      "stage": "check",
-      "question": "Which VS Code extension enables editing code on a remote GPU machine as if it were local?",
-      "options": [
-        "GitLens, because one plausible output is sufficient production evidence",
-        "Pylance",
-        "Remote SSH",
-        "Debugpy"
+        "A second GPU attached to the editor",
+        "Automatic approval of every pull request",
+        "Diagnostics, navigation, and completion",
+        "A replacement for the Python runtime"
       ],
       "correct": 2,
-      "explanation": "Remote SSH installs a lightweight VS Code server on the remote machine and streams the UI to your local editor, letting you edit files, run terminals, and debug remotely."
+      "explanation": "A language server analyzes source as you edit and feeds diagnostics, symbol navigation, and completion to the editor. It does not execute the program or supply hardware."
     },
     {
       "stage": "check",
-      "question": "Why should 'notebook.output.scrolling' be enabled in VS Code settings for AI work?",
+      "question": "Which editor settings are part of the lesson's evaluate_editor checklist?",
       "options": [
-        "It enables horizontal scrolling for wide dataframes",
-        "It prevents training loop output (thousands of lines) from exploding the output panel",
-        "It allows scrolling between notebook cells with the mouse wheel, before defining the measurement, acceptance threshold, or rollback path",
-        "It enables smooth scrolling animations in the editor"
+        "dark_mode, emoji_completion, and automatic model retraining",
+        "video_recording, browser_history, and cloud billing",
+        "only a wider minimap and a custom file icon",
+        "The five capabilities in REQUIRED_SETTINGS"
       ],
-      "correct": 1,
-      "explanation": "Training loops can print thousands of lines of output. Without output scrolling, the notebook output panel grows unbounded, making the notebook unusable."
+      "correct": 3,
+      "explanation": "REQUIRED_SETTINGS names five workflow capabilities. evaluate_editor returns the satisfied and missing names plus a score without changing the settings."
     },
     {
-      "stage": "post",
-      "question": "What does setting 'python.analysis.typeCheckingMode' to 'basic' in VS Code accomplish?",
+      "stage": "check",
+      "question": "What is the practical effect of enabling format-on-save and basic type checking?",
       "options": [
-        "It enables syntax highlighting for Python files",
-        "It catches wrong argument types and tensor shape mismatches before running the code",
-        "It formats Python code according to PEP 8 standards — and applies unchanged even when the lesson's stated preconditions fail",
-        "It enables Python 3.12 language features"
-      ],
-      "correct": 1,
-      "explanation": "Basic type checking with Pylance flags type mismatches, wrong argument types, and incorrect API parameters at edit time, catching bugs before you run a potentially expensive training script."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Editor Setup?",
-      "options": [
-        "Configure format-on-save, type checking, and notebook output scrolling for AI workflows",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Formatting and static type warnings",
+        "Every runtime shape error is proven impossible",
+        "The editor compiles CUDA kernels on save",
+        "Notebook outputs are automatically converted into unit tests"
       ],
       "correct": 0,
-      "explanation": "“Configure format-on-save, type checking, and notebook output scrolling for AI workflows” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Formatting and static analysis catch common consistency and interface mistakes early. They complement, rather than replace, runtime tests for tensor shapes and device behavior."
+    },
+    {
+      "stage": "check",
+      "question": "Why use Remote SSH when the GPU is in another machine?",
+      "options": [
+        "It copies the remote GPU into the laptop's hardware inventory",
+        "It runs the editor context on the remote host",
+        "It removes the need for authentication on the remote host",
+        "It changes a CPU notebook into a CUDA kernel without moving execution"
+      ],
+      "correct": 1,
+      "explanation": "Remote SSH installs the editor server on the GPU host and runs commands there. This keeps data and computation remote while providing a local editing interface."
+    },
+    {
+      "stage": "post",
+      "question": "The editor shows no GPU, but an SSH terminal on the same project host runs nvidia-smi successfully. What should you check?",
+      "options": [
+        "Whether the editor's font has GPU glyphs",
+        "Whether the project contains more Markdown than Python",
+        "Check the remote window and selected interpreter",
+        "Whether the laptop battery is fully charged"
+      ],
+      "correct": 2,
+      "explanation": "The shell result proves the host can see the device, not that the editor is connected to that host or using its Python. Re-selecting the remote window and interpreter addresses the mismatch."
+    },
+    {
+      "stage": "post",
+      "question": "You alternate between local notebook exploration and a remote training box. Which editor setup is the best fit?",
+      "options": [
+        "Disable the integrated terminal and edit remote files through screenshots",
+        "Use a new editor for every notebook cell so no settings can be shared",
+        "Run training locally because editor settings determine available hardware",
+        "Use local notebook support and Remote SSH"
+      ],
+      "correct": 3,
+      "explanation": "The checklist supports both interactive notebooks and a remote execution context. Recording the interpreter avoids accidentally running the training job with the laptop environment."
     }
   ]
 }

@@ -1,78 +1,78 @@
 {
   "lesson": "85-ai-enhanced-user-research",
-  "title": "From Raw Research to Validatable Decisions: AI-Enhanced User Research (2026)",
+  "title": "AI-Enhanced User Research",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to From Raw Research to Validatable Decisions: AI-Enhanced User Research (2026)?",
+      "question": "Which evidence profile can reach the STRONG confidence tier in score_hypothesis?",
       "options": [
-        "Explain the production problem addressed by From Raw Research to Validatable Decisions: AI-Enhanced User Re...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Explain the production problem addressed by From Raw Research to Validatable Decisions: AI-Enhanced User Re...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of From Raw Research to Validatable Decisions: AI-Enhanced User Research (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through From Raw Research to Validatable Decisions: AI-Enhanced User Research (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Measure quality, cost, latency, and risk with explicit acceptance criteria",
-        "Treat one successful example as proof that every edge case works"
+        "Two participants from one segment across one session",
+        "Three participants with seven snippets and no second segment",
+        "Five or more participants, at least two segments, and multi-session evidence",
+        "One participant with many snippets and a clear research label"
       ],
       "correct": 2,
-      "explanation": "“Measure quality, cost, latency, and risk with explicit acceptance criteria” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The strong branch requires all three conditions: at least five distinct participants, at least two segments, and evidence spanning multiple sessions."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits From Raw Research to Validatable Decisions: AI-Enhanced User Research (2026)?",
+      "question": "What tier and score does the Power users hypothesis receive?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Identify failure modes and define a safe rollback or review path",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Identify failure modes and define a safe rollback or review path” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for From Raw Research to Validatable Decisions: AI-Enhanced User Research (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the production problem addressed by From Raw Research to Validatable Decisions: AI-Enhanced User Re..."
+        "STRONG at 0.80, because it has two segments",
+        "WEAK at 0.30, because it has fewer than five participants",
+        "ANECDOTE at 0.15, because it is about keyboard shortcuts",
+        "MODERATE at 0.66, because it has four participants and two segments"
       ],
       "correct": 3,
-      "explanation": "“Explain the production problem addressed by From Raw Research to Validatable Decisions: AI-Enhanced User Re...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Four participants enter the moderate branch. With two segments, the base is 0.62; one extra participant adds 0.04, giving 0.66."
+    },
+    {
+      "stage": "check",
+      "question": "How does score_hypothesis classify evidence from one participant with several snippets?",
+      "options": [
+        "ANECDOTE at 0.15",
+        "WEAK at 0.30",
+        "MODERATE at 0.50",
+        "STRONG at 0.80"
+      ],
+      "correct": 0,
+      "explanation": "The single-participant check runs before the strong or moderate branches. It returns ANECDOTE with score 0.15 even when the snippet count is greater than one."
+    },
+    {
+      "stage": "check",
+      "question": "Why does Scenario B trigger a representational-bias flag?",
+      "options": [
+        "Power users contribute more snippets than new users",
+        "New users contribute 14 of 18 snippets, above 60%, while representing only 30% of the population",
+        "The cluster contains no enterprise users",
+        "Every segment has fewer than five snippets"
+      ],
+      "correct": 1,
+      "explanation": "The new-user evidence share is 14/18, about 78%. It exceeds SKEW_THRESHOLD=0.60 while its population share is below POP_THRESHOLD=0.40."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for From Raw Research to Validatable Decisions: AI-Enhanced User Research (2026)?",
+      "question": "Which segment is listed as silent for Scenario B?",
       "options": [
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "new-user",
+        "power-user",
+        "returning-user",
+        "enterprise-user"
       ],
-      "correct": 0,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "Scenario B includes new-user, power-user, and enterprise-user evidence. returning-user is in ALL_SEGMENTS_IN_POOL but absent from the cluster."
+    },
+    {
+      "stage": "post",
+      "question": "Which boundary does check_bias use for its skew flag?",
+      "options": [
+        "It flags at exactly 40% evidence share when population share is 60%",
+        "It flags every segment with fewer than five snippets",
+        "It flags only when the total snippet count is zero",
+        "It flags evidence share strictly above 60% when population share is strictly below 40%"
+      ],
+      "correct": 3,
+      "explanation": "The condition is evidence_share > SKEW_THRESHOLD and population_share < POP_THRESHOLD. Equality at either threshold does not trigger this flag."
     }
   ]
 }

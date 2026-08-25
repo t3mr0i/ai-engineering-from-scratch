@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Actor-Critic — A2C and A3C?",
+      "question": "What does value(w, x) compute for the critic in this lesson?",
       "options": [
-        "Formulate Actor-Critic — A2C and A3C in terms of states, actions, rewards, and objectives",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
+        "The dot product of critic weights w and one-hot state features x",
+        "A softmax distribution over the four actions",
+        "The maximum reward in the current trajectory",
+        "The squared distance between actor logits and the terminal state"
       ],
       "correct": 0,
-      "explanation": "“Formulate Actor-Critic — A2C and A3C in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "value returns sum(wj*xj), a linear state-value estimate; the actor uses separate logits and a softmax."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Actor-Critic — A2C and A3C?",
+      "question": "What does rollout store as v for each transition?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the central update rule from first principles",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "The final Monte Carlo return, computed after the episode",
+        "The critic's current value(w, x) before that action is updated",
+        "The largest action probability from the actor",
+        "The next state's reward before applying gamma"
       ],
       "correct": 1,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Each record includes 'v': value(w, x) at the current state; gae_advantages later uses this stored estimate and the next record's value."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Actor-Critic — A2C and A3C?",
+      "question": "Which recurrence does gae_advantages use for a nonterminal step?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Trace learning signals through a self-terminating experiment",
-        "Treat one successful example as proof that every edge case works"
+        "gae = reward - gamma*next_v, with no previous advantage",
+        "gae = next_v / gamma for every state",
+        "delta = r + gamma*next_v - v, then gae = delta + gamma*lam*gae from the later step",
+        "gae = max(action logits) - min(action logits)"
       ],
       "correct": 2,
-      "explanation": "“Trace learning signals through a self-terminating experiment” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The reverse loop forms the TD residual delta and recursively adds the discounted, lambda-weighted later advantage."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Actor-Critic — A2C and A3C?",
+      "question": "How are critic training targets formed after GAE?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate convergence, stability, and exploration trade-offs",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate convergence, stability, and exploration trade-offs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Actor-Critic — A2C and A3C?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Formulate Actor-Critic — A2C and A3C in terms of states, actions, rewards, and objectives"
+        "They are all set to the terminal reward",
+        "They are the actor's action indices converted to floats",
+        "They are the unnormalized advantages only",
+        "Each return target equals the stored state value plus its corresponding advantage"
       ],
       "correct": 3,
-      "explanation": "“Formulate Actor-Critic — A2C and A3C in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "gae_advantages returns returns = [a + traj[t]['v'] ...], which actor_critic uses as the critic target."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Actor-Critic — A2C and A3C?",
+      "question": "What does normalize(xs) do when xs has at least two entries?",
       "options": [
-        "Implement the central update rule from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It subtracts the mean and divides by the population standard deviation plus 1e-8",
+        "It clips every value to [-1, 1] without centering",
+        "It converts values into a one-hot action vector",
+        "It divides by the largest absolute reward only"
       ],
       "correct": 0,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The helper computes the mean and variance over len(xs), then returns (x-m)/ (sqrt(var)+1e-8); a one-entry list is unchanged."
+    },
+    {
+      "stage": "post",
+      "question": "How does ent_coef affect the actor update in actor_critic?",
+      "options": [
+        "It replaces the critic target with an entropy value",
+        "It adds an entropy-gradient term to the policy update, encouraging nonzero action probabilities",
+        "It turns off GAE whenever the policy is greedy",
+        "It changes the GridWorld reward from -1 to +1"
+      ],
+      "correct": 1,
+      "explanation": "The actor increment contains adv*grad_logpi plus ent_coef*entropy_grad*probs, so the coefficient controls the exploration bonus."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the core insight behind LoRA (Low-Rank Adaptation)?",
+      "question": "Immediately after constructing `LoRALayer(16, 8, rank=4, alpha=8)`, what is the adapter's contribution for any input?",
       "options": [
-        "Weight updates during fine-tuning have low intrinsic rank, so two small matrices can approximate them instead of the full matrix",
-        "Only the query and value projections carry task-specific information, so every other layer can be dropped from the model — and applies unchanged even when the lesson's stated preconditions fail",
-        "Quantizing the base weights to four bits frees up enough memory that the full gradient now fits on one consumer GPU",
-        "Freezing the early layers and training only the final one avoids catastrophic forgetting while keeping quality intact"
-      ],
-      "correct": 0,
-      "explanation": "Aghajanyan et al. showed that fine-tuning updates occupy a low-dimensional subspace. LoRA exploits this by representing the update as W + BA where B (d x r) and A (r x d) have small rank r, typically 8-64."
-    },
-    {
-      "stage": "check",
-      "question": "How much memory does LoRA save compared to full fine-tuning of an 8B model?",
-      "options": [
-        "No saving in GPU memory at all; LoRA only shrinks the checkpoint file you store on disk afterwards",
-        "Roughly a 50% cut, since gradients are dropped but the Adam optimizer states are still kept in full",
-        "From ~56GB down to ~6GB by training <1% of parameters while keeping base weights frozen",
-        "From ~56GB down to ~14GB, which is the memory needed to hold the base weights in fp16"
+        "It equals the frozen linear output because `A` is initialized as an identity matrix",
+        "It is a random projection with scale `8`, because both adapter matrices are random",
+        "It is zero, because `B` starts as an all-zero matrix even though `A` is random",
+        "It is undefined until `train_lora` has updated the optimizer state"
       ],
       "correct": 2,
-      "explanation": "Full fine-tuning needs gradients and optimizer states for all 8B parameters (~56GB). LoRA freezes base weights and only trains adapter matrices (~80M parameters at rank 16), needing ~6GB total."
+      "explanation": "The forward path is `(x @ A @ B) * scaling`. `B` is initialized to zeros, so the low-rank update is zero at initialization and the wrapped layer initially behaves like its base linear layer."
     },
     {
       "stage": "check",
-      "question": "What is QLoRA?",
+      "question": "For `rank=4` and `alpha=8`, what value does `LoRALayer.scaling` use?",
       "options": [
-        "A LoRA variant that quantizes the adapter matrices to 4-bit while the base model stays in fp16 throughout training, because one plausible output is sufficient production evidence",
-        "A merging method that trims small-magnitude adapter weights and resolves sign conflicts before combining adapters",
-        "Quantized LoRA: the base model is loaded in 4-bit while the adapters train in 16-bit, combining the memory savings of both",
-        "A kernel rewrite of the forward and backward pass that doubles throughput and halves VRAM with no accuracy loss"
+        "`4`, because scaling equals the rank",
+        "`0.5`, because scaling divides rank by alpha",
+        "`12`, because alpha and rank are added",
+        "`2`, because scaling is `alpha / rank`"
       ],
-      "correct": 2,
-      "explanation": "QLoRA (Dettmers et al.) loads the frozen base model in 4-bit (NF4 quantization) while training LoRA adapters in FP16/BF16. This allows fine-tuning a 7B model on a single consumer GPU with 6GB VRAM."
+      "correct": 3,
+      "explanation": "The constructor sets `self.scaling = alpha / rank`, so `8 / 4 = 2`. This factor controls the strength of the low-rank update without changing its rank."
     },
     {
       "stage": "check",
-      "question": "What does the 'rank' parameter (r) in LoRA control?",
+      "question": "What does `inject_lora(model, target_modules=[\"0\", \"2\"])` do to a sequential demo model?",
       "options": [
-        "The capacity of the adapter: higher rank captures more complex adaptations but uses more parameters and memory",
-        "How strongly the adapter path is scaled into the output, with the common default doubling the update size",
-        "How many projections receive adapters, with higher values adding the MLP layers on top of attention",
-        "The number of bits used to store the frozen base weights while the adapters keep training in higher precision throughout"
+        "It freezes the base and wraps matching linear layers",
+        "It deletes modules `0` and `2` and replaces them with standalone adapter matrices",
+        "It trains every layer but records modules `0` and `2` only for reporting",
+        "It quantizes every parameter to four bits without adding any trainable parameters"
       ],
       "correct": 0,
-      "explanation": "Rank r determines the size of adapter matrices A (r x d) and B (d x r). Rank 4 trains very few parameters (fast, cheap). Rank 64 trains more parameters (more expressive). Most tasks work well with rank 8-32."
+      "explanation": "The helper first sets all parameters non-trainable, then wraps matching linear modules. Each wrapper keeps the frozen base linear layer and adds trainable `A` and `B` parameters."
+    },
+    {
+      "stage": "check",
+      "question": "In `quantize_to_nf4`, how is a block's scale computed before values are rounded?",
+      "options": [
+        "The block mean is divided by the number of dimensions and used for every value",
+        "The block maximum is divided by `7.0` and clamped above zero",
+        "Every value is divided by the global tensor norm, with no block-level padding",
+        "The rank and alpha of the nearest LoRA layer determine the quantization scale"
+      ],
+      "correct": 1,
+      "explanation": "The function pads to complete blocks, computes `blocks.abs().max(...) / 7.0`, clamps the scale, then rounds and clamps values to the simulated NF4 integer range."
     },
     {
       "stage": "post",
-      "question": "What happens when you merge LoRA weights back into the base model?",
+      "question": "When `merge_lora_weights` replaces a `LinearWithLoRA`, what mathematical update is added to the base weight?",
       "options": [
-        "The base weights are re-quantized to NF4, so the merged checkpoint ends up roughly as small as the adapter file was",
-        "The adapters remain separate at inference time and are swapped in per request, which is the whole point of merging",
-        "The adapter matrices are added to the base weights (W_merged = W_base + B*A), producing a standard model with no inference overhead",
-        "The merged model has to run one more training epoch, because the zero-initialized B matrix is reset during the merge — and applies unchanged even when the lesson's stated preconditions fail"
+        "`A + B`, transposed once so the adapter rank disappears",
+        "`B * alpha` only; `A` is discarded after training",
+        "The scaled `A @ B` update, transposed to match the base weight",
+        "The base weight is replaced by the adapter output for a fixed zero input"
       ],
       "correct": 2,
-      "explanation": "Since LoRA adds W_base + B*A, you can compute B*A once and add it to W_base permanently. The merged model has the same architecture and inference speed as the original, with no adapter overhead."
+      "explanation": "The wrapper computes `(A @ B) * scaling` in input-by-output orientation and adds its transpose to `module.linear.weight`. The wrapper is then replaced by the ordinary linear layer."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Fine-Tuning with LoRA & QLoRA?",
+      "question": "Which parameters does `train_lora` pass to `torch.optim.AdamW`?",
       "options": [
-        "Calculate the parameter savings of LoRA vs full fine-tuning: rank r with d_model dimensions trains 2*r*d pa...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "All model parameters, including frozen base weights, so gradients can decide what to update",
+        "Only parameters whose names contain `lora`, whether or not `requires_grad` is true",
+        "A copied state dictionary of base weights, with no optimizer parameters at all",
+        "Only parameters with `requires_grad=True`, which are the adapter matrices after injection"
       ],
-      "correct": 0,
-      "explanation": "“Calculate the parameter savings of LoRA vs full fine-tuning: rank r with d_model dimensions trains 2*r*d pa...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 3,
+      "explanation": "The optimizer receives `[p for p in model.parameters() if p.requires_grad]`. After injection, that list contains trainable LoRA matrices while the original linear weights remain frozen."
     }
   ]
 }

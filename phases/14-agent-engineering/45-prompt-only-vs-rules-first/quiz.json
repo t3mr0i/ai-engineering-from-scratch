@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What should decide whether a task is complete?",
+      "question": "Which changed_files tuple does prompt_only_attempt return for the validator task?",
       "options": [
-        "The worker's confidence",
-        "The task's evidence contract",
-        "The amount of prose produced",
-        "The number of files changed"
-      ],
-      "correct": 1,
-      "explanation": "Completion belongs to independently checked evidence."
-    },
-    {
-      "stage": "check",
-      "question": "What does an allowed-file list constrain?",
-      "options": [
-        "Only the commit message text",
-        "The model's own output vocabulary",
-        "Which paths the task may change",
-        "The test runner's exit output"
+        "('src/validator.py', 'tests/test_validator.py')",
+        "('src/validator.py', 'README.md')",
+        "('src/validator.py', 'tests/test_validator.py', 'notes.txt')",
+        "('notes.txt', 'README.md', 'src/validator.py')"
       ],
       "correct": 2,
-      "explanation": "Scope is an authorization boundary for writes."
+      "explanation": "The baseline deliberately includes notes.txt in addition to the source and test paths, creating an out-of-scope violation."
     },
     {
       "stage": "check",
-      "question": "Why run both fixture attempts through one validator?",
+      "question": "Which required check is missing from the prompt-only attempt?",
       "options": [
-        "To make the prompts given to both workers identical",
-        "To hide the prompt-only attempt's baseline failure",
-        "To avoid recording the task's allowed-file scope",
-        "To compare their evidence under one contract"
+        "unit",
+        "format",
+        "lint",
+        "acceptance"
       ],
       "correct": 3,
-      "explanation": "A shared validator makes the comparison meaningful."
+      "explanation": "The task requires unit and acceptance, but prompt_only_attempt reports completed_checks=('unit',) only."
     },
     {
       "stage": "check",
-      "question": "What is a missing acceptance check?",
+      "question": "What changed_files does rules_first_attempt use?",
       "options": [
-        "A completion violation",
-        "A harmless review note",
-        "A minor style choice",
-        "A successful fallback"
+        "Exactly task.allowed_files",
+        "The prompt-only tuple plus notes.txt",
+        "Every file under src/ and tests/",
+        "Only the first allowed path"
       ],
       "correct": 0,
-      "explanation": "Required checks are part of the definition of done."
+      "explanation": "rules_first_attempt returns changed_files=task.allowed_files and creates an artifact entry for each of those paths."
     },
     {
-      "stage": "post",
-      "question": "Which receipt is most useful to a reviewer?",
+      "stage": "check",
+      "question": "Which artifact entries are missing from the prompt-only attempt?",
       "options": [
-        "Only a confidence score from the worker",
-        "Changed paths, checks, and machine verdict",
-        "A longer prompt sent to the same worker",
-        "A screenshot taken with no commands attached"
+        "src/validator.py only",
+        "tests/test_validator.py and notes.txt",
+        "No entries; the note claims the task is ready",
+        "src/validator.py and tests/test_validator.py"
       ],
       "correct": 1,
-      "explanation": "The receipt exposes the evidence boundary."
+      "explanation": "The baseline artifact contains only src/validator.py; validate_attempt therefore reports missing entries for the test path and notes.txt."
     },
     {
       "stage": "post",
-      "question": "What should a rules-first worker do when scope fails?",
+      "question": "Which violation does validate_attempt report first for the prompt-only attempt?",
       "options": [
-        "Merge the change anyway and note the scope issue",
-        "Delete the task rather than report the violation",
-        "Repair or escalate with the violation",
-        "Treat its own confident note as sufficient proof"
+        "missing checks: acceptance",
+        "missing artifact entries: notes.txt, tests/test_validator.py",
+        "out-of-scope files: notes.txt",
+        "invalid task goal"
       ],
       "correct": 2,
-      "explanation": "A failure should stay visible and actionable."
+      "explanation": "validate_attempt checks the changed-path set first, so the sorted out-of-scope receipt for notes.txt precedes missing checks and artifacts."
+    },
+    {
+      "stage": "post",
+      "question": "What verdict does validate_attempt return for rules_first_attempt on the same Task?",
+      "options": [
+        "passed=False because the note is not evidence",
+        "passed=False because every artifact is only a fixture string",
+        "passed=False because the unit check is not rerun inside the validator",
+        "passed=True with no violations"
+      ],
+      "correct": 3,
+      "explanation": "The rules-first attempt stays within allowed_files, lists both required checks, and supplies an artifact entry for each changed path."
     }
   ]
 }

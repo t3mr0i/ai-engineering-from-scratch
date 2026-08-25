@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Async Tasks (SEP-1686) — Call-Now, Fetch-Later for Long-Running Work?",
+      "question": "What does tools_call return when generate_report includes _meta.task.required?",
       "options": [
-        "Identify when to promote a tool from synchronous to task-augmented (>30 seconds of server-side work)",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Identify when to promote a tool from synchronous to task-augmented (>30 seconds of server-side work)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Async Tasks (SEP-1686) — Call-Now, Fetch-Later for Long-Running Work?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Walk the task lifecycle: `working` → `input_required` → `completed` / `failed` / `cancelled`",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Walk the task lifecycle: `working` → `input_required` → `completed` / `failed` / `cancelled`” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Async Tasks (SEP-1686) — Call-Now, Fetch-Later for Long-Running Work?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Persist task state so crashes do not lose in-flight work",
-        "Treat one successful example as proof that every edge case works"
+        "An immediate three-second report only",
+        "A transport error because tasks are unsupported",
+        "task id + working + ttl=900000",
+        "A completed result with no task metadata"
       ],
       "correct": 2,
-      "explanation": "“Persist task state so crashes do not lose in-flight work” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The task-aware branch starts a daemon worker and immediately returns _meta.task with the task id, working state, and ttl."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Async Tasks (SEP-1686) — Call-Now, Fetch-Later for Long-Running Work?",
+      "question": "What text does the normal worker produce for the demo's size=large task?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Poll `tasks/get` and fetch `tasks/result` correctly",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Poll `tasks/get` and fetch `tasks/result` correctly” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Async Tasks (SEP-1686) — Call-Now, Fetch-Later for Long-Running Work?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Identify when to promote a tool from synchronous to task-augmented (>30 seconds of server-side work)"
+        "Report size=1 with 5 sections",
+        "Report size=large with 3 sections",
+        "A JSON list of all task ids",
+        "Report size=large with 30 sections"
       ],
       "correct": 3,
-      "explanation": "“Identify when to promote a tool from synchronous to task-augmented (>30 seconds of server-side work)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The worker performs 30 steps and formats the result with the requested size, so the demo's large task reports 30 sections."
+    },
+    {
+      "stage": "check",
+      "question": "What does tasks_status return for an unknown task id?",
+      "options": [
+        "{\"error\":\"not found\"}",
+        "A completed task with zero progress",
+        "The latest task's progress",
+        "None, because status is only available after completion"
+      ],
+      "correct": 0,
+      "explanation": "The store lookup fails cleanly and tasks_status returns an error object whose message is not found."
+    },
+    {
+      "stage": "check",
+      "question": "When is tasks_result allowed to return the generated report?",
+      "options": [
+        "Immediately after the task id is allocated",
+        "Only after the task state is completed",
+        "Whenever progress is above zero",
+        "Only after a second initialize exchange"
+      ],
+      "correct": 1,
+      "explanation": "A working, cancelling, or failed task is not ready; tasks_result returns the stored result only for completed tasks."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Async Tasks (SEP-1686) — Call-Now, Fetch-Later for Long-Running Work?",
+      "question": "What state transition follows tasks_cancel on a still-running report?",
       "options": [
-        "Walk the task lifecycle: `working` → `input_required` → `completed` / `failed` / `cancelled`",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It jumps directly to completed",
+        "It deletes the task file before the worker sees it",
+        "cancelling, then worker marks cancelled",
+        "It changes the task back to working with a new id"
       ],
-      "correct": 0,
-      "explanation": "“Walk the task lifecycle: `working` → `input_required` → `completed` / `failed` / `cancelled`” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "Cancellation is cooperative: the request sets a flag and state cancelling, then the worker observes it and finishes as cancelled."
+    },
+    {
+      "stage": "post",
+      "question": "How does crash_recover handle a persisted task left in working state?",
+      "options": [
+        "It resumes the worker from step zero",
+        "It hides the task from tasks_status",
+        "It marks it completed without a result",
+        "failed: CRASH_RECOVERY"
+      ],
+      "correct": 3,
+      "explanation": "On startup, persisted working tasks cannot safely be assumed to have a live worker, so crash_recover records a failed CRASH_RECOVERY state."
     }
   ]
 }

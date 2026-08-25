@@ -91,6 +91,18 @@ Every write picks one scope. Retrieval can query across scopes with per-scope we
 
 
 
+## Build It
+
+Reconstruct **Hybrid Memory: Vector + Graph + KV (Mem0)** by following `Record` on a graph with edges (0,1) and (1,2). Run `python3 main.py` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.
+
+## Use It
+
+Call `Record` from a small caller with a graph with edges (0,1) and (1,2). Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-hybrid-memory.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Chhikara et al., Mem0 (arXiv:2504.19413)](https://arxiv.org/abs/2504.19413) — the original paper
@@ -100,10 +112,20 @@ Every write picks one scope. Retrieval can query across scopes with per-scope we
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain why a single store (vector only, graph only, KV only) is insufficient for agent memory.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Name Mem0's three parallel stores and what each one optimizes for.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe Mem0's fusion scoring — relevance, importance, recency — and why it is a weighted sum, not a hierarchy.
+This lab follows `Record` and `VectorStore` on a controlled fixture; write down the value before changing the input.
+
+1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using a graph with edges (0,1) and (1,2). Follow `Record`, `VectorStore`, `add`. Expect degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly; capture the first printed shape, metric, status, or summary field and state which part supports **Explain why a single store (vector only, graph only, KV only) is insufficient for agent memory.**.
+2. **Change the controlled parameter.** Repeat the command after changing only the edge list: use the same graph with an isolated node 3. Predict the direction of the change, then compare the two output values. Explain why **Name Mem0's three parallel stores and what each one optimizes for.** says the other inputs should stay fixed.
+3. **Exercise the guard.** Feed the implementation a graph with no edges. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Describe Mem0's fusion scoring — relevance, importance, recency — and why it is a weighted sum, not a hierarchy.** and record the exception text if the code rejects the case.
+4. **Prepare the artifact for reuse.** Open `outputs/skill-hybrid-memory.md` and add a worked example using a graph with edges (0,1) and (1,2). Include the input contract, one expected output field, and a named acceptance check for **Implement a toy three-store memory in stdlib with an `add()` that writes to all three and a `search()` that fuses results.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain why a single store (vector only, graph only, KV only) is insufficient for agent memory,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe Mem0's fusion scoring — relevance, importance, recency — and why it is a weighted sum, not a hierarchy,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Hybrid Memory: Vector + Graph + KV (Mem0)** should contain:
+
+- the `python3 main.py` output for a graph with edges (0,1) and (1,2), with `Record`, `VectorStore`, `add` traced to the value or shape that supports **Explain why a single store (vector only, graph only, KV only) is insufficient for agent memory.**;
+- a before/after comparison for the edge list, where the same graph with an isolated node 3 changes the observation in the direction predicted by **Name Mem0's three parallel stores and what each one optimizes for.**;
+- a recorded result for a graph with no edges that matches the implementation’s validation or empty-result contract and explains the evidence for **Describe Mem0's fusion scoring — relevance, importance, recency — and why it is a weighted sum, not a hierarchy.**; and
+- an updated `outputs/skill-hybrid-memory.md` example with a concrete input, expected output field, and acceptance check tied to **Implement a toy three-store memory in stdlib with an `add()` that writes to all three and a `search()` that fuses results.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

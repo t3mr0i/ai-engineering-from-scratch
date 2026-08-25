@@ -1,78 +1,78 @@
 {
   "lesson": "08-t5-bart-encoder-decoder",
-  "title": "T5, BART — Encoder-Decoder Models",
+  "title": "T5 and BART — Encoder-Decoder Denoising",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to T5, BART — Encoder-Decoder Models?",
+      "question": "In corrupt_spans, what role does <extra_id_0> play in the returned source and target?",
       "options": [
-        "Derive the mechanism behind T5, BART — Encoder-Decoder Models from tensor operations",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Derive the mechanism behind T5, BART — Encoder-Decoder Models from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of T5, BART — Encoder-Decoder Models?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the core component without relying on a transformer framework",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through T5, BART — Encoder-Decoder Models?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Trace tensor shapes and information flow through the implementation",
-        "Treat one successful example as proof that every edge case works"
+        "It replaces every masked token separately, one sentinel per token",
+        "It is a normal vocabulary word copied into both sequences",
+        "It marks the first masked span in the source and starts that span's original tokens in the decoder target",
+        "It marks the end of the entire target but never appears in the source"
       ],
       "correct": 2,
-      "explanation": "“Trace tensor shapes and information flow through the implementation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Each ordered masked span gets a sentinel in source; target repeats that sentinel and then emits the span's original tokens."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits T5, BART — Encoder-Decoder Models?",
+      "question": "Why does the T5 target end with sentinel(len(ordered))?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate the computational and modeling trade-offs introduced by T5, BART — Encoder-Decoder Models",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate the computational and modeling trade-offs introduced by T5, BART — Encoder-Decoder Models” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for T5, BART — Encoder-Decoder Models?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Derive the mechanism behind T5, BART — Encoder-Decoder Models from tensor operations"
+        "It replaces the first sentinel when spans overlap",
+        "It forces the decoder to predict one extra word from the input",
+        "It records the number of unmasked tokens in the source",
+        "It provides a closing marker after the final recovered span, with no tokens following it"
       ],
       "correct": 3,
-      "explanation": "“Derive the mechanism behind T5, BART — Encoder-Decoder Models from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "round_trip treats the last sentinel as a marker with an empty following span, so it closes the target sequence."
+    },
+    {
+      "stage": "check",
+      "question": "What does round_trip(source, target) do with a sentinel found in source?",
+      "options": [
+        "It replaces the sentinel with the token span mapped to that sentinel in target",
+        "It deletes the sentinel and leaves the missing text absent",
+        "It replaces every sentinel with the whole target sequence",
+        "It samples a new span from the vocabulary"
+      ],
+      "correct": 0,
+      "explanation": "The target is parsed into a sentinel-to-span dictionary, and source sentinels are expanded from that dictionary."
+    },
+    {
+      "stage": "check",
+      "question": "How does BART text_infill represent a masked span of several tokens?",
+      "options": [
+        "It emits one <mask> token for every removed token",
+        "It emits one <mask> token while advancing over the whole span",
+        "It deletes the span without leaving any marker",
+        "It replaces the span with a T5 <extra_id_0> and its original text"
+      ],
+      "correct": 1,
+      "explanation": "text_infill appends one mask_token and increments i by span_len; the decoder must infer how many tokens were removed."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for T5, BART — Encoder-Decoder Models?",
+      "question": "What does token_delete(tokens, rate=0.15, rng=...) return?",
       "options": [
-        "Implement the core component without relying on a transformer framework",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "The original list sorted by token ID",
+        "A same-length list with deleted entries replaced by <mask>",
+        "A shorter list containing only tokens whose random draw is at least the deletion rate",
+        "One sentinel followed by all deleted tokens"
       ],
-      "correct": 0,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The list comprehension keeps each token when rng.random() >= rate and emits nothing for the deleted positions."
+    },
+    {
+      "stage": "post",
+      "question": "Why are sentence_permute and document_rotate useful as denoising tasks?",
+      "options": [
+        "They reduce every document to its first sentence for classification",
+        "They convert every sentence into a bag of unrelated vocabulary IDs",
+        "They mask only special tokens so no language modeling is needed",
+        "They corrupt order while preserving the token content, giving an encoder-decoder model a reconstruction problem"
+      ],
+      "correct": 3,
+      "explanation": "Both functions retain the same words but perturb sentence or document order, so the model must learn to restore coherent structure."
     }
   ]
 }

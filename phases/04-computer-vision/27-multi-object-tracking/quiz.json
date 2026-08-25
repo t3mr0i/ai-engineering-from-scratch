@@ -1,78 +1,78 @@
 {
   "lesson": "27-multi-object-tracking",
-  "title": "Multi-Object Tracking & Video Memory",
+  "title": "Multi-Object Tracking",
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the Hungarian algorithm do in tracking-by-detection?",
+      "question": "What does bounding-box IoU divide the intersection area by?",
       "options": [
-        "It filters out low-confidence detections — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "It solves the minimum-cost one-to-one assignment between tracks and detections — typically using 1 - IoU as cost — to match each track to at most one detection and vice versa",
-        "It trains the detector",
-        "It predicts future trajectories"
-      ],
-      "correct": 1,
-      "explanation": "Every tracking-by-detection frame does an assignment problem: M tracks, N detections, find the best one-to-one match. Hungarian is the optimal polynomial algorithm for this. Cost is usually 1 - IoU (higher overlap = lower cost). scipy.optimize.linear_sum_assignment is the standard implementation. SORT, DeepSORT, ByteTrack, BoT-SORT all use it."
-    },
-    {
-      "stage": "check",
-      "question": "ByteTrack's distinguishing contribution is what?",
-      "options": [
-        "A new backbone",
-        "A second-stage association that tries to match leftover tracks to low-confidence detections, recovering short occlusions and IDs that standard trackers would lose by dropping those detections",
-        "A new Kalman filter",
-        "An appearance embedding, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path"
-      ],
-      "correct": 1,
-      "explanation": "Most trackers discard detections below a confidence threshold (~0.5). ByteTrack keeps them and runs a second Hungarian pass to try to match them to tracks that did not match any high-confidence detection. This recovers brief occlusions and crossings, lifting IDF1 significantly on MOT17 without any learned appearance features. Its simplicity makes it the default in Ultralytics and Roboflow Supervision."
-    },
-    {
-      "stage": "check",
-      "question": "How does SAM 2's memory-based tracker avoid explicit Hungarian-style association?",
-      "options": [
-        "It runs SORT internally",
-        "It stores per-instance spatio-temporal features in a memory bank; on each new frame, cross-attention between memory and current features directly produces the mask of the same instance, with association implicit in the attention operation",
-        "It uses a Kalman filter",
-        "It requires hand-labelled IDs per frame, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "SAM 2 replaces the detect-then-associate loop with a memory-conditional segmenter. The memory bank holds the instance's features from previous frames. At each new frame, the decoder cross-attends the new frame's features against the memory, and the resulting mask is the same instance — no external assignment step. This handles long occlusions gracefully because the memory stays even when the instance disappears for many frames."
-    },
-    {
-      "stage": "check",
-      "question": "For surveillance video where keeping each person's ID consistent is the primary requirement, which metric should you report?",
-      "options": [
-        "MOTA",
-        "IDF1 — the harmonic mean of ID precision and recall; measures identity preservation over time rather than per-frame detection accuracy",
-        "Top-1 accuracy, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "FID"
-      ],
-      "correct": 1,
-      "explanation": "MOTA conflates detection and association errors, so a tracker with many false positives can hide its ID failures. IDF1 is designed for the 'who is who over time' question: it matches predicted tracks to ground-truth tracks globally across the whole video and computes F1 on the identity labels. For surveillance and crowd analytics, IDF1 is the metric to report; HOTA is the broader academic standard."
-    },
-    {
-      "stage": "post",
-      "question": "SAM 3.1 Object Multiplex (March 2026) introduces shared memory across many tracked instances. What does that enable?",
-      "options": [
-        "Lower accuracy",
-        "Efficient multi-object tracking — one shared memory bank with per-instance query tokens replaces N separate memory banks, so cost scales sub-linearly in number of instances and concert-crowd-sized scenes become tractable",
-        "Cloud-only inference",
-        "A new training objective — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence"
-      ],
-      "correct": 1,
-      "explanation": "Pre-Multiplex SAM 2 / SAM 3 tracked each object with its own memory bank; cost scaled linearly with the number of instances. Multiplex (March 2026) introduces one shared memory with per-instance query tokens that fetch instance-specific features. Many-object tracking — crowds, traffic, warehouse workers — becomes efficient for the first time with a memory-based tracker."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Multi-Object Tracking & Video Memory?",
-      "options": [
-        "Implement IoU + Hungarian assignment from scratch for classic tracking-by-detection",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "The union area of the two boxes",
+        "The sum of their center coordinates",
+        "The larger box's perimeter",
+        "The number of tracker frames"
       ],
       "correct": 0,
-      "explanation": "“Implement IoU + Hungarian assignment from scratch for classic tracking-by-detection” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "IoU is intersection over union, so overlapping area is normalized by the area covered by either box."
+    },
+    {
+      "stage": "check",
+      "question": "How does the tracker turn IoU into a Hungarian assignment cost?",
+      "options": [
+        "It uses IoU directly and rewards every invalid pair",
+        "It uses 1-IoU and gives very large cost to invalid low-IoU pairs",
+        "It uses the box perimeter as the only cost",
+        "It assigns every detection to the oldest track"
+      ],
+      "correct": 1,
+      "explanation": "Higher overlap should mean lower cost; pairs below the configured overlap threshold are discouraged with a large sentinel cost."
+    },
+    {
+      "stage": "check",
+      "question": "With match_iou_threshold=0.3, which pair is considered geometrically valid?",
+      "options": [
+        "A pair with IoU below 0.3",
+        "Only a pair whose boxes are identical",
+        "A pair with IoU at least 0.3",
+        "A pair chosen without looking at IoU"
+      ],
+      "correct": 2,
+      "explanation": "The tracker accepts an assignment when its overlap reaches the threshold; lower-overlap matches are treated as invalid."
+    },
+    {
+      "stage": "check",
+      "question": "What does a track's max_age measure?",
+      "options": [
+        "The maximum width of its bounding box",
+        "The number of classes in the detector",
+        "The age of the video file on disk",
+        "How many frames it may remain unmatched before removal"
+      ],
+      "correct": 3,
+      "explanation": "Each missed update increases the track's age, and max_age controls how long that missing track is retained."
+    },
+    {
+      "stage": "post",
+      "question": "What happens to a detection that cannot be matched to an existing track?",
+      "options": [
+        "The tracker creates a new Track with a new ID",
+        "It is assigned the first track's ID automatically",
+        "It is used only to change the frame rate",
+        "It is discarded even when new-track creation is enabled"
+      ],
+      "correct": 0,
+      "explanation": "Unmatched detections represent possible new objects, so the implementation starts tracks for them."
+    },
+    {
+      "stage": "post",
+      "question": "When does count_id_switches report an ID switch?",
+      "options": [
+        "A frame contains two detections of different objects",
+        "The same ground-truth object is associated with a different tracker ID later",
+        "A track survives a missed frame",
+        "A bounding box has zero area"
+      ],
+      "correct": 1,
+      "explanation": "An ID switch measures identity inconsistency over time, not simply the presence of multiple objects or missed detections."
     }
   ]
 }

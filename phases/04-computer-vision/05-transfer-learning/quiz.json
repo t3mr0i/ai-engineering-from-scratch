@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "You have 500 labelled images for a new task close to the ImageNet distribution. Which regime makes the most sense?",
+      "question": "After make_feature_extractor(num_classes=10), which parameters are intended to receive gradients?",
       "options": [
-        "Train a ResNet-50 from scratch",
-        "Freeze an ImageNet-pretrained backbone and train only a new linear head",
-        "Fine-tune every layer with the same large LR",
-        "Ignore pretrained weights; small datasets work best with small models — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "With 500 images you do not have enough signal to train a deep network from scratch or to safely fine-tune all layers end-to-end without destroying pretrained features. Freezing the backbone and training only a new head (linear probe) uses the pretrained features directly and is the standard recipe for small, close-domain datasets."
-    },
-    {
-      "stage": "check",
-      "question": "Why do early conv layers of an ImageNet-pretrained network transfer well to medical images even though ImageNet contains no X-rays?",
-      "options": [
-        "PyTorch re-initialises early layers automatically, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "Early layers encode generic visual primitives — edges, orientations, contrast — that are shared across almost any visual domain; only late layers specialise to ImageNet categories",
-        "ImageNet secretly contains medical data",
-        "Transfer only works when domains match"
-      ],
-      "correct": 1,
-      "explanation": "Gabor-like filters and simple texture detectors are the features early CNN layers learn on any natural-image corpus. They reflect the statistics of light, shadow, and edges that hold across photography, medical imaging, microscopy, and satellite data. Late layers progressively specialise, which is why fine-tuning focuses on the last few blocks."
-    },
-    {
-      "stage": "check",
-      "question": "When fine-tuning end-to-end with discriminative learning rates, why should early layers get a smaller LR than late layers?",
-      "options": [
-        "Early layers have fewer parameters",
-        "Early layers encode general features you want to preserve; late layers encode task-specific features that must move; a smaller LR on early layers prevents feature drift and catastrophic forgetting",
-        "PyTorch requires layer-wise LR for correctness",
-        "A smaller LR in the early layers speeds up training, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "Early layers already encode the right visual primitives; you want tiny updates so those features are preserved. Late layers need to move toward the new task. One learning rate for the whole model forces a compromise that hurts both ends. Discriminative LRs let each stage move at its own pace, which is the empirical sweet spot for fine-tuning."
-    },
-    {
-      "stage": "check",
-      "question": "You fine-tune a ResNet on a 10-class medical dataset of 800 grayscale images (replicated to 3 channels). Accuracy is 10% (random chance for 10 classes). What is the most likely cause?",
-      "options": [
-        "You used the wrong loss function",
-        "BatchNorm running statistics are from ImageNet RGB photos and badly mismatch the grayscale-medical distribution, so the first few BN layers produce noise that propagates forward",
-        "ResNet cannot handle grayscale input",
-        "800 images is simply too few for any transfer learning, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "BatchNorm keeps running_mean and running_var from ImageNet. On a small, distribution-shifted dataset those buffers never adapt fast enough during a short fine-tune, and BN normalises activations with the wrong stats. Fixes: freeze BN statistics, switch to GroupNorm, or pretrain BN stats with a BN-only warmup pass on the target dataset."
-    },
-    {
-      "stage": "post",
-      "question": "You compare two runs: (a) linear probe on frozen ImageNet backbone, 82% accuracy; (b) end-to-end fine-tune, 78% accuracy. What should you conclude?",
-      "options": [
-        "Fine-tuning is not helpful; ship the linear probe — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "A fine-tune that ends below the linear probe is almost always a training bug — LR too high, BN mishandled, or scheduler/optimizer misconfigured; diagnose before concluding anything about transfer",
-        "The dataset is too large",
-        "Pretrained weights are bad"
-      ],
-      "correct": 1,
-      "explanation": "Fine-tuning should always beat or match the linear probe, since the linear probe is a special case of fine-tuning with backbone LR = 0. If fine-tune is worse, the pipeline is actively destroying pretrained features. The fix is to lower backbone LR, apply discriminative LRs, or freeze BN — not to abandon fine-tuning."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Transfer Learning & Fine-Tuning?",
-      "options": [
-        "Load a pretrained backbone, replace its classifier head, and train only the head to a working baseline in u...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "The replacement classifier head only",
+        "Every convolution and the old ImageNet classifier",
+        "Only BatchNorm running statistics",
+        "No parameters, because the model is in eval mode"
       ],
       "correct": 0,
-      "explanation": "“Load a pretrained backbone, replace its classifier head, and train only the head to a working baseline in u...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The function freezes the pretrained parameters, then replaces fc with a new trainable Linear layer for the target classes."
+    },
+    {
+      "stage": "check",
+      "question": "How does make_fine_tune differ from make_feature_extractor?",
+      "options": [
+        "It removes every convolution and keeps only the old head",
+        "It leaves the pretrained backbone parameters trainable after replacing fc",
+        "It freezes the new classifier and changes images to grayscale",
+        "It skips ImageNet normalization"
+      ],
+      "correct": 1,
+      "explanation": "Fine-tuning creates the same kind of new classifier but sets requires_grad=True for all model parameters."
+    },
+    {
+      "stage": "check",
+      "question": "In discriminative_param_groups, which stage receives the largest learning rate when decay=0.3?",
+      "options": [
+        "conv1 and bn1",
+        "layer1",
+        "The new fc head",
+        "All stages receive exactly the same rate"
+      ],
+      "correct": 2,
+      "explanation": "The exponent is zero for the last stage, fc, so it keeps base_lr; earlier backbone stages receive progressively smaller rates."
+    },
+    {
+      "stage": "check",
+      "question": "Why can freeze_bn_stats help when fine-tuning on a tiny dataset?",
+      "options": [
+        "It turns every convolution into a linear classifier",
+        "It increases the learning rate of the earliest layers",
+        "It removes the classifier head from the optimizer",
+        "It prevents small batches from replacing pretrained BatchNorm running statistics"
+      ],
+      "correct": 3,
+      "explanation": "The helper puts BatchNorm modules in eval mode and freezes their affine parameters, avoiding noisy running-stat updates."
+    },
+    {
+      "stage": "post",
+      "question": "What preprocessing does ArrayDataset apply before returning a training example?",
+      "options": [
+        "Subtract ImageNet channel means, divide by standard deviations, then permute HWC to CHW",
+        "Convert every image to a single grayscale byte",
+        "Resize labels and leave pixels in HWC order",
+        "Apply a random crop after converting the label to a tensor"
+      ],
+      "correct": 0,
+      "explanation": "The dataset uses the declared ImageNet mean/std arrays and returns a float tensor with channels first."
+    },
+    {
+      "stage": "post",
+      "question": "A fine-tuning run has feature drift after unfreezing the backbone. Which first change matches the lesson's diagnosis?",
+      "options": [
+        "Increase the backbone rate far above the head rate",
+        "Lower the backbone learning rates while keeping a larger rate for the new head",
+        "Replace cross-entropy with a pixel-wise mask loss",
+        "Disable the validation loop so drift cannot be measured"
+      ],
+      "correct": 1,
+      "explanation": "Discriminative rates protect generic early features from large updates while allowing the task-specific head to adapt quickly."
     }
   ]
 }

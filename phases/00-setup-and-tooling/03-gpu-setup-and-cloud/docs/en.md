@@ -162,12 +162,30 @@ Reserving 20% of VRAM for activations/KV cache turns a naive "12B fits in
 | fp16 | "Half precision" | 16-bit floating point, uses half the memory of fp32 with minimal accuracy loss |
 | Tensor Core | "Fast matrix hardware" | Specialized GPU cores for matrix multiplication, 4-8x faster than regular cores |
 
+## Use It
+
+Call `check_gpu` from a small caller with the reported device check on CPU. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/artifact-card.md` with the command `python3 main.py`, the accepted input shape (the reported device check on CPU), the expected observable result, and a failure note for malformed inputs.
+
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Verify local GPU availability using `nvidia-smi` and PyTorch's CUDA API.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Configure Google Colab with a T4 GPU for free cloud-based experiments.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Benchmark matrix multiplication on CPU vs GPU and measure the speedup.
+Use `check_gpu` as the trace: start from the reported device check on CPU, keep the raw output, and tie each observation to a named objective.
+
+1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using the reported device check on CPU. Follow `check_gpu`. Expect the report distinguishes an available device from an unavailable one and records the selected backend; capture the first printed shape, metric, status, or summary field and state which part supports **Verify local GPU availability using `nvidia-smi` and PyTorch's CUDA API**.
+2. **Vary one named input.** Repeat the command after changing only the selected device backend: use the same check with CUDA/MPS unavailable. Predict the direction of the change, then compare the two output values. Explain why **Configure Google Colab with a T4 GPU for free cloud-based experiments** says the other inputs should stay fixed.
+3. **Probe the empty case.** Feed the implementation a machine with no visible accelerator. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Benchmark matrix multiplication on CPU vs GPU and measure the speedup** and record the exception text if the code rejects the case.
+4. **Package a usable handoff.** Open `outputs/artifact-card.md` and add a worked example using the reported device check on CPU. Include the input contract, one expected output field, and a named acceptance check for **Estimate the largest model that fits in your VRAM using the fp16 rule of thumb**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Verify local GPU availability using `nvidia-smi` and PyTorch's CUDA API,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Benchmark matrix multiplication on CPU vs GPU and measure the speedup,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **GPU Setup & Cloud** should contain:
+
+- the `python3 main.py` output for the reported device check on CPU, with `check_gpu` traced to the value or shape that supports **Verify local GPU availability using `nvidia-smi` and PyTorch's CUDA API**;
+- a before/after comparison for the selected device backend, where the same check with CUDA/MPS unavailable changes the observation in the direction predicted by **Configure Google Colab with a T4 GPU for free cloud-based experiments**;
+- a recorded result for a machine with no visible accelerator that matches the implementation’s validation or empty-result contract and explains the evidence for **Benchmark matrix multiplication on CPU vs GPU and measure the speedup**; and
+- an updated `outputs/artifact-card.md` example with a concrete input, expected output field, and acceptance check tied to **Estimate the largest model that fits in your VRAM using the fp16 rule of thumb**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is AI adoption not finished when a tool is available?",
+      "question": "Why can a technically successful AI pilot still fail to become a team workflow?",
       "options": [
-        "Because early adopters need time before the rest of the team can be given access — and applies unchanged even when the lesson's stated preconditions fail",
-        "Because roles, handoffs, review duties, and behavior changes still need to be clear",
-        "Because the tool must pass a security review before anyone is allowed to open it",
-        "Because licence costs only become visible once the whole department is onboarded"
+        "Roles, handoffs, review duties, governance routines, and the desired behavior change were never made explicit",
+        "The model needs a larger context window before people can adopt it",
+        "Every pilot requires a new reporting structure before anyone can use the tool",
+        "A launch email is sufficient once the interface is available to the team"
       ],
-      "correct": 1,
-      "explanation": "AI adoption requires operating routines and role clarity, not only tool access. Adoption stalls when teams cannot see who is accountable or when AI use is allowed."
+      "correct": 0,
+      "explanation": "Change work is workflow redesign. The plan names who is affected, who reviews outputs, how exceptions move, and which adoption metric shows that behavior changed."
     },
     {
       "stage": "check",
-      "question": "Adoption of a new AI workflow stalled after the pilot. What does every such workflow still need?",
+      "question": "The rollout to service team fixture has three matched signals, impact=4, and uncertainty=4. What result does score_scenario and priority_for produce?",
       "options": [
-        "A communication campaign, an internal launch event, and a short recorded demo per team",
-        "A dedicated budget line, a vendor support contract, and a named technical administrator",
-        "A role map, an explicit human review point, an adoption metric, and a way to handle exceptions",
-        "A model evaluation report, a latency benchmark, and a documented fallback to the older model, with no need to inspect intermediate results or test edge cases"
+        "14 and guided pilot",
+        "18 and launch gate required",
+        "20 and team practice",
+        "16 and awareness only"
+      ],
+      "correct": 1,
+      "explanation": "The score is 4*2 + 4 + 3*2 = 18. The priority is launch gate required, not guided pilot, because the threshold is 16."
+    },
+    {
+      "stage": "check",
+      "question": "Which category does choose_category select for the rollout to service team fixture?",
+      "options": [
+        "roles",
+        "adoption",
+        "handoff",
+        "governance"
       ],
       "correct": 2,
-      "explanation": "The lesson defines team integration as four concrete pieces: a role map, an explicit human review point, an adoption metric, and exception handling. Communication alone does not close the gap, because AI change is a workflow redesign problem."
+      "explanation": "Three matches plus impact 4 and uncertainty 4 gives index 11 modulo 4, or 3. CATEGORIES[3] is handoff."
     },
     {
       "stage": "check",
-      "question": "What does the Python artifact produce?",
+      "question": "Which controls are selected for a change scenario with three matched signals?",
       "options": [
-        "A change-readiness plan with priority, controls, and rationale",
-        "A reorganisation chart that assigns each person a new reporting line",
-        "A training curriculum generated automatically from each employee's role",
-        "A compliance attestation that clears the rollout for the whole department"
-      ],
-      "correct": 0,
-      "explanation": "The artifact scores adoption signals and returns priority, controls, and rationale, so team integration decisions can be compared rather than argued."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to this lesson?",
-      "options": [
-        "A tool ban that blocks AI use until the governance policy is finalised, before defining the measurement, acceptance threshold, or rollback path",
-        "A role map that states who does what in the changed workflow and who reviews it",
-        "An anonymous usage log that hides which team produced which output",
-        "A one-off launch email that announces the tool and closes the rollout"
-      ],
-      "correct": 1,
-      "explanation": "A role map clarifies responsibilities around the changed workflow, including who reviews AI output. The lesson insists that human review points be explicit."
-    },
-    {
-      "stage": "post",
-      "question": "When should rollout require stronger controls?",
-      "options": [
-        "Only when the user interface has many screens and takes time to learn",
-        "Only when the tool has no active users left after the pilot has ended",
-        "Only when the vendor changes its pricing model partway through the year — and applies unchanged even when the lesson's stated preconditions fail",
-        "When role impact, adoption friction, and governance uncertainty are high"
+        "role map and stakeholder plan only",
+        "adoption metric alone, because it proves whether rollout worked",
+        "A launch email and a vendor support contract",
+        "role map, stakeholder plan, training path, and adoption metric"
       ],
       "correct": 3,
-      "explanation": "High adoption and governance risk require stronger rollout controls. Interface complexity and vendor pricing are not the signals this lesson scores."
+      "explanation": "recommend selects the first four controls when three signals match: role map, stakeholder plan, training path, and adoption metric."
     },
     {
       "stage": "post",
-      "question": "What is the main purpose of the integration plan?",
+      "question": "What happens to the brown bag fixture with no matched signals, impact=2, and uncertainty=2?",
       "options": [
-        "To translate AI adoption into team routines, owners, metrics, and controls",
-        "To replace the manager's role in deciding how the team allocates its work, with no need to inspect intermediate results or test edge cases",
-        "To retire the training path once the first group of users is comfortable",
-        "To keep handoff problems out of the rollout review so momentum is kept"
+        "It is awareness only with score 6",
+        "It is a launch gate because an empty signal list is unsafe",
+        "It is team practice with score 8",
+        "It is a guided pilot because the team is already interested"
       ],
       "correct": 0,
-      "explanation": "The plan connects change management to concrete operating behavior, translating governance language into routines a team can actually follow."
+      "explanation": "No signals contribute no bonus, so the score is 2*2 + 2 = 6. The common priority bands put that result in awareness only."
+    },
+    {
+      "stage": "post",
+      "question": "What is the purpose of plan-ai-change-integration.md during rollout?",
+      "options": [
+        "To replace managers by assigning every team decision automatically",
+        "To connect role impact, owners, training, review points, handoffs, and an adoption metric",
+        "To keep governance language separate from the daily workflow",
+        "To declare the pilot complete as soon as users attend the launch session"
+      ],
+      "correct": 1,
+      "explanation": "The plan translates change into operating routines. It gives the team a way to discuss responsibilities and measure whether the intended behavior actually appears."
     }
   ]
 }

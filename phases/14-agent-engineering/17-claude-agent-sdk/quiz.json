@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the difference between the Anthropic Client SDK and the Claude Agent SDK?",
+      "question": "After the parent run and its three spawned subagents finish, what is the parent's `context_tokens` value?",
       "options": [
-        "Client SDK is a paid Enterprise tier of the Messages API; Agent SDK is the free open-source package instead",
-        "Client SDK runs only on Python; Agent SDK adds first-class support for every other language Anthropic ships today",
-        "Client SDK is raw Messages API; Agent SDK is the Claude Code harness shape with built-in tools, MCP, hooks, subagents, and session store",
-        "There is no real difference; both SDKs wrap the exact same underlying agent loop and shared tool registry surface"
-      ],
-      "correct": 2,
-      "explanation": "Client SDK gives you the loop; Agent SDK ships the loop pre-built."
-    },
-    {
-      "stage": "check",
-      "question": "What are the two documented purposes of subagents?",
-      "options": [
-        "Caching and rate limiting across every tool call the subagent makes across a run",
-        "Logging and metrics collection for the orchestrator's full audit trail",
-        "Authentication and authorization checks before a subagent can spawn",
-        "Parallelization (concurrent work) and context isolation (own context window)"
-      ],
-      "correct": 3,
-      "explanation": "Subagents run independent work concurrently and preserve the orchestrator's context budget by isolating context."
-    },
-    {
-      "stage": "check",
-      "question": "Which method is NOT part of the session store surface?",
-      "options": [
-        "compile_prompt, which builds the system prompt from templates and variables",
-        "append, which adds a brand new message turn to the current active session log",
-        "load, which restores the full conversation history for a given session",
-        "list_subkeys, which lists every subagent key nested under a session"
+        "11; subagent turns are isolated and do not add to the parent's context.",
+        "47; the parent absorbs all three subagent transcripts.",
+        "3; only the number of tool calls is retained.",
+        "0; spawning a subagent resets the parent run's context."
       ],
       "correct": 0,
-      "explanation": "Session store ships append, load, list_sessions, delete, list_subkeys; compile_prompt is not a session API."
+      "explanation": "The parent accumulates 11 tokens from its own prompt, tool result, and assistant output. Each subagent has its own `AgentRun`, so its 12-token context is not merged into the parent."
     },
     {
       "stage": "check",
-      "question": "Which is NOT a Claude Agent SDK lifecycle hook?",
+      "question": "What session IDs does `spawn_subagents` create for three children of `parent`?",
       "options": [
-        "PreToolUse, which gates or audits a tool call before it runs",
-        "PreEmbedding, which runs before the SDK computes any vector embedding",
-        "PreCompact, which runs right before the session undergoes context compaction",
-        "SessionStart, which runs setup logic when a new session begins"
+        "`parent.1`, `parent.2`, and `parent.3`",
+        "`parent.sub01`, `parent.sub02`, and `parent.sub03`",
+        "`sub01.parent`, `sub02.parent`, and `sub03.parent`",
+        "Three random UUIDs with no parent prefix"
       ],
       "correct": 1,
-      "explanation": "Hooks include PreToolUse, PostToolUse, SessionStart/End, UserPromptSubmit, PreCompact, Stop, Notification. PreEmbedding is not a hook."
+      "explanation": "The harness numbers children with a two-digit suffix under the parent ID: `parent.sub01` through `parent.sub03`."
     },
     {
-      "stage": "post",
-      "question": "How does trace context propagate across the agent and CLI subprocess?",
+      "stage": "check",
+      "question": "What remains in `SessionStore` after deleting the parent session in the demo?",
       "options": [
-        "Through shared files on disk that both processes poll continuously",
-        "Only via the provider's dashboard, with no local trace propagation",
-        "Through W3C trace context headers passed into the CLI subprocess",
-        "Only through environment variables set once at process startup"
+        "The parent only; linked subagents are retained for audit.",
+        "The three subagent sessions, but none of their linked metadata.",
+        "No sessions; deletion cascades through the linked subkeys.",
+        "Only the most recently created subagent session"
       ],
       "correct": 2,
-      "explanation": "OTel spans on the caller propagate into the CLI subprocess via W3C trace context, so the whole multi-process run is one trace."
+      "explanation": "`delete(parent)` follows the parent-to-subkey links and removes the children as well, so `list_sessions()` is empty after the cascade."
+    },
+    {
+      "stage": "check",
+      "question": "For one successful tool call, what lifecycle order does the harness hook list record?",
+      "options": [
+        "`pre_tool`, `session_start`, `session_end`, `post_tool`",
+        "`post_tool`, `pre_tool`, `session_start`, `session_end`",
+        "`session_end`, `session_start`, `pre_tool`, `post_tool`",
+        "`session_start`, `pre_tool`, `post_tool`, `session_end`"
+      ],
+      "correct": 3,
+      "explanation": "The run begins with session-start hooks, wraps each dispatch with pre- and post-tool hooks, and invokes session-end hooks after the assistant output is stored."
     },
     {
       "stage": "post",
-      "question": "What is subagent over-spawn and when does it happen?",
+      "question": "What assistant output is stored after one run containing two tool calls?",
       "options": [
-        "Forgetting to call SessionEnd after every single subagent finishes its work",
-        "Spawning a subagent before the SessionStart hook has fully finished running",
-        "Spawning more subagents at once than the machine has CPU cores available",
-        "Spawning 100 subagents for 100 tiny tasks where overhead dominates; batch instead"
+        "`processed 2 tools; session=<id>`",
+        "`processed 1 tools; session=<id>`",
+        "`processed 2 tools; parent=<id>`",
+        "`completed; tools=2` without a session identifier"
       ],
-      "correct": 3,
-      "explanation": "Subagents have overhead; batch small tasks instead of spawning one each."
+      "correct": 0,
+      "explanation": "`run_agent` counts the supplied tool calls and formats the assistant turn as `processed {len(tool_calls)} tools; session={session_id}`, yielding the two-tool form."
+    },
+    {
+      "stage": "post",
+      "question": "Which statement describes context after `spawn_subagents` returns?",
+      "options": [
+        "The parent context is replaced by the last child context.",
+        "Each child has isolated context; the parent's token count is unchanged by child turns.",
+        "All child tokens are added to the parent before the parent can finish.",
+        "The parent can no longer load its own session transcript."
+      ],
+      "correct": 1,
+      "explanation": "Subagents are separate runs linked in the store for navigation, not shared-context continuations. Their turns and token counters remain isolated from the parent."
     }
   ]
 }

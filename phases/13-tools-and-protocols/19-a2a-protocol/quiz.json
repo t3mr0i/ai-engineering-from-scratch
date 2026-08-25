@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to A2A — Agent-to-Agent Protocol?",
+      "question": "What does the writer agent's Agent Card advertise for draft_report?",
       "options": [
-        "Distinguish agent-to-tool (MCP) from agent-to-agent (A2A) use cases",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Distinguish agent-to-tool (MCP) from agent-to-agent (A2A) use cases” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of A2A — Agent-to-Agent Protocol?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Publish an Agent Card at `/.well-known/agent.json` with skills and endpoint metadata",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Publish an Agent Card at `/.well-known/agent.json` with skills and endpoint metadata” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through A2A — Agent-to-Agent Protocol?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Walk the Task lifecycle (submitted → working → input-required → completed / failed / canceled / rejected)",
-        "Treat one successful example as proof that every edge case works"
+        "Input only audio and output only JSON",
+        "No declared skills or capabilities",
+        "text/file/data -> text/artifact",
+        "A required OAuth scope instead of input modes"
       ],
       "correct": 2,
-      "explanation": "“Walk the Task lifecycle (submitted → working → input-required → completed / failed / canceled / rejected)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The card declares the draft_report skill with text, file, and data inputs and text/artifact outputs."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits A2A — Agent-to-Agent Protocol?",
+      "question": "Why does writer_tasks_send initially enter input_required?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Use Messages with Parts (text, file, data) and Artifacts as outputs",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Use Messages with Parts (text, file, data) and Artifacts as outputs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for A2A — Agent-to-Agent Protocol?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Distinguish agent-to-tool (MCP) from agent-to-agent (A2A) use cases"
+        "The agent card is missing a URL",
+        "The first message has no text part",
+        "The artifact MIME type is invalid",
+        "missing data targetLength"
       ],
       "correct": 3,
-      "explanation": "“Distinguish agent-to-tool (MCP) from agent-to-agent (A2A) use cases” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The initial demo supplies prose and paper.pdf but not the data instruction targetLength, so the task asks the caller for that input."
+    },
+    {
+      "stage": "check",
+      "question": "What full state sequence follows writer_tasks_reply from input_required after targetLength is supplied?",
+      "options": [
+        "input_required -> working -> completed",
+        "It is cancelled before processing",
+        "It remains input_required forever",
+        "It creates a second Agent Card"
+      ],
+      "correct": 0,
+      "explanation": "writer_tasks_reply receives the data while the task is input_required, sets it to working, and finish immediately moves it to completed with the summary artifact."
+    },
+    {
+      "stage": "check",
+      "question": "What metadata identifies the artifact created by finish?",
+      "options": [
+        "name=paper.pdf and mimeType application/pdf",
+        "name=summary and mimeType text/markdown",
+        "name=writer-agent and mimeType application/json",
+        "name=task and mimeType text/plain"
+      ],
+      "correct": 1,
+      "explanation": "finish creates an Artifact named summary with MIME type text/markdown and a text part containing the writer summary."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for A2A — Agent-to-Agent Protocol?",
+      "question": "Which capability flags appear on the writer Agent Card?",
       "options": [
-        "Publish an Agent Card at `/.well-known/agent.json` with skills and endpoint metadata",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "streaming false and pushNotifications true",
+        "streaming false and pushNotifications false",
+        "streaming true and pushNotifications false",
+        "streaming true and pushNotifications true"
       ],
-      "correct": 0,
-      "explanation": "“Publish an Agent Card at `/.well-known/agent.json` with skills and endpoint metadata” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The card explicitly supports streaming but does not advertise push notifications."
+    },
+    {
+      "stage": "post",
+      "question": "Which task state sequence is observed in the two-message demo?",
+      "options": [
+        "completed, input_required, submitted",
+        "working, cancelled, completed",
+        "submitted, failed, working",
+        "working, input_required, working, completed"
+      ],
+      "correct": 3,
+      "explanation": "The task starts working, requests missing input, resumes working after the data reply, and completes with the summary artifact."
     }
   ]
 }

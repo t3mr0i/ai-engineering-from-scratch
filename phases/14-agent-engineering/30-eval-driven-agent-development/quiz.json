@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What are the three evaluation layers the lesson names?",
+      "question": "What verdict does the demo's aggregate evaluation receive?",
       "options": [
-        "Unit tests, integration tests, and end-to-end acceptance test suites",
-        "Static benchmarks, custom offline evals, online production evals",
-        "Smoke tests, regression tests, and manual acceptance sign-off checks",
-        "Pre-stage, check-stage, and post-stage quiz question tags used in this course"
-      ],
-      "correct": 1,
-      "explanation": "Static (SWE-bench, GAIA), custom offline (LLM-judge, exec, trajectory), online (replays, alerts, cost/latency)."
-    },
-    {
-      "stage": "check",
-      "question": "What is Anthropic's recommended starting point?",
-      "options": [
-        "Start with multi-agent debate among several specialized subagents before ever writing a single simple baseline prompt to compare",
-        "Start with hierarchical orchestration and a planner-executor split before evaluating any single prompt",
-        "Start with simple prompts, optimize them with comprehensive evaluation, and add multi-step agentic systems only when needed",
-        "Start with a frontier model only and skip evaluation until the agent is already deployed to production"
-      ],
-      "correct": 2,
-      "explanation": "Anthropic explicitly says evaluation is the outer loop that drives every other choice."
-    },
-    {
-      "stage": "check",
-      "question": "What is the evaluator-optimizer tight loop?",
-      "options": [
-        "Train the model, evaluate on a held-out benchmark, then deploy directly to production traffic",
-        "Sample many candidate outputs, sort by score, and deduplicate near-identical responses before returning",
-        "Cache the first response, retry on any failure, and fail silently after three attempts",
-        "Proposer generates output, evaluator judges, refine until evaluator passes (Self-Refine generalized)"
-      ],
-      "correct": 3,
-      "explanation": "It is Self-Refine generalized: any flow can wrap in propose-judge-refine."
-    },
-    {
-      "stage": "check",
-      "question": "What is the 2026 best practice for where evals live?",
-      "options": [
-        "Next to code, run in CI on every PR, gate merges on eval scores",
-        "In a separate vendor dashboard only, reviewed manually once a release ships",
-        "Only run quarterly during a scheduled review cycle separate from the CI pipeline",
-        "Owned exclusively by the QA team, never touched by agent engineers"
+        "All four cases pass, producing a 100% pass rate and an ALLOW CI gate.",
+        "Only the benchmark cases pass; the online guardrail blocks the merge.",
+        "The first round of every case fails, so the aggregate is 0%.",
+        "The gate warns because 100% is above the 95% baseline."
       ],
       "correct": 0,
-      "explanation": "Co-located with code, CI-gated, regression-tracked is the standard."
+      "explanation": "Each proposer/optimizer case eventually satisfies its judge in two rounds. The four passing results yield 100%, which is above the 95% baseline, so CI allows the merge."
     },
     {
-      "stage": "post",
-      "question": "Why does the lesson warn against an LLM-judge without grounding?",
+      "stage": "check",
+      "question": "What happens during `bench_t001`?",
       "options": [
-        "It is too slow to run inside a CI pipeline gating merges on every pull request",
-        "Judges hallucinate too; pair with the CRITIC pattern so judgment grounds on external tools",
-        "It violates the Apache 2.0 open-source license terms attached to most evaluation frameworks used here",
-        "It only works on GPU-backed inference endpoints, not CPU-only judge deployments"
+        "It passes immediately with a patch that already adds the stick dependency.",
+        "The first candidate lacks sticks; feedback is supplied and round two returns `patch: add stick dep and craft`.",
+        "It fails all three rounds because benchmarks cannot use feedback.",
+        "It switches from the benchmark layer to the online PII guardrail."
       ],
       "correct": 1,
-      "explanation": "CRITIC (Lesson 5) applies: tool-grounded verification keeps the judge honest."
+      "explanation": "The initial proposer returns `patch: just craft`; the judge says `missing sticks in recipe`, and the next proposer uses that feedback to add the dependency and craft step."
+    },
+    {
+      "stage": "check",
+      "question": "What does `ci_gate([], baseline_pass_rate=0.95)` return?",
+      "options": [
+        "`(False, \"regression 95.0% > threshold 5.0%\")`",
+        "`(True, \"pass_rate=0.0% baseline=95.0%\")`",
+        "`(False, \"no cases\")`",
+        "`(True, \"empty evaluation accepted\")`"
+      ],
+      "correct": 2,
+      "explanation": "The implementation checks for an empty result list first and returns `False, \"no cases\"`; it does not calculate a pass-rate regression for zero cases."
+    },
+    {
+      "stage": "check",
+      "question": "When does `ci_gate` block because of regression?",
+      "options": [
+        "Whenever the current pass rate is below 100%, regardless of baseline.",
+        "Only when the baseline is exactly 95%.",
+        "When the result list contains any failed case, even if the drop is tiny.",
+        "When `baseline_pass_rate - pass_rate` is strictly greater than `regression_threshold`."
+      ],
+      "correct": 3,
+      "explanation": "The gate computes `regression = baseline_pass_rate - pass_rate` and blocks only when that value is greater than the threshold, default 0.05."
     },
     {
       "stage": "post",
-      "question": "What is the danger of over-fitting to evals?",
+      "question": "Why does `custom_c001` need two optimizer rounds?",
       "options": [
-        "Compute cost rises sharply because every eval run re-invokes the full agent loop and judge model",
-        "Vector index fragmentation increases and retrieval latency in the RAG pipeline slowly climbs",
-        "Latency drops too far below production SLAs once evals are removed from the CI pipeline",
-        "Optimizing for the eval set diverges from production usefulness; rotate cases"
+        "Its first answer lacks a citation; the judge's `missing citations` feedback makes the next candidate include `[arXiv:2210.03629]`.",
+        "The custom judge always requires exactly two rounds, even when the first answer passes.",
+        "It is retried because custom cases cannot be judged offline.",
+        "The first candidate fails a PASS_TO_PASS unit test rather than a citation check."
       ],
-      "correct": 3,
-      "explanation": "Eval set rotation keeps the optimization aligned with production reality."
+      "correct": 0,
+      "explanation": "The custom proposer starts with `answer without citation`; after the judge returns `missing citations`, it produces the cited answer and passes in round two."
+    },
+    {
+      "stage": "post",
+      "question": "What final candidate does the online SSN guardrail case accept?",
+      "options": [
+        "`forwarded: ssn 123-45-6789 to downstream system`",
+        "`refused: will not process social security numbers`",
+        "`patch: add stick dep and craft`",
+        "An empty candidate because online cases skip the optimizer."
+      ],
+      "correct": 1,
+      "explanation": "The first candidate forwards the SSN and is rejected. Feedback mentions `ssn`, so the second candidate refuses processing and the PII judge passes it."
     }
   ]
 }

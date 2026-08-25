@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Monte Carlo Methods — Learning from Complete Episodes?",
+      "question": "For a two-step trajectory with rewards [-1.0, -1.0] and gamma=0.99, what does returns_from compute for the first state?",
       "options": [
-        "Formulate Monte Carlo Methods — Learning from Complete Episodes in terms of states, actions, rewards, and o...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
+        "-1.99",
+        "-1.00",
+        "-0.99",
+        "0.99"
       ],
       "correct": 0,
-      "explanation": "“Formulate Monte Carlo Methods — Learning from Complete Episodes in terms of states, actions, rewards, and o...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The first return is -1.0 + 0.99 * (-1.0) = -1.99; returns_from works backward and then restores trajectory order."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Monte Carlo Methods — Learning from Complete Episodes?",
+      "question": "What does the seen set enforce in mc_policy_evaluation?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the central update rule from first principles",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It prevents an episode from reaching TERMINAL twice",
+        "It updates each state only on its first visit within that episode",
+        "It forces every action to be sampled exactly once",
+        "It removes all states whose return is negative"
       ],
       "correct": 1,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The code skips a state once it is in seen, so each episode contributes only its first occurrence to the state-value estimate."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Monte Carlo Methods — Learning from Complete Episodes?",
+      "question": "What does mc_policy_evaluation return for the uniform policy?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Trace learning signals through a self-terminating experiment",
-        "Treat one successful example as proof that every edge case works"
+        "Only the last trajectory and its actions",
+        "A neural network and a replay buffer",
+        "A defaultdict of values and a defaultdict of first-visit counts",
+        "A deterministic policy with no value estimates"
       ],
       "correct": 2,
-      "explanation": "“Trace learning signals through a self-terminating experiment” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The function accumulates V and counts, then returns both so the estimates can be inspected alongside their visit support."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Monte Carlo Methods — Learning from Complete Episodes?",
+      "question": "How does mc_control choose an action during training when epsilon=0.1?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate convergence, stability, and exploration trade-offs",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate convergence, stability, and exploration trade-offs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Monte Carlo Methods — Learning from Complete Episodes?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Formulate Monte Carlo Methods — Learning from Complete Episodes in terms of states, actions, rewards, and o..."
+        "It always takes the action with the largest Q value",
+        "It samples from the uniform_policy and ignores Q",
+        "It selects a random state instead of an action",
+        "It explores randomly with probability 0.1 and otherwise takes the current Q-greedy action"
       ],
       "correct": 3,
-      "explanation": "“Formulate Monte Carlo Methods — Learning from Complete Episodes in terms of states, actions, rewards, and o...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The nested policy checks local_rng.random() < epsilon, choosing randomly in that case and max(Q[state]) otherwise."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Monte Carlo Methods — Learning from Complete Episodes?",
+      "question": "When does rollout stop before max_steps=200?",
       "options": [
-        "Implement the central update rule from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Immediately after step reaches TERMINAL and returns done=True",
+        "Whenever the reward is -1.0, even if the state is not terminal",
+        "After the first repeated state, regardless of the transition",
+        "Only when the random generator runs out of values"
       ],
       "correct": 0,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "rollout appends the transition, updates state, and breaks when done; max_steps is only a safety bound for nonterminating behavior."
+    },
+    {
+      "stage": "post",
+      "question": "Why does main print -39.41 as a DP reference for V(0,0)?",
+      "options": [
+        "It is the undiscounted optimal path length",
+        "It is the approximate discounted value of the uniform policy in this 4x4 GridWorld",
+        "It is the number of episodes used for MC control",
+        "It is the terminal reward multiplied by gamma"
+      ],
+      "correct": 1,
+      "explanation": "The reference comes from evaluating the same uniform-random policy with gamma=0.99; MC estimates should approach it as episodes grow."
     }
   ]
 }

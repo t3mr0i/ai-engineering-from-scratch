@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is scope creep called the most under-monitored failure mode?",
+      "question": "Which files remain allowed after merging the project and task contracts in the demo?",
       "options": [
-        "Each touch had a plausible reason in the moment; together they form a different change than was reviewed",
-        "It only happens when a scope contract on disk is missing its forbidden_files glob field entirely",
-        "The verification gate silently downgrades every block-severity finding into a mere warning note",
-        "It occurs only when two separate agents happen to edit the same repository during one shared working session"
-      ],
-      "correct": 0,
-      "explanation": "Agents narrate each step in good faith; the silent total is the creep."
-    },
-    {
-      "stage": "check",
-      "question": "Which contract field does the lesson call half the contract?",
-      "options": [
-        "task_id, since it links the contract back to the board entry the human filed",
-        "forbidden_files (the negative space); a contract without it is incomplete",
-        "approvals_required, since every field above it depends on this one being set",
-        "rollback_plan, since the checker cannot run without a paragraph describing it"
-      ],
-      "correct": 1,
-      "explanation": "A contract without forbidden_files is incomplete; the negative space is half the contract."
-    },
-    {
-      "stage": "check",
-      "question": "Why pin allowed/forbidden to globs rather than raw paths?",
-      "options": [
-        "Because raw paths cannot be stored as valid JSON string values in a contract",
-        "Real repos move files between sessions; globs like app/**/*.py survive refactors",
-        "Because glob patterns compress smaller than an equivalent list of raw paths",
-        "Because the scope checker only accepts glob syntax and rejects literal paths outright"
-      ],
-      "correct": 1,
-      "explanation": "Globs (app/**/*.py) keep the contract valid through refactors."
-    },
-    {
-      "stage": "check",
-      "question": "Why does the lesson say a contract needs a rollback_plan?",
-      "options": [
-        "Rollback plans are required by the verification gate's schema validator",
-        "Without one, the checker cannot compute which files are in scope",
-        "Rollback plans let the agent skip acceptance criteria if something breaks",
-        "Writing it forces the author to think through what could go wrong first"
-      ],
-      "correct": 3,
-      "explanation": "The lesson says listing how to roll back forces the contract author to think about what could go wrong; a contract you cannot roll back from should not be approved."
-    },
-    {
-      "stage": "post",
-      "question": "What does the scope checker compare against the diff, per the lesson?",
-      "options": [
-        "Only the commit message, checked against a required template",
-        "The task's estimated time budget against the actual wall-clock time",
-        "The allowed globs, forbidden globs, and any acceptance commands",
-        "The diff size in lines against a fixed per-task ceiling value"
+        "Every project-wide path plus every task-specific path.",
+        "Only documentation paths, because code files are always hard-blocked.",
+        "The intersection: `app.py` and `test_app.py`.",
+        "Only `scripts/release.sh`, because the project contract owns releases."
       ],
       "correct": 2,
-      "explanation": "The lesson says the checker reads the diff, the allowed globs, the forbidden globs, and a list of any acceptance commands that ran; each violation is a tagged finding."
+      "explanation": "`merge_contracts` intersects the two `allowed_files` sets. Both contracts permit `app.py` and `test_app.py`, so those are the effective allowed paths."
+    },
+    {
+      "stage": "check",
+      "question": "What network egress survives the demo's contract merge?",
+      "options": [
+        "Both `api.openai.com` and `api.anthropic.com`.",
+        "No network hosts, because any child list denies all traffic.",
+        "Only `evil.example` from the creep run.",
+        "The intersection, `api.anthropic.com`."
+      ],
+      "correct": 3,
+      "explanation": "The project allowlist contains two hosts and the child allowlist contains only `api.anthropic.com`; `_merge_egress` intersects them."
+    },
+    {
+      "stage": "check",
+      "question": "What does `scope_check` report for the clean run?",
+      "options": [
+        "`passed=True` and `over_budget=False` with no findings.",
+        "`passed=False` because every task must touch a documentation file.",
+        "`passed=False` because the task has a 30-minute budget.",
+        "`passed=True` but with a forbidden-write block for `app.py`."
+      ],
+      "correct": 0,
+      "explanation": "The clean run touches only effective allowed files, runs the acceptance command, stays within 30 minutes, and uses the allowlisted host, so no finding is emitted."
+    },
+    {
+      "stage": "check",
+      "question": "How is `README.md` classified in the creep run?",
+      "options": [
+        "A block-severity forbidden write.",
+        "An informational soft off-scope documentation write.",
+        "An in-scope write because README is in every allowed set.",
+        "It is ignored because only source files are examined."
+      ],
+      "correct": 1,
+      "explanation": "`README.md` matches `docs_paths_soft` and not the hard allowed/forbidden patterns, so it appears in `soft_off_scope_writes` with an `info` finding."
     },
     {
       "stage": "post",
-      "question": "What must be true of feature_list.json before a session may start, per the lesson?",
+      "question": "Which creep-run path creates a `scope.forbidden` block?",
       "options": [
-        "Every feature must already have a done_when line filled with output",
-        "At most one feature may carry status in_progress at any given time",
-        "The active feature must match the branch name exactly to proceed",
-        "At least one feature must be marked blocked before work may start"
+        "`README.md`",
+        "`app.py`",
+        "`scripts/release.sh`",
+        "`test_app.py`"
       ],
-      "correct": 1,
-      "explanation": "The lesson says the invariant 'at most one in_progress' is itself a startup check: if the list shows two, the session refuses to start until a human resolves it."
+      "correct": 2,
+      "explanation": "The project contract forbids `scripts/release.sh`; the task contract additionally forbids `migrations/**`, so both appear as forbidden writes in the creep report."
+    },
+    {
+      "stage": "post",
+      "question": "What is `creep_report.over_budget` in the demo?",
+      "options": [
+        "`True`, because every informational finding consumes the violation budget.",
+        "`True`, because the elapsed time is over 30 minutes.",
+        "`True`, because the network host is not allowlisted.",
+        "`False`; the report has no warn-severity findings, even though block findings make `passed()` false."
+      ],
+      "correct": 3,
+      "explanation": "`over_budget` counts only findings with severity `warn`; the creep report has blocks and an info finding, so its warn count is zero while `passed()` is still false."
     }
   ]
 }

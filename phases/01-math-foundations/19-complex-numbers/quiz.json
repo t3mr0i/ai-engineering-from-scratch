@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the imaginary unit i defined by?",
+      "question": "What is (2+3i) + (1-4i)?",
       "options": [
-        "i = sqrt(2)",
-        "i^2 = -1",
-        "i = -1",
-        "i^2 = 1"
-      ],
-      "correct": 1,
-      "explanation": "The imaginary unit i is defined by the property i^2 = -1. It extends the real number line into a 2D plane. Geometrically, multiplying by i is a 90-degree rotation — two multiplications (i^2) give a 180-degree rotation, which is -1."
-    },
-    {
-      "stage": "check",
-      "question": "What does Euler's formula e^(i*theta) equal?",
-      "options": [
-        "theta + i",
-        "cos(theta) + i*sin(theta)",
-        "sin(theta) + cos(theta), with no need to inspect intermediate results or test edge cases",
-        "i^theta"
-      ],
-      "correct": 1,
-      "explanation": "Euler's formula states e^(i*theta) = cos(theta) + i*sin(theta). This connects complex exponentials to trigonometry and shows that e^(i*theta) traces the unit circle as theta varies."
-    },
-    {
-      "stage": "check",
-      "question": "What is the result of (3 + 2i)(1 + 4i)?",
-      "options": [
-        "3 + 8i",
-        "4 + 6i",
-        "-5 + 14i",
-        "5 + 14i, because one plausible output is sufficient production evidence"
+        "1+7i",
+        "3+7i",
+        "3-i",
+        "1-i"
       ],
       "correct": 2,
-      "explanation": "Using FOIL: (3)(1) + (3)(4i) + (2i)(1) + (2i)(4i) = 3 + 12i + 2i + 8i^2 = 3 + 14i + 8(-1) = 3 + 14i - 8 = -5 + 14i."
+      "explanation": "Add real and imaginary parts separately: (2+1) + (3-4)i = 3-i."
     },
     {
       "stage": "check",
-      "question": "Why are complex numbers used in Rotary Position Embedding (RoPE) for transformers?",
+      "question": "What is (2+3i)(1-2i)?",
       "options": [
-        "Complex numbers compress the position encoding to use less memory, before defining the measurement, acceptance threshold, or rollback path",
-        "Multiplying query/key vectors by complex rotations encodes relative position as a rotation angle",
-        "Complex numbers are required by the attention softmax function",
-        "RoPE uses imaginary numbers to handle negative positions"
+        "2-6i",
+        "5-i",
+        "-4+7i",
+        "8-i"
       ],
-      "correct": 1,
-      "explanation": "RoPE multiplies query and key vectors by complex rotation matrices e^(i*m*theta) where m is the position. The relative position between two tokens becomes a rotation angle, and attention naturally becomes sensitive to relative (not absolute) position through complex multiplication."
+      "correct": 3,
+      "explanation": "Expand to 2-4i+3i-6i^2. Since i^2=-1, the real part is 2+6=8 and the imaginary part is -i."
     },
     {
-      "stage": "post",
-      "question": "The N-th roots of unity are N equally spaced points on the unit circle. What is their sum?",
+      "stage": "check",
+      "question": "What is the conjugate of 3+4i, and why is it useful for division?",
       "options": [
-        "N",
-        "1",
-        "0",
-        "N/2"
-      ],
-      "correct": 2,
-      "explanation": "The N roots of unity are e^(2*pi*i*k/N) for k = 0, ..., N-1. They are symmetrically distributed around the unit circle, so their vector sum cancels out to zero. This symmetry property is what makes the DFT invertible."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Complex Numbers for AI?",
-      "options": [
-        "Apply Euler's formula to convert between complex exponentials and trigonometric functions",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "3-4i; multiplying by it makes the denominator real",
+        "-3+4i; it changes only the real sign",
+        "4+3i; it swaps the coordinates",
+        "3+4i; conjugation has no effect"
       ],
       "correct": 0,
-      "explanation": "“Apply Euler's formula to convert between complex exponentials and trigonometric functions” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "z times its conjugate is |z|^2 = 3^2+4^2=25. Multiplying numerator and denominator by the conjugate removes the imaginary denominator."
+    },
+    {
+      "stage": "check",
+      "question": "What does Euler's formula give for exp(i*pi)?",
+      "options": [
+        "1",
+        "-1",
+        "i",
+        "pi"
+      ],
+      "correct": 1,
+      "explanation": "Euler's formula exp(i theta)=cos(theta)+i sin(theta). At theta=pi this is -1+i*0."
+    },
+    {
+      "stage": "post",
+      "question": "For an N=4 DFT, what is the k=1 root of unity exp(-2*pi*i*k/N)?",
+      "options": [
+        "i",
+        "-1",
+        "-i",
+        "1"
+      ],
+      "correct": 2,
+      "explanation": "The angle is -pi/2, so cos(-pi/2)+i sin(-pi/2) = -i. These roots supply the DFT's rotating phases."
+    },
+    {
+      "stage": "post",
+      "question": "Why can a complex rotation used in RoPE preserve the norm of a pair of coordinates?",
+      "options": [
+        "The rotation discards the imaginary component",
+        "Every complex number has magnitude one",
+        "RoPE replaces coordinates with their absolute values",
+        "Multiplication by a unit-magnitude complex number changes phase but not magnitude"
+      ],
+      "correct": 3,
+      "explanation": "A factor exp(i theta) has magnitude one. Multiplying z by it rotates the point in the complex plane while preserving |z|."
     }
   ]
 }

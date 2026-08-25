@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Building an MCP Client — Discovery, Invocation, Session Management?",
+      "question": "How many canonical tools are present after discovering the three fake servers and prefixing collisions?",
       "options": [
-        "Spawn an MCP server as a child process, complete `initialize`, and send a `notifications/initialized`",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "7",
+        "3",
+        "5",
+        "10"
       ],
       "correct": 0,
-      "explanation": "“Spawn an MCP server as a child process, complete `initialize`, and send a `notifications/initialized`” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The merged registry keeps seven tools: notes search/create, files search/read, and three GitHub tools with colliding search names prefixed."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Building an MCP Client — Discovery, Invocation, Session Management?",
+      "question": "Where does the canonical files/search name route?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Maintain per-server session state (capabilities, tool list, last-seen notification ids)",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "The notes server's local search function",
+        "files/search -> files.search",
+        "The GitHub server's list_issues function",
+        "No server; it is a display-only alias"
       ],
       "correct": 1,
-      "explanation": "“Maintain per-server session state (capabilities, tool list, last-seen notification ids)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The prefix identifies the files session while preserving its local tool name search for dispatch."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Building an MCP Client — Discovery, Invocation, Session Management?",
+      "question": "What happens to the first unqualified search name under prefix-on-collision?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Merge tool lists across multiple servers into one namespace with collision handling",
-        "Treat one successful example as proof that every edge case works"
+        "It is deleted because search is ambiguous",
+        "It becomes github/search immediately",
+        "The first keeps search; later names are prefixed",
+        "All three servers are renamed with numeric suffixes"
       ],
       "correct": 2,
-      "explanation": "“Merge tool lists across multiple servers into one namespace with collision handling” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The merge policy preserves the first registration as search and qualifies subsequent duplicate names such as files/search and github/search."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Building an MCP Client — Discovery, Invocation, Session Management?",
+      "question": "What does a call to notes create report after the notes session is marked dead?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Route a tool call to the server that owns it and reassemble the response",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Route a tool call to the server that owns it and reassemble the response” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Building an MCP Client — Discovery, Invocation, Session Management?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Spawn an MCP server as a child process, complete `initialize`, and send a `notifications/initialized`"
+        "A successful note with a new id",
+        "A retry against the files server",
+        "A JSON-RPC parse error",
+        "isError: session dead: notes"
       ],
       "correct": 3,
-      "explanation": "“Spawn an MCP server as a child process, complete `initialize`, and send a `notifications/initialized`” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Session.alive is checked before routing, so a dead session returns an explicit session-dead tool error."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Building an MCP Client — Discovery, Invocation, Session Management?",
+      "question": "What does merge(policy=reject) do when a later server exports an existing name?",
       "options": [
-        "Maintain per-server session state (capabilities, tool list, last-seen notification ids)",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "skip the later duplicate",
+        "It sends both calls to the later server",
+        "It changes every name to a UUID",
+        "It raises before retaining any tools"
       ],
       "correct": 0,
-      "explanation": "“Maintain per-server session state (capabilities, tool list, last-seen notification ids)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The reject policy keeps the first canonical registration and omits later tools whose local name collides."
+    },
+    {
+      "stage": "post",
+      "question": "What state does initialize_all record for each successful Session?",
+      "options": [
+        "Only the server name; discovery happens on every call",
+        "The server capabilities and alive=True",
+        "A permanent OAuth token",
+        "A single global tool list with no session identity"
+      ],
+      "correct": 1,
+      "explanation": "Initialization stores each server's advertised capabilities and marks its session alive before discovery and invocation."
     }
   ]
 }

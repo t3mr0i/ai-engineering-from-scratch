@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why do HR AI use cases need stricter controls?",
+      "question": "Why do HR AI workflows need controls that go beyond ordinary drafting quality?",
       "options": [
-        "They mostly reformat existing policy text, so the wording is the only thing at stake",
-        "They can involve personal data, fairness, employee impact, and manager accountability",
-        "They run on internal HR systems, where the data has already cleared privacy review",
-        "They are drafted by HR specialists, whose expertise catches any error before it spreads"
+        "Internal HR data is automatically safe because it never leaves the company",
+        "Privacy and fairness matter only for recruitment, not for learning or manager workflows",
+        "They can involve personal data, fairness risk, employee impact, and a manager's people decision",
+        "A fluent HR draft is authoritative when it was written by a specialist"
+      ],
+      "correct": 2,
+      "explanation": "The lesson treats trust and accountability as design requirements. AI can assist, but privacy, fairness, employee impact, and human ownership remain explicit."
+    },
+    {
+      "stage": "check",
+      "question": "The feedback summary fixture has three matched signals, impact=5, and uncertainty=4. What priority does it receive?",
+      "options": [
+        "guided pilot",
+        "team practice",
+        "awareness only",
+        "launch gate required"
+      ],
+      "correct": 3,
+      "explanation": "Its score reaches the cap: 5*2 + 4 + 3*2 = 20. priority_for therefore returns launch gate required."
+    },
+    {
+      "stage": "check",
+      "question": "Which category does choose_category assign to the feedback summary fixture?",
+      "options": [
+        "privacy",
+        "fairness",
+        "accountability",
+        "trust"
+      ],
+      "correct": 0,
+      "explanation": "Three matches, impact 5, and uncertainty 4 produce index 12 modulo 4 = 0. The first category is privacy."
+    },
+    {
+      "stage": "check",
+      "question": "What controls does recommend select for an HR scenario with three matched signals?",
+      "options": [
+        "privacy review and fairness check only",
+        "privacy review, fairness check, human decision owner, and communication script",
+        "human decision owner alone, because managers handle the rest",
+        "A communication script without a privacy or fairness review"
       ],
       "correct": 1,
-      "explanation": "HR workflows often affect employees directly and require clear human accountability. Privacy, fairness, and employee trust have to be designed into the workflow from the start."
-    },
-    {
-      "stage": "check",
-      "question": "An AI tool scores internal candidates during a promotion round. What does this lesson's legal frame say applies?",
-      "options": [
-        "It stays outside the AI Act because the model only ranks and a manager makes the final call, with no need to inspect intermediate results or test edge cases",
-        "It is exempt while the tool runs internally and its outputs never leave the company",
-        "It only needs a data processing agreement, since personal data stays in the HR system",
-        "Annex III of the EU AI Act covers it as high-risk employment use, so human oversight applies"
-      ],
-      "correct": 3,
-      "explanation": "The lesson places recruitment, evaluation, promotion, termination, and performance-monitoring use cases under Annex III, point 4 of the EU AI Act, where conformity assessment and human oversight apply. Where an output drives a decision with legal or similarly significant effect without meaningful human review, Art. 22 GDPR is engaged as well."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Python artifact produce?",
-      "options": [
-        "A personnel decision that the responsible manager can confirm with one click",
-        "A payroll integration that writes the outcome back into the HR system",
-        "A legal approval that clears the use case under the EU AI Act",
-        "A ranked HR AI triage plan with matched controls and rationale"
-      ],
-      "correct": 3,
-      "explanation": "The artifact supports triage and control selection. It does not make HR decisions - humans own judgment, decisions, employee communication, and sensitive escalations."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to this lesson?",
-      "options": [
-        "A named human decision owner who carries the people decision, not the model",
-        "A privacy exemption for HR data, since employees already consented at hiring",
-        "A fairness check deferred until the first complaint reaches the works council",
-        "A communication script that avoids saying where AI was used in the process"
-      ],
-      "correct": 0,
-      "explanation": "A human decision owner is required for people-related decisions. Privacy review, fairness checks, and a communication script are the other controls this lesson teaches."
+      "explanation": "Three matches select all four controls in the HR list. They cover data handling, fairness, accountability, and transparent communication."
     },
     {
       "stage": "post",
-      "question": "When should an HR AI use case require a launch gate?",
+      "question": "How is Scenario(\"policy rewrite\", \"Drafting task with no listed signals.\", (), impact=2, uncertainty=2) classified?",
       "options": [
-        "Only when the workflow touches recruitment rather than internal learning paths",
-        "Only when the works council has already asked for the tool to be reviewed",
-        "Only when the output is sent to employees rather than kept inside the HR team",
-        "When employee impact, personal data sensitivity, and uncertainty are high"
+        "launch gate required because HR content is sensitive",
+        "guided pilot because it is an internal workflow",
+        "awareness only with score 6",
+        "team practice with score 8"
       ],
-      "correct": 3,
-      "explanation": "High-impact HR use cases need explicit review before rollout, driven by employee impact, data sensitivity, and uncertainty rather than by who has already objected."
+      "correct": 2,
+      "explanation": "With no matches the score is 6, so the common threshold function returns awareness only. The classification still needs a human context check before use."
     },
     {
       "stage": "post",
-      "question": "What should communication clarify in HR AI workflows?",
+      "question": "What must sheet-hr-ai-use-case-triage.md make clear for a people decision?",
       "options": [
-        "Where AI supports the work and where humans still make the decision",
-        "How the model was trained and which vendor supplied the underlying system",
-        "Which HR processes were the fastest to automate during the pilot phase",
-        "How much reviewer time the workflow saved compared with the manual process"
+        "The model's confidence is the final promotion or performance decision",
+        "Only the amount of time saved by drafting the HR note",
+        "That privacy review can be skipped when the requester is a manager",
+        "Where AI supports the process, which controls apply, and which named human owns the decision"
       ],
-      "correct": 0,
-      "explanation": "Trust depends on clear boundaries between AI support and human accountability. Employee trust is treated as a design requirement, not a communications afterthought."
+      "correct": 3,
+      "explanation": "The triage sheet keeps the support role of AI separate from accountability. It also records the privacy, fairness, communication, and review work needed before rollout."
     }
   ]
 }

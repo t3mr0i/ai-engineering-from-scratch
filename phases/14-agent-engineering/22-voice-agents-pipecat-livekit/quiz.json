@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which two flow directions does a Pipecat pipeline use?",
+      "question": "What does the voice pipeline do with an empty `audio_chunk`?",
       "options": [
-        "DOWNSTREAM (source to sink) and UPSTREAM (feedback, cancel, barge-in)",
-        "PUBLISH and SUBSCRIBE, mirroring the Frame-to-FrameProcessor queue design",
-        "REQUEST and RESPONSE, matching the STT-to-LLM-to-TTS turn-taking cycle",
-        "SYNC and ASYNC, selected per transport to match Daily or LiveKit timing"
-      ],
-      "correct": 0,
-      "explanation": "Frames flow downstream source-to-sink and upstream for control and cancellation."
-    },
-    {
-      "stage": "check",
-      "question": "What is the canonical Pipecat voice pipeline?",
-      "options": [
-        "STT -> VAD -> TTS -> LLM -> transport",
-        "VAD -> STT -> LLM -> TTS -> transport",
-        "LLM -> STT -> VAD -> TTS -> transport",
-        "TTS -> LLM -> VAD -> STT -> transport -> cache"
-      ],
-      "correct": 1,
-      "explanation": "VAD detects voice activity, STT transcribes, LLM responds, TTS speaks, transport delivers."
-    },
-    {
-      "stage": "check",
-      "question": "Which two voice agent classes does LiveKit Agents ship?",
-      "options": [
-        "TelephonyAgent (SIP-only audio) and BrowserAgent (WebRTC-only audio)",
-        "ScriptedAgent (fixed dialogue tree) and FreeformAgent (open-ended LLM chat)",
-        "MultimodalAgent (direct audio) and VoicePipelineAgent (STT/LLM/TTS cascade)",
-        "InboundAgent (receives incoming calls) and OutboundAgent (places outbound calls via SIP)"
+        "It emits a transcript containing an empty string.",
+        "It invokes the LLM with the previous turn's text.",
+        "It marks `speech=False` and does not forward a `vad_speech` frame.",
+        "It sends one silent word through TTS."
       ],
       "correct": 2,
-      "explanation": "MultimodalAgent uses direct audio (Realtime-style); VoicePipelineAgent uses STT->LLM->TTS for text-level control."
+      "explanation": "The VAD reads the chunk's boolean speech payload; an empty/non-speech chunk becomes `speech=False`, so no downstream STT frame is emitted."
     },
     {
       "stage": "check",
-      "question": "What is barge-in and how is it handled?",
+      "question": "How many words does the canned `hello` response deliver to the transport?",
       "options": [
-        "An LLM cost spike triggered by long context; the fix is to truncate conversation history",
-        "A provider outage on the STT service; the fix is to fail over to a backup transcription vendor immediately",
-        "A CAPTCHA failure during telephony SIP setup; the fix is to retry the call after a short delay",
-        "The user interrupts while the agent is speaking; UPSTREAM cancel frames stop TTS mid-utterance"
+        "3",
+        "0, because TTS handles only refund requests",
+        "14",
+        "7"
       ],
       "correct": 3,
-      "explanation": "Barge-in is user interruption; UPSTREAM cancellation is how Pipecat handles it cleanly."
+      "explanation": "The `hello` canned reply is split by TTS into seven words, and the transport stores that seven-word audio frame."
     },
     {
-      "stage": "post",
-      "question": "What end-to-end latency does the lesson describe as premium?",
+      "stage": "check",
+      "question": "What text does the LLM stage produce for a transcript with no canned reply?",
       "options": [
-        "About 450-600 ms end-to-end, the premium stack range cited for Vapi and Retell",
-        "About 50 ms, roughly the latency of a single VAD frame detection alone",
-        "About 1500 ms, the threshold above which the lesson says it starts to feel broken",
-        "About 5000 ms, comparable to a slow batch API round trip with retries"
+        "`[no canned reply]`",
+        "`please repeat`",
+        "An empty frame that stops the pipeline.",
+        "The previous transcript's response"
       ],
       "correct": 0,
-      "explanation": "Premium stacks land around 450-600 ms; 800-1200 ms is common; over 1500 ms feels broken."
+      "explanation": "The scripted LLM dictionary has explicit entries for the demo utterances; an unmatched transcript falls back to the literal `[no canned reply]`."
+    },
+    {
+      "stage": "check",
+      "question": "What does an upstream cancel from the transport do?",
+      "options": [
+        "It travels downstream and queues another TTS frame.",
+        "It propagates to TTS and LLM, where TTS becomes cancelled and the LLM records cancellation.",
+        "It cancels only the transport and leaves all processors running.",
+        "It restarts VAD so the next audio chunk is replayed."
+      ],
+      "correct": 1,
+      "explanation": "UPSTREAM frames use each processor's `prev` link. The cancel reaches TTS and LLM; TTS sets `cancelled=True` and LLM adds `LLM: cancelled` to its trace."
     },
     {
       "stage": "post",
-      "question": "What goes wrong if STT confidence is ignored?",
+      "question": "What does the canned refund response contribute to the transport trace?",
       "options": [
-        "Latency improves noticeably because skipping the confidence check removes a processing step from STT",
-        "Low-confidence transcripts feed the LLM as if gospel, producing wrong answers; gate on confidence or ask for confirmation",
-        "TTS gets faster since it no longer needs to synthesize a spoken confirmation prompt back to the user",
-        "Calls get meaningfully cheaper because the pipeline stops requesting extra SIP telephony minutes for repeated retries"
+        "A seven-word audio frame.",
+        "No audio, because refunds require human handoff.",
+        "A fourteen-word audio frame after TTS splits the response.",
+        "A transcript frame sent back upstream to STT."
       ],
-      "correct": 1,
-      "explanation": "Treating low-confidence STT as truth is a top voice-agent failure mode."
+      "correct": 2,
+      "explanation": "The refund response is the longer canned reply; TTS splits it into fourteen words before the downstream transport records the audio frame."
+    },
+    {
+      "stage": "post",
+      "question": "Which direction rule does a Pipecat processor use for frame forwarding?",
+      "options": [
+        "Every frame goes to both neighbors so control and media stay synchronized.",
+        "DOWNSTREAM frames go to `prev`, while UPSTREAM frames go to `next`.",
+        "Only audio frames travel; control frames are consumed at their source.",
+        "DOWNSTREAM frames go to `next`, while UPSTREAM control frames go to `prev`."
+      ],
+      "correct": 3,
+      "explanation": "The pipeline is directional: source media travels through `next` downstream, while cancellation/control travels back through `prev` upstream."
     }
   ]
 }

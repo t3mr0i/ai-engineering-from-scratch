@@ -101,12 +101,34 @@ The lesson implements one outbound notification helper, `write_notification`. Th
 
 This transport is enough for the lessons that follow. Production transports add three things. A correlation id field that survives forwarding (your `id` is already this, but in a mesh you need an outer trace id too). A cancellation channel (a notification like `$/cancelRequest` with the id of the in-flight call). And a content-type negotiation handshake so the same socket can speak JSON-RPC and Streamable HTTP. None of those change the wire. They add metadata.
 
+## Build It
+
+Reconstruct **JSON-RPC 2.0 Over Newline-Delimited Stdio** by following `JsonRpcError` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.
+
+## Use It
+
+Call `JsonRpcError` from a small caller with the smallest valid record {"id": 1}. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/artifact-card.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
+
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Speak JSON-RPC 2.0 framed as newline-delimited JSON over stdin and stdout.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Map the five standard error codes (-32700, -32600, -32601, -32602, -32603) and surface them with the right semantics.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Distinguish requests, responses, notifications, and batches without inventing new envelope keys.
+Keep two runs side by side for **JSON-RPC 2.0 Over Newline-Delimited Stdio**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
+
+1. **Read the first result.** From `code/`, run `python3 main.py` using the smallest valid record {"id": 1}. Follow `JsonRpcError`, `MethodNotFound`, `InvalidParams`. Expect validation names the missing field or rejects the request; it must not silently accept an incomplete record; capture the first printed shape, metric, status, or summary field and state which part supports **Speak JSON-RPC 2.0 framed as newline-delimited JSON over stdin and stdout.**.
+2. **Run a two-value comparison.** Repeat the command after changing only the optional field: use the same record with one optional field changed. Predict the direction of the change, then compare the two output values. Explain why **Map the five standard error codes (-32700, -32600, -32601, -32602, -32603) and surface them with the right semantics.** says the other inputs should stay fixed.
+3. **Try an adversarial fixture.** Feed the implementation a record missing the required "id" field. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Distinguish requests, responses, notifications, and batches without inventing new envelope keys.** and record the exception text if the code rejects the case.
+4. **Write the operator note.** Open `outputs/artifact-card.md` and add a worked example using the smallest valid record {"id": 1}. Include the input contract, one expected output field, and a named acceptance check for **Handle one parse error per line without poisoning the rest of the stream.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Speak JSON-RPC 2.0 framed as newline-delimited JSON over stdin and stdout,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Distinguish requests, responses, notifications, and batches without inventing new envelope keys,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **JSON-RPC 2.0 Over Newline-Delimited Stdio** should contain:
+
+- the `python3 main.py` output for the smallest valid record {"id": 1}, with `JsonRpcError`, `MethodNotFound`, `InvalidParams` traced to the value or shape that supports **Speak JSON-RPC 2.0 framed as newline-delimited JSON over stdin and stdout.**;
+- a before/after comparison for the optional field, where the same record with one optional field changed changes the observation in the direction predicted by **Map the five standard error codes (-32700, -32600, -32601, -32602, -32603) and surface them with the right semantics.**;
+- a recorded result for a record missing the required "id" field that matches the implementation’s validation or empty-result contract and explains the evidence for **Distinguish requests, responses, notifications, and batches without inventing new envelope keys.**; and
+- an updated `outputs/artifact-card.md` example with a concrete input, expected output field, and acceptance check tied to **Handle one parse error per line without poisoning the rest of the stream.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

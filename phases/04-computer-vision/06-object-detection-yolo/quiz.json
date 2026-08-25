@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "A YOLO detector with grid 13x13, 3 anchors per cell, and 20 classes produces a head output of shape (N, 13, 13, 3, 25). Why is the last dimension 25?",
+      "question": "Two boxes are [0,0,10,10] and [5,0,15,10]. What IoU does box_iou compute?",
       "options": [
-        "4 box coords + 1 bias + 20 classes",
-        "4 box coords + 1 objectness + 20 classes = 5 + C",
-        "25 is the number of classes in COCO",
-        "It is padding to the next power of 2 — and applies unchanged even when the lesson's stated preconditions fail"
+        "1/2, about 0.5",
+        "1",
+        "1/3, about 0.333",
+        "0"
       ],
-      "correct": 1,
-      "explanation": "Every anchor emits four box regression targets (tx, ty, tw, th), one objectness score, and C class logits. For YOLO-style detectors the per-anchor dimension is always 5 + C. On COCO with 80 classes it is 85; on PASCAL VOC with 20 it is 25."
+      "correct": 2,
+      "explanation": "The intersection is 5*10=50 and the union is 100+100-50=150, so IoU=50/150=1/3."
     },
     {
       "stage": "check",
-      "question": "Why does YOLO predict tx, ty through a sigmoid before adding the grid cell?",
+      "question": "Given the demo's five boxes and scores [0.9,0.8,0.7,0.85,0.6], what does NMS with threshold 0.4 keep?",
       "options": [
-        "To normalise them to [0, 1] so the centre stays inside the cell and cannot escape to a neighbouring cell's territory",
-        "Sigmoid is required by the convolution, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "To prevent NaN during training",
-        "To make the box larger"
+        "Indices [1,2,4]",
+        "All five indices",
+        "Only index [4]",
+        "Indices [0,3]"
+      ],
+      "correct": 3,
+      "explanation": "NMS keeps the highest score in each overlapping group: box 0 suppresses 1 and 2, while box 3 suppresses 4."
+    },
+    {
+      "stage": "check",
+      "question": "For a YOLOHead with num_anchors=3 and num_classes=5, what is the last dimension of its output?",
+      "options": [
+        "10, representing 5 box/objectness values plus 5 class values",
+        "8, representing only the box corners",
+        "5, representing classes without objectness",
+        "15, representing three complete boxes"
       ],
       "correct": 0,
-      "explanation": "sigmoid(tx) is in [0, 1], so (sigmoid(tx) + cell_x) * stride places the centre somewhere inside the cell at column cell_x. This constraint keeps each cell responsible for only the objects centred within its own area, which is the assumption that makes grid-based training stable."
+      "explanation": "Each anchor predicts tx,ty,tw,th,objectness and five class logits: 5+num_classes=10."
     },
     {
       "stage": "check",
-      "question": "Your detector predicts 15 boxes around a single object after the head. You apply NMS with iou_threshold=0.45 and get back 1 box. What did NMS do?",
+      "question": "How is the final confidence score formed in postprocess?",
       "options": [
-        "It averaged all 15 predictions",
-        "It sorted the 15 boxes by score, kept the highest-scoring, and deleted every box whose IoU with it exceeded 0.45; the other 14 all overlapped the winner above the threshold so one remained",
-        "It picked a random survivor",
-        "It merged the boxes geometrically, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail"
+        "The raw box width multiplied by the class index",
+        "sigmoid(objectness) multiplied by the largest sigmoid class probability",
+        "IoU with the nearest anchor added to the objectness logit",
+        "The mean of all class logits without sigmoid"
       ],
       "correct": 1,
-      "explanation": "NMS is a greedy deduplication: sort by score, keep the top, remove everything close to it (IoU > threshold), repeat. It does not merge or average. That is why detection latency benchmarks include NMS time and why modern models like RT-DETR replace it with a learned alternative."
-    },
-    {
-      "stage": "check",
-      "question": "Your model has mAP@0.5 = 0.75 but mAP@0.5:0.95 = 0.32. What is the most accurate interpretation?",
-      "options": [
-        "The model is broken; mAP@0.5 must equal mAP@0.5:0.95, before defining the measurement, acceptance threshold, or rollback path",
-        "The model finds the right objects but its boxes are not tightly localised — fine at IoU 0.5, fail at IoU 0.7+",
-        "The dataset has too many classes",
-        "The inference threshold is too high"
-      ],
-      "correct": 1,
-      "explanation": "mAP@0.5 is lenient about localisation; mAP@0.5:0.95 averages over strict thresholds up to 0.95. A big gap between the two means the boxes are in roughly the right place but not tight. Typical fixes: CIoU/DIoU box loss, higher-resolution features, anchor sets better tuned to the dataset."
+      "explanation": "The code computes score=sigmoid(obj)*cls_probs.max(), then filters by conf_threshold before NMS."
     },
     {
       "stage": "post",
-      "question": "YOLO loss weights lambda_coord=5.0 and lambda_noobj=0.5 roughly mirror the original paper. What do these ratios encode?",
+      "question": "What does assign_targets use to choose an anchor for a ground-truth box?",
       "options": [
-        "GPU memory trade-offs",
-        "The fact that most cells have no object, so the no-object cells must be downweighted or they would dominate the total loss; and the fact that box regression is a smaller-scale loss than cross-entropy, so it needs upweighting to produce comparable gradients",
-        "Random choices the authors never justified — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "The number of anchors per cell"
+        "The anchor with the smallest grid-cell index",
+        "The class probability predicted before training",
+        "The anchor with the largest width-height IoU against the box",
+        "A random anchor for every image"
       ],
-      "correct": 1,
-      "explanation": "In a 13x13 grid there are 169 cells, usually with one to five objects. The 160+ empty cells all contribute objectness loss; without a small lambda_noobj they would overwhelm the positive signal. Conversely, MSE box loss is numerically small next to cross-entropy, so lambda_coord > 1 keeps its gradients comparable. Both ratios are about balancing per-component gradient magnitudes."
+      "correct": 2,
+      "explanation": "It compares the box dimensions with each anchor's dimensions, selects argmax IoU, and stores the target in the box center's grid cell."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Object Detection — YOLO from Scratch?",
+      "question": "What does decode do with tx and ty before converting them to a box center?",
       "options": [
-        "Compute Intersection-over-Union between boxes and implement non-maximum suppression from scratch",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Clips them to the class count and treats them as pixel corners",
+        "Squares them and ignores the grid cell",
+        "Uses them as an IoU threshold",
+        "Applies sigmoid, adds the cell coordinate, and multiplies by stride"
       ],
-      "correct": 0,
-      "explanation": "“Compute Intersection-over-Union between boxes and implement non-maximum suppression from scratch” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 3,
+      "explanation": "The center is (sigmoid(t)+cell_index)*stride, constraining the predicted offset to the current cell."
     }
   ]
 }

@@ -93,6 +93,18 @@ Phase 17 · 01 (managed hyperscalers), · 02 (inference platforms) cover managed
 
 
 
+## Build It
+
+Reconstruct **Self-Hosted Serving Selection — llama.cpp, Ollama, TGI, vLLM, SGLang** by following `pick_engine` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
+
+## Use It
+
+Call `pick_engine` from a small caller with the text "red fox". Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-engine-picker.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [AI Made Tools — vLLM vs Ollama vs llama.cpp vs TGI 2026](https://www.aimadetools.com/blog/vllm-vs-ollama-vs-llamacpp-vs-tgi/)
@@ -104,10 +116,20 @@ Phase 17 · 01 (managed hyperscalers), · 02 (inference platforms) cover managed
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Pick an engine given hardware (CPU / AMD / NVIDIA Hopper / Blackwell), scale (1 user / 100 / 10,000), and workload (general chat / agent / long-context).
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Name the 2026 TGI maintenance-mode status (December 11, 2025) and why it biases new projects toward vLLM or SGLang.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe the dev/staging/prod pipeline using the same GGUF or HF weights throughout.
+Keep two runs side by side for **Self-Hosted Serving Selection — llama.cpp, Ollama, TGI, vLLM, SGLang**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
+
+1. **Read the first result.** From `code/`, run `python3 main.py` using the text "red fox". Follow `pick_engine`. Expect the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text; capture the first printed shape, metric, status, or summary field and state which part supports **Pick an engine given hardware (CPU / AMD / NVIDIA Hopper / Blackwell), scale (1 user / 100 / 10,000), and workload (general chat / agent / long-context).**.
+2. **Run a two-value comparison.** Repeat the command after changing only the input text: use the text "red fox runs". Predict the direction of the change, then compare the two output values. Explain why **Name the 2026 TGI maintenance-mode status (December 11, 2025) and why it biases new projects toward vLLM or SGLang.** says the other inputs should stay fixed.
+3. **Try an adversarial fixture.** Feed the implementation an empty string. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Describe the dev/staging/prod pipeline using the same GGUF or HF weights throughout.** and record the exception text if the code rejects the case.
+4. **Write the operator note.** Open `outputs/skill-engine-picker.md` and add a worked example using the text "red fox". Include the input contract, one expected output field, and a named acceptance check for **Explain why "CPU only" forces llama.cpp and "AMD" excludes TRT-LLM.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Pick an engine given hardware (CPU / AMD / NVIDIA Hopper / Blackwell), scale (1 user / 100 / 10,000), and workload (general chat / agent / long-context),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe the dev/staging/prod pipeline using the same GGUF or HF weights throughout,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Self-Hosted Serving Selection — llama.cpp, Ollama, TGI, vLLM, SGLang** should contain:
+
+- the `python3 main.py` output for the text "red fox", with `pick_engine` traced to the value or shape that supports **Pick an engine given hardware (CPU / AMD / NVIDIA Hopper / Blackwell), scale (1 user / 100 / 10,000), and workload (general chat / agent / long-context).**;
+- a before/after comparison for the input text, where the text "red fox runs" changes the observation in the direction predicted by **Name the 2026 TGI maintenance-mode status (December 11, 2025) and why it biases new projects toward vLLM or SGLang.**;
+- a recorded result for an empty string that matches the implementation’s validation or empty-result contract and explains the evidence for **Describe the dev/staging/prod pipeline using the same GGUF or HF weights throughout.**; and
+- an updated `outputs/skill-engine-picker.md` example with a concrete input, expected output field, and acceptance check tied to **Explain why "CPU only" forces llama.cpp and "AMD" excludes TRT-LLM.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

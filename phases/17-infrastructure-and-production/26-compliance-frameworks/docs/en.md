@@ -101,6 +101,18 @@ OpenAI maintains SOC 2 Type 2, ISO/IEC 27001:2022, ISO/IEC 27701:2019, GDPR/CCPA
 
 
 
+## Build It
+
+Reconstruct **Compliance — SOC 2, HIPAA, GDPR, PCI-DSS, EU AI Act, ISO 42001** by following `main` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
+
+## Use It
+
+Call `main` from a small caller with the demo’s smallest built-in fixture. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-compliance-matrix.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [OpenAI Security and Privacy](https://openai.com/security-and-privacy/) — reference compliance profile.
@@ -112,10 +124,20 @@ OpenAI maintains SOC 2 Type 2, ISO/IEC 27001:2022, ISO/IEC 27701:2019, GDPR/CCPA
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Enumerate the seven 2026 frameworks relevant to LLM products and match each to a customer segment.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Cite the EU AI Act enforcement timeline (in force August 2024; high-risk enforcement 2 December 2027 for Annex III / 2 August 2028 for Annex I, per Regulation (EU) 2026/1744) and the two-tier fine ceiling (€15M / 3% for high-risk obligations, €35M / 7% for prohibited practices).
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain why post-processing PII cleanup is not enough for GDPR and name real-time inference-layer redaction as the defensible standard.
+Use `main` as the trace: start from the demo’s smallest built-in fixture, keep the raw output, and tie each observation to a named objective.
+
+1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using the demo’s smallest built-in fixture. Follow `main`. Expect the result reports the empty case explicitly or raises the documented validation error; capture the first printed shape, metric, status, or summary field and state which part supports **Enumerate the seven 2026 frameworks relevant to LLM products and match each to a customer segment.**.
+2. **Vary one named input.** Repeat the command after changing only the primary fixture value: use the same fixture with its primary value changed from 1 to 2. Predict the direction of the change, then compare the two output values. Explain why **Cite the EU AI Act enforcement timeline (in force August 2024; high-risk enforcement 2 December 2027 for Annex III / 2 August 2028 for Annex I, per Regulation (EU) 2026/1744) and the two-tier fine ceiling (€15M / 3% for high-risk obligations, €35M / 7% for prohibited practices).** says the other inputs should stay fixed.
+3. **Probe the empty case.** Feed the implementation an empty fixture {}. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Explain why post-processing PII cleanup is not enough for GDPR and name real-time inference-layer redaction as the defensible standard.** and record the exception text if the code rejects the case.
+4. **Package a usable handoff.** Open `outputs/skill-compliance-matrix.md` and add a worked example using the demo’s smallest built-in fixture. Include the input contract, one expected output field, and a named acceptance check for **Describe cross-framework control mapping (e.g., access control maps to ISO 27001 A.5.15-5.18 + GDPR Art. 32 + HIPAA §164.312(a)).**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Enumerate the seven 2026 frameworks relevant to LLM products and match each to a customer segment,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain why post-processing PII cleanup is not enough for GDPR and name real-time inference-layer redaction as the defensible standard,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Compliance — SOC 2, HIPAA, GDPR, PCI-DSS, EU AI Act, ISO 42001** should contain:
+
+- the `python3 main.py` output for the demo’s smallest built-in fixture, with `main` traced to the value or shape that supports **Enumerate the seven 2026 frameworks relevant to LLM products and match each to a customer segment.**;
+- a before/after comparison for the primary fixture value, where the same fixture with its primary value changed from 1 to 2 changes the observation in the direction predicted by **Cite the EU AI Act enforcement timeline (in force August 2024; high-risk enforcement 2 December 2027 for Annex III / 2 August 2028 for Annex I, per Regulation (EU) 2026/1744) and the two-tier fine ceiling (€15M / 3% for high-risk obligations, €35M / 7% for prohibited practices).**;
+- a recorded result for an empty fixture {} that matches the implementation’s validation or empty-result contract and explains the evidence for **Explain why post-processing PII cleanup is not enough for GDPR and name real-time inference-layer redaction as the defensible standard.**; and
+- an updated `outputs/skill-compliance-matrix.md` example with a concrete input, expected output field, and acceptance check tied to **Describe cross-framework control mapping (e.g., access control maps to ISO 27001 A.5.15-5.18 + GDPR Art. 32 + HIPAA §164.312(a)).**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

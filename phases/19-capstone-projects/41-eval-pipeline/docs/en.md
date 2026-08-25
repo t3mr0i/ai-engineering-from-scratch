@@ -154,12 +154,34 @@ The JSON dump uses stable keys so a CI dashboard can plot trend lines across ver
 
 The implementation gives you the four evals, the aggregator, and the report. Real evaluation pipelines layer many more dimensions on top; the pattern stays the same: one function per eval, one aggregator, one report.
 
+## Build It
+
+Reconstruct **Capstone Lesson 41: Full Evaluation Pipeline** by following `InstructionTokenizer` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `InstructionTokenizer` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/artifact-card.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Compute held-out perplexity with masked-token accounting on a tiny transformer.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Run an exact-match eval on short-form factual prompts.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compute token-level F1 between predicted and reference strings with normalisation.
+Work from the smallest fixture that the Capstone Lesson 41: Full Evaluation Pipeline demo already understands, then make one deliberate change and record what moved.
+
+1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using tokens=["red","fox"]. Follow `InstructionTokenizer`, `encode_pair`, `encode_prefix`. Expect the attention/embedding shape follows the token count and each valid attention row remains normalized; capture the first printed shape, metric, status, or summary field and state which part supports **Compute held-out perplexity with masked-token accounting on a tiny transformer.**.
+2. **Perturb one field.** Repeat the command after changing only the token sequence: use tokens=["red","fox","runs"]. Predict the direction of the change, then compare the two output values. Explain why **Run an exact-match eval on short-form factual prompts.** says the other inputs should stay fixed.
+3. **Check the failure boundary.** Feed the implementation tokens=[]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Compute token-level F1 between predicted and reference strings with normalisation.** and record the exception text if the code rejects the case.
+4. **Make the result repeatable.** Open `outputs/artifact-card.md` and add a worked example using tokens=["red","fox"]. Include the input contract, one expected output field, and a named acceptance check for **Build a local mock LLM-as-judge that scores model outputs on a 1-5 scale.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Compute held-out perplexity with masked-token accounting on a tiny transformer,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compute token-level F1 between predicted and reference strings with normalisation,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Capstone Lesson 41: Full Evaluation Pipeline** should contain:
+
+- the `python3 main.py` output for tokens=["red","fox"], with `InstructionTokenizer`, `encode_pair`, `encode_prefix` traced to the value or shape that supports **Compute held-out perplexity with masked-token accounting on a tiny transformer.**;
+- a before/after comparison for the token sequence, where tokens=["red","fox","runs"] changes the observation in the direction predicted by **Run an exact-match eval on short-form factual prompts.**;
+- a recorded result for tokens=[] that matches the implementation’s validation or empty-result contract and explains the evidence for **Compute token-level F1 between predicted and reference strings with normalisation.**; and
+- an updated `outputs/artifact-card.md` example with a concrete input, expected output field, and acceptance check tied to **Build a local mock LLM-as-judge that scores model outputs on a 1-5 scale.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does LangGraph treat as the core unit of the agent?",
+      "question": "When `Runner` runs `build_graph()` on `the CLI crashes on ctrl-c, please fix`, what route and ticket are produced?",
       "options": [
-        "A single shared tool registry that every node reads from",
-        "A vector index over the agent's past conversation turns",
-        "A free-form LLM call with no persisted structure or state carried between turns",
-        "A state machine with typed state, function nodes, and conditional edges"
-      ],
-      "correct": 3,
-      "explanation": "LangGraph models the agent as a state graph: nodes are pure functions, edges are transitions, state is typed and immutable."
-    },
-    {
-      "stage": "check",
-      "question": "Which problem does durable execution solve?",
-      "options": [
-        "Resuming a 40-step run from step 38 when it fails, with exact state, instead of starting over",
-        "Reducing the per-token inference cost of every LLM call across the entire graph, regardless of node count",
-        "Generating embeddings faster by batching them across every node in the graph",
-        "Automatically translating tool calls between different model providers mid-run"
-      ],
-      "correct": 0,
-      "explanation": "Checkpoints after every node let the runtime resume from the last successful step."
-    },
-    {
-      "stage": "check",
-      "question": "Which of these is NOT one of the three topologies LangGraph supports?",
-      "options": [
-        "Supervisor, a central router LLM that dispatches to specialist subagents",
-        "Gradient ring, where nodes pass partial gradients around a closed loop",
-        "Hierarchical, supervisors managing sub-supervisors as nested subgraphs",
-        "Swarm (peer-to-peer), where agents hand off directly via a shared tool surface"
-      ],
-      "correct": 1,
-      "explanation": "Topologies are supervisor, swarm, and hierarchical. Gradient ring is not a LangGraph topology."
-    },
-    {
-      "stage": "check",
-      "question": "Why must nodes be deterministic for resume to work cleanly?",
-      "options": [
-        "Model providers contractually require deterministic nodes as a condition of API access",
-        "Python's GIL requires every node function to be completely side-effect free",
-        "Resume assumes the same inputs produce the same state update; random seeds, wall-clock, and external APIs must be captured",
-        "Deterministic nodes reduce token cost because identical responses can be cached and reused across every subsequent run of the graph"
+        "route `sales`, ticket `SAL-the CLI cras`",
+        "route `refund`, ticket `REF-the CLI cras`",
+        "route `bug`, ticket `BUG-the CLI cras`",
+        "route `bug`, ticket `BUG-the CLI crashes on ctrl-c, please fix`"
       ],
       "correct": 2,
-      "explanation": "If a node depends on uncaptured nondeterminism, resume cannot reconstruct the post-step state."
+      "explanation": "The classifier detects `crash` and routes to `bug`; `_bug` prefixes the first 12 input characters with `BUG-`, yielding `BUG-the CLI cras`."
     },
     {
-      "stage": "post",
-      "question": "What is a conditional edge?",
+      "stage": "check",
+      "question": "How does `Runner.run` apply a node's return value to the current state?",
       "options": [
-        "An edge that only fires when the runtime is executing on a GPU",
-        "An edge with a time-to-live that expires after a fixed duration",
-        "An edge weighted by the training loss recorded during a fine-tuning run",
-        "An edge chosen by a function of state, used to branch the graph"
+        "It replaces state with the update dictionary and drops input fields.",
+        "It serializes only the update and lets the next node reconstruct state.",
+        "It appends updates to a list without changing the state mapping.",
+        "It creates a new mapping with `{**state, **update}`, so update keys overwrite old values."
       ],
       "correct": 3,
-      "explanation": "Conditional edges branch based on state; overusing them makes the graph hard to reason about."
+      "explanation": "The runner merges each node result as `state = {**state, **update}`, preserving unrelated fields while applying changes."
+    },
+    {
+      "stage": "check",
+      "question": "What is checkpointed when the first run pauses at `human_gate` with approval false?",
+      "options": [
+        "`classify`, `bug`, and `human_gate`, with step 3 and no final output",
+        "Only `classify`, because the gate is never checkpointed",
+        "All nodes through `send`, with step 4 and a sent ticket",
+        "`human_gate` only, with the original step 0 state"
+      ],
+      "correct": 0,
+      "explanation": "The runner saves after every executed node; classify, bug, and the pausing gate are saved, and the gate increments step to 3 before raising."
+    },
+    {
+      "stage": "check",
+      "question": "What does `InMemoryCheckpointer.load_latest(\"s001\")` return after three saved nodes?",
+      "options": [
+        "The first `(node, state)` snapshot",
+        "The last `(step_name, state)` tuple in the session history",
+        "Only the latest state mapping, without its node name",
+        "A deep copy of the original initial state"
+      ],
+      "correct": 1,
+      "explanation": "`load_latest` looks up the session list and returns `history[-1]`, preserving both the checkpoint node and its copied state."
     },
     {
       "stage": "post",
-      "question": "What goes wrong when checkpoints are too small?",
+      "question": "What does the approved resume from `resume_from=\"send\"` return in the demo?",
       "options": [
-        "Tool state and memory writes are not recoverable; full state must serialize",
-        "The disk backing the checkpointer silently fills up and writes start failing",
-        "The graph becomes structurally unable to ever reach the END node",
-        "The model starts producing noticeably shorter answers on every turn"
+        "It reruns classify and pauses again at human_gate.",
+        "It returns the approved state unchanged, with no output field.",
+        "It finishes at step 4 with `output` equal to `sent BUG-the CLI cras`.",
+        "It routes the ticket to sales because approval changes the route."
       ],
-      "correct": 0,
-      "explanation": "Only checkpointing conversation turns leaves tool state and memory writes outside resume's reach."
+      "correct": 2,
+      "explanation": "The approved checkpoint is passed as `state_override` and the runner starts at `send`, which adds the output and increments step from 3 to 4."
+    },
+    {
+      "stage": "post",
+      "question": "How does `build_graph` choose a branch after `classify`?",
+      "options": [
+        "It always follows the first edge registered for `classify`.",
+        "It hashes the input and selects a branch by numeric remainder.",
+        "It asks `human_gate` to choose between refund, bug, and sales.",
+        "It evaluates predicates made by `_make_router`, matching the classifier's `route` string to a target."
+      ],
+      "correct": 3,
+      "explanation": "`add_conditional_edges` creates one predicate per target; `_next` follows the edge whose predicate sees the matching route."
     }
   ]
 }

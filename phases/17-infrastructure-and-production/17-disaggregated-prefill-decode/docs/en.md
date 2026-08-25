@@ -107,6 +107,18 @@ Benchmark numbers drift — NVIDIA and the inference stack post updated results 
 
 
 
+## Build It
+
+Reconstruct **Disaggregated Prefill/Decode — NVIDIA Dynamo and llm-d** by following `PREFILL_TOK_PER_MS` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
+
+## Use It
+
+Call `PREFILL_TOK_PER_MS` from a small caller with the text "red fox". Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-disaggregation-decider.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [NVIDIA — Introducing Dynamo](https://developer.nvidia.com/blog/introducing-nvidia-dynamo-a-low-latency-distributed-inference-framework-for-scaling-reasoning-ai-models/)
@@ -117,10 +129,20 @@ Benchmark numbers drift — NVIDIA and the inference stack post updated results 
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain why prefill and decode have different optimal GPU allocations and quantify the waste under colocation.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Diagram the disaggregated architecture: prefill pool, decode pool, KV transfer via NIXL, router.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Name the condition when disaggregation does NOT pay off (short prompts, short outputs).
+Work from the smallest fixture that the Disaggregated Prefill/Decode — NVIDIA Dynamo and llm-d demo already understands, then make one deliberate change and record what moved.
+
+1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using the text "red fox". Follow `PREFILL_TOK_PER_MS`, `ms_colocated`, `ms_disaggregated`. Expect the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text; capture the first printed shape, metric, status, or summary field and state which part supports **Explain why prefill and decode have different optimal GPU allocations and quantify the waste under colocation.**.
+2. **Perturb one field.** Repeat the command after changing only the input text: use the text "red fox runs". Predict the direction of the change, then compare the two output values. Explain why **Diagram the disaggregated architecture: prefill pool, decode pool, KV transfer via NIXL, router.** says the other inputs should stay fixed.
+3. **Check the failure boundary.** Feed the implementation an empty string. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Name the condition when disaggregation does NOT pay off (short prompts, short outputs).** and record the exception text if the code rejects the case.
+4. **Make the result repeatable.** Open `outputs/skill-disaggregation-decider.md` and add a worked example using the text "red fox". Include the input contract, one expected output field, and a named acceptance check for **Distinguish NVIDIA Dynamo (stack-above) from llm-d (Kubernetes-native) and match each to an operational context.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain why prefill and decode have different optimal GPU allocations and quantify the waste under colocation,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Name the condition when disaggregation does NOT pay off (short prompts, short outputs),” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Disaggregated Prefill/Decode — NVIDIA Dynamo and llm-d** should contain:
+
+- the `python3 main.py` output for the text "red fox", with `PREFILL_TOK_PER_MS`, `ms_colocated`, `ms_disaggregated` traced to the value or shape that supports **Explain why prefill and decode have different optimal GPU allocations and quantify the waste under colocation.**;
+- a before/after comparison for the input text, where the text "red fox runs" changes the observation in the direction predicted by **Diagram the disaggregated architecture: prefill pool, decode pool, KV transfer via NIXL, router.**;
+- a recorded result for an empty string that matches the implementation’s validation or empty-result contract and explains the evidence for **Name the condition when disaggregation does NOT pay off (short prompts, short outputs).**; and
+- an updated `outputs/skill-disaggregation-decider.md` example with a concrete input, expected output field, and acceptance check tied to **Distinguish NVIDIA Dynamo (stack-above) from llm-d (Kubernetes-native) and match each to an operational context.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What three responsibilities does the Module abstraction have in a deep learning framework?",
+      "question": "How many parameters does Linear(2,3) expose in the mini-framework, including its three biases?",
       "options": [
-        "Load data, preprocess data, augment data — and applies unchanged even when the lesson's stated preconditions fail",
-        "forward() for computation, backward() for gradients, parameters() for trainable weights",
-        "Compile, optimize, deploy",
-        "Tokenize, embed, decode"
-      ],
-      "correct": 1,
-      "explanation": "Every Module implements forward() to compute output, backward() to propagate gradients, and parameters() to expose trainable weights. This uniform interface lets any module be composed with any other."
-    },
-    {
-      "stage": "check",
-      "question": "Why does Sequential process modules in reverse order during the backward pass?",
-      "options": [
-        "It's arbitrary -- either direction works, with no need to inspect intermediate results or test edge cases",
-        "Gradients flow from the loss backward through the network, so the last layer computes gradients first",
-        "Reverse order uses less memory",
-        "It prevents gradient explosion"
-      ],
-      "correct": 1,
-      "explanation": "The backward pass starts at the loss and propagates gradients toward the input. The last layer receives the loss gradient first, computes its local gradients, and passes them to the previous layer."
-    },
-    {
-      "stage": "check",
-      "question": "Why is optimizer.zero_grad() a separate call instead of being done automatically?",
-      "options": [
-        "It's a PyTorch design mistake, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "It allows gradient accumulation across multiple batches before taking a single optimizer step",
-        "It saves memory",
-        "It makes debugging easier"
-      ],
-      "correct": 1,
-      "explanation": "Separating zero_grad from step enables gradient accumulation: you can run backward() multiple times (across mini-batches) and sum the gradients before calling step(). This simulates larger batch sizes."
-    },
-    {
-      "stage": "check",
-      "question": "What is the correct order of operations in a training loop?",
-      "options": [
-        "backward, forward, zero_grad, step",
-        "forward, loss, zero_grad, backward, step, before defining the measurement, acceptance threshold, or rollback path",
-        "zero_grad, forward, loss, backward, step",
-        "forward, zero_grad, backward, loss, step"
+        "6",
+        "5",
+        "9",
+        "12"
       ],
       "correct": 2,
-      "explanation": "The standard pattern: zero_grad (clear old gradients), forward (compute predictions), loss (compute scalar loss), backward (compute gradients), step (update parameters). Getting this order wrong causes subtle bugs."
+      "explanation": "The layer has 3*2=6 weights and 3 biases, for 9 parameters."
     },
     {
-      "stage": "post",
-      "question": "What is the role of the DataLoader in the framework?",
+      "stage": "check",
+      "question": "In Sequential.backward, in what order are the modules called?",
       "options": [
-        "It trains the model",
-        "It splits data into batches and optionally shuffles between epochs for mini-batch gradient descent",
-        "It computes the loss function — and applies unchanged even when the lesson's stated preconditions fail",
-        "It initializes the weights"
+        "Forward order, from the first module to the final one",
+        "Alphabetical order by class name",
+        "Only the modules with trainable weights",
+        "Reverse order, from the final module back to the first"
       ],
-      "correct": 1,
-      "explanation": "The DataLoader handles two practical concerns: batching (you can't fit all data in memory) and shuffling (random order prevents the model from memorizing data sequence)."
+      "correct": 3,
+      "explanation": "The chain rule sends the gradient backward through the composed modules, so the implementation iterates over reversed(self.modules)."
     },
     {
-      "stage": "post",
-      "question": "What is the best completion criterion for Build Your Own Mini Framework?",
+      "stage": "check",
+      "question": "What happens when the mini-framework Dropout module is in eval mode?",
       "options": [
-        "Explain the Module abstraction (forward, backward, parameters) and why train/eval mode toggling is necessary",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "It returns activations unchanged",
+        "It drops every activation",
+        "It draws a new mask and doubles the survivors",
+        "It changes the batch size"
       ],
       "correct": 0,
-      "explanation": "“Explain the Module abstraction (forward, backward, parameters) and why train/eval mode toggling is necessary” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Dropout applies its inverted random mask only while training; evaluation returns x directly."
+    },
+    {
+      "stage": "check",
+      "question": "What kind of input does the mini-framework BCELoss expect?",
+      "options": [
+        "Unbounded class logits",
+        "Probabilities between zero and one",
+        "Integer feature indices only",
+        "Already-thresholded 0/1 predictions only"
+      ],
+      "correct": 1,
+      "explanation": "BCELoss clips predicted probabilities and applies logarithms. A sigmoid output should be supplied; raw logits need a different loss formulation."
+    },
+    {
+      "stage": "post",
+      "question": "For 160 examples and batch_size=32, what does len(DataLoader(data,32)) return?",
+      "options": [
+        "32",
+        "160",
+        "5",
+        "4"
+      ],
+      "correct": 2,
+      "explanation": "The loader reports ceil(160/32)=5 batches. Each iteration yields a list of inputs and a list of targets."
+    },
+    {
+      "stage": "post",
+      "question": "Why does Sequential.eval() call eval() on every contained module?",
+      "options": [
+        "Linear layers cannot compute outputs during training",
+        "It resets every parameter and gradient to zero",
+        "It changes the loss from BCE to MSE",
+        "Dropout and normalization must switch behavior consistently at inference"
+      ],
+      "correct": 3,
+      "explanation": "The container propagates the mode so nested Dropout and BatchNorm use inference behavior while ordinary layers remain compatible."
     }
   ]
 }

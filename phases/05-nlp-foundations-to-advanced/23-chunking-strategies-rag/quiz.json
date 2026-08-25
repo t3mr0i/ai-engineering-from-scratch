@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is chunking strategy as important as the embedding model in RAG?",
+      "question": "With size=10 and overlap=3, what step does chunk_fixed use between starts?",
       "options": [
-        "Chunking shrinks the embedding model's own parameter count, which is why smaller chunks always run faster at inference time",
-        "Chunking is a hard requirement of vector index libraries like FAISS, not an optional quality lever",
-        "Smaller chunks always train faster, since the embedding model has fewer tokens to process per document",
-        "Chunk boundaries determine whether the answer is even retrievable at all; bad chunks defeat any embedding model"
-      ],
-      "correct": 3,
-      "explanation": "Vectara's 2025 study showed chunking quality matches or exceeds embedding-model impact on retrieval quality."
-    },
-    {
-      "stage": "check",
-      "question": "What does LangChain's RecursiveCharacterTextSplitter try in order?",
-      "options": [
-        "Try splitting on paragraph breaks first, then newlines, then sentence boundaries, then spaces as a last resort",
-        "Always split at a fixed character position N, regardless of where sentences or paragraphs fall",
-        "Split directly on the tokenizer's own token IDs, ignoring character-level structure like punctuation marks entirely",
-        "Split on whitespace characters only, treating every other separator as part of the chunk content"
+        "7 characters",
+        "3 characters",
+        "10 characters",
+        "13 characters"
       ],
       "correct": 0,
-      "explanation": "Recursive splitting falls back through paragraph -> newline -> sentence -> space to preserve structure."
+      "explanation": "The function sets step=size-overlap, so adjacent chunks start seven characters apart."
     },
     {
       "stage": "check",
-      "question": "Why does the parent-document pattern improve answer quality?",
+      "question": "Which separator does chunk_recursive try before a single newline?",
       "options": [
-        "It removes the need for embeddings entirely by matching parent documents with keyword search alone",
-        "It avoids tokenization overhead by operating directly on raw document bytes instead of chunked text",
-        "Small child chunks give precise retrieval; the larger parent block returned instead preserves surrounding context",
-        "It uses noticeably fewer GPU cycles than single-level chunking because parent blocks skip re-embedding, because one plausible output is sufficient production evidence"
-      ],
-      "correct": 2,
-      "explanation": "Retrieve by small child chunks for precision, then expand to the parent for context."
-    },
-    {
-      "stage": "check",
-      "question": "What does Anthropic's 'contextual retrieval' add to each chunk before indexing?",
-      "options": [
-        "A part-of-speech tag for the chunk's dominant grammatical structure, used to filter irrelevant matches",
-        "An LLM-generated summary placing the chunk in the document's overall context, such as which section it belongs to",
-        "A language code identifying which of several supported languages the chunk's text is written in",
-        "Randomly sampled noise tokens, used as a regularizer that prevents the retriever from overfitting to exact phrasing"
+        "A space",
+        "A double newline",
+        "A comma",
+        "No separator; it always slices fixed widths first"
       ],
       "correct": 1,
-      "explanation": "Contextual retrieval prepends an LLM-written situating summary to each chunk; ~35-50% recall gain."
+      "explanation": "The default separators are ordered (double newline, newline, period-space, space), and the first present separator is used."
     },
     {
-      "stage": "post",
-      "question": "Which 2026 finding contradicts the conventional wisdom about chunk overlap?",
+      "stage": "check",
+      "question": "When does chunk_semantic start a new chunk at sentence i?",
       "options": [
-        "Empirical 2026 benchmarks show overlap often provides zero measurable retrieval benefit while inflating index size",
-        "Chunk overlap is a hard architectural requirement for BM25 to score documents correctly, unlike dense retrieval — and applies unchanged even when the lesson's stated preconditions fail",
-        "Overlap only improves results when combined with contextual retrieval, and does nothing on its own",
-        "The optimal overlap percentage was found to be exactly 50% of the chunk size across all query types"
+        "Similarity is above threshold and the current chunk is empty",
+        "Every sentence has a different token count",
+        "The adjacent-sentence similarity is below threshold and the current chunk is at least min_chars long",
+        "Only when the text contains a comma"
       ],
-      "correct": 0,
-      "explanation": "Newer studies (SPLADE+Mistral on NQ) show chunk overlap rarely helps and inflates index size."
+      "correct": 2,
+      "explanation": "The split condition is sim < threshold and len(current chunk) >= min_chars; otherwise the sentence is appended."
     },
     {
-      "stage": "post",
-      "question": "Which chunk size does NVIDIA's 2026 benchmark associate with factoid queries?",
+      "stage": "check",
+      "question": "What does each entry from chunk_parent_child contain?",
       "options": [
-        "About 64 tokens, small enough that only a single sentence fragment ever fits in one chunk",
-        "1024-2048 tokens, the size the benchmark recommends for whole-section comprehension queries instead",
-        "512-1024 tokens, the size the benchmark recommends for analytical or multi-hop queries instead",
-        "Roughly 256-512 tokens, big enough to contain the answer plus local context without excess noise"
+        "Only a child index with no parent text",
+        "One embedding and its cosine score against the query",
+        "A token label for every word in the original document",
+        "A child string, its parent_idx, and the full parent string"
       ],
       "correct": 3,
-      "explanation": "Factoid queries benefit from smaller chunks (256-512 tokens) that concentrate the answer signal."
+      "explanation": "The mapping appends a dictionary with child, parent_idx, and parent for every recursively split child."
+    },
+    {
+      "stage": "post",
+      "question": "When does retrieve_recall return True?",
+      "options": [
+        "At least one top-k chunk contains at least one gold substring, case-insensitively",
+        "Every chunk contains every gold substring",
+        "The query has more tokens than the chunk",
+        "The highest cosine score is exactly one"
+      ],
+      "correct": 0,
+      "explanation": "It checks any gold substring against any of the top-k chunk texts after lowercasing."
+    },
+    {
+      "stage": "post",
+      "question": "Why might a parent-child strategy help a RAG answer about a short clause?",
+      "options": [
+        "It removes all document context to reduce the prompt to one word",
+        "A small child can retrieve precisely while its larger parent supplies surrounding context",
+        "It guarantees semantic embeddings are unnecessary for every query",
+        "It makes every chunk the same length regardless of document structure"
+      ],
+      "correct": 1,
+      "explanation": "The mapping preserves a retrievable child and the broader parent text, allowing retrieval and context assembly to use different scales."
     }
   ]
 }

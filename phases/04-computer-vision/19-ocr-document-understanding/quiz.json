@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does OCR use CTC loss instead of plain cross-entropy?",
+      "question": "Which index is the CTC blank symbol in the lesson's VOCAB?",
       "options": [
-        "CTC is faster",
-        "OCR maps a fixed-length feature sequence to a variable-length character sequence without per-timestep alignment; CTC loss marginalises over all alignments that reduce to the target after removing repeats and blanks, so you can train without character-level timing labels",
-        "CTC is required by PyTorch",
-        "Cross-entropy overflows for long sequences — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path"
-      ],
-      "correct": 1,
-      "explanation": "Recognition produces one distribution per time step, but the target text has no per-step alignment. CTC handles that by summing over every alignment that reduces to the target via the merge-repeats-and-remove-blanks operation. This is why CRNNs can be trained on just (image, text) pairs without knowing where each character starts and ends in the image."
-    },
-    {
-      "stage": "check",
-      "question": "In CTC decoding, what does the blank token do?",
-      "options": [
-        "Pads the sequence to a fixed length, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "Separates adjacent identical characters so that outputs like 'hello' with a double L can be produced by the model emitting 'h e l _ l o' — without the blank, 'l l' would collapse to one 'l'",
-        "Masks noisy regions",
-        "Indicates end of sequence"
-      ],
-      "correct": 1,
-      "explanation": "The blank is the mechanism that lets CTC encode double characters. 'll' needs a blank between the two l's so the 'merge repeats' step keeps them distinct: 'l _ l' survives merging, 'l l' does not. Without the blank, CTC cannot represent any word containing adjacent identical characters."
-    },
-    {
-      "stage": "check",
-      "question": "Why is greedy CTC decoding sometimes better than beam search on simple datasets?",
-      "options": [
-        "Greedy is always better",
-        "When the model is confident at every step (clean handwriting, printed fonts), greedy's argmax is usually the beam winner; beam search adds latency with no accuracy gain. On noisy or ambiguous inputs, beam search helps",
-        "Beam search requires a language model, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "Greedy is easier to implement"
-      ],
-      "correct": 1,
-      "explanation": "Beam search only wins when the per-step argmax is unreliable — ambiguous characters, overlapping letters, degraded scans. For clean printed text, the model is confident at each step and greedy is within 1% CER of beam. Always benchmark both; the latency trade is real."
-    },
-    {
-      "stage": "check",
-      "question": "Donut skips explicit text detection and character recognition. How?",
-      "options": [
-        "It uses an external OCR engine internally",
-        "It is a ViT encoder + text decoder trained to produce the final output string (often JSON) directly from the image; the model learns both localisation and recognition implicitly through the training objective",
-        "It is limited to document categories with fixed layouts, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "It preprocesses images with a CNN text detector"
-      ],
-      "correct": 1,
-      "explanation": "Donut is an end-to-end model: the ViT encoder sees the whole document, the transformer decoder emits the target text or JSON auto-regressively. No pipeline of detector + recogniser + layout module. This skips error accumulation across stages but requires large labelled training sets for the specific document types you care about."
-    },
-    {
-      "stage": "post",
-      "question": "For extracting `invoice_total` from receipts, which approach is typically best in 2026?",
-      "options": [
-        "A hand-crafted regex on Tesseract output — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "Fine-tuned Donut or a VLM on a small labelled set of the target receipts; both handle layout and semantic extraction in one model and generalise across receipt variants better than pipeline-based approaches",
-        "Only classical OCR is reliable enough",
-        "A separate CNN for each field"
-      ],
-      "correct": 1,
-      "explanation": "Structured-field extraction used to be the domain of LayoutLM + heuristics. End-to-end models (Donut, Qwen-VL-OCR) have overtaken that path: they accept an image and produce the JSON directly. For a small set of labelled receipts (100-1000), fine-tuning Donut reaches higher F1 than any pipeline of OCR + rules."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for OCR & Document Understanding?",
-      "options": [
-        "Implement CTC (Connectionist Temporal Classification) loss for sequence-to-sequence OCR training",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "0",
+        "1",
+        "The final vocabulary index",
+        "It has no index"
       ],
       "correct": 0,
-      "explanation": "“Implement CTC (Connectionist Temporal Classification) loss for sequence-to-sequence OCR training” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "VOCAB starts with '_' at index zero, followed by digits and lowercase letters."
+    },
+    {
+      "stage": "check",
+      "question": "What shape does TinyCRNN.forward return for a batch of N line images?",
+      "options": [
+        "(N,1,H,W), the input image reconstructed",
+        "(T,N,V), log probabilities over the vocabulary at each time",
+        "(N,V,T,H), one class map per pixel",
+        "(V,N), one token for the whole batch"
+      ],
+      "correct": 1,
+      "explanation": "The CNN features are arranged as batch-time-feature, the bidirectional LSTM runs with batch_first, and the head is transposed to CTC's time-batch-class layout."
+    },
+    {
+      "stage": "check",
+      "question": "What does greedy_ctc_decode do with repeated non-blank IDs such as [3,3,0,4]?",
+      "options": [
+        "Produces [3,3,0,4] unchanged",
+        "Sorts the IDs numerically to [0,3,3,4]",
+        "Collapses the repeat and blank to produce [3,4]",
+        "Drops only the final ID"
+      ],
+      "correct": 2,
+      "explanation": "CTC decoding emits an ID only when it differs from the previous ID and is not blank, so repeated characters are collapsed."
+    },
+    {
+      "stage": "check",
+      "question": "Why does build_batch return target_lengths separately from the concatenated targets tensor?",
+      "options": [
+        "The lengths are used as image channel counts",
+        "They tell the CNN how many filters to create",
+        "CTC ignores the target IDs and uses only lengths",
+        "CTC needs each string's length to split the flattened target sequence for the batch"
+      ],
+      "correct": 3,
+      "explanation": "The targets are concatenated into one vector, while target_lengths tells F.ctc_loss where each example's target ends."
+    },
+    {
+      "stage": "post",
+      "question": "What does ctc_loss's zero_infinity=True protect against?",
+      "options": [
+        "It replaces infinite losses from impossible alignments with zero instead of propagating infinity",
+        "It makes every character probability exactly zero",
+        "It removes the blank symbol from the vocabulary",
+        "It forces input and target lengths to be identical"
+      ],
+      "correct": 0,
+      "explanation": "The option prevents an invalid alignment from poisoning optimization with an infinite loss; it does not change the sequence model's vocabulary."
+    },
+    {
+      "stage": "post",
+      "question": "Which stages distinguish OCR from broader document understanding?",
+      "options": [
+        "OCR only detects boxes, while document understanding only changes image colors",
+        "OCR reads text, layout parsing locates structure, and understanding interprets fields or meaning",
+        "Layout parsing replaces recognition, so no text decoder is needed",
+        "All three tasks are identical pixel classifications"
+      ],
+      "correct": 1,
+      "explanation": "A document system may need detection, character recognition, spatial layout, and semantic interpretation; each answers a different question."
     }
   ]
 }

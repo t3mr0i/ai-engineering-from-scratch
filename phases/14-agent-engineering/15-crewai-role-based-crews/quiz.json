@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What are CrewAI's four primitives?",
+      "question": "In the demo's `SequentialCrew`, in what order are the three declared tasks executed?",
       "options": [
-        "Agent, Task, Crew, Process",
-        "Node, Edge, Reducer, Checkpointer",
-        "Actor, Message, Inbox, Runtime",
-        "Tool, Prompt, Model, Memory"
+        "Researcher, then writer, then editor.",
+        "Editor, then researcher, then writer.",
+        "Writer and editor run in parallel before the researcher.",
+        "The manager chooses a new order at every kickoff."
       ],
       "correct": 0,
-      "explanation": "Agent, Task, Crew, and Process are the four primitives."
+      "explanation": "A sequential crew walks its task list in declaration order: the researcher creates material, the writer drafts it, and the editor revises the draft."
     },
     {
       "stage": "check",
-      "question": "What is the recommended production starting point per the CrewAI docs?",
+      "question": "How does the demo's researcher select the decorated web-search tool?",
       "options": [
-        "Crew, because LLM-driven autonomy is easiest to audit in production",
-        "Flow, because Crews are folded in only once autonomy earns its cost",
-        "Sequential process, because task order is fixed and predictable",
-        "Hierarchical process, because a manager Agent decides everything"
+        "It calls every registered function and concatenates all results.",
+        "It chooses the first tool with `is_tool` set and `search` in its `tool_name`.",
+        "It requires a `BaseTool` subclass and ignores functions decorated with `@tool`.",
+        "It selects the tool whose role name is alphabetically last."
       ],
       "correct": 1,
-      "explanation": "The docs say start production apps with Flows; fold Crews in as sub-steps when autonomy earns its cost."
+      "explanation": "The `_researcher` helper filters the registry for decorated objects marked `is_tool` and whose `tool_name` contains `search`, then invokes that match."
     },
     {
       "stage": "check",
-      "question": "What is the difference between a Crew and a Flow?",
+      "question": "What sequence does the hierarchical crew's manager follow in this fixture?",
       "options": [
-        "Crew requires a paid CrewAI Enterprise license; Flow ships free in the open-source package",
-        "Crew requires GPU-backed inference for the manager Agent's routing calls; Flow runs on CPU only",
-        "Crew is autonomous and LLM-driven; Flow is event-driven, code-owned, deterministic and testable",
-        "Flow contains no Agents at all; only a Crew may define agents or call an LLM directly"
+        "It runs editor once and stops without a manager result.",
+        "It launches all specialists concurrently and merges their raw outputs.",
+        "It selects researcher, writer, editor, and then emits `done`.",
+        "It delegates only to writer because hierarchy permits one specialist."
       ],
       "correct": 2,
-      "explanation": "Crew is autonomy-first; Flow is determinism-first."
+      "explanation": "The fixture's manager policy chooses the three specialists in that order and finishes with its own `done` step within the five-step budget."
     },
     {
       "stage": "check",
-      "question": "Which of these is NOT one of the four memory types CrewAI ships?",
+      "question": "Which event topics drive the Flow trace from research to the final listener?",
       "options": [
-        "Short-term memory, a conversation buffer wiped at the end of the run",
-        "Long-term memory, persisted across runs in a vector DB",
-        "Entity memory, per-entity facts keyed by entity, not by similarity",
-        "Quantized memory, bit-packed embeddings compressed for storage"
+        "`start`, `finish`, and `archive`.",
+        "`research`, `write`, and `review`.",
+        "`agent`, `task`, and `crew`.",
+        "`researched`, then `drafted`, then `edited`."
       ],
       "correct": 3,
-      "explanation": "Short-term, long-term, entity, and contextual are the four. Quantized memory is not a CrewAI concept."
+      "explanation": "The start handler emits `researched`; its listener emits `drafted`, and the next listener emits `edited`, matching the printed event trace."
     },
     {
       "stage": "post",
-      "question": "What is backstory bloat and how does the lesson recommend handling it?",
+      "question": "How many long-term memory entries exist after the demo's first crew, Flow, and second crew runs?",
       "options": [
-        "2000-word agent backstories push out the context budget; keep backstories under 200 words",
-        "Storing too many finished Crew definitions in one project file; archive the completed ones",
-        "Registering too many BaseTool subclasses on a single Agent; delete the unused tools",
-        "Bedrock inference calls running slow under sustained load; switch to a closer AWS region"
+        "9 entries, because each of the three runs contributes three task memories.",
+        "3 entries, because a new kickoff replaces the previous long-term memory.",
+        "6 entries, because Flow memory is not persisted.",
+        "0 entries, because only short-term memory is enabled in the fixture."
       ],
       "correct": 0,
-      "explanation": "Backstories shape tone and judgment but eat context if oversized."
+      "explanation": "Each run writes three long-term entries and the store is cumulative, so the three demonstrations produce the printed total of nine."
     },
     {
       "stage": "post",
-      "question": "When is Hierarchical process worth picking over Sequential?",
+      "question": "What does `reset_short_term()` change before the second sequential kickoff?",
       "options": [
-        "Always, since Hierarchical is CrewAI's documented default process for every Crew",
-        "When you have 4+ specialists that need a manager Agent to route between them",
-        "When you have exactly one task and no need for any routing at all",
-        "When you do not have any tools registered on the specialist agents"
+        "It deletes all long-term embeddings and leaves no memory at all.",
+        "It clears prior short-term turns; this run then has three short-term entries.",
+        "It changes the task order so the editor runs before the researcher.",
+        "It disables the decorated search tool for the rest of the process."
       ],
       "correct": 1,
-      "explanation": "Hierarchical adds a manager Agent; only worthwhile when several specialists need dynamic routing."
+      "explanation": "`reset_short_term` clears only the transient list. The next three-task kickoff repopulates it with three entries while long-term memory remains intact."
     }
   ]
 }

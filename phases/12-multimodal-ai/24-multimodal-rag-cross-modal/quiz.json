@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Multimodal RAG and Cross-Modal Retrieval?",
+      "question": "What audio_retrieve score does the quiet query assign to Sunday Plant Bistro (r1, 38dB)?",
       "options": [
-        "Design cross-modal retrieval: text → image, image → text, audio → video, etc",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Design cross-modal retrieval: text → image, image → text, audio → video, etc” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Multimodal RAG and Cross-Modal Retrieval?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Compare three fusion strategies: score fusion, attention-based fusion, MoE fusion",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Compare three fusion strategies: score fusion, attention-based fusion, MoE fusion” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Multimodal RAG and Cross-Modal Retrieval?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Explain generation grounding: what \"cite your sources\" looks like when sources are a mix of modalities",
-        "Treat one successful example as proof that every edge case works"
+        "0.38, using the raw decibel value",
+        "1.00, because every quiet restaurant has perfect relevance",
+        "0.525, from max(0, 1 - 38/80)",
+        "0.80, because the denominator is the number of corpus items"
       ],
       "correct": 2,
-      "explanation": "“Explain generation grounding: what \"cite your sources\" looks like when sources are a mix of modalities” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "For a query containing quiet, audio_retrieve computes max(0, 1 - ambient_db/80). For r1 this is 1 - 38/80 = 0.525."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Multimodal RAG and Cross-Modal Retrieval?",
+      "question": "What happens for image_retrieve('sunny airy') in the restaurant corpus?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Name the three canonical multimodal RAG surveys of 2025 and their sub-problem taxonomy",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Name the three canonical multimodal RAG surveys of 2025 and their sub-problem taxonomy” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Multimodal RAG and Cross-Modal Retrieval?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Design cross-modal retrieval: text → image, image → text, audio → video, etc"
+        "Steak Central wins because dark is the only image tag",
+        "Every restaurant receives zero because image_retrieve accepts only exact tag names",
+        "Sunday Plant Bistro alone gets 1.0 because it has natural_light",
+        "Morning Glow receives 1.0 because it has both natural_light and airy tags"
       ],
       "correct": 3,
-      "explanation": "“Design cross-modal retrieval: text → image, image → text, audio → video, etc” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "'sunny' adds natural_light and 'airy' adds airy to tag_hints. Morning Glow has both, so its score is 2/2 = 1.0; Sunday Plant Bistro has only one."
+    },
+    {
+      "stage": "check",
+      "question": "How does fuse combine the three modality score dictionaries in agentic_loop?",
+      "options": [
+        "It computes a weighted sum using the supplied weights for each restaurant ID",
+        "It keeps only the highest modality score and discards the other two",
+        "It averages raw review text strings instead of numeric scores",
+        "It concatenates the dictionaries and lets duplicate IDs overwrite earlier scores"
+      ],
+      "correct": 0,
+      "explanation": "fuse loops over CORPUS and adds w*score for each pair from scores_list and weights. agentic_loop uses [0.3, 0.4, 0.3] in its first round."
+    },
+    {
+      "stage": "check",
+      "question": "Which citations does grounded_generate append for each ranked restaurant?",
+      "options": [
+        "Only a model confidence number with no source ID",
+        "[review id], [img tags ...], and [ambient ...dB] alongside the restaurant name",
+        "A page number and OCR bounding box from LayoutLMv3",
+        "A URL generated from the restaurant's name"
+      ],
+      "correct": 1,
+      "explanation": "The generated line includes the review ID, image tags, and ambient decibel value. These modality-specific source markers make the answer auditable."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Multimodal RAG and Cross-Modal Retrieval?",
+      "question": "What does agentic_loop do when the first fused confidence is below confidence_floor?",
       "options": [
-        "Compare three fusion strategies: score fusion, attention-based fusion, MoE fusion",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It returns an empty answer because retrieval failed",
+        "It removes the audio scores and keeps the original ranking",
+        "It appends 'bright windows low noise', reruns image/audio retrieval with new weights, and ranks again",
+        "It changes the restaurant corpus so the top score reaches the floor"
       ],
-      "correct": 0,
-      "explanation": "“Compare three fusion strategies: score fusion, attention-based fusion, MoE fusion” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The low-confidence branch reformulates the query, recomputes image and audio scores, fuses them with [0.3,0.5,0.2], and records a second-round trace."
+    },
+    {
+      "stage": "post",
+      "question": "Which trio appears in surveys_table as the 2025 multimodal-RAG survey authors?",
+      "options": [
+        "Radford, Faysse, and Li",
+        "DeepMind, OpenAI, and NVIDIA",
+        "ColBERT, PaliGemma, and Qwen",
+        "Abootorabi et al., Mei et al., and Zhao et al."
+      ],
+      "correct": 3,
+      "explanation": "surveys_table lists Abootorabi et al. (February), Mei et al. (April), and Zhao et al. (March) with their respective taxonomy and benchmark emphases."
     }
   ]
 }

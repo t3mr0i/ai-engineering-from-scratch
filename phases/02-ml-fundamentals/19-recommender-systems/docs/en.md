@@ -65,6 +65,14 @@ python3 main.py
 - **Filter bubble:** repeated similarity reduces discovery and catalog coverage.
 - **Metric mismatch:** click optimization may harm long-term satisfaction or safety.
 
+## Build It
+
+Reconstruct **Recommender Systems from Scratch** by following `popularity_scores` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Ship It
+
+Hand off `outputs/recommender-evaluation-card.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+
 ## Exercises
 
 1. Add a new user with no history. Compare the documented fallback with zero-filled collaborative scores and explain which behavior is safer.

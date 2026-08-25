@@ -1,78 +1,78 @@
 {
   "lesson": "78-ai-introduction-to-architecture-for-ai",
-  "title": "From LLM API Call to Production AI System: Architecture Decisions That Matter (2026)",
+  "title": "Introduction to Architecture for AI",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to From LLM API Call to Production AI System: Architecture Decisions That Matter (2026)?",
+      "question": "Which requirement activates the context-assembly layer as a RAG pipeline?",
       "options": [
-        "Explain the production problem addressed by From LLM API Call to Production AI System: Architecture Decisio...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
+        "The answer depends on proprietary or recent data that the model was not trained on",
+        "The application has a user-facing latency target but no source data",
+        "The team wants a larger model even though the prompt already contains all context",
+        "The output is a single call with no retrieval or tool requirement"
       ],
       "correct": 0,
-      "explanation": "“Explain the production problem addressed by From LLM API Call to Production AI System: Architecture Decisio...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "classify_architecture adds the RAG context layer when needs_rag is true. Latency, model preference, and call count do not by themselves make retrieval necessary."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of From LLM API Call to Production AI System: Architecture Decisions That Matter (2026)?",
+      "question": "What orchestration pattern does the agentic research assistant receive?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "CHAIN, because every tool call is sequential",
+        "AGENT_LOOP, because it combines multi-step work with tool use",
+        "DAG, because all research tasks are independent",
+        "SINGLE_CALL, because RAG supplies the context"
       ],
       "correct": 1,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The profile has needs_rag, needs_tools, and multi_step. The tool-plus-multi-step branch selects AGENT_LOOP before the simpler chain or DAG branches."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through From LLM API Call to Production AI System: Architecture Decisions That Matter (2026)?",
+      "question": "A profile has multi_step=True, parallel_subtasks=True, and needs_tools=False. Which orchestration value is returned?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Measure quality, cost, latency, and risk with explicit acceptance criteria",
-        "Treat one successful example as proof that every edge case works"
+        "AGENT_LOOP",
+        "CHAIN",
+        "DAG",
+        "SINGLE_CALL"
       ],
       "correct": 2,
-      "explanation": "“Measure quality, cost, latency, and risk with explicit acceptance criteria” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Known independent subtasks use the DAG branch when no tool-driven agent loop is required. The classifier records parallel orchestration and activates the corresponding layer."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits From LLM API Call to Production AI System: Architecture Decisions That Matter (2026)?",
+      "question": "What model-layer cost does estimate_cost report for 10,000 requests/day at 800 tokens/request?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Identify failure modes and define a safe rollback or review path",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Identify failure modes and define a safe rollback or review path” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for From LLM API Call to Production AI System: Architecture Decisions That Matter (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the production problem addressed by From LLM API Call to Production AI System: Architecture Decisio..."
+        "EUR 2.40/day",
+        "EUR 24.00/day",
+        "EUR 480.00/day",
+        "EUR 48.00/day"
       ],
       "correct": 3,
-      "explanation": "“Explain the production problem addressed by From LLM API Call to Production AI System: Architecture Decisio...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The volume is 8,000,000 tokens/day. At the illustrative EUR 6 per million tokens, the model component is 8*6 = EUR 48/day; retrieval and tools remain zero."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for From LLM API Call to Production AI System: Architecture Decisions That Matter (2026)?",
+      "question": "What deployment topology does classify_architecture choose when data_residency_eu=True?",
       "options": [
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "PLATFORM_MANAGED",
+        "MANAGED_API",
+        "SELF_HOSTED",
+        "The topology is left unset until a tool is selected"
       ],
       "correct": 0,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The residency branch sets deployment to PLATFORM_MANAGED and records the EU endpoint note. It applies even when the profile has no tools."
+    },
+    {
+      "stage": "post",
+      "question": "What is the full-stack model, retrieval, and tool cost for 10,000 requests/day with 4,000 tokens, 5 retrieval queries, and 3 tool calls per request?",
+      "options": [
+        "EUR 48.00/day",
+        "EUR 246.50/day",
+        "EUR 240.00/day",
+        "EUR 2.00/day"
+      ],
+      "correct": 1,
+      "explanation": "Model cost is EUR 240. Retrieval adds 50,000/1,000*0.04 = EUR 2, and tools add 30,000/1,000*0.15 = EUR 4.50. The total is EUR 246.50/day."
     }
   ]
 }

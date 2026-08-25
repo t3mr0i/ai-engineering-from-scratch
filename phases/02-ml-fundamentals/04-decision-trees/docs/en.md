@@ -193,6 +193,18 @@ Neural networks win when the data has spatial or sequential structure (images, t
 
 
 
+## Build It
+
+Reconstruct **Decision Trees and Random Forests** by following `gini_impurity` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Use It
+
+Call `gini_impurity` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-tree-interpreter.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Breiman: Random Forests (2001)](https://link.springer.com/article/10.1023/A:1010933404324) - the original random forest paper
@@ -202,10 +214,20 @@ Neural networks win when the data has spatial or sequential structure (images, t
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement Gini impurity, entropy, and information gain calculations to find optimal decision tree splits.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Build a decision tree classifier from scratch with pre-pruning controls (max depth, min samples).
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Construct a random forest using bootstrap sampling and feature randomization, and explain why it reduces variance.
+Keep two runs side by side for **Decision Trees and Random Forests**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
+
+1. **Read the first result.** From `code/`, run `python3 main.py` using x=0.5 with the demo defaults. Follow `gini_impurity`, `entropy`, `information_gain`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Implement Gini impurity, entropy, and information gain calculations to find optimal decision tree splits**.
+2. **Run a two-value comparison.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Build a decision tree classifier from scratch with pre-pruning controls (max depth, min samples)** says the other inputs should stay fixed.
+3. **Try an adversarial fixture.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Construct a random forest using bootstrap sampling and feature randomization, and explain why it reduces variance** and record the exception text if the code rejects the case.
+4. **Write the operator note.** Open `outputs/prompt-tree-interpreter.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Compare MDI feature importance with permutation importance and identify when MDI is biased**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement Gini impurity, entropy, and information gain calculations to find optimal decision tree splits,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Construct a random forest using bootstrap sampling and feature randomization, and explain why it reduces variance,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Decision Trees and Random Forests** should contain:
+
+- the `python3 main.py` output for x=0.5 with the demo defaults, with `gini_impurity`, `entropy`, `information_gain` traced to the value or shape that supports **Implement Gini impurity, entropy, and information gain calculations to find optimal decision tree splits**;
+- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Build a decision tree classifier from scratch with pre-pruning controls (max depth, min samples)**;
+- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Construct a random forest using bootstrap sampling and feature randomization, and explain why it reduces variance**; and
+- an updated `outputs/prompt-tree-interpreter.md` example with a concrete input, expected output field, and acceptance check tied to **Compare MDI feature importance with permutation importance and identify when MDI is biased**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

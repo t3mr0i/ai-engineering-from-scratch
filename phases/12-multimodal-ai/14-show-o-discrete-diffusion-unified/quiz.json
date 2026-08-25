@@ -1,78 +1,78 @@
 {
   "lesson": "14-show-o-discrete-diffusion-unified",
-  "title": "Show-o and Discrete-Diffusion Unified Models",
+  "title": "Show-o Masked Discrete Diffusion",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Show-o and Discrete-Diffusion Unified Models?",
+      "question": "What mask ratio does cosine_schedule(T=8) return at its first step?",
       "options": [
-        "Explain masked discrete diffusion: the schedule that masks tokens uniformly then asks the transformer to re...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Explain masked discrete diffusion: the schedule that masks tokens uniformly then asks the transformer to re...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Show-o and Discrete-Diffusion Unified Models?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Compare parallel image decoding (Show-o, MaskGIT) to autoregressive image decoding (Chameleon, Emu3) on spe...",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Compare parallel image decoding (Show-o, MaskGIT) to autoregressive image decoding (Chameleon, Emu3) on spe...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Show-o and Discrete-Diffusion Unified Models?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Name the three tasks Show-o handles in one checkpoint: T2I, VQA, image inpainting",
-        "Treat one successful example as proof that every edge case works"
+        "0.000, because sampling begins with every token visible",
+        "0.500, because the midpoint is used for the first prediction",
+        "About 0.981, from cos(pi/16), so almost all positions remain masked initially",
+        "1.500, because cosine values are shifted above one"
       ],
       "correct": 2,
-      "explanation": "“Name the three tasks Show-o handles in one checkpoint: T2I, VQA, image inpainting” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The schedule uses cos(pi*(t+1)/(2*T)). At t=0 and T=8 this is cos(pi/16) ≈ 0.981, a high initial mask ratio."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Show-o and Discrete-Diffusion Unified Models?",
+      "question": "What does step_unmask do with a token list containing MASK entries?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Pick a masking schedule (cosine, linear, truncated) and reason about its effect on sample quality",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Pick a masking schedule (cosine, linear, truncated) and reason about its effect on sample quality” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Show-o and Discrete-Diffusion Unified Models?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain masked discrete diffusion: the schedule that masks tokens uniformly then asks the transformer to re..."
+        "It changes every position, including already visible tokens",
+        "It masks the lowest-confidence visible tokens and never predicts replacements",
+        "It copies the prompt seed into every masked position",
+        "It predicts masked positions, ranks their confidences, and fills only the requested top fraction"
       ],
       "correct": 3,
-      "explanation": "“Explain masked discrete diffusion: the schedule that masks tokens uniformly then asks the transformer to re...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The helper obtains mock logits for masked entries, sorts masked indices by predicted probability, and replaces only n_to_keep positions. Existing tokens are retained."
+    },
+    {
+      "stage": "check",
+      "question": "How is the initial state in sample(prompt_seed=3, T=8) represented?",
+      "options": [
+        "A list of 16 MASK=-1 entries",
+        "Sixteen random vocabulary IDs sampled before the first step",
+        "A single MASK token shared by all positions",
+        "A list containing the prompt seed at each position"
+      ],
+      "correct": 0,
+      "explanation": "sample initializes tokens = [MASK] * SEQ_LEN, and SEQ_LEN is 16. The trace therefore begins with sixteen unknown image-token positions."
+    },
+    {
+      "stage": "check",
+      "question": "Which task is not one of the four uses listed for the Show-o checkpoint?",
+      "options": [
+        "Text generation with standard NTP",
+        "Audio transcription from a waveform",
+        "Text-to-image generation with masked image tokens",
+        "Image inpainting through the same masked loop"
+      ],
+      "correct": 1,
+      "explanation": "The driver lists text generation, VQA, T2I, and inpainting. Audio transcription is not part of this checkpoint's four-task demonstration."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Show-o and Discrete-Diffusion Unified Models?",
+      "question": "Why does sample keep calling step_unmask after the scheduled steps if MASK entries remain?",
       "options": [
-        "Compare parallel image decoding (Show-o, MaskGIT) to autoregressive image decoding (Chameleon, Emu3) on spe...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "To re-mask every token and restart the cosine schedule",
+        "To change the vocabulary size after diffusion finishes",
+        "To force a final fill pass so the returned sequence contains no MASK values",
+        "To evaluate an audio decoder on the residual mask"
       ],
-      "correct": 0,
-      "explanation": "“Compare parallel image decoding (Show-o, MaskGIT) to autoregressive image decoding (Chameleon, Emu3) on spe...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The while any(t == MASK for t in tokens) loop uses keep_ratio=1.0 until every position has a sampled ID. It guarantees a complete discrete sequence."
+    },
+    {
+      "stage": "post",
+      "question": "What qualitative behavior does the cosine schedule encourage in this sampler?",
+      "options": [
+        "A fixed number of tokens is unmasked at every step",
+        "Only the final step can change an image token",
+        "The sampler keeps a high mask ratio forever, preventing completion",
+        "It moves from many masked positions toward fewer masked positions with a smooth coarse-to-fine reveal"
+      ],
+      "correct": 3,
+      "explanation": "The cosine values fall from near one toward zero. Since keep_ratio is based on 1-ratio, progressively more positions are revealed as sampling advances."
     }
   ]
 }

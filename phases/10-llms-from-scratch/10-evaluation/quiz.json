@@ -4,75 +4,45 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why have benchmarks like MMLU become less useful for comparing frontier models?",
-      "options": [
-        "They test the wrong subjects",
-        "Frontier models have saturated MMLU (scoring 86-89%), compressing the leaderboard to a range where differences are statistical noise",
-        "MMLU was designed for smaller models — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "The questions are too easy"
-      ],
-      "correct": 1,
-      "explanation": "When GPT-4, Claude 3, and Llama 3 all score 86-89% on MMLU, a 1-point difference is not meaningful. The benchmark no longer discriminates between models, yet it still dominates leaderboard culture."
+      "question": "How does `exact_match(' Yes ', 'yes')` score the two strings?",
+      "options": ["0.5, because one string contains spaces.", "0.0, because case must match.", "1.0 after strip/lowercase.", "It returns the token F1 instead."],
+      "correct": 2,
+      "explanation": "The function strips and lowercases both inputs before comparison, so these strings are an exact match and the intended score is 1.0."
     },
     {
       "stage": "check",
-      "question": "What is Goodhart's Law in the context of LLM evaluation?",
-      "options": [
-        "A law about model scaling",
-        "When a measure becomes a target, it ceases to be a good measure -- models and teams optimize for benchmarks instead of real capabilities",
-        "A rule about learning rate schedules, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "A theorem about attention mechanisms"
-      ],
-      "correct": 1,
-      "explanation": "Labs optimize for benchmark scores (data contamination, benchmark-specific prompting). The score goes up, but real-world capability doesn't necessarily improve. Your own task-specific eval is the only reliable measure."
+      "question": "What representation does `token_f1` use when comparing a prediction with a reference?",
+      "options": ["Character n-grams with multiplicity.", "A BLEU precision over ordered token positions.", "The numeric sum of token IDs.", "It uses sets of whitespace tokens."],
+      "correct": 3,
+      "explanation": "The implementation builds `set(pred.split())` and `set(expected.split())`, then computes precision, recall, and their harmonic mean."
     },
     {
       "stage": "check",
-      "question": "What is the LLM-as-judge evaluation approach?",
-      "options": [
-        "Having a human judge evaluate every response",
-        "Using a strong LLM (e.g., GPT-4) to score responses against rubrics, replacing expensive human evaluation at scale",
-        "Training a separate classifier for evaluation, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "Using the model to evaluate itself"
-      ],
-      "correct": 1,
-      "explanation": "LLM-as-judge uses a capable model to score responses against defined criteria. It's cheaper and faster than human evaluation, though it has biases (e.g., preferring verbose responses) that must be calibrated."
-    },
-    {
-      "stage": "check",
-      "question": "Why is building a custom evaluation suite important rather than relying on public benchmarks?",
-      "options": [
-        "Public benchmarks are always wrong",
-        "Public benchmarks test general capabilities; your application has specific requirements that only a custom eval can measure",
-        "Custom evals are easier to build",
-        "Public benchmarks are too expensive, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "A model scoring 90% on MMLU might fail on your specific task (e.g., extracting dates from legal documents in your format). Only a custom eval with your data, your edge cases, and your success criteria measures what matters."
-    },
-    {
-      "stage": "post",
-      "question": "What is data contamination in the context of LLM benchmarks?",
-      "options": [
-        "When training data is corrupted",
-        "When benchmark questions appear in the model's pre-training data, inflating scores without reflecting true capability",
-        "When the model generates incorrect data — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "When evaluation data is mislabeled"
-      ],
-      "correct": 1,
-      "explanation": "If MMLU questions appeared in the training corpus, the model memorized the answers rather than reasoning about them. This inflates scores and makes benchmark comparisons unreliable. It's a growing problem as training corpora expand."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Evaluation: Benchmarks, Evals, LM Harness?",
-      "options": [
-        "Explain why standard benchmarks (MMLU, HumanEval) saturate and fail to differentiate frontier models",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "For ratings `rating_a` and `rating_b`, which expression is `ELOTracker.expected_score(rating_a, rating_b)`?",
+      "options": ["`1/(1+10^((b-a)/400))`.", "`(rating_a + rating_b) / 2`.", "`10 ** ((rating_a - rating_b) / 400)`.", "`rating_a - rating_b` clipped to [0, 1]."],
       "correct": 0,
-      "explanation": "“Explain why standard benchmarks (MMLU, HumanEval) saturate and fail to differentiate frontier models” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The logistic Elo expectation gives the higher-rated player a larger score: `1 / (1 + 10^((b-a)/400))`."
+    },
+    {
+      "stage": "check",
+      "question": "How does `perplexity` turn a nonempty list of token log-probabilities into one value?",
+      "options": ["It takes the maximum log-probability.", "It returns `exp(-mean(log_probs))`.", "It sums raw token IDs.", "It divides the number of tokens by the vocabulary size."],
+      "correct": 1,
+      "explanation": "Perplexity is the exponential of the negative mean log-likelihood; the helper returns infinity only for an empty list."
+    },
+    {
+      "stage": "post",
+      "question": "When does `summarize_results` count a case in `pass_rate` for threshold 0.5?",
+      "options": ["Only when the score is strictly greater than 0.5.", "Only when the median score is 0.5.", "When the individual score is at least 0.5.", "When the prediction has exactly half as many tokens as the reference."],
+      "correct": 2,
+      "explanation": "The summary uses an inclusive comparison `score >= threshold`, so a score exactly equal to 0.5 passes."
+    },
+    {
+      "stage": "post",
+      "question": "Which two ingredients form `llm_judge_simulated`'s score?",
+      "options": ["Character edit distance and ELO rating, with no length term.", "Exact match and token count variance.", "KL divergence and perplexity.", "Overlap is 0.7; length penalty is 0.3."],
+      "correct": 3,
+      "explanation": "The simulated judge computes overlap at 0.7 weight and `min(1, len(pred)/len(expected))` at 0.3 weight."
     }
   ]
 }

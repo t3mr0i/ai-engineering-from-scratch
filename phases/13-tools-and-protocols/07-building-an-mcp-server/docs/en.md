@@ -630,6 +630,14 @@ else:
 ```
 
 
+## Build It
+
+Reconstruct **Building an MCP Server — Python + TypeScript SDKs** by following `call` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
+
+## Ship It
+
+Hand off `outputs/skill-mcp-server-scaffolder.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Model Context Protocol — Python SDK](https://github.com/modelcontextprotocol/python-sdk) — the reference Python implementation
@@ -640,10 +648,20 @@ else:
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement `initialize`, `tools/list`, `tools/call`, `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` methods.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Write a dispatch loop that reads JSON-RPC messages from stdin and writes responses to stdout.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Emit structured error responses per the JSON-RPC 2.0 spec and MCP's additional codes.
+Keep two runs side by side for **Building an MCP Server — Python + TypeScript SDKs**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
+
+1. **Read the first result.** From `code/`, run `python3 main.py` using the text "red fox". Follow `call`, `text`, `usage`. Expect the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text; capture the first printed shape, metric, status, or summary field and state which part supports **Implement `initialize`, `tools/list`, `tools/call`, `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` methods.**.
+2. **Run a two-value comparison.** Repeat the command after changing only the input text: use the text "red fox runs". Predict the direction of the change, then compare the two output values. Explain why **Write a dispatch loop that reads JSON-RPC messages from stdin and writes responses to stdout.** says the other inputs should stay fixed.
+3. **Try an adversarial fixture.** Feed the implementation an empty string. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Emit structured error responses per the JSON-RPC 2.0 spec and MCP's additional codes.** and record the exception text if the code rejects the case.
+4. **Write the operator note.** Open `outputs/skill-mcp-server-scaffolder.md` and add a worked example using the text "red fox". Include the input contract, one expected output field, and a named acceptance check for **Graduate a stdlib implementation to FastMCP (Python SDK) or the TypeScript SDK without rewriting tool logic.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement `initialize`, `tools/list`, `tools/call`, `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` methods,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Emit structured error responses per the JSON-RPC 2.0 spec and MCP's additional codes,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Building an MCP Server — Python + TypeScript SDKs** should contain:
+
+- the `python3 main.py` output for the text "red fox", with `call`, `text`, `usage` traced to the value or shape that supports **Implement `initialize`, `tools/list`, `tools/call`, `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` methods.**;
+- a before/after comparison for the input text, where the text "red fox runs" changes the observation in the direction predicted by **Write a dispatch loop that reads JSON-RPC messages from stdin and writes responses to stdout.**;
+- a recorded result for an empty string that matches the implementation’s validation or empty-result contract and explains the evidence for **Emit structured error responses per the JSON-RPC 2.0 spec and MCP's additional codes.**; and
+- an updated `outputs/skill-mcp-server-scaffolder.md` example with a concrete input, expected output field, and acceptance check tied to **Graduate a stdlib implementation to FastMCP (Python SDK) or the TypeScript SDK without rewriting tool logic.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to AI Use Case Design Across Cloud, Data Platform, and IoT Boundaries (2026)?",
+      "question": "Which architecture pattern does the factory-floor use case receive after combining its source boundaries?",
       "options": [
-        "Explain the production problem addressed by AI Use Case Design Across Cloud, Data Platform, and IoT Boundar...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Explain the production problem addressed by AI Use Case Design Across Cloud, Data Platform, and IoT Boundar...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of AI Use Case Design Across Cloud, Data Platform, and IoT Boundaries (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through AI Use Case Design Across Cloud, Data Platform, and IoT Boundaries (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Measure quality, cost, latency, and risk with explicit acceptance criteria",
-        "Treat one successful example as proof that every edge case works"
+        "CLOUD_FIRST_RAG, because the ERP history is in a private cloud",
+        "ON_PREMISES_INFERENCE, because latency alone determines the pattern",
+        "HYBRID_FEDERATED, because sovereignty, latency, and ownership boundaries are all present",
+        "EDGE_PREPROCESSED_RAG, because regulated ERP history removes ownership"
       ],
       "correct": 2,
-      "explanation": "“Measure quality, cost, latency, and risk with explicit acceptance criteria” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The OT sensor has sovereignty, latency, and ownership boundaries; the regulated ERP source adds sovereignty and ownership. The combined set contains all three, selecting HYBRID_FEDERATED."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits AI Use Case Design Across Cloud, Data Platform, and IoT Boundaries (2026)?",
+      "question": "What pattern does select_pattern choose for the regulatory-document use case with sovereignty and ownership but no latency boundary?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Identify failure modes and define a safe rollback or review path",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Identify failure modes and define a safe rollback or review path” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for AI Use Case Design Across Cloud, Data Platform, and IoT Boundaries (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the production problem addressed by AI Use Case Design Across Cloud, Data Platform, and IoT Boundar..."
+        "CLOUD_FIRST_RAG, because regulatory documents are batch data",
+        "EDGE_PREPROCESSED_RAG, because every personal source is streaming",
+        "HYBRID_FEDERATED, because ownership always implies an edge model",
+        "ON_PREMISES_INFERENCE, because sovereignty without latency selects the on-premises path"
       ],
       "correct": 3,
-      "explanation": "“Explain the production problem addressed by AI Use Case Design Across Cloud, Data Platform, and IoT Boundar...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The on-prem personal source creates sovereignty and ownership, but its 86,400-second refresh rate does not create latency. The selection rule maps sovereignty without latency to ON_PREMISES_INFERENCE."
+    },
+    {
+      "stage": "check",
+      "question": "Why does the customer-churn workload select CLOUD_FIRST_RAG despite having a latency boundary?",
+      "options": [
+        "It has no sovereignty boundary; ownership and latency alone fall through to CLOUD_FIRST_RAG",
+        "Latency boundaries are ignored for all CRM sources",
+        "The 60-second refresh rate is too slow to create any boundary, so no pattern is selected",
+        "CLOUD_FIRST_RAG is always preferred when two sources are present"
+      ],
+      "correct": 0,
+      "explanation": "The product-usage stream creates latency and both internal sources create ownership, but neither source is OT/on-prem or personal/regulated. With no sovereignty flag, select_pattern returns CLOUD_FIRST_RAG."
+    },
+    {
+      "stage": "check",
+      "question": "Is the factory-floor latency pipeline feasible under its 3,000 ms budget?",
+      "options": [
+        "No; its fixed edge stages alone exceed 3,000 ms",
+        "Yes; the 2,480 ms total allocation stays within the budget",
+        "No; any LLM inference stage makes an IoT pipeline infeasible",
+        "Yes only after removing the OT-to-IT bridge from the calculation"
+      ],
+      "correct": 1,
+      "explanation": "The six allocations sum to 2,480 ms (500+200+350+80+1200+150), below 3,000 ms. run_latency_model therefore reports the pipeline as within budget."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for AI Use Case Design Across Cloud, Data Platform, and IoT Boundaries (2026)?",
+      "question": "What is the binding constraint for customer-churn prediction when its 6,300 ms allocation exceeds a 5,000 ms budget?",
       "options": [
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Feature retrieval at 400 ms, because it is the first stage",
+        "LLM inference at 600 ms, because model calls are always fixed",
+        "Streaming event ingestion lag at 4,800 ms, the largest non-negotiable stage",
+        "RAG retrieval at 300 ms, because retrieval cannot be negotiated"
       ],
-      "correct": 0,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The total is 6,300 ms, and the overrun branch chooses the largest stage marked non-negotiable. Streaming event ingestion is fixed at 4,800 ms, so it is the binding constraint."
+    },
+    {
+      "stage": "post",
+      "question": "What pattern does a regulated on-prem source with a 3,600-second refresh rate receive by itself?",
+      "options": [
+        "HYBRID_FEDERATED, because every regulated source is also streaming",
+        "EDGE_PREPROCESSED_RAG, because on-prem always implies a latency boundary",
+        "CLOUD_FIRST_RAG, because ownership has no architectural consequence",
+        "ON_PREMISES_INFERENCE, because regulated sensitivity creates sovereignty without latency"
+      ],
+      "correct": 3,
+      "explanation": "Regulated sensitivity adds sovereignty and non-public data adds ownership. A 3,600-second refresh is not below the one-second latency threshold, so the on-premises pattern is selected."
     }
   ]
 }

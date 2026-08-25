@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the goal of POS tagging?",
+      "question": "What tag does predict_mft use for a token it never saw during training?",
       "options": [
-        "Detect sentiment",
-        "Translate the sentence — and applies unchanged even when the lesson's stated preconditions fail",
-        "Extract named entities",
-        "Assign a grammatical category (noun, verb, etc.) to each token"
-      ],
-      "correct": 3,
-      "explanation": "POS tagging labels each token with its part of speech."
-    },
-    {
-      "stage": "check",
-      "question": "Which tagset is the default for cross-lingual work?",
-      "options": [
-        "Penn Treebank",
-        "Stanford Dependencies, with no need to inspect intermediate results or test edge cases",
-        "Universal Dependencies",
-        "CoNLL-2003"
-      ],
-      "correct": 2,
-      "explanation": "Universal Dependencies provides a coarser, language-agnostic 17-tag set."
-    },
-    {
-      "stage": "check",
-      "question": "What does a bigram HMM POS tagger model?",
-      "options": [
-        "P(tags) only",
-        "Dependency parses",
-        "Embedding similarities, because one plausible output is sufficient production evidence",
-        "P(tag | previous tag) transitions plus P(word | tag) emissions, decoded with Viterbi"
-      ],
-      "correct": 3,
-      "explanation": "Bigram HMM uses tag transitions and word emissions; Viterbi finds the highest-probability sequence."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Viterbi algorithm compute for an HMM tagger?",
-      "options": [
-        "The single highest-probability tag sequence via dynamic programming over the tag lattice",
-        "The transition matrix",
-        "The marginal probability of each tag, before defining the measurement, acceptance threshold, or rollback path",
-        "The forward probabilities only"
+        "The globally most frequent tag returned as default_tag",
+        "The tag of the previous token in the sentence",
+        "A random tag from the training vocabulary",
+        "An empty string that marks a parse boundary"
       ],
       "correct": 0,
-      "explanation": "Viterbi finds the argmax sequence with O(n * |T|^2) dynamic programming."
+      "explanation": "train_mft counts all tags and returns all_tags.most_common(1)[0][0] as the unknown-word fallback."
+    },
+    {
+      "stage": "check",
+      "question": "What does train_hmm store in emissions[tag]?",
+      "options": [
+        "Counts of transitions from that tag to the next tag",
+        "Counts of lowercased tokens emitted by that tag",
+        "The final Viterbi path for each sentence",
+        "Only the sentence lengths for that tag"
+      ],
+      "correct": 1,
+      "explanation": "For each token/tag pair, train_hmm increments emissions[tag][token.lower()]."
+    },
+    {
+      "stage": "check",
+      "question": "Why does viterbi pass alpha to log_prob for an unseen token?",
+      "options": [
+        "Alpha changes the token into a verb",
+        "Alpha removes all transition probabilities from the path",
+        "Smoothing keeps the emission probability finite instead of taking log(0)",
+        "Smoothing guarantees the unseen token is the best tag"
+      ],
+      "correct": 2,
+      "explanation": "The numerator adds alpha and the denominator includes the vocabulary size, giving unknown emissions a small nonzero probability."
+    },
+    {
+      "stage": "check",
+      "question": "What does the Viterbi dynamic program optimize?",
+      "options": [
+        "The shortest sequence of words regardless of grammar",
+        "The most common tag independently at every position",
+        "The number of unique tokens in the sentence",
+        "The highest-scoring sequence of tags using emissions and tag transitions"
+      ],
+      "correct": 3,
+      "explanation": "Each state stores the best score ending in a tag and a backpointer to reconstruct the globally best path."
     },
     {
       "stage": "post",
-      "question": "What does dependency parsing produce?",
+      "question": "Which transition is used to initialize the first Viterbi column?",
       "options": [
-        "A tree where each word has one head word and a labeled grammatical relation",
-        "A flat BIO sequence",
-        "A constituency tree of NP/VP/PP labels — and applies unchanged even when the lesson's stated preconditions fail",
-        "A coreference chain"
+        "The transition from <BOS> to each candidate tag",
+        "The transition from <EOS> to each candidate tag",
+        "A transition from the first word to itself",
+        "No transition; only the emission is scored"
       ],
       "correct": 0,
-      "explanation": "Dependency parses give per-word (head, relation) edges; constituency parses give nested phrase structures."
+      "explanation": "train_hmm records a <BOS> transition for the first tag, and viterbi combines that log probability with the first emission."
     },
     {
       "stage": "post",
-      "question": "Why is the accuracy ceiling on PTB POS tagging around 97-98%?",
+      "question": "Why can a sequence model outperform most-frequent-tag tagging on an ambiguous word?",
       "options": [
-        "Models cannot exceed 98% in any task, with no need to inspect intermediate results or test edge cases",
-        "Universal Dependencies caps at 98%",
-        "Human annotators only agree about 97% of the time, so models above ~98% may be overfitting test data",
-        "Hardware limitations"
+        "It ignores the word identity and uses only sentence length",
+        "It scores the word's emission together with neighboring tag transitions",
+        "It assigns every unknown token the same noun tag",
+        "It replaces POS tags with character n-grams"
       ],
-      "correct": 2,
-      "explanation": "Annotator disagreement bounds the achievable accuracy; very high numbers often signal overfitting."
+      "correct": 1,
+      "explanation": "The HMM can prefer a tag whose surrounding transitions make sense even when the token's local evidence is ambiguous."
     }
   ]
 }

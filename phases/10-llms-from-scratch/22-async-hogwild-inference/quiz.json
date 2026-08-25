@@ -4,75 +4,45 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Async and Hogwild! Inference?",
-      "options": [
-        "Describe the three common parallel-LLM topologies (voting, sub-task, Hogwild!) and name which problems each...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Describe the three common parallel-LLM topologies (voting, sub-task, Hogwild!) and name which problems each...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Async and Hogwild! Inference?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "State the core Hogwild! setup: multiple workers, one shared KV cache, emergent coordination via self-prompting",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“State the core Hogwild! setup: multiple workers, one shared KV cache, emergent coordination via self-prompting” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Async and Hogwild! Inference?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Compute the wall-time speedup of Hogwild! as a function of worker count `N`, task-level parallelism `p`, an...",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "What shared state do the workers inspect in `run_hogwild` before choosing their next category?",
+      "options": ["A private cache copied once at startup.", "Only the target model's logits, with no token history.", "The same `SharedCache`, whose counts include earlier workers' category tokens.", "The scheduler's GPU-hour budget."],
       "correct": 2,
-      "explanation": "“Compute the wall-time speedup of Hogwild! as a function of worker count `N`, task-level parallelism `p`, an...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Each worker calls `decide_next_category` with the shared cache, so it can see how many A, B, noise, and coordination tokens already exist."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Async and Hogwild! Inference?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement a two-worker Hogwild! simulator on a toy problem and observe the emergent task division",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement a two-worker Hogwild! simulator on a toy problem and observe the emergent task division” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Async and Hogwild! Inference?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Describe the three common parallel-LLM topologies (voting, sub-task, Hogwild!) and name which problems each..."
-      ],
+      "question": "What behavior does `coordination_weight=0.0` model in this simulator?",
+      "options": ["Perfectly balanced A/B work at every step.", "Workers always sample the least-filled category.", "Workers stop emitting tokens.", "Workers usually keep their intended category A, producing redundant work."],
       "correct": 3,
-      "explanation": "“Describe the three common parallel-LLM topologies (voting, sub-task, Hogwild!) and name which problems each...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "With zero probability of the coordination branch, both workers retain their intended A category except for the small noise/coordination branches."
+    },
+    {
+      "stage": "check",
+      "question": "Which expression does `expected_speedup` use for a serial time `T_serial`?",
+      "options": ["`T_serial / (T_serial * ((1-p) + p/N) + c*N)`.", "`N / (p + c)`.", "`T_serial * p * N`.", "`T_serial - c/N` with no p term."],
+      "correct": 0,
+      "explanation": "The denominator is Amdahl's serial portion plus parallel portion divided over N workers, with coordination overhead c*N."
+    },
+    {
+      "stage": "check",
+      "question": "For `n_workers=2` and `step_budget=200`, how many entries does `run_hogwild` append to `SharedCache.tokens`?",
+      "options": ["200", "400", "2", "The number of unique categories only."],
+      "correct": 1,
+      "explanation": "Every worker appends one category per step, so 2 workers times 200 steps produces 400 cache entries."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Async and Hogwild! Inference?",
-      "options": [
-        "State the core Hogwild! setup: multiple workers, one shared KV cache, emergent coordination via self-prompting",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“State the core Hogwild! setup: multiple workers, one shared KV cache, emergent coordination via self-prompting” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "question": "What is the maximum unique work progress contributed by two workers in one simulator step?",
+      "options": ["One, because the cache stores one token total.", "Four, one for each cache category.", "Two, if the workers choose distinct A and B work categories.", "Zero, because redundant tokens never count."],
+      "correct": 2,
+      "explanation": "The step-level set counts at most one unique A and one unique B token, so two workers can contribute at most two units of work progress."
+    },
+    {
+      "stage": "post",
+      "question": "What makes Hogwild! different from simply running independent workers and voting afterward?",
+      "options": ["It requires every worker to have a different model.", "It never records generated tokens.", "It serializes all workers behind one global lock.", "Workers read and write one shared cache during generation, allowing live coordination."],
+      "correct": 3,
+      "explanation": "The defining mechanism is concurrent access to the shared token/KV context; workers can adapt to one another before a final vote."
     }
   ]
 }

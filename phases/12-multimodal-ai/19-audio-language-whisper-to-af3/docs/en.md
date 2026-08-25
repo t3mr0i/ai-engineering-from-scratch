@@ -110,6 +110,18 @@ Open SOTA (AF3) at 0.72; proprietary frontier ~0.78 (Gemini 2.5 Pro, Claude Opus
 
 
 
+## Build It
+
+Reconstruct **Audio-Language Models: the Whisper to Audio Flamingo 3 Arc** by following `synth_waveform` on a 160-sample 16 kHz waveform. Run `python3 main.py` and verify that the duration/frame count is zero or the documented validation path is used; no plausible speech label should be fabricated.
+
+## Use It
+
+Call `synth_waveform` from a small caller with a 160-sample 16 kHz waveform. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-audio-llm-pipeline-picker.md` with the command `python3 main.py`, the accepted input shape (a 160-sample 16 kHz waveform), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Radford et al. — Whisper (arXiv:2212.04356)](https://arxiv.org/abs/2212.04356)
@@ -120,10 +132,20 @@ Open SOTA (AF3) at 0.72; proprietary frontier ~0.78 (Gemini 2.5 Pro, Claude Opus
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Compute a log-Mel spectrogram from a waveform: windowing, FFT, filter banks, log transform.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compare encoder options: Whisper encoder, BEATs, AF-Whisper hybrid. When each wins.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build an audio Q-former: N learnable queries cross-attending to spectrogram patches.
+Work from the smallest fixture that the Audio-Language Models: the Whisper to Audio Flamingo 3 Arc demo already understands, then make one deliberate change and record what moved.
+
+1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using a 160-sample 16 kHz waveform. Follow `synth_waveform`, `window_frames`, `naive_dft_mag`. Expect the duration/frame count is zero or the documented validation path is used; no plausible speech label should be fabricated; capture the first printed shape, metric, status, or summary field and state which part supports **Compute a log-Mel spectrogram from a waveform: windowing, FFT, filter banks, log transform.**.
+2. **Perturb one field.** Repeat the command after changing only the waveform amplitude: use the same waveform with its amplitude halved. Predict the direction of the change, then compare the two output values. Explain why **Compare encoder options: Whisper encoder, BEATs, AF-Whisper hybrid. When each wins.** says the other inputs should stay fixed.
+3. **Check the failure boundary.** Feed the implementation an empty waveform (zero samples). Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Build an audio Q-former: N learnable queries cross-attending to spectrogram patches.** and record the exception text if the code rejects the case.
+4. **Make the result repeatable.** Open `outputs/skill-audio-llm-pipeline-picker.md` and add a worked example using a 160-sample 16 kHz waveform. Include the input contract, one expected output field, and a named acceptance check for **Explain cascaded (Whisper-then-LLM) vs end-to-end audio-LLM training: why end-to-end scales better for reasoning.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Compute a log-Mel spectrogram from a waveform: windowing, FFT, filter banks, log transform,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build an audio Q-former: N learnable queries cross-attending to spectrogram patches,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Audio-Language Models: the Whisper to Audio Flamingo 3 Arc** should contain:
+
+- the `python3 main.py` output for a 160-sample 16 kHz waveform, with `synth_waveform`, `window_frames`, `naive_dft_mag` traced to the value or shape that supports **Compute a log-Mel spectrogram from a waveform: windowing, FFT, filter banks, log transform.**;
+- a before/after comparison for the waveform amplitude, where the same waveform with its amplitude halved changes the observation in the direction predicted by **Compare encoder options: Whisper encoder, BEATs, AF-Whisper hybrid. When each wins.**;
+- a recorded result for an empty waveform (zero samples) that matches the implementation’s validation or empty-result contract and explains the evidence for **Build an audio Q-former: N learnable queries cross-attending to spectrogram patches.**; and
+- an updated `outputs/skill-audio-llm-pipeline-picker.md` example with a concrete input, expected output field, and acceptance check tied to **Explain cascaded (Whisper-then-LLM) vs end-to-end audio-LLM training: why end-to-end scales better for reasoning.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

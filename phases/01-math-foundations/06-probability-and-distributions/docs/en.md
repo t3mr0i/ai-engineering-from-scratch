@@ -312,6 +312,14 @@ division ever happens. `stable_softmax` fixes it the same way real libraries
 | Logits | "Raw model outputs" | Unnormalized scores before softmax. Named after the logistic function |
 | Sampling | "Drawing random values" | Generating values according to a probability distribution. How models generate output |
 
+## Build It
+
+Reconstruct **Probability and Distributions** by following `combinations` on an 8x8 synthetic image. Run `julia main.jl` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+
+## Ship It
+
+Hand off `outputs/skill-probability-reasoning.md` with the command `julia main.jl`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [3Blue1Brown: But what is the Central Limit Theorem?](https://www.youtube.com/watch?v=zeJD6dqJ5lo) - visual proof of why averages become normal
@@ -320,10 +328,20 @@ division ever happens. `stable_softmax` fixes it the same way real libraries
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement PMFs and PDFs from scratch for Bernoulli, categorical, Poisson, uniform, and normal distributions.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compute expected value, variance, and use the Central Limit Theorem to explain why Gaussians dominate.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build softmax and log-softmax functions with the numerical stability trick (subtract max logit).
+Keep two runs side by side for **Probability and Distributions**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
+
+1. **Read the first result.** From `code/`, run `julia main.jl` using an 8x8 synthetic image. Follow `combinations`, `conditional_probability`, `poisson_pmf`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **Implement PMFs and PDFs from scratch for Bernoulli, categorical, Poisson, uniform, and normal distributions**.
+2. **Run a two-value comparison.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Compute expected value, variance, and use the Central Limit Theorem to explain why Gaussians dominate** says the other inputs should stay fixed.
+3. **Try an adversarial fixture.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Build softmax and log-softmax functions with the numerical stability trick (subtract max logit)** and record the exception text if the code rejects the case.
+4. **Write the operator note.** Open `outputs/skill-probability-reasoning.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **Calculate cross-entropy loss from logits and connect it to negative log-likelihood**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.jl](../code/main.jl) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement PMFs and PDFs from scratch for Bernoulli, categorical, Poisson, uniform, and normal distributions,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build softmax and log-softmax functions with the numerical stability trick (subtract max logit),” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Probability and Distributions** should contain:
+
+- the `julia main.jl` output for an 8x8 synthetic image, with `combinations`, `conditional_probability`, `poisson_pmf` traced to the value or shape that supports **Implement PMFs and PDFs from scratch for Bernoulli, categorical, Poisson, uniform, and normal distributions**;
+- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Compute expected value, variance, and use the Central Limit Theorem to explain why Gaussians dominate**;
+- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Build softmax and log-softmax functions with the numerical stability trick (subtract max logit)**; and
+- an updated `outputs/skill-probability-reasoning.md` example with a concrete input, expected output field, and acceptance check tied to **Calculate cross-entropy loss from logits and connect it to negative log-likelihood**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

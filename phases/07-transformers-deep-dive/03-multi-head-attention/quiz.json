@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Multi-Head Attention?",
+      "question": "For the Python demo's 6 tokens, d_model=8, and two heads, what shape does multi_head_attention return?",
       "options": [
-        "Derive the mechanism behind Multi-Head Attention from tensor operations",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
+        "A 6×8 output matrix, plus one 6×6 weight matrix per head",
+        "A 2×6 output matrix, plus one 8×8 weight matrix",
+        "A 6×4 output matrix with no per-head weights",
+        "An 8×8 output matrix, plus one scalar per token"
       ],
       "correct": 0,
-      "explanation": "“Derive the mechanism behind Multi-Head Attention from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Each head has width 4 but the two head outputs are concatenated back to width 8; every head attends over the six token positions."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Multi-Head Attention?",
+      "question": "What does split_heads do to an 8-wide representation with n_heads=2?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the core component without relying on a transformer framework",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "It creates four matrices with two columns each",
+        "It creates two matrices with four columns each",
+        "It doubles the sequence length and keeps eight columns",
+        "It averages the two halves into one four-column matrix"
       ],
       "correct": 1,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "split_heads requires divisibility and slices the model dimension into n_heads equal d_head-sized matrices."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Multi-Head Attention?",
+      "question": "In grouped_query_attention with 4 query heads and 2 KV heads, how are the smaller K/V head sets used?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Trace tensor shapes and information flow through the implementation",
-        "Treat one successful example as proof that every edge case works"
+        "The two KV heads are averaged into one before attention",
+        "Every query head receives a unique KV head and two are discarded",
+        "Each KV head is reused by two query heads",
+        "K and V are replaced by the query heads"
       ],
       "correct": 2,
-      "explanation": "“Trace tensor shapes and information flow through the implementation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "repeat = n_heads // n_kv_heads = 2, and Kh_small[i // repeat] and Vh_small[i // repeat] reuse each KV head twice."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Multi-Head Attention?",
+      "question": "For n=6, d_model=8, n_heads=4, and n_kv_heads=2, what KV-cache element counts does the demo print for MHA and GQA?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate the computational and modeling trade-offs introduced by Multi-Head Attention",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate the computational and modeling trade-offs introduced by Multi-Head Attention” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Multi-Head Attention?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Derive the mechanism behind Multi-Head Attention from tensor operations"
+        "24 for MHA and 12 for GQA",
+        "48 for MHA and 96 for GQA",
+        "64 for both variants",
+        "96 for MHA and 48 for GQA"
       ],
       "correct": 3,
-      "explanation": "“Derive the mechanism behind Multi-Head Attention from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "With d_head=8/4=2, MHA stores 4*6*2*2=96 elements and GQA stores 2*6*2*2=48."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Multi-Head Attention?",
+      "question": "Why does scaled_dot_product_attention return a separate weight matrix for every head?",
       "options": [
-        "Implement the core component without relying on a transformer framework",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Each head has its own Q/K scores and can learn a different token-to-token pattern",
+        "The output projection cannot operate on a matrix with more than one row",
+        "All heads share one score matrix, so the list only stores copies for formatting",
+        "Weights are needed only to count parameters, not to form the output"
       ],
       "correct": 0,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The loop computes attention independently for each Q/K/V head and records each head's softmax matrix before concatenating the head outputs."
+    },
+    {
+      "stage": "post",
+      "question": "What condition does split_heads enforce before slicing the model dimension?",
+      "options": [
+        "The sequence length must equal n_heads",
+        "X.cols must be divisible by n_heads",
+        "n_heads must be a power of two",
+        "Every matrix entry must be positive"
+      ],
+      "correct": 1,
+      "explanation": "The assertion `X.cols % n_heads == 0` ensures that every head receives an integer d_head width."
     }
   ]
 }

@@ -155,6 +155,18 @@ graph TD
 
 
 
+## Build It
+
+Reconstruct **Learning Rate Schedules and Warmup** by following `constant_schedule` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Use It
+
+Call `constant_schedule` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-lr-schedule-advisor.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - Loshchilov & Hutter, "SGDR: Stochastic Gradient Descent with Warm Restarts" (2017) -- introduced cosine annealing and warm restarts
@@ -164,10 +176,20 @@ graph TD
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement constant, step decay, cosine annealing, warmup + cosine, and 1cycle learning rate schedules from scratch.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Demonstrate the three failure modes of learning rate selection: divergence (too high), stalling (too low), and oscillation (no decay).
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain why warmup is necessary for Adam-based optimizers and how it stabilizes early training.
+Work from the smallest fixture that the Learning Rate Schedules and Warmup demo already understands, then make one deliberate change and record what moved.
+
+1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using x=0.5 with the demo defaults. Follow `constant_schedule`, `step_decay_schedule`, `cosine_schedule`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Implement constant, step decay, cosine annealing, warmup + cosine, and 1cycle learning rate schedules from scratch**.
+2. **Perturb one field.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Demonstrate the three failure modes of learning rate selection: divergence (too high), stalling (too low), and oscillation (no decay)** says the other inputs should stay fixed.
+3. **Check the failure boundary.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Explain why warmup is necessary for Adam-based optimizers and how it stabilizes early training** and record the exception text if the code rejects the case.
+4. **Make the result repeatable.** Open `outputs/prompt-lr-schedule-advisor.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Compare convergence speed across all five schedules on the same task and select the appropriate one for a given training budget**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement constant, step decay, cosine annealing, warmup + cosine, and 1cycle learning rate schedules from scratch,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain why warmup is necessary for Adam-based optimizers and how it stabilizes early training,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Learning Rate Schedules and Warmup** should contain:
+
+- the `python3 main.py` output for x=0.5 with the demo defaults, with `constant_schedule`, `step_decay_schedule`, `cosine_schedule` traced to the value or shape that supports **Implement constant, step decay, cosine annealing, warmup + cosine, and 1cycle learning rate schedules from scratch**;
+- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Demonstrate the three failure modes of learning rate selection: divergence (too high), stalling (too low), and oscillation (no decay)**;
+- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Explain why warmup is necessary for Adam-based optimizers and how it stabilizes early training**; and
+- an updated `outputs/prompt-lr-schedule-advisor.md` example with a concrete input, expected output field, and acceptance check tied to **Compare convergence speed across all five schedules on the same task and select the appropriate one for a given training budget**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

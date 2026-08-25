@@ -183,6 +183,18 @@ The entire reason "3x3 all the way down" works (VGG, ResNet, ConvNeXt) is that t
 
 
 
+## Build It
+
+Reconstruct **Convolutions from Scratch** by following `pad2d` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+
+## Use It
+
+Call `pad2d` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-cnn-architect.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [A guide to convolution arithmetic for deep learning (Dumoulin & Visin, 2016)](https://arxiv.org/abs/1603.07285) — the definitive diagrams of padding/stride/dilation that every course quietly copies
@@ -192,14 +204,23 @@ The entire reason "3x3 all the way down" works (VGG, ResNet, ConvNeXt) is that t
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement 2D convolution from scratch using only NumPy, including the nested-loop version and a vectorised `im2col` version.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compute output spatial size for any combination of input size, kernel size, padding, and stride, and justify the `(H - K + 2P) / S + 1` formula.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Hand-design kernels (edge, blur, sharpen, Sobel) and explain why each one produces the pattern of activations it does.
+This lab follows `pad2d` and `output_size` on a controlled fixture; write down the value before changing the input.
+
+1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using an 8x8 synthetic image. Follow `pad2d`, `output_size`, `conv2d_naive`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **Implement 2D convolution from scratch using only NumPy, including the nested-loop version and a vectorised `im2col` version**.
+2. **Change the controlled parameter.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Compute output spatial size for any combination of input size, kernel size, padding, and stride, and justify the `(H - K + 2P) / S + 1` formula** says the other inputs should stay fixed.
+3. **Exercise the guard.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Hand-design kernels (edge, blur, sharpen, Sobel) and explain why each one produces the pattern of activations it does** and record the exception text if the code rejects the case.
+4. **Prepare the artifact for reuse.** Open `outputs/prompt-cnn-architect.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **Stack convolutions into a feature extractor and connect the depth-of-the-stack to the size of the receptive field**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement 2D convolution from scratch using only NumPy, including the nested-loop version and a vectorised `im2col` version,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Hand-design kernels (edge, blur, sharpen, Sobel) and explain why each one produces the pattern of activations it does,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Convolutions from Scratch** should contain:
 
+- the `python3 main.py` output for an 8x8 synthetic image, with `pad2d`, `output_size`, `conv2d_naive` traced to the value or shape that supports **Implement 2D convolution from scratch using only NumPy, including the nested-loop version and a vectorised `im2col` version**;
+- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Compute output spatial size for any combination of input size, kernel size, padding, and stride, and justify the `(H - K + 2P) / S + 1` formula**;
+- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Hand-design kernels (edge, blur, sharpen, Sobel) and explain why each one produces the pattern of activations it does**; and
+- an updated `outputs/prompt-cnn-architect.md` example with a concrete input, expected output field, and acceptance check tied to **Stack convolutions into a feature extractor and connect the depth-of-the-stack to the size of the receptive field**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
 ## Guided Demo
 
 Use the [10–15 minute guided demo](demo.md) to predict an invariant, run the canonical entrypoint, change one variable, and probe a failure case.

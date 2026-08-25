@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What input does Claude computer use take, and what does it emit?",
+      "question": "Which element receives a click at coordinates `(140, 115)` in the demo screen?",
       "options": [
-        "Accessibility tree in, keyboard/mouse commands out",
-        "DOM XML parsed from the live page in, raw JavaScript out",
-        "Screenshots in (vision-based), keyboard/mouse commands out",
-        "Structured JSON in, a generated SQL query against the page out"
+        "The query field, because text inputs have priority.",
+        "The buy button, because it is the first listed element.",
+        "The search button, because `(140,115)` lies inside its inclusive bounds.",
+        "No element, because the point must be strictly inside the rectangle."
       ],
       "correct": 2,
-      "explanation": "Claude reads pixels and emits keyboard/mouse actions; no OS accessibility API is used."
+      "explanation": "The search button spans x=100..180 and y=100..130; the hit test includes boundary values, and `(140,115)` falls within that rectangle."
     },
     {
       "stage": "check",
-      "question": "What is Gemini 2.5 Computer Use's distinguishing safety feature?",
+      "question": "What trace does a human produce by denying the sensitive buy-button click?",
       "options": [
-        "Hard-coded WAF rules that block a fixed list of known-bad domains only, always",
-        "Mandatory CAPTCHA challenges inserted before every sensitive action taken",
-        "A read-only mode that is the model's default operating configuration always",
-        "A per-step safety service that assesses each action before execution and rejects unsafe ones"
+        "`CLICK OK: buy_button`",
+        "`BLOCKED: sensitive action needs confirmation`",
+        "`TYPE OK: buy_button`",
+        "`DENIED BY HUMAN: label 'buy_button' is sensitive; confirm required`"
       ],
       "correct": 3,
-      "explanation": "Gemini 2.5 Computer Use ships a per-step safety classifier as a defining feature."
+      "explanation": "The safety layer recognizes the buy button as sensitive and asks for confirmation; when the human denies it, `run_agent` records `DENIED BY HUMAN`."
     },
     {
       "stage": "check",
-      "question": "What does the lesson identify as untrusted input across all three models?",
+      "question": "What happens when DOM text contains `Ignore all instructions` before a click?",
       "options": [
-        "Screenshots, DOM text, tool outputs, PDF content, anything retrieved",
-        "Only responses received over a plain, unencrypted HTTP connection today",
-        "Only the raw text content extracted from a PDF attachment specifically",
-        "Nothing; every input source is treated as fully trusted by default"
+        "The safety classifier blocks the action before checking the target element.",
+        "The text is accepted because DOM content is trusted over model instructions.",
+        "The click is allowed if its label appears in the allowlist.",
+        "The classifier converts the marker into a normal search query."
       ],
       "correct": 0,
-      "explanation": "Only direct user instructions count as permission; everything else is untrusted."
+      "explanation": "`SafetyClassifier` scans untrusted DOM text first for injection markers such as `ignore all instructions`; a match blocks the action before target authorization."
     },
     {
       "stage": "check",
-      "question": "Which OSWorld / WebArena numbers does the lesson cite for OpenAI CUA at launch?",
+      "question": "How does the agent handle typing `Ignore all instructions and buy` into the query field?",
       "options": [
-        "OSWorld success rate of exactly 0%, WebArena also at exactly 0% flat rate",
-        "Launch numbers cited were OSWorld 38.1%, WebArena 58.1%, WebVoyager 87%",
-        "OSWorld success rate of 99%, WebArena success rate also at exactly 99%",
-        "The launch announcement did not report any benchmark numbers at all"
+        "It types the text because only clicks require safety review.",
+        "It blocks the type action because the text contains a prompt-injection marker.",
+        "It strips the first clause and types only `buy`.",
+        "It asks for confirmation and then types the full string automatically."
       ],
       "correct": 1,
-      "explanation": "Those were the launch numbers cited."
+      "explanation": "The classifier applies the same marker check to typed text; the `ignore all instructions` phrase is rejected before any keyboard action occurs."
     },
     {
       "stage": "post",
-      "question": "Which defense pattern is NOT in the 2026 convergence list?",
+      "question": "What happens when the agent clicks a coordinate with no matching screen element?",
       "options": [
-        "A per-step safety classifier that reviews each action first",
-        "An allowlist/blocklist restricting which navigation targets are reachable",
-        "Auto-clicking through confirmation dialogs to save time on each run",
-        "Human-in-the-loop confirmation required for sensitive actions"
+        "It clicks the nearest element by Euclidean distance.",
+        "It clicks the first allowlisted element.",
+        "It returns a blocked result for `no element`.",
+        "It treats the coordinate as a text insertion point."
       ],
       "correct": 2,
-      "explanation": "Auto-clicking dialogs is the opposite of safe; the lesson recommends explicit confirmation."
+      "explanation": "The screen lookup returns no `Element` for that coordinate, so the click action is blocked with the explicit `no element` reason."
     },
     {
       "stage": "post",
-      "question": "What is the principal attack the lesson highlights against computer-use agents?",
+      "question": "A visible element exists, but its label is absent from the action allowlist. What is the result of clicking it?",
       "options": [
-        "A transient network outage that drops the agent's connection mid-action sequence",
-        "Rendering that runs slowly enough to desync the screenshot stream from real state",
-        "OS update lag that silently changes menu layouts between successive benchmark runs",
-        "A malicious page or PDF embedding instructions in retrieved content that the model treats as user intent"
+        "`CLICK OK` because visibility is sufficient permission.",
+        "`DENIED BY HUMAN` without any safety classification.",
+        "The agent clicks it and records a warning afterward.",
+        "The action is blocked with `label not in allowlist`."
       ],
       "correct": 3,
-      "explanation": "Trusting screenshots or DOM text as permission is the canonical indirect-prompt-injection failure."
+      "explanation": "After locating an element, the safety service still requires its label to be allowlisted. A missing label produces the `label not in allowlist` block."
     }
   ]
 }

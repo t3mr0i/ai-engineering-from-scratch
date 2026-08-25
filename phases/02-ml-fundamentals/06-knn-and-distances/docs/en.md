@@ -298,6 +298,14 @@ else:
 | Approximate nearest neighbor | Algorithms (HNSW, LSH, IVF) that find approximately nearest points much faster than exact search |
 | Voronoi diagram | The partition of space where each region contains all points closer to one training point than any other. K=1 KNN produces Voronoi boundaries |
 
+## Build It
+
+Reconstruct **K-Nearest Neighbors and Distances** by following `l2_distance` on the two-element input [1.0, 2.0]. Run `python3 main.py` and verify that the printed shape/value follows the stated formula, and the zero case does not produce an unexplained finite substitute for an undefined quantity.
+
+## Ship It
+
+Hand off `outputs/prompt-distance-metric-advisor.md` with the command `python3 main.py`, the accepted input shape (the two-element input [1.0, 2.0]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Cover & Hart: Nearest Neighbor Pattern Classification (1967)](https://ieeexplore.ieee.org/document/1053964) - the foundational KNN paper proving it has error rate at most twice the Bayes optimal
@@ -308,10 +316,20 @@ else:
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement KNN classification and regression from scratch with configurable K and distance-weighted voting.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compare L1, L2, cosine, and Minkowski distance metrics and select the appropriate one for a given data type.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain the curse of dimensionality and demonstrate why KNN degrades in high-dimensional spaces.
+Use `l2_distance` as the trace: start from the two-element input [1.0, 2.0], keep the raw output, and tie each observation to a named objective.
+
+1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using the two-element input [1.0, 2.0]. Follow `l2_distance`, `l1_distance`, `cosine_distance`. Expect the printed shape/value follows the stated formula, and the zero case does not produce an unexplained finite substitute for an undefined quantity; capture the first printed shape, metric, status, or summary field and state which part supports **Implement KNN classification and regression from scratch with configurable K and distance-weighted voting**.
+2. **Vary one named input.** Repeat the command after changing only the second input value: use the same input with the second value changed to 3.0. Predict the direction of the change, then compare the two output values. Explain why **Compare L1, L2, cosine, and Minkowski distance metrics and select the appropriate one for a given data type** says the other inputs should stay fixed.
+3. **Probe the empty case.** Feed the implementation the zero vector [0.0, 0.0]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Explain the curse of dimensionality and demonstrate why KNN degrades in high-dimensional spaces** and record the exception text if the code rejects the case.
+4. **Package a usable handoff.** Open `outputs/prompt-distance-metric-advisor.md` and add a worked example using the two-element input [1.0, 2.0]. Include the input contract, one expected output field, and a named acceptance check for **Build a KD-tree for efficient nearest neighbor search and analyze when it outperforms brute-force**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement KNN classification and regression from scratch with configurable K and distance-weighted voting,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain the curse of dimensionality and demonstrate why KNN degrades in high-dimensional spaces,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **K-Nearest Neighbors and Distances** should contain:
+
+- the `python3 main.py` output for the two-element input [1.0, 2.0], with `l2_distance`, `l1_distance`, `cosine_distance` traced to the value or shape that supports **Implement KNN classification and regression from scratch with configurable K and distance-weighted voting**;
+- a before/after comparison for the second input value, where the same input with the second value changed to 3.0 changes the observation in the direction predicted by **Compare L1, L2, cosine, and Minkowski distance metrics and select the appropriate one for a given data type**;
+- a recorded result for the zero vector [0.0, 0.0] that matches the implementation’s validation or empty-result contract and explains the evidence for **Explain the curse of dimensionality and demonstrate why KNN degrades in high-dimensional spaces**; and
+- an updated `outputs/prompt-distance-metric-advisor.md` example with a concrete input, expected output field, and acceptance check tied to **Build a KD-tree for efficient nearest neighbor search and analyze when it outperforms brute-force**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

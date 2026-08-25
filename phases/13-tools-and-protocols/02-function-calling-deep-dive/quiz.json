@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Function Calling Deep Dive — OpenAI, Anthropic, Gemini?",
+      "question": "What shape does to_openai produce for the WEATHER definition?",
       "options": [
-        "State the three shape differences between OpenAI, Anthropic, and Gemini function-calling payloads (declarat...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "type=function with parameters and strict",
+        "A flat object with input_schema and no function wrapper",
+        "A functionDeclarations array with an upper-case type field",
+        "A JSON string containing only the weather arguments"
       ],
       "correct": 0,
-      "explanation": "“State the three shape differences between OpenAI, Anthropic, and Gemini function-calling payloads (declarat...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The OpenAI adapter wraps the definition as type=function and places the schema and strict flag under function."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Function Calling Deep Dive — OpenAI, Anthropic, Gemini?",
+      "question": "How does the sample argument payload differ between OpenAI and Anthropic parsing?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Translate one tool declaration across all three provider formats and predict where strict-mode constraints...",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Both providers always return a Python dict encoded as YAML",
+        "OpenAI args are JSON text; Anthropic input is a dict",
+        "OpenAI omits arguments and Anthropic supplies a JSON string",
+        "Anthropic uppercases every argument value before parsing"
       ],
       "correct": 1,
-      "explanation": "“Translate one tool declaration across all three provider formats and predict where strict-mode constraints...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The OpenAI sample has arguments as a JSON string, while Anthropic tool_use already exposes input as a dictionary."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Function Calling Deep Dive — OpenAI, Anthropic, Gemini?",
+      "question": "Which transformation is specific to to_gemini?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Use `tool_choice` in each provider to force, forbid, or auto-pick tool calls",
-        "Treat one successful example as proof that every edge case works"
+        "It adds a strict boolean and rejects every optional property",
+        "It changes the function name to a numeric id",
+        "Uppercases scalar type strings; drops additionalProperties",
+        "It turns all enum values into null"
       ],
       "correct": 2,
-      "explanation": "“Use `tool_choice` in each provider to force, forbid, or auto-pick tool calls” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The Gemini adapter maps scalar JSON Schema type names to Gemini's upper-case form and deliberately drops additionalProperties."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Function Calling Deep Dive — OpenAI, Anthropic, Gemini?",
+      "question": "How does the adapter force one named function for Gemini?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Know the per-provider hard limits (tool count, schema depth, argument length) and the error signatures each...",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Know the per-provider hard limits (tool count, schema depth, argument length) and the error signatures each...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Function Calling Deep Dive — OpenAI, Anthropic, Gemini?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "State the three shape differences between OpenAI, Anthropic, and Gemini function-calling payloads (declarat..."
+        "It sends mode NONE with an empty allow-list",
+        "It sends mode AUTO and lets the model choose",
+        "It sends the Anthropic tool/name object unchanged",
+        "ANY plus allowed_function_names"
       ],
       "correct": 3,
-      "explanation": "“State the three shape differences between OpenAI, Anthropic, and Gemini function-calling payloads (declarat...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Gemini's forced choice uses functionCallingConfig mode ANY plus an allowed_function_names list containing the requested function."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Function Calling Deep Dive — OpenAI, Anthropic, Gemini?",
+      "question": "What normalized call should parse_openai produce for the bundled get_weather sample?",
       "options": [
-        "Translate one tool declaration across all three provider formats and predict where strict-mode constraints...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "call_abc123 -> get_weather(Bengaluru, celsius)",
+        "Call id weather-0, name weather, with no arguments",
+        "Call id call_abc123, name get_time, with timezone UTC",
+        "A refusal because strict mode forbids JSON arguments"
       ],
       "correct": 0,
-      "explanation": "“Translate one tool declaration across all three provider formats and predict where strict-mode constraints...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The sample response names get_weather, uses id call_abc123, and its JSON arguments decode to city Bengaluru and units celsius."
+    },
+    {
+      "stage": "post",
+      "question": "Which restriction is part of the lesson's strict OpenAI schema guidance?",
+      "options": [
+        "Strict mode allows arbitrary $ref chains and overlapping oneOf branches",
+        "Strict mode avoids $ref and overlapping oneOf branches in the schema",
+        "Strict mode requires every tool to use Anthropic's input_schema key",
+        "Strict mode disables enum validation for string properties"
+      ],
+      "correct": 1,
+      "explanation": "The documented strict subset does not support $ref or overlapping oneOf constructs, so schemas must stay within that subset."
     }
   ]
 }

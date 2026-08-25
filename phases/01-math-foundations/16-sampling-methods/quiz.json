@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does temperature < 1.0 do to a language model's output distribution?",
+      "question": "For exponential sampling with lambda=1 and U=0.5, what does the inverse-CDF formula -ln(U)/lambda return?",
       "options": [
-        "Makes the distribution more uniform (more random) — and applies unchanged even when the lesson's stated preconditions fail",
-        "Sharpens the distribution, making the highest-probability token more likely",
-        "Removes all tokens except the top one",
-        "Has no effect on the output"
-      ],
-      "correct": 1,
-      "explanation": "Temperature < 1.0 divides logits by a number less than 1, which amplifies differences between logits. After softmax, the highest-probability token gets an even larger share. Temperature approaches 0 gives greedy (argmax) decoding."
-    },
-    {
-      "stage": "check",
-      "question": "What is the key difference between top-k and top-p (nucleus) sampling?",
-      "options": [
-        "Top-k is faster than top-p",
-        "Top-k keeps a fixed number of tokens; top-p keeps a variable number based on cumulative probability",
-        "Top-p only works with temperature = 1.0",
-        "Top-k works on logits while top-p works on probabilities, with no need to inspect intermediate results or test edge cases"
-      ],
-      "correct": 1,
-      "explanation": "Top-k always keeps exactly k tokens regardless of the probability distribution. Top-p adaptively keeps the smallest set of tokens whose cumulative probability exceeds p. When the model is confident, top-p keeps few tokens; when uncertain, it keeps many."
-    },
-    {
-      "stage": "check",
-      "question": "Why can't you backpropagate through a standard sampling operation z ~ N(mu, sigma^2)?",
-      "options": [
-        "Normal distributions don't have gradients",
-        "The sampling operation is non-deterministic and has no well-defined derivative with respect to mu and sigma",
-        "PyTorch doesn't support normal distributions, because one plausible output is sufficient production evidence",
-        "The gradient is always exactly zero"
-      ],
-      "correct": 1,
-      "explanation": "Sampling introduces a stochastic discontinuity — you can't compute d(sample)/d(mu) for a random draw. The reparameterization trick solves this by writing z = mu + sigma * epsilon (where epsilon ~ N(0,1)), making z a deterministic, differentiable function of mu and sigma."
-    },
-    {
-      "stage": "check",
-      "question": "In Metropolis-Hastings MCMC, what happens if the proposal standard deviation is set much too large?",
-      "options": [
-        "The chain converges faster because it takes bigger steps",
-        "Most proposals land in low-probability regions and are rejected, so the chain barely moves",
-        "The stationary distribution changes to a uniform distribution, before defining the measurement, acceptance threshold, or rollback path",
-        "The burn-in period becomes zero"
-      ],
-      "correct": 1,
-      "explanation": "With a large proposal standard deviation, proposed points are far from the current position and likely land in low-probability regions. These are rejected, causing the chain to stay stuck at the current point. The optimal acceptance rate is about 23% for high-dimensional Gaussian proposals."
-    },
-    {
-      "stage": "post",
-      "question": "In rejection sampling, what happens to the acceptance rate as the dimensionality of the target distribution increases?",
-      "options": [
-        "It stays constant regardless of dimension",
-        "It increases because there are more dimensions to accept in — and applies unchanged even when the lesson's stated preconditions fail",
-        "It drops exponentially because most of the proposal volume gets rejected",
-        "It approaches 50% in all cases"
+        "0.5",
+        "1.0",
+        "About 0.693",
+        "About 1.693"
       ],
       "correct": 2,
-      "explanation": "In high dimensions, the volume of the proposal distribution that overlaps with the target distribution shrinks exponentially. The bound M grows, and the acceptance rate (1/M) drops exponentially. This is the curse of dimensionality for rejection sampling."
+      "explanation": "-ln(0.5) = ln(2), approximately 0.693. The code's uniform draw is transformed to the exponential tail by this inverse CDF."
+    },
+    {
+      "stage": "check",
+      "question": "In rejection_sample, when is a proposed x accepted?",
+      "options": [
+        "Whenever target_pdf(x) is smaller than proposal_pdf(x)",
+        "Only when x is the proposal distribution's mean",
+        "When the uniform draw is above M times the target density",
+        "When a uniform draw is below target_pdf(x)/(M*proposal_pdf(x))"
+      ],
+      "correct": 3,
+      "explanation": "M must bound the target-to-proposal density ratio. The acceptance probability corrects the proposal so accepted points follow the target."
+    },
+    {
+      "stage": "check",
+      "question": "What weight does importance_sampling_estimate assign to a proposal sample x?",
+      "options": [
+        "target_pdf(x) / proposal_pdf(x)",
+        "proposal_pdf(x) / target_pdf(x)",
+        "The same weight for every sample",
+        "The rank of x after sorting"
+      ],
+      "correct": 0,
+      "explanation": "The target-to-proposal ratio reweights samples toward the desired distribution. The code uses those weights in both unnormalized and self-normalized estimates."
+    },
+    {
+      "stage": "check",
+      "question": "What is the main effect of lowering temperature in temperature_distribution?",
+      "options": [
+        "It makes every token equally likely",
+        "It sharpens the softmax toward the largest logit",
+        "It removes the largest logit before sampling",
+        "It increases the vocabulary size"
+      ],
+      "correct": 1,
+      "explanation": "The logits are divided by temperature before softmax. A lower positive temperature magnifies differences, concentrating probability on high logits."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Sampling Methods?",
+      "question": "How does top-p sampling choose its candidate set?",
       "options": [
-        "Build temperature, top-k, and top-p (nucleus) sampling for language model token generation",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "It always keeps exactly p tokens",
+        "It keeps tokens with probability below p",
+        "It takes the highest-probability tokens until their cumulative mass reaches p",
+        "It samples uniformly from the entire vocabulary before sorting"
       ],
-      "correct": 0,
-      "explanation": "“Build temperature, top-k, and top-p (nucleus) sampling for language model token generation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The implementation sorts probabilities, adds tokens until cumulative mass reaches the threshold, then renormalizes the selected probabilities."
+    },
+    {
+      "stage": "post",
+      "question": "For z=mu+sigma*epsilon, what are dz/dmu and dz/dsigma in the reparameterization trick?",
+      "options": [
+        "epsilon and 1",
+        "mu and sigma",
+        "0 and 0 because epsilon is random",
+        "1 and epsilon"
+      ],
+      "correct": 3,
+      "explanation": "The random source epsilon is treated as an external draw. Differentiating z=mu+sigma*epsilon gives 1 with respect to mu and epsilon with respect to sigma."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does ReAct's prompt grow quadratically with depth?",
+      "question": "In the built ReWOO fixture, what does evidence `E3` contain after `round_million` processes `E2`?",
       "options": [
-        "The model has to re-tokenize its own weights from scratch before every single step",
-        "Tool schemas get duplicated into the prompt once for every single tool call made",
-        "The provider bills per byte transmitted instead of per token, so long prompts cost far more",
-        "Each step carries the full prior context, including every previous thought and observation"
-      ],
-      "correct": 3,
-      "explanation": "ReAct re-includes prior thoughts and observations on each step, making total prompt length grow with the square of the depth."
-    },
-    {
-      "stage": "check",
-      "question": "What is the three-role split that defines ReWOO?",
-      "options": [
-        "Reader, Writer, Reviewer",
-        "Planner, Workers, Solver",
-        "Actor, Evaluator, Reflector",
-        "Generator, Critic, Optimizer"
-      ],
-      "correct": 1,
-      "explanation": "ReWOO separates a Planner that emits a DAG, Workers that fetch evidence, and a Solver that composes the final answer."
-    },
-    {
-      "stage": "check",
-      "question": "What headline numbers does the paper report for ReWOO vs ReAct on HotpotQA?",
-      "options": [
-        "About 5x fewer tokens and roughly +4 absolute accuracy points on HotpotQA versus ReAct",
-        "About 2x more tokens and roughly +10 accuracy points on HotpotQA versus ReAct",
-        "The same token count as ReAct, with only about +1 accuracy point of improvement overall",
-        "About 10x fewer tokens but roughly -2 accuracy points on HotpotQA versus ReAct"
+        "11 million",
+        "11.2 million metro",
+        "Paris",
+        "unknown"
       ],
       "correct": 0,
-      "explanation": "ReWOO reports about a 5x token reduction and +4 absolute accuracy on HotpotQA compared to ReAct."
+      "explanation": "`E2` is `11.2 million metro`; `rounded_million` extracts 11.2 and returns `11 million`."
     },
     {
       "stage": "check",
-      "question": "What does a placeholder like #E1 inside a ReWOO plan node mean?",
+      "question": "What does `resolve_references(\"#E2\", {\"E2\": \"11.2 million metro\"})` return?",
       "options": [
-        "An error code that worker 1 returns to the runtime when its tool call fails",
-        "A retry counter that tracks how many times evidence fetching has failed so far already",
-        "A reference substituted at dispatch time with the output of an earlier worker node",
-        "A version identifier the Planner attaches to every DAG it emits for the Solver"
+        "#E2",
+        "11.2 million metro",
+        "E2: 11.2 million metro",
+        "11 million"
+      ],
+      "correct": 1,
+      "explanation": "The reference regex replaces `#E2` with the evidence value for key `E2`; it does not perform rounding itself."
+    },
+    {
+      "stage": "check",
+      "question": "What does `topological` raise when every pending plan step still has an unresolved reference?",
+      "options": [
+        "ValueError(\"bad tool\")",
+        "KeyError(\"E1\")",
+        "RuntimeError(\"cyclic plan or unresolved reference\")",
+        "It silently drops the blocked steps."
       ],
       "correct": 2,
-      "explanation": "Plan nodes use evidence references like #E1, #E2 that the executor substitutes with the output of upstream workers."
+      "explanation": "With no progress in a pass, `topological` raises `RuntimeError` using the message `cyclic plan or unresolved reference`."
+    },
+    {
+      "stage": "check",
+      "question": "How does `run_workers` make a dependent worker see an earlier result?",
+      "options": [
+        "It asks the Solver to rewrite every argument after all workers finish.",
+        "It executes every step in the original list and leaves `#E1` literal.",
+        "It runs all tools concurrently and merges results by list position.",
+        "It topologically orders the plan, resolves references from `evidence`, then dispatches each tool."
+      ],
+      "correct": 3,
+      "explanation": "For each ordered step, `run_workers` resolves its argument strings against the evidence map before calling `ToolRegistry.dispatch`."
     },
     {
       "stage": "post",
-      "question": "Why does ReWOO localize failures better than ReAct?",
+      "question": "What does `rounded_million(\"population 11.2 million metro\")` return?",
       "options": [
-        "An error in a worker becomes a string the Solver sees alongside the original plan, so degradation is per-node not per-step",
-        "Workers crash the entire run the moment any single tool call raises an error, unlike ReAct's interleaved loop",
-        "The Planner re-emits a brand-new DAG from scratch after every single worker error that ever occurs mid-run",
-        "Every failed worker call is automatically retried up to ten times before it ever counts as a failure"
+        "11 million",
+        "11.2 million",
+        "12 million",
+        "population unknown"
       ],
       "correct": 0,
-      "explanation": "Per-node failure with the original plan in context lets the Solver degrade gracefully rather than reasoning mid-stream out of an error."
+      "explanation": "The regex extracts `11.2`, and Python rounding formats that value as `11 million`."
     },
     {
       "stage": "post",
-      "question": "Which task shape best fits Plan-and-Act over plain ReWOO?",
+      "question": "What does `ScriptedSolver(\"answer: {E1}\").solve(...)` use for `{E1}`?",
       "options": [
-        "A two-step factoid lookup that a single ReAct call can already answer",
-        "A 40-step web or mobile navigation trajectory where a single ReAct run loses coherence",
-        "A single-turn classification task with no tool calls involved at all",
-        "A pure arithmetic question that a calculator tool can answer in one call"
+        "The original user question, regardless of the evidence map.",
+        "The value stored under key `E1` in the evidence dictionary.",
+        "The text of the full `Plan` object, including all tool names.",
+        "A fresh tool call made by the Solver itself."
       ],
       "correct": 1,
-      "explanation": "Plan-and-Act is built for long-horizon (over 30 steps) web and mobile agents where a single ReAct trajectory loses coherence."
+      "explanation": "`solve` calls `self.template.format(**evidence)`, so placeholders are filled directly from worker evidence."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the goal of coreference resolution?",
+      "question": "What kind of mention does extract_mentions create for the token \"He\"?",
       "options": [
-        "Cluster all mentions (named, nominal, pronominal) that refer to the same real-world entity",
-        "Tag parts of speech",
-        "Extract relations",
-        "Translate pronouns to nouns — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 0,
-      "explanation": "Coref clusters mention spans that all refer to the same entity."
-    },
-    {
-      "stage": "check",
-      "question": "Which type of expression is a 'nominal' mention?",
-      "options": [
-        "A proper noun only",
-        "A noun phrase such as 'the CEO' or 'the company'",
-        "A pronoun like 'she', with no need to inspect intermediate results or test edge cases",
-        "A verb"
-      ],
-      "correct": 1,
-      "explanation": "Nominal mentions are noun phrases like 'the company'; pronominal mentions are pronouns."
-    },
-    {
-      "stage": "check",
-      "question": "What is the modern (Lee et al., 2017) coref architecture?",
-      "options": [
-        "BM25 retrieval",
-        "Rule-based syntactic parsing only, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "Decision trees",
-        "End-to-end span-based: enumerate spans, score mentions, then score antecedent probabilities and cluster greedily"
-      ],
-      "correct": 3,
-      "explanation": "End-to-end neural coref enumerates spans and learns mention + antecedent scoring jointly."
-    },
-    {
-      "stage": "check",
-      "question": "What does CoNLL F1 average?",
-      "options": [
-        "F1 across languages",
-        "MUC, B-cubed, and CEAF-phi4 F1 scores",
-        "Token and span F1",
-        "Precision and recall, before defining the measurement, acceptance threshold, or rollback path"
-      ],
-      "correct": 1,
-      "explanation": "CoNLL F1 is the mean of MUC, B-cubed, and CEAF-phi4 metrics."
-    },
-    {
-      "stage": "post",
-      "question": "What is bridging anaphora?",
-      "options": [
-        "A mistranslation",
-        "An implicit reference like 'the wheels' implying the wheels of a previously mentioned car",
-        "A pronoun before its referent",
-        "A pronoun without an antecedent — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "Bridging links a mention to a part-of or related entity that was implied but not explicitly stated."
-    },
-    {
-      "stage": "post",
-      "question": "Why is LLM-only coref unreliable on long documents?",
-      "options": [
-        "LLMs cannot read text, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "Tokenizers fail",
-        "Single-call LLMs over-merge or silently drop mentions across 50+ paragraphs; require sliding-window plus merge",
-        "Coref requires a CFG"
+        "A nominal mention with head company",
+        "An organization mention with plural features",
+        "A pronoun mention with masculine singular features",
+        "No mention because pronouns are ignored"
       ],
       "correct": 2,
-      "explanation": "Long-doc LLM coref degrades; sliding-window with cross-window merging mitigates."
+      "explanation": "PRONOUNS maps he to gender m, number sg, and type prp."
+    },
+    {
+      "stage": "check",
+      "question": "What gender does infer_gender(\"Jordan Lee\") return?",
+      "options": [
+        "m, because every two-word name is masculine",
+        "f, because the last name is Lee",
+        "n, because names are always treated as objects",
+        "u, because Jordan is not in the hand-written first-name lists"
+      ],
+      "correct": 3,
+      "explanation": "The helper examines the first token and returns u when it is absent from FEMALE_FIRST and MALE_FIRST."
+    },
+    {
+      "stage": "check",
+      "question": "What agreement score does a singular unknown-gender pronoun receive against a singular candidate?",
+      "options": [
+        "2.0",
+        "1.0",
+        "0.0",
+        "-2.0"
+      ],
+      "correct": 0,
+      "explanation": "Matching number adds 1.0, and an unknown gender on either side adds another 1.0."
+    },
+    {
+      "stage": "check",
+      "question": "What does recency_score favor among otherwise similar antecedents?",
+      "options": [
+        "The candidate that appears earliest in the document",
+        "A candidate with a smaller sentence and token distance from the pronoun",
+        "A candidate with the longest surface string",
+        "A candidate that has never been extracted as a mention"
+      ],
+      "correct": 1,
+      "explanation": "The score is the negative distance from mention span to candidate span, so nearer previous mentions score higher."
+    },
+    {
+      "stage": "post",
+      "question": "Which antecedents can resolve consider for a pronoun?",
+      "options": [
+        "Only mentions in the same token position",
+        "Every later mention in the document",
+        "Earlier named-entity or nominal mentions, not earlier pronouns",
+        "Only candidates whose text is exactly the pronoun"
+      ],
+      "correct": 2,
+      "explanation": "The candidates comprehension scans mentions[:i] and keeps types ne and nominal."
+    },
+    {
+      "stage": "post",
+      "question": "How does clusters join two mentions after resolve links them?",
+      "options": [
+        "It concatenates their strings and sorts characters",
+        "It deletes the pronoun from the mention list",
+        "It assigns every mention to one global cluster",
+        "Union-find links their object IDs and groups mentions by the resulting root"
+      ],
+      "correct": 3,
+      "explanation": "clusters initializes one parent per mention, unions linked pairs, and collects texts sharing a root."
     }
   ]
 }

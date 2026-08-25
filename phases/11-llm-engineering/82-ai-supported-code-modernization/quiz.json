@@ -1,78 +1,78 @@
 {
   "lesson": "82-ai-supported-code-modernization",
-  "title": "Analyzing Legacy Code with AI: The Refactoring Slice Framework (2026)",
+  "title": "AI-Supported Code Modernization",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Analyzing Legacy Code with AI: The Refactoring Slice Framework (2026)?",
+      "question": "What evidence should a legacy-module readiness score combine before an AI refactor is attempted?",
       "options": [
-        "Explain the production problem addressed by Analyzing Legacy Code with AI: The Refactoring Slice Framework...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Coupling, test coverage, secret and config hygiene, dependency health, and change frequency",
+        "Only lines of code and the age of the programming language",
+        "A model-generated refactor plan without current failure-path tests",
+        "The number of developers who are interested in modernising the module"
       ],
       "correct": 0,
-      "explanation": "“Explain the production problem addressed by Analyzing Legacy Code with AI: The Refactoring Slice Framework...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "score_module turns five operational dimensions into 0-2 scores. The result exposes whether a slice is isolated and verifiable enough to cut safely."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Analyzing Legacy Code with AI: The Refactoring Slice Framework (2026)?",
+      "question": "What tier does score_module assign to payment_processor.py in the demo?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Amber, because its high risk makes it a middle-priority slice",
+        "Red, because all five dimensions score zero for the demo inputs",
+        "Green, because risk reduction is 5/5",
+        "Green, because the module has seven callers to validate the refactor"
       ],
       "correct": 1,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Seven callers, low coverage without failure-path integration tests, a hardcoded secret, a CVE, and 4.5 commits per week each score zero. The total is 0 and the tier is Red."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Analyzing Legacy Code with AI: The Refactoring Slice Framework (2026)?",
+      "question": "What tier does the report_exporter.py demo module receive?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Measure quality, cost, latency, and risk with explicit acceptance criteria",
-        "Treat one successful example as proof that every edge case works"
+        "Red",
+        "Amber",
+        "Green",
+        "Unclassified until a slice is chosen"
       ],
       "correct": 2,
-      "explanation": "“Measure quality, cost, latency, and risk with explicit acceptance criteria” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "One caller, 75% branch coverage with failure paths, boundary-injected config, supported dependencies, and 0.3 commits per week all score 2. The total is 10/10, which is Green."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Analyzing Legacy Code with AI: The Refactoring Slice Framework (2026)?",
+      "question": "Why does prioritize_slices place payment_processor.py after the other demo candidates?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Identify failure modes and define a safe rollback or review path",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Identify failure modes and define a safe rollback or review path” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Analyzing Legacy Code with AI: The Refactoring Slice Framework (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the production problem addressed by Analyzing Legacy Code with AI: The Refactoring Slice Framework..."
+        "Its combined score is highest, so the sort deliberately ignores its tier",
+        "It has no risk reduction estimate",
+        "It is alphabetically last among the candidate modules",
+        "Red-tier modules receive a large ordering penalty and are deferred until stabilised"
       ],
       "correct": 3,
-      "explanation": "“Explain the production problem addressed by Analyzing Legacy Code with AI: The Refactoring Slice Framework...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The prioritizer subtracts 1000 from the sort key for a Red module. This keeps a high-risk, high-risk-reduction slice behind safer Amber or Green slices."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Analyzing Legacy Code with AI: The Refactoring Slice Framework (2026)?",
+      "question": "What readiness tier does auth_middleware.py receive with the demo inputs?",
       "options": [
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Amber, total 5/10",
+        "Green, total 8/10",
+        "Red, total 4/10",
+        "Green, total 10/10"
       ],
       "correct": 0,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Its five dimensions score 1 each: three callers, 62% coverage, centralised but not boundary-injected config, an EOL dependency, and moderate churn. The total is 5, the lower edge of Amber."
+    },
+    {
+      "stage": "post",
+      "question": "What sequence does the demo's prioritizer recommend?",
+      "options": [
+        "payment_processor.py, report_exporter.py, auth_middleware.py",
+        "report_exporter.py, auth_middleware.py, payment_processor.py",
+        "auth_middleware.py, payment_processor.py, report_exporter.py",
+        "payment_processor.py, auth_middleware.py, report_exporter.py"
+      ],
+      "correct": 1,
+      "explanation": "The Green report exporter is the safe first slice, auth is the Amber second slice, and the Red payment module is deferred despite its large risk-reduction estimate."
     }
   ]
 }

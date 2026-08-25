@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is a 1D convolutional filter of width 3 over word embeddings effectively learning?",
+      "question": "What is vanishing_gradient_sim(seq_len=100, recurrent_weight=0.9) approximately?",
       "options": [
-        "A learnable bigram detector — and applies unchanged even when the lesson's stated preconditions fail",
-        "A position embedding",
-        "A learnable trigram (n-gram) detector",
-        "A unigram count"
+        "0.9",
+        "9.0",
+        "2.66e-5",
+        "100^0.9"
       ],
       "correct": 2,
-      "explanation": "A width-3 filter spans three consecutive tokens, acting as a learnable trigram detector."
+      "explanation": "The helper returns 0.9**100, which is about 0.0000266."
     },
     {
       "stage": "check",
-      "question": "Why does an LSTM use a cell state with mostly additive interactions?",
+      "question": "For five token embeddings and a width-2 filter, how many values does conv1d_over_embeddings return?",
       "options": [
-        "Additive flow lets gradients propagate through long sequences without vanishing or exploding",
-        "Faster softmax",
-        "It saves memory",
-        "To avoid matrix inversion, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence"
-      ],
-      "correct": 0,
-      "explanation": "The cell-state highway keeps gradients stable across hundreds of steps, fixing vanishing-gradient issues."
-    },
-    {
-      "stage": "check",
-      "question": "Why does TextCNN use global max-pooling after the convolutional layer?",
-      "options": [
-        "To enable backpropagation, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "To remove embeddings",
-        "To reduce vocabulary",
-        "Max-pool gives a fixed-size, position-invariant representation by selecting the strongest activation per filter"
+        "5",
+        "2",
+        "10",
+        "4"
       ],
       "correct": 3,
-      "explanation": "Global max-pool produces a fixed-size feature vector regardless of input length, with position invariance."
+      "explanation": "The valid loop starts at each position where a two-token window fits, giving 5-2+1=4 activations."
     },
     {
       "stage": "check",
-      "question": "What is the main advantage of a bidirectional RNN over a one-way RNN for sequence labeling?",
+      "question": "What nonlinearity does conv1d_over_embeddings apply to each filter sum?",
       "options": [
-        "Faster training",
-        "Each token's representation sees both left and right context, which is essential for tagging",
-        "Avoids embeddings, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "Cheaper memory"
+        "ReLU, via max(total, 0.0)",
+        "A sigmoid that always returns a probability",
+        "Softmax across all windows",
+        "No nonlinearity; it returns the raw dot product"
+      ],
+      "correct": 0,
+      "explanation": "The function adds the bias and embedding/filter products, then clips negative totals to zero."
+    },
+    {
+      "stage": "check",
+      "question": "What does max_pool([0.2, 0.0, 0.8, 0.4]) return?",
+      "options": [
+        "0.35",
+        "0.8",
+        "0.2",
+        "0.0"
       ],
       "correct": 1,
-      "explanation": "Bidirectional networks concatenate forward + backward hidden states so labels can use full context."
+      "explanation": "The helper keeps the strongest activation in the sequence."
     },
     {
       "stage": "post",
-      "question": "Why does max-pooling over an LSTM's outputs often beat using just the last hidden state for classification?",
+      "question": "What kind of pattern can a width-3 text convolution detect directly?",
       "options": [
-        "Max-pool is differentiable; last-state is not — and applies unchanged even when the lesson's stated preconditions fail",
-        "Information at the end of a long sequence tends to dominate the last state, hiding earlier evidence",
-        "Max-pool removes capitalization",
-        "Last-state pool ignores padding"
-      ],
-      "correct": 1,
-      "explanation": "Max-pool aggregates strongest signal across positions; last-state can lose earlier evidence."
-    },
-    {
-      "stage": "post",
-      "question": "Which limitation of LSTM/RNN encoder-decoders motivated attention?",
-      "options": [
-        "They require subword tokenizers, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "They cannot use embeddings",
-        "The decoder sees only a fixed-size encoder state, losing detail on long inputs; recurrence also serializes training",
-        "They cannot embed tokens"
+        "Only a document's final token",
+        "An arbitrary dependency path across the whole document",
+        "A local three-token phrase, independent of where it occurs",
+        "A class label without reading any embeddings"
       ],
       "correct": 2,
-      "explanation": "Fixed-size summarization plus serial training were two failures attention removed."
+      "explanation": "The filter slides over adjacent embeddings and max pooling can retain a strong phrase match at any position."
+    },
+    {
+      "stage": "post",
+      "question": "What does a bidirectional RNN add for a token-tagging task?",
+      "options": [
+        "A guarantee that gradients never decay",
+        "A fixed one-token context with no sequence order",
+        "A replacement for the tokenization step",
+        "A representation that uses both left and right context"
+      ],
+      "correct": 3,
+      "explanation": "The forward and backward recurrent passes are concatenated, so each token can use information from both directions."
     }
   ]
 }

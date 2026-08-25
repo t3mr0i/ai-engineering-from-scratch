@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Qwen-VL Family and Dynamic-FPS Video?",
+      "question": "For mrope_angles(MRoPEConfig(48,16,16,16), t=12, h=0, w=0), what are the first rotation angles for the three bands?",
       "options": [
-        "Compute M-RoPE's three-axis rotations (temporal, height, width) and explain why all three are needed",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "[12, 0, 0] for temporal, height, and width",
+        "[0, 12, 12], because images use spatial positions first",
+        "[1, 1, 1], because the base normalizes every position",
+        "[12, 12, 12], because all axes share the temporal coordinate"
       ],
       "correct": 0,
-      "explanation": "“Compute M-RoPE's three-axis rotations (temporal, height, width) and explain why all three are needed” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "For the first pair i=0, theta=base^0=1. The temporal position is 12 and both spatial positions are zero, yielding [12,0,0]."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Qwen-VL Family and Dynamic-FPS Video?",
+      "question": "Why does M-RoPE carry separate temporal, height, and width positions for a video patch?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Pick a dynamic-FPS sampling strategy for a video and reason about tokens-per-second vs event-detection accu...",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It removes all positional information so attention is permutation-invariant",
+        "It lets the model distinguish time from the two spatial coordinates without a fixed 1D image table",
+        "It assigns every video token the same timestamp and only rotates height",
+        "It replaces the MLP projector with a Q-Former"
       ],
       "correct": 1,
-      "explanation": "“Pick a dynamic-FPS sampling strategy for a video and reason about tokens-per-second vs event-detection accu...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "mrope_rotate applies independent rotations to the temporal, height, and width bands. A token can therefore encode frame time and 2D location simultaneously."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Qwen-VL Family and Dynamic-FPS Video?",
+      "question": "What FPS does VideoPlan(30s, 81 tokens/frame, 32768 budget, motion='high') choose?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Name the four Qwen-VL generational upgrades in order and what each enabled",
-        "Treat one successful example as proof that every edge case works"
+        "0.25 FPS, because high motion is downsampled most aggressively",
+        "4 FPS, because the cap is always four",
+        "8 FPS, the highest high-motion candidate under the 13.49 FPS budget ceiling",
+        "30 FPS, because one frame is allocated per second of video"
       ],
       "correct": 2,
-      "explanation": "“Name the four Qwen-VL generational upgrades in order and what each enabled” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The maximum feasible rate is 32768/(30*81) ≈ 13.49 FPS. The high-motion candidates are [8,4,2,1,...], so 8 FPS is selected."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Qwen-VL Family and Dynamic-FPS Video?",
+      "question": "What does parse_tool_call do with text surrounding a valid JSON object?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Wire a Qwen2.5-VL-style JSON agent output format and parse structured tool calls from a VLM response",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Wire a Qwen2.5-VL-style JSON agent output format and parse structured tool calls from a VLM response” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Qwen-VL Family and Dynamic-FPS Video?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Compute M-RoPE's three-axis rotations (temporal, height, width) and explain why all three are needed"
+        "It rejects the whole string because the first character is not '{'",
+        "It returns the surrounding prose and discards the object",
+        "It converts the object into a Python list of coordinate pairs",
+        "It extracts the substring from the first '{' to the last '}' and parses that object"
       ],
       "correct": 3,
-      "explanation": "“Compute M-RoPE's three-axis rotations (temporal, height, width) and explain why all three are needed” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "After a direct json.loads failure, the fallback finds the first and last braces and tries json.loads on that slice. Only if that also fails does it return PARSE_ERROR."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Qwen-VL Family and Dynamic-FPS Video?",
+      "question": "What does parse_tool_call return for the malformed string '{\"tool\": \"type_text\", \"text\": \"hello\"'?",
       "options": [
-        "Pick a dynamic-FPS sampling strategy for a video and reason about tokens-per-second vs event-detection accu...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "A dictionary with tool='PARSE_ERROR' and the original raw string",
+        "The completed type_text call with an implicit closing brace",
+        "An empty dictionary because malformed JSON is ignored",
+        "A list containing the text value only"
       ],
       "correct": 0,
-      "explanation": "“Pick a dynamic-FPS sampling strategy for a video and reason about tokens-per-second vs event-detection accu...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The input has no closing brace, so the fallback cannot extract a valid object. parse_tool_call returns {tool: 'PARSE_ERROR', raw: raw}."
+    },
+    {
+      "stage": "post",
+      "question": "Which upgrade belongs to Qwen2-VL in the lineage summary?",
+      "options": [
+        "448px grounding with a Q-Former, before native resolution",
+        "M-RoPE, native resolution, and an MLP projector",
+        "Dynamic FPS and absolute-time JSON tools, introduced in Qwen2.5-VL",
+        "Qwen3 thinking mode and OCR scale"
+      ],
+      "correct": 1,
+      "explanation": "The summary assigns 2024 Qwen2-VL M-RoPE, native resolution, and an MLP projector. Qwen2.5-VL adds dynamic FPS, absolute time, and JSON agent mode."
     }
   ]
 }

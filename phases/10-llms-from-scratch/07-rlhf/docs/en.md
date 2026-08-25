@@ -180,6 +180,18 @@ Anthropic's 2022 paper trained a 52B reward model on 22,000 comparisons. Larger 
 
 
 
+## Build It
+
+Reconstruct **RLHF: Reward Model + PPO** by following `RewardModel` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
+
+## Use It
+
+Call `RewardModel` from a small caller with the text "red fox". Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-reward-model-designer.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Ouyang et al., 2022 -- "Training language models to follow instructions with human feedback" (InstructGPT)](https://arxiv.org/abs/2203.02155) -- the paper that made RLHF practical for large language models
@@ -190,10 +202,20 @@ Anthropic's 2022 paper trained a 52B reward model on 22,000 comparisons. Larger 
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build a reward model that scores response quality from human preference pairs (chosen vs rejected).
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement the PPO training loop that optimizes a language model policy against the reward model with a KL penalty.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain why RLHF requires three models (SFT, reward, policy) and how the KL constraint prevents reward hacking.
+Work from the smallest fixture that the RLHF: Reward Model + PPO demo already understands, then make one deliberate change and record what moved.
+
+1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using the text "red fox". Follow `RewardModel`, `forward`, `tokenize_for_reward`. Expect the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text; capture the first printed shape, metric, status, or summary field and state which part supports **Build a reward model that scores response quality from human preference pairs (chosen vs rejected)**.
+2. **Perturb one field.** Repeat the command after changing only the input text: use the text "red fox runs". Predict the direction of the change, then compare the two output values. Explain why **Implement the PPO training loop that optimizes a language model policy against the reward model with a KL penalty** says the other inputs should stay fixed.
+3. **Check the failure boundary.** Feed the implementation an empty string. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Explain why RLHF requires three models (SFT, reward, policy) and how the KL constraint prevents reward hacking** and record the exception text if the code rejects the case.
+4. **Make the result repeatable.** Open `outputs/prompt-reward-model-designer.md` and add a worked example using the text "red fox". Include the input contract, one expected output field, and a named acceptance check for **Evaluate the effect of RLHF by comparing response quality before and after preference optimization**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build a reward model that scores response quality from human preference pairs (chosen vs rejected),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain why RLHF requires three models (SFT, reward, policy) and how the KL constraint prevents reward hacking,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **RLHF: Reward Model + PPO** should contain:
+
+- the `python3 main.py` output for the text "red fox", with `RewardModel`, `forward`, `tokenize_for_reward` traced to the value or shape that supports **Build a reward model that scores response quality from human preference pairs (chosen vs rejected)**;
+- a before/after comparison for the input text, where the text "red fox runs" changes the observation in the direction predicted by **Implement the PPO training loop that optimizes a language model policy against the reward model with a KL penalty**;
+- a recorded result for an empty string that matches the implementation’s validation or empty-result contract and explains the evidence for **Explain why RLHF requires three models (SFT, reward, policy) and how the KL constraint prevents reward hacking**; and
+- an updated `outputs/prompt-reward-model-designer.md` example with a concrete input, expected output field, and acceptance check tied to **Evaluate the effect of RLHF by comparing response quality before and after preference optimization**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

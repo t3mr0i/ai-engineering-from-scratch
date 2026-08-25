@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In supervised learning, what does the model receive during training?",
+      "question": "A table contains house size, neighborhood, and sale price for past homes. What kind of task predicts the price of a new home?",
       "options": [
-        "Only input data with no labels, so the model must discover structure entirely on its own",
-        "A reward signal for each action taken, which the model uses to adjust its behavior over time",
-        "Input-output pairs where the correct answer is provided for each example",
-        "A set of if-then rules written by a human expert that the model simply executes"
+        "Supervised regression",
+        "Unsupervised clustering",
+        "Reinforcement learning",
+        "Dimensionality reduction"
       ],
-      "correct": 2,
-      "explanation": "Supervised learning trains on input-output pairs (labeled data). The model learns to map inputs to known correct outputs."
+      "correct": 0,
+      "explanation": "The historical prices are labels, and price is a continuous target, so this is supervised regression."
     },
     {
       "stage": "check",
-      "question": "What is the purpose of splitting data into training and test sets?",
+      "question": "A nearest-centroid classifier sees x=[1,1]. Class A has centroid [0,0] and class B has centroid [4,4]. Which label does it assign?",
       "options": [
-        "To make training run faster, since the model only has to process the smaller training portion",
-        "To evaluate whether the model generalizes to data it has never seen during training, rather than just memorized",
-        "To keep a backup copy of the data in case the training set is corrupted or accidentally lost",
-        "To balance the class distribution between the two sets so each has an equal number of examples, with no need to inspect intermediate results or test edge cases"
+        "Class B",
+        "Class A",
+        "Both classes, because the distances tie",
+        "It cannot classify a two-dimensional point"
       ],
       "correct": 1,
-      "explanation": "The test set measures generalization. If you evaluate on training data, you measure memorization, not learning."
+      "explanation": "The squared distances are 2 to Class A and 18 to Class B, so the classifier assigns Class A."
     },
     {
       "stage": "check",
-      "question": "A model gets 98% accuracy on training data but 55% on test data. What is this an example of?",
+      "question": "Which pairing uses an appropriate task and loss?",
       "options": [
-        "Underfitting: the model is too simple to capture the patterns in either set",
-        "Data drift: the statistical distribution of the test set changed sometime after training finished",
-        "Overfitting: the model memorized training-set noise instead of learning general patterns",
-        "Good generalization: the model learned the true underlying patterns in the data"
+        "House prices with cross-entropy",
+        "Customer groups with mean squared error",
+        "Spam/not-spam labels with cross-entropy",
+        "A fixed tax formula with a learned reward signal"
       ],
       "correct": 2,
-      "explanation": "A large gap between training accuracy (high) and test accuracy (low) is the hallmark of overfitting. The model memorized the training data."
+      "explanation": "Binary labels are modeled as probabilities, for which cross-entropy penalizes incorrect confidence. Prices need a regression loss."
     },
     {
       "stage": "check",
-      "question": "An e-commerce site wants to group customers into segments based on purchase behavior without any predefined labels. Which type of ML is this?",
+      "question": "An agent receives a positive reward after choosing an action in a game. Which learning setup uses that signal?",
       "options": [
-        "Supervised learning (classification), since customers are being sorted into distinct categories, before defining the measurement, acceptance threshold, or rollback path",
-        "Unsupervised learning (clustering), since the model finds natural groupings without predefined labels",
-        "Supervised learning (regression), since purchase behavior is a continuous numeric signal",
-        "Reinforcement learning, since the site adjusts its recommendations based on customer responses"
+        "Supervised learning with a price label",
+        "Unsupervised clustering",
+        "A nearest-centroid lookup",
+        "Reinforcement learning"
       ],
-      "correct": 1,
-      "explanation": "Finding natural groupings in data without predefined labels is clustering, which is a form of unsupervised learning."
+      "correct": 3,
+      "explanation": "Reinforcement learning improves action choices from rewards or penalties supplied by an environment."
     },
     {
       "stage": "post",
-      "question": "Which scenario is NOT a good use case for machine learning?",
+      "question": "A company needs to compute sales tax from a published table with a fixed formula. What is the strongest first choice?",
       "options": [
-        "Converting temperatures from Celsius to Fahrenheit, a fixed formula that needs no learned model",
-        "Predicting customer churn from historical behavior data across many weakly-correlated signals over time",
-        "Detecting fraudulent transactions in a continuous stream of millions of payments in real time",
-        "Classifying images of skin lesions as benign or malignant from subtle pixel-level patterns"
+        "Implement the deterministic rule",
+        "Train a classifier on old tax returns",
+        "Cluster the tax brackets",
+        "Use random actions and rewards"
       ],
       "correct": 0,
-      "explanation": "Celsius to Fahrenheit is a fixed formula (F = 9/5 * C + 32). Simple, well-defined rules do not need ML. ML adds complexity with no benefit."
+      "explanation": "A known, stable rule is easier to audit and cannot learn spurious correlations. ML is useful when the mapping must be inferred from examples."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for What Is Machine Learning?",
+      "question": "You have thousands of customer baskets but no labels. You want groups of shoppers with similar purchasing patterns. Which approach fits?",
       "options": [
-        "Implement a nearest centroid classifier from scratch and evaluate it against a random baseline",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Supervised regression",
+        "Unsupervised clustering",
+        "Binary classification",
+        "A reward-maximizing policy"
       ],
-      "correct": 0,
-      "explanation": "“Implement a nearest centroid classifier from scratch and evaluate it against a random baseline” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 1,
+      "explanation": "There is no target label; clustering can discover groups from the basket features."
     }
   ]
 }

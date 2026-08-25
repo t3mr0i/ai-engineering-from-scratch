@@ -1,78 +1,78 @@
 {
   "lesson": "67-ai-product-experiment-feedback-analytics",
-  "title": "AI Product Experiment Design and Feedback Analytics",
+  "title": "AI Product Experiment and Feedback Analytics",
   "questions": [
     {
       "stage": "pre",
-      "question": "What should an AI product experiment define before rollout?",
+      "question": "What must a small AI product experiment define before the team interprets feedback?",
       "options": [
-        "A demo script that shows the impressive output to stakeholders",
-        "A backlog label and a rollout date with no success metric",
-        "A hypothesis, success metric, feedback sample, and stop rule",
-        "A feedback sample only, collected after the rollout is live"
+        "A testable hypothesis, a success metric, a feedback sample, and a stop rule",
+        "A launch announcement that treats every positive comment as evidence of success",
+        "A model choice before the team knows what learning the experiment should produce",
+        "A permanent rollout date that cannot change when the metric is weak"
       ],
-      "correct": 2,
-      "explanation": "A product experiment needs a decision structure, not just an implementation idea."
+      "correct": 0,
+      "explanation": "The experiment canvas makes learning explicit. A hypothesis gives feedback a question, a metric gives it a decision rule, and a sample plus stop rule bounds the test."
     },
     {
       "stage": "check",
-      "question": "Why is an unclear hypothesis a risk?",
+      "question": "The copilot onboarding test fixture matches three signals, has learning_value=5, and rollout_risk=4. What priority does recommend return?",
       "options": [
-        "The stop rule becomes the only artifact the team needs",
-        "The feedback sample can be collected without any bias review",
-        "The team cannot tell what it is trying to learn or measure",
-        "The rollout risk note replaces the need for a hypothesis"
-      ],
-      "correct": 2,
-      "explanation": "Without a hypothesis, feedback cannot be interpreted against a learning goal."
-    },
-    {
-      "stage": "check",
-      "question": "What does a stop rule prevent?",
-      "options": [
-        "Collecting a feedback sample before the pilot begins running",
-        "Defining a success metric while the experiment is being designed",
-        "Scaling weak evidence or harmful behavior into a full rollout",
-        "All user research conducted before an AI experiment starts"
-      ],
-      "correct": 2,
-      "explanation": "A stop rule defines when the team should halt instead of scaling the idea."
-    },
-    {
-      "stage": "check",
-      "question": "Which input helps AI feedback synthesis stay credible?",
-      "options": [
-        "Unlabeled anecdotes collected without any stated sample size",
-        "A visible feedback sample paired with an explicit bias note",
-        "A hidden prompt that stakeholders cannot review or audit",
-        "A single executive quote presented as the full user feedback view"
+        "prepare feedback study with score 18",
+        "run controlled experiment with score 20",
+        "define hypothesis with score 17",
+        "backlog note with score 15"
       ],
       "correct": 1,
-      "explanation": "The team needs to understand where the feedback came from and what bias it may contain."
+      "explanation": "The base is 5*2 + 4 = 14. Three matches add 6, producing the capped score 20 and the run controlled experiment priority."
     },
     {
-      "stage": "post",
-      "question": "Which product idea is most ready for a controlled experiment?",
+      "stage": "check",
+      "question": "Which controls does recommend select for the copilot onboarding test after three signal matches?",
       "options": [
-        "One with no user segment and no plan for a feedback sample",
-        "One with no decision owner and no defined stop rule for the pilot",
-        "One with user feedback, a clear metric, and known rollout risk",
-        "One with no success metric and an undefined hypothesis statement"
+        "hypothesis statement and success metric only",
+        "feedback sample and stop rule only",
+        "hypothesis statement, success metric, feedback sample, and stop rule",
+        "a success metric without a rule for stopping the test"
       ],
       "correct": 2,
-      "explanation": "Feedback, metric clarity, and known risk are good reasons to run a controlled experiment."
+      "explanation": "Three matches select the complete four-control list. The test therefore states its learning goal, measure, sample, and boundary for ending or changing the experiment."
+    },
+    {
+      "stage": "check",
+      "question": "The search ranking change fixture has one match, learning_value=4, and rollout_risk=5. Which result is correct?",
+      "options": [
+        "run controlled experiment with score 15",
+        "define hypothesis with score 15",
+        "backlog note with score 13",
+        "prepare feedback study with score 15"
+      ],
+      "correct": 3,
+      "explanation": "The score is 4*2 + 5 + 2 = 15. That falls below 16 but above 10, so priority_for returns prepare feedback study."
     },
     {
       "stage": "post",
-      "question": "What should AI assist with in feedback analytics?",
+      "question": "A no-match Scenario has learning_value=1 and rollout_risk=1. What does recommend return?",
       "options": [
-        "Replacing the product team rollout and stop-rule decisions",
-        "Hiding negative feedback that contradicts the stated hypothesis",
-        "Removing the need for a success metric before the rollout decision",
-        "Synthesizing feedback while decisions stay under human review"
+        "backlog note with score 3",
+        "define hypothesis with score 7",
+        "prepare feedback study with score 11",
+        "run controlled experiment with score 16"
       ],
-      "correct": 3,
-      "explanation": "AI can help synthesize feedback, but product decisions still need human review and evidence."
+      "correct": 0,
+      "explanation": "The no-match score is 1*2 + 1 = 3. It stays as a backlog note rather than triggering an experiment."
+    },
+    {
+      "stage": "post",
+      "question": "What should canvas-product-experiment-feedback.md make visible before a rollout decision?",
+      "options": [
+        "A positive quote from one user, without the sample or metric",
+        "The hypothesis, success metric, feedback sample, stop rule, and the decision tied to the result",
+        "The final launch date, even when the stop rule was triggered",
+        "A model benchmark that does not measure the product behavior under test"
+      ],
+      "correct": 1,
+      "explanation": "The canvas ties feedback to a predeclared decision. It prevents a selectively chosen comment or benchmark from replacing the experiment's metric and stopping boundary."
     }
   ]
 }

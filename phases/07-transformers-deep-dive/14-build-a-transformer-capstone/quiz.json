@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Build a Transformer from Scratch — The Capstone?",
+      "question": "Which model component ties the language-model head to the token embedding weights in the capstone?",
       "options": [
-        "Derive the mechanism behind Build a Transformer from Scratch — The Capstone from tensor operations",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Derive the mechanism behind Build a Transformer from Scratch — The Capstone from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Build a Transformer from Scratch — The Capstone?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the core component without relying on a transformer framework",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Build a Transformer from Scratch — The Capstone?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Trace tensor shapes and information flow through the implementation",
-        "Treat one successful example as proof that every edge case works"
+        "CausalSelfAttention shares its mask with the classifier",
+        "The positional embedding is copied into the final norm",
+        "GPT sets `self.lm_head.weight = self.tok_emb.weight`",
+        "SwiGLUFFN reuses the vocabulary tensor as W1"
       ],
       "correct": 2,
-      "explanation": "“Trace tensor shapes and information flow through the implementation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The GPT constructor explicitly assigns the output linear weight to the token embedding weight, so the tied head adds no separate weight matrix."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Build a Transformer from Scratch — The Capstone?",
+      "question": "With block_size=64, what does generate do when the current prefix is longer than 64 tokens?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate the computational and modeling trade-offs introduced by Build a Transformer from Scratch — The Cap...",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate the computational and modeling trade-offs introduced by Build a Transformer from Scratch — The Cap...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Build a Transformer from Scratch — The Capstone?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Derive the mechanism behind Build a Transformer from Scratch — The Capstone from tensor operations"
+        "It drops the newest token and keeps the first 64",
+        "It stops generation permanently at token 64",
+        "It pads the prefix to 128 tokens before every forward pass",
+        "It passes only `idx[:, -self.block_size:]` into the model for the next-token prediction"
       ],
       "correct": 3,
-      "explanation": "“Derive the mechanism behind Build a Transformer from Scratch — The Capstone from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "generate constructs idx_cond from the last block_size positions, then appends the sampled next ID to the full sequence."
+    },
+    {
+      "stage": "check",
+      "question": "What target relationship does get_batch create for each training window?",
+      "options": [
+        "y is x shifted one character to the left: src[i+1:i+1+block_size]",
+        "y is the same slice as x, so the model copies its input",
+        "y contains only the final character of the full Shakespeare text",
+        "y is a random permutation of x's vocabulary IDs"
+      ],
+      "correct": 0,
+      "explanation": "The batch pairs `src[i:i+block_size]` with the following slice `src[i+1:i+1+block_size]` for causal next-character prediction."
+    },
+    {
+      "stage": "check",
+      "question": "What is the order of operations in a capstone Block.forward?",
+      "options": [
+        "Causal attention → LayerNorm → pooling, then a decoder cross-attention",
+        "RMSNorm → causal attention → residual, then RMSNorm → SwiGLU → residual",
+        "SwiGLU → RMSNorm → residual, with attention applied after the output",
+        "A single softmax over the block's vocabulary followed by token deletion"
+      ],
+      "correct": 1,
+      "explanation": "Block.forward is pre-norm: x receives attention applied to n1(x), then receives the FFN applied to n2(x)."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Build a Transformer from Scratch — The Capstone?",
+      "question": "What does CausalSelfAttention's lower-triangular mask guarantee for a token at position i?",
       "options": [
-        "Implement the core component without relying on a transformer framework",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "It sees future targets during training but not during sampling",
+        "It can attend only to the final token in the sequence",
+        "Its attention weights for positions greater than i are zero",
+        "It replaces the query with a learned [CLS] vector"
       ],
-      "correct": 0,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The registered mask is torch.tril(...); masked future score entries become -inf before softmax."
+    },
+    {
+      "stage": "post",
+      "question": "Why does the script still run a parameter preview when PyTorch is unavailable?",
+      "options": [
+        "The test suite installs torch before main starts",
+        "PyTorch is bundled inside the Shakespeare text file",
+        "The code silently replaces the Transformer with a random NumPy model",
+        "run_param_preview is stdlib-only and try_train catches ImportError with a friendly message"
+      ],
+      "correct": 3,
+      "explanation": "main calls run_param_preview first, while try_train catches a missing torch import and reports the fallback instead of crashing."
     }
   ]
 }

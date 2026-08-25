@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is a random train/test split invalid for time series data?",
+      "question": "For a forecast made in June, which split respects the time order?",
       "options": [
-        "Random splits make the dataset too small",
-        "Random splits leak future information into the training set, allowing the model to cheat",
-        "Time series data cannot be split at all",
-        "Random splits only work for classification problems — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "In a random split, future data points can end up in the training set while past points are in the test set. The model then uses future information to predict the past, giving falsely optimistic results."
-    },
-    {
-      "stage": "check",
-      "question": "What does it mean for a time series to be stationary?",
-      "options": [
-        "The values never change over time, with no need to inspect intermediate results or test edge cases",
-        "Its statistical properties (mean, variance, autocorrelation) do not change over time",
-        "It has no seasonal patterns",
-        "It always trends upward"
-      ],
-      "correct": 1,
-      "explanation": "A stationary series has constant mean, variance, and autocorrelation structure over time. Most forecasting methods assume stationarity. Non-stationary series need differencing or detrending first."
-    },
-    {
-      "stage": "check",
-      "question": "What is the purpose of differencing a time series?",
-      "options": [
-        "To increase the number of data points",
-        "To remove trend and make the series stationary by modeling changes between consecutive values",
-        "To convert regression into classification, because one plausible output is sufficient production evidence",
-        "To normalize the values between 0 and 1"
-      ],
-      "correct": 1,
-      "explanation": "Differencing replaces each value with the change from the previous value: diff[t] = value[t] - value[t-1]. This removes trend, making the series closer to stationary."
-    },
-    {
-      "stage": "check",
-      "question": "Lag features convert a time series into a supervised learning problem. What is a lag-3 feature for predicting y[t]?",
-      "options": [
-        "The average of the next 3 values: (y[t+1] + y[t+2] + y[t+3]) / 3",
-        "The value 3 time steps ago: y[t-3]",
-        "The 3rd derivative of the series",
-        "The difference between the current value and 3 steps ahead"
-      ],
-      "correct": 1,
-      "explanation": "A lag-3 feature is y[t-3]: the value 3 time steps in the past. Using past values as input features lets standard ML models (regression, trees) make time series predictions without specialized algorithms."
-    },
-    {
-      "stage": "post",
-      "question": "Walk-forward validation splits time data into expanding or sliding windows. Why is this better than K-fold CV for time series?",
-      "options": [
-        "Walk-forward is faster to compute",
-        "Walk-forward respects temporal order, training only on past data and testing on future data, preventing lookahead bias",
-        "K-fold CV cannot be used on numeric data — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "Walk-forward uses more data for training"
-      ],
-      "correct": 1,
-      "explanation": "Walk-forward validation always trains on past data and tests on future data, mimicking real-world deployment. K-fold CV shuffles data, potentially training on future to predict past (temporal leakage)."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Time Series Fundamentals?",
-      "options": [
-        "Implement lag features and rolling statistics to convert a time series into a supervised learning problem",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Train on earlier months and test on later months",
+        "Randomly mix January and December in both sets",
+        "Train only on the future test months",
+        "Use the target from July as a feature for June"
       ],
       "correct": 0,
-      "explanation": "“Implement lag features and rolling statistics to convert a time series into a supervised learning problem” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "A forecast can use the past, not observations that occur after the prediction timestamp."
+    },
+    {
+      "stage": "check",
+      "question": "Which decomposition component captures a repeating weekly pattern in daily sales?",
+      "options": [
+        "The residual only",
+        "Seasonality",
+        "The one-time measurement error",
+        "The train/test split"
+      ],
+      "correct": 1,
+      "explanation": "Seasonality is a recurring pattern tied to a calendar or known period."
+    },
+    {
+      "stage": "check",
+      "question": "A series has a steadily rising rolling mean and changing variance. What does that suggest about stationarity?",
+      "options": [
+        "The series is stationary by definition",
+        "Only the class labels are non-stationary",
+        "The series is likely non-stationary",
+        "Stationarity can be decided from the first value alone"
+      ],
+      "correct": 2,
+      "explanation": "A stationary process has stable distributional properties; drifting mean or variance is evidence against that assumption."
+    },
+    {
+      "stage": "check",
+      "question": "When predicting y at time t, which lag feature is safe to compute without using the future target?",
+      "options": [
+        "y at time t+1",
+        "The mean of all future y values",
+        "The test label at time t",
+        "y at time t-1"
+      ],
+      "correct": 3,
+      "explanation": "The previous observation is available at prediction time; future target values would leak the answer."
+    },
+    {
+      "stage": "post",
+      "question": "What happens in walk-forward validation after evaluating a forecast window?",
+      "options": [
+        "The training window advances and later observations become available for the next forecast",
+        "The model is evaluated on the same first window forever",
+        "All future targets are added before the first forecast",
+        "The time index is randomly permuted"
+      ],
+      "correct": 0,
+      "explanation": "Walk-forward evaluation mirrors deployment: predict the next period, reveal it, update the training history, and continue."
+    },
+    {
+      "stage": "post",
+      "question": "Why can a random train/test split make a time-series model look too good?",
+      "options": [
+        "Random splitting always removes seasonal signals",
+        "Training rows can include information from after validation timestamps",
+        "It forces every lag to be zero",
+        "It prevents the model from seeing any training data"
+      ],
+      "correct": 1,
+      "explanation": "Mixing time points lets the model learn from future regimes or neighboring observations that would not be available at deployment."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is it important to have separate train, validation, and test splits in machine learning?",
+      "question": "Why keep separate train, validation, and test splits?",
       "options": [
-        "To make the dataset smaller so training is faster — and applies unchanged even when the lesson's stated preconditions fail",
-        "To evaluate model performance on unseen data and prevent overfitting",
-        "To ensure each split uses a different file format",
-        "To distribute data across multiple GPUs"
-      ],
-      "correct": 1,
-      "explanation": "The training set teaches the model, the validation set tunes hyperparameters during training, and the test set provides a final unbiased evaluation on data the model has never seen."
-    },
-    {
-      "stage": "check",
-      "question": "What is the Hugging Face Hub primarily used for in AI/ML workflows?",
-      "options": [
-        "Hosting and sharing datasets, models, and ML artifacts",
-        "Running GPU training jobs in the cloud",
-        "Managing Python virtual environments",
-        "Version controlling source code like GitHub, with no need to inspect intermediate results or test edge cases"
+        "To evaluate on unseen data",
+        "To make each split use a different programming language",
+        "To guarantee that every example fits in GPU memory",
+        "To avoid recording the dataset version"
       ],
       "correct": 0,
-      "explanation": "Hugging Face Hub is a platform for hosting and sharing pre-trained models, datasets, and ML demos. The 'datasets' library provides a standard way to load data from it."
+      "explanation": "Training updates parameters, validation guides choices, and the held-out test set estimates generalization. Reusing test examples for tuning makes its score optimistic."
     },
     {
       "stage": "check",
-      "question": "What advantage does the Parquet format have over CSV for storing ML datasets?",
+      "question": "When is streaming=True useful while loading a very large dataset?",
       "options": [
-        "Parquet files are human-readable in any text editor",
-        "Parquet uses columnar storage for smaller file sizes and faster read speeds",
-        "Parquet supports more data types than CSV",
-        "Parquet files can be edited in spreadsheet applications, because one plausible output is sufficient production evidence"
+        "When the dataset must be converted into a video stream",
+        "Fetch rows on demand",
+        "When every row must be downloaded before the first example is read",
+        "When a stream should silently replace the validation split"
       ],
       "correct": 1,
-      "explanation": "Parquet is a columnar binary format that compresses better than CSV and enables fast column-level reads. It is the preferred storage format for ML datasets."
+      "explanation": "Streaming creates an iterable view that reads examples as needed, reducing local storage and memory pressure. It does not change the meaning of the split."
     },
     {
       "stage": "check",
-      "question": "What does 'streaming=True' do when loading a dataset with the Hugging Face datasets library?",
+      "question": "Which format is the natural choice for fast typed column reads from a tabular dataset?",
       "options": [
-        "Downloads the dataset faster using parallel connections",
-        "Loads data row by row without downloading the full dataset to disk",
-        "Converts the dataset to a streaming video format",
-        "Enables real-time updates as new data is added to the Hub, before defining the measurement, acceptance threshold, or rollback path"
+        "CSV, because every reader preserves its inferred types exactly",
+        "A plain-text log, because it has schema metadata by default",
+        "Columnar, compressed storage",
+        "A shell history file, because it supports random row access"
       ],
-      "correct": 1,
-      "explanation": "Streaming mode creates an IterableDataset that fetches rows on demand. Memory usage stays constant regardless of dataset size, which is essential for datasets too large to fit on disk."
+      "correct": 2,
+      "explanation": "Parquet's columnar layout and schema support make selective reads and compression efficient. CSV remains useful for simple interchange but needs parsing and type handling."
+    },
+    {
+      "stage": "check",
+      "question": "What should a reproducible dataset split record besides the three counts?",
+      "options": [
+        "Only the name of the editor used to create the split",
+        "The GPU temperature at the time of export",
+        "A screenshot with no dataset identifier",
+        "The seed, source, split rule, and filters"
+      ],
+      "correct": 3,
+      "explanation": "Counts alone cannot recreate membership. The seed, source revision, and transformation rules let another run produce and audit the same partitions."
     },
     {
       "stage": "post",
-      "question": "When should you use DVC (Data Version Control) instead of just .gitignore for large files?",
+      "question": "A model's test score is suspiciously high after you generated train and test files. What should you inspect first?",
       "options": [
-        "When your dataset is smaller than 1 MB",
-        "When you need to reproduce exact experiments across machines with versioned data",
-        "When you are working alone on a personal project — and applies unchanged even when the lesson's stated preconditions fail",
-        "When you only have CSV files in your project"
+        "Check for duplicates and train/test leakage",
+        "The color of the dataset directory in the editor",
+        "Whether the README uses short paragraphs",
+        "The number of CPU threads used by the terminal"
       ],
-      "correct": 1,
-      "explanation": "DVC tracks data versions with small pointer files in git while storing the actual data in remote storage (S3, GCS). It ensures anyone can reproduce your exact experiment with the same data."
+      "correct": 0,
+      "explanation": "Leakage and duplicates let the model see test information during training, producing an inflated score. Comparing identities and split construction tests that hypothesis directly."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Data Management?",
+      "question": "What belongs in a compact data card for a phase artifact?",
       "options": [
-        "Convert between CSV, JSON, Parquet, and Arrow formats and explain their tradeoffs",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Only the final accuracy, with no record of the examples",
+        "Schema, counts, seed, source, format, and cache",
+        "A copy of every raw file embedded in the source repository",
+        "The dataset URL without its revision or preprocessing description"
       ],
-      "correct": 0,
-      "explanation": "“Convert between CSV, JSON, Parquet, and Arrow formats and explain their tradeoffs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 1,
+      "explanation": "These fields describe what was loaded and how it became the training inputs. They make the artifact inspectable without putting large data files into Git."
     }
   ]
 }

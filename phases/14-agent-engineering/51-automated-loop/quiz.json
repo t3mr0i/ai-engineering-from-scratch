@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does a trigger decide?",
+      "question": "When is a timer trigger due in the main API?",
       "options": [
-        "When work may begin",
-        "Whether the code works",
-        "Which model is smartest",
-        "Who owns the review"
-      ],
-      "correct": 0,
-      "explanation": "Trigger semantics are separate from loop completion."
-    },
-    {
-      "stage": "check",
-      "question": "What does the evaluator own?",
-      "options": [
-        "The maker's original prompt",
-        "The deployment secret's value",
-        "The entire task's scope",
-        "The completion decision"
-      ],
-      "correct": 3,
-      "explanation": "The evaluator decides whether evidence meets the goal."
-    },
-    {
-      "stage": "check",
-      "question": "Why record every loop round?",
-      "options": [
-        "To inflate the log files needlessly",
-        "To preserve evidence and feedback",
-        "To avoid defining a stop policy",
-        "To hide the intervention count"
-      ],
-      "correct": 1,
-      "explanation": "Round receipts make the loop replayable and reviewable."
-    },
-    {
-      "stage": "check",
-      "question": "What is a stalled stop?",
-      "options": [
-        "A single artifact that already passed",
-        "A timer trigger waking on schedule",
-        "Repeated failure without artifact change",
-        "A human approval decision pending review"
+        "Only when requested=True, regardless of elapsed time",
+        "When event_name matches the timer's interval",
+        "When last_run is absent or now - last_run reaches interval",
+        "Only after the evaluator has passed twice"
       ],
       "correct": 2,
-      "explanation": "Stall detection prevents useless repetition."
+      "explanation": "trigger_due treats timers as stateless: no last_run means due immediately; otherwise the elapsed time must meet the configured interval."
     },
     {
-      "stage": "post",
-      "question": "Which task fits a goal loop best?",
+      "stage": "check",
+      "question": "How many rounds and interventions does the automated main fixture produce?",
       "options": [
-        "A feature with a verifiable acceptance command",
-        "An undefined wish with no finish line",
-        "A clock-only poll that never has a defined goal",
-        "An irreversible deploy without review"
-      ],
-      "correct": 0,
-      "explanation": "Goal loops need a machine-checkable finish line."
-    },
-    {
-      "stage": "post",
-      "question": "What should manual versus automated comparisons measure?",
-      "options": [
-        "Only the elapsed wall-clock time",
-        "The length of the original prompt",
-        "Which particular model brand was used",
-        "Interventions, failures, and receipts"
+        "2 rounds and 1 intervention",
+        "3 rounds and 2 interventions",
+        "6 rounds and 0 interventions",
+        "3 rounds and 0 interventions"
       ],
       "correct": 3,
-      "explanation": "Reliability improvement needs evidence beyond speed."
+      "explanation": "The automated demo_maker adds scope, tests, and acceptance in three rounds; demo_evaluator requests no human intervention."
+    },
+    {
+      "stage": "check",
+      "question": "What status results when an unchanged failing artifact reaches max_stalled=2?",
+      "options": [
+        "stalled after two receipts",
+        "complete after the first unchanged receipt",
+        "exhausted only after max_rounds",
+        "intervention_required without recording a receipt"
+      ],
+      "correct": 0,
+      "explanation": "run_loop increments stalled for unchanged failures and returns LoopResult('stalled', ...) as soon as the stall budget is reached."
+    },
+    {
+      "stage": "check",
+      "question": "What happens when an evaluator requests intervention while max_interventions is 0?",
+      "options": [
+        "The handler is called anyway and its answer is trusted",
+        "The loop records intervention_budget_exhausted without calling the handler",
+        "The intervention is silently converted into a passing evaluation",
+        "The loop retries forever until a human answers"
+      ],
+      "correct": 1,
+      "explanation": "The intervention count exceeds the hard budget before the handler call, so the result is intervention_budget_exhausted with a receipt."
+    },
+    {
+      "stage": "post",
+      "question": "What does compare_manual_and_automated report for the main fixture's intervention counts?",
+      "options": [
+        "manual_interventions=0, automated_interventions=2, interventions_reduced=-2",
+        "manual_interventions=3, automated_interventions=0, interventions_reduced=3",
+        "manual_interventions=2, automated_interventions=0, interventions_reduced=2",
+        "manual_interventions=2, automated_interventions=2, interventions_reduced=0"
+      ],
+      "correct": 2,
+      "explanation": "manual_demo_evaluator requests human input for missing tests and then acceptance, while the automated run requests none; the comparison subtracts 0 from 2."
+    },
+    {
+      "stage": "post",
+      "question": "What status does a never-passing run with LoopPolicy(max_rounds=2) return?",
+      "options": [
+        "stalled after one round",
+        "complete because the maker changed the artifact",
+        "intervention_required after the second round",
+        "exhausted with two round receipts"
+      ],
+      "correct": 3,
+      "explanation": "The fixture changes the artifact each round, so the stall limit is not reached; after two failed evaluations, the hard round budget returns exhausted."
     }
   ]
 }

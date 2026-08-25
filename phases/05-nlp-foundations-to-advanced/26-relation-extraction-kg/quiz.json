@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the atomic unit of a knowledge graph?",
+      "question": "Which relation code does the pattern for \"Tim Cook became CEO of Apple\" emit?",
       "options": [
-        "A POS tag",
-        "A (subject, relation, object) triple",
-        "A token",
-        "A sentence — and applies unchanged even when the lesson's stated preconditions fail"
+        "P19",
+        "P112",
+        "P169",
+        "P69"
       ],
-      "correct": 1,
-      "explanation": "KGs store information as (s, r, o) triples; aggregated triples form the graph."
+      "correct": 2,
+      "explanation": "The became/is/was CEO of pattern is mapped to P169, labeled CEO of."
     },
     {
       "stage": "check",
-      "question": "What does AEVS stand for in 2026 relation extraction?",
+      "question": "What provenance does extract attach to a matched relation?",
       "options": [
-        "Anchor-Extraction-Verification-Supplement: anchor spans, extract triples, verify against source, supplement coverage",
-        "Auto-Encoder Vector Search",
-        "Async Entity Validation Service, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "Aggregated Entity-Value Schema"
-      ],
-      "correct": 0,
-      "explanation": "AEVS is the 2026 hallucination-mitigation framework for grounded RE."
-    },
-    {
-      "stage": "check",
-      "question": "Why must each triple carry source provenance (doc id + span)?",
-      "options": [
-        "Provenance lets you audit triples and reject hallucinations whose spans do not match the source text",
-        "It speeds up extraction",
-        "Provenance changes the ontology",
-        "Provenance is required by SPARQL, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path"
-      ],
-      "correct": 0,
-      "explanation": "Provenance enables auditing and is the core of AEVS-style hallucination detection."
-    },
-    {
-      "stage": "check",
-      "question": "What does canonicalization of relations do?",
-      "options": [
-        "Maps surface verb phrases (e.g. 'was born in', 'is a native of') onto a fixed property id so the graph is queryable",
-        "Removes triples",
-        "Adds embeddings",
-        "Translates the document, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 0,
-      "explanation": "Canonicalization collapses paraphrases into canonical KG property ids."
-    },
-    {
-      "stage": "post",
-      "question": "Why does relation extraction usually need coreference resolution first?",
-      "options": [
-        "Pronouns like 'he founded Apple' must be resolved to a named entity before triple extraction",
-        "Coref adds embeddings",
-        "Coref provides positions — and applies unchanged even when the lesson's stated preconditions fail",
-        "Coref normalizes case"
-      ],
-      "correct": 0,
-      "explanation": "Without coref, RE attaches relations to pronouns instead of the underlying named entity."
-    },
-    {
-      "stage": "post",
-      "question": "Which choice trades open IE recall for graph queryability?",
-      "options": [
-        "Skipping NER",
-        "Random sampling of triples, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "Embedding-only graphs",
-        "Mapping open-IE relations onto a closed ontology (e.g. Wikidata properties) before merging into the KG"
+        "Only the subject string, with no source location",
+        "A model probability and a token embedding",
+        "The document title but not the matched sentence",
+        "The character span and the exact evidence text matched by the regex"
       ],
       "correct": 3,
-      "explanation": "Closed ontologies make the graph queryable; the canonicalization step pays for itself downstream."
+      "explanation": "Each triple stores span=(m.start(), m.end()) and evidence=m.group(0)."
+    },
+    {
+      "stage": "check",
+      "question": "What does verify reject when checking an extracted triple?",
+      "options": [
+        "A triple whose stored span no longer matches its evidence text",
+        "Every triple containing a two-word subject",
+        "Triples using relation code P169",
+        "Any object that appears in the source text"
+      ],
+      "correct": 0,
+      "explanation": "verify compares text[s:e] with t[\"evidence\"] before retaining the triple."
+    },
+    {
+      "stage": "check",
+      "question": "How does build_graph represent a subject with two extracted relations?",
+      "options": [
+        "It keeps only the last object for each subject",
+        "It maps the subject to a list of (relation, object, evidence) tuples",
+        "It creates one node per character in the subject",
+        "It stores relations without their source evidence"
+      ],
+      "correct": 1,
+      "explanation": "The defaultdict(list) appends the relation code, object, and evidence for every triple."
+    },
+    {
+      "stage": "post",
+      "question": "Which additional relation is not represented when the text says \"Larry Page founded Google with Sergey Brin\"?",
+      "options": [
+        "The subject contains an uppercase first name",
+        "Google is not a possible object in the pattern",
+        "The co-founder relation between Larry Page and Sergey Brin",
+        "verify always rejects sentences with the word with"
+      ],
+      "correct": 2,
+      "explanation": "The founded pattern can match the main Larry Page–Google triple, but no pattern captures the additional co-founder relation with Sergey Brin."
+    },
+    {
+      "stage": "post",
+      "question": "What does the demo query for Tim Cook retrieve from the graph?",
+      "options": [
+        "Every object connected to Apple under any relation",
+        "The first person alphabetically in the graph",
+        "Only a boolean indicating whether Tim Cook appears",
+        "The P169 object Apple, along with evidence that Tim Cook became CEO of Apple"
+      ],
+      "correct": 3,
+      "explanation": "The query filters graph[\"Tim Cook\"] for rel == \"P169\" and prints its object and evidence."
     }
   ]
 }

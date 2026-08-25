@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which query class does a KV store handle best?",
+      "question": "What weights does a default `Mem0Config` assign to relevance, importance, and recency?",
       "options": [
-        "Semantic similarity over long conversations",
-        "Reachability across customers sharing a billing entity",
-        "Temporal queries about what was true at a past time",
-        "Direct fact lookup keyed by (user, type, entity)"
-      ],
-      "correct": 3,
-      "explanation": "KV is O(1) on exact keys; vector is for similarity, graph is for relationships."
-    },
-    {
-      "stage": "check",
-      "question": "What are the three stores Mem0 writes in parallel on each add()?",
-      "options": [
-        "Vector, KV, and graph stores",
-        "Cache, queue, and log stores",
-        "Postgres, Redis, and ClickHouse",
-        "Embedding, attention, and FFN layers"
-      ],
-      "correct": 0,
-      "explanation": "Mem0 fans every write out to vector, KV, and graph stores."
-    },
-    {
-      "stage": "check",
-      "question": "What three dimensions feed Mem0's fusion score?",
-      "options": [
-        "Precision, recall, and F1 score",
-        "Relevance, importance, and recency",
-        "Latency, throughput, and dollar cost",
-        "Confidence, perplexity, and BLEU score"
-      ],
-      "correct": 1,
-      "explanation": "Score is a weighted sum of relevance, importance, and recency; weights tune per product."
-    },
-    {
-      "stage": "check",
-      "question": "What does Mem0g do when an incoming fact contradicts an existing edge?",
-      "options": [
-        "Raises an exception and aborts the write until a human resolves the conflict",
-        "Rewrites the user_id on the edge to match the incoming fact's source",
-        "Marks the existing edge invalid but does not delete it, so temporal queries can still traverse",
-        "Deletes the edge immediately, so no record of the earlier fact remains for temporal queries to traverse"
+        "0.5, 0.5, and 0.0",
+        "0.2, 0.6, and 0.2",
+        "0.6, 0.2, and 0.2",
+        "1.0, 0.0, and 0.0"
       ],
       "correct": 2,
-      "explanation": "Soft invalidation preserves history for temporal (valid-at-time) queries."
+      "explanation": "The dataclass defaults are `w_relevance=0.6`, `w_importance=0.2`, and `w_recency=0.2`."
     },
     {
-      "stage": "post",
-      "question": "Why does the lesson recommend tuning fusion weights per product?",
+      "stage": "check",
+      "question": "How does `VectorStore.search` calculate its token-overlap relevance for one record?",
       "options": [
-        "Vector libraries reject fusion scores that mix cosine similarity with non-normalized signals",
-        "The Apache 2.0 license requires every deployment to expose configurable scoring weights",
-        "Every product should use equal fixed weights across relevance, importance, and recency so retrieval stays unbiased across every use case",
-        "Recency dominates for chat agents while importance dominates for compliance agents and relevance dominates for retrieval agents"
+        "Intersection size divided by the query length only",
+        "The record's importance multiplied by its age",
+        "A binary exact-string match with no tokenization",
+        "Intersection size divided by the size of the query/record token union"
       ],
       "correct": 3,
-      "explanation": "Different products want different bias on relevance/importance/recency; one set of weights does not fit all."
+      "explanation": "The stand-in embedding score is `len(q_tokens & r_tokens) / len(q_tokens | r_tokens)`, a Jaccard-style overlap."
+    },
+    {
+      "stage": "check",
+      "question": "What does `GraphStore.add_edge` do when the same subject and relation already have a valid edge?",
+      "options": [
+        "It marks the old edge invalid, then appends the new edge.",
+        "It raises a duplicate-edge exception and keeps the old edge.",
+        "It merges both objects into one comma-separated edge.",
+        "It deletes every edge for that subject, including unrelated relations."
+      ],
+      "correct": 0,
+      "explanation": "The graph uses soft replacement: matching valid edges are marked invalid and the new `Edge` is appended."
+    },
+    {
+      "stage": "check",
+      "question": "Why is Bob's user-scoped refund absent from Ava's vector hits in `Mem0.search(..., user_id=\"ava\")`?",
+      "options": [
+        "The refund record is never written to the vector store.",
+        "Search skips a record whose user differs when that record has `scope == \"user\"`.",
+        "The vector score for the word `refund` is always zero.",
+        "KV lookup deletes Bob's record before vector results are fused."
+      ],
+      "correct": 1,
+      "explanation": "The vector-hit loop applies the user-scope guard, so Bob's `scope=\"user\"` record cannot enter Ava's fused results."
     },
     {
       "stage": "post",
-      "question": "What is the scope taxonomy Mem0 uses?",
+      "question": "With the default half-life, what is `_recency_score(record, record.ts + 86400)`?",
       "options": [
-        "User, session, and agent scope",
-        "Public, private, and secret scope",
-        "Local, regional, and global scope",
-        "Read, write, and admin scope"
+        "0.0",
+        "1.0",
+        "0.5",
+        "0.2"
       ],
-      "correct": 0,
-      "explanation": "Scopes are user (cross-session), session (one thread), agent (per-instance state)."
+      "correct": 2,
+      "explanation": "The default half-life is 86,400 seconds and the formula is `0.5 ** (elapsed / half)`, giving 0.5 after one half-life."
+    },
+    {
+      "stage": "post",
+      "question": "What exact key does `Mem0.add(..., user_id=\"ava\", kv_triples=((\"city\", \"Lisbon\"),))` write to `KVStore`?",
+      "options": [
+        "`KVKey(fact_type=\"city\", entity=\"Lisbon\")`",
+        "`KVKey(user_id=\"ava\", fact_type=\"user\", entity=\"city\")`",
+        "`KVKey(user_id=\"ava\", fact_type=\"Lisbon\", entity=\"city\")`",
+        "`KVKey(user_id=\"ava\", fact_type=\"city\", entity=\"Lisbon\")`"
+      ],
+      "correct": 3,
+      "explanation": "`add` unpacks each `(fact_type, entity)` pair and constructs `KVKey(user_id, fact_type, entity)` before storing the record."
     }
   ]
 }

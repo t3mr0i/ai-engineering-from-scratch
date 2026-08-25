@@ -4,75 +4,45 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why can't you simply load all pre-training data into memory?",
-      "options": [
-        "Python's built-in list and array types impose a hard 4GB size limit per object, so any larger corpus must be split into many separate in-memory objects first",
-        "Loading data into memory is technically possible but always slower than streaming it directly from disk on every single training step",
-        "Pre-training corpora are terabytes in size, far exceeding available RAM, so streaming pipelines load only the data needed for the current batch",
-        "GPU memory is reserved entirely for model weights and optimizer states, so the CPU side has no RAM left over for data at all"
-      ],
+      "question": "In `pack_sequences`, what happens to positions added after a short final chunk reaches `seq_length`?",
+      "options": ["They are filled with `pad_id` and receive attention-mask value 0.", "They are repeated from the first document and receive mask value 1.", "They are dropped together with the entire final document.", "They are replaced by the EOS ID and receive mask value 1."],
+      "correct": 0,
+      "explanation": "The function pads a final chunk to the requested length and marks only its real token positions with 1 in the attention mask."
+    },
+    {
+      "stage": "check",
+      "question": "Why does `tokenize_corpus` append `eos_id` to each encoded document?",
+      "options": ["To make every document exactly the same length.", "To mark where one document ends.", "To replace all padding with a trainable word.", "To increase the number of ordinary BPE merges."],
+      "correct": 1,
+      "explanation": "The EOS token gives the model an explicit boundary between documents before their token IDs are packed into fixed-length sequences."
+    },
+    {
+      "stage": "check",
+      "question": "What does `quality_filter(text, min_words=50)` return for a 12-word document, assuming no other checks matter?",
+      "options": ["True, because word count is only advisory.", "True, after adding 38 padding words.", "False: 12 words is below 50.", "A MinHash signature instead of a Boolean."],
       "correct": 2,
-      "explanation": "LLM pre-training data is typically 1-15 TB of text. Even with 256GB of RAM, you can't hold the full dataset. Streaming pipelines process data on-the-fly, loading only what's needed for the current batch."
+      "explanation": "The first filter condition rejects documents whose `split()` word count is less than `min_words`, so 12 words fails the default threshold."
     },
     {
       "stage": "check",
-      "question": "Why is data deduplication important for pre-training?",
-      "options": [
-        "Duplicate documents cause the model to memorize specific text verbatim and waste training compute on repeated content instead of diverse signal",
-        "It saves disk space on the storage cluster, which is by far the main cost driver for terabyte-scale web crawls like Common Crawl and its mirrors",
-        "It speeds up tokenization, since a tokenizer's vocabulary-building step runs faster on a smaller unique-document set",
-        "It reduces the size of the model's vocabulary, since fewer unique documents means fewer unique subword tokens to learn"
-      ],
-      "correct": 0,
-      "explanation": "Near-duplicate content (boilerplate, scraped duplicates) causes the model to memorize rather than generalize. Deduplication reduces training compute waste and improves model quality by ensuring diverse training signal."
-    },
-    {
-      "stage": "check",
-      "question": "What is the purpose of creating fixed-length training sequences from variable-length documents?",
-      "options": [
-        "It makes the raw text easier for a human reviewer to read during a manual quality-control pass before training starts",
-        "Fixed-length sequences let the model make more accurate predictions, since every training example carries exactly the same amount of information, because one plausible output is sufficient production evidence",
-        "It reduces the total number of tokens the model has to process overall, cutting training cost per step across the run",
-        "GPU training requires uniform tensor shapes, so documents must be packed or padded into fixed-length sequences with a block-diagonal attention mask"
-      ],
+      "question": "When `deduplicate` compares two candidate documents, which result causes the later document to be removed?",
+      "options": ["Any shared word, regardless of frequency.", "A matching MinHash signature at one band.", "A larger character count in the later document.", "Jaccard similarity reaches 0.8."],
       "correct": 3,
-      "explanation": "GPUs process batches of tensors with identical shapes. Variable-length documents must be chunked into fixed-length sequences (e.g., 2048 or 4096 tokens) with proper attention masks at document boundaries."
-    },
-    {
-      "stage": "check",
-      "question": "What happens if the data pipeline is slower than GPU training speed?",
-      "options": [
-        "Training automatically throttles the learning rate to match the slower data arrival rate, preserving convergence",
-        "The GPU sits idle waiting for batches, wasting expensive compute time until the dataloader catches up",
-        "The model silently trains on the same batch repeatedly until the next batch is ready, inflating the effective epoch count",
-        "Nothing changes, because the pipeline runs on a fully asynchronous background thread that never blocks the training loop"
-      ],
-      "correct": 1,
-      "explanation": "If the dataloader can't serve batches fast enough, the GPU stalls between steps. On A100 clusters costing $30+/hour, pipeline bottlenecks directly waste money. Profiling pipeline throughput is essential."
+      "explanation": "LSH only proposes candidates; the function then computes exact shingle Jaccard similarity and removes the later item when it is at least 0.8."
     },
     {
       "stage": "post",
-      "question": "Why is data quality filtering (language detection, content filtering) applied before tokenization?",
-      "options": [
-        "Tokenizers throw hard errors on low-quality text, since BPE merge rules assume the input is already free of spam and boilerplate",
-        "Low-quality data degrades model capabilities proportional to its share of training data, so filtering it out early keeps the learned signal high-quality",
-        "Filtering can only be applied after tokenization succeeds, so running it early is really just a scheduling convenience baked into most pipeline frameworks",
-        "It reduces the time tokenization itself takes to run, since fewer surviving documents means fewer BPE merge operations overall"
-      ],
-      "correct": 1,
-      "explanation": "The model learns from whatever data it sees. If 10% of training data is spam or low-quality content, the model allocates 10% of its capacity to reproducing those patterns. Filtering early ensures only high-quality signal reaches the model."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Data Pipelines for Pre-Training?",
-      "options": [
-        "Implement data quality filters (deduplication, language detection, content filtering) used in real pre-trai...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "For a MinHash signature of length 128 and `bands=16`, how many signature values go into each LSH band?",
+      "options": ["8", "16", "112", "2048"],
       "correct": 0,
-      "explanation": "“Implement data quality filters (deduplication, language detection, content filtering) used in real pre-trai...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "`lsh_buckets` uses `len(signature) // bands`, so 128 // 16 gives 8 rows per band."
+    },
+    {
+      "stage": "post",
+      "question": "How does `minhash_signature` create the candidate values for a shingle at hash round `i`?",
+      "options": ["It counts the shingle's words and takes their mean.", "The minimum SHA-256 value for `i:shingle`.", "It assigns the shingle the document's token length.", "It selects the LSH band with the most documents."],
+      "correct": 1,
+      "explanation": "Each round hashes the round index and shingle together, converts the digest to an integer, and records the minimum over the shingle set."
     }
   ]
 }

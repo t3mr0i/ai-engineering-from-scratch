@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which four orchestration patterns does the lesson list?",
+      "question": "What trace does the supervisor produce for `I need a refund for invoice 4711`?",
       "options": [
-        "Sequential, parallel, distributed, and federated, chosen per deployment target",
-        "Plan, act, reflect, and refine within a fixed four-step iteration loop",
-        "Supervisor-worker, swarm/peer-to-peer, hierarchical, and debate",
-        "Push, pull, batch, and stream, chosen per transport protocol"
-      ],
-      "correct": 2,
-      "explanation": "Supervisor-worker, swarm, hierarchical, and debate recur across 2026 frameworks."
-    },
-    {
-      "stage": "check",
-      "question": "What is the 2026 LangChain recommendation regarding supervision?",
-      "options": [
-        "Always use create_supervisor, since it is now the only supported routing mechanism",
-        "Avoid supervision entirely and let specialists route themselves without any hub",
-        "Run supervisors on dedicated GPU instances kept fully separate from the specialist agents",
-        "Prefer direct tool calls over create_supervisor for finer context-engineering control"
-      ],
-      "correct": 3,
-      "explanation": "Tool-call-based supervision gives you precise control over what each specialist sees."
-    },
-    {
-      "stage": "check",
-      "question": "What distinguishes a swarm from a supervisor-worker topology?",
-      "options": [
-        "Swarm has no central router; agents hand off directly via a shared tool surface",
-        "Swarm requires dedicated GPU hardware that supervisor-worker topologies do not need",
-        "Swarm collapses to a single agent, removing the need for any handoff mechanism",
-        "Swarm only runs on a cron schedule, while supervisor-worker runs continuously"
+        "It classifies `refund`, then calls the refund specialist, which returns `refund handled: I need a refund for invoice 47`.",
+        "It starts with sales and hands off twice before reaching refund.",
+        "It asks all three specialists to vote before producing a response.",
+        "It routes the request to `bug` because invoice work is an error path."
       ],
       "correct": 0,
-      "explanation": "Swarm is peer-to-peer; supervisor centralizes routing through one LLM."
+      "explanation": "`classify` checks `refund` first; `supervisor_worker` records the supervisor route and then invokes the refund function, which truncates the input to 30 characters."
     },
     {
       "stage": "check",
-      "question": "When is hierarchical orchestration justified?",
+      "question": "What label does `classify(\"Can I get a quote?\")` return?",
       "options": [
-        "Always, because hierarchical topology scales for free with no added complexity",
-        "When a single supervisor's context budget cannot hold descriptions of all specialists",
-        "Only when every specialist agent happens to run on dedicated GPU hardware",
-        "Never; the lesson calls nested supervisors an antipattern in every case"
+        "`refund`, because quote requests involve pricing.",
+        "`sales`, because `quote` is a sales keyword.",
+        "`bug`, because every question is treated as a diagnostic task.",
+        "`unknown`, because only the three demo sentences are recognized."
       ],
       "correct": 1,
-      "explanation": "Nested supervisors are for large specialist populations that exceed one supervisor's budget."
+      "explanation": "The classifier maps either `pricing` or `quote` to `sales`; it does not require the input to match one of the demo strings exactly."
     },
     {
-      "stage": "post",
-      "question": "What is the recommended decision order Anthropic supports?",
+      "stage": "check",
+      "question": "How many operations does the swarm use for the three demo tasks?",
       "options": [
-        "Always start with a hierarchical multi-agent system, since nested supervisors always scale cleanly from day one without any later rework needed",
-        "Start with debate first, since cross-critique among proposers catches more errors than any single agent ever could on its own",
-        "Start with a single agent plus workflow patterns; add topology only when needed; supervisor before swarm before hierarchical; debate when accuracy beats cost",
-        "Start with swarm and contract toward a single agent only once latency completely stops being a concern for the whole team"
+        "3",
+        "6",
+        "5",
+        "9"
       ],
       "correct": 2,
-      "explanation": "Anthropic's guidance is to build the right system for your needs, not the most sophisticated."
+      "explanation": "Swarm starts each task at `refund`: refund takes one operation, bug takes a handoff plus handling (two), and sales also takes two, totaling five."
+    },
+    {
+      "stage": "check",
+      "question": "How does the hierarchical pattern route the volume-pricing task?",
+      "options": [
+        "`top -> customer_ops`, then directly to `refund`.",
+        "`top -> sales`, with no intermediate category.",
+        "`top -> commercial`, then `commercial -> bug`.",
+        "`top -> commercial`, then `commercial -> sales`, followed by the sales specialist."
+      ],
+      "correct": 3,
+      "explanation": "For a task classified as sales, the top node chooses `commercial`; the second level repeats the classification and invokes the sales specialist."
     },
     {
       "stage": "post",
-      "question": "What is fake hierarchy in this lesson?",
+      "question": "What operation count does `debate` report for the three demo tasks?",
       "options": [
-        "Mislabelled YAML keys in the orchestrator config that route requests to the wrong specialist",
-        "An orchestrator written in TypeScript instead of Python, which the lesson says adds no risk",
-        "A test fixture that mocks three supervisor layers purely for automated unit-test coverage and nothing else",
-        "Three layers of supervisors because 'enterprise' when there are only two actual teams; collapse it"
+        "15",
+        "6",
+        "9",
+        "5"
       ],
-      "correct": 3,
-      "explanation": "Layers that do not correspond to real teams add operational complexity without payoff."
+      "correct": 0,
+      "explanation": "Each task has three proposal operations, one convergence operation, and one specialist operation. Five per task across three tasks gives 15."
+    },
+    {
+      "stage": "post",
+      "question": "What label does `classify(\"status update\")` use when no keyword matches?",
+      "options": [
+        "`refund`",
+        "`sales`",
+        "`bug`",
+        "`unknown`"
+      ],
+      "correct": 1,
+      "explanation": "After checking refund, bug/error/crash, and pricing/quote, `classify` falls through to its default return value, `sales`."
     }
   ]
 }

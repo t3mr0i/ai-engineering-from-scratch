@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to MCP Transports — stdio vs Streamable HTTP vs SSE Migration?",
+      "question": "How does the HTTP handler treat an initialize request from an unapproved evil origin?",
       "options": [
-        "Pick between stdio and Streamable HTTP based on deployment shape (local vs remote, single-process vs fleet)",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It returns HTTP 403 before dispatching JSON-RPC",
+        "It mints a session and returns 200",
+        "It accepts the request only when the body is empty",
+        "It converts the origin to localhost"
       ],
       "correct": 0,
-      "explanation": "“Pick between stdio and Streamable HTTP based on deployment shape (local vs remote, single-process vs fleet)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "_require_origin checks the exact/prefix allowlist first, so an evil origin receives 403 and cannot create a session."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of MCP Transports — stdio vs Streamable HTTP vs SSE Migration?",
+      "question": "What does an allowed initialize POST receive in addition to its JSON response?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the Streamable HTTP single-endpoint pattern: POST for requests, GET for session stream",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "An SSE stream but no session",
+        "A new Mcp-Session-Id header",
+        "A 204 response with no body",
+        "A permanent bearer token"
       ],
       "correct": 1,
-      "explanation": "“Implement the Streamable HTTP single-endpoint pattern: POST for requests, GET for session stream” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The initialize handler mints a 32-hex session id, stores it, and returns it in Mcp-Session-Id with HTTP 200."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through MCP Transports — stdio vs Streamable HTTP vs SSE Migration?",
+      "question": "What happens to tools/list when its session id is missing or unknown?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Enforce `Origin` validation and session-id semantics to defeat DNS-rebinding",
-        "Treat one successful example as proof that every edge case works"
+        "It is treated as a notification",
+        "It falls back to the most recent session",
+        "It returns HTTP 404",
+        "It creates a second session implicitly"
       ],
       "correct": 2,
-      "explanation": "“Enforce `Origin` validation and session-id semantics to defeat DNS-rebinding” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Non-initialize requests must resolve an existing session; an absent or dead id is reported as HTTP 404."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits MCP Transports — stdio vs Streamable HTTP vs SSE Migration?",
+      "question": "Which request header is required for the lesson's SSE GET endpoint?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Migrate a legacy HTTP+SSE server to Streamable HTTP before the mid-2026 removal deadlines",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Migrate a legacy HTTP+SSE server to Streamable HTTP before the mid-2026 removal deadlines” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for MCP Transports — stdio vs Streamable HTTP vs SSE Migration?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Pick between stdio and Streamable HTTP based on deployment shape (local vs remote, single-process vs fleet)"
+        "Content-Type: application/json",
+        "Authorization: Basic",
+        "Accept: text/plain",
+        "Accept: text/event-stream"
       ],
       "correct": 3,
-      "explanation": "“Pick between stdio and Streamable HTTP based on deployment shape (local vs remote, single-process vs fleet)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The streaming endpoint checks for the event-stream media type before returning SSE progress events."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for MCP Transports — stdio vs Streamable HTTP vs SSE Migration?",
+      "question": "What does DELETE do for a valid session and allowed origin?",
       "options": [
-        "Implement the Streamable HTTP single-endpoint pattern: POST for requests, GET for session stream",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "204 and removes the session",
+        "It returns the full tools/list response",
+        "It keeps the session but pauses SSE",
+        "It returns HTTP 202 and schedules deletion"
       ],
       "correct": 0,
-      "explanation": "“Implement the Streamable HTTP single-endpoint pattern: POST for requests, GET for session stream” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The DELETE probe receives 204 and removes the session from SESSIONS, so subsequent requests cannot use it."
+    },
+    {
+      "stage": "post",
+      "question": "How many progress events does the SSE probe emit?",
+      "options": [
+        "One event with no token",
+        "three progress SSE events",
+        "Five events because MAX_TURNS is 5",
+        "No events; SSE is only used for errors"
+      ],
+      "correct": 1,
+      "explanation": "The handler emits three progress events with progressToken p1 and total 3 before ending the stream."
     }
   ]
 }

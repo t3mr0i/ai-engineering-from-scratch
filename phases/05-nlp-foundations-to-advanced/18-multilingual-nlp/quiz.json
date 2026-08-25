@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does zero-shot cross-lingual transfer mean?",
+      "question": "What is similarity(\"marathi\", \"hindi\") in the lesson feature table?",
       "options": [
-        "Fine-tune a multilingual model on one source language and evaluate on a different language with no target-language labels",
-        "Translating without a translation model — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "Tokenizing with zero merges",
-        "Training with zero examples"
-      ],
-      "correct": 0,
-      "explanation": "Zero-shot transfer: train on the source language, run on the target without target-language supervision."
-    },
-    {
-      "stage": "check",
-      "question": "Which model family ships as the standard 100-language cross-lingual baseline?",
-      "options": [
-        "GloVe",
-        "GPT-2",
-        "XLM-R (e.g. XLM-RoBERTa-base, 270M)",
-        "DistilBERT, with no need to inspect intermediate results or test edge cases"
+        "0.0",
+        "0.33",
+        "1.0",
+        "0.5"
       ],
       "correct": 2,
-      "explanation": "XLM-R is the canonical 100-language pretrained baseline for cross-lingual classification."
+      "explanation": "Both entries share SOV word order, Devanagari script, and Indic family, so all three features match."
     },
     {
       "stage": "check",
-      "question": "Why does English-as-source not always give the best transfer for a non-English target?",
+      "question": "How does similarity(a, b) combine the language features?",
       "options": [
-        "English has too little data, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "Language similarity (typology, script, morphology) predicts transfer quality; a closer high-resource source can outperform English",
-        "English uses BPE",
-        "English is too short"
-      ],
-      "correct": 1,
-      "explanation": "Typologically related sources (e.g. Hindi for Indic targets) often outperform English as a fine-tune source."
-    },
-    {
-      "stage": "check",
-      "question": "What is the 'fertility tax' for low-resource languages?",
-      "options": [
-        "BPE refuses to train",
-        "Low-resource text tokenizes into more subwords per word than English, consuming context window, latency, and capacity",
-        "Smaller models train slower",
-        "Tokenizers cannot handle Unicode, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "Long-tail languages tokenize at much higher fertility, eating context and training efficiency."
-    },
-    {
-      "stage": "post",
-      "question": "Why is per-language evaluation required, not aggregated accuracy?",
-      "options": [
-        "Aggregates ignore tokenization",
-        "Aggregate numbers hide long-tail languages where a multilingual model can be far worse than its mean suggests",
-        "Aggregates only work on classification — and applies unchanged even when the lesson's stated preconditions fail",
-        "Aggregates run faster"
-      ],
-      "correct": 1,
-      "explanation": "Aggregate accuracy masks poor performance on low-resource languages; per-language scores expose it."
-    },
-    {
-      "stage": "post",
-      "question": "Why is fine-tuning learning rate critical when adapting a multilingual model with few-shot data?",
-      "options": [
-        "Lower LR wastes GPU",
-        "Required by tokenizers",
-        "It changes the vocabulary, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "High LR can collapse the multilingual alignment and effectively reduce the model to English-only"
+        "It compares only the language names alphabetically",
+        "It uses a learned translation model with no table lookup",
+        "It returns the number of shared letters in the two names",
+        "It counts matching feature values and divides by the number of features"
       ],
       "correct": 3,
-      "explanation": "Excessive LR drifts the shared representation; conservative LR (~2e-5) preserves cross-lingual structure."
+      "explanation": "The function loops over the three fields and returns matches divided by len(fa)."
+    },
+    {
+      "stage": "check",
+      "question": "What does rank_source_languages exclude from its candidate list?",
+      "options": [
+        "The target language itself",
+        "Every language with Latin script",
+        "The candidate with the highest similarity",
+        "Languages whose names have fewer than six letters"
+      ],
+      "correct": 0,
+      "explanation": "The list comprehension keeps cand only when cand != target, then sorts the remaining pairs by descending score."
+    },
+    {
+      "stage": "check",
+      "question": "What transfer accuracy does simulate_transfer_accuracy predict at similarity=1?",
+      "options": [
+        "0.45",
+        "0.90",
+        "0.50",
+        "0.95 exactly"
+      ],
+      "correct": 1,
+      "explanation": "The toy formula is base_accuracy 0.45 plus max_boost 0.45, still below the 0.95 cap."
+    },
+    {
+      "stage": "post",
+      "question": "Why is the language ranking only a teaching heuristic rather than a benchmark result?",
+      "options": [
+        "It evaluates every language on a balanced labeled test set",
+        "The score is a BLEU result from a production translation system",
+        "It uses three hand-written features, not measured task data or a real multilingual encoder",
+        "It proves that all languages in one family transfer equally well"
+      ],
+      "correct": 2,
+      "explanation": "The code models word order, script, and family; those signals cannot establish actual transfer accuracy by themselves."
+    },
+    {
+      "stage": "post",
+      "question": "Which source is the toy ranking likely to favor for a Marathi target?",
+      "options": [
+        "English, because Latin script always transfers best",
+        "Japanese, because every SOV language has the same vocabulary",
+        "Arabic, because all non-Latin scripts receive a score of one",
+        "Hindi, because it shares the Indic family, Devanagari script, and SOV order"
+      ],
+      "correct": 3,
+      "explanation": "Hindi matches all three declared features with Marathi, whereas the alternatives match fewer."
     }
   ]
 }

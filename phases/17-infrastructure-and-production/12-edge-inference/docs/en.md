@@ -89,6 +89,18 @@ Voice agents are latency-sensitive (first token < 500 ms). Local inference elimi
 
 
 
+## Build It
+
+Reconstruct **Edge Inference — Apple Neural Engine, Qualcomm Hexagon, WebGPU/WebLLM, Jetson** by following `Target` on the reported device check on CPU. Run `python3 main.py` and verify that the report distinguishes an available device from an unavailable one and records the selected backend.
+
+## Use It
+
+Call `Target` from a small caller with the reported device check on CPU. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-edge-target-picker.md` with the command `python3 main.py`, the accepted input shape (the reported device check on CPU), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [On-Device LLMs State of the Union 2026](https://v-chandra.github.io/on-device-llms/) — landscape and benchmarks.
@@ -100,10 +112,20 @@ Voice agents are latency-sensitive (first token < 500 ms). Local inference elimi
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain why mobile LLM inference is memory-bandwidth-bound and compute is secondary.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Enumerate the four edge targets (Apple ANE, Qualcomm Hexagon, WebGPU/WebLLM, NVIDIA Jetson) and match each to a use case.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Name the 2026 WebGPU coverage gap (Firefox Android catching up) and the Safari iOS 26 landing.
+Use `Target` as the trace: start from the reported device check on CPU, keep the raw output, and tie each observation to a named objective.
+
+1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using the reported device check on CPU. Follow `Target`, `ceiling`, `efficiency`. Expect the report distinguishes an available device from an unavailable one and records the selected backend; capture the first printed shape, metric, status, or summary field and state which part supports **Explain why mobile LLM inference is memory-bandwidth-bound and compute is secondary.**.
+2. **Vary one named input.** Repeat the command after changing only the selected device backend: use the same check with CUDA/MPS unavailable. Predict the direction of the change, then compare the two output values. Explain why **Enumerate the four edge targets (Apple ANE, Qualcomm Hexagon, WebGPU/WebLLM, NVIDIA Jetson) and match each to a use case.** says the other inputs should stay fixed.
+3. **Probe the empty case.** Feed the implementation a machine with no visible accelerator. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Name the 2026 WebGPU coverage gap (Firefox Android catching up) and the Safari iOS 26 landing.** and record the exception text if the code rejects the case.
+4. **Package a usable handoff.** Open `outputs/skill-edge-target-picker.md` and add a worked example using the reported device check on CPU. Include the input contract, one expected output field, and a named acceptance check for **Pick a quantization format per target (Core ML INT4 + FP16 for ANE, QNN INT8/INT4 for Hexagon, WebGPU Q4 for browser, NVFP4 for Jetson Thor).**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain why mobile LLM inference is memory-bandwidth-bound and compute is secondary,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Name the 2026 WebGPU coverage gap (Firefox Android catching up) and the Safari iOS 26 landing,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Edge Inference — Apple Neural Engine, Qualcomm Hexagon, WebGPU/WebLLM, Jetson** should contain:
+
+- the `python3 main.py` output for the reported device check on CPU, with `Target`, `ceiling`, `efficiency` traced to the value or shape that supports **Explain why mobile LLM inference is memory-bandwidth-bound and compute is secondary.**;
+- a before/after comparison for the selected device backend, where the same check with CUDA/MPS unavailable changes the observation in the direction predicted by **Enumerate the four edge targets (Apple ANE, Qualcomm Hexagon, WebGPU/WebLLM, NVIDIA Jetson) and match each to a use case.**;
+- a recorded result for a machine with no visible accelerator that matches the implementation’s validation or empty-result contract and explains the evidence for **Name the 2026 WebGPU coverage gap (Firefox Android catching up) and the Safari iOS 26 landing.**; and
+- an updated `outputs/skill-edge-target-picker.md` example with a concrete input, expected output field, and acceptance check tied to **Pick a quantization format per target (Core ML INT4 + FP16 for ANE, QNN INT8/INT4 for Hexagon, WebGPU Q4 for browser, NVFP4 for Jetson Thor).**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

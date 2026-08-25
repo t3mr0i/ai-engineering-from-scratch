@@ -1,78 +1,78 @@
 {
   "lesson": "16-mio-any-to-any-streaming",
-  "title": "MIO and Any-to-Any Streaming Multimodal Models",
+  "title": "MIO Any-to-Any Streaming",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to MIO and Any-to-Any Streaming Multimodal Models?",
+      "question": "Which slot follows the 32,000-token text BPE range in build_vocab?",
       "options": [
-        "Design a shared vocabulary that hosts text, image, speech, and music tokens without collisions",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Design a shared vocabulary that hosts text, image, speech, and music tokens without collisions” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of MIO and Any-to-Any Streaming Multimodal Models?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Compare SEED-Tokenizer (images) and SpeechTokenizer residual-VQ (speech) on compression + reconstruction tr...",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Compare SEED-Tokenizer (images) and SpeechTokenizer residual-VQ (speech) on compression + reconstruction tr...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through MIO and Any-to-Any Streaming Multimodal Models?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Explain the four-stage curriculum that builds up any-to-any generation",
-        "Treat one successful example as proof that every edge case works"
+        "Speech L0, starting at 36,096",
+        "Music, starting at 40,192",
+        "The image SEED slot, starting at 32,000",
+        "The <image> delimiter, starting at 32,000 with size 1"
       ],
       "correct": 2,
-      "explanation": "“Explain the four-stage curriculum that builds up any-to-any generation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "build_vocab starts the text slot at cursor 0 with size 32,000. The next slot is image SEED, which begins at 32,000; the delimiter comes much later."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits MIO and Any-to-Any Streaming Multimodal Models?",
+      "question": "What tokenizer path does route_inputs assign to an input whose kind is 'voice'?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Name the three open any-to-any recipes and their main trade-offs: MIO, AnyGPT, Unified-IO 2",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Name the three open any-to-any recipes and their main trade-offs: MIO, AnyGPT, Unified-IO 2” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for MIO and Any-to-Any Streaming Multimodal Models?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Design a shared vocabulary that hosts text, image, speech, and music tokens without collisions"
+        "BPE",
+        "SEED-Tokenizer",
+        "UNKNOWN",
+        "SpeechTokenizer residual-VQ"
       ],
       "correct": 3,
-      "explanation": "“Design a shared vocabulary that hosts text, image, speech, and music tokens without collisions” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The routing branch treats both 'speech' and 'voice' as audio and assigns 'SpeechTokenizer residual-VQ'."
+    },
+    {
+      "stage": "check",
+      "question": "What total TTFAB does streaming_decode_latency(prompt_audio_seconds=2.0, model_size_b=8) produce?",
+      "options": [
+        "270 ms: 40 + 80 + 40 + 30 + 80",
+        "320 ms, because the residual layers run once per audio second",
+        "390 ms, because prefill includes a vision pass by default",
+        "500 ms, because all five stages are serialized per token"
+      ],
+      "correct": 0,
+      "explanation": "The trace components are 2*20=40ms for mic tokens, 80ms prefill, 40ms first output, 30ms residual-VQ, and 80ms decoder. Their sum is 270ms."
+    },
+    {
+      "stage": "check",
+      "question": "What changes when model_size_b increases from 8 to 16 in streaming_decode_latency?",
+      "options": [
+        "Only the speech decoder doubles; the Thinker is unchanged",
+        "The Thinker prefill and first-output components double; the default total rises from 270ms to 390ms",
+        "Every component doubles, including microphone tokenization",
+        "The total falls because larger models use fewer residual-VQ layers"
+      ],
+      "correct": 1,
+      "explanation": "Prefill is 80*(model/8) and first output is 40*(model/8). At 16B they become 160 and 80 while the other components stay fixed, yielding 390ms."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for MIO and Any-to-Any Streaming Multimodal Models?",
+      "question": "Which path does route_inputs choose for kind='music'?",
       "options": [
-        "Compare SEED-Tokenizer (images) and SpeechTokenizer residual-VQ (speech) on compression + reconstruction tr...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "BPE",
+        "SpeechTokenizer residual-VQ",
+        "Encodec",
+        "SEED-Tokenizer"
       ],
-      "correct": 0,
-      "explanation": "“Compare SEED-Tokenizer (images) and SpeechTokenizer residual-VQ (speech) on compression + reconstruction tr...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The explicit music branch assigns Encodec. Text, image, and speech/voice are routed to the other three tokenizer paths."
+    },
+    {
+      "stage": "post",
+      "question": "What is the order of the demo_chain_of_visual_thought stages after the user asks about the cat?",
+      "options": [
+        "Text answer, then audio transcription, then an image label",
+        "A VQ image decode only, with no language reasoning",
+        "Speech tokens, then a random screenshot, then a classifier score",
+        "Vision tokens, an intermediate sketch bounded by <image> tags, text analysis, then a yes/no conclusion"
+      ],
+      "correct": 3,
+      "explanation": "The demo prints four steps: user text to vision tokens, an intermediate image sketch, text analysis of that sketch, and a final answer with justification."
     }
   ]
 }

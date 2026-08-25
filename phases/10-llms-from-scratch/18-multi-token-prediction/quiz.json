@@ -4,75 +4,45 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Multi-Token Prediction (MTP)?",
-      "options": [
-        "State the MTP training objective and derive the joint loss across prediction depths",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“State the MTP training objective and derive the joint loss across prediction depths” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Multi-Token Prediction (MTP)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Explain the difference between Gloeckle et al.'s parallel MTP heads (2024) and DeepSeek-V3's sequential MTP...",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Explain the difference between Gloeckle et al.'s parallel MTP heads (2024) and DeepSeek-V3's sequential MTP...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Multi-Token Prediction (MTP)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Compute the parameter and memory overhead of adding MTP modules to a pre-training run",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "How does `mtp_loss` combine per-depth losses when there are D modules and weight `lam`?",
+      "options": ["`D * lam + sum(per_depth)`.", "The maximum per-depth loss only.", "`(lam / D) * sum(per_depth)`.", "The loss of depth 1 divided by the vocabulary size."],
       "correct": 2,
-      "explanation": "“Compute the parameter and memory overhead of adding MTP modules to a pre-training run” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The implementation averages the D depth losses and multiplies the result by lambda: `(lam / D) * sum(per_depth)`."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Multi-Token Prediction (MTP)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement one MTP module from scratch: the shared embedding, the per-depth transformer block, the projectio...",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement one MTP module from scratch: the shared embedding, the per-depth transformer block, the projectio...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Multi-Token Prediction (MTP)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "State the MTP training objective and derive the joint loss across prediction depths"
-      ],
+      "question": "What does the sequential `mtp_forward` step combine before applying `M_k`?",
+      "options": ["Two independent output logits.", "The current vocabulary histogram and a loss scalar.", "Only the previous hidden state, with no token embedding.", "RMS-normalized previous hidden state plus RMS-normalized embedding of the next token."],
       "correct": 3,
-      "explanation": "“State the MTP training objective and derive the joint loss across prediction depths” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The toy folds the concatenation from the paper into an addition of normalized `prev_hidden` and `next_embed`, then projects it."
+    },
+    {
+      "stage": "check",
+      "question": "How does `shared_head_logits` produce one vocabulary logit?",
+      "options": ["It takes a dot product between the hidden vector and that vocabulary row of the shared embedding E.", "It samples an integer uniformly from the vocabulary.", "It applies a separate random matrix for every depth.", "It returns the hidden vector's RMS norm for every token."],
+      "correct": 0,
+      "explanation": "The tied head computes `sum(E[v][i] * hidden[i])` for every vocabulary row v, reusing E rather than adding a new output matrix."
+    },
+    {
+      "stage": "check",
+      "question": "According to `count_parameters`, which terms make up one toy MTP module's extra count?",
+      "options": ["Only the shared embedding and output head.", "`hidden²` for `M_k` plus one attention block and one MLP.", "The entire main model multiplied by D.", "Only the vocabulary size."],
+      "correct": 1,
+      "explanation": "The code counts `hidden * hidden` for the projection, then adds the attention and MLP terms for each MTP block; embeddings and the head are shared."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Multi-Token Prediction (MTP)?",
-      "options": [
-        "Explain the difference between Gloeckle et al.'s parallel MTP heads (2024) and DeepSeek-V3's sequential MTP...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Explain the difference between Gloeckle et al.'s parallel MTP heads (2024) and DeepSeek-V3's sequential MTP...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "question": "With a sequence of 12 backbone states and `D=2`, how many starting positions does `mtp_loss` evaluate?",
+      "options": ["2", "12", "10", "24"],
+      "correct": 2,
+      "explanation": "The loop runs `range(len(backbone_hidden) - D)`, so it evaluates 12 - 2 = 10 positions that have two future targets."
+    },
+    {
+      "stage": "post",
+      "question": "If every vocabulary logit is equal and the vocabulary has 32 entries, what is the cross-entropy for one target in this toy?",
+      "options": ["0", "1", "32", "`ln(32)`"],
+      "correct": 3,
+      "explanation": "Equal logits give probability 1/32 to the target, so `-log(1/32) = log(32)`, the uniform-guess reference printed by the demo."
     }
   ]
 }

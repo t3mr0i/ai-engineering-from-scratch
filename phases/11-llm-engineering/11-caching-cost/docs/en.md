@@ -5,7 +5,7 @@
 **Type:** Build
 **Languages:** Python
 **Prerequisites:** Phase 11 Lesson 09 (Function Calling)
-**Time:** ~45 minutes
+**Time:** ~60 minutes
 **Related:** Phase 11 · 15 (Prompt Caching) — this lesson covers application-layer caching (semantic cache, exact hash cache, model routing). Lesson 15 covers provider-layer prompt caching (Anthropic cache_control, OpenAI automatic, Gemini CachedContent). Combine both for 50-95% cost reduction.
 
 ## Learning Objectives
@@ -759,6 +759,18 @@ print(f"  Latency: {latency*1000:.0f}ms")
 print(f"\n💡 Try asking a similar question next to see semantic caching in action!")
 ```
 
+## Build It
+
+Reconstruct **Caching, Rate Limiting & Cost Optimization** by following `calculate_cost` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `calculate_cost` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-cost-optimizer.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Anthropic Prompt Caching Guide](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching) -- the official docs for Anthropic's explicit cache_control markers, pricing, and cache lifetime behavior.
@@ -768,10 +780,20 @@ print(f"\n💡 Try asking a similar question next to see semantic caching in act
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement semantic caching that serves repeated or similar queries from cache instead of making a new API call.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Calculate per-request costs across providers and implement token-aware rate limiting and budget alerts.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a cost optimization layer with prompt compression, model routing (expensive vs cheap), and response caching.
+Start with the smallest reproducible run. Keep the input, output, and interpretation together so another reader can repeat the check.
+
+1. **Start with a known input.** Run [main.py](../code/main.py) with `python3 main.py` from the lesson's `code/` directory. Record the smallest input that demonstrates “Implement semantic caching that serves repeated or similar queries from cache instead of making a new API call”. Point to `main.py` and name the returned field or printed value that serves as evidence.
+2. **Run a controlled comparison.** Change exactly one input, threshold, or option that affects “Calculate per-request costs across providers and implement token-aware rate limiting and budget alerts”. Predict the direction of the change before running it, then compare the two outputs and explain why the other fields should stay stable.
+3. **Try the smallest valid counterexample.** Construct a case that stresses “Build a cost optimization layer with prompt compression, model routing (expensive vs cheap), and response caching”: choose an empty collection, missing field, maximum-sized value, malformed record, or another boundary that fits this lesson. Write the expected behavior first and distinguish an intentional guard from an accidental crash.
+4. **Transfer the result.** Open outputs/prompt-cost-optimizer.md and adapt one example to a real workflow. State the owner, evidence, and next decision required for “Design a tiered caching strategy using exact match, semantic similarity, and prefix caching for different query types”; mark any assumption that the demo does not establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement semantic caching that serves repeated or similar queries from cache instead of making a new API call,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a cost optimization layer with prompt compression, model routing (expensive vs cheap), and response caching,” and cite a repeatable check rather than relying on visual inspection alone.
+Your solution is complete when it records python3 main.py, the captured output, and a short interpretation. Show:
+
+- evidence for “Implement semantic caching that serves repeated or similar queries from cache instead of making a new API call” with the relevant input and returned field;
+- a one-variable comparison that makes “Calculate per-request costs across providers and implement token-aware rate limiting and budget alerts” visible;
+- a predicted and observed boundary result for “Build a cost optimization layer with prompt compression, model routing (expensive vs cheap), and response caching”, including why the behavior is safe; and
+- one concrete update to outputs/prompt-cost-optimizer.md that applies “Design a tiered caching strategy using exact match, semantic similarity, and prefix caching for different query types” without hiding uncertainty.
+
+Use main.py to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.

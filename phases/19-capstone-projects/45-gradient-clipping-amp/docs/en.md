@@ -61,6 +61,18 @@ The scaling factor is the GradScaler's internal state. Every step the lesson rea
 
 
 
+## Build It
+
+Reconstruct **Gradient Clipping and Mixed Precision** by following `StepLog` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Use It
+
+Call `StepLog` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/artifact-card.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Micikevicius et al., Mixed Precision Training (arXiv 1710.03740)](https://arxiv.org/abs/1710.03740) - the original loss-scaling proposal
@@ -73,10 +85,20 @@ The scaling factor is the GradScaler's internal state. Every step the lesson rea
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Compute the global L2 norm over all parameter gradients and clip in place when it exceeds a configured threshold.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Wrap a training step in autocast plus a GradScaler so FP16 forward and backward passes survive overflow.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Detect NaN and Inf in the loss or gradient, skip the optimizer step, and log the skip.
+Work from the smallest fixture that the Gradient Clipping and Mixed Precision demo already understands, then make one deliberate change and record what moved.
+
+1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using x=0.5 with the demo defaults. Follow `StepLog`, `to_csv_row`, `SkipLog`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Compute the global L2 norm over all parameter gradients and clip in place when it exceeds a configured threshold.**.
+2. **Perturb one field.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Wrap a training step in autocast plus a GradScaler so FP16 forward and backward passes survive overflow.** says the other inputs should stay fixed.
+3. **Check the failure boundary.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Detect NaN and Inf in the loss or gradient, skip the optimizer step, and log the skip.** and record the exception text if the code rejects the case.
+4. **Make the result repeatable.** Open `outputs/artifact-card.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Report the GradScaler's scaling factor every step so a long sequence of skips is visible immediately.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Compute the global L2 norm over all parameter gradients and clip in place when it exceeds a configured threshold,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Detect NaN and Inf in the loss or gradient, skip the optimizer step, and log the skip,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Gradient Clipping and Mixed Precision** should contain:
+
+- the `python3 main.py` output for x=0.5 with the demo defaults, with `StepLog`, `to_csv_row`, `SkipLog` traced to the value or shape that supports **Compute the global L2 norm over all parameter gradients and clip in place when it exceeds a configured threshold.**;
+- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Wrap a training step in autocast plus a GradScaler so FP16 forward and backward passes survive overflow.**;
+- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Detect NaN and Inf in the loss or gradient, skip the optimizer step, and log the skip.**; and
+- an updated `outputs/artifact-card.md` example with a concrete input, expected output field, and acceptance check tied to **Report the GradScaler's scaling factor every step so a long sequence of skips is visible immediately.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

@@ -1,78 +1,78 @@
 {
   "lesson": "91-decision-making-with-ai",
-  "title": "From AI Recommendation to Accountable Decision: A Decision-Quality Framework (2026)",
+  "title": "Decision-Making with AI",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to From AI Recommendation to Accountable Decision: A Decision-Quality Framework (2026)?",
+      "question": "What must score_decision verify before a model output can clear the decision gateway?",
       "options": [
-        "Explain the production problem addressed by From AI Recommendation to Accountable Decision: A Decision-Qual...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Explain the production problem addressed by From AI Recommendation to Accountable Decision: A Decision-Qual...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of From AI Recommendation to Accountable Decision: A Decision-Quality Framework (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through From AI Recommendation to Accountable Decision: A Decision-Quality Framework (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Measure quality, cost, latency, and risk with explicit acceptance criteria",
-        "Treat one successful example as proof that every edge case works"
+        "Only the point estimate, because a confident model is already calibrated",
+        "A named approver and a passing aggregate score, with no per-metric limits",
+        "Calibration, uncertainty, subgroup parity, and accountability gates that all pass",
+        "A human approval only for irreversible decisions"
       ],
       "correct": 2,
-      "explanation": "“Measure quality, cost, latency, and risk with explicit acceptance criteria” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The gateway is a conjunction of four gates. A good point estimate or a named approver cannot compensate for a failed ECE, prediction-set, or subgroup-parity check."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits From AI Recommendation to Accountable Decision: A Decision-Quality Framework (2026)?",
+      "question": "Which gates fail for decision D-004, the high-risk loan application?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Identify failure modes and define a safe rollback or review path",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Identify failure modes and define a safe rollback or review path” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for From AI Recommendation to Accountable Decision: A Decision-Quality Framework (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the production problem addressed by From AI Recommendation to Accountable Decision: A Decision-Qual..."
+        "Only accountability, because the approver is present",
+        "Only uncertainty, because the prediction set is too wide",
+        "None, because the point estimate 0.68 is decisive",
+        "Calibration and subgroup parity, because ECE=0.05 and gap=0.05 exceed their 0.03 limits"
       ],
       "correct": 3,
-      "explanation": "“Explain the production problem addressed by From AI Recommendation to Accountable Decision: A Decision-Qual...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "For HIGH_RISK, both ECE and parity tolerance are 0.03. D-004 exceeds both; its width passes and its named approver does not repair those failures."
+    },
+    {
+      "stage": "check",
+      "question": "Why does D-005 fail its accountability gate?",
+      "options": [
+        "It is IRREVERSIBLE and has no named approver",
+        "Its point estimate is below 0.95",
+        "Its prediction-set width is above 0.10",
+        "Its subgroup parity gap is above 0.02"
+      ],
+      "correct": 0,
+      "explanation": "D-005 has passing calibration, uncertainty, and parity values, but approver_id is None. The irreversible branch requires a named human and rejects AUTOMATED as well."
+    },
+    {
+      "stage": "check",
+      "question": "What does build_audit_entry record for D-003 when the approver accepts despite its failed ECE gate?",
+      "options": [
+        "all_gates_passed=True and override=False",
+        "all_gates_passed=False and override=True",
+        "all_gates_passed=True and override=True",
+        "It discards the gate result once a human approver is present"
+      ],
+      "correct": 1,
+      "explanation": "D-003 has ECE 0.06 above the RESOURCE_ALLOC limit 0.05, so all_gates_passed is false. A named non-AUTOMATED approver makes the gate-failure override flag true."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for From AI Recommendation to Accountable Decision: A Decision-Quality Framework (2026)?",
+      "question": "When is the AuditEntry override flag set?",
       "options": [
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Whenever an approver_id is present, even if every gate passes",
+        "Whenever a decision is automated, because automation is an override",
+        "When at least one gate fails and a named human approver other than AUTOMATED is present",
+        "Only when the input hash cannot be computed"
       ],
-      "correct": 0,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "override is defined as gate_fail and a real approver being present. It exposes a rubber stamp: a human accepted a decision that the gateway did not clear."
+    },
+    {
+      "stage": "post",
+      "question": "Why is a high point estimate not enough to clear a high-risk decision?",
+      "options": [
+        "Point estimates are ignored for every decision type",
+        "Only the model version determines whether an action can proceed",
+        "The approver may replace every metric with a personal judgement",
+        "A confident estimate can still be miscalibrated or wrong for a subgroup, so the other gates remain mandatory"
+      ],
+      "correct": 3,
+      "explanation": "D-004 demonstrates the aggregate-confidence trap: the point estimate looks decisive while calibration and subgroup parity fail. The gateway keeps those safety signals independent."
     }
   ]
 }

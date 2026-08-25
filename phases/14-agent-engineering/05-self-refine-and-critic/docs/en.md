@@ -86,6 +86,18 @@ OpenAI Agents SDK ships this pattern as "output guardrails." A guardrail is a va
 
 
 
+## Build It
+
+Reconstruct **Self-Refine and CRITIC: Iterative Output Improvement** by following `Attempt` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
+
+## Use It
+
+Call `Attempt` from a small caller with the text "red fox". Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-refine-loop.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Madaan et al., Self-Refine (arXiv:2303.17651)](https://arxiv.org/abs/2303.17651) — the canonical paper
@@ -95,10 +107,20 @@ OpenAI Agents SDK ships this pattern as "output guardrails." A guardrail is a va
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: State Self-Refine's three prompts (generate, feedback, refine) and explain why history matters for the refine prompt.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain CRITIC's critical insight: LLMs are unreliable at self-verification without external grounding.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement a stdlib Self-Refine loop with history and an optional external verifier.
+This lab follows `Attempt` and `generate` on a controlled fixture; write down the value before changing the input.
+
+1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using the text "red fox". Follow `Attempt`, `generate`, `feedback_self`. Expect the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text; capture the first printed shape, metric, status, or summary field and state which part supports **State Self-Refine's three prompts (generate, feedback, refine) and explain why history matters for the refine prompt.**.
+2. **Change the controlled parameter.** Repeat the command after changing only the input text: use the text "red fox runs". Predict the direction of the change, then compare the two output values. Explain why **Explain CRITIC's critical insight: LLMs are unreliable at self-verification without external grounding.** says the other inputs should stay fixed.
+3. **Exercise the guard.** Feed the implementation an empty string. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Implement a stdlib Self-Refine loop with history and an optional external verifier.** and record the exception text if the code rejects the case.
+4. **Prepare the artifact for reuse.** Open `outputs/skill-refine-loop.md` and add a worked example using the text "red fox". Include the input contract, one expected output field, and a named acceptance check for **Map this pattern to Anthropic's "evaluator-optimizer" workflow and OpenAI Agents SDK's output guardrails.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “State Self-Refine's three prompts (generate, feedback, refine) and explain why history matters for the refine prompt,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement a stdlib Self-Refine loop with history and an optional external verifier,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Self-Refine and CRITIC: Iterative Output Improvement** should contain:
+
+- the `python3 main.py` output for the text "red fox", with `Attempt`, `generate`, `feedback_self` traced to the value or shape that supports **State Self-Refine's three prompts (generate, feedback, refine) and explain why history matters for the refine prompt.**;
+- a before/after comparison for the input text, where the text "red fox runs" changes the observation in the direction predicted by **Explain CRITIC's critical insight: LLMs are unreliable at self-verification without external grounding.**;
+- a recorded result for an empty string that matches the implementation’s validation or empty-result contract and explains the evidence for **Implement a stdlib Self-Refine loop with history and an optional external verifier.**; and
+- an updated `outputs/skill-refine-loop.md` example with a concrete input, expected output field, and acceptance check tied to **Map this pattern to Anthropic's "evaluator-optimizer" workflow and OpenAI Agents SDK's output guardrails.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

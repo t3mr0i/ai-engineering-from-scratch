@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Multi-Agent RL?",
+      "question": "What joint state does reset() create for the cooperative 5x5 GridWorld?",
       "options": [
-        "Formulate Multi-Agent RL in terms of states, actions, rewards, and objectives",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Formulate Multi-Agent RL in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Multi-Agent RL?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the central update rule from first principles",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Multi-Agent RL?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Trace learning signals through a self-terminating experiment",
-        "Treat one successful example as proof that every edge case works"
+        "((0, 0), (0, 0))",
+        "((4, 4), (0, 0))",
+        "((0, 0), (4, 0))",
+        "Two independent random positions near the goal"
       ],
       "correct": 2,
-      "explanation": "“Trace learning signals through a self-terminating experiment” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The first agent starts at (0,0) and the second at (GRID-1,0)=(4,0); both must reach GOAL=(4,4)."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Multi-Agent RL?",
+      "question": "When does step(state, action_pair) return reward 10.0 and done=True?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate convergence, stability, and exploration trade-offs",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate convergence, stability, and exploration trade-offs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Multi-Agent RL?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Formulate Multi-Agent RL in terms of states, actions, rewards, and objectives"
+        "When either agent reaches the goal",
+        "After exactly 100 steps, even if both agents are elsewhere",
+        "When both agents take the same action once",
+        "Only when both new positions equal GOAL=(4,4)"
       ],
       "correct": 3,
-      "explanation": "“Formulate Multi-Agent RL in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "done is `(new1 == GOAL) and (new2 == GOAL)`; the reward is 10.0 only for that joint success, and -1.0 otherwise."
+    },
+    {
+      "stage": "check",
+      "question": "What does default_q() return for a new agent state?",
+      "options": [
+        "A dictionary with up, down, left, and right all initialized to 0.0",
+        "A 16-entry table for every joint action pair",
+        "The four actions sorted by their current returns",
+        "A policy that assigns probability 0.25 to each action"
+      ],
+      "correct": 0,
+      "explanation": "default_q constructs `{a: 0.0 for a in ACTIONS}`; the independent learners use this four-action table separately."
+    },
+    {
+      "stage": "check",
+      "question": "What does independent_q maintain for the two agents?",
+      "options": [
+        "One shared Q table indexed only by the first agent's position",
+        "Separate Q1 and Q2 tables, both indexed by the joint state and updated with the shared reward",
+        "A model that predicts the other agent's next action but no values",
+        "A 4x4 image processed by a convolutional network"
+      ],
+      "correct": 1,
+      "explanation": "independent_q creates Q1 and Q2 separately, yet both receive the same transition reward and use the joint state s as their key."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Multi-Agent RL?",
+      "question": "How large is the joint action set in joint_q_learning?",
       "options": [
-        "Implement the central update rule from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "4, because the two agents must choose the same move",
+        "8, by adding the four actions for each agent",
+        "16, from every ordered pair (a1, a2) in ACTIONS x ACTIONS",
+        "25, one action for every grid row and column"
       ],
-      "correct": 0,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "joint_actions is built by nested iteration over four actions for each agent, yielding 4*4=16 ordered pairs."
+    },
+    {
+      "stage": "post",
+      "question": "Why can a centralized critic help this cooperative task even when actors act separately?",
+      "options": [
+        "It removes the shared reward so each agent gets a different game",
+        "It makes the joint action space equal to four actions",
+        "It prevents either agent from observing its own position",
+        "It can condition value estimates on the global state and help assign a shared outcome to each agent's decision"
+      ],
+      "correct": 3,
+      "explanation": "The lesson's CTDE idea keeps decentralized actors while allowing training-time access to joint information for better credit assignment."
     }
   ]
 }

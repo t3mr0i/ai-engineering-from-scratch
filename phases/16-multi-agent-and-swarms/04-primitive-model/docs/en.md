@@ -121,6 +121,18 @@ All implementable on top of the primitives. None of them are new primitives.
 
 
 
+## Build It
+
+Reconstruct **The Multi-Agent Primitive Model** by following `SharedState` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.
+
+## Use It
+
+Call `SharedState` from a small caller with the smallest valid record {"id": 1}. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-primitive-mapper.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [OpenAI cookbook: Orchestrating Agents — Routines and Handoffs](https://developers.openai.com/cookbook/examples/orchestrating_agents) — the clearest articulation of handoff-driven orchestration
@@ -131,10 +143,20 @@ All implementable on top of the primitives. None of them are new primitives.
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the coordination mechanism behind The Multi-Agent Primitive Model.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement the central multi-agent interaction from first principles.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Trace messages, shared state, and verification decisions end to end.
+This lab follows `SharedState` and `append` on a controlled fixture; write down the value before changing the input.
+
+1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using the smallest valid record {"id": 1}. Follow `SharedState`, `append`, `snapshot`. Expect validation names the missing field or rejects the request; it must not silently accept an incomplete record; capture the first printed shape, metric, status, or summary field and state which part supports **Explain the coordination mechanism behind The Multi-Agent Primitive Model**.
+2. **Change the controlled parameter.** Repeat the command after changing only the optional field: use the same record with one optional field changed. Predict the direction of the change, then compare the two output values. Explain why **Implement the central multi-agent interaction from first principles** says the other inputs should stay fixed.
+3. **Exercise the guard.** Feed the implementation a record missing the required "id" field. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Trace messages, shared state, and verification decisions end to end** and record the exception text if the code rejects the case.
+4. **Prepare the artifact for reuse.** Open `outputs/skill-primitive-mapper.md` and add a worked example using the smallest valid record {"id": 1}. Include the input contract, one expected output field, and a named acceptance check for **Evaluate coordination quality, cost, and correlated failure modes**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the coordination mechanism behind The Multi-Agent Primitive Model,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Trace messages, shared state, and verification decisions end to end,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **The Multi-Agent Primitive Model** should contain:
+
+- the `python3 main.py` output for the smallest valid record {"id": 1}, with `SharedState`, `append`, `snapshot` traced to the value or shape that supports **Explain the coordination mechanism behind The Multi-Agent Primitive Model**;
+- a before/after comparison for the optional field, where the same record with one optional field changed changes the observation in the direction predicted by **Implement the central multi-agent interaction from first principles**;
+- a recorded result for a record missing the required "id" field that matches the implementation’s validation or empty-result contract and explains the evidence for **Trace messages, shared state, and verification decisions end to end**; and
+- an updated `outputs/skill-primitive-mapper.md` example with a concrete input, expected output field, and acceptance check tied to **Evaluate coordination quality, cost, and correlated failure modes**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

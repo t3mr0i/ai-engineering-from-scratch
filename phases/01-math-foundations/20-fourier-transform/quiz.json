@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the Fourier transform do to a signal?",
+      "question": "What DFT coefficients result from the constant signal [1,1,1,1]?",
       "options": [
-        "Compresses the signal to use less storage",
-        "Decomposes the signal into sine waves of different frequencies, amplitudes, and phases",
-        "Removes noise from the signal",
-        "Converts the signal from analog to digital — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "The Fourier transform converts a signal from the time domain to the frequency domain. Each frequency coefficient X[k] tells you the amplitude and phase of a sine wave at frequency k. The signal is re-expressed as a sum of these sine waves."
-    },
-    {
-      "stage": "check",
-      "question": "What is the time complexity of the Fast Fourier Transform (FFT) compared to the direct DFT?",
-      "options": [
-        "Both are O(N^2)",
-        "FFT is O(N log N), DFT is O(N^2)",
-        "FFT is O(N), DFT is O(N log N), with no need to inspect intermediate results or test edge cases",
-        "FFT is O(log N), DFT is O(N)"
-      ],
-      "correct": 1,
-      "explanation": "The direct DFT computes N outputs, each summing over N inputs: O(N^2). The Cooley-Tukey FFT splits the signal into even/odd halves recursively, doing O(N) work at each of log2(N) levels, giving O(N log N). For N = 1 million, this is 20 million vs 1 trillion operations."
-    },
-    {
-      "stage": "check",
-      "question": "What does the convolution theorem state?",
-      "options": [
-        "Convolution in the time domain equals addition in the frequency domain, because one plausible output is sufficient production evidence",
-        "Convolution in the time domain equals pointwise multiplication in the frequency domain",
-        "Convolution always increases the length of a signal",
-        "Convolution and correlation are identical operations"
-      ],
-      "correct": 1,
-      "explanation": "The convolution theorem states that convolution in the time domain equals pointwise multiplication in the frequency domain: x * h = IFFT(FFT(x) . FFT(h)). This is why FFT-based convolution is O(N log N) instead of O(N*M) for large kernels."
-    },
-    {
-      "stage": "check",
-      "question": "Why does zero-padding a signal before FFT NOT increase the true frequency resolution?",
-      "options": [
-        "Zero-padding introduces noise that cancels the improvement, before defining the measurement, acceptance threshold, or rollback path",
-        "Zero-padding interpolates between existing frequency bins but cannot reveal frequency detail absent from the original samples",
-        "Zero-padding only works for power-of-2 signal lengths",
-        "The FFT algorithm ignores zero-padded samples"
-      ],
-      "correct": 1,
-      "explanation": "True frequency resolution depends on the observation time T = N/fs. Zero-padding adds more frequency bins (finer grid) but only interpolates the existing spectrum — it gives a smoother-looking result without resolving frequencies closer than 1/T Hz apart."
-    },
-    {
-      "stage": "post",
-      "question": "In the original Transformer's sinusoidal positional encodings, why are different dimension pairs assigned geometrically spaced frequencies?",
-      "options": [
-        "It reduces the computational cost of attention",
-        "Each frequency provides a different resolution — high frequencies encode fine position, low frequencies encode coarse position, giving each position a unique fingerprint",
-        "Geometric spacing is required by the FFT algorithm — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "It ensures all encoding values are between 0 and 1"
-      ],
-      "correct": 1,
-      "explanation": "High-frequency dimensions change rapidly with position (fine resolution), while low-frequency dimensions change slowly (coarse resolution). Together, the multi-frequency encoding gives every position a unique pattern — similar to how Fourier coefficients uniquely identify a signal."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for The Fourier Transform?",
-      "options": [
-        "Interpret frequency coefficients: extract amplitude, phase, and power spectrum from a signal",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "X[0]=4 and X[1]=X[2]=X[3]=0",
+        "All four coefficients equal 1",
+        "X[0]=0 and X[1]=4",
+        "Every coefficient has magnitude 4"
       ],
       "correct": 0,
-      "explanation": "“Interpret frequency coefficients: extract amplitude, phase, and power spectrum from a signal” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The zero-frequency coefficient sums all samples. The rotating factors cancel at nonzero frequencies for a constant signal."
+    },
+    {
+      "stage": "check",
+      "question": "What does the coefficient X[0] represent for a real signal under this DFT convention?",
+      "options": [
+        "The highest oscillation frequency",
+        "The DC component, equal to the sum and proportional to the mean",
+        "Only the imaginary part of the signal",
+        "The phase of the Nyquist component"
+      ],
+      "correct": 1,
+      "explanation": "At k=0 every factor is 1, so X[0] is the sum of samples. Dividing by N gives the mean under the usual normalization."
+    },
+    {
+      "stage": "check",
+      "question": "Which sign and scale reconstruct the signal in the inverse DFT?",
+      "options": [
+        "Use the same sign and multiply by N",
+        "Discard all negative frequencies with no conjugate symmetry",
+        "Use the opposite exponential sign and divide the sum by N",
+        "Take the absolute value of each coefficient"
+      ],
+      "correct": 2,
+      "explanation": "The forward transform uses a negative sign in the exponent; the inverse uses a positive sign and the 1/N normalization."
+    },
+    {
+      "stage": "check",
+      "question": "How does the convolution theorem compute a discrete convolution with FFTs?",
+      "options": [
+        "Add the two spectra and take a second forward FFT",
+        "Multiply the time-domain samples only at equal indices",
+        "Take the determinant of the two Fourier matrices",
+        "FFT each input, multiply the spectra pointwise, then apply the inverse FFT"
+      ],
+      "correct": 3,
+      "explanation": "Circular convolution in the time domain corresponds to pointwise multiplication in frequency. Padding handles linear convolution when required."
+    },
+    {
+      "stage": "post",
+      "question": "For N=8 samples, which bin is the Nyquist frequency?",
+      "options": [
+        "k=4",
+        "k=1",
+        "k=7",
+        "k=8"
+      ],
+      "correct": 0,
+      "explanation": "The Nyquist bin is N/2 for even N, so k=4. Frequencies above it alias into lower frequencies."
+    },
+    {
+      "stage": "post",
+      "question": "Why is an FFT preferable to the direct DFT for a long sequence?",
+      "options": [
+        "The FFT removes the need for complex arithmetic",
+        "Cooley-Tukey reduces typical work from O(N^2) to O(N log N)",
+        "The DFT cannot represent phase",
+        "The FFT always returns exact real numbers"
+      ],
+      "correct": 1,
+      "explanation": "The FFT reuses subproblems in the DFT sum. It preserves the same frequency information while reducing computational cost for suitable lengths."
     }
   ]
 }

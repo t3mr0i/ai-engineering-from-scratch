@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does a graph make explicit?",
+      "question": "In demo_graph, what route does verify choose until the artifact contains tests and validation?",
       "options": [
-        "Nodes, edges, state, and routing",
-        "Only the original prompt text",
-        "The model's hidden internal thoughts",
-        "A deployment secret's stored value"
+        "fail",
+        "pass",
+        "approved",
+        "default"
       ],
       "correct": 0,
-      "explanation": "Graph structure exposes control-flow decisions."
+      "explanation": "verify marks review='fail' and routes to fail while either tests or validation is missing; that edge returns to implement."
     },
     {
       "stage": "check",
-      "question": "What should an unknown route do?",
+      "question": "What does GraphRunner do when approval is missing at the approval node?",
       "options": [
-        "End the run successfully anyway",
-        "Choose the first listed edge blindly",
-        "Skip verification for that node",
-        "Fail closed before committing state"
-      ],
-      "correct": 3,
-      "explanation": "Silent route fallback is unsafe."
-    },
-    {
-      "stage": "check",
-      "question": "Why pause at human approval?",
-      "options": [
-        "To treat missing consent as approval",
-        "To require an explicit decision",
-        "To erase the graph's recorded trace",
-        "To restart every node from research"
+        "It routes directly to merge",
+        "It pauses at approval and waits for an explicit decision",
+        "It treats None as approved and clears the state",
+        "It restarts at research with an empty state"
       ],
       "correct": 1,
-      "explanation": "Approval is a real graph state, not an implicit default."
+      "explanation": "approval returns NodeResult(pause=True) when no decision exists, so the runner records a pause rather than treating absence as consent."
     },
     {
       "stage": "check",
-      "question": "What must fan-in define?",
+      "question": "After resume({'approval': 'rejected'}), what happens before the next approval pause?",
       "options": [
-        "A very specific model brand to call",
-        "A much longer system prompt",
-        "Merge semantics for shared fields",
-        "A randomly chosen branch order"
+        "The rejected value remains and the graph merges immediately",
+        "The decision is consumed, repair runs, and approval is None at the new pause",
+        "The graph deletes its trace and returns to research",
+        "The decision is ignored and the original artifact is merged"
       ],
-      "correct": 2,
-      "explanation": "Parallel branches need explicit conflict and append rules."
+      "correct": 1,
+      "explanation": "The approval node clears the one-shot decision and routes rejected to implement; after repair and verification pass, the next approval node pauses with approval=None."
+    },
+    {
+      "stage": "check",
+      "question": "What does GraphRunner.step preserve when a node returns an unknown route?",
+      "options": [
+        "The current state, trace, node, and checkpoint list",
+        "Only the attempted route is kept in the trace",
+        "Only the state; it still advances current",
+        "Only the checkpoint; the route is recorded as default"
+      ],
+      "correct": 0,
+      "explanation": "The route is resolved before mutation, so the attempted update is not committed and all runner state remains as it was."
     },
     {
       "stage": "post",
-      "question": "When is a graph worth the coordination cost?",
+      "question": "What evidence list does the main fan_out_merge call return?",
       "options": [
-        "For every single one-step script with no real branches at all",
-        "Only when a framework specifically demands one be used",
-        "Never, regardless of the task's complexity or risk",
-        "When specialization, branches, recovery, or approval matter"
+        "['tests:pass', 'security:pass']",
+        "['requirements', 'tests:pass', 'security:pass']",
+        "['security:pass', 'tests:pass']",
+        "['implementation', 'tests', 'security']"
       ],
-      "correct": 3,
-      "explanation": "Use a graph when implicit structure has become a reliability problem."
+      "correct": 1,
+      "explanation": "The initial mapping contains evidence=['requirements']; append_keys preserves it and then adds the tests and security branch lists."
     },
     {
       "stage": "post",
-      "question": "What does a checkpoint carry?",
+      "question": "Which fields are stored in each workflow Checkpoint?",
       "options": [
-        "Only a screenshot taken during the run",
-        "Next node and durable state snapshot",
-        "A success claim with no supporting evidence",
-        "Only the original task prompt text"
+        "Only the node name and the latest note",
+        "Only the final merged artifact",
+        "The original prompt, model id, and token count",
+        "next_node, a state snapshot, and trace_length"
       ],
-      "correct": 1,
-      "explanation": "The next session needs both position and state."
+      "correct": 3,
+      "explanation": "Checkpoint is a dataclass with next_node, state, and trace_length, enough to restore position and state while trace events remain a separate concern."
     }
   ]
 }

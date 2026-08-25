@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to The Full Transformer — Encoder + Decoder?",
+      "question": "In the demo, what are the source and target shapes before the encoder and decoder run?",
       "options": [
-        "Derive the mechanism behind The Full Transformer — Encoder + Decoder from tensor operations",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
+        "Source is 6×8 and target is 5×8",
+        "Source is 8×6 and target is 8×5",
+        "Both are 6×6 because attention changes the model width",
+        "Source is 5×8 and target is 6×8"
       ],
       "correct": 0,
-      "explanation": "“Derive the mechanism behind The Full Transformer — Encoder + Decoder from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "main sets src_len=6, tgt_len=5, and d=8; attention changes token interactions but preserves each sequence's model width."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of The Full Transformer — Encoder + Decoder?",
+      "question": "What sequence of sublayers does decoder_block apply after its first RMSNorm?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the core component without relying on a transformer framework",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Bidirectional self-attention, pooling, then a classifier with no residuals",
+        "Causal self-attention, encoder cross-attention, then an FFN, each with a residual",
+        "Only cross-attention to enc_out, followed by a second tokenizer",
+        "An FFN, then causal self-attention, while ignoring enc_out"
       ],
       "correct": 1,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "decoder_block first adds masked self-attention, then attends to enc_out, and finally adds the selected FFN output."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through The Full Transformer — Encoder + Decoder?",
+      "question": "How does rms_norm differ from layer_norm in this implementation?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Trace tensor shapes and information flow through the implementation",
-        "Treat one successful example as proof that every edge case works"
+        "RMSNorm normalizes across sequence positions, while LayerNorm uses one token",
+        "RMSNorm subtracts the mean twice and never computes a square",
+        "RMSNorm divides by root mean square without subtracting the row mean",
+        "They are identical except for the function name"
       ],
       "correct": 2,
-      "explanation": "“Trace tensor shapes and information flow through the implementation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "rms_norm computes sqrt(mean(v²)+eps) and divides; layer_norm also computes and subtracts the row mean."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits The Full Transformer — Encoder + Decoder?",
+      "question": "What operation defines ffn_swiglu(X, W1, W2, W3)?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate the computational and modeling trade-offs introduced by The Full Transformer — Encoder + Decoder",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate the computational and modeling trade-offs introduced by The Full Transformer — Encoder + Decoder” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for The Full Transformer — Encoder + Decoder?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Derive the mechanism behind The Full Transformer — Encoder + Decoder from tensor operations"
+        "A residual addition of W1, W2, and W3 without matrix products",
+        "W1 applied after a softmax over tokens, followed by W2+W3",
+        "A ReLU on XW2 with W1 and W3 used only for scaling the loss",
+        "W2 applied to silu(XW1) elementwise multiplied by XW3"
       ],
       "correct": 3,
-      "explanation": "“Derive the mechanism behind The Full Transformer — Encoder + Decoder from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The code forms h1=XW1 and h3=XW3, gates silu(h1) by h3, then projects the result with W2."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for The Full Transformer — Encoder + Decoder?",
+      "question": "What does causal=True change inside scaled_dot_product_attention?",
       "options": [
-        "Implement the core component without relying on a transformer framework",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "It masks score entries where j>i before softmax",
+        "It removes the sqrt(dk) scale from every score",
+        "It reverses K and V so the decoder reads the encoder backward",
+        "It replaces softmax with an argmax over the future"
       ],
       "correct": 0,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The mask marks future columns j>i as -inf, so their post-softmax weights become zero."
+    },
+    {
+      "stage": "post",
+      "question": "Why does decoder_block pass enc_out as kv_source for its cross-attention?",
+      "options": [
+        "It lets the decoder reuse the source vocabulary without computing attention",
+        "Queries come from the decoder state while keys and values come from the encoded source sequence",
+        "It makes the decoder causal mask apply to source positions instead of target positions",
+        "It replaces the target residual stream with a copy of enc_out"
+      ],
+      "correct": 1,
+      "explanation": "multi_head_attention always forms Q from X but uses kv_source for K and V, which is the encoder-decoder attention pattern."
     }
   ]
 }

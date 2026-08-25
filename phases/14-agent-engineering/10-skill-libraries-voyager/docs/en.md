@@ -91,6 +91,18 @@ For production agents this translates to a "what's missing" operator: given the 
 
 
 
+## Build It
+
+Reconstruct **Skill Libraries and Lifelong Learning (Voyager)** by following `Skill` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
+
+## Use It
+
+Call `Skill` from a small caller with the text "red fox". Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-skill-library.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Wang et al., Voyager (arXiv:2305.16291)](https://arxiv.org/abs/2305.16291) — the original skill-library paper
@@ -100,10 +112,20 @@ For production agents this translates to a "what's missing" operator: given the 
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Name Voyager's three components — automatic curriculum, skill library, iterative prompting — and the role of each.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why Voyager makes the action space code, not primitive commands.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Implement a stdlib skill library with registration, retrieval, composition, and failure-driven refinement.
+Keep two runs side by side for **Skill Libraries and Lifelong Learning (Voyager)**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
+
+1. **Read the first result.** From `code/`, run `python3 main.py` using the text "red fox". Follow `Skill`, `SkillLibrary`, `register`. Expect the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text; capture the first printed shape, metric, status, or summary field and state which part supports **Name Voyager's three components — automatic curriculum, skill library, iterative prompting — and the role of each.**.
+2. **Run a two-value comparison.** Repeat the command after changing only the input text: use the text "red fox runs". Predict the direction of the change, then compare the two output values. Explain why **Explain why Voyager makes the action space code, not primitive commands.** says the other inputs should stay fixed.
+3. **Try an adversarial fixture.** Feed the implementation an empty string. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Implement a stdlib skill library with registration, retrieval, composition, and failure-driven refinement.** and record the exception text if the code rejects the case.
+4. **Write the operator note.** Open `outputs/skill-skill-library.md` and add a worked example using the text "red fox". Include the input contract, one expected output field, and a named acceptance check for **Map Voyager's pattern onto the 2026 Claude Agent SDK skills and the skillkit ecosystem.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name Voyager's three components — automatic curriculum, skill library, iterative prompting — and the role of each,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement a stdlib skill library with registration, retrieval, composition, and failure-driven refinement,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Skill Libraries and Lifelong Learning (Voyager)** should contain:
+
+- the `python3 main.py` output for the text "red fox", with `Skill`, `SkillLibrary`, `register` traced to the value or shape that supports **Name Voyager's three components — automatic curriculum, skill library, iterative prompting — and the role of each.**;
+- a before/after comparison for the input text, where the text "red fox runs" changes the observation in the direction predicted by **Explain why Voyager makes the action space code, not primitive commands.**;
+- a recorded result for an empty string that matches the implementation’s validation or empty-result contract and explains the evidence for **Implement a stdlib skill library with registration, retrieval, composition, and failure-driven refinement.**; and
+- an updated `outputs/skill-skill-library.md` example with a concrete input, expected output field, and acceptance check tied to **Map Voyager's pattern onto the 2026 Claude Agent SDK skills and the skillkit ecosystem.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

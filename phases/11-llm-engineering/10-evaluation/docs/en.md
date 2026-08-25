@@ -617,6 +617,18 @@ for criterion in ["relevance", "correctness", "helpfulness", "safety"]:
 print(f"\nAverage score: {sum(custom_scores.values()) / len(custom_scores):.2f}/5")
 ```
 
+## Build It
+
+Reconstruct **Evaluation & Testing LLM Applications** by following `TestCase` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
+
+## Use It
+
+Call `TestCase` from a small caller with the text "red fox". Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-eval-designer.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Zheng et al., 2023 -- "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena"](https://arxiv.org/abs/2306.05685) -- the foundational paper on using LLMs to judge other LLMs.
@@ -628,13 +640,23 @@ print(f"\nAverage score: {sum(custom_scores.values()) / len(custom_scores):.2f}/
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build an evaluation dataset with input-output pairs, rubrics, and edge cases specific to your LLM application.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement automated scoring using LLM-as-judge, regex matching, and deterministic assertion checks.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Set up regression testing that detects quality degradation when prompts, models, or parameters change.
+Treat this as a lab exercise. Preserve the setup and result, then explain which observation is doing the evidentiary work.
+
+1. **Reproduce the control run.** Run [`main.py`](../code/main.py) with `python3 main.py` from the lesson's `code/` directory. Record the smallest input that demonstrates “Build an evaluation dataset with input-output pairs, rubrics, and edge cases specific to your LLM application”. Point to `main.py` and name the returned field or printed value that serves as evidence.
+2. **Change one decision.** Change exactly one input, threshold, or option that affects “Implement automated scoring using LLM-as-judge, regex matching, and deterministic assertion checks”. Predict the direction of the change before running it, then compare the two outputs and explain why the other fields should stay stable.
+3. **Probe a boundary.** Construct a case that stresses “Set up regression testing that detects quality degradation when prompts, models, or parameters change”: choose an empty collection, missing field, maximum-sized value, malformed record, or another boundary that fits this lesson. Write the expected behavior first and distinguish an intentional guard from an accidental crash.
+4. **Transfer the result.** Open `outputs/prompt-eval-designer.md` and adapt one example to a real workflow. State the owner, evidence, and next decision required for “Design evaluation metrics that capture what matters for your use case (correctness, tone, format compliance, latency)”; mark any assumption that the demo does not establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build an evaluation dataset with input-output pairs, rubrics, and edge cases specific to your LLM application,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Set up regression testing that detects quality degradation when prompts, models, or parameters change,” and cite a repeatable check rather than relying on visual inspection alone.
+A complete handoff records `python3 main.py`, the observed output, and the reasoning behind it. Check:
+
+- evidence for “Build an evaluation dataset with input-output pairs, rubrics, and edge cases specific to your LLM application” with the relevant input and returned field;
+- a one-variable comparison that makes “Implement automated scoring using LLM-as-judge, regex matching, and deterministic assertion checks” visible;
+- a predicted and observed boundary result for “Set up regression testing that detects quality degradation when prompts, models, or parameters change”, including why the behavior is safe; and
+- one concrete update to `outputs/prompt-eval-designer.md` that applies “Design evaluation metrics that capture what matters for your use case (correctness, tone, format compliance, latency)” without hiding uncertainty.
+
+Use `main.py` to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
 ## Guided Demo
 

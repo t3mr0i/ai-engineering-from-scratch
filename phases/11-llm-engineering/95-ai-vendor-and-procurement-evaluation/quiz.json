@@ -1,78 +1,78 @@
 {
   "lesson": "95-ai-vendor-and-procurement-evaluation",
-  "title": "AI Vendor Evaluation: Procurement Evidence That Bites (2026)",
+  "title": "AI Vendor and Procurement Evaluation",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to AI Vendor Evaluation: Procurement Evidence That Bites (2026)?",
+      "question": "How should a procurement scorecard use hard-gate evidence?",
       "options": [
-        "Explain the production problem addressed by AI Vendor Evaluation: Procurement Evidence That Bites (2026)",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Explain the production problem addressed by AI Vendor Evaluation: Procurement Evidence That Bites (2026)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of AI Vendor Evaluation: Procurement Evidence That Bites (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through AI Vendor Evaluation: Procurement Evidence That Bites (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Measure quality, cost, latency, and risk with explicit acceptance criteria",
-        "Treat one successful example as proof that every edge case works"
+        "Convert each missing document into a small score penalty",
+        "Let a high capability score compensate for a missing DPA",
+        "Filter vendors on signed DPA, training-use terms, security scope, and residency before ranking",
+        "Apply gates only after the cheapest vendor has been selected"
       ],
       "correct": 2,
-      "explanation": "“Measure quality, cost, latency, and risk with explicit acceptance criteria” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The lesson separates gates from weighted dimensions. A vendor can rank well and still be disqualified when the evidence fails a non-negotiable control."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits AI Vendor Evaluation: Procurement Evidence That Bites (2026)?",
+      "question": "Which gate does the Azure AI Foundry entry fail in GATES?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Identify failure modes and define a safe rollback or review path",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Identify failure modes and define a safe rollback or review path” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for AI Vendor Evaluation: Procurement Evidence That Bites (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the production problem addressed by AI Vendor Evaluation: Procurement Evidence That Bites (2026)"
+        "Signed DPA",
+        "SOC 2 Type II",
+        "EU data residency",
+        "ISO 27001 Statement of Applicability covering the inference API"
       ],
       "correct": 3,
-      "explanation": "“Explain the production problem addressed by AI Vendor Evaluation: Procurement Evidence That Bites (2026)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The Azure entry sets iso27001_in_scope=False while its other listed gates are true. gate_failures reports that the SoA excludes the inference API."
+    },
+    {
+      "stage": "check",
+      "question": "What does WeightProfile.__post_init__ do when weights sum to 0.90?",
+      "options": [
+        "Raises ValueError because the profile must sum to 1.0 within 0.01",
+        "Normalises all weights automatically to sum to 1.0",
+        "Accepts the profile and scales the final score down",
+        "Drops the smallest dimension from the profile"
+      ],
+      "correct": 0,
+      "explanation": "The constructor checks abs(total - 1.0) > 0.01 and raises ValueError for a 0.90 total. It does not silently repair procurement weights."
+    },
+    {
+      "stage": "check",
+      "question": "A vendor quote uses a 50% batch discount, but TrafficProfile.real_time_required=True. What effective input price does monthly_cost use?",
+      "options": [
+        "Half the list price, because the quote already promised the discount",
+        "The real-time list price, because the batch discount is voided",
+        "Zero input cost, because real-time traffic is metered separately",
+        "The batch price for input and the list price for output"
+      ],
+      "correct": 1,
+      "explanation": "effective_price_per_million returns the list input price when a batch quote is deployed in real time. monthly_cost likewise voids the output discount."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for AI Vendor Evaluation: Procurement Evidence That Bites (2026)?",
+      "question": "What switching-cost estimate does the BudgetAI profile produce?",
       "options": [
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "5 weeks: only re-integration and re-evaluation count",
+        "9 weeks: custom export adds no fine-tuning adjustment",
+        "13 weeks: 3+2 base weeks, +4 custom export, +4 for one fine-tuned model",
+        "17 weeks: the custom export and fine-tuning adjustments are each doubled"
       ],
-      "correct": 0,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "switching_cost_estimate starts at 3+2=5, adds 4 for custom export, and adds 4 for one fine-tuned model. The result is 13 weeks."
+    },
+    {
+      "stage": "post",
+      "question": "What does monthly_cost expose when a batch quote is compared with real-time production traffic?",
+      "options": [
+        "Only the quoted monthly number, because deployment details are out of scope",
+        "A single blended price with no indication of the SLA mismatch",
+        "The vendor name and its weighted score, but not token assumptions",
+        "Quoted and effective monthly costs plus an explanation that the batch discount was voided"
+      ],
+      "correct": 3,
+      "explanation": "monthly_cost returns quoted_monthly_usd, effective_monthly_usd, and notes for input and output pricing. That makes the batch-price trap visible under the actual SLA."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What are Letta's three memory tiers?",
+      "question": "For a block with `limit=180`, when does the default `near_limit()` become true?",
       "options": [
-        "Core, recall, archival",
-        "Working, episodic, semantic",
-        "RAM, swap, and virtual memory",
-        "Cache, KV store, archival"
-      ],
-      "correct": 0,
-      "explanation": "Letta uses core (always visible), recall (conversation history), and archival (external) tiers."
-    },
-    {
-      "stage": "check",
-      "question": "Which production problem does sleep-time compute target?",
-      "options": [
-        "Block bloat from unlimited block_append calls hitting the character limit",
-        "Tail latency from doing memory consolidation on the critical path",
-        "Poisoned consolidation from attacker-reachable content entering core memory",
-        "Silent drift where the primary agent never sees a rewritten block underneath it"
-      ],
-      "correct": 1,
-      "explanation": "Sleep-time moves prune/summarize/reconcile off the user-facing path, so primary responses stay fast."
-    },
-    {
-      "stage": "check",
-      "question": "Which property is NOT a memory block field in Letta?",
-      "options": [
-        "label (short identifier)",
-        "value (block content)",
-        "embedding_model_version",
-        "limit (character cap)"
+        "At 90 characters, because the default threshold is 0.5.",
+        "Only after the block exceeds 180 characters.",
+        "At 144 characters, because the default threshold is 0.8.",
+        "As soon as the block has any non-empty value."
       ],
       "correct": 2,
-      "explanation": "Blocks carry id, label, value, limit, description; embedding model version is not part of the block schema."
+      "explanation": "`near_limit` compares length with `int(180 * 0.8)`, which is 144 characters."
     },
     {
       "stage": "check",
-      "question": "Why can the sleep-time agent run a stronger model than the primary?",
+      "question": "What is the responsibility of `PrimaryAgent.turn` in this implementation?",
       "options": [
-        "It receives a private API key that bypasses the primary agent's rate limits",
-        "It is exempt from the per-request rate limits the primary model faces",
-        "Memory consolidation writes cost roughly half the tokens of a normal turn",
-        "It is off the critical path, so it is not latency-constrained"
+        "It rewrites every block into a half-length summary before responding.",
+        "It invalidates contradictory archival records synchronously.",
+        "It waits for `SleepTimeAgent.run` before returning a response.",
+        "It writes raw block or archival facts and returns `response to: ...` without consolidation."
       ],
       "correct": 3,
-      "explanation": "Because it does not block user responses, the sleep-time agent can be slower and more expensive."
+      "explanation": "The primary agent handles user-turn writes and appends a response; consolidation is deliberately a separate off-path pass."
     },
     {
-      "stage": "post",
-      "question": "What pattern do the Human and Persona blocks generalize to?",
+      "stage": "check",
+      "question": "What does `SleepTimeAgent.run` do to a block that is near its limit?",
       "options": [
-        "Arbitrary user-defined typed editable blocks (Task, Project, Safety, ...)",
-        "Vector embeddings stored alongside the core block for semantic retrieval",
-        "JSON-RPC channels used to synchronize state between the primary and sleep-time agents",
-        "OS-style processes, each with its own memory space and scheduler priority"
+        "It summarizes the value and calls `block.rewrite`, creating a new version.",
+        "It deletes the block and moves its contents to the invalid archive.",
+        "It appends the full value a second time to preserve raw history.",
+        "It leaves the block unchanged and only logs that it was near the limit."
       ],
       "correct": 0,
-      "explanation": "Letta generalizes the two MemGPT blocks to any user-defined block with id, label, value, limit, description."
+      "explanation": "Near-limit blocks are passed through `_summarize` and `rewrite`; `rewrite` increments the version and records the prior value."
+    },
+    {
+      "stage": "check",
+      "question": "What happens to a valid archival record matching a contradiction claim?",
+      "options": [
+        "It is physically removed from the archive.",
+        "`Archival.invalidate` marks it `valid=False` while retaining the record.",
+        "It is copied into every block and marked as current.",
+        "The primary agent is interrupted and the contradiction is raised."
+      ],
+      "correct": 1,
+      "explanation": "The sleep-time pass keeps the record for history but flips its `valid` flag, so `valid_records()` excludes it."
     },
     {
       "stage": "post",
-      "question": "What is silent drift in this pattern?",
+      "question": "Which archival record is invalidated by the demo's Berlin contradiction?",
       "options": [
-        "The sleep-time agent silently exhausting the disk quota reserved for archival storage before the primary agent's very next turn",
-        "A primary agent never seeing that the sleep-time agent rewrote a block underneath it; fix with versioning and visible diffs",
-        "An upgraded embedding model changing vector similarity scores between sessions without flagging the change",
-        "Rate-limit jitter causing sleep-time consolidation to run on an unpredictable schedule"
+        "`a001`, the writing-style preference",
+        "No record; contradictions affect blocks only.",
+        "`a002`, `ava lives in Berlin - old address, outdated`",
+        "`a003`, the curriculum audience claim"
       ],
-      "correct": 1,
-      "explanation": "Versioning blocks and surfacing diffs in the trace makes sleep-time rewrites visible to the primary loop."
+      "correct": 2,
+      "explanation": "The contradiction claim is `ava lives in Berlin`; the matching second record is `a002`, which the sleep pass marks invalid."
+    },
+    {
+      "stage": "post",
+      "question": "What does `Block.append` do when the new value is longer than `limit`?",
+      "options": [
+        "It truncates the value exactly at `limit`.",
+        "It raises `ValueError` and leaves the prior value untouched.",
+        "It silently discards the newest text.",
+        "It appends the text, increments `version`, and records the old value; the method itself does not enforce the limit."
+      ],
+      "correct": 3,
+      "explanation": "The limit is used by `near_limit`; `append` simply updates the value, version, and history, leaving consolidation to another agent."
     }
   ]
 }

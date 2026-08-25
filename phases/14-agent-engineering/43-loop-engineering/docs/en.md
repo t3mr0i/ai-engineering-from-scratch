@@ -191,6 +191,18 @@ coordination cost explicit.
 - [Anthropic: Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) — workflow patterns and evaluator/optimizer separation.
 - [OpenAI: Harness engineering](https://openai.com/index/harness-engineering-leveraging-codex-in-an-agent-first-world/) — repository structure and verification as agent infrastructure.
 
+## Build It
+
+Reconstruct **Loop Engineering: From Prompts to Bounded Autonomy** by following `TriggerKind` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
+
+## Use It
+
+Call `TriggerKind` from a small caller with the text "red fox". Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-loop-engineering.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
+
 ## Exercises
 
 1. Replace the demo evaluator with a command-backed evaluator that records an
@@ -205,4 +217,11 @@ coordination cost explicit.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish a manual turn, a goal loop, a timer loop, and an event-triggered loop,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement a deterministic maker/evaluator loop with receipts for every round,” and cite a repeatable check rather than relying on visual inspection alone.
+For Loop Engineering: From Prompts to Bounded Autonomy, run python3 main.py from code/ and keep the output beside the input that produced it. A defensible submission contains:
+
+1. Evidence for “Distinguish a manual turn, a goal loop, a timer loop, and an event-triggered loop”: identify the exact field, trace entry, or report line that proves it; a successful process exit alone is not enough.
+2. A one-variable comparison for “Define a loop contract with a goal, an independent evaluator, feedback, and bounded stop conditions”. State the prediction first and explain why the observed change follows from __post_init__, trigger_is_due, complete.
+3. A boundary or failure result for “Implement a deterministic maker/evaluator loop with receipts for every round”. Include the input, the expected guard or refusal, and the observed behavior. If the demo has no guard, record that gap instead of calling a crash a pass.
+4. A practical update to outputs/skill-loop-engineering.md that applies “Detect stalled work and exhausted budgets before an unattended loop can run forever” and names the person or system responsible for the next decision.
+
+Run the relevant tests after the experiment. Keep any mismatch between prediction and observation in the receipt; the purpose of this lesson is to make the reasoning inspectable, not to make every run look successful.

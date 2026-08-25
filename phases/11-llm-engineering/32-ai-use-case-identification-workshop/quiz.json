@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What makes an AI idea a useful use case candidate?",
+      "question": "Which evidence turns a rough idea into a candidate for an AI use-case workshop?",
       "options": [
-        "It arrives with a vendor demo that already impressed several people in the room",
-        "It has a workflow, evidence, value, risk, ownership, and a way to measure impact",
-        "It promises a broad transformation story that leadership can quote in a townhall meeting",
-        "It sits highest in the backlog because it was submitted before the other ideas"
-      ],
-      "correct": 1,
-      "explanation": "A use case must be tied to a workflow and a measurable outcome. Discovery starts with the workflow, not with a tool, and the output is a short pilot brief rather than a transformation promise."
-    },
-    {
-      "stage": "check",
-      "question": "A backlog holds twenty AI ideas. Why are they hard to prioritize as they stand?",
-      "options": [
-        "They are not comparable: one saves minutes, one reduces risk, one improves quality, one is a demo",
-        "They were written by different teams, so the wording and level of detail vary across the entries each time",
-        "There are too many of them for one workshop, so the list has to be cut before scoring begins",
-        "They lack technical detail about model choice, context window size, and expected token cost"
-      ],
-      "correct": 0,
-      "explanation": "The lesson's problem statement is comparability. Without a shared scoring method that weighs value, risk, volume, variance, and ownership on the same scale, prioritization becomes opinion-driven."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Python artifact produce?",
-      "options": [
-        "A finished product roadmap with committed delivery dates per quarter",
-        "A retrieval index over the team's documents for semantic search",
-        "A ranked use-case plan with priority, controls, and rationale",
-        "A signed compliance approval that clears the use case for launch"
+        "A vendor demo that makes the idea sound innovative",
+        "A high position in the backlog, even if the workflow and owner are unknown",
+        "A named workflow with observable value, risk, data, ownership, and a measure for a pilot",
+        "A broad transformation promise that does not identify a first experiment"
       ],
       "correct": 2,
-      "explanation": "The artifact helps teams compare use cases against each other and choose the next control level for each one."
+      "explanation": "The canvas is meant to make an idea testable. A workflow, signals, owner, risk, data, metric, and next step are more useful than excitement or a product name."
     },
     {
       "stage": "check",
-      "question": "Which control belongs to this lesson?",
+      "question": "The invoice intake fixture has three matched signals, impact=4, and uncertainty=3. Which score and priority does the artifact produce?",
       "options": [
-        "A vendor shortlist that names the AI products each idea would be built on, before defining the measurement, acceptance threshold, or rollback path",
-        "A transformation narrative that describes the end state three years out",
-        "A backlog ordering rule that promotes whichever idea was submitted first",
-        "A use case canvas that captures value, risk, owner, data, metric, and next step"
+        "11 and guided pilot",
+        "15 and guided pilot",
+        "20 and team practice",
+        "17 and launch gate required"
       ],
       "correct": 3,
-      "explanation": "The use case canvas captures the information needed for prioritization - value, risk, owner, data, metric, and next step - so ideas can be compared on the same terms."
+      "explanation": "The raw score is 4*2 + 3 + 3*2 = 17. That crosses the launch-gate threshold of 16."
+    },
+    {
+      "stage": "check",
+      "question": "Which category does choose_category assign to the invoice intake fixture?",
+      "options": [
+        "risk",
+        "efficiency",
+        "experience",
+        "quality"
+      ],
+      "correct": 0,
+      "explanation": "The fixture has three matches, impact 4, and uncertainty 3. (3+4+3) modulo 4 is 2, so CATEGORIES[2] is risk."
+    },
+    {
+      "stage": "check",
+      "question": "What does recommend include when the use-case fixture has three matched signals?",
+      "options": [
+        "Only the accountable owner, because value and risk are decided later",
+        "use case canvas, value risk score, pilot metric, and accountable owner",
+        "The first two controls, regardless of the signal count",
+        "A vendor shortlist instead of a pilot metric"
+      ],
+      "correct": 1,
+      "explanation": "The control slice is one more item than the match count, capped at the four controls. Three matches select the whole use-case control set."
     },
     {
       "stage": "post",
-      "question": "When should a use case move toward a guided pilot?",
+      "question": "What priority does Scenario(\"one-off report\", \"Exploration idea with no listed signals.\", (), impact=2, uncertainty=2) receive?",
       "options": [
-        "When the idea is popular enough that several teams have asked for it by name",
-        "When the value is plausible, the workflow is clear, and the risks are controllable",
-        "When no owner has been named yet, so a pilot can be used to find one",
-        "When the data is inaccessible, since a pilot is the cheapest way to test access — and applies unchanged even when the lesson's stated preconditions fail"
+        "guided pilot, because every report is repetitive",
+        "launch gate required, because the output is an artifact",
+        "awareness only, because its score is 2*2 + 2 = 6",
+        "team practice, because an empty signal list adds two points"
       ],
-      "correct": 1,
-      "explanation": "A guided pilot needs enough structure to test the hypothesis safely. Ideas without a clear workflow, an accountable owner, or usable data are not ready for one."
+      "correct": 2,
+      "explanation": "The fixture has impact 2, uncertainty 2, and no matches, so its score is 6. priority_for reserves team practice for scores of 7 or more."
     },
     {
       "stage": "post",
-      "question": "What is the main purpose of the pilot brief?",
+      "question": "What should canvas-ai-use-case-pilot.md make explicit before a team starts the pilot?",
       "options": [
-        "To secure budget approval before the workflow has been described",
-        "To make the next experiment specific enough to test against a named metric",
-        "To replace the stakeholder alignment conversation with a written document, with no need to inspect intermediate results or test edge cases",
-        "To promise a broad transformation that leadership can announce externally"
+        "The model brand and a fixed promise that the idea will scale",
+        "Only the workshop ranking, without naming an owner or outcome measure",
+        "A final deployment date, even if the process and data are still unclear",
+        "The workflow, value and risk, data, accountable owner, pilot metric, and next step"
       ],
-      "correct": 1,
-      "explanation": "The pilot brief turns an idea into a measurable next step. The lesson asks for a short, testable brief rather than a broad transformation promise."
+      "correct": 3,
+      "explanation": "The output is a pilot brief, not a launch approval. Its fields let a team challenge assumptions and agree what evidence the next experiment must produce."
     }
   ]
 }

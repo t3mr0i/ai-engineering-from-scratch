@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does 'entropy' measure in information theory?",
+      "question": "What is the entropy of a fair binary variable, using log base 2?",
       "options": [
-        "The energy of a physical system",
-        "The average surprise or uncertainty in a probability distribution",
-        "The number of bits in a binary message",
-        "The error rate of a communication channel — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "Entropy H(P) = -sum(p(x) * log(p(x))) measures the average amount of surprise across all outcomes. High entropy means high uncertainty (uniform distribution). Low entropy means the outcome is predictable."
-    },
-    {
-      "stage": "check",
-      "question": "What is the cross-entropy loss commonly used for in neural networks?",
-      "options": [
-        "Regression tasks with continuous outputs",
-        "Classification tasks, measuring how far predicted probabilities are from true labels",
-        "Generating new data samples",
-        "Regularizing model weights to prevent overfitting, with no need to inspect intermediate results or test edge cases"
-      ],
-      "correct": 1,
-      "explanation": "Cross-entropy loss H(P,Q) = -sum(p(x)*log(q(x))) measures the difference between the true distribution (labels) and the model's predicted distribution. It is THE standard loss for classification."
-    },
-    {
-      "stage": "check",
-      "question": "Why is minimizing cross-entropy equivalent to minimizing KL divergence during training?",
-      "options": [
-        "Because KL divergence is always zero during training",
-        "Because cross-entropy = entropy + KL divergence, and the entropy of the true labels is constant, so minimizing cross-entropy minimizes KL divergence",
-        "Because cross-entropy and KL divergence are the same formula, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "Because the model's entropy equals zero at convergence"
-      ],
-      "correct": 1,
-      "explanation": "H(P,Q) = H(P) + D_KL(P||Q). Since the true distribution P doesn't change during training, H(P) is constant. Minimizing H(P,Q) is the same as minimizing D_KL(P||Q) -- pushing the model toward the true distribution."
-    },
-    {
-      "stage": "check",
-      "question": "A language model has perplexity 50 on a test set. What does this mean?",
-      "options": [
-        "The model makes 50 errors per sentence, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "On average, the model is as uncertain as if it were choosing uniformly from 50 possible next tokens at each step",
-        "The model has 50 layers",
-        "The model was trained for 50 epochs"
-      ],
-      "correct": 1,
-      "explanation": "Perplexity = e^(cross-entropy). A perplexity of 50 means the model's uncertainty at each token is equivalent to picking randomly from 50 equally likely options. Lower perplexity means better predictions."
-    },
-    {
-      "stage": "post",
-      "question": "How does mutual information differ from Pearson correlation for feature selection?",
-      "options": [
-        "Mutual information is faster to compute",
-        "Mutual information detects any statistical dependency (linear or nonlinear) while correlation only detects linear relationships",
-        "Pearson correlation works for any data type while mutual information only works for continuous data — and applies unchanged even when the lesson's stated preconditions fail",
-        "They always give the same feature rankings"
-      ],
-      "correct": 1,
-      "explanation": "Mutual information I(X;Y) captures all statistical dependencies between variables, including nonlinear and non-monotonic ones. Pearson correlation only measures linear association, missing many important relationships."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Information Theory?",
-      "options": [
-        "Derive why minimizing cross-entropy loss is equivalent to maximizing log-likelihood",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "1 bit",
+        "0 bits",
+        "2 bits",
+        "0.5 bits"
       ],
       "correct": 0,
-      "explanation": "“Derive why minimizing cross-entropy loss is equivalent to maximizing log-likelihood” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "H(X) = -2*(0.5 log2 0.5) = 1. A fair coin has one bit of uncertainty."
+    },
+    {
+      "stage": "check",
+      "question": "How are cross-entropy, entropy, and KL divergence related for true distribution p and model q?",
+      "options": [
+        "CE(p,q) = H(q) - KL(p||q)",
+        "CE(p,q) = H(p) + KL(p||q)",
+        "KL(p||q) = H(p) + H(q) for all p and q",
+        "Cross-entropy is always smaller than entropy"
+      ],
+      "correct": 1,
+      "explanation": "Cross-entropy decomposes into the irreducible entropy of p plus the mismatch penalty KL(p||q). The penalty is nonnegative and vanishes when the distributions match."
+    },
+    {
+      "stage": "check",
+      "question": "Which property of KL divergence matters when comparing a model distribution with the target?",
+      "options": [
+        "It is a true metric with the same value after swapping p and q",
+        "It can be negative whenever q assigns high probability",
+        "It is nonnegative and is zero only when the distributions agree, but it is not symmetric",
+        "It is symmetric whenever p and q have the same support"
+      ],
+      "correct": 2,
+      "explanation": "Gibbs' inequality gives KL >= 0. In general KL(p||q) differs from KL(q||p), so the direction of the comparison is part of the definition."
+    },
+    {
+      "stage": "check",
+      "question": "What is mutual information I(X;Y) when X and Y are independent?",
+      "options": [
+        "H(X)+H(Y)",
+        "1 for every pair of variables",
+        "The larger of H(X) and H(Y)",
+        "0"
+      ],
+      "correct": 3,
+      "explanation": "Independence means p(x,y)=p(x)p(y), so the log ratio in mutual information is zero everywhere with positive mass."
+    },
+    {
+      "stage": "post",
+      "question": "A language model has entropy ln(4). What perplexity does that correspond to?",
+      "options": [
+        "4",
+        "ln(4)",
+        "2",
+        "1/4"
+      ],
+      "correct": 0,
+      "explanation": "Perplexity is exp(cross-entropy) when using natural logs. exp(ln 4)=4, the effective number of equally likely choices."
+    },
+    {
+      "stage": "post",
+      "question": "A language model's average cross-entropy falls while its evaluation data stays fixed. What should happen to perplexity?",
+      "options": [
+        "It rises because better likelihood means more uncertainty",
+        "It falls because perplexity is the exponential of cross-entropy",
+        "It stays exactly one for every model",
+        "It changes only if the vocabulary is reordered"
+      ],
+      "correct": 1,
+      "explanation": "Perplexity = exp(cross-entropy) for natural-log loss, so a lower loss means a lower effective branching factor."
     }
   ]
 }

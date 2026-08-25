@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What must a goal loop have before it can safely run without a person prompting every turn?",
+      "question": "In trigger_is_due, what must a GOAL trigger receive before it wakes the loop?",
       "options": [
-        "A goal, an independent evaluator, and explicit stop conditions",
-        "A timer trigger set to the shortest available polling interval",
-        "A single model call allowed to grade its own output as complete",
-        "A longer system prompt combined with a larger, more capable model"
+        "requested=True",
+        "last_run older than interval_seconds",
+        "event_name equal to 'goal.completed'",
+        "a passing CheckResult from the previous run"
       ],
       "correct": 0,
-      "explanation": "The loop contract is the goal, machine-checkable evidence from an evaluator, and bounded exits. More prompting does not create a stopping policy."
+      "explanation": "MANUAL and GOAL triggers return the requested flag; they do not infer readiness from elapsed time or an event name."
     },
     {
       "stage": "check",
-      "question": "Which role owns the completion decision in the maker/evaluator design?",
+      "question": "Which default LoopPolicy limits are used by run_maker_checker?",
       "options": [
-        "The maker, because it originally knew what it intended",
-        "The timer, because elapsed time proves progress",
-        "The human only, even while the loop remains fully unattended",
-        "The evaluator, using structured evidence against the goal"
+        "max_rounds=3, required_passes=3, max_stalled_rounds=1",
+        "max_rounds=8, required_passes=1, max_stalled_rounds=2",
+        "max_rounds=50, required_passes=1, max_stalled_rounds=8",
+        "max_rounds=1, required_passes=8, max_stalled_rounds=2"
+      ],
+      "correct": 1,
+      "explanation": "LoopPolicy defaults are eight rounds, one required consecutive pass, and two unchanged failing rounds before a stall stop."
+    },
+    {
+      "stage": "check",
+      "question": "What artifacts does the deterministic demo produce across its three rounds?",
+      "options": [
+        "implementation; implementation + acceptance; implementation + tests",
+        "implementation; implementation + tests; implementation + acceptance",
+        "implementation; implementation + tests; implementation + tests + acceptance",
+        "implementation + tests; implementation + acceptance; implementation + tests + acceptance"
+      ],
+      "correct": 2,
+      "explanation": "demo_maker adds one missing item per round, so the outputs are implementation, then tests, then acceptance; the third round passes."
+    },
+    {
+      "stage": "check",
+      "question": "When does run_maker_checker increment stalled_rounds?",
+      "options": [
+        "Whenever a passing artifact remains unchanged",
+        "Whenever the timer trigger is not due",
+        "Whenever the maker changes a failing artifact",
+        "When a failing check returns the same artifact unchanged"
       ],
       "correct": 3,
-      "explanation": "The maker produces an artifact; the independent evaluator decides whether the artifact satisfies the contract."
+      "explanation": "Stable passing artifacts are allowed for consecutive-pass policies; only unchanged failures increment the stall counter."
     },
     {
-      "stage": "check",
-      "question": "Why does the reference loop stop on a stalled artifact?",
+      "stage": "post",
+      "question": "With required_passes=4 and a maker that returns the same passing artifact, when does the loop complete?",
       "options": [
-        "Repeated unchanged failures are evidence that another round is unlikely to help",
-        "A loop is only permitted to inspect any single artifact exactly one time before stopping",
-        "A stalled artifact means the evaluator has already passed it for enough consecutive rounds",
-        "The maker is only allowed to be called one single time before the loop halts automatically"
+        "After four consecutive passing checks",
+        "After one pass because the artifact did not change",
+        "Only when max_stalled_rounds is reached",
+        "Never, because unchanged output is always a stall"
       ],
       "correct": 0,
-      "explanation": "A stall guard limits unattended waste and escalates when the maker is not changing a failing artifact."
-    },
-    {
-      "stage": "check",
-      "question": "Which trigger is the honest default for a check that has no natural finish line?",
-      "options": [
-        "Goal trigger, since every task can be phrased as a finish line",
-        "Manual trigger with retries hidden from the round receipts",
-        "Timer or event trigger with idempotency and retry limits",
-        "An infinite goal loop that keeps evaluating until it eventually passes"
-      ],
-      "correct": 2,
-      "explanation": "Timer and event loops handle recurring or reactive work; a goal loop needs a verifiable end state."
+      "explanation": "run_maker_checker counts consecutive passes separately from stalls; four stable passing checks satisfy required_passes=4."
     },
     {
       "stage": "post",
-      "question": "What should every non-success loop exit provide to the next session?",
+      "question": "What does read_round_receipts reject before returning RoundRecord values?",
       "options": [
-        "A confident claim from the maker that the work is essentially finished",
-        "Only the final artifact, with every failed round's receipt discarded",
-        "A status, reason, round receipts, and an escalation or next action",
-        "A recommendation to select a larger or more capable underlying model"
+        "A score of 0.5 on a failed round",
+        "A JSONL file whose round numbers are not sequential",
+        "A receipt whose feedback string is empty",
+        "A passing receipt whose changed flag is false"
       ],
-      "correct": 2,
-      "explanation": "A bounded stop is useful only when its evidence can be reviewed and resumed, not when it disappears into chat."
-    },
-    {
-      "stage": "post",
-      "question": "What is the safest way to automate an irreversible production action?",
-      "options": [
-        "Let the maker approve its own irreversible action once the artifact looks complete",
-        "Run the action on a timer trigger first and only ever inspect the rounds that later fail",
-        "Define evaluator evidence, scope, approval, and rollback before enabling the side effect",
-        "Remove the round budget entirely so the loop can retry until the action succeeds"
-      ],
-      "correct": 2,
-      "explanation": "Irreversible work needs an independent gate and an operator recovery path before autonomy is expanded."
+      "correct": 1,
+      "explanation": "The reader requires the exact field set and round numbers 1, 2, ... in order; malformed or out-of-sequence JSONL raises ValueError."
     }
   ]
 }

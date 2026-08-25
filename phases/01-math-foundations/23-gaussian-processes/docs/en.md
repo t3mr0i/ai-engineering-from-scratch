@@ -59,6 +59,18 @@ The demo prints the selected length scale, posterior values at representative po
 - **Hyperparameter leakage:** selecting settings on the final test region makes uncertainty claims optimistic.
 - **Scale mismatch:** standardize inputs or give dimensions separate length scales when their units differ.
 
+## Build It
+
+Reconstruct **Gaussian Processes from Scratch** by following `as_column` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+
+## Use It
+
+Call `as_column` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/gp-experiment-card.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
+
 ## Exercises
 
 1. Fit the demo with length scales `0.15`, `0.6`, and `2.0`. Explain the change in mean and variance using covariance, not plot aesthetics.

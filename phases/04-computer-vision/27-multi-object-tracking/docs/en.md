@@ -99,6 +99,18 @@ For surveillance (who is who): IDF1 is what you report. For sports analytics (co
 
 
 
+## Build It
+
+Reconstruct **Multi-Object Tracking & Video Memory** by following `bbox_iou` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+
+## Use It
+
+Call `bbox_iou` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-tracker-picker.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [SORT (Bewley et al., 2016)](https://arxiv.org/abs/1602.00763) — the minimal tracking-by-detection paper
@@ -111,10 +123,20 @@ For surveillance (who is who): IDF1 is what you report. For sports analytics (co
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Distinguish tracking-by-detection from query-based tracking and name the algorithm families (SORT, DeepSORT, ByteTrack, BoT-SORT, SAM 2 memory tracker, SAM 3.1 Object Multiplex).
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Implement IoU + Hungarian assignment from scratch for classic tracking-by-detection.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain SAM 2's memory bank and why it handles occlusion better than IoU-based association.
+Use `bbox_iou` as the trace: start from an 8x8 synthetic image, keep the raw output, and tie each observation to a named objective.
+
+1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using an 8x8 synthetic image. Follow `bbox_iou`, `Track`, `update`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **Distinguish tracking-by-detection from query-based tracking and name the algorithm families (SORT, DeepSORT, ByteTrack, BoT-SORT, SAM 2 memory tracker, SAM 3.1 Object Multiplex)**.
+2. **Vary one named input.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Implement IoU + Hungarian assignment from scratch for classic tracking-by-detection** says the other inputs should stay fixed.
+3. **Probe the empty case.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Explain SAM 2's memory bank and why it handles occlusion better than IoU-based association** and record the exception text if the code rejects the case.
+4. **Package a usable handoff.** Open `outputs/prompt-tracker-picker.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **Read the three tracking metrics (MOTA, IDF1, HOTA) and pick which one matters for a given use case**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish tracking-by-detection from query-based tracking and name the algorithm families (SORT, DeepSORT, ByteTrack, BoT-SORT, SAM 2 memory tracker, SAM 3.1 Object Multiplex),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain SAM 2's memory bank and why it handles occlusion better than IoU-based association,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Multi-Object Tracking & Video Memory** should contain:
+
+- the `python3 main.py` output for an 8x8 synthetic image, with `bbox_iou`, `Track`, `update` traced to the value or shape that supports **Distinguish tracking-by-detection from query-based tracking and name the algorithm families (SORT, DeepSORT, ByteTrack, BoT-SORT, SAM 2 memory tracker, SAM 3.1 Object Multiplex)**;
+- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Implement IoU + Hungarian assignment from scratch for classic tracking-by-detection**;
+- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Explain SAM 2's memory bank and why it handles occlusion better than IoU-based association**; and
+- an updated `outputs/prompt-tracker-picker.md` example with a concrete input, expected output field, and acceptance check tied to **Read the three tracking metrics (MOTA, IDF1, HOTA) and pick which one matters for a given use case**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

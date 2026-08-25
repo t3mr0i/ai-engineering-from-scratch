@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What discount does Anthropic apply to cache reads versus the base input rate?",
+      "question": "What do the three fields in `Request(prefix_tokens, suffix_tokens, prefix_key)` represent in the simulator?",
       "options": [
-        "90% off",
-        "25% off",
-        "50% off the base rate",
-        "75% off"
+        "Reusable prefix tokens, suffix tokens, and a prefix key",
+        "The model's output length, cache TTL, and the provider's API key",
+        "Three alternative prices for one request, selected by the provider at runtime",
+        "The number of writes, reads, and misses that have already occurred"
       ],
       "correct": 0,
-      "explanation": "Anthropic's cache_control markers give a 90% discount on cache-hit input tokens versus the base rate, in exchange for a 25% write premium on the first request."
+      "explanation": "The simulator treats `prefix_tokens` as cacheable, `suffix_tokens` as the changing user portion, and `prefix_key` as the equality key used by each provider's cache map."
     },
     {
       "stage": "check",
-      "question": "Why must dynamic timestamps go below the cache breakpoint, not above it?",
+      "question": "In `simulate_anthropic`, when is an existing prefix considered expired?",
       "options": [
-        "Timestamps confuse the tokenizer into splitting the surrounding system prompt into more tokens than expected, with no need to inspect intermediate results or test edge cases",
-        "Timestamps cost more tokens per character than static text, so placing them early inflates the write premium",
-        "Caches only hit when the prefix is byte-identical; a changing timestamp breaks the match for everything after it",
-        "Anthropic explicitly rejects any cached block that contains a timestamp field, returning a validation error"
+        "When the current request has a different suffix, even if the prefix key is unchanged",
+        "When elapsed time reaches the entry's TTL, causing a new write",
+        "Only after exactly two reads, because the simulator caps cache reuse at two requests",
+        "When the prefix contains fewer than 1,024 tokens, regardless of elapsed time"
+      ],
+      "correct": 1,
+      "explanation": "The expiry condition is `entry is None or (now_seconds - entry.written_at) >= entry.ttl_seconds`. A miss writes the prefix at the current simulated time; an unexpired entry is a read."
+    },
+    {
+      "stage": "check",
+      "question": "What TTL does `simulate_openai` use for its automatic cache model?",
+      "options": [
+        "Five minutes, matching Anthropic's short-lived cache",
+        "The caller's `ttl_seconds` argument, which OpenAI receives explicitly",
+        "A fixed 3,600-second best-effort window in this simulator",
+        "No TTL; every matching prefix remains cached for the entire process"
       ],
       "correct": 2,
-      "explanation": "All three providers cache prefixes only. If any token differs between requests, everything after the first differing token is a miss -- so the stable parts (system prompt, tools, few-shots) must sit above any per-request variable like a timestamp."
+      "explanation": "Unlike the Anthropic and Gemini helpers, `simulate_openai` takes only the requests and interval. Its expiry test uses the hard-coded `3600` seconds."
     },
     {
       "stage": "check",
-      "question": "OpenAI's prompt caching is configured how?",
+      "question": "What pattern of prefix keys does `make_traffic(n_requests=6, n_prefixes=3, ...)` produce?",
       "options": [
-        "Explicit cache_control markers placed on specific content blocks, the same mechanism Anthropic uses",
-        "Automatic prefix matching, with no configuration or explicit markers required from the developer",
-        "A CachedContent API you create ahead of time and reference by ID in each request, as Google's Gemini requires",
-        "A system-level flag toggled per project in a dashboard, separate from anything configured in the request body"
+        "Six unique keys, because every request receives a fresh prefix identifier",
+        "Only `prefix_0`, because the first prefix is reused for all traffic",
+        "Keys chosen randomly from three strings, so counts vary on every run",
+        "`prefix_0`, `prefix_1`, `prefix_2`, then the same three keys repeated"
       ],
-      "correct": 1,
-      "explanation": "Unlike Anthropic's explicit cache_control markers or Google's CachedContent API, OpenAI detects matching prefixes automatically and applies the discount with zero code changes."
-    },
-    {
-      "stage": "check",
-      "question": "For Anthropic, what write premium does the 1-hour extended TTL cost vs the 5-minute default?",
-      "options": [
-        "Same as the 5-minute default, since the write premium is a fixed 25% no matter how long the cache is kept warm",
-        "2x the write premium, trading a higher upfront write cost for a cache that stays warm a full hour",
-        "4x the write premium, since extending the TTL from 5 minutes to 1 hour multiplies the base surcharge fourfold",
-        "No write premium at all for the 1-hour extended TTL, only the standard 90% discount applies on every read"
-      ],
-      "correct": 1,
-      "explanation": "The 1-hour extended TTL doubles the write-side surcharge compared to the 5-minute default, trading a larger upfront cost for a longer window in which reads keep hitting the cache."
+      "correct": 3,
+      "explanation": "The list comprehension uses `prefix_key=f\"prefix_{i % n_prefixes}\"`. With six requests and three prefixes, each rotating key occurs twice."
     },
     {
       "stage": "post",
-      "question": "How many reuses are needed to break even on Anthropic's 25% write premium?",
+      "question": "What does `baseline_cost(requests, provider)` deliberately ignore?",
       "options": [
-        "1 reuse",
-        "2 reuses",
-        "5 reuses",
-        "10 reuses"
-      ],
-      "correct": 1,
-      "explanation": "With a 25% write premium and a 90% read discount, the second read alone recovers the extra cost paid on the write, and every reuse after that is close to pure savings."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Prompt Caching and Context Caching?",
-      "options": [
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "It prices every prefix and suffix token at the provider's base input rate",
+        "The suffix token count, because only the reusable prefix can affect cost",
+        "The selected provider, because all entries in `PRICES` use the same base rate",
+        "The number of requests, because baseline is calculated from a single representative entry"
       ],
       "correct": 0,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The baseline sums `(prefix_tokens + suffix_tokens) / 1000 * p[\"base\"]` for every request. It is the no-cache comparison point against which provider cache savings are reported."
+    },
+    {
+      "stage": "post",
+      "question": "Why does `simulate_gemini` add a `storage_cost` after processing requests?",
+      "options": [
+        "Gemini charges storage for each generated suffix token even when no prefix is cached",
+        "It charges retained prefixes by token-hours over their TTL",
+        "Storage cost is a proxy for output-token generation and is added only when reads outnumber writes",
+        "The simulator uses storage cost to replace input cost whenever the cache has a miss"
+      ],
+      "correct": 1,
+      "explanation": "After the request loop, each retained cache entry contributes `tokens/1000 * storage_per_1k_per_hour * ttl_seconds/3600`. This models Gemini's separate token-hour storage charge."
     }
   ]
 }

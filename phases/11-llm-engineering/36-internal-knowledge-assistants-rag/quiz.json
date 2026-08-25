@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What makes an internal knowledge assistant reliable?",
+      "question": "What must be governed before an internal knowledge assistant indexes company sources?",
       "options": [
-        "A polished chat interface that makes the assistant feel responsive and trustworthy",
-        "Governed sources, a permission model, an evaluation sample, and a fallback path",
-        "An index that covers every document in SharePoint so nothing is ever missing",
-        "A context window large enough that whole documents fit without being chunked"
-      ],
-      "correct": 1,
-      "explanation": "Internal assistants need source governance and answer evaluation. The lesson is explicit that source governance matters more than chatbot polish."
-    },
-    {
-      "stage": "check",
-      "question": "A team wants a Confluence assistant. Where does this lesson locate the hard part?",
-      "options": [
-        "Choosing an embedding model whose similarity scores match how colleagues phrase questions, with no need to inspect intermediate results or test edge cases",
-        "Sizing the vector store so retrieval stays fast once the whole space has been indexed",
-        "Designing a chat interface that colleagues will prefer over searching Confluence directly",
-        "Knowing which sources are allowed, who owns them, what is stale, and how wrong answers get caught"
-      ],
-      "correct": 3,
-      "explanation": "The lesson puts the difficulty in source governance rather than in the chat box: allowed sources, named owners, freshness, and a way to catch wrong answers."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Python artifact produce?",
-      "options": [
-        "A ranked source-readiness plan with matched controls and rationale",
-        "A production vector database populated from the team's document store",
-        "A permission model derived automatically from the source system's ACLs",
-        "A finished chatbot interface wired to the retrieval and fallback paths"
-      ],
-      "correct": 0,
-      "explanation": "The artifact is a planning tool for source readiness - it ranks sources and matches controls before anything is indexed."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to this lesson?",
-      "options": [
-        "An access boundary that keeps retrieval inside the permissions a user already has",
-        "A retrieval scope that ignores permissions so answers stay complete for every user",
-        "An evaluation set that is discarded once the assistant passes its first review",
-        "A source inventory with no named owner, so cleanup is a shared team responsibility"
-      ],
-      "correct": 0,
-      "explanation": "Access boundaries keep retrieval aligned with permissions. Source owners, freshness rules, and answer evaluation are the other controls this lesson teaches."
-    },
-    {
-      "stage": "post",
-      "question": "When should a knowledge assistant require a launch gate?",
-      "options": [
-        "Only when the chat interface has to support more than one language at launch",
-        "Only when the source system is external rather than an internal wiki or drive",
-        "Only when the assistant is expected to answer more than a few hundred questions",
-        "When sensitive access, stale content, and missing evaluation create high risk"
-      ],
-      "correct": 3,
-      "explanation": "High-risk source conditions - sensitive access, stale content, missing evaluation - require explicit launch review. Interface scope and query volume are not the risk signals here."
-    },
-    {
-      "stage": "post",
-      "question": "What is the main purpose of the intake template?",
-      "options": [
-        "To record the assistant's answer quality after the first month of live use",
-        "To document the fallback path once uncertain answers start reaching support",
-        "To decide which sources are ready before any of them are indexed",
-        "To capture the user questions that the assistant was unable to answer correctly"
+        "Only the embedding model, because source quality is visible in retrieval scores",
+        "A chat interface that can answer every employee question without a fallback",
+        "Source ownership, freshness, permissions, evaluation questions, and a path for uncertain answers",
+        "A large document collection, even when nobody can state which users may read it"
       ],
       "correct": 2,
-      "explanation": "The intake template makes source readiness explicit before indexing, covering ownership, freshness, permissions, and evaluation."
+      "explanation": "RAG quality depends on the sources and their operating rules. Ownership, freshness, access boundaries, evaluation samples, and fallback behavior are product requirements."
+    },
+    {
+      "stage": "check",
+      "question": "The service knowledge bot fixture has three matched signals, impact=4, and uncertainty=4. Which priority does it receive?",
+      "options": [
+        "team practice",
+        "guided pilot",
+        "awareness only",
+        "launch gate required"
+      ],
+      "correct": 3,
+      "explanation": "The score is 4*2 + 4 + 3*2 = 18. The threshold function maps that score to launch gate required."
+    },
+    {
+      "stage": "check",
+      "question": "Which category does choose_category assign to the service knowledge bot fixture?",
+      "options": [
+        "quality",
+        "source",
+        "access",
+        "freshness"
+      ],
+      "correct": 0,
+      "explanation": "Three matches, impact 4, and uncertainty 4 produce index 11 modulo 4 = 3. CATEGORIES[3] is quality."
+    },
+    {
+      "stage": "check",
+      "question": "Which controls are selected for a RAG intake with three matched signals?",
+      "options": [
+        "source owner and freshness rule only",
+        "source owner, freshness rule, access boundary, and answer evaluation",
+        "access boundary alone, because permissions are the only hard control",
+        "A vector index rebuild without an answer evaluation set"
+      ],
+      "correct": 1,
+      "explanation": "The recommendation includes all four controls for three matches. It therefore names an owner, freshness rule, access boundary, and evaluation work."
+    },
+    {
+      "stage": "post",
+      "question": "How is Scenario(\"team FAQ\", \"Small document set with no listed signals.\", (), impact=2, uncertainty=2) classified?",
+      "options": [
+        "launch gate required because every internal source is sensitive",
+        "guided pilot because a FAQ is already a knowledge assistant",
+        "awareness only with score 6",
+        "team practice with score 8"
+      ],
+      "correct": 2,
+      "explanation": "The empty signal list leaves the base score at 6, which is below the team-practice threshold. The classification does not remove the need to verify source ownership."
+    },
+    {
+      "stage": "post",
+      "question": "What should intake-internal-knowledge-assistant.md settle before indexing a policy assistant?",
+      "options": [
+        "Only the name of the chat interface and the preferred embedding library",
+        "A promise that retrieval will always find the correct policy paragraph",
+        "A larger context window instead of a permission boundary and evaluation set",
+        "Which documents are available, who owns and may access them, how freshness is checked, and how answers are evaluated"
+      ],
+      "correct": 3,
+      "explanation": "The intake artifact turns source governance into a reviewable plan. It records ownership, access, freshness, evaluation questions, and the fallback for uncertain answers."
     }
   ]
 }

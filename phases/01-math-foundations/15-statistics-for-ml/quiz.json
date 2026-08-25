@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does a p-value of 0.03 mean in a hypothesis test?",
+      "question": "What are the mean and sample variance of [1,2,3,4]?",
       "options": [
-        "There is a 3% probability the null hypothesis is true — and applies unchanged even when the lesson's stated preconditions fail",
-        "There is a 3% probability of seeing data this extreme if the null hypothesis were true",
-        "The model improved by 3%",
-        "97% of the data supports the alternative hypothesis"
-      ],
-      "correct": 1,
-      "explanation": "The p-value is the probability of observing data as extreme as what you got, assuming the null hypothesis is true. It is NOT the probability that H0 is true — this is the single most common misunderstanding in statistics."
-    },
-    {
-      "stage": "check",
-      "question": "Why do you divide by (n-1) instead of n when computing sample variance?",
-      "options": [
-        "It makes the computation faster",
-        "It accounts for the fact that the sample mean is not the true population mean (Bessel's correction)",
-        "It converts the variance to standard deviation, with no need to inspect intermediate results or test edge cases",
-        "It only applies when the sample size is odd"
-      ],
-      "correct": 1,
-      "explanation": "Bessel's correction (dividing by n-1) compensates for the bias introduced by using the sample mean instead of the true population mean. Without it, sample variance systematically underestimates the true population variance."
-    },
-    {
-      "stage": "check",
-      "question": "You test 20 different model configurations at alpha = 0.05. What is the approximate probability of at least one false positive?",
-      "options": [
-        "5%",
-        "25%, because one plausible output is sufficient production evidence",
-        "64%",
-        "95%"
-      ],
-      "correct": 2,
-      "explanation": "P(at least one false positive) = 1 - (1 - 0.05)^20 = 1 - 0.95^20 ≈ 0.64 (64%). This is the multiple comparison problem. Bonferroni correction addresses it by testing each at alpha/20 = 0.0025."
-    },
-    {
-      "stage": "check",
-      "question": "Model A scores 0.9234 and Model B scores 0.9237 on 1 million test samples with p-value = 0.001. What should you conclude?",
-      "options": [
-        "Model B is significantly better and should be deployed immediately, before defining the measurement, acceptance threshold, or rollback path",
-        "The difference is statistically significant but a 0.03% improvement may not be practically significant",
-        "The test is invalid because the sample size is too large",
-        "Model A is better because it was tested first"
-      ],
-      "correct": 1,
-      "explanation": "With 1 million samples, even trivially small differences become statistically significant. The p-value confirms the difference is real, but the effect size (0.03% accuracy gain) may not justify the engineering cost of deployment. Always report both p-value and effect size."
-    },
-    {
-      "stage": "post",
-      "question": "What advantage does bootstrap have over the paired t-test for comparing two ML models?",
-      "options": [
-        "Bootstrap always produces smaller p-values",
-        "Bootstrap requires no distributional assumptions and works for any metric (AUC, F1, median)",
-        "Bootstrap needs fewer samples to reach significance — and applies unchanged even when the lesson's stated preconditions fail",
-        "Bootstrap can only be used with neural networks"
-      ],
-      "correct": 1,
-      "explanation": "Bootstrap resampling estimates the sampling distribution of any statistic by resampling with replacement. Unlike the t-test, it does not assume normality. It works for any metric — AUC, F1, precision@k, median — without needing a closed-form formula."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Statistics for Machine Learning?",
-      "options": [
-        "Perform hypothesis tests (t-test, chi-squared) and interpret p-values and confidence intervals correctly",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Mean 2.5 and variance 5/3",
+        "Mean 2.5 and variance 1.25",
+        "Mean 3 and variance 2",
+        "Mean 10 and variance 5"
       ],
       "correct": 0,
-      "explanation": "“Perform hypothesis tests (t-test, chi-squared) and interpret p-values and confidence intervals correctly” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The mean is 2.5. Squared deviations sum to 5, and sample variance divides by n-1=3, giving 5/3."
+    },
+    {
+      "stage": "check",
+      "question": "Which statistic is least affected when one observation is an extreme outlier?",
+      "options": [
+        "The mean",
+        "The median",
+        "The variance",
+        "The Pearson covariance"
+      ],
+      "correct": 1,
+      "explanation": "The median depends on order and central position, so one extreme value usually does not move it much. Mean and spread statistics use the outlier's magnitude."
+    },
+    {
+      "stage": "check",
+      "question": "When is Spearman correlation more appropriate than Pearson correlation?",
+      "options": [
+        "When both variables are guaranteed independent",
+        "When every value must have the same rank",
+        "When the relationship is monotonic but not necessarily linear, or ranks are more reliable",
+        "When the goal is to prove that one variable causes the other"
+      ],
+      "correct": 2,
+      "explanation": "Spearman computes Pearson correlation on ranks, so it detects monotonic association without requiring a straight-line relationship."
+    },
+    {
+      "stage": "check",
+      "question": "What does a p-value of 0.03 mean in a test with a null hypothesis?",
+      "options": [
+        "There is a 3% chance that the null hypothesis is true",
+        "The alternative hypothesis is 97% true",
+        "The observed effect is automatically important in practice",
+        "If the null were true, results at least this extreme would have probability about 0.03 under the test model"
+      ],
+      "correct": 3,
+      "explanation": "A p-value is a tail probability conditional on the null and the test assumptions. It is not a posterior probability of either hypothesis or an effect-size measure."
+    },
+    {
+      "stage": "post",
+      "question": "How does bootstrap_statistic form a confidence interval without assuming a normal population?",
+      "options": [
+        "It repeatedly resamples the observed data with replacement and takes quantiles of the statistic",
+        "It replaces every observation with the population mean",
+        "It uses only the minimum and maximum of the original sample",
+        "It draws new labels from a uniform distribution"
+      ],
+      "correct": 0,
+      "explanation": "The empirical sample acts as a proxy population. Repeated resamples approximate the sampling distribution of the chosen statistic, whose quantiles form the interval."
+    },
+    {
+      "stage": "post",
+      "question": "A huge test set yields p<0.001 for a 0.1 percentage-point lift. What additional measure decides practical importance?",
+      "options": [
+        "A smaller p-value from running the test again",
+        "Effect size and the business-relevant magnitude of the lift",
+        "The number of decimal places in the p-value",
+        "Whether the sample mean is exactly zero"
+      ],
+      "correct": 1,
+      "explanation": "Large n can make tiny differences statistically detectable. Cohen's d or a domain-specific lift and cost threshold addresses whether the change matters."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the defining property of a convex function?",
+      "question": "Which quick one-dimensional test proves f(x)=x^2 is convex?",
       "options": [
-        "It has exactly one critical point",
-        "The line segment between any two points on its graph lies above or on the graph",
-        "Its derivative is always positive",
-        "It can only be defined on positive real numbers — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "A function is convex if for any two points x, y and any t in [0,1]: f(tx + (1-t)y) <= t*f(x) + (1-t)*f(y). Geometrically, the chord between any two points on the graph never dips below the graph itself."
-    },
-    {
-      "stage": "check",
-      "question": "Which of these ML problems has a convex loss landscape?",
-      "options": [
-        "Training a 3-layer neural network with ReLU activations",
-        "Logistic regression with cross-entropy loss",
-        "k-means clustering",
-        "Matrix factorization for recommendation"
-      ],
-      "correct": 1,
-      "explanation": "Logistic regression has a convex loss (log-loss is convex in the weights). Neural networks, k-means, and matrix factorization are all non-convex. For convex problems, any local minimum is the global minimum."
-    },
-    {
-      "stage": "check",
-      "question": "Newton's method converges to the minimum of f(x) = 5x^2 + 3x + 1 in how many steps?",
-      "options": [
-        "1 step (it is exact for quadratic functions)",
-        "About 10 steps",
-        "About 100 steps",
-        "It depends on the learning rate, because one plausible output is sufficient production evidence"
-      ],
-      "correct": 0,
-      "explanation": "Newton's method fits a local quadratic approximation and jumps to its minimum. For an actual quadratic function, the approximation is exact, so Newton's method converges in a single step regardless of the starting point."
-    },
-    {
-      "stage": "check",
-      "question": "In the KKT conditions, what does 'complementary slackness' (lambda_i * g_i(x) = 0) mean?",
-      "options": [
-        "All constraints must be active at the optimum",
-        "Either a constraint is active (g_i = 0) or its multiplier is zero (lambda_i = 0) — an inactive constraint has no effect",
-        "The gradients of all constraints must be orthogonal, before defining the measurement, acceptance threshold, or rollback path",
-        "The Lagrangian is always zero at the optimum"
-      ],
-      "correct": 1,
-      "explanation": "Complementary slackness means each constraint is either binding (g_i = 0, sitting on the boundary) or irrelevant (lambda_i = 0, not affecting the solution). In SVMs, this is why only support vectors (active constraints with lambda_i > 0) determine the decision boundary."
-    },
-    {
-      "stage": "post",
-      "question": "Why does SGD find good solutions in non-convex neural network landscapes despite the lack of convexity guarantees?",
-      "options": [
-        "Neural networks are secretly convex in high dimensions — and applies unchanged even when the lesson's stated preconditions fail",
-        "SGD always finds the global minimum",
-        "In high dimensions, most critical points are saddle points (not bad local minima), and SGD noise helps escape them",
-        "The loss function is irrelevant to model performance"
+        "Its first derivative is zero everywhere",
+        "It has a negative value for x<0",
+        "Its second derivative is f''(x)=2, which is nonnegative everywhere",
+        "It has exactly one plotted sample"
       ],
       "correct": 2,
-      "explanation": "In high-dimensional parameter spaces, random critical points are overwhelmingly saddle points. The few local minima that exist tend to have loss values close to the global minimum. SGD's stochastic noise helps escape saddle points, and overparameterization smooths the landscape."
+      "explanation": "A twice-differentiable one-dimensional function is convex when its second derivative is nonnegative throughout its domain."
+    },
+    {
+      "stage": "check",
+      "question": "What does a positive-semidefinite Hessian indicate for a twice-differentiable function on a convex domain?",
+      "options": [
+        "The function must have a saddle at every point",
+        "The function is strictly concave",
+        "The Hessian is unrelated to curvature",
+        "The function is convex on that domain"
+      ],
+      "correct": 3,
+      "explanation": "Positive-semidefinite quadratic forms give nonnegative second directional derivatives. Positive definite is the stronger condition associated with strict local curvature."
+    },
+    {
+      "stage": "check",
+      "question": "For f(x)=x^2, what Newton step starts from x=2?",
+      "options": [
+        "x_new=0",
+        "x_new=1",
+        "x_new=2.5",
+        "x_new=4"
+      ],
+      "correct": 0,
+      "explanation": "Newton uses x_new=x-f'(x)/f''(x)=2-4/2=0, which reaches the minimizer in one step."
+    },
+    {
+      "stage": "check",
+      "question": "For minimizing x^2 subject to x>=1, where is the constrained optimum?",
+      "options": [
+        "At x=0, the unconstrained minimum",
+        "At x=1, on the active constraint boundary",
+        "At x=-1, because the constraint reverses the sign",
+        "There is no feasible point"
+      ],
+      "correct": 1,
+      "explanation": "The unconstrained minimizer x=0 violates x>=1. Among feasible values, the closest point to zero is the boundary x=1, where the KKT constraint is active."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Convex Optimization?",
+      "question": "Why does convexity make optimization easier than a general neural-network loss?",
       "options": [
-        "Implement Newton's method and compare its quadratic convergence against gradient descent",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Convex functions never need gradients",
+        "Every convex objective has exactly one point and no flat regions",
+        "Every local minimum is global, so a converged local search is not trapped in a worse basin",
+        "Convexity guarantees any learning rate converges in one step"
       ],
-      "correct": 0,
-      "explanation": "“Implement Newton's method and compare its quadratic convergence against gradient descent” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "Convexity rules out spurious local minima, although conditioning, step size, and non-unique flat solutions can still affect convergence."
+    },
+    {
+      "stage": "post",
+      "question": "What can a saddle point do to gradient descent in a high-dimensional non-convex loss?",
+      "options": [
+        "Guarantee that the current point is a global minimum",
+        "Make every Hessian eigenvalue positive",
+        "Remove all dependence on the learning rate",
+        "Create nearly flat directions with mixed curvature and slow progress"
+      ],
+      "correct": 3,
+      "explanation": "At a saddle, some directions curve up and others down; gradients can be small near the center even though the point is not a minimum."
     }
   ]
 }

@@ -130,6 +130,18 @@ In our experience, features that pass all four checks are *rare*. Most features 
 
 
 
+## Build It
+
+Reconstruct **AI Risk Management: Owners, Controls, and Audit Evidence (2026)** by following `Level` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
+
+## Use It
+
+Call `Level` from a small caller with the demo’s smallest built-in fixture. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-ai-risk-controls-checklist.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [NIST AI Risk Management Framework 1.0](https://airc.nist.gov/) — the GOVERN, MAP, MEASURE, MANAGE functions; profiles and playbooks.
@@ -140,10 +152,20 @@ In our experience, features that pass all four checks are *rare*. Most features 
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by AI Risk Management: Owners, Controls, and Audit Evidence (2026).
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+Make the experiment auditable. Save the input, output, and one sentence explaining how the result bears on the claim.
+
+1. **Reproduce the control run.** Run [main.py](../code/main.py) with `python3 main.py` from the lesson's `code/` directory. Record the smallest input that demonstrates “Explain the production problem addressed by AI Risk Management: Owners, Controls, and Audit Evidence (2026)”. Point to `classify_output()`, `analyze_gaps()`, `detect_silent_reclassification()` and name the returned field or printed value that serves as evidence.
+2. **Change one decision.** Change exactly one input, threshold, or option that affects “Apply the lesson's decision or implementation workflow to a concrete case”. Predict the direction of the change before running it, then compare the two outputs and explain why the other fields should stay stable.
+3. **Probe a boundary.** Construct a case that stresses “Measure quality, cost, latency, and risk with explicit acceptance criteria”: choose an empty collection, missing field, maximum-sized value, malformed record, or another boundary that fits this lesson. Write the expected behavior first and distinguish an intentional guard from an accidental crash.
+4. **Transfer the result.** Open outputs/skill-ai-risk-controls-checklist.md and adapt one example to a real workflow. State the owner, evidence, and next decision required for “Identify failure modes and define a safe rollback or review path”; mark any assumption that the demo does not establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by AI Risk Management: Owners, Controls, and Audit Evidence (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.
+A useful submission records python3 main.py, the observed output, and the conclusion drawn from it. It should contain:
+
+- evidence for “Explain the production problem addressed by AI Risk Management: Owners, Controls, and Audit Evidence (2026)” with the relevant input and returned field;
+- a one-variable comparison that makes “Apply the lesson's decision or implementation workflow to a concrete case” visible;
+- a predicted and observed boundary result for “Measure quality, cost, latency, and risk with explicit acceptance criteria”, including why the behavior is safe; and
+- one concrete update to outputs/skill-ai-risk-controls-checklist.md that applies “Identify failure modes and define a safe rollback or review path” without hiding uncertainty.
+
+Use classify_output(), analyze_gaps(), detect_silent_reclassification() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.

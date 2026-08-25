@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to MCP Resources and Prompts — Context Exposure Beyond Tools?",
+      "question": "What does handle_resources_list expose in addition to the five note resources?",
       "options": [
-        "Decide between exposing a capability as a tool, a resource, or a prompt for a given domain",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "The dynamic notes://recent resource",
+        "A second tools/call endpoint",
+        "A binary audio stream",
+        "Only the review_note prompt"
       ],
       "correct": 0,
-      "explanation": "“Decide between exposing a capability as a tool, a resource, or a prompt for a given domain” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The list contains note-1 through note-5 plus notes://recent, which is the dynamic application/json resource."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of MCP Resources and Prompts — Context Exposure Beyond Tools?",
+      "question": "What does resources_read return for notes://recent?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement `resources/list`, `resources/read`, `resources/subscribe` and handle `notifications/resources/upd...",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Markdown for note-1 only",
+        "JSON list of five; application/json",
+        "A prompt argument schema",
+        "A 404 because recent is not a note"
       ],
       "correct": 1,
-      "explanation": "“Implement `resources/list`, `resources/read`, `resources/subscribe` and handle `notifications/resources/upd...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The dynamic URI is intentionally readable and returns a JSON list limited to the five latest notes."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through MCP Resources and Prompts — Context Exposure Beyond Tools?",
+      "question": "What notification follows an update to subscribed note-1?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Implement `prompts/list` and `prompts/get` with argument templates",
-        "Treat one successful example as proof that every edge case works"
+        "notifications/tools/list_changed",
+        "notifications/prompts/updated with no URI",
+        "resources/updated for notes://note-1",
+        "No notification; subscriptions are write-only"
       ],
       "correct": 2,
-      "explanation": "“Implement `prompts/list` and `prompts/get` with argument templates” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "update_note checks subscribed URIs and emits a resources/updated notification for the changed note URI."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits MCP Resources and Prompts — Context Exposure Beyond Tools?",
+      "question": "What happens when prompts_get requests review_note with style concise?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Recognize when the host surfaces prompts as slash-commands vs auto-injected context",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Recognize when the host surfaces prompts as slash-commands vs auto-injected context” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for MCP Resources and Prompts — Context Exposure Beyond Tools?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Decide between exposing a capability as a tool, a resource, or a prompt for a given domain"
+        "The style is ignored and the prompt is rejected",
+        "It returns the summarize_tag prompt instead",
+        "It creates a new resource subscription",
+        "review_note uses note_id and concise style"
       ],
       "correct": 3,
-      "explanation": "“Decide between exposing a capability as a tool, a resource, or a prompt for a given domain” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "review_note accepts note_id plus optional style; the provided style is included in the generated user instruction."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for MCP Resources and Prompts — Context Exposure Beyond Tools?",
+      "question": "Which argument is required by the summarize_tag prompt?",
       "options": [
-        "Implement `resources/list`, `resources/read`, `resources/subscribe` and handle `notifications/resources/upd...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "tag",
+        "style",
+        "note_id",
+        "resourceUri"
       ],
       "correct": 0,
-      "explanation": "“Implement `resources/list`, `resources/read`, `resources/subscribe` and handle `notifications/resources/upd...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "prompts_get defines summarize_tag with required tag, then returns an instruction to summarize notes carrying that tag."
+    },
+    {
+      "stage": "post",
+      "question": "What is the practical distinction between a resource and a prompt in this lesson?",
+      "options": [
+        "A resource can only be written; a prompt can only be binary",
+        "a resource supplies data; a prompt supplies a reusable message",
+        "They are aliases for tools/call",
+        "A prompt always contains the full note database"
+      ],
+      "correct": 1,
+      "explanation": "Resources expose context such as note content, while prompts package instructions and arguments for a model conversation."
     }
   ]
 }

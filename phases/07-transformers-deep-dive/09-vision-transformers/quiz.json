@@ -1,78 +1,78 @@
 {
   "lesson": "09-vision-transformers",
-  "title": "Vision Transformers (ViT)",
+  "title": "Vision Transformers — Patchify, Embed, Attend",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Vision Transformers (ViT)?",
+      "question": "For the demo image (24, 24, 3) and patch_size=6, what does patchify return?",
       "options": [
-        "Derive the mechanism behind Vision Transformers (ViT) from tensor operations",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
+        "16 patches, each flattened to 108 values, on a 4×4 grid",
+        "24 patches, each 6 values, on a 3×3 grid",
+        "4 patches, each 16 values, on a 6×6 grid",
+        "16 patches, each 24 values, on a 6×6 grid"
       ],
       "correct": 0,
-      "explanation": "“Derive the mechanism behind Vision Transformers (ViT) from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Both spatial dimensions split into 24/6=4 cells, giving 16 patches; each contains 6*6*3=108 channel values."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Vision Transformers (ViT)?",
+      "question": "What shape does linear_project produce for those 16 flattened patches with d_model=48?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the core component without relying on a transformer framework",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "48×108",
+        "16×48",
+        "16×108",
+        "4×48"
       ],
       "correct": 1,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The projection maps each 108-value patch to one 48-wide vector while preserving the number of patches."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Vision Transformers (ViT)?",
+      "question": "What happens to the sequence length in cls_and_pos for a 4×4 patch grid?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Trace tensor shapes and information flow through the implementation",
-        "Treat one successful example as proof that every edge case works"
+        "It becomes 48 because position vectors are concatenated to every patch",
+        "It remains 16 because [CLS] replaces the first patch",
+        "It becomes 17 because one learnable [CLS] vector is prepended to 16 patch tokens",
+        "It becomes 20 because four row tokens are added"
       ],
       "correct": 2,
-      "explanation": "“Trace tensor shapes and information flow through the implementation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "cls_and_pos starts its output with one CLS vector and then appends every patch after adding its 2D positional encoding."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Vision Transformers (ViT)?",
+      "question": "Why does pos_2d require d_model to be divisible by 4?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate the computational and modeling trade-offs introduced by Vision Transformers (ViT)",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate the computational and modeling trade-offs introduced by Vision Transformers (ViT)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Vision Transformers (ViT)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Derive the mechanism behind Vision Transformers (ViT) from tensor operations"
+        "It divides the image into four equal patch grids",
+        "It needs four separate class tokens for the image corners",
+        "It stores four RGB values at every spatial position",
+        "It splits the width into row and column halves, each needing even sin/cos pairs"
       ],
       "correct": 3,
-      "explanation": "“Derive the mechanism behind Vision Transformers (ViT) from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Half the dimensions encode rows and half columns; each half is filled with even/odd sinusoidal pairs."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Vision Transformers (ViT)?",
+      "question": "Which component supplies the vision-specific tokenization before a standard Transformer encoder?",
       "options": [
-        "Implement the core component without relying on a transformer framework",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "patchify plus linear_project, followed by [CLS] and 2D position information",
+        "The decoder cross-attention and a text tokenizer",
+        "A recurrent scan over the image's RGB channels",
+        "The classifier head before any patch is formed"
       ],
       "correct": 0,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The demo makes image patches into token vectors and adds position/CLS information; the later transformer block can reuse an encoder architecture."
+    },
+    {
+      "stage": "post",
+      "question": "In param_count_vit, what is counted by `head = d_model * num_classes`?",
+      "options": [
+        "The Q, K, and V projections for every attention head",
+        "The final linear classifier that maps the representation to class logits",
+        "The number of spatial patches in the input image",
+        "The learned [CLS] vector plus all position embeddings"
+      ],
+      "correct": 1,
+      "explanation": "The classifier head has one output weight per model dimension and class; position and CLS terms are counted separately."
     }
   ]
 }

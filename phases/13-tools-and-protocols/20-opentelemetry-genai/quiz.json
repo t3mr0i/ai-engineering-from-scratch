@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to OpenTelemetry GenAI — Tracing Tool Calls End-to-End?",
+      "question": "How many spans does the default agent_loop create?",
       "options": [
-        "Name the required OTel GenAI attributes for an LLM span and a tool-execution span",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Name the required OTel GenAI attributes for an LLM span and a tool-execution span” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of OpenTelemetry GenAI — Tracing Tool Calls End-to-End?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Build a trace hierarchy that covers agent loop, LLM call, tool call, and MCP client dispatch",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Build a trace hierarchy that covers agent loop, LLM call, tool call, and MCP client dispatch” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through OpenTelemetry GenAI — Tracing Tool Calls End-to-End?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Decide what content to capture (opt-in) vs redact (defaults)",
-        "Treat one successful example as proof that every edge case works"
+        "3: one span per city only",
+        "6: one span per model and city pair",
+        "9 spans",
+        "12: a root plus four spans for each city"
       ],
       "correct": 2,
-      "explanation": "“Decide what content to capture (opt-in) vs redact (defaults)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The loop creates 1 root invoke_agent span, 2 llm.chat spans, 3 tool.execute spans, and 3 nested mcp.call spans, for 9 total."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits OpenTelemetry GenAI — Tracing Tool Calls End-to-End?",
+      "question": "Which span kind is assigned to fake_mcp_call?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Emit spans to a local collector (Jaeger, Langfuse) without rewriting tool code",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Emit spans to a local collector (Jaeger, Langfuse) without rewriting tool code” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for OpenTelemetry GenAI — Tracing Tool Calls End-to-End?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Name the required OTel GenAI attributes for an LLM span and a tool-execution span"
+        "INTERNAL with no parent",
+        "SERVER with an HTTP listener",
+        "PRODUCER with a new trace for every call",
+        "CLIENT, nested under the tool span"
       ],
       "correct": 3,
-      "explanation": "“Name the required OTel GenAI attributes for an LLM span and a tool-execution span” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "MCP is an outbound call from the agent process, so fake_mcp_call starts a CLIENT span as a child of the tool execution span."
+    },
+    {
+      "stage": "check",
+      "question": "What traceparent value does fake_mcp_call attach?",
+      "options": [
+        "00-{trace_id}-{mcp_span_id}-01",
+        "The fixed string 00-0000-0000-01",
+        "A new random trace unrelated to the parent",
+        "Only the parent span id without a version"
+      ],
+      "correct": 0,
+      "explanation": "The implementation formats W3C trace context with version 00, the shared trace id, the current MCP span id, and flags 01."
+    },
+    {
+      "stage": "check",
+      "question": "What is the default content-capture behavior?",
+      "options": [
+        "Prompts and completions are always printed",
+        "content events only with OTEL_CAPTURE_CONTENT=1",
+        "Capture is enabled when OTEL_CAPTURE_CONTENT is unset",
+        "Only tool arguments are captured"
+      ],
+      "correct": 1,
+      "explanation": "Content capture is opt-in; the default environment leaves the event count at zero, while setting the variable to 1 adds the events."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for OpenTelemetry GenAI — Tracing Tool Calls End-to-End?",
+      "question": "Which attributes are attached by the two simulated call types?",
       "options": [
-        "Build a trace hierarchy that covers agent loop, LLM call, tool call, and MCP client dispatch",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "LLM spans carry filesystem paths; tools carry only timestamps",
+        "Both carry the same model name and no tool identity",
+        "LLM response attrs; tool name/call-id attrs",
+        "Only the root span receives response metadata"
       ],
-      "correct": 0,
-      "explanation": "“Build a trace hierarchy that covers agent loop, LLM call, tool call, and MCP client dispatch” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "fake_llm_call records response and token usage fields, while fake_tool_execute identifies the generated tool name and tool call id."
+    },
+    {
+      "stage": "post",
+      "question": "What relationship should all nine spans in the default trace have?",
+      "options": [
+        "Each city starts an unrelated trace",
+        "Only MCP spans share a trace id",
+        "The root has no trace id",
+        "They share one trace_id and use parent span ids to form the hierarchy"
+      ],
+      "correct": 3,
+      "explanation": "start_span propagates the root trace id through its children; parent fields preserve the invoke-agent, LLM, tool, and MCP nesting."
     }
   ]
 }

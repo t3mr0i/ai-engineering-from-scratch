@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to RL for Games — AlphaZero, MuZero, and the LLM-Reasoning Era?",
+      "question": "For QUESTIONS[0], which answer index does verify(0, answer) reward?",
       "options": [
-        "Formulate RL for Games — AlphaZero, MuZero, and the LLM-Reasoning Era in terms of states, actions, rewards,...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Formulate RL for Games — AlphaZero, MuZero, and the LLM-Reasoning Era in terms of states, actions, rewards,...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of RL for Games — AlphaZero, MuZero, and the LLM-Reasoning Era?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the central update rule from first principles",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through RL for Games — AlphaZero, MuZero, and the LLM-Reasoning Era?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Trace learning signals through a self-terminating experiment",
-        "Treat one successful example as proof that every edge case works"
+        "Index 0, because every prompt's first answer is correct",
+        "Index 1, the answer to 'what is 1+2'",
+        "Index 2, the third answer entry for 'what is 1+2'",
+        "Index 3, because verify uses one-based answer numbering"
       ],
       "correct": 2,
-      "explanation": "“Trace learning signals through a self-terminating experiment” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The first toy question stores `correct: 2`; verify returns 1.0 exactly when the sampled answer equals that zero-based index."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits RL for Games — AlphaZero, MuZero, and the LLM-Reasoning Era?",
+      "question": "What invariant does softmax(z) provide for the policy probabilities?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate convergence, stability, and exploration trade-offs",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate convergence, stability, and exploration trade-offs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for RL for Games — AlphaZero, MuZero, and the LLM-Reasoning Era?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Formulate RL for Games — AlphaZero, MuZero, and the LLM-Reasoning Era in terms of states, actions, rewards,..."
+        "The largest logit is always assigned probability zero",
+        "It returns an unnormalized list of logits that may sum to four",
+        "It selects one answer immediately and discards the other probabilities",
+        "It returns positive probabilities whose sum is one, after shifting by max(z)"
       ],
       "correct": 3,
-      "explanation": "“Formulate RL for Games — AlphaZero, MuZero, and the LLM-Reasoning Era in terms of states, actions, rewards,...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The implementation exponentiates shifted logits and divides by their sum, producing a normalized categorical policy."
+    },
+    {
+      "stage": "check",
+      "question": "How does grpo_step form the advantage for each of its G=8 sampled answers?",
+      "options": [
+        "It centers the verifier rewards by their group mean and divides by the group standard deviation plus 1e-8",
+        "It uses the raw reward without a baseline",
+        "It asks a learned critic for one value per token",
+        "It ranks answers by index and assigns advantages 1, 2, 3, and 4"
+      ],
+      "correct": 0,
+      "explanation": "The group rewards are normalized as (r-mean_r)/std_r, which is the group-relative signal used by this miniature GRPO loop."
+    },
+    {
+      "stage": "check",
+      "question": "What does the reference-policy term do inside grpo_step?",
+      "options": [
+        "It replaces verifier rewards with a supervised label",
+        "It subtracts beta times KL(current policy || reference policy) from the update pressure",
+        "It makes every answer equally likely after one step",
+        "It adds a second critic network to estimate the value"
+      ],
+      "correct": 1,
+      "explanation": "The code computes KL against the copied reference and subtracts beta*(probs-probs_ref) from theta to limit policy drift."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for RL for Games — AlphaZero, MuZero, and the LLM-Reasoning Era?",
+      "question": "How does reinforce_step differ from grpo_step in this demo?",
       "options": [
-        "Implement the central update rule from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "REINFORCE samples a group of 8 answers and uses a reference KL, while GRPO samples one",
+        "REINFORCE uses a target network, while GRPO uses no policy",
+        "REINFORCE samples one answer and scales its log-policy gradient by the binary verifier reward; it has no group normalization or KL term",
+        "REINFORCE never updates theta because verifier rewards are discrete"
       ],
-      "correct": 0,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "reinforce_step draws one p_idx and one answer, then applies lr*r*grad_logpi; grpo_step uses group-relative advantages and a reference penalty."
+    },
+    {
+      "stage": "post",
+      "question": "What does evaluate(theta) measure after training?",
+      "options": [
+        "The average KL divergence of every sampled token",
+        "The number of MCTS nodes expanded for each prompt",
+        "The critic's mean squared value error",
+        "Greedy answer accuracy: it chooses the highest-probability answer for random prompts and averages verify results"
+      ],
+      "correct": 3,
+      "explanation": "evaluate selects argmax over the policy probabilities for each sampled prompt and averages the binary verifier reward over 200 episodes."
     }
   ]
 }

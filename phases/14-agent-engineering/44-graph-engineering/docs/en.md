@@ -257,6 +257,14 @@ increase throughput while also increasing coordination, merge conflicts, token
 cost, and review load. Human attention is still a serial resource. The graph's
 job is to make that cost visible and place approval where it matters.
 
+## Build It
+
+Reconstruct **Graph Engineering: Make Agent Structure Explicit** by following `GraphError` on a graph with edges (0,1) and (1,2). Run `python3 main.py` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.
+
+## Ship It
+
+Hand off `outputs/skill-graph-engineering.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
+
 ## Exercises
 
 1. Draw the loop from "Loop Engineering: From Prompts to Bounded Autonomy" as a graph. Mark the edge that was implicit in
@@ -276,4 +284,11 @@ job is to make that cost visible and place approval where it matters.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Decompose a multi-step agent system into nodes, edges, shared state, and routing rules,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Implement conditional routing, rollback, checkpoints, human approval, and fan-out/fan-in with the standard library,” and cite a repeatable check rather than relying on visual inspection alone.
+For Graph Engineering: Make Agent Structure Explicit, run python3 main.py from code/ and keep the output beside the input that produced it. A defensible submission contains:
+
+1. Evidence for “Decompose a multi-step agent system into nodes, edges, shared state, and routing rules”: identify the exact field, trace entry, or report line that proves it; a successful process exit alone is not enough.
+2. A one-variable comparison for “Distinguish a graph that contains agent nodes from a deterministic workflow”. State the prediction first and explain why the observed change follows from _checkpoint_from_mapping, save_checkpoint, load_checkpoint.
+3. A boundary or failure result for “Implement conditional routing, rollback, checkpoints, human approval, and fan-out/fan-in with the standard library”. Include the input, the expected guard or refusal, and the observed behavior. If the demo has no guard, record that gap instead of calling a crash a pass.
+4. A practical update to outputs/skill-graph-engineering.md that applies “Define explicit merge semantics so parallel branches cannot silently overwrite each other” and names the person or system responsible for the next decision.
+
+Run the relevant tests after the experiment. Keep any mismatch between prediction and observation in the receipt; the purpose of this lesson is to make the reasoning inspectable, not to make every run look successful.

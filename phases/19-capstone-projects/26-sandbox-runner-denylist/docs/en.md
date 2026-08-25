@@ -92,12 +92,34 @@ The demo creates a temp directory, drops a clean file into it, then runs a batte
 
 Lesson 25 produced the gate chain. Lesson 26 is the executor that runs after a gate ALLOW. Lesson 27's eval harness compares the sandbox results against the expected exit-code per task. Lesson 28 emits a `gen_ai.tool.execution` span around each `Sandbox.run` invocation. Lesson 29's end-to-end demo wires a real coding agent through both layers.
 
+## Build It
+
+Reconstruct **Capstone Lesson 26: Sandbox Runner with Denylist and Path Jail** by following `SandboxResult` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
+
+## Use It
+
+Call `SandboxResult` from a small caller with the demo’s smallest built-in fixture. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/artifact-card.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
+
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Build a `Sandbox` class wrapping `subprocess.run` with timeout, capture, and truncation.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Refuse a command by name against a denylist and by structure against an argv inspector.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Refuse any path argument that resolves outside a declared project root.
+Keep two runs side by side for **Capstone Lesson 26: Sandbox Runner with Denylist and Path Jail**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
+
+1. **Read the first result.** From `code/`, run `python3 main.py` using the demo’s smallest built-in fixture. Follow `SandboxResult`, `ok`, `to_dict`. Expect the result reports the empty case explicitly or raises the documented validation error; capture the first printed shape, metric, status, or summary field and state which part supports **Build a `Sandbox` class wrapping `subprocess.run` with timeout, capture, and truncation.**.
+2. **Run a two-value comparison.** Repeat the command after changing only the primary fixture value: use the same fixture with its primary value changed from 1 to 2. Predict the direction of the change, then compare the two output values. Explain why **Refuse a command by name against a denylist and by structure against an argv inspector.** says the other inputs should stay fixed.
+3. **Try an adversarial fixture.** Feed the implementation an empty fixture {}. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Refuse any path argument that resolves outside a declared project root.** and record the exception text if the code rejects the case.
+4. **Write the operator note.** Open `outputs/artifact-card.md` and add a worked example using the demo’s smallest built-in fixture. Include the input contract, one expected output field, and a named acceptance check for **Refuse shell metacharacters when shell mode is off.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Build a `Sandbox` class wrapping `subprocess.run` with timeout, capture, and truncation,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Refuse any path argument that resolves outside a declared project root,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Capstone Lesson 26: Sandbox Runner with Denylist and Path Jail** should contain:
+
+- the `python3 main.py` output for the demo’s smallest built-in fixture, with `SandboxResult`, `ok`, `to_dict` traced to the value or shape that supports **Build a `Sandbox` class wrapping `subprocess.run` with timeout, capture, and truncation.**;
+- a before/after comparison for the primary fixture value, where the same fixture with its primary value changed from 1 to 2 changes the observation in the direction predicted by **Refuse a command by name against a denylist and by structure against an argv inspector.**;
+- a recorded result for an empty fixture {} that matches the implementation’s validation or empty-result contract and explains the evidence for **Refuse any path argument that resolves outside a declared project root.**; and
+- an updated `outputs/artifact-card.md` example with a concrete input, expected output field, and acceptance check tied to **Refuse shell metacharacters when shell mode is off.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

@@ -4,75 +4,45 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Speculative Decoding and EAGLE-3?",
-      "options": [
-        "State the Leviathan theorem in one sentence and prove that the speculative loop produces samples identicall...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "In `spec_step`, how is a draft token `d` accepted at a verification position?",
+      "options": ["With probability `min(1, q[d] / p[d])`.", "Only when `q[d]` is exactly zero.", "With probability `p[d] / q[d]` without clipping.", "Always, because the draft is cheaper."],
       "correct": 0,
-      "explanation": "“State the Leviathan theorem in one sentence and prove that the speculative loop produces samples identicall...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The Leviathan rule compares verifier probability q with draft probability p and clips the acceptance ratio at one."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Speculative Decoding and EAGLE-3?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Walk the two-year progression from vanilla spec-decoding (Leviathan 2023) through EAGLE, EAGLE-2, and EAGLE...",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "What distribution does `residual(q, p)` sample after a rejection?",
+      "options": ["The average of q and p.", "The positive part of `q - p`, renormalized; q itself is the zero-residual fallback.", "The draft distribution p with its largest entry removed.", "A uniform distribution over every vocabulary ID."],
       "correct": 1,
-      "explanation": "“Walk the two-year progression from vanilla spec-decoding (Leviathan 2023) through EAGLE, EAGLE-2, and EAGLE...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The function computes `max(0, q_i-p_i)`, normalizes those masses, and returns q if the residual sum is zero."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Speculative Decoding and EAGLE-3?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Compute expected speedup from acceptance rate `α` and draft-to-verifier cost ratio `c`, and choose the opti...",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "What does `spec_step` append after all N draft tokens pass verification?",
+      "options": ["The first draft token again.", "No additional token.", "A bonus sample from the verifier distribution q.", "A residual sample from p - q without clipping."],
       "correct": 2,
-      "explanation": "“Compute expected speedup from acceptance rate `α` and draft-to-verifier cost ratio `c`, and choose the opti...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Full acceptance leaves the verifier's next position available, so the loop samples one bonus token from q and emits N+1 tokens."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Speculative Decoding and EAGLE-3?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the full speculative loop from scratch: draft, verify, reject-sample from the residual, roll the...",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the full speculative loop from scratch: draft, verify, reject-sample from the residual, roll the...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Speculative Decoding and EAGLE-3?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "State the Leviathan theorem in one sentence and prove that the speculative loop produces samples identicall..."
-      ],
+      "question": "If the second draft token is rejected after one token was accepted, where does `KVBuffer` truncate?",
+      "options": ["To the original prefix length, discarding the accepted token.", "To the full physical capacity.", "To `prefix_len + N`, keeping unverified entries.", "To `prefix_len + len(emitted)`, keeping the accepted token and correction."],
       "correct": 3,
-      "explanation": "“State the Leviathan theorem in one sentence and prove that the speculative loop produces samples identicall...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The rejection branch truncates to the prefix plus the number of emitted tokens, so the accepted prefix and the correction remain logically committed."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Speculative Decoding and EAGLE-3?",
-      "options": [
-        "Walk the two-year progression from vanilla spec-decoding (Leviathan 2023) through EAGLE, EAGLE-2, and EAGLE...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "Which expression does `expected_tokens_per_verify(alpha, N)` use for 0 < alpha < 1?",
+      "options": ["`(1 - alpha**(N+1)) / (1 - alpha)`.", "`N / alpha`.", "`alpha**N - 1`.", "`1 + alpha / N` for every N."],
       "correct": 0,
-      "explanation": "“Walk the two-year progression from vanilla spec-decoding (Leviathan 2023) through EAGLE, EAGLE-2, and EAGLE...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The function returns the geometric sum of acceptance probabilities through the N draft positions plus the bonus opportunity."
+    },
+    {
+      "stage": "post",
+      "question": "What distribution-alignment change is emphasized for EAGLE-3's training-time test (TTT)?",
+      "options": ["It replaces the verifier with a uniform sampler.", "It feeds the draft's own previous predictions back during training, matching inference conditions.", "It trains only the tokenizer merges.", "It disables rejection sampling during inference."],
+      "correct": 1,
+      "explanation": "TTT exposes the draft to its own multi-step predictions during training, reducing the train/inference mismatch that causes error accumulation."
     }
   ]
 }

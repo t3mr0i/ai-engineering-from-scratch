@@ -54,12 +54,30 @@ This lesson produces:
 | DVC | "Git for data" | A version control system for datasets and models that integrates with cloud storage |
 | Cache | "Already downloaded" | A local copy of previously fetched data, stored at ~/.cache/huggingface/ by default |
 
+## Build It
+
+Reconstruct **Data Management** by following `load_and_inspect` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Use It
+
+Call `load_and_inspect` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Load, stream, and cache datasets using the Hugging Face `datasets` library.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Convert between CSV, JSON, Parquet, and Arrow formats and explain their tradeoffs.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Create reproducible train/validation/test splits with fixed random seeds.
+Keep two runs side by side for **Data Management**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
+
+1. **Read the first result.** From `code/`, run `python3 main.py` using x=0.5 with the demo defaults. Follow `load_and_inspect`, `stream_dataset`, `convert_format`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Load, stream, and cache datasets using the Hugging Face `datasets` library**.
+2. **Run a two-value comparison.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Convert between CSV, JSON, Parquet, and Arrow formats and explain their tradeoffs** says the other inputs should stay fixed.
+3. **Try an adversarial fixture.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Create reproducible train/validation/test splits with fixed random seeds** and record the exception text if the code rejects the case.
+4. **Write the operator note.** Open `outputs/prompt-data-helper.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Manage large model and dataset files using `.gitignore`, Git LFS, or DVC**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Load, stream, and cache datasets using the Hugging Face `datasets` library,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Create reproducible train/validation/test splits with fixed random seeds,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Data Management** should contain:
+
+- the `python3 main.py` output for x=0.5 with the demo defaults, with `load_and_inspect`, `stream_dataset`, `convert_format` traced to the value or shape that supports **Load, stream, and cache datasets using the Hugging Face `datasets` library**;
+- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Convert between CSV, JSON, Parquet, and Arrow formats and explain their tradeoffs**;
+- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Create reproducible train/validation/test splits with fixed random seeds**; and
+- an updated `outputs/prompt-data-helper.md` example with a concrete input, expected output field, and acceptance check tied to **Manage large model and dataset files using `.gitignore`, Git LFS, or DVC**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

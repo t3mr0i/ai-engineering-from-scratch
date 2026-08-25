@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Attention Variants — Sliding Window, Sparse, Differential?",
+      "question": "How many finite cells does causal_mask(8) contain?",
       "options": [
-        "Derive the mechanism behind Attention Variants — Sliding Window, Sparse, Differential from tensor operations",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
+        "36",
+        "32",
+        "64",
+        "8"
       ],
       "correct": 0,
-      "explanation": "“Derive the mechanism behind Attention Variants — Sliding Window, Sparse, Differential from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Row i contains i+1 allowed positions, so the lower triangle has 1+...+8 = 36 finite cells."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Attention Variants — Sliding Window, Sparse, Differential?",
+      "question": "For row i=7, which positions does swa_mask(8, window=4) allow?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the core component without relying on a transformer framework",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Positions 0 through 7",
+        "Positions 4, 5, 6, and 7",
+        "Positions 5, 6, and 7 only",
+        "Positions 0, 3, 6, and 7"
       ],
       "correct": 1,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The local lower bound is max(0, 7-4+1)=4, so the row attends to the four-token suffix."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Attention Variants — Sliding Window, Sparse, Differential?",
+      "question": "For row i=7 with window=2 and stride=3, which positions are finite in strided_mask?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Trace tensor shapes and information flow through the implementation",
-        "Treat one successful example as proof that every edge case works"
+        "0 through 7",
+        "5, 6, and 7 only",
+        "0, 3, 6, and 7",
+        "1, 4, and 7 only"
       ],
       "correct": 2,
-      "explanation": "“Trace tensor shapes and information flow through the implementation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The local window contributes 6 and 7; the strided loop contributes 0, 3, and 6, giving the union {0,3,6,7}."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Attention Variants — Sliding Window, Sparse, Differential?",
+      "question": "What can happen to a weight produced by diff_attention_row(..., lam=0.5)?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate the computational and modeling trade-offs introduced by Attention Variants — Sliding Window, Spars...",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate the computational and modeling trade-offs introduced by Attention Variants — Sliding Window, Spars...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Attention Variants — Sliding Window, Sparse, Differential?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Derive the mechanism behind Attention Variants — Sliding Window, Sparse, Differential from tensor operations"
+        "It is converted to an integer before the value sum",
+        "It must remain between 0 and 1 because both inputs are softmax rows",
+        "It is always exactly zero for the first position",
+        "It can be negative because the function subtracts 0.5*w2 from w1"
       ],
       "correct": 3,
-      "explanation": "“Derive the mechanism behind Attention Variants — Sliding Window, Sparse, Differential from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The differential weights are `a - lam*b`; subtracting a second attention pattern can produce negative entries even though each original row is nonnegative."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Attention Variants — Sliding Window, Sparse, Differential?",
+      "question": "What is the main memory benefit of a sliding window of 1,024 at N=131,072 in the demo's cache estimate?",
       "options": [
-        "Implement the core component without relying on a transformer framework",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "It scales the full cache by 1024/131072, reducing the context-dependent portion by 128×",
+        "It removes all K/V storage and keeps only one token",
+        "It doubles the cache because every window has two directions",
+        "It changes dtype from fp16 to fp32 automatically"
       ],
       "correct": 0,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The code sets `reduced = full * (window / N)`, and 131072/1024 = 128."
+    },
+    {
+      "stage": "post",
+      "question": "Why does differential attention pay more KV memory in this toy comparison?",
+      "options": [
+        "It stores one extra token only when a score is negative",
+        "It models two attention streams and reports `full * 2` for the sink-free weight construction",
+        "It uses no keys or values and therefore allocates a fallback tensor",
+        "It adds a classifier head with twice the vocabulary size"
+      ],
+      "correct": 1,
+      "explanation": "The demo's differential row computes two attention patterns, and its cache comparison explicitly doubles the full estimate."
     }
   ]
 }

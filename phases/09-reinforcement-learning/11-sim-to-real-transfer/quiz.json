@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Sim-to-Real Transfer?",
+      "question": "What does step do when rng.random() falls below slip?",
       "options": [
-        "Formulate Sim-to-Real Transfer in terms of states, actions, rewards, and objectives",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
+        "It replaces the requested action with a randomly chosen perpendicular action",
+        "It terminates the episode with reward +10",
+        "It doubles the requested action's Q value",
+        "It ignores the state and samples a new terminal coordinate"
       ],
       "correct": 0,
-      "explanation": "“Formulate Sim-to-Real Transfer in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "For up/down, slip chooses left or right; for left/right, it chooses up or down before applying the grid transition."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Sim-to-Real Transfer?",
+      "question": "What is the training-environment difference between train_fixed(0.0) and train_dr(0.0, 0.3)?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the central update rule from first principles",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "The fixed run uses Monte Carlo while DR uses a policy gradient",
+        "The fixed run keeps slip at 0.0, whereas DR samples one slip value uniformly in [0.0, 0.3] for each episode",
+        "The fixed run has no epsilon exploration, while DR has epsilon=1.0",
+        "The fixed run trains on a 4x4 grid and DR on a 5x5 grid"
       ],
       "correct": 1,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "train_fixed passes its slip unchanged; train_dr calls rng.uniform(slip_low, slip_high) once per episode before collecting the trajectory."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Sim-to-Real Transfer?",
+      "question": "Which slip values are sampled by train_dr(slip_low=0.0, slip_high=0.3)?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Trace learning signals through a self-terminating experiment",
-        "Treat one successful example as proof that every edge case works"
+        "Only 0.0 and 0.3, alternating every step",
+        "A value above 0.7 for every training episode",
+        "One uniform random value between 0.0 and 0.3 per episode, reused for that episode's steps",
+        "A new value chosen from ACTIONS for every state"
       ],
       "correct": 2,
-      "explanation": "“Trace learning signals through a self-terminating experiment” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The function samples slip_ep before the episode loop and passes that same episode parameter to every step in the rollout."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Sim-to-Real Transfer?",
+      "question": "How does evaluate choose actions for a learned Q table?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate convergence, stability, and exploration trade-offs",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate convergence, stability, and exploration trade-offs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Sim-to-Real Transfer?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Formulate Sim-to-Real Transfer in terms of states, actions, rewards, and objectives"
+        "It samples uniformly from ACTIONS regardless of Q",
+        "It uses epsilon=0.15 to keep exploring on hardware",
+        "It averages all four action values before moving",
+        "It takes max(ACTIONS, key=lambda a: Q[s][a]) with no exploration"
       ],
       "correct": 3,
-      "explanation": "“Formulate Sim-to-Real Transfer in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "evaluate is a greedy test: at each state it chooses the action with the largest stored Q value and only the slip remains stochastic."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Sim-to-Real Transfer?",
+      "question": "How does main label its evaluation table for slips 0.0 through 0.7?",
       "options": [
-        "Implement the central update rule from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Slips at or below 0.3 are in-support for DR; larger slips are marked OOD for DR",
+        "Every slip is marked in-support because evaluation never changes the simulator",
+        "Only slip=0.7 is in-support because it is the hardest case",
+        "The fixed policy's training slip determines all labels"
       ],
       "correct": 0,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The printed label checks `slip <= 0.3`, matching the domain-randomization training envelope [0.0,0.3]."
+    },
+    {
+      "stage": "post",
+      "question": "What trade-off does the lesson associate with overly broad domain randomization?",
+      "options": [
+        "It guarantees a policy that is optimal for every possible robot",
+        "A policy can become overly cautious because excessive variation acts like strong regularization",
+        "It removes the need for any real-world evaluation",
+        "It makes the simulator deterministic and eliminates the reality gap by definition"
+      ],
+      "correct": 1,
+      "explanation": "The docs note that excessive noise can produce a universal but timid policy; the randomization envelope should cover plausible reality without drowning the signal."
     }
   ]
 }

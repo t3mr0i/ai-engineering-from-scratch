@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the pipe operator '|' do in a shell command?",
+      "question": "What does the pipe in tail -f train.log | grep loss do?",
       "options": [
-        "Runs two commands in parallel",
-        "Sends the standard output of one command as standard input to the next",
-        "Saves the output of a command to a file — and applies unchanged even when the lesson's stated preconditions fail",
-        "Combines two files into one"
+        "It runs tail and grep on unrelated files in parallel",
+        "It appends the entire log to a new binary file",
+        "It pipes stdout into grep",
+        "It encrypts the log before displaying it"
       ],
-      "correct": 1,
-      "explanation": "The pipe operator connects commands in a pipeline. For example, 'cat log.txt | grep error' sends the contents of log.txt as input to grep, which filters for lines containing 'error'."
+      "correct": 2,
+      "explanation": "The pipe connects standard output to standard input. tail follows new log lines and grep filters the stream for the requested text."
     },
     {
       "stage": "check",
-      "question": "What happens to a running process when you close the terminal that started it?",
+      "question": "What is the difference between these redirections: > output.log and >> output.log?",
       "options": [
-        "The process continues running in the background",
-        "The process receives a hangup signal (SIGHUP) and typically terminates",
-        "The process pauses until you open a new terminal",
-        "The process automatically migrates to a system service, with no need to inspect intermediate results or test edge cases"
+        "> appends; >> truncates the file before writing",
+        "Both send output to the terminal and leave the file unchanged",
+        "Both redirect only standard error",
+        "> replaces; >> appends"
       ],
-      "correct": 1,
-      "explanation": "Closing the terminal sends SIGHUP to child processes, which causes them to terminate by default. Tools like tmux, nohup, or screen prevent this."
+      "correct": 3,
+      "explanation": "A single greater-than opens the destination for replacement, while the double form opens it for append. Use the latter when preserving earlier training runs matters."
     },
     {
       "stage": "check",
-      "question": "What is the key advantage of tmux over using 'nohup command &' for long-running training jobs?",
+      "question": "Why is tmux useful for a long training run on an SSH GPU box?",
       "options": [
-        "tmux uses less CPU than nohup",
-        "tmux lets you detach, reattach, and see live output with multiple panes",
-        "tmux automatically restarts failed processes",
-        "tmux compresses the process output to save disk space, because one plausible output is sufficient production evidence"
-      ],
-      "correct": 1,
-      "explanation": "tmux creates persistent sessions you can detach from and reattach to later, with live output visible in multiple panes. nohup only logs to a file with no way to interact or reattach."
-    },
-    {
-      "stage": "check",
-      "question": "What does 'python train.py > output.log 2>&1' accomplish?",
-      "options": [
-        "Runs train.py and saves only errors to output.log, before defining the measurement, acceptance threshold, or rollback path",
-        "Runs train.py and redirects both standard output and standard error to output.log",
-        "Runs train.py twice and logs the second run",
-        "Runs train.py with double the memory allocation"
-      ],
-      "correct": 1,
-      "explanation": "'> output.log' redirects stdout to the file. '2>&1' sends stderr to the same place as stdout. The result is both normal output and errors captured in one file."
-    },
-    {
-      "stage": "post",
-      "question": "Which command lets you access a remote Jupyter notebook running on port 8888 of a GPU box from your local browser?",
-      "options": [
-        "scp -P 8888 user@gpu-box:~/notebook.ipynb",
-        "ssh -L 8888:localhost:8888 user@gpu-box",
-        "rsync -avz user@gpu-box:8888 localhost:8888",
-        "ssh user@gpu-box --forward-port 8888"
-      ],
-      "correct": 1,
-      "explanation": "SSH local port forwarding (-L) maps a remote port to your local machine. After this command, opening localhost:8888 in your browser accesses the remote Jupyter server."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Terminal & Shell?",
-      "options": [
-        "Create persistent tmux sessions with multiple panes for concurrent training and GPU monitoring",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Detach and reattach to the same session",
+        "It turns a failed training process into a system service automatically",
+        "It doubles the GPU VRAM available to Python",
+        "It compresses every checkpoint before the program writes it"
       ],
       "correct": 0,
-      "explanation": "“Create persistent tmux sessions with multiple panes for concurrent training and GPU monitoring” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The tmux server stays alive after the SSH client disconnects. Reattaching shows the same shell and output, and panes can hold training and monitoring commands together."
+    },
+    {
+      "stage": "check",
+      "question": "Which command copies a local experiment directory to a remote GPU box while preserving useful file metadata?",
+      "options": [
+        "grep -r experiment user@gpu-box",
+        "rsync -av over SSH",
+        "nvidia-smi ./experiment/ user@gpu-box",
+        "python -m scp --metadata ./experiment/"
+      ],
+      "correct": 1,
+      "explanation": "rsync's archive mode preserves common metadata and transfers the directory over SSH. It can later send only changed files."
+    },
+    {
+      "stage": "post",
+      "question": "You lose your SSH connection halfway through training and want to see whether the job continues. What should you do next time?",
+      "options": [
+        "Run it in the foreground and close the terminal quickly",
+        "Pipe stderr to /dev/null so SIGHUP cannot reach the process",
+        "Run it inside tmux",
+        "Copy the command into the local browser address bar"
+      ],
+      "correct": 2,
+      "explanation": "A tmux session owns the shell independently of the SSH client. After reconnecting, tmux attach restores the running view instead of relying on a fragile foreground process."
+    },
+    {
+      "stage": "post",
+      "question": "Which sequence gives a useful remote training workspace with live GPU monitoring?",
+      "options": [
+        "Start nvidia-smi on the laptop, then copy its screen into the remote shell",
+        "Use scp to execute the training loop and delete the remote log",
+        "Run the job with > /dev/null so no process needs monitoring",
+        "Use tmux with a monitoring pane"
+      ],
+      "correct": 3,
+      "explanation": "The session keeps the job alive, a second pane exposes device utilization, and reattachment preserves both views. Logging stdout and stderr separately can complement the live pane."
     }
   ]
 }

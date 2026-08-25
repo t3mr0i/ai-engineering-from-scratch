@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the difference between prompt engineering and context engineering?",
+      "question": "For `ContextBudget(max_tokens=1000, generation_reserve=200)`, how many estimated tokens are available to system text, tools, history, and retrieved documents?",
       "options": [
-        "Prompt engineering fixes the wording once per application, while context engineering rewrites the system prompt every turn — and applies unchanged even when the lesson's stated preconditions fail",
-        "Prompt engineering targets short windows, while context engineering only applies to models above one million tokens",
-        "Prompt engineering handles the user turn; context engineering is the database work of indexing documents for retrieval",
-        "A prompt is the user's query; context is everything in the window: system prompt, tools, retrieved docs, history, and the query"
+        "800, because the reserve is subtracted before component allocations",
+        "1,000, because the reserve is reported but not removed from the budget",
+        "200, because only the generation reserve may be allocated to context",
+        "1,200, because the reserve extends the context window"
       ],
-      "correct": 3,
-      "explanation": "Prompt engineering focuses on crafting the user instruction. Context engineering manages the entire input to the model: what goes in, what stays out, in what order, and how to allocate the limited context window."
+      "correct": 0,
+      "explanation": "`ContextBudget.available` is `max_tokens - generation_reserve`, so the context side receives 800 estimated tokens and 200 remain protected for the model's response."
     },
     {
       "stage": "check",
-      "question": "Why does context window order matter for LLM performance?",
+      "question": "If `budget.allocate(\"history\", long_text, max_tokens=50)` estimates 80 tokens, what should the returned content represent?",
       "options": [
-        "Attention cost grows quadratically, so tokens placed late in the window are processed by a cheaper approximate pass",
-        "The window is filled strictly front to back, so everything after the system prompt is dropped once the budget runs out",
-        "Tool definitions must precede retrieved documents, otherwise the model cannot bind a document to the tool that fetched it",
-        "LLMs have recency and primacy biases, paying more attention to the beginning and end of the context window"
+        "The complete `long_text`, because per-component limits are advisory only",
+        "A bounded word prefix and its token count",
+        "`None`, because truncation is allowed only for retrieved documents",
+        "A random 50-word sample, so the allocator does not favor the beginning of the history"
       ],
-      "correct": 3,
-      "explanation": "Research shows LLMs attend more to the start and end of the context window ('lost in the middle' phenomenon). Placing the most important information at the beginning or end of context improves utilization."
+      "correct": 1,
+      "explanation": "`allocate` truncates by words when the component's `max_tokens` is lower than the estimate, then records the actual allocated token count. It preserves a bounded prefix rather than returning the full text."
     },
     {
       "stage": "check",
-      "question": "A coding assistant uses 22,700 tokens of a 128K context window. Why is budget management still important?",
+      "question": "Given four scored items sorted as `A, B, C, D`, what order does `reorder_lost_in_middle` produce?",
       "options": [
-        "Providers bill for the full declared window rather than the tokens actually used, so an unfilled 128K window costs exactly the same, because one plausible output is sufficient production evidence",
-        "Token counts drift between different tokenizers, so any budget you calculate in advance is wrong by roughly a factor of two anyway",
-        "Reserving generation headroom is unnecessary below half the window, so budgets only begin to matter once past the halfway mark",
-        "Long conversations, large code files, and retrieved docs fill the window fast, and without budget management critical context gets truncated"
-      ],
-      "correct": 3,
-      "explanation": "22,700 tokens is the baseline. A 50-turn conversation adds 30K+ tokens. Retrieving a large codebase adds 50K+. Tool call results add more. Without active management, the window fills and oldest context is lost."
-    },
-    {
-      "stage": "check",
-      "question": "What is the sliding window strategy for conversation history?",
-      "options": [
-        "Scoring every retrieved chunk against the current query and discarding the ones below a relevance threshold",
-        "Summarizing each section of a long document first, then summarizing those summaries into one short digest",
-        "Keeping only the N most recent turns in context and dropping older turns, optionally summarizing them first",
-        "Classifying the query intent and including only the tool definitions that match it, dropping all other tools"
+        "`A, B, C, D`, because the helper is a stable ordinary sort",
+        "`D, C, B, A`, because the middle is reversed before the first item",
+        "`A, C, D, B`, placing high-scoring items at the beginning and end",
+        "`B, D, A, C`, alternating from the lowest-scoring item"
       ],
       "correct": 2,
-      "explanation": "Sliding window keeps the K most recent conversation turns in full context. Older turns are either dropped or replaced with a summary. This bounds memory usage while preserving the most relevant recent context."
+      "explanation": "The implementation takes even-indexed sorted items (`A, C`) followed by the reversed odd-indexed items (`D, B`). This `A, C, D, B` layout moves some important context away from the middle."
+    },
+    {
+      "stage": "check",
+      "question": "When does `ConversationManager` move old turns into `summaries`?",
+      "options": [
+        "After every turn, so the live history always contains only the latest message",
+        "Only when the caller explicitly invokes a public `summarize` method",
+        "When the token limit is exceeded and there are at most four turns, because short histories are unsafe to keep",
+        "After overflow, it summarizes and removes the oldest two turns"
+      ],
+      "correct": 3,
+      "explanation": "`_compress_if_needed` checks the token estimate and, when there are more than four turns, summarizes the oldest pair, stores that summary, and keeps the remaining recent turns live."
     },
     {
       "stage": "post",
-      "question": "How should a context assembler allocate tokens across components?",
+      "question": "For `select_tools(\"schedule a meeting and email the invite\", token_budget=300)`, what determines whether a tool is included?",
       "options": [
-        "Dynamically by query type: a simple question needs little retrieved context, a complex one needs more, with generation headroom always reserved",
-        "In equal shares per component, so system prompt, tools, history and retrieved docs each take a fixed quarter of the window regardless of the query",
-        "By filling every remaining token with retrieved chunks, since more retrieved text always raises the chance of a hit somewhere",
-        "By shrinking the system prompt first, because it is the one component repeated on every call and so costs the most overall"
+        "Matching intent and token cost determine which tools fit",
+        "Every registered tool is included, then the assembled prompt is truncated to 300 tokens",
+        "Only the first tool in `TOOL_REGISTRY` is selected, regardless of the query's words",
+        "Tools are chosen by alphabetical name and the intent classifier is consulted only for logging"
       ],
       "correct": 0,
-      "explanation": "A simple factual question might need 500 tokens of retrieved context. A complex analysis might need 10,000. A good context assembler adjusts allocation dynamically while always reserving headroom for the model's response."
+      "explanation": "The selector classifies the query into categories such as calendar and email, walks the registry, and adds matching tools only while cumulative token cost stays within the supplied budget."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Context Engineering: Windows, Budgets, Memory, and Retrieval?",
+      "question": "How is `score_relevance(\"refund timing\", documents)` calculated for each document?",
       "options": [
-        "Implement context window management strategies: truncation, summarization, and sliding window for conversat...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "The document's character count divided by the query length, rounded to three decimals",
+        "Query-word overlap divided by query-word count",
+        "The cosine similarity between two learned embeddings produced by the context engine",
+        "A binary value that is one only when the document contains the exact query string"
       ],
-      "correct": 0,
-      "explanation": "“Implement context window management strategies: truncation, summarization, and sliding window for conversat...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 1,
+      "explanation": "The helper lowercases and tokenizes both sides, computes the intersection of query and document word sets, divides by the number of query words, and rounds the result."
     }
   ]
 }

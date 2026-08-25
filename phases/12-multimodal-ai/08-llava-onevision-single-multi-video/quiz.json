@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to LLaVA-OneVision: Single-Image, Multi-Image, Video in One Model?",
+      "question": "What does anyres_tokens(tiles=9, per_tile=182) return for the single-image plan?",
       "options": [
-        "Design a visual-token budget that holds constant across single-image, multi-image, and video inputs",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "1,820, counting nine tiles plus one global thumbnail",
+        "1,638, counting only the nine tiles",
+        "182, because all tiles are pooled into one token",
+        "2,916, because each tile uses the unpooled 729-token grid"
       ],
       "correct": 0,
-      "explanation": "“Design a visual-token budget that holds constant across single-image, multi-image, and video inputs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "anyres_tokens computes (tiles + 1) * per_tile. Thus (9+1)*182 = 1,820 visual tokens including the thumbnail."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of LLaVA-OneVision: Single-Image, Multi-Image, Video in One Model?",
+      "question": "What does per_tile_tokens(384, 14, 2) return?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Order a training curriculum that transfers skills from single-image to video without catastrophic forgetting",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "729, because 384/14 is rounded to 27 and no pooling occurs",
+        "169, because floor(384/14)=27, pooled by 2 to 13, then squared",
+        "192, because pooling halves only one spatial axis",
+        "576, because 384px always means the base LLaVA count"
       ],
       "correct": 1,
-      "explanation": "“Order a training curriculum that transfers skills from single-image to video without catastrophic forgetting” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The helper uses g=384//14=27, pooled=g//2=13, and returns 13*13=169 tokens for one tile."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through LLaVA-OneVision: Single-Image, Multi-Image, Video in One Model?",
+      "question": "Which plan does plan_video(4096) choose first?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Explain why a single model beats specialists at the same parameter count when curriculum is done right",
-        "Treat one successful example as proof that every edge case works"
+        "8 frames at 336 with pool 2, because it always minimizes tokens",
+        "16 frames at 384 with pool 2, totaling 2,704 tokens",
+        "32 frames at 384 with pool 3, totaling 2,592 tokens",
+        "32 frames at 384 with no pooling, totaling 23,328 tokens"
       ],
       "correct": 2,
-      "explanation": "“Explain why a single model beats specialists at the same parameter count when curriculum is done right” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The first fitting loop choice is 32 frames, 384 resolution, pool 3. Each frame has 9*9=81 tokens, so the total is 32*81=2,592."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits LLaVA-OneVision: Single-Image, Multi-Image, Video in One Model?",
+      "question": "What is the intended order of curriculum_stages before the target-task mix?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Name the three emergent capabilities reported by LLaVA-OneVision: multi-camera reasoning, set-of-mark promp...",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Name the three emergent capabilities reported by LLaVA-OneVision: multi-camera reasoning, set-of-mark promp...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for LLaVA-OneVision: Single-Image, Multi-Image, Video in One Model?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Design a visual-token budget that holds constant across single-image, multi-image, and video inputs"
+        "Video first, then single-image, then multi-image specialists",
+        "Multi-image only, then freeze the model before video",
+        "Randomly interleave all scenarios from the first optimizer step",
+        "Single-image (SI), then OneVision mixed training (OV), then target-task fine-tuning (TT)"
       ],
       "correct": 3,
-      "explanation": "“Design a visual-token budget that holds constant across single-image, multi-image, and video inputs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "curriculum_stages prints SI with single-image data, OV with a 0.5/0.3/0.2 mixture, and TT using the requested final mix. The order is part of the transfer recipe."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for LLaVA-OneVision: Single-Image, Multi-Image, Video in One Model?",
+      "question": "What does plan_multi_image(4096) select before trying smaller image counts?",
       "options": [
-        "Order a training curriculum that transfers skills from single-image to video without catastrophic forgetting",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Eight 384px images with pool 2, for 8*169 = 1,352 tokens",
+        "Six 384px images without pooling, for 6*729 = 4,374 tokens",
+        "Four 336px images with pool 1, for 4*576 = 2,304 tokens",
+        "Two 384px images with pool 2, because the loop starts at two"
       ],
       "correct": 0,
-      "explanation": "“Order a training curriculum that transfers skills from single-image to video without catastrophic forgetting” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The loop tries n_images in [8,6,4,2] and first tests 384/pool2. Each image has 169 tokens, so eight images use 1,352 and fit the 4,096 budget."
+    },
+    {
+      "stage": "post",
+      "question": "Which capability does the demo label as an emergent result of the combined curriculum?",
+      "options": [
+        "A larger text-only vocabulary",
+        "An iPhone-screenshot agent, alongside multi-camera reasoning and set-of-mark prompting",
+        "Automatic audio diarization without an audio encoder",
+        "A replacement for all visual-token pooling"
+      ],
+      "correct": 1,
+      "explanation": "The driver names multi-camera reasoning, set-of-mark prompting, and the iPhone-screenshot agent as capabilities that do not appear in the single-image-only stage."
     }
   ]
 }

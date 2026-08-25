@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why are Exact Match and token-F1 insufficient for evaluating modern LLM outputs?",
+      "question": "How does faithfulness score one answer sentence in the toy evaluator?",
       "options": [
-        "They run too slowly at evaluation time, making them impractical for large test sets with many thousands of examples",
-        "They miss semantic equivalence entirely; 'June 29th, 2007' vs 'June 29, 2007' scores 0 EM despite being correct",
-        "They require a GPU to compute, unlike judge-based metrics which can run on CPU-only infrastructure",
-        "They are not differentiable, so they cannot be used as a training loss during fine-tuning"
+        "It counts the sentence as supported when at least half of its non-stopword tokens occur in the context",
+        "It checks whether the answer has the same number of characters as the context",
+        "It compares only the answer length with the question length",
+        "It gives one point whenever the answer contains a period"
+      ],
+      "correct": 0,
+      "explanation": "For each claim, faithfulness computes context-token overlap and accepts it when overlap/claim-token count is at least 0.5."
+    },
+    {
+      "stage": "check",
+      "question": "What denominator does answer_relevance use?",
+      "options": [
+        "The number of context chunks retrieved",
+        "The size of the union of question and answer token sets",
+        "The answer token count only",
+        "The number of sentences in the expected answer"
       ],
       "correct": 1,
-      "explanation": "Exact-match/F1 cannot recognize paraphrases or formatting differences that humans would mark correct."
+      "explanation": "It returns len(q_tokens & a_tokens) / len(q_tokens | a_tokens), a Jaccard-style score."
     },
     {
       "stage": "check",
-      "question": "What does the RAGAS faithfulness metric measure?",
+      "question": "If two of four retrieved chunks are in relevant_chunks, what is context_precision?",
       "options": [
-        "Retrieval recall, the fraction of all relevant passages successfully returned by the retriever's top-K results",
-        "End-to-end latency, how long the full retrieval-plus-generation pipeline takes to return an answer",
-        "Raw generation throughput, measured in tokens produced per second during the answer-generation step",
-        "Whether each claim in the answer is entailed by the retrieved context, checked via an NLI entailment model"
+        "0.25",
+        "2.0",
+        "0.5",
+        "1.0"
+      ],
+      "correct": 2,
+      "explanation": "The helper counts relevant retrieved chunks and divides by len(retrieved_chunks), giving 2/4."
+    },
+    {
+      "stage": "check",
+      "question": "What does context_recall compare against retrieved text?",
+      "options": [
+        "The fraction of retrieved chunks that contain a question mark",
+        "The number of generated sentences divided by context length",
+        "The average BM25 score of the chunks",
+        "The fraction of gold answer tokens that occur in the retrieved token set"
       ],
       "correct": 3,
-      "explanation": "Faithfulness checks each answer claim against retrieved context using NLI entailment."
-    },
-    {
-      "stage": "check",
-      "question": "Why is judge-model calibration against human labels required before trusting scores?",
-      "options": [
-        "If Spearman correlation between judge and human labels drops below roughly 0.7, the score is noise, not signal",
-        "It is a compliance requirement under the GDPR for any automated system that scores generated text",
-        "Calibrating the judge model against human labels measurably speeds up its inference latency",
-        "Calibration is fundamentally a tokenization issue caused by mismatched vocabularies between judge and generator"
-      ],
-      "correct": 0,
-      "explanation": "Without calibration, you cannot tell whether judge scores reflect quality or model bias."
-    },
-    {
-      "stage": "check",
-      "question": "What is self-evaluation bias in LLM-as-judge setups?",
-      "options": [
-        "The claim that judge latency drops whenever the judge model shares a weights family with the generator",
-        "The observation that judges run measurably faster whenever they are scoring cached, previously seen model outputs, before defining the measurement, acceptance threshold, or rollback path",
-        "Using the same LLM family to both generate and judge inflates scores compared to using an independent judge model",
-        "The tendency of judge models to silently ignore any system prompt they are given during evaluation"
-      ],
-      "correct": 2,
-      "explanation": "Same-family generator+judge biases scores upward; use a different model family for judging."
+      "explanation": "It joins retrieved chunks, builds a token set, and counts covered gold_answer_tokens."
     },
     {
       "stage": "post",
-      "question": "What does G-Eval specifically add over a naive 'score 0-1' prompt?",
+      "question": "What does g_eval_correctness compare for each actual answer claim?",
       "options": [
-        "A larger context window, letting the judge see substantially more of the full conversation history before scoring",
-        "Lower per-call cost, since G-Eval's structured format uses noticeably fewer tokens than a freeform prompt",
-        "An explicit chain-of-thought rubric that auto-expands into named evaluation steps, yielding more stable scores",
-        "Built-in multilingual scoring support that a plain 'score 0-1' prompt cannot provide on its own"
+        "Its token overlap with the expected answer against the threshold",
+        "Its cosine similarity with the question embedding",
+        "Its length against the number of retrieved chunks",
+        "Its punctuation against the reference punctuation"
       ],
-      "correct": 2,
-      "explanation": "G-Eval's structured eval-steps produce more reliable scores than freeform 'rate it' prompts."
+      "correct": 0,
+      "explanation": "The toy G-Eval function counts a claim when its expected-token overlap ratio reaches threshold."
     },
     {
       "stage": "post",
-      "question": "Why is reporting only the aggregate mean score dangerous?",
+      "question": "Why should faithfulness and answer relevance be reported separately?",
       "options": [
-        "A 0.85 mean can hide a small tail of catastrophic failures; always inspect the bottom quantile of scores too",
-        "Aggregate numbers are simply too large in magnitude to fit cleanly into most CI/CD dashboards without truncation",
-        "Reporting an aggregate score silently discards the judge model's identity and version from the record",
-        "Computing the aggregate mean itself requires GPU resources that a CI pipeline may not have available"
+        "They are mathematically identical for every answer",
+        "An answer can mention the question while inventing unsupported facts, or be supported but fail to address the question",
+        "Relevance measures only GPU latency, while faithfulness measures token count",
+        "Reporting one makes the other impossible to compute"
       ],
-      "correct": 0,
-      "explanation": "Means hide tail failures; surface bottom-10% to catch high-severity issues."
+      "correct": 1,
+      "explanation": "The metrics test different failure modes: support from context versus alignment with the user question."
     }
   ]
 }

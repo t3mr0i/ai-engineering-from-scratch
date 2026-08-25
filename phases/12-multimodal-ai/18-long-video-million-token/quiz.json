@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Long-Video Understanding at Million-Token Context?",
+      "question": "How many visual tokens does tokens(duration_s=300, fps=2, per_frame=81) return?",
       "options": [
-        "Compute total visual-token counts for long-form video at varying FPS and pooling",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Compute total visual-token counts for long-form video at varying FPS and pooling” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Long-Video Understanding at Million-Token Context?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Explain the three scaling paths: brute context (Gemini 1.5), ring attention (LWM), token compression (LongV...",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Explain the three scaling paths: brute context (Gemini 1.5), ring attention (LWM), token compression (LongV...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Long-Video Understanding at Million-Token Context?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Compare raw-context video VLMs vs agentic-retrieval video VLMs (VideoAgent) on accuracy and latency",
-        "Treat one successful example as proof that every edge case works"
+        "24,300, because 300 seconds contains 300 frames at the reduced rate",
+        "162, because only two frames are kept per minute",
+        "48,600, from 300*2 frames times 81 tokens per frame",
+        "583,200, the two-hour brute-context count"
       ],
       "correct": 2,
-      "explanation": "“Compare raw-context video VLMs vs agentic-retrieval video VLMs (VideoAgent) on accuracy and latency” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "tokens multiplies duration, FPS, and per-frame count directly: 300*2*81 = 48,600. The 24,300 option omits the second frame per second."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Long-Video Understanding at Million-Token Context?",
+      "question": "What token count appears for a two-hour video at 1 FPS and 81 tokens per frame?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Design a needle-in-a-haystack test for a 30-minute video and measure recall at a specific minute",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Design a needle-in-a-haystack test for a 30-minute video and measure recall at a specific minute” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Long-Video Understanding at Million-Token Context?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Compute total visual-token counts for long-form video at varying FPS and pooling"
+        "58,320",
+        "81,000",
+        "360,000",
+        "583,200"
       ],
       "correct": 3,
-      "explanation": "“Compute total visual-token counts for long-form video at varying FPS and pooling” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Two hours is 7,200 seconds. At one frame per second, 7,200*81 = 583,200 visual tokens, matching the brute-context comparison in the driver."
+    },
+    {
+      "stage": "check",
+      "question": "How many tokens does agentic_retrieval_sim use for three 30-second clips at 81 tokens per frame plus 200 text tokens?",
+      "options": [
+        "7,490, from 3*30*81 + 200",
+        "2,630, because the three clips share one frame stream",
+        "24,300, because every clip is one minute long",
+        "583,200, because retrieval still encodes the whole video"
+      ],
+      "correct": 0,
+      "explanation": "The function sets tokens_used = 3 * 30 * 81 + 200 = 7,490. It encodes retrieved clips rather than the complete two-hour context."
+    },
+    {
+      "stage": "check",
+      "question": "If pct_into_video=0.20 and the curve is [(0.1,0.95),(0.5,0.85),(1.0,0.75)], which recall probability does nih_trial return?",
+      "options": [
+        "0.95, because every needle is treated as early",
+        "0.85, because 0.20 is above 0.1 but no greater than 0.5",
+        "0.75, because only the last curve value is used",
+        "0.20, because the function returns the needle position"
+      ],
+      "correct": 1,
+      "explanation": "nih_trial returns the first curve entry whose threshold is at least the needle's fractional position. 0.20 falls in the 0.5 bucket, whose recall is 0.85."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Long-Video Understanding at Million-Token Context?",
+      "question": "Which strategy does the lesson recommend for a specific query in a video longer than one hour?",
       "options": [
-        "Explain the three scaling paths: brute context (Gemini 1.5), ring attention (LWM), token compression (LongV...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Brute context at 1 FPS, regardless of the question",
+        "Only a fixed 16-frame Q-Former clip, with no retrieval loop",
+        "VideoAgent-style agentic retrieval, because it searches for clips instead of ingesting the entire context",
+        "A larger text tokenizer, because visual tokens are irrelevant"
       ],
-      "correct": 0,
-      "explanation": "“Explain the three scaling paths: brute context (Gemini 1.5), ring attention (LWM), token compression (LongV...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The strategy picker maps '>1h specific query' to VideoAgent. Retrieval trades a small number of clip encodes for much lower token cost on targeted questions."
+    },
+    {
+      "stage": "post",
+      "question": "What is the key trade-off between brute-context video VLMs and VideoAgent-style retrieval?",
+      "options": [
+        "Brute context cannot answer temporal questions, while retrieval always has perfect recall",
+        "Retrieval uses more tokens because it encodes every frame twice",
+        "The two paths have identical compute because the LLM sees the same number of frames",
+        "Brute context offers broad recall at high context cost; retrieval lowers latency and tokens but can miss the relevant clip"
+      ],
+      "correct": 3,
+      "explanation": "The brute path keeps broad video context but grows to hundreds of thousands of tokens. Agentic retrieval focuses compute on returned clips, introducing query and retrieval failure modes."
     }
   ]
 }

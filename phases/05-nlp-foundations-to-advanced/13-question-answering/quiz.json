@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does extractive QA predict?",
+      "question": "What does normalize(\"The June 29, 2007\") remove before comparison?",
       "options": [
-        "A generated natural-language answer — and applies unchanged even when the lesson's stated preconditions fail",
-        "A confidence score only",
-        "Start and end token indices of the answer span within a given passage",
-        "A retrieved passage ID"
+        "Case differences, articles, punctuation, and extra whitespace",
+        "All digits and every month name",
+        "Only the final answer token",
+        "The meaning of the sentence through stemming"
       ],
-      "correct": 2,
-      "explanation": "Extractive QA outputs the span of the passage that contains the answer."
+      "correct": 0,
+      "explanation": "normalize lowercases, removes a/an/the, replaces non-word characters with spaces, and collapses whitespace."
     },
     {
       "stage": "check",
-      "question": "What two components define a basic RAG pipeline?",
+      "question": "What does exact_match(\"The cat\", \"cat\") return?",
       "options": [
-        "An encoder and a decoder trained jointly, with no need to inspect intermediate results or test edge cases",
-        "A reranker and a translator",
-        "Tokenizer and POS tagger",
-        "A retriever (find relevant passages) and a reader (extract or generate the answer)"
-      ],
-      "correct": 3,
-      "explanation": "RAG = retriever (finds relevant context) plus reader (answers from it)."
-    },
-    {
-      "stage": "check",
-      "question": "On SQuAD, what does Exact Match (EM) measure?",
-      "options": [
-        "Edit distance",
-        "Per-word overlap, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "Whether the prediction matches the reference exactly after normalization (lowercase, strip punctuation, remove articles)",
-        "Token-level F1"
-      ],
-      "correct": 2,
-      "explanation": "EM is strict equality after a defined normalization step; partial matches score zero."
-    },
-    {
-      "stage": "check",
-      "question": "What does deepset/roberta-base-squad2 add over a SQuAD 1.1 model?",
-      "options": [
-        "Multilingual support",
-        "Training on unanswerable questions so the model can predict a null answer",
-        "Bigger context window",
-        "Cross-lingual retrieval, before defining the measurement, acceptance threshold, or rollback path"
+        "0.0",
+        "1.0",
+        "0.5",
+        "The token overlap count, 2.0"
       ],
       "correct": 1,
-      "explanation": "SQuAD 2.0 includes unanswerable items; models trained on it can predict 'no answer'."
+      "explanation": "After normalization both strings become cat, so exact_match returns one."
     },
     {
-      "stage": "post",
-      "question": "Which RAGAS dimension targets hallucinations specifically?",
+      "stage": "check",
+      "question": "What token F1 does token_f1(\"June 29th 2007\", \"June 29 2007\") produce?",
       "options": [
-        "Answer relevance",
-        "Context recall",
-        "Faithfulness, measured by NLI entailment between answer claims and retrieved context",
-        "Context precision — and applies unchanged even when the lesson's stated preconditions fail"
+        "1.0",
+        "0.0",
+        "About 0.667",
+        "0.333"
       ],
       "correct": 2,
-      "explanation": "Faithfulness checks each answer claim against retrieved context via NLI entailment."
+      "explanation": "Two of three tokens overlap, giving precision=recall=2/3 and an F1 of 2/3."
+    },
+    {
+      "stage": "check",
+      "question": "Does refusal_from_score(0.3, threshold=0.3) refuse the answer?",
+      "options": [
+        "Yes; equality always triggers refusal",
+        "Only if the answer contains a date",
+        "No, because the function ignores threshold entirely",
+        "No; refusal uses the strict condition score < threshold"
+      ],
+      "correct": 3,
+      "explanation": "The helper returns top_retrieval_score < threshold, so equality at 0.3 is accepted."
     },
     {
       "stage": "post",
-      "question": "Why should you measure retrieval recall before evaluating reader accuracy?",
+      "question": "What makes the first iPhone document score for the query \"When was the first iPhone released?\"?",
       "options": [
-        "Required by transformers",
-        "Recall determines ROUGE",
-        "Reader latency depends on it, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "If the correct passage is not in the top-k, the reader cannot succeed regardless of how good it is"
+        "Shared query tokens such as first, iPhone, and released contribute to toy_bm25_score",
+        "The document is always selected because it is first in CORPUS",
+        "Only the document punctuation is compared",
+        "The score comes from an external neural retriever"
       ],
-      "correct": 3,
-      "explanation": "A reader cannot answer when the right passage is missing; retrieval recall bounds reader performance."
+      "correct": 0,
+      "explanation": "toy_bm25_score counts matching query terms and normalizes by document length; toy_retrieve sorts these scores."
+    },
+    {
+      "stage": "post",
+      "question": "Why can token F1 be useful alongside exact match for extractive QA?",
+      "options": [
+        "It guarantees semantic equivalence for any paraphrase",
+        "It gives partial credit when predicted and gold answers share some tokens but are not identical strings",
+        "It ignores missing answer tokens to favor longer predictions",
+        "It replaces retrieval and never needs a gold answer"
+      ],
+      "correct": 1,
+      "explanation": "F1 balances token precision and recall, while exact match is an all-or-nothing normalized string test."
     }
   ]
 }

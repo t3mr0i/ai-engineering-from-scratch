@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What problem do embeddings solve that keyword search cannot?",
+      "question": "After `SimpleEmbedder.fit([\"refund policy\", \"refund timing\"])`, what does `embed(\"refund\")` contain?",
       "options": [
-        "Embeddings store each document as a sparse bag-of-words vector, so rare terms get more weight than common ones at query time",
-        "Embeddings index every document inside an HNSW graph, so a plain keyword index can never be searched in less than linear time — and applies unchanged even when the lesson's stated preconditions fail",
-        "Embeddings capture semantic meaning, matching 'payment didn't go through' with 'charge was declined' even though they share no words",
-        "Embeddings preserve word order inside a chunk, so that 'dog bites man' and 'man bites dog' can finally be told apart"
+        "A probability distribution over the two documents, with one score per document",
+        "A fixed one-hot vector whose only nonzero entry is the word `refund`",
+        "A normalized TF-IDF vector over the fitted vocabulary",
+        "A binary vector produced by hashing the complete sentence into 64 bits"
       ],
       "correct": 2,
-      "explanation": "Keyword search treats words as independent symbols. Embeddings map text to high-dimensional vectors where semantic similarity = geometric proximity. Texts with the same meaning cluster together regardless of word choice."
+      "explanation": "`SimpleEmbedder` builds a sorted vocabulary and IDF values during `fit`. `embed` then computes term frequency times IDF and L2-normalizes the resulting vocabulary-sized vector."
     },
     {
       "stage": "check",
-      "question": "What does cosine similarity measure between two embedding vectors?",
+      "question": "Why does `cosine_similarity` return `0.0` when either input vector has zero norm?",
       "options": [
-        "The straight-line distance between the two points, which shrinks as the vectors' magnitudes get closer together",
-        "The raw inner product of the two vectors, a score that grows whenever either vector's magnitude increases",
-        "The number of bits that differ once both vectors have been quantized down to a single bit per dimension",
-        "The angle between the vectors, indicating how similar their directions are regardless of magnitude"
+        "A zero vector is always maximally similar to every other vector in the index",
+        "The function treats empty vectors as a request to use Euclidean distance instead",
+        "The IDF calculation guarantees that zero vectors cannot occur after fitting",
+        "It avoids division by zero because a zero vector has no direction"
       ],
       "correct": 3,
-      "explanation": "Cosine similarity = dot(A,B) / (|A|*|B|). It ranges from -1 (opposite) to 1 (identical direction). Two texts with the same meaning will have vectors pointing in nearly the same direction, giving cosine similarity near 1."
+      "explanation": "Cosine similarity divides by both vector norms. The implementation explicitly returns zero when either norm is zero, which gives unknown-only or empty text a safe neutral score."
     },
     {
       "stage": "check",
-      "question": "What is the typical dimensionality of modern text embedding models?",
+      "question": "A query contains a word absent from `SimpleEmbedder`'s fitted vocabulary. What happens to that word in `embed`?",
       "options": [
-        "768 to 3072 dimensions, depending on the model",
-        "24 to 64 dimensions, one per layer of the HNSW graph",
-        "300 dimensions, the fixed size set in the Word2Vec era",
-        "100,000 or more dimensions, one per vocabulary token"
+        "It is ignored, so it contributes no coordinate to the TF-IDF vector",
+        "It is appended to the vocabulary and changes the dimensions of every stored vector",
+        "It raises `KeyError`, because every query token must have appeared during fitting",
+        "It receives the highest possible IDF so that unknown terms dominate retrieval"
       ],
       "correct": 0,
-      "explanation": "Modern embedding models (OpenAI text-embedding-3, BGE, E5) produce vectors with 768 to 3072 dimensions. Higher dimensions capture more nuance but cost more to store and search."
+      "explanation": "The embedder loops through tokens only when their lowercase form is in `word_to_idx`. Unknown words are skipped; the fitted vector shape remains stable for indexed documents and queries."
     },
     {
       "stage": "check",
-      "question": "Why should you evaluate embedding quality using retrieval benchmarks rather than just inspecting similarity scores?",
+      "question": "What does `VectorIndex.search(query_vector, top_k=2, metric=\"euclidean\")` sort by?",
       "options": [
-        "Cosine similarity ignores vector magnitude, so any two texts of differing length are scored as identical by design",
-        "Similarity scores are defined only for normalized embeddings, so a model that skips normalization returns no number",
-        "Similarity scores are computed after HNSW pruning, so they report the index's recall rather than the quality of the embedding model",
-        "Absolute similarity values vary by model; what matters is whether relevant documents outrank irrelevant ones (precision@k, recall)"
-      ],
-      "correct": 3,
-      "explanation": "A cosine similarity of 0.85 might mean 'very similar' for one model and 'somewhat similar' for another. Retrieval metrics (precision@k, recall) measure what actually matters: does the right document come back?"
-    },
-    {
-      "stage": "post",
-      "question": "When would you use a local/open-source embedding model instead of an API-based one?",
-      "options": [
-        "When you need Matryoshka truncation, which only open-weight checkpoints expose via a dimensions parameter",
-        "When you need data privacy, offline operation, lower cost at scale, or domain-specific fine-tuning",
-        "When the corpus passes a million vectors, since hosted APIs cannot return more than the top-k nearest results",
-        "When retrieval quality is the priority, because hosted models always score below open-weight ones on MTEB"
+        "The largest raw Euclidean distance, because distant documents are more informative",
+        "Negative distance, sorted so nearest vectors come first",
+        "The number of shared nonzero coordinates, which is the Hamming metric",
+        "The original insertion order, because Euclidean search does not return scores"
       ],
       "correct": 1,
-      "explanation": "API embeddings (OpenAI, Cohere) are easy but send your data externally. Local models (BGE, E5, Nomic) keep data private, eliminate per-call costs at scale, and can be fine-tuned on domain-specific data."
+      "explanation": "The index represents Euclidean similarity as the negative distance. Sorting scores descending therefore puts the smallest actual distance at the top, while preserving a common result shape."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Embeddings & Vector Representations?",
+      "question": "Why does `truncate_embedding(vector, 3)` renormalize the sliced vector?",
       "options": [
-        "Explain why embeddings solve the vocabulary mismatch problem that keyword search cannot handle",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Slicing creates new vocabulary terms that must be assigned IDF values",
+        "Renormalization converts the vector to a binary Hamming representation",
+        "Slicing changes the norm, so it is renormalized for cosine use",
+        "The function cannot return fewer dimensions unless every coordinate sums to one"
       ],
-      "correct": 0,
-      "explanation": "“Explain why embeddings solve the vocabulary mismatch problem that keyword search cannot handle” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "A prefix slice generally has a norm below one. The helper slices first and divides by the new norm, preserving the scale expected by cosine-based retrieval unless the slice is all zeros."
+    },
+    {
+      "stage": "post",
+      "question": "How does `chunk_by_sentences(text, max_chunk_tokens=200)` differ from fixed word chunking?",
+      "options": [
+        "It always returns exactly 200 sentences, regardless of the text length",
+        "It embeds each sentence independently and returns vectors rather than text chunks",
+        "It overlaps every sentence with the previous chunk by 50 tokens, even when the sentence is complete",
+        "It groups complete sentences under the token budget"
+      ],
+      "correct": 3,
+      "explanation": "The sentence-aware helper splits on sentence boundaries and accumulates sentences while their estimated token count stays within the limit. Fixed word chunking can cut a sentence in the middle."
     }
   ]
 }

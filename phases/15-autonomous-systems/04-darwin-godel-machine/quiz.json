@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Darwin Godel Machine — Open-Ended Self-Modifying Agents?",
+      "question": "What is the key difference between true_score and reported_score in this simulator?",
       "options": [
-        "Explain the autonomy mechanism and assumptions behind Darwin Godel Machine — Open-Ended Self-Modifying Agents",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "reported_score can add hack_bonus when the evaluator side channel is open, while true_score counts exact cases",
+        "true_score is produced by the agent and reported_score is always lower",
+        "true_score ignores the tool output and reported_score runs the tests",
+        "They are aliases for the same floating-point value"
       ],
       "correct": 0,
-      "explanation": "“Explain the autonomy mechanism and assumptions behind Darwin Godel Machine — Open-Ended Self-Modifying Agents” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "true_score is the external exact-case score; reported_score adds the agent's hack bonus only when hack_allowed is enabled, capped at 1.0."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Darwin Godel Machine — Open-Ended Self-Modifying Agents?",
+      "question": "If an agent adds hack_bonus but the side channel is closed, what happens to true_score?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Model its control loop, state transitions, and stopping conditions explicitly",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It is increased by the bonus",
+        "It remains the exact fraction of cases transformed correctly",
+        "It is replaced by the archive key",
+        "It becomes zero after every mutation"
       ],
       "correct": 1,
-      "explanation": "“Model its control loop, state transitions, and stopping conditions explicitly” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The bonus affects only reported_score under hack_allowed; true_score is recomputed from the actual transformed cases."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Darwin Godel Machine — Open-Ended Self-Modifying Agents?",
+      "question": "Which fields make two candidates occupy different archive cells?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Apply bounded permissions, budgets, and rollback controls",
-        "Treat one successful example as proof that every edge case works"
+        "Only the random seed",
+        "Only whether the candidate was generated in round 200",
+        "The number of operations and rounded reported score",
+        "The target string and the quiz stage"
       ],
       "correct": 2,
-      "explanation": "“Apply bounded permissions, budgets, and rollback controls” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "run_dgm keys its archive by (len(ops), round(reported_score, 2)), so both program length and reported fitness affect the cell."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Darwin Godel Machine — Open-Ended Self-Modifying Agents?",
+      "question": "Why can no tool-only sequence in the default TOOLS list reach a perfect score on all CASES?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate capability and safety claims against reproducible evidence",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate capability and safety claims against reproducible evidence” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Darwin Godel Machine — Open-Ended Self-Modifying Agents?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the autonomy mechanism and assumptions behind Darwin Godel Machine — Open-Ended Self-Modifying Agents"
+        "The evaluator never runs the sequence",
+        "The trim tool always deletes the answer",
+        "Every input contains an unknown operation",
+        "The target includes title-case behavior, but title is not one of the available tools"
       ],
       "correct": 3,
-      "explanation": "“Explain the autonomy mechanism and assumptions behind Darwin Godel Machine — Open-Ended Self-Modifying Agents” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The cases require collapse, trim, and title-case; the manifest has the first two but no title operation, so the true score has a ceiling below 1.0."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Darwin Godel Machine — Open-Ended Self-Modifying Agents?",
+      "question": "What observable warning distinguishes the open side-channel run from the closed run?",
       "options": [
-        "Model its control loop, state transitions, and stopping conditions explicitly",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "reported_score can exceed the corresponding true_score",
+        "The target cases disappear",
+        "All candidates receive exactly zero",
+        "The evaluator starts changing the tool list"
       ],
       "correct": 0,
-      "explanation": "“Model its control loop, state transitions, and stopping conditions explicitly” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "With --reward-hack-allowed, reported_score includes a bonus that is not present in true_score, exposing the evaluator mismatch."
+    },
+    {
+      "stage": "post",
+      "question": "What does apply do when a candidate contains an unknown operation name?",
+      "options": [
+        "It treats the operation as title-case",
+        "It returns an empty string",
+        "It skips the operation and reports a perfect score",
+        "It adds the name to TOOLS"
+      ],
+      "correct": 1,
+      "explanation": "The implementation checks the tool lookup and returns an empty string for an unknown operation rather than extending the manifest."
     }
   ]
 }

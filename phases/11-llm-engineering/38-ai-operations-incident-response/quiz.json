@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why do AI features need incident runbooks?",
+      "question": "Which observation belongs in an AI incident review even when the service is still reachable?",
       "options": [
-        "Because standard uptime monitoring already covers every way an assistant can degrade — and applies unchanged even when the lesson's stated preconditions fail",
-        "Because support teams respond faster when each incident is handled case by case",
-        "Because most AI incidents resolve themselves once the provider rotates the model",
-        "Because model behavior, retrieval quality, tool calls, cost, and safety controls can fail"
+        "Only CPU utilization, because a reachable endpoint is operational",
+        "Only the latest user complaint, because aggregate signals obscure the incident",
+        "Quality drift, cost spikes, tool failures, and safety alerts alongside availability",
+        "Only the model vendor's status page, because application teams cannot assess quality"
+      ],
+      "correct": 2,
+      "explanation": "AI incidents include behavior, spend, safety, and tool effects, not just uptime. The runbook connects those signals to owners, rollback, escalation, and learning."
+    },
+    {
+      "stage": "check",
+      "question": "The production assistant fixture has two matched signals, impact=5, and uncertainty=4. What priority does it receive?",
+      "options": [
+        "team practice",
+        "guided pilot",
+        "awareness only",
+        "launch gate required"
       ],
       "correct": 3,
-      "explanation": "AI operations covers quality, cost, safety, and tool behavior in addition to uptime. Without a runbook, support teams improvise and the business loses trust."
+      "explanation": "The score is 5*2 + 4 + 2*2 = 18, which crosses the launch-gate threshold."
     },
     {
       "stage": "check",
-      "question": "A live assistant starts blocking valid work because a guardrail fires too often. Which operational signal is this?",
+      "question": "Which category does choose_category select for the production assistant fixture?",
       "options": [
-        "A cost spike - each blocked request is retried, which multiplies the tokens consumed",
-        "A safety alert - the guardrail is firing on legitimate requests and needs triage",
-        "Quality drift - the model's answers have degraded slowly since the last release",
-        "A tool failure - the integration behind the guardrail stopped returning a verdict"
-      ],
-      "correct": 1,
-      "explanation": "The lesson lists a safety alert as one of four operational signals, alongside quality drift, cost spikes, and tool failure. A guardrail blocking valid work is an incident to triage, not a tuning detail."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Python artifact produce?",
-      "options": [
-        "A production monitoring platform that watches quality, cost, and tool health",
-        "A root cause determined automatically from the alert and the recent changes",
-        "A service management process that replaces the existing incident workflow",
-        "A ranked incident triage plan with matched controls and rationale"
-      ],
-      "correct": 3,
-      "explanation": "The artifact helps plan incident response controls by ranking findings and matching each to a control. It extends service management rather than replacing it."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to this lesson?",
-      "options": [
-        "A rollback path that returns the feature to a known-good state during containment",
-        "An alert threshold set high enough that routine quality variation stays quiet, before defining the measurement, acceptance threshold, or rollback path",
-        "A shared support inbox with no named owner, so whoever is free picks it up",
-        "A resolution note filed instead of a postmortem once the incident is closed"
+        "safety",
+        "quality",
+        "cost",
+        "tooling"
       ],
       "correct": 0,
-      "explanation": "Rollback paths help contain AI feature incidents. Runbooks, named escalation owners, and postmortems are the other controls this lesson teaches."
+      "explanation": "Two matches, impact 5, and uncertainty 4 produce index (2+5+4) modulo 4 = 3. CATEGORIES[3] is safety."
+    },
+    {
+      "stage": "check",
+      "question": "A run has two incident signals. Which controls does recommend include?",
+      "options": [
+        "runbook and rollback path only",
+        "runbook, rollback path, and escalation owner",
+        "postmortem only, because it records the incident after recovery",
+        "a vendor status check and a new feature roadmap"
+      ],
+      "correct": 1,
+      "explanation": "Two matches select the first three controls. The postmortem is fourth and is still needed after the immediate response."
     },
     {
       "stage": "post",
-      "question": "When should an AI incident trigger escalation?",
+      "question": "How is the pilot review fixture classified with no matched signals, impact=2, and uncertainty=2?",
       "options": [
-        "Only when the outage is visible on the status page for external customers",
-        "Only when the failure is in infrastructure rather than in model behavior",
-        "When impact, uncertainty, and operational risk signals are high enough",
-        "Only when the on-call engineer cannot reproduce the problem within an hour"
+        "launch gate required with score 6",
+        "guided pilot with score 8",
+        "awareness only with score 6",
+        "team practice with score 10"
       ],
       "correct": 2,
-      "explanation": "High-impact operational issues need clear escalation, and every AI feature needs a named escalation owner. AI incidents are not only uptime incidents."
+      "explanation": "No signals add points, so the score is 6. The priority function puts scores below 7 in awareness only."
     },
     {
       "stage": "post",
-      "question": "What should a postmortem update after an AI incident?",
+      "question": "What should runbook-ai-incident-response.md cause the team to update after recovery?",
       "options": [
-        "Only the customer status page and the note sent to affected stakeholders",
-        "Only the on-call rota, so the next incident reaches a different engineer",
-        "Evals, prompts, tools, controls, and the runbook the team followed",
-        "Only the alert threshold that fired, since the rest of the stack held up"
+        "Only the on-call calendar, leaving the system and evaluation unchanged",
+        "Only the customer notice, because technical changes belong to the vendor",
+        "Only the alert threshold that happened to fire",
+        "Evals, prompts, tools, controls, owners, and the runbook steps revealed by the incident"
       ],
-      "correct": 2,
-      "explanation": "Postmortems should improve the operating system around the AI feature: evals, prompts, tools, controls, and runbooks."
+      "correct": 3,
+      "explanation": "A postmortem is part of the learning loop. It should improve both technical behavior and the operating response so the same failure is easier to detect and contain."
     }
   ]
 }

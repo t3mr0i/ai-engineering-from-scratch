@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does an AI portfolio need active management?",
+      "question": "Why does an AI portfolio need kill criteria as well as launch criteria?",
       "options": [
-        "Because every pilot that produced a working demo should be scaled into production",
-        "Because quick wins, strategic bets, risk controls, capacity, and learning need balancing",
-        "Because measuring initiatives slows delivery, so the review cadence should stay light — and applies unchanged even when the lesson's stated preconditions fail",
-        "Because ownership can be assigned later, once the strongest initiative has emerged"
+        "Evidence, capacity, dependencies, ownership, and value can show that a promising pilot should pause or stop",
+        "Every initiative should be protected until it reaches production",
+        "Kill criteria make a review cadence unnecessary once a roadmap is approved",
+        "A portfolio is only a communications artifact, so delivery evidence is optional"
+      ],
+      "correct": 0,
+      "explanation": "Active management prevents zombie initiatives from consuming scarce capacity. A clear stop condition lets leaders redirect effort when assumptions fail."
+    },
+    {
+      "stage": "check",
+      "question": "The multi-team rollout fixture has three matched signals, impact=5, and uncertainty=4. Which result is correct?",
+      "options": [
+        "18 and guided pilot",
+        "20 and launch gate required",
+        "16 and team practice",
+        "14 and awareness only"
       ],
       "correct": 1,
-      "explanation": "Portfolio management makes tradeoffs visible across initiatives. Not every pilot should scale, and without portfolio discipline teams overcommit while weak pilots keep running."
+      "explanation": "The raw score is 5*2 + 4 + 3*2 = 20, already at the cap. The corresponding priority is launch gate required."
     },
     {
       "stage": "check",
-      "question": "Six AI initiatives are running and all of them look promising. What does this lesson say is missing?",
+      "question": "Which category does choose_category assign to the multi-team rollout fixture?",
       "options": [
-        "A shared delivery platform so the six teams stop building the same components twice",
-        "A single executive sponsor who can approve budget for all six without further review",
-        "A communications plan so the organisation hears about each initiative at the right time",
-        "A way to compare value, dependency, risk, staffing, and evidence across the whole set"
+        "dependency",
+        "capacity",
+        "ownership",
+        "evidence"
+      ],
+      "correct": 2,
+      "explanation": "The index is (3+5+4) modulo 4 = 0. The first portfolio category is ownership."
+    },
+    {
+      "stage": "check",
+      "question": "Which controls are included when a portfolio initiative matches three signals?",
+      "options": [
+        "portfolio board and review cadence only",
+        "kill criteria and scaling decision only",
+        "a scaling decision without a review cadence",
+        "portfolio board, review cadence, kill criteria, and scaling decision"
       ],
       "correct": 3,
-      "explanation": "The lesson's problem is comparability: each initiative looks promising, but nobody can weigh value, dependency, risk, staffing, and evidence on the same terms. Portfolio management turns scattered initiatives into a managed set of bets."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Python artifact produce?",
-      "options": [
-        "A ranked portfolio plan with matched controls and rationale per initiative",
-        "A strategy deck generated from the scored initiatives for the steering meeting",
-        "A production deployment of whichever initiative scored highest in the cycle",
-        "A guaranteed business case for each initiative that finance can sign off on"
-      ],
-      "correct": 0,
-      "explanation": "The artifact supports portfolio triage and steering by ranking initiatives and matching controls to each one."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to this lesson?",
-      "options": [
-        "A capacity assumption that every team can absorb one more initiative",
-        "A review cadence that is set once the roadmap has already been agreed",
-        "Kill criteria that say in advance when an initiative is paused or stopped",
-        "A dependency list kept inside each team rather than on the portfolio board"
-      ],
-      "correct": 2,
-      "explanation": "Kill criteria help teams stop weak initiatives before they become zombies. The portfolio board, review cadence, and scaling decision are the other controls this lesson teaches."
+      "explanation": "The recommendation slice includes all four controls for three matches. That gives the board both a review mechanism and explicit stop and scale decisions."
     },
     {
       "stage": "post",
-      "question": "When should an initiative receive stronger portfolio controls?",
+      "question": "What does the small pilot fixture demonstrate when it has no matched signals, impact=2, and uncertainty=2?",
       "options": [
-        "Only after the initiative has already shipped and is running in production",
-        "Only when no business stakeholder has been attached to the initiative",
-        "When impact, uncertainty, dependencies, or capacity conflicts are high",
-        "Only when the initiative appears on more than one team's roadmap at once"
+        "It stays awareness only with score 6",
+        "It becomes launch gate required because every portfolio item is high risk",
+        "It is guided pilot with score 10",
+        "It is team practice with score 8"
       ],
-      "correct": 2,
-      "explanation": "High-risk portfolio items need explicit review and steering. The score combines impact, uncertainty, dependency, and capacity rather than any single trigger."
+      "correct": 0,
+      "explanation": "The empty signal list leaves the base score at 6. The priority bands classify that low-evidence fixture as awareness only."
     },
     {
       "stage": "post",
-      "question": "Why are kill criteria useful?",
+      "question": "What should board-ai-portfolio-roadmap.md let a steering group compare?",
       "options": [
-        "They stop weak pilots from consuming team capacity indefinitely",
-        "They let a paused initiative restart without a new business case",
-        "They replace the review cadence with a single end-of-cycle decision",
-        "They set the scaling threshold that every successful pilot must clear"
+        "Only which team submitted each idea first",
+        "Initiative value, dependency and capacity pressure, ownership, evidence, controls, and the next scaling decision",
+        "A single model benchmark shared by every initiative",
+        "A fixed delivery date that overrides the evidence from the pilot"
       ],
-      "correct": 0,
-      "explanation": "Kill criteria protect capacity and focus, keeping zombie initiatives from crowding out the rest of the portfolio."
+      "correct": 1,
+      "explanation": "The board makes portfolio trade-offs visible. It supports a review cadence and keeps kill criteria alongside the evidence needed to scale."
     }
   ]
 }

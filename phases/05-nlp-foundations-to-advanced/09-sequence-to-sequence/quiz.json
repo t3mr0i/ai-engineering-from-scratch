@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the role of the encoder in a 2014-style seq2seq model?",
+      "question": "What is fixed in simulate_copy_accuracy even when seq_len changes?",
       "options": [
-        "Computes attention weights — and applies unchanged even when the lesson's stated preconditions fail",
-        "Performs beam search",
-        "Reads the source and produces a fixed-size context vector summarizing it",
-        "Generates target tokens"
+        "The encoder context dimension, which defaults to 8",
+        "The number of tokens in every generated sequence",
+        "The number of vocabulary symbols, which becomes one",
+        "The decoder's attention window over all encoder states"
       ],
-      "correct": 2,
-      "explanation": "The encoder RNN compresses the source into a final hidden state used by the decoder."
+      "correct": 0,
+      "explanation": "The context list has context_dim entries, so longer sequences must be compressed into the same eight values."
     },
     {
       "stage": "check",
-      "question": "What is teacher forcing during seq2seq training?",
+      "question": "How does encode update one context component for a token embedding?",
       "options": [
-        "Adding a teacher network during inference, with no need to inspect intermediate results or test edge cases",
-        "Doubling the batch size",
-        "Feeding the ground-truth previous token (instead of the model's prediction) as decoder input",
-        "Manually labeling each decoder step"
+        "c[d] = c[d] / 0.85 - embed[idx][d]",
+        "c[d] = c[d] * 0.85 + embed[idx][d]",
+        "c[d] = embed[idx][d] and discards the previous context",
+        "c[d] = c[d] + 0.85 for every vocabulary item"
       ],
-      "correct": 2,
-      "explanation": "Teacher forcing stabilizes training by using true previous tokens; without it early errors cascade."
+      "correct": 1,
+      "explanation": "The decay factor preserves part of the old state before adding the current token's embedding component."
     },
     {
       "stage": "check",
-      "question": "Why does fixed context-vector seq2seq accuracy fall as input length grows?",
+      "question": "What does the simulation compare to count a copy hit?",
       "options": [
-        "Padding tokens accumulate",
-        "Cross-entropy diverges",
-        "All information about the source must fit in a single fixed-size encoder hidden state, which loses detail on long inputs",
-        "Vocabulary becomes too large, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path"
+        "The number of encoder parameters versus decoder parameters",
+        "The source length versus the vocabulary size",
+        "The score for the original sequence versus a score for a random sequence",
+        "The first token's embedding versus the last token's spelling"
       ],
       "correct": 2,
-      "explanation": "The fixed context-vector bottleneck means long inputs cannot be losslessly summarized."
+      "explanation": "A trial increments hits when decode_score(context, seq) exceeds the score for a randomly chosen target."
     },
     {
       "stage": "check",
-      "question": "What is exposure bias?",
+      "question": "Why does a fixed context vector become a bottleneck for long input sequences?",
       "options": [
-        "Bias from class imbalance",
-        "Bias in encoder embeddings, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "Annotator disagreement",
-        "The train/inference gap from training on ground-truth tokens but generating from the model's own predictions at inference"
+        "The decoder receives every source token twice",
+        "Longer sequences have no target vocabulary",
+        "The encoder cannot process more than one token",
+        "All source information must be represented in one fixed-size state"
       ],
       "correct": 3,
-      "explanation": "The model never practiced recovering from its own mistakes during training, so errors cascade at inference."
+      "explanation": "The encoder overwrites a single state as it reads, so capacity and decay make details harder to retain as length grows."
     },
     {
       "stage": "post",
-      "question": "Why does beam search often outperform greedy decoding for generation?",
+      "question": "During teacher forcing, what token is fed to a decoder at the next training step?",
       "options": [
-        "Beam search keeps the top-k partial sequences alive at each step instead of irrevocably committing to one token",
-        "Beam search avoids exposure bias — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "Beam search is faster",
-        "Beam search lowers the loss"
+        "The ground-truth token from the previous target position",
+        "The decoder's sampled token from the previous inference run",
+        "The final source token regardless of target position",
+        "A random vocabulary token with no target alignment"
       ],
       "correct": 0,
-      "explanation": "Greedy commits per step; beam search explores multiple hypotheses, then picks the best complete one."
+      "explanation": "Teacher forcing supplies the known previous target, which stabilizes training while the model learns the next-token distribution."
     },
     {
       "stage": "post",
-      "question": "Which architectural family replaced RNN seq2seq for general generation tasks?",
+      "question": "What is exposure bias in this seq2seq setting?",
       "options": [
-        "Transformer encoder-decoder models (BART, T5, mBART, NLLB)",
-        "Graph neural networks, with no need to inspect intermediate results or test edge cases",
-        "Naive Bayes",
-        "1D CNNs"
+        "The encoder sees too many examples from the training corpus",
+        "Training uses gold prefixes, but inference must use the model's own possibly mistaken prefixes",
+        "The decoder is exposed to both source languages at once",
+        "The context vector has more dimensions at test time"
       ],
-      "correct": 0,
-      "explanation": "Transformer encoder-decoders dropped recurrence and now dominate generation tasks."
+      "correct": 1,
+      "explanation": "The different prefix distributions create a train/inference gap, so an early generation error can cascade at test time."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to AI-Assisted Service Management: Triage, Knowledge, and Incident Handoff (2026)?",
+      "question": "What does extract_fields return for the Salesforce v3 billing follow-up ticket in TICKETS?",
       "options": [
-        "Explain the production problem addressed by AI-Assisted Service Management: Triage, Knowledge, and Incident...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "BILLING intent, product salesforce, version v3, prior_contact=True, and full confidence",
+        "ACCESS intent, no product, no version, and prior_contact=False",
+        "BREAK_FIX intent, product grafana, version v2, and urgency_p1=True",
+        "UNKNOWN intent because a follow-up marker suppresses keyword extraction"
       ],
       "correct": 0,
-      "explanation": "“Explain the production problem addressed by AI-Assisted Service Management: Triage, Knowledge, and Incident...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The ticket contains invoice and charge terms, Salesforce, v3, and the Re:/Reopening markers. All three completeness fields are filled, so confidence reaches 1.0 and prior_contact is true."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of AI-Assisted Service Management: Triage, Knowledge, and Incident Handoff (2026)?",
+      "question": "The ticket text 'Hi, I need access to something. Thanks.' produces only an access intent. How does route_ticket handle it?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "ROUTE to Identity & Access Management at 1.00 confidence",
+        "ROUTE_FLAG to Identity & Access Management because confidence is 0.60",
+        "ESCALATE to L2 because any missing product automatically falls below 0.30",
+        "ROUTE_FLAG to General Triage because the access keyword is ignored without a version"
       ],
       "correct": 1,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The intent is filled but product and version are not, giving 0.4 + 1/3*0.6 = 0.60. That is above escalation but below the 0.75 route threshold, so the draft is held for review in the access queue."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through AI-Assisted Service Management: Triage, Knowledge, and Incident Handoff (2026)?",
+      "question": "What happens to the ticket reporting a complete production outage with all users locked out?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Measure quality, cost, latency, and risk with explicit acceptance criteria",
-        "Treat one successful example as proof that every edge case works"
+        "It is routed normally once the product and version are extracted",
+        "It is ROUTE_FLAG because urgent tickets need a human draft review",
+        "It is ESCALATE to the L2 On-Call queue because a P1 urgency signal takes priority",
+        "It is sent to Finance & Billing because the text mentions an SLA breach"
       ],
       "correct": 2,
-      "explanation": "“Measure quality, cost, latency, and risk with explicit acceptance criteria” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Production down, all users, data loss risk, and SLA breach are P1 signals. route_ticket checks urgency before confidence and sends the ticket directly to L2 On-Call."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits AI-Assisted Service Management: Triage, Knowledge, and Incident Handoff (2026)?",
+      "question": "What verdict does score_response give the good Grafana draft against ARTICLES?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Identify failure modes and define a safe rollback or review path",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Identify failure modes and define a safe rollback or review path” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for AI-Assisted Service Management: Triage, Knowledge, and Incident Handoff (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the production problem addressed by AI-Assisted Service Management: Triage, Knowledge, and Incident..."
+        "PARTIAL, because one step lacks an imperative verb",
+        "BLOCK, because retrieved articles cannot ground an operational response",
+        "PARTIAL, because five steps exceed the actionability limit",
+        "PASS, because all five numbered steps are grounded and imperative"
       ],
       "correct": 3,
-      "explanation": "“Explain the production problem addressed by AI-Assisted Service Management: Triage, Knowledge, and Incident...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Each step contains a four-word phrase found in the retrieved articles, and each starts with an allowed imperative without speculative language. Groundedness is 1.0 and actionability is 1.0."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for AI-Assisted Service Management: Triage, Knowledge, and Incident Handoff (2026)?",
+      "question": "Why does the bad Grafana draft receive BLOCK rather than PARTIAL?",
       "options": [
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Its hallucinated step makes groundedness 75%, and any value below 100% blocks the response",
+        "It has no numbered steps, so the scorer cannot evaluate it",
+        "The draft contains five steps, which exceeds the article-list size",
+        "The route threshold of 0.75 is applied to response quality instead of ticket confidence"
       ],
       "correct": 0,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The four numbered steps include one invented cache-directory step, so groundedness is 0.75. score_response blocks whenever groundedness is below 1.0; the speculative language is an additional actionability failure."
+    },
+    {
+      "stage": "post",
+      "question": "What does score_response return when a draft contains no numbered steps at all?",
+      "options": [
+        "PASS with groundedness 1.0 because there are no unsupported steps",
+        "BLOCK with groundedness 0.0, actionability 0.0, and a no-numbered-steps failure",
+        "PARTIAL with one implicit step made from the whole paragraph",
+        "ROUTE_FLAG because the ticket confidence threshold applies to the draft"
+      ],
+      "correct": 1,
+      "explanation": "The scorer does not treat an unstructured paragraph as a safely grounded procedure. With no numbered steps it returns BLOCK and identifies the missing structure explicitly."
     }
   ]
 }

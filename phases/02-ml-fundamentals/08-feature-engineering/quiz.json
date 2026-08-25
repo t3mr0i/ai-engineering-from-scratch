@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is feature engineering often more impactful than choosing a fancier algorithm?",
+      "question": "A feature has mean 10 and standard deviation 5. After standardization, what value represents x=15?",
       "options": [
-        "Feature engineering makes the code run faster",
-        "Good features expose patterns to the model that raw data hides, making even simple models effective",
-        "Feature engineering eliminates the need for a test set — and applies unchanged even when the lesson's stated preconditions fail",
-        "Fancy algorithms cannot process raw data"
+        "15",
+        "3",
+        "1",
+        "0.5"
       ],
-      "correct": 1,
-      "explanation": "The representation of data matters more than the algorithm. A well-engineered feature like BMI (weight/height^2) directly exposes the relevant pattern, making even logistic regression competitive with complex ensembles."
+      "correct": 2,
+      "explanation": "The z-score is (15-10)/5=1."
     },
     {
       "stage": "check",
-      "question": "What is one-hot encoding?",
+      "question": "For min-max scaling to [0,1], what is the scaled value of x=7 when the observed minimum is 2 and maximum is 12?",
       "options": [
-        "Replacing each category with its frequency in the dataset, with no need to inspect intermediate results or test edge cases",
-        "Creating one binary column per category, with exactly one column set to 1 per row",
-        "Converting all features to values between 0 and 1",
-        "Encoding the target variable as a probability"
+        "0.7",
+        "5",
+        "1.4",
+        "0.5"
       ],
-      "correct": 1,
-      "explanation": "One-hot encoding creates a binary column for each unique category. For a color feature with values red/blue/green, it produces three columns: is_red, is_blue, is_green."
+      "correct": 3,
+      "explanation": "Use (x-min)/(max-min)=(7-2)/(12-2)=0.5."
     },
     {
       "stage": "check",
-      "question": "What is the data leakage risk with target encoding?",
+      "question": "Why must target-encoding statistics be computed separately inside each training fold?",
       "options": [
-        "It makes the model too slow to train, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "It replaces categories with the mean target value, which can leak information from the test set if not computed on training data only",
-        "It creates too many features",
-        "It only works with binary targets"
-      ],
-      "correct": 1,
-      "explanation": "Target encoding replaces each category with the mean target for that category. If computed on the full dataset (including test data), test labels leak into training features, inflating performance estimates."
-    },
-    {
-      "stage": "check",
-      "question": "TF-IDF weights a word by its inverse document frequency. What is the effect?",
-      "options": [
-        "Common words like 'the' get high weight because they appear frequently, before defining the measurement, acceptance threshold, or rollback path",
-        "Rare, distinctive words get higher weight while common words get lower weight",
-        "All words get equal weight regardless of frequency",
-        "Only the most frequent word in each document is kept"
-      ],
-      "correct": 1,
-      "explanation": "IDF = log(total docs / docs containing word). Common words (appearing in many documents) get low IDF. Rare, distinctive words get high IDF, making them more influential in the representation."
-    },
-    {
-      "stage": "post",
-      "question": "You have two features with correlation 0.98. Why might you remove one?",
-      "options": [
-        "Highly correlated features always cause the model to crash",
-        "They are redundant -- both carry nearly the same information, and keeping both increases overfitting risk without adding signal",
-        "Correlated features make the data non-stationary",
-        "Correlation above 0.5 means the features are measuring different things — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "Features with r=0.98 are nearly redundant. Keeping both adds a noisy duplicate that increases dimensionality, overfitting risk, and multicollinearity without providing new information about the target."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Feature Engineering & Selection?",
-      "options": [
-        "Build one-hot, label, and target encoding for categorical features and identify the data leakage risk in ta...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Using validation targets would leak the answer into the feature",
+        "Target encoding only works for numeric labels",
+        "Fold-specific statistics make categories alphabetically ordered",
+        "Validation rows cannot contain categorical values"
       ],
       "correct": 0,
-      "explanation": "“Build one-hot, label, and target encoding for categorical features and identify the data leakage risk in ta...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The category mean must be learned without seeing held-out targets; otherwise the validation score is optimistic."
+    },
+    {
+      "stage": "check",
+      "question": "What is the main reason TF-IDF downweights a word that appears in nearly every document?",
+      "options": [
+        "It removes every word that appears twice",
+        "Its inverse-document-frequency factor is small, so it carries little document-specific information",
+        "It replaces word order with random numbers",
+        "It gives common words the largest possible weight"
+      ],
+      "correct": 1,
+      "explanation": "A word found in many documents has low inverse document frequency and is less useful for distinguishing documents."
+    },
+    {
+      "stage": "post",
+      "question": "A color column contains red, green, and blue with no natural order. Which encoding avoids inventing a numeric ranking?",
+      "options": [
+        "Label encoding red=0, green=1, blue=2",
+        "The mean of the three color names",
+        "One-hot encoding",
+        "Drop every row containing a color"
+      ],
+      "correct": 2,
+      "explanation": "One-hot columns represent membership without implying that blue is greater than green or red."
+    },
+    {
+      "stage": "post",
+      "question": "You want to remove an almost-constant numeric feature before fitting a model. Which filter is directly suited to that goal?",
+      "options": [
+        "A target mean computed using the test labels",
+        "A random permutation of the feature names",
+        "A one-hot encoder applied to the response",
+        "A variance threshold computed on the training data"
+      ],
+      "correct": 3,
+      "explanation": "Variance thresholding removes features with little variation. The threshold is fitted on training data to avoid using held-out information."
     }
   ]
 }

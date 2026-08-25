@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which four parts make an agent graph reviewable?",
+      "question": "In build_demo_graph, which route leaves verify when requirements are missing?",
       "options": [
-        "Nodes, edges, shared state, and routing rules",
-        "Prompts, temperature, tokens, and model size",
-        "A dashboard, a queue, a database, and a webhook",
-        "One loop, one prompt, one tool, and one model"
+        "needs_research",
+        "fail",
+        "pass",
+        "default"
       ],
       "correct": 0,
-      "explanation": "The graph makes responsibilities, handoffs, durable data, and next-step decisions explicit."
+      "explanation": "verify_node checks requirements before artifact evidence and returns route='needs_research' when the requirements string is empty."
     },
     {
       "stage": "check",
-      "question": "What should happen when a verifier returns an unknown route label?",
+      "question": "What state does a fresh demo runner have after verification lacks requirements?",
       "options": [
-        "Fall back silently to the merge node",
-        "Treat the label as an automatic pass",
-        "Fail closed and surface a graph error",
-        "Delete the result and restart research"
+        "current='implement' and review='fail'",
+        "current='research' and review='needs_research'",
+        "current='approval' and review='pass'",
+        "current=None and status='complete'"
+      ],
+      "correct": 1,
+      "explanation": "A verify result with route needs_research updates review and resolves the edge back to research, allowing the requirements to be made explicit."
+    },
+    {
+      "stage": "check",
+      "question": "After runner.run on the built-in graph, where is the runner paused?",
+      "options": [
+        "At research, before requirements are recorded",
+        "At implement, waiting for a second artifact attempt",
+        "At approval, with review='pass'",
+        "At merge, after the final checkpoint"
       ],
       "correct": 2,
-      "explanation": "Unknown routing is a graph-definition failure. Silent success would turn a malformed decision into an unsafe side effect."
+      "explanation": "The demo reaches implementation, verifies the artifact, and then approval_node pauses because no human decision is present; review is pass."
     },
     {
       "stage": "check",
-      "question": "Why does the reference graph deep-copy state before each fan-out branch?",
+      "question": "After a rejected approval is consumed and repair runs, what does the next approval pause contain?",
       "options": [
-        "To let branches mutate one another's state directly during fan-out",
-        "To avoid recording any of the branch outputs in the trace",
-        "To make every branch share one hidden transcript of the run",
-        "To keep branch inputs isolated so their patches can be merged deliberately"
+        "approval='rejected' and current='merge'",
+        "approval='approved' and current='merge'",
+        "approval=None and current='implement'",
+        "approval=None and current='approval'"
       ],
       "correct": 3,
-      "explanation": "Isolation prevents one branch from accidentally changing another branch's input before fan-in."
-    },
-    {
-      "stage": "check",
-      "question": "What does the approval node do when no human decision is present?",
-      "options": [
-        "Pause and persist an approval request",
-        "Assume approval after a single retry",
-        "Route the state directly to merge",
-        "Discard the state and restart research"
-      ],
-      "correct": 0,
-      "explanation": "Missing approval is not consent. The graph pauses, checkpoints state, and resumes only after an explicit decision."
+      "explanation": "approval_node clears the one-shot decision before routing to implement; the repaired graph reaches approval again with no decision and pauses there."
     },
     {
       "stage": "post",
-      "question": "When should a failed verification route back to research instead of implementation?",
+      "question": "What evidence list does fan_out_merge produce for the demo's tests and security branches?",
       "options": [
-        "Whenever the implementation node ends up needing more than one round to finish",
-        "When the requirements or evidence needed to implement are insufficient",
-        "When the human approval node is currently paused for a decision",
-        "When a parallel branch produced a list instead of a scalar value"
+        "['tests:pass', 'security:pass']",
+        "['requirements', 'tests:pass', 'security:pass']",
+        "['requirements', 'security:pass', 'tests:pass']",
+        "['implementation', 'tests', 'security']"
       ],
       "correct": 0,
-      "explanation": "Rollback should target the layer that owns the defect; missing requirements belong to research, not guesswork in implementation."
+      "explanation": "The graph-engineering demo starts with no evidence key, and append semantics add the tests branch result followed by the security branch result."
     },
     {
       "stage": "post",
-      "question": "What is the safest fan-in behavior for conflicting scalar updates from parallel branches?",
+      "question": "What remains unchanged when GraphRunner.step encounters an unknown route?",
       "options": [
-        "Use whichever parallel branch happens to finish last",
-        "Concatenate the conflicting scalar values into one string",
-        "Raise a conflict and require an explicit merge decision",
-        "Drop both conflicting values and continue the merge silently"
+        "The attempted update is committed, but no trace is appended",
+        "The state, trace, current node, and checkpoint list remain unchanged",
+        "The checkpoint list only; state and trace are committed",
+        "The route is rewritten to default and execution continues"
       ],
-      "correct": 2,
-      "explanation": "A silent overwrite destroys provenance. The runner rejects conflicting scalar updates so a human or merge rule can decide."
+      "correct": 1,
+      "explanation": "GraphRunner resolves a route before applying updates or appending a trace/checkpoint, so state, trace, current node, and checkpoints all remain unchanged."
     }
   ]
 }

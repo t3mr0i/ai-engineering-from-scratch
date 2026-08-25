@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is a constant learning rate usually suboptimal for training neural networks?",
+      "question": "What value does constant_schedule(step=50, lr=0.05) return?",
       "options": [
-        "It uses too much memory",
-        "It's either too high for late training (causes oscillation) or too low for early training (wastes compute)",
-        "Constant learning rates cause overfitting — and applies unchanged even when the lesson's stated preconditions fail",
-        "They only work with SGD"
-      ],
-      "correct": 1,
-      "explanation": "The optimal step size changes during training. Early on, large steps cover ground quickly. Late in training, small steps are needed to settle into a minimum. A constant rate can't serve both needs."
-    },
-    {
-      "stage": "check",
-      "question": "What is the purpose of learning rate warmup?",
-      "options": [
-        "To prevent overfitting",
-        "To let adaptive optimizer statistics (momentum, variance) stabilize before taking large steps",
-        "To increase the batch size gradually, with no need to inspect intermediate results or test edge cases",
-        "To initialize weights properly"
-      ],
-      "correct": 1,
-      "explanation": "Adam's moment estimates are initialized to zero. Early gradient updates are based on unreliable statistics. Warmup starts with a tiny LR and ramps up, giving Adam time to accumulate meaningful estimates."
-    },
-    {
-      "stage": "check",
-      "question": "What learning rate schedule do Llama 3, GPT-3, and most modern LLMs use?",
-      "options": [
-        "Constant learning rate",
-        "Step decay every 30 epochs, because one plausible output is sufficient production evidence",
-        "Linear warmup followed by cosine decay",
-        "Exponential decay"
-      ],
-      "correct": 2,
-      "explanation": "Linear warmup + cosine decay is the standard for transformer training. Llama 3 used 2000 warmup steps with cosine decay from 3e-4 to 3e-5. This schedule requires no milestone tuning."
-    },
-    {
-      "stage": "check",
-      "question": "What makes the 1cycle policy different from other schedules?",
-      "options": [
-        "It uses a constant learning rate",
-        "It ramps the learning rate UP in the first half of training, then back down -- the high LR phase acts as regularization",
-        "It only works with SGD",
-        "It requires no hyperparameter tuning, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "Leslie Smith's 1cycle ramps LR from low to high (first half) then high to very low (second half). The high-LR phase helps the model explore more of the loss landscape before settling into the best basin."
-    },
-    {
-      "stage": "post",
-      "question": "If training loss suddenly spikes and diverges, what is the most likely learning rate issue?",
-      "options": [
-        "Learning rate is too low",
-        "Learning rate is too high, causing the optimizer to overshoot the minimum",
-        "The warmup period is too long",
-        "The schedule decays too slowly — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "A learning rate that's too high causes the optimizer to take steps larger than the loss basin, overshooting the minimum and causing the loss to increase. This manifests as sudden divergence."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Learning Rate Schedules and Warmup?",
-      "options": [
-        "Demonstrate the three failure modes of learning rate selection: divergence (too high), stalling (too low),...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "0.05",
+        "0.01",
+        "0",
+        "0.5"
       ],
       "correct": 0,
-      "explanation": "“Demonstrate the three failure modes of learning rate selection: divergence (too high), stalling (too low),...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The constant schedule ignores the step and returns its lr argument."
+    },
+    {
+      "stage": "check",
+      "question": "What does step_decay_schedule(step=250, lr=0.1, step_size=100, gamma=0.1) return?",
+      "options": [
+        "0.01",
+        "0.001",
+        "0.0001",
+        "0.1"
+      ],
+      "correct": 1,
+      "explanation": "Integer division gives 250//100=2, so the schedule returns 0.1*(0.1^2)=0.001."
+    },
+    {
+      "stage": "check",
+      "question": "What value does cosine_schedule return at step=total_steps?",
+      "options": [
+        "lr",
+        "0",
+        "lr_min",
+        "lr/2"
+      ],
+      "correct": 2,
+      "explanation": "The implementation explicitly returns lr_min when step is at least total_steps."
+    },
+    {
+      "stage": "check",
+      "question": "During warmup_cosine_schedule(step=25, lr=0.04, warmup_steps=100), what learning rate is used?",
+      "options": [
+        "0.04",
+        "0.02",
+        "0.0001",
+        "0.01"
+      ],
+      "correct": 3,
+      "explanation": "Before warmup ends, the schedule is linear: 0.04*(25/100)=0.01."
+    },
+    {
+      "stage": "post",
+      "question": "For one_cycle_schedule with lr=0.05 and total_steps=1000, what is the learning rate at step 0?",
+      "options": [
+        "0.002",
+        "0.05",
+        "0.000005",
+        "0.025"
+      ],
+      "correct": 0,
+      "explanation": "The first half starts at lr/25, so 0.05/25=0.002, then rises toward the peak learning rate."
+    },
+    {
+      "stage": "post",
+      "question": "A training run diverges with a high loss and NaNs almost immediately. Which schedule diagnosis is most plausible?",
+      "options": [
+        "The learning rate is too low and the model is merely stalling",
+        "The learning rate is too high; reduce it or warm it up more gradually",
+        "The model needs a larger test set before any update",
+        "A constant schedule guarantees that the loss will be finite"
+      ],
+      "correct": 1,
+      "explanation": "A step size that is too large can overshoot and make activations or gradients unstable. A lower starting rate or warmup limits the first updates."
     }
   ]
 }

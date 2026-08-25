@@ -4,75 +4,45 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Jamba — Hybrid SSM-Transformer?",
-      "options": [
-        "Explain the three primitives in a Jamba block — Transformer layers, Mamba layers, MoE — and the 1:7:even in...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "Which factors multiply in `kv_cache_bytes` for a hybrid configuration?",
+      "options": ["2 for K/V, attention layers, KV heads, head dimension, context length, and bytes per element.", "Only total layers and hidden size.", "SSM layers, state size, and context length.", "Vocabulary size and number of query heads."],
       "correct": 0,
-      "explanation": "“Explain the three primitives in a Jamba block — Transformer layers, Mamba layers, MoE — and the 1:7:even in...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The KV cache stores keys and values for each attention layer, KV head, head dimension, and context position at the selected element width."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Jamba — Hybrid SSM-Transformer?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "State what an SSM's recurrence looks like at a high level and why it enables constant-memory inference",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "How does `ssm_state_bytes` determine how many SSM layers a hybrid model has?",
+      "options": ["It uses `attn_layers - total_layers`.", "It uses `total_layers - attn_layers` and multiplies by hidden size, state size, and bytes per element.", "It sets SSM layers equal to the context length.", "It always returns zero for a hybrid."],
       "correct": 1,
-      "explanation": "“State what an SSM's recurrence looks like at a high level and why it enables constant-memory inference” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Every non-attention layer is modeled as an SSM layer, so the count is total minus attention layers before multiplying its per-layer state size."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Jamba — Hybrid SSM-Transformer?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Compute the KV cache footprint of a Jamba model at 256k context and compare to what a pure-Transformer mode...",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "What is the KV-cache contribution of the `pure Mamba 32L` configuration?",
+      "options": ["The full Transformer MHA cache.", "One cache entry per query head.", "Zero, because it has zero attention layers.", "A value proportional to vocabulary size."],
       "correct": 2,
-      "explanation": "“Compute the KV cache footprint of a Jamba model at 256k context and compare to what a pure-Transformer mode...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "`kv_cache_bytes` multiplies by `attn_layers`, which is zero for pure Mamba; its memory comes from the SSM state instead."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Jamba — Hybrid SSM-Transformer?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Name the three Mamba-3 innovations (exponential-trapezoidal discretization, complex-valued state update, MI...",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Name the three Mamba-3 innovations (exponential-trapezoidal discretization, complex-valued state update, MI...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Jamba — Hybrid SSM-Transformer?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the three primitives in a Jamba block — Transformer layers, Mamba layers, MoE — and the 1:7:even in..."
-      ],
+      "question": "What attention/SSM layout is encoded by `Jamba 1:7 hybrid 32L`?",
+      "options": ["28 attention layers and 4 SSM layers.", "16 attention layers and 16 SSM layers.", "2 attention layers and 30 SSM layers.", "4 attention layers and 28 SSM layers."],
       "correct": 3,
-      "explanation": "“Explain the three primitives in a Jamba block — Transformer layers, Mamba layers, MoE — and the 1:7:even in...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The config sets `total_layers=32` and `attn_layers=4`, leaving 28 layers for the SSM side of the hybrid."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Jamba — Hybrid SSM-Transformer?",
-      "options": [
-        "State what an SSM's recurrence looks like at a high level and why it enables constant-memory inference",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "If a model changes from 32 KV heads to 8 KV heads while other KV-cache factors stay fixed, what happens to KV-cache bytes?",
+      "options": ["They fall to one quarter because the cache scales linearly with KV-head count.", "They quadruple because fewer heads require more values.", "They stay unchanged; only query heads matter.", "They become the SSM state size."],
       "correct": 0,
-      "explanation": "“State what an SSM's recurrence looks like at a high level and why it enables constant-memory inference” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The cache formula contains `n_kv_heads` as a direct factor, so 8 heads cost 8/32 of the 32-head cache."
+    },
+    {
+      "stage": "post",
+      "question": "Does `ssm_state_bytes` grow with context length in this calculator?",
+      "options": ["Yes, quadratically with context.", "No; it depends on SSM layers, hidden size, state size, and element width, not context.", "Only for pure Transformer configurations.", "It grows with the number of query heads."],
+      "correct": 1,
+      "explanation": "The SSM state is a fixed per-layer state in this model, so its byte formula has no `ctx` argument; only KV cache scales with context."
     }
   ]
 }

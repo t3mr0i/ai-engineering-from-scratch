@@ -1,78 +1,78 @@
 {
   "lesson": "90-ai-workforce-strategy",
-  "title": "AI Workforce Strategy: Mapping Roles, Skills, and Enablement Gaps (2026)",
+  "title": "AI Workforce Strategy",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to AI Workforce Strategy: Mapping Roles, Skills, and Enablement Gaps (2026)?",
+      "question": "Which interaction-point properties increase score_impact?",
       "options": [
-        "Explain the production problem addressed by AI Workforce Strategy: Mapping Roles, Skills, and Enablement Ga...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Non-reversible output, EU high-risk status, and review or govern direction",
+        "A reversible prompt with an adequate competency rating",
+        "Only the number of people in the role",
+        "A low-effort gap without any decision consequence"
       ],
       "correct": 0,
-      "explanation": "“Explain the production problem addressed by AI Workforce Strategy: Mapping Roles, Skills, and Enablement Ga...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "score_impact adds two for non-reversibility, two for EU high-risk, and one when the person is reviewing or governing the output, capped at five."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of AI Workforce Strategy: Mapping Roles, Skills, and Enablement Gaps (2026)?",
+      "question": "What impact score does the Compliance Analyst's high-risk creditworthiness review receive?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "3, because it is a governance task",
+        "5, from non-reversible output, high-risk status, and govern direction",
+        "2, because only the EU flag counts",
+        "1, because review effort is not business impact"
       ],
       "correct": 1,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The interaction is non-reversible (+2), EU high-risk (+2), and GOVERN (+1), reaching the cap of 5."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through AI Workforce Strategy: Mapping Roles, Skills, and Enablement Gaps (2026)?",
+      "question": "A high-risk creditworthiness item has a Missing gap, impact=5, and effort=3. What priority score does priority_score return?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Measure quality, cost, latency, and risk with explicit acceptance criteria",
-        "Treat one successful example as proof that every edge case works"
+        "15.0, before considering the risk flag",
+        "18.5, because effort is added to impact",
+        "23.5, after the EU high-risk override adds 10",
+        "25.0, because Missing gaps are multiplied by 5"
       ],
       "correct": 2,
-      "explanation": "“Measure quality, cost, latency, and risk with explicit acceptance criteria” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The base is 5*3 - 3*0.5 = 13.5. The EU high-risk override adds 10, giving 23.5."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits AI Workforce Strategy: Mapping Roles, Skills, and Enablement Gaps (2026)?",
+      "question": "Which ratings does build_gap_report omit from the enablement backlog?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Identify failure modes and define a safe rollback or review path",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Identify failure modes and define a safe rollback or review path” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for AI Workforce Strategy: Mapping Roles, Skills, and Enablement Gaps (2026)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Explain the production problem addressed by AI Workforce Strategy: Mapping Roles, Skills, and Enablement Ga..."
+        "MISSING ratings only",
+        "GAP ratings when the interaction is reversible",
+        "All ratings from Software Engineer profiles",
+        "ADEQUATE ratings"
       ],
       "correct": 3,
-      "explanation": "“Explain the production problem addressed by AI Workforce Strategy: Mapping Roles, Skills, and Enablement Ga...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The report creates BacklogItems only when the rating is not ADEQUATE. Adequate competency is already sufficient and does not need a backlog item."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for AI Workforce Strategy: Mapping Roles, Skills, and Enablement Gaps (2026)?",
+      "question": "Which role has the most Missing ratings in build_example_profiles?",
       "options": [
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Compliance Analyst",
+        "Product Manager",
+        "Software Engineer",
+        "All three roles tie"
       ],
       "correct": 0,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Compliance Analyst has three Missing ratings on creditworthiness review and one on policy governance sign-off, more than the other roles."
+    },
+    {
+      "stage": "post",
+      "question": "Why can an EU high-risk backlog item outrank a larger ordinary gap?",
+      "options": [
+        "High-risk items are always marked Adequate",
+        "The priority score adds a 10-point EU high-risk override",
+        "The effort term is removed for regulated work",
+        "The sorter ranks by role name before score"
+      ],
+      "correct": 1,
+      "explanation": "BacklogItem.priority_score adds 10.0 when eu_high_risk is true, making the compliance deadline visible even when another gap has a larger ordinary base score."
     }
   ]
 }

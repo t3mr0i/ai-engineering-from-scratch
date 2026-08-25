@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why should AI security be addressed before launch?",
+      "question": "What makes prompt injection an architecture concern rather than only a wording problem?",
       "options": [
-        "Because model output is filtered by the provider before it ever reaches the application",
-        "Because retrieved documents are internal, and internal sources cannot carry hostile text",
-        "Because a tool call only returns data and cannot turn generated text into an action",
-        "Because prompts, context, tools, and outputs create trust boundaries that need controls"
-      ],
-      "correct": 3,
-      "explanation": "AI workflows introduce trust boundaries - hostile prompts, hidden instructions in retrieved context, outputs that leak data, and tools that turn text into action - and these must be understood before production use."
-    },
-    {
-      "stage": "check",
-      "question": "An assistant retrieves an internal document containing the line \"ignore your previous instructions\". Which trust boundary failed?",
-      "options": [
-        "Output: the generated answer was returned to the user without a sensitive-data check",
-        "Tool call: an action was executed without an allowlist entry or a human approval step",
-        "Audit: the interaction was not logged, so the override could not be reconstructed later, with no need to inspect intermediate results or test edge cases",
-        "Context: retrieved content was treated as trusted instruction rather than untrusted data"
-      ],
-      "correct": 3,
-      "explanation": "Prompt injection is a trust-boundary problem at the context stage: retrieved documents can carry hidden instructions, so context must be handled as untrusted data. Output checks, allowlists, and audit logs are separate controls at later boundaries."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Python artifact produce?",
-      "options": [
-        "An automated penetration test that probes the assistant's tools for weaknesses",
-        "A production firewall configuration that blocks hostile traffic before the model",
-        "A signed security review that clears the assistant for internal data access",
-        "A ranked security triage plan with matched controls and rationale per finding"
-      ],
-      "correct": 3,
-      "explanation": "The artifact supports triage - it ranks findings and matches controls - but the lesson is explicit that it does not replace security review."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to this lesson?",
-      "options": [
-        "A trust boundary map that separates input, context, model, tool call, and output",
-        "An allowance for every registered tool, so the assistant is not blocked mid-workflow",
-        "A retention rule that drops audit logs quickly to limit sensitive-data exposure",
-        "A policy that sensitive fields are handled by the model rather than filtered upfront"
+        "Untrusted text can cross a trust boundary and influence retrieval, tool calls, data handling, or output decisions",
+        "A longer system prompt guarantees that no retrieved document can affect the model",
+        "Prompt injection matters only when a model is fine-tuned on public data",
+        "A user interface warning replaces allowlists, approval, and audit controls"
       ],
       "correct": 0,
-      "explanation": "A trust boundary map makes the risk surface visible by separating input, context, model, tool call, and output. Allowlists, human approval, and audit logs are the controls applied on top of it."
+      "explanation": "The security artifact maps where untrusted instructions enter and what the assistant can reach. Tool boundaries, sensitive data, approvals, and audit evidence must be designed together."
     },
     {
-      "stage": "post",
-      "question": "When should an AI workflow require a launch gate?",
+      "stage": "check",
+      "question": "The tool-enabled assistant fixture has two matched signals, impact=5, and uncertainty=4. Which priority is returned?",
       "options": [
-        "Only when the assistant has no retrieval source and answers from the model alone",
-        "Only when external users, rather than internal colleagues, will send the prompts",
-        "When impact, uncertainty, and security signals are high enough to need review",
-        "Only when the workflow calls a tool that writes data rather than one that reads it"
+        "guided pilot",
+        "launch gate required",
+        "team practice",
+        "awareness only"
+      ],
+      "correct": 1,
+      "explanation": "The score is 5*2 + 4 + 2*2 = 18, so priority_for returns launch gate required."
+    },
+    {
+      "stage": "check",
+      "question": "Which controls are selected for the document Q&A fixture with two matched signals?",
+      "options": [
+        "trust boundary map and allowlist",
+        "human approval and audit log only",
+        "trust boundary map, allowlist, and human approval",
+        "audit log alone, because it records any later misuse"
       ],
       "correct": 2,
-      "explanation": "High-risk AI workflows need explicit launch-gate review. Controls should be proportional to impact and uncertainty, not tied to a single structural feature such as who sends the prompt."
+      "explanation": "Two matches cause recommend to select the first three controls: trust boundary map, allowlist, and human approval. The audit log is the fourth control."
+    },
+    {
+      "stage": "check",
+      "question": "What category does choose_category use for Scenario(\"training sandbox\", \"Isolated exercise with no listed signals.\", (), impact=2, uncertainty=2)?",
+      "options": [
+        "audit, because training evidence should be retained",
+        "tool, because the lesson is about tool access",
+        "data, because the sandbox has no sensitive data",
+        "input, the first entry in the security categories"
+      ],
+      "correct": 3,
+      "explanation": "The no-match branch returns CATEGORIES[0], which is input. It does not infer the security layer from the absence of a signal."
     },
     {
       "stage": "post",
-      "question": "What is the main purpose of the reusable checklist?",
+      "question": "Before an assistant can call an external tool, which control combination is most defensible?",
       "options": [
-        "To document audit gaps after an incident so the postmortem has a starting point",
-        "To pre-approve tool calls in bulk, so the assistant is not interrupted at runtime",
-        "To replace the human review step once the team has run the checklist a few times",
-        "To surface risks and controls before an assistant receives data or tool access"
+        "An allowlist, an explicit human approval path, and an audit log tied to the trust boundary",
+        "A hidden instruction telling the model to ignore all text returned by the tool",
+        "A broad tool permission with review only after an incident",
+        "A longer prompt that leaves the tool's data and side effects undocumented"
       ],
-      "correct": 3,
-      "explanation": "The checklist supports practical security review before access expands. The lesson places AI security work in the design phase, not only at go-live."
+      "correct": 0,
+      "explanation": "The checklist uses technical and operational controls together: constrain allowed actions, approve consequential calls, and preserve evidence for review."
+    },
+    {
+      "stage": "post",
+      "question": "What is checklist-ai-security-triage.md meant to document before release?",
+      "options": [
+        "A model leaderboard and the vendor's preferred prompt",
+        "Trust boundaries, sensitive-data exposure, tool permissions, approvals, audit evidence, and the next control decision",
+        "Only the text of the system prompt, because all security decisions happen there",
+        "A guarantee that prompt injection cannot occur once the checklist is signed"
+      ],
+      "correct": 1,
+      "explanation": "The checklist supports release readiness by making threats and controls reviewable. It does not promise that an adversarial input is impossible."
     }
   ]
 }

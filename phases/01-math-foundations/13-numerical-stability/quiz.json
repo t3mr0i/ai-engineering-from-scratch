@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the approximate range of numbers that float32 can represent?",
+      "question": "Why can naive softmax fail on logits [1000, 1001], and what is the stable remedy?",
       "options": [
-        "+/- 65,504",
-        "+/- 3.4e38",
-        "+/- 1.8e308",
-        "+/- 1.0e10"
-      ],
-      "correct": 1,
-      "explanation": "Float32 has an 8-bit exponent giving a range of approximately +/- 3.4e38. Float16 is limited to +/- 65,504, and float64 reaches +/- 1.8e308."
-    },
-    {
-      "stage": "check",
-      "question": "Why does 0.1 + 0.2 not equal 0.3 in floating-point arithmetic?",
-      "options": [
-        "Python rounds all decimals to integers",
-        "0.1 and 0.2 cannot be represented exactly in binary floating point",
-        "The CPU has a bug in its addition circuit, with no need to inspect intermediate results or test edge cases",
-        "0.3 is not a valid floating-point number"
-      ],
-      "correct": 1,
-      "explanation": "The number 0.1 is a repeating fraction in binary (like 1/3 in decimal). Float32 truncates it, so the stored value is approximately 0.100000001490116. The accumulated error makes the sum differ from 0.3."
-    },
-    {
-      "stage": "check",
-      "question": "In the stable softmax implementation, why do you subtract max(logits) before exponentiating?",
-      "options": [
-        "It makes the output probabilities more uniform, because one plausible output is sufficient production evidence",
-        "It prevents exp() from overflowing by ensuring the largest exponent is 0",
-        "It converts logits from float16 to float32",
-        "It normalizes the logits to have zero mean"
-      ],
-      "correct": 1,
-      "explanation": "After subtracting max(logits), the largest value is 0 and exp(0) = 1, which cannot overflow. All other values are negative, so their exponentials are less than 1. The probabilities are mathematically identical to the naive version."
-    },
-    {
-      "stage": "check",
-      "question": "When using centered finite differences for gradient checking, what happens if the step size h is too small (e.g., 1e-15)?",
-      "options": [
-        "The approximation becomes more accurate, before defining the measurement, acceptance threshold, or rollback path",
-        "Catastrophic cancellation destroys the result because f(x+h) and f(x-h) are nearly identical",
-        "The function evaluation becomes faster",
-        "The gradient automatically becomes zero"
-      ],
-      "correct": 1,
-      "explanation": "When h is extremely small, f(x+h) and f(x-h) differ only in their last few significant digits. Subtracting them cancels the leading digits, leaving mostly rounding noise. Typical good values are h = 1e-5 to 1e-7."
-    },
-    {
-      "stage": "post",
-      "question": "Why is bfloat16 generally preferred over float16 for neural network training?",
-      "options": [
-        "bfloat16 has more mantissa bits, giving better precision",
-        "bfloat16 has the same exponent range as float32, avoiding overflow on large activations without loss scaling",
-        "bfloat16 uses less memory than float16",
-        "bfloat16 is supported by more GPU architectures than float16 — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "bfloat16 has 8 exponent bits (same as float32, range up to 3.4e38) while float16 has only 5 exponent bits (max ~65,504). During training, activations and gradients can exceed 65,504, causing float16 overflow. bfloat16 handles this without loss scaling."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Numerical Stability?",
-      "options": [
-        "Identify overflow, underflow, and catastrophic cancellation in floating-point computations",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "exp overflows; subtract the maximum logit before exponentiating",
+        "The logits are negative; add their minimum before exponentiating",
+        "Softmax requires integer logits; round them first",
+        "Division by the sum always creates underflow, so use raw logits"
       ],
       "correct": 0,
-      "explanation": "“Identify overflow, underflow, and catastrophic cancellation in floating-point computations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The probabilities are unchanged by a common shift. Subtracting 1001 produces [-1,0], keeping exponentials in a safe range."
+    },
+    {
+      "stage": "check",
+      "question": "Which expression is a stable log-sum-exp calculation for values x?",
+      "options": [
+        "log(sum(exp(x_i))) without any shift",
+        "m + log(sum(exp(x_i - m))) where m=max(x)",
+        "sum(log(x_i)) divided by len(x)",
+        "max(x) * log(sum(x_i))"
+      ],
+      "correct": 1,
+      "explanation": "Factoring out the largest value prevents overflow: log(sum exp x) = m + log(sum exp(x-m))."
+    },
+    {
+      "stage": "check",
+      "question": "A centered finite-difference gradient becomes noisy when h is reduced from 1e-5 to 1e-12. What is the likely cause?",
+      "options": [
+        "The analytical derivative has become discontinuous by definition",
+        "A smaller h always increases floating-point precision",
+        "Subtraction cancellation and rounding error dominate the tiny numerator",
+        "The function has changed from scalar to vector"
+      ],
+      "correct": 2,
+      "explanation": "f(x+h) and f(x-h) become nearly equal at tiny h, so their subtraction loses significant digits. A moderate step balances truncation and roundoff error."
+    },
+    {
+      "stage": "check",
+      "question": "Why is bfloat16 often safer than float16 for training activations?",
+      "options": [
+        "It has more mantissa bits than float32",
+        "It stores every number exactly",
+        "It removes the need for loss scaling in every model",
+        "It has a wider exponent range, reducing overflow and underflow"
+      ],
+      "correct": 3,
+      "explanation": "bfloat16 keeps float32's exponent width but uses fewer fraction bits. Its range is therefore much wider than float16's, even though its precision is lower."
+    },
+    {
+      "stage": "post",
+      "question": "Data values are around 1e8 with tiny variation. Which variance method avoids E[x^2] - E[x]^2 cancellation?",
+      "options": [
+        "Use the one-pass Welford update",
+        "Square the already rounded mean again",
+        "Subtract the largest value from every label only at the end",
+        "Use a smaller integer type"
+      ],
+      "correct": 0,
+      "explanation": "Welford's online updates maintain a stable running mean and sum of squared deviations instead of subtracting two huge, nearly equal quantities."
+    },
+    {
+      "stage": "post",
+      "question": "A gradient vector has norm 20 and clip_by_norm receives max_norm=5. What should it return?",
+      "options": [
+        "The vector scaled by 20/5",
+        "The vector scaled by 5/20",
+        "A vector of all zeros regardless of its direction",
+        "The original vector with each component clipped to 5"
+      ],
+      "correct": 1,
+      "explanation": "Norm clipping preserves direction and scales only when the norm exceeds the limit. Here the returned norm is 5."
     }
   ]
 }

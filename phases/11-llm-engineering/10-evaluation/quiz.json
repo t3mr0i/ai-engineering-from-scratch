@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is manually reading a few LLM outputs not a reliable evaluation method?",
+      "question": "What identifier does a `TestCase` create when no `id` is supplied?",
       "options": [
-        "It takes too long, so teams skip evaluation entirely and ship whatever the last prompt version happened to produce",
-        "Manual review is too expensive once you scale past a handful of cases, so teams settle for a smaller sample instead — and applies unchanged even when the lesson's stated preconditions fail",
-        "LLM outputs are always correct once the prompt has been reviewed and approved once by a domain expert",
-        "Small samples miss failure modes that only appear at scale, and human judgment is inconsistent across reviewers and sessions"
-      ],
-      "correct": 3,
-      "explanation": "Reading 10 outputs shows you 10 points in a distribution. A prompt change might improve 90% of outputs but break 10% of edge cases. Without systematic evaluation, you'll miss the regression until users report it."
-    },
-    {
-      "stage": "check",
-      "question": "What is regression testing in the context of LLM applications?",
-      "options": [
-        "Running a fixed set of test cases after every change (prompt, model, parameters) to ensure quality hasn't degraded",
-        "Testing the prompt only on the examples that were used to write it, which measures memorization rather than generalization",
-        "Fitting a linear regression model that predicts which prompt version will score highest before running any eval",
-        "Measuring the model's training loss curve after each fine-tuning run to check whether quality is still improving"
-      ],
-      "correct": 0,
-      "explanation": "Every prompt change, model swap, or temperature tweak changes the output distribution. Regression tests catch cases where a change that improves one area silently degrades another."
-    },
-    {
-      "stage": "check",
-      "question": "What is the LLM-as-judge evaluation approach?",
-      "options": [
-        "Having the model evaluate its own training loss curve to decide when its own outputs have converged on quality",
-        "Using the model's token-level confidence scores as a proxy for correctness, without any rubric or reference answer, because one plausible output is sufficient production evidence",
-        "Using a strong LLM to score outputs against rubrics, replacing expensive human evaluation while scaling to thousands of test cases",
-        "Comparing two models' parameter counts and context window sizes to predict which one will produce better answers"
+        "A random UUID generated each time the test suite is built",
+        "The category name followed by the number of tags",
+        "The first eight characters of the MD5 hash of `input_text`",
+        "The SHA-256 hash of the reference output, truncated to 16 characters"
       ],
       "correct": 2,
-      "explanation": "LLM-as-judge sends (input, output, rubric) to a strong model which scores the output. It's cheaper and faster than human evaluation, though it has known biases (e.g., preferring verbose responses)."
+      "explanation": "`TestCase.__post_init__` computes `hashlib.md5(self.input_text.encode()).hexdigest()[:8]` when `id` is empty. This gives repeated identical inputs a stable short identifier."
     },
     {
       "stage": "check",
-      "question": "What makes a good evaluation dataset for an LLM application?",
+      "question": "If the reference tokens are `['a', 'b', 'c']` and the hypothesis tokens are `['a', 'x', 'c']`, what does `rouge_l_score` measure?",
       "options": [
-        "As many examples as possible, since the docs show confidence intervals only tighten once you pass a thousand cases",
-        "Diverse inputs covering common cases, edge cases, adversarial inputs, and expected outputs with clear rubrics",
-        "Only the hardest adversarial examples, skipping the golden test set that represents your core, everyday use cases",
-        "Random samples scraped from the internet rather than curated golden cases, adversarial examples, and production traffic"
+        "The fraction of unique words shared, regardless of their order",
+        "The shortest edit distance between the two complete strings",
+        "The cosine similarity of the two token-count vectors",
+        "An F1 score from the LCS (`a, c`)"
       ],
-      "correct": 1,
-      "explanation": "A good eval set covers the distribution: happy path cases, edge cases (empty input, very long input), adversarial inputs (prompt injection), and ambiguous queries. Each example has a clear expected output or scoring rubric."
+      "correct": 3,
+      "explanation": "The dynamic-programming table finds the LCS length and combines its precision and recall into an F1 score. The ordered subsequence `a, c` therefore matters even though `b` and `x` differ."
     },
     {
-      "stage": "post",
-      "question": "How should you handle non-deterministic LLM outputs in evaluation?",
+      "stage": "check",
+      "question": "What interval does `wilson_confidence_interval(successes=0, total=0)` return?",
       "options": [
-        "Set temperature to 0 for every evaluation, since this alone fully eliminates output variance across all providers",
-        "Run each test case multiple times and use aggregate metrics (pass rate, average score) to account for output variance",
-        "Assume non-determinism doesn't affect evaluation scores, since a well-designed rubric averages out any run-to-run noise",
-        "Only evaluate the first output of each test case and treat every later regeneration as redundant extra cost"
-      ],
-      "correct": 1,
-      "explanation": "Even at temperature 0, some providers introduce sampling variation. Running each test 3-5 times and measuring pass rate or average score gives a more reliable picture than a single run that might hit a lucky/unlucky sample."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Evaluation & Testing LLM Applications?",
-      "options": [
-        "Implement automated scoring using LLM-as-judge, regex matching, and deterministic assertion checks",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "`(0.0, 0.0)`, from the empty-sample branch",
+        "`(0.5, 0.5)`, because zero observations imply a neutral estimate",
+        "A division-by-zero exception from `successes / total`",
+        "`(0.95, 1.0)`, because the confidence level is fixed at 95%"
       ],
       "correct": 0,
-      "explanation": "“Implement automated scoring using LLM-as-judge, regex matching, and deterministic assertion checks” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The function has an early `if total == 0` branch returning `(0.0, 0.0)`. It does not attempt to form a sample proportion when there are no observations."
+    },
+    {
+      "stage": "check",
+      "question": "Why does `bootstrap_confidence_interval` use a deterministic seed sequence derived from `sum(scores)`?",
+      "options": [
+        "To guarantee that every bootstrap sample contains each score exactly once",
+        "To make resampling the same score list reproducible",
+        "To replace resampling with a closed-form Wilson interval",
+        "To make the interval wider whenever the model output is longer"
+      ],
+      "correct": 1,
+      "explanation": "The implementation derives `seed_base` from the scores and advances a deterministic pseudo-random recurrence for each bootstrap draw. The same input list therefore yields the same interval in this lesson."
+    },
+    {
+      "stage": "post",
+      "question": "What does `run_eval_suite(test_suite, \"baseline-v1\", \"prompt-v2\")` produce for each test case?",
+      "options": [
+        "A single average score for the whole suite, with individual cases discarded",
+        "A new `TestCase` whose reference output is the model's generated text",
+        "`EvalResult` rows with output, scores, model, and prompt version",
+        "A sorted list containing only cases whose safety score is below 3"
+      ],
+      "correct": 2,
+      "explanation": "The runner calls `run_model`, scores the output with the configured criteria, and constructs an `EvalResult` for every case. It records `baseline-v1` and `prompt-v2` on each result for later comparison."
+    },
+    {
+      "stage": "post",
+      "question": "When `compare_eval_runs` sees a new criterion mean more than 0.3 below the baseline, where does it report that change?",
+      "options": [
+        "It replaces the baseline scores, so only the latest run remains",
+        "It raises an exception unless every other criterion improves",
+        "It records the criterion in `improvements` because the new run is lower",
+        "It appends the criterion name to `regressions` and marks its criteria report `status` as `REGRESSION`"
+      ],
+      "correct": 3,
+      "explanation": "`compare_eval_runs` computes `diff = new_mean - baseline_mean`; when `diff < -0.3`, it appends only the criterion name to `report[\"regressions\"]` and sets that criterion report's `status` to `REGRESSION`. The baseline mean, new mean, and diff remain in `report[\"criteria\"]`, not in the regressions list."
     }
   ]
 }

@@ -175,6 +175,18 @@ The trend is clear: each method eliminates one more piece of complexity. RLHF ne
 
 
 
+## Build It
+
+Reconstruct **DPO: Direct Preference Optimization** by following `tokenize_sequence` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
+
+## Use It
+
+Call `tokenize_sequence` from a small caller with the text "red fox". Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-alignment-method-selector.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Rafailov et al., 2023 -- "Direct Preference Optimization: Your Language Model is Secretly a Reward Model"](https://arxiv.org/abs/2305.18290) -- the DPO paper that simplified alignment from RLHF to supervised learning
@@ -186,10 +198,20 @@ The trend is clear: each method eliminates one more piece of complexity. RLHF ne
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement DPO training that directly optimizes a language model on preference pairs without a separate reward model.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Derive the DPO loss function and explain how it implicitly represents a reward model through the policy's log probabilities.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compare DPO vs RLHF in terms of training stability, compute cost, and number of models required.
+Use `tokenize_sequence` as the trace: start from the text "red fox", keep the raw output, and tie each observation to a named objective.
+
+1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using the text "red fox". Follow `tokenize_sequence`, `compute_sequence_log_prob`, `sigmoid`. Expect the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text; capture the first printed shape, metric, status, or summary field and state which part supports **Implement DPO training that directly optimizes a language model on preference pairs without a separate reward model**.
+2. **Vary one named input.** Repeat the command after changing only the input text: use the text "red fox runs". Predict the direction of the change, then compare the two output values. Explain why **Derive the DPO loss function and explain how it implicitly represents a reward model through the policy's log probabilities** says the other inputs should stay fixed.
+3. **Probe the empty case.** Feed the implementation an empty string. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Compare DPO vs RLHF in terms of training stability, compute cost, and number of models required** and record the exception text if the code rejects the case.
+4. **Package a usable handoff.** Open `outputs/prompt-alignment-method-selector.md` and add a worked example using the text "red fox". Include the input contract, one expected output field, and a named acceptance check for **Tune the beta parameter to control how far the trained policy diverges from the reference model**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement DPO training that directly optimizes a language model on preference pairs without a separate reward model,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compare DPO vs RLHF in terms of training stability, compute cost, and number of models required,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **DPO: Direct Preference Optimization** should contain:
+
+- the `python3 main.py` output for the text "red fox", with `tokenize_sequence`, `compute_sequence_log_prob`, `sigmoid` traced to the value or shape that supports **Implement DPO training that directly optimizes a language model on preference pairs without a separate reward model**;
+- a before/after comparison for the input text, where the text "red fox runs" changes the observation in the direction predicted by **Derive the DPO loss function and explain how it implicitly represents a reward model through the policy's log probabilities**;
+- a recorded result for an empty string that matches the implementation’s validation or empty-result contract and explains the evidence for **Compare DPO vs RLHF in terms of training stability, compute cost, and number of models required**; and
+- an updated `outputs/prompt-alignment-method-selector.md` example with a concrete input, expected output field, and acceptance check tied to **Tune the beta parameter to control how far the trained policy diverges from the reference model**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

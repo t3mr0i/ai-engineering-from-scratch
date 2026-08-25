@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does an n-gram language model estimate?",
+      "question": "Which boundary tokens does train_bigrams add to every sentence?",
       "options": [
-        "Edit distance between words — and applies unchanged even when the lesson's stated preconditions fail",
-        "P(label | document)",
-        "Document embeddings",
-        "P(next word | previous n-1 words) from count statistics"
+        "<BOS> at both ends",
+        "A period at the start and a comma at the end",
+        "<s> at the start and </s> at the end",
+        "No boundary tokens; it counts only interior words"
+      ],
+      "correct": 2,
+      "explanation": "The padded sequence is [\"<s>\"] + sentence + [\"</s>\"], so starts and stops receive bigram counts."
+    },
+    {
+      "stage": "check",
+      "question": "What does laplace_prob return for an unseen bigram when count=0?",
+      "options": [
+        "Exactly zero",
+        "The probability of the previous word",
+        "The Kneser-Ney continuation probability",
+        "A positive smoothed probability 1/(unigram_count(prev)+vocab_size)"
       ],
       "correct": 3,
-      "explanation": "An n-gram LM models P(w | last n-1 words) via counted occurrences."
+      "explanation": "Add-one smoothing changes the numerator from zero to one while retaining the vocabulary-sized denominator adjustment."
     },
     {
       "stage": "check",
-      "question": "What problem does smoothing solve in n-gram models?",
+      "question": "What does Kneser-Ney continuation count for a word w?",
       "options": [
-        "Numerical precision",
-        "Memory usage",
-        "Zero-probability assignment to n-grams unseen in training, which collapses sentence likelihoods to zero",
-        "Tokenization mismatch, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence"
-      ],
-      "correct": 2,
-      "explanation": "Smoothing reallocates probability mass so unseen n-grams get non-zero probability."
-    },
-    {
-      "stage": "check",
-      "question": "What insight makes Kneser-Ney smoothing better than naive absolute discounting?",
-      "options": [
-        "It estimates the lower-order distribution with continuation probability (number of distinct contexts a word appears in) instead of raw frequency",
-        "It uses TF-IDF",
-        "It uses bigger n",
-        "It uses gradient descent, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path"
+        "The number of distinct preceding contexts of w divided by total distinct bigrams",
+        "The raw number of times w appears in all documents",
+        "The number of characters in w divided by vocabulary size",
+        "Only the most frequent predecessor of w"
       ],
       "correct": 0,
-      "explanation": "Continuation probability gives credit for context diversity, not just raw count."
+      "explanation": "unigram_contexts[w] stores distinct predecessors, and the code divides its size by total_unique_bigrams."
     },
     {
       "stage": "check",
-      "question": "What does perplexity measure?",
+      "question": "How does perplexity convert the accumulated log probabilities?",
       "options": [
-        "exp of the average negative log-likelihood per token on a held-out test set; lower is better",
-        "Number of distinct n-grams, before defining the measurement, acceptance threshold, or rollback path",
-        "Cross-entropy of labels",
-        "Throughput of generation"
+        "It averages raw probabilities without taking logs",
+        "It returns exp(-total_log / total), the exponential of mean negative log probability",
+        "It counts the number of unique words in each sentence",
+        "It returns the highest next-word probability"
       ],
-      "correct": 0,
-      "explanation": "Perplexity = exp(- mean log P); lower means the model is less surprised by the test text."
+      "correct": 1,
+      "explanation": "The function sums log p over predicted tokens, divides by token count, negates, and exponentiates."
     },
     {
       "stage": "post",
-      "question": "Why must train and test sets use identical tokenization when comparing perplexity numbers?",
+      "question": "Why does sample_sentence exclude \"<s>\" from its candidate words?",
       "options": [
-        "Required by gradient descent — and applies unchanged even when the lesson's stated preconditions fail",
-        "To avoid OOV",
-        "Perplexity depends on the tokenization scheme; mismatched tokenizers produce noncomparable scores",
-        "To control batch size"
+        "The start marker is always the most probable semantic word",
+        "The model cannot store a start marker in its vocabulary",
+        "The start marker should begin the sequence, not be generated as an interior word",
+        "Excluding it forces every sentence to end at the first token"
       ],
       "correct": 2,
-      "explanation": "Different tokenizations change the token count and likelihood, making perplexity values incomparable."
+      "explanation": "The candidate list skips <s>; generation can still select </s> and then returns words between the markers."
     },
     {
       "stage": "post",
-      "question": "Why do generated trigram-LM sentences feel locally fluent but globally incoherent?",
+      "question": "What failure does Laplace smoothing prevent for an unseen test bigram?",
       "options": [
-        "They drop punctuation",
-        "Beam search fails",
-        "Local trigram context guides each next word but the model has no long-range memory beyond n-1 tokens",
-        "They use Laplace smoothing, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence"
+        "A document length longer than the training corpus",
+        "A token being assigned two POS tags",
+        "A duplicate sentence being sampled twice",
+        "A zero probability that would make the sentence log probability undefined"
       ],
-      "correct": 2,
-      "explanation": "Conditioning only on the last n-1 tokens makes long-range coherence accidental."
+      "correct": 3,
+      "explanation": "Giving unseen transitions a small positive probability avoids log(0) and infinite perplexity for an otherwise evaluable sentence."
     }
   ]
 }

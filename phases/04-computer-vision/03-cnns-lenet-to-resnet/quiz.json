@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What single architectural idea did AlexNet (2012) introduce that made training deep CNNs practical on GPUs?",
+      "question": "For LeNet5 with a 32x32 input, what is the spatial size after conv1, 2x2 pooling, conv2, and another 2x2 pooling?",
       "options": [
-        "Residual connections",
-        "Replacing tanh with ReLU, which does not saturate and speeds convergence by roughly 6x",
-        "Batch normalization",
-        "Depthwise separable convolutions — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "AlexNet's biggest training speedup came from ReLU. Tanh saturates for large positive or negative inputs, which kills gradients and caps the depth you can train. ReLU is piecewise linear, does not saturate for positive inputs, and was the single change that took training from weeks to days. Dropout and GPU parallelism mattered, but ReLU is the one that unlocked depth."
-    },
-    {
-      "stage": "check",
-      "question": "Why did VGG prefer stacks of 3x3 convolutions over a single larger kernel?",
-      "options": [
-        "Smaller kernels run faster on CPU",
-        "Two 3x3 convs cover the same 5x5 receptive field with fewer parameters (18C^2 vs 25C^2) and one extra ReLU between them",
-        "3x3 convs are rotation-invariant; 5x5 is not, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "Larger kernels cannot be trained with SGD"
-      ],
-      "correct": 1,
-      "explanation": "Two stacked 3x3 convs see the same 5x5 patch as one 5x5 conv, but use fewer parameters (2 * 3 * 3 * C^2 = 18C^2 compared to 25C^2) and include an additional non-linearity. That extra ReLU increases expressive power. VGG turned this observation into an entire architecture with exactly one block type repeated."
-    },
-    {
-      "stage": "check",
-      "question": "ResNet introduced residual connections as y = F(x) + x. What problem does this solve?",
-      "options": [
-        "Overfitting in the classifier head",
-        "Vanishing activations in layers with ReLU, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "The degradation problem — past ~20 plain conv layers, training loss starts getting worse because the optimizer struggles to learn an identity mapping through many non-linear layers",
-        "Memory consumption during backprop"
-      ],
-      "correct": 2,
-      "explanation": "Before ResNet, training loss started increasing past about 20 layers even though the network had more capacity — the degradation problem. A residual block can trivially represent identity by driving F to zero, giving the optimizer a safe default. With that escape hatch, every extra block can make the network slightly better, which is how 100+ layer networks became trainable."
-    },
-    {
-      "stage": "check",
-      "question": "In a ResNet BasicBlock with in_channels=64, out_channels=128, stride=2, what is the role of the shortcut branch?",
-      "options": [
-        "It is always identity; the main branch handles the shape change, before defining the measurement, acceptance threshold, or rollback path",
-        "It is a 1x1 conv with stride 2 that matches the output channels and spatial size of the main branch so the two can be added",
-        "It is a max-pool that halves the spatial dimension",
-        "It is a placeholder that is removed at inference time"
-      ],
-      "correct": 1,
-      "explanation": "When a block changes channel count or spatial stride, the identity path cannot be added directly to the main branch because shapes differ. The shortcut becomes a 1x1 conv with stride=2 and C_out output channels, optionally followed by batch norm. Pass-through identity is used only when in_c == out_c and stride == 1."
-    },
-    {
-      "stage": "post",
-      "question": "ResNet-18 has ~11.7M parameters and matches or beats VGG-16 (138M params) on ImageNet. What does this imply about VGG?",
-      "options": [
-        "VGG's kernels were too small to learn good features",
-        "Most of VGG's parameters are wasted in the fully connected head and the redundant depth past the point where residual connections would let each layer contribute",
-        "VGG was trained with a worse optimizer",
-        "VGG's accuracy on ImageNet has been measured incorrectly — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases"
-      ],
-      "correct": 1,
-      "explanation": "VGG-16's parameter count is dominated by its giant fully connected classifier (three dense layers on 25088 activations), and its plain deep stack cannot add layers as efficiently as a residual stack. ResNet-18 replaces the FC head with global average pool plus one linear layer and uses residual blocks, which together give roughly 12x parameter efficiency at similar accuracy."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for CNNs — LeNet to ResNet?",
-      "options": [
-        "Implement LeNet-5, a VGG-style block, and a ResNet BasicBlock in PyTorch, each under 40 lines",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "5x5",
+        "8x8",
+        "10x10",
+        "28x28"
       ],
       "correct": 0,
-      "explanation": "“Implement LeNet-5, a VGG-style block, and a ResNet BasicBlock in PyTorch, each under 40 lines” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "A 5x5 valid convolution gives 28, pooling gives 14, the second valid convolution gives 10, and pooling gives 5."
+    },
+    {
+      "stage": "check",
+      "question": "What is the flattened feature size feeding LeNet5's first linear layer after the final pool?",
+      "options": [
+        "6*28*28 = 4704",
+        "16*5*5 = 400",
+        "120",
+        "84"
+      ],
+      "correct": 1,
+      "explanation": "The final convolution has 16 channels and a 5x5 map, matching the declared Linear(16*5*5,120)."
+    },
+    {
+      "stage": "check",
+      "question": "When does BasicBlock create a convolutional shortcut instead of nn.Identity()?",
+      "options": [
+        "For every block, even when shapes already match",
+        "Only when the batch contains one image",
+        "When stride is not 1 or the input and output channel counts differ",
+        "When the final classifier has ten classes"
+      ],
+      "correct": 2,
+      "explanation": "The projection aligns spatial resolution and channels so the residual branch can be added to the main branch."
+    },
+    {
+      "stage": "check",
+      "question": "What output shape does TinyResNet produce for an input batch shaped (1,3,32,32) with num_classes=10?",
+      "options": [
+        "(1,256,4,4)",
+        "(10,32,32)",
+        "(1,3,32,32)",
+        "(1,10)"
+      ],
+      "correct": 3,
+      "explanation": "AdaptiveAvgPool2d(1) and Flatten reduce the final 256-channel map to one vector per image, and the head emits ten logits."
+    },
+    {
+      "stage": "post",
+      "question": "In BasicBlock.forward, what happens immediately before the final ReLU?",
+      "options": [
+        "The second batch-normalized branch is added to the shortcut output",
+        "The input is flattened into a class vector",
+        "The shortcut is multiplied by the batch size",
+        "The output is passed through max pooling"
+      ],
+      "correct": 0,
+      "explanation": "The code computes out=bn2(conv2(out)), adds self.shortcut(x), and only then applies F.relu."
+    },
+    {
+      "stage": "post",
+      "question": "What is the central optimization benefit of a residual connection?",
+      "options": [
+        "It removes the need for nonlinear activations",
+        "It gives gradients a direct identity path around a block",
+        "It guarantees every convolution has stride 1",
+        "It converts image classification into segmentation"
+      ],
+      "correct": 1,
+      "explanation": "Learning a residual correction around an identity path makes deep stacks easier to optimize than forcing every block to learn a complete transformation."
     }
   ]
 }

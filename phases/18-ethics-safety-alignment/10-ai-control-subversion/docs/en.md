@@ -78,6 +78,18 @@ Lessons 6-9 describe the threat (deception is possible). Lesson 10 describes the
 
 
 
+## Build It
+
+Reconstruct **AI Control — Safety Despite Subversion** by following `u_produce` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
+
+## Use It
+
+Call `u_produce` from a small caller with the demo’s smallest built-in fixture. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-control-protocol-audit.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Greenblatt, Shlegeris, Sachan, Roger — AI Control (arXiv:2312.06942)](https://arxiv.org/abs/2312.06942) — the canonical ICML 2024 paper
@@ -87,10 +99,20 @@ Lessons 6-9 describe the threat (deception is possible). Lesson 10 describes the
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Define the AI Control threat model: untrusted strong model U, trusted weaker model T, trusted human budget H.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe the Trusted Editing protocol and why it Pareto-dominates Untrusted Monitoring on the ICML 2024 code-backdoor task.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain the difference between alignment (U is trustworthy) and control (U is not trustworthy and we are safe anyway).
+Keep two runs side by side for **AI Control — Safety Despite Subversion**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
+
+1. **Read the first result.** From `code/`, run `python3 main.py` using the demo’s smallest built-in fixture. Follow `u_produce`, `t_edit`, `untrusted_monitor`. Expect the result reports the empty case explicitly or raises the documented validation error; capture the first printed shape, metric, status, or summary field and state which part supports **Define the AI Control threat model: untrusted strong model U, trusted weaker model T, trusted human budget H.**.
+2. **Run a two-value comparison.** Repeat the command after changing only the primary fixture value: use the same fixture with its primary value changed from 1 to 2. Predict the direction of the change, then compare the two output values. Explain why **Describe the Trusted Editing protocol and why it Pareto-dominates Untrusted Monitoring on the ICML 2024 code-backdoor task.** says the other inputs should stay fixed.
+3. **Try an adversarial fixture.** Feed the implementation an empty fixture {}. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Explain the difference between alignment (U is trustworthy) and control (U is not trustworthy and we are safe anyway).** and record the exception text if the code rejects the case.
+4. **Write the operator note.** Open `outputs/skill-control-protocol-audit.md` and add a worked example using the demo’s smallest built-in fixture. Include the input contract, one expected output field, and a named acceptance check for **State the three limits of control: humans do not scale, trusted weak models eventually lag, control does not produce trustworthy strong models.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define the AI Control threat model: untrusted strong model U, trusted weaker model T, trusted human budget H,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain the difference between alignment (U is trustworthy) and control (U is not trustworthy and we are safe anyway),” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **AI Control — Safety Despite Subversion** should contain:
+
+- the `python3 main.py` output for the demo’s smallest built-in fixture, with `u_produce`, `t_edit`, `untrusted_monitor` traced to the value or shape that supports **Define the AI Control threat model: untrusted strong model U, trusted weaker model T, trusted human budget H.**;
+- a before/after comparison for the primary fixture value, where the same fixture with its primary value changed from 1 to 2 changes the observation in the direction predicted by **Describe the Trusted Editing protocol and why it Pareto-dominates Untrusted Monitoring on the ICML 2024 code-backdoor task.**;
+- a recorded result for an empty fixture {} that matches the implementation’s validation or empty-result contract and explains the evidence for **Explain the difference between alignment (U is trustworthy) and control (U is not trustworthy and we are safe anyway).**; and
+- an updated `outputs/skill-control-protocol-audit.md` example with a concrete input, expected output field, and acceptance check tied to **State the three limits of control: humans do not scale, trusted weak models eventually lag, control does not produce trustworthy strong models.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

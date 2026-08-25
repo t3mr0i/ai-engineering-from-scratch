@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Reward Modeling & RLHF?",
+      "question": "How many distinct tokens are in VOCAB for this reward-model demo?",
       "options": [
-        "Formulate Reward Modeling & RLHF in terms of states, actions, rewards, and objectives",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
+        "12: six GOOD tokens plus six BAD tokens",
+        "3: one token for each prompt",
+        "6: only the GOOD vocabulary is retained",
+        "24: every token appears once for each pair position"
       ],
       "correct": 0,
-      "explanation": "“Formulate Reward Modeling & RLHF in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "GOOD and BAD are disjoint six-token tuples, and VOCAB is the sorted set of their concatenation, giving 12 entries."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Reward Modeling & RLHF?",
+      "question": "What kind of examples does sample_pair(rng) create for reward-model training?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the central update rule from first principles",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Two prompts with identical completions",
+        "A random prompt, a two-GOOD-token response, and a two-BAD-token response",
+        "One response with one token drawn from every vocabulary entry",
+        "A terminal state and an action from GridWorld"
       ],
       "correct": 1,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "sample_pair chooses x from PROMPTS, then draws y_pos from GOOD twice and y_neg from BAD twice."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Reward Modeling & RLHF?",
+      "question": "How does train_rm update a token's weight after comparing y_pos and y_neg?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Trace learning signals through a self-terminating experiment",
-        "Treat one successful example as proof that every edge case works"
+        "It copies the positive score into every token and leaves negatives unchanged",
+        "It subtracts the learning rate from every vocabulary entry",
+        "It adds lr*(1-p)*count to positive tokens and subtracts the same scale from negative tokens",
+        "It updates only the prompt embedding, never response tokens"
       ],
       "correct": 2,
-      "explanation": "“Trace learning signals through a self-terminating experiment” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "With p=sigmoid(r_pos-r_neg), grad_scale=1-p; bag counts scale positive additions and negative subtractions."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Reward Modeling & RLHF?",
+      "question": "Why does score(w, ['clear', 'clear']) count the weight for 'clear' twice?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate convergence, stability, and exploration trade-offs",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate convergence, stability, and exploration trade-offs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Reward Modeling & RLHF?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Formulate Reward Modeling & RLHF in terms of states, actions, rewards, and objectives"
+        "score applies a softmax to duplicate words",
+        "The second token is treated as a negative label",
+        "Only the first occurrence is used by Counter",
+        "bag(tokens) records token multiplicity, and score sums w[token] * count"
       ],
       "correct": 3,
-      "explanation": "“Formulate Reward Modeling & RLHF in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "score iterates over bag(tokens).items(), so repeated tokens contribute their weight once per occurrence."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Reward Modeling & RLHF?",
+      "question": "What reward does rlhf_loop assign to a sampled token?",
       "options": [
-        "Implement the central update rule from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "The reward-model token score minus beta times KL(policy || reference)",
+        "Only the binary verifier result; beta is ignored",
+        "The token index plus the number of prompts",
+        "The negative of the reward-model score, with KL added"
       ],
       "correct": 0,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The loop sets reward = rm_score - beta * kl_term, penalizing movement away from the copied reference policy."
+    },
+    {
+      "stage": "post",
+      "question": "How are policy advantages normalized in one rlhf_loop update?",
+      "options": [
+        "Each reward is divided by its token index",
+        "They are (reward - batch mean) divided by batch standard deviation plus 1e-8",
+        "All advantages are replaced by the reward-model weights",
+        "They are sorted so the best completion always has advantage one"
+      ],
+      "correct": 1,
+      "explanation": "The 16 rollout rewards are centered by mean_r and scaled by sqrt(var_r)+1e-8 before the clipped policy update."
     }
   ]
 }

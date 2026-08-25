@@ -597,6 +597,18 @@ The best prompts are model-agnostic. They work on GPT-5, Claude Opus 4.7, Gemini
 
 
 
+## Build It
+
+Reconstruct **Prompt Engineering: Techniques & Patterns** by following `call` on the text "red fox". Run `npx tsx main.ts` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
+
+## Use It
+
+Call `call` from a small caller with the text "red fox". Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-prompt-optimizer.md` with the command `npx tsx main.ts`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [OpenAI Prompt Engineering Guide](https://platform.openai.com/docs/guides/prompt-engineering) -- official best practices from OpenAI covering system messages, few-shot, and chain-of-thought
@@ -610,13 +622,23 @@ The best prompts are model-agnostic. They work on GPT-5, Claude Opus 4.7, Gemini
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Apply the core prompt engineering patterns (role, context, constraints, output format) to transform vague requests into precise instructions.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Construct system prompts with explicit behavioral rules that produce consistent, high-quality outputs.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Diagnose prompt failures (hallucination, refusal, format violations) and fix them with targeted prompt modifications.
+Start with the smallest reproducible run. Keep the input, output, and interpretation together so another reader can repeat the check.
+
+1. **Reproduce the control run.** Run [`main.ts`](../code/main.ts) with `npx tsx main.ts` from the lesson's `code/` directory. Record the smallest input that demonstrates “Apply the core prompt engineering patterns (role, context, constraints, output format) to transform vague requests into precise instructions”. Point to `renderTemplate()`, `buildPrompt()`, `formatOpenAI()` and name the returned field or printed value that serves as evidence.
+2. **Change one decision.** Change exactly one input, threshold, or option that affects “Construct system prompts with explicit behavioral rules that produce consistent, high-quality outputs”. Predict the direction of the change before running it, then compare the two outputs and explain why the other fields should stay stable.
+3. **Probe a boundary.** Construct a case that stresses “Diagnose prompt failures (hallucination, refusal, format violations) and fix them with targeted prompt modifications”: choose an empty collection, missing field, maximum-sized value, malformed record, or another boundary that fits this lesson. Write the expected behavior first and distinguish an intentional guard from an accidental crash.
+4. **Transfer the result.** Open `outputs/prompt-prompt-optimizer.md` and adapt one example to a real workflow. State the owner, evidence, and next decision required for “Implement a prompt testing harness that evaluates prompt changes against a set of expected outputs”; mark any assumption that the demo does not establish.
 
 ## Reference Solution
 
-Use the canonical [main.ts](../code/main.ts) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Apply the core prompt engineering patterns (role, context, constraints, output format) to transform vague requests into precise instructions,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Diagnose prompt failures (hallucination, refusal, format violations) and fix them with targeted prompt modifications,” and cite a repeatable check rather than relying on visual inspection alone.
+Your solution is complete when it records `npx tsx main.ts`, the captured output, and a short interpretation. Show:
+
+- evidence for “Apply the core prompt engineering patterns (role, context, constraints, output format) to transform vague requests into precise instructions” with the relevant input and returned field;
+- a one-variable comparison that makes “Construct system prompts with explicit behavioral rules that produce consistent, high-quality outputs” visible;
+- a predicted and observed boundary result for “Diagnose prompt failures (hallucination, refusal, format violations) and fix them with targeted prompt modifications”, including why the behavior is safe; and
+- one concrete update to `outputs/prompt-prompt-optimizer.md` that applies “Implement a prompt testing harness that evaluates prompt changes against a set of expected outputs” without hiding uncertainty.
+
+Use `renderTemplate()`, `buildPrompt()`, `formatOpenAI()` to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
 ## Guided Demo
 

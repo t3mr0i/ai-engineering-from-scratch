@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Dynamic Programming — Policy Iteration & Value Iteration?",
+      "question": "What do the probabilities in transitions(state, action) sum to for a nonterminal state?",
       "options": [
-        "Formulate Dynamic Programming — Policy Iteration & Value Iteration in terms of states, actions, rewards, an...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Formulate Dynamic Programming — Policy Iteration & Value Iteration in terms of states, actions, rewards, an...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Dynamic Programming — Policy Iteration & Value Iteration?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the central update rule from first principles",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Dynamic Programming — Policy Iteration & Value Iteration?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Trace learning signals through a self-terminating experiment",
-        "Treat one successful example as proof that every edge case works"
+        "0.9, because the intended move is the only reliable outcome",
+        "0.1, the value of SLIP",
+        "1.0, with 0.9 on the intended move and 0.05 on each perpendicular move",
+        "4.0, one unit for each action name"
       ],
       "correct": 2,
-      "explanation": "“Trace learning signals through a self-terminating experiment” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "SLIP is 0.1, so the intended outcome gets 0.9 and the two perpendicular outcomes get 0.05 each."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Dynamic Programming — Policy Iteration & Value Iteration?",
+      "question": "Which perpendicular moves does perpendiculars('up') return?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate convergence, stability, and exploration trade-offs",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate convergence, stability, and exploration trade-offs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Dynamic Programming — Policy Iteration & Value Iteration?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Formulate Dynamic Programming — Policy Iteration & Value Iteration in terms of states, actions, rewards, an..."
+        "('down', 'up')",
+        "('up', 'down')",
+        "('up', 'right')",
+        "('left', 'right')"
       ],
       "correct": 3,
-      "explanation": "“Formulate Dynamic Programming — Policy Iteration & Value Iteration in terms of states, actions, rewards, an...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "For a vertical action, the two sideways alternatives are left and right; the helper returns them in that order."
+    },
+    {
+      "stage": "check",
+      "question": "What does q_value(state, action, V, gamma) calculate?",
+      "options": [
+        "The transition-probability-weighted sum of r + gamma V(s_next)",
+        "The maximum value in V, ignoring the chosen action",
+        "The number of sweeps needed by value iteration",
+        "The probability of selecting action under a uniform policy"
+      ],
+      "correct": 0,
+      "explanation": "q_value loops over transitions and sums p * (r + gamma * V[s_next]), the one-action Bellman backup."
+    },
+    {
+      "stage": "check",
+      "question": "What operation distinguishes the value_iteration backup from policy_evaluation?",
+      "options": [
+        "It samples one transition and discards the others",
+        "It takes the maximum q_value over all available actions",
+        "It always uses gamma=0.5",
+        "It averages values without using rewards"
+      ],
+      "correct": 1,
+      "explanation": "value_iteration applies max(q_value(state, action, V, gamma)) at each nonterminal state rather than a policy-weighted average."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Dynamic Programming — Policy Iteration & Value Iteration?",
+      "question": "How does policy_iteration decide that its outer loop is finished?",
       "options": [
-        "Implement the central update rule from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "When the first policy evaluation sweep reaches one iteration",
+        "When every state has value exactly zero",
+        "When the greedy policy produced from V is identical to the current policy",
+        "When the slip probability becomes zero"
       ],
-      "correct": 0,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "After evaluation, policy_iteration builds new_policy with greedy_from_V and returns when new_policy == policy."
+    },
+    {
+      "stage": "post",
+      "question": "What should the final comparison print when value_iteration and policy_iteration agree?",
+      "options": [
+        "A sup-norm difference near 1.0 and different policies",
+        "Only the value-iteration sweep count",
+        "A warning that the terminal state is unreachable",
+        "A sup-norm difference near zero and the printed 'policies identical?' value True"
+      ],
+      "correct": 3,
+      "explanation": "Both methods solve the same stochastic MDP, so the demo compares their values and expects a near-zero sup norm and matching policies."
     }
   ]
 }

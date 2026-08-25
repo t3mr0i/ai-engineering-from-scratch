@@ -102,6 +102,18 @@ Every decision in that config traces back to a paper you can read.
 
 
 
+## Build It
+
+Reconstruct **Vision Transformers and the Patch-Token Primitive** by following `ViTConfig` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `ViTConfig` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-patch-geometry-reader.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Dosovitskiy et al. — An Image is Worth 16x16 Words (arXiv:2010.11929)](https://arxiv.org/abs/2010.11929) — original ViT.
@@ -113,10 +125,20 @@ Every decision in that config traces back to a paper you can read.
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Convert an HxWx3 image into a sequence of patch tokens with correct positional encoding.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Compute sequence length, parameter count, and FLOPs for a ViT of a given (patch size, resolution, hidden dim, depth).
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Name the three upgrades that took ViT from 2020 research to 2026 production: self-supervised pretraining (DINO / MAE), register tokens, and native-resolution packing.
+Work from the smallest fixture that the Vision Transformers and the Patch-Token Primitive demo already understands, then make one deliberate change and record what moved.
+
+1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using tokens=["red","fox"]. Follow `ViTConfig`, `grid_shape`, `seq_length`. Expect the attention/embedding shape follows the token count and each valid attention row remains normalized; capture the first printed shape, metric, status, or summary field and state which part supports **Convert an HxWx3 image into a sequence of patch tokens with correct positional encoding.**.
+2. **Perturb one field.** Repeat the command after changing only the token sequence: use tokens=["red","fox","runs"]. Predict the direction of the change, then compare the two output values. Explain why **Compute sequence length, parameter count, and FLOPs for a ViT of a given (patch size, resolution, hidden dim, depth).** says the other inputs should stay fixed.
+3. **Check the failure boundary.** Feed the implementation tokens=[]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Name the three upgrades that took ViT from 2020 research to 2026 production: self-supervised pretraining (DINO / MAE), register tokens, and native-resolution packing.** and record the exception text if the code rejects the case.
+4. **Make the result repeatable.** Open `outputs/skill-patch-geometry-reader.md` and add a worked example using tokens=["red","fox"]. Include the input contract, one expected output field, and a named acceptance check for **Pick between CLS pooling, mean pooling, and register tokens for a downstream task.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Convert an HxWx3 image into a sequence of patch tokens with correct positional encoding,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Name the three upgrades that took ViT from 2020 research to 2026 production: self-supervised pretraining (DINO / MAE), register tokens, and native-resolution packing,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Vision Transformers and the Patch-Token Primitive** should contain:
+
+- the `python3 main.py` output for tokens=["red","fox"], with `ViTConfig`, `grid_shape`, `seq_length` traced to the value or shape that supports **Convert an HxWx3 image into a sequence of patch tokens with correct positional encoding.**;
+- a before/after comparison for the token sequence, where tokens=["red","fox","runs"] changes the observation in the direction predicted by **Compute sequence length, parameter count, and FLOPs for a ViT of a given (patch size, resolution, hidden dim, depth).**;
+- a recorded result for tokens=[] that matches the implementation’s validation or empty-result contract and explains the evidence for **Name the three upgrades that took ViT from 2020 research to 2026 production: self-supervised pretraining (DINO / MAE), register tokens, and native-resolution packing.**; and
+- an updated `outputs/skill-patch-geometry-reader.md` example with a concrete input, expected output field, and acceptance check tied to **Pick between CLS pooling, mean pooling, and register tokens for a downstream task.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

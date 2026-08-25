@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to MCP Auth in Production — Enrollment, JWKS Refresh, Audience-Pinned Tokens?",
+      "question": "Which discovery properties does the authorization server publish for this client flow?",
       "options": [
-        "Discover an authorization server through RFC 8414 metadata and verify the contract",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Discover an authorization server through RFC 8414 metadata and verify the contract” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of MCP Auth in Production — Enrollment, JWKS Refresh, Audience-Pinned Tokens?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement RFC 7591 dynamic client registration so MCP clients enroll without admin intervention",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement RFC 7591 dynamic client registration so MCP clients enroll without admin intervention” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through MCP Auth in Production — Enrollment, JWKS Refresh, Audience-Pinned Tokens?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Cache and refresh JWKS keys on a schedule so signature verification survives key roll-over",
-        "Treat one successful example as proof that every edge case works"
+        "Only implicit grant and plain PKCE",
+        "A static client secret with no metadata",
+        "S256, CIMD, and registration",
+        "A JWKS endpoint but no authorization endpoint"
       ],
       "correct": 2,
-      "explanation": "“Cache and refresh JWKS keys on a schedule so signature verification survives key roll-over” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The metadata advertises S256, CIMD support, and the dynamic registration endpoint alongside the normal authorization and token endpoints."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits MCP Auth in Production — Enrollment, JWKS Refresh, Audience-Pinned Tokens?",
+      "question": "What does valid dynamic client registration return?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Pin tokens to a single MCP resource using RFC 8707 resource indicators and refuse confused-deputy reuse",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Pin tokens to a single MCP resource using RFC 8707 resource indicators and refuse confused-deputy reuse” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for MCP Auth in Production — Enrollment, JWKS Refresh, Audience-Pinned Tokens?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Separate the three roles cleanly — authorization server, resource server, client — so each enforces only th..."
+        "200 with the plaintext registration secret only",
+        "404 because DCR is disabled",
+        "403 until the first token exchange",
+        "201 plus metadata and a hashed registration token"
       ],
       "correct": 3,
-      "explanation": "“Separate the three roles cleanly — authorization server, resource server, client — so each enforces only th...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "A valid redirect URI and supported authentication method produce 201; the server stores only a hash of the returned registration token."
+    },
+    {
+      "stage": "check",
+      "question": "What does ResourceServer.refresh_jwks do after an unknown key id?",
+      "options": [
+        "Re-fetches the authorization server's published JWKS into its cache; it does not rotate signing keys",
+        "It signs a replacement token locally",
+        "It accepts any key whose id is new",
+        "It deletes all cached keys permanently"
+      ],
+      "correct": 0,
+      "explanation": "The resource server re-fetches the authorization server's published JWKS into its cache; signing-key rotation remains an authorization-server operation."
+    },
+    {
+      "stage": "check",
+      "question": "In what order does validate reject a token with an untrusted issuer?",
+      "options": [
+        "It first tries the tool backend and then checks issuer",
+        "401 iss not allowed before JWKS work",
+        "It returns 403 missing scope",
+        "It accepts the token if its audience is correct"
+      ],
+      "correct": 1,
+      "explanation": "Issuer allowlisting is an early authentication check, so the resource server returns 401 before spending work on key lookup or scope authorization."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for MCP Auth in Production — Enrollment, JWKS Refresh, Audience-Pinned Tokens?",
+      "question": "What happens when a valid notes token is replayed to the tasks resource?",
       "options": [
-        "Read an IdP capability matrix and refuse to deploy when the IdP cannot satisfy MCP's auth profile",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "It succeeds because both resources use the same issuer",
+        "It is downgraded to read-only",
+        "It returns 401 for an audience mismatch",
+        "It returns 403 only if the task is complete"
       ],
-      "correct": 0,
-      "explanation": "“Read an IdP capability matrix and refuse to deploy when the IdP cannot satisfy MCP's auth profile” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The token's aud is pinned to the notes resource; using it at another resource server fails authentication with audience mismatch."
+    },
+    {
+      "stage": "post",
+      "question": "What scope must the elevated token carry for the demonstrated notes.delete operation?",
+      "options": [
+        "No scope because delete is local",
+        "Only mcp:tools.invoke",
+        "Only the registration token",
+        "mcp:tools.delete in addition to mcp:tools.invoke"
+      ],
+      "correct": 3,
+      "explanation": "TOOL_SCOPES maps notes.delete to mcp:tools.delete; the demo issues an elevated token containing that scope plus the ordinary invoke scope."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What three primitives does an MCP server expose?",
+      "question": "What does the demo's `initialize` request establish before discovery begins?",
       "options": [
-        "Functions, types, classes",
-        "Endpoints, webhooks, queues",
-        "Tools, resources, prompts",
-        "Agents, skills, workflows"
+        "A database transaction that permanently registers every tool call",
+        "A model completion containing the first prompt to send to the host",
+        "Protocol, server, and capability metadata",
+        "A resource read that returns `config://app` before the server lists it"
       ],
       "correct": 2,
-      "explanation": "The lesson defines an MCP server as exposing exactly three primitives: tools (functions the model calls), resources (read-only content addressed by URI), and prompts (reusable templated prompts)."
+      "explanation": "`MCPServer.handle` returns `protocolVersion`, `serverInfo`, and capability maps for tools, resources, and prompts on `initialize`. Discovery methods are separate requests made afterward."
     },
     {
       "stage": "check",
-      "question": "What wire format does MCP use?",
+      "question": "How does `tools/list` distinguish the demo's `delete_user` tool from `add`?",
       "options": [
-        "GraphQL queries over HTTP",
-        "JSON-RPC 2.0 over stdio or HTTP",
-        "gRPC with protobuf messages, with no need to inspect intermediate results or test edge cases",
-        "REST with an OpenAPI schema"
-      ],
-      "correct": 1,
-      "explanation": "The lesson states MCP messages are JSON-RPC 2.0 over stdio or streamable HTTP, with the format `{\"jsonrpc\": \"2.0\", \"method\": \"...\", \"params\": {...}, \"id\": N}`."
-    },
-    {
-      "stage": "check",
-      "question": "In MCP terminology, what is the relationship between host, client, and server?",
-      "options": [
-        "The host is the LLM application; the client is a sub-component of the host that speaks to exactly one server; the server is your code exposing tools, resources, and prompts",
-        "The host and the client are the same component inside the LLM application, and the server is just another name for the LLM's own reasoning process, because one plausible output is sufficient production evidence",
-        "The server is the LLM application itself, while the host is a thin wrapper process that exposes the model's own tools back to it for calling",
-        "The client refers only to the protocol version number negotiated at startup, and the host and server are interchangeable terms for one process"
-      ],
-      "correct": 0,
-      "explanation": "The lesson defines the host as the LLM application (e.g. Claude Desktop), the client as a sub-component of the host that speaks to exactly one server, and the server as the code exposing tools, resources, and prompts. One host can mount many servers, each through its own client."
-    },
-    {
-      "stage": "check",
-      "question": "What is the 2025-06-18 transport that replaced the earlier SSE-only remote transport?",
-      "options": [
-        "WebTransport (QUIC-based)",
-        "Streamable HTTP transport",
-        "WebSocket-only transport",
-        "gRPC bidirectional streaming"
-      ],
-      "correct": 1,
-      "explanation": "The lesson's wire-format section lists streamable HTTP, alongside stdio, as a transport for MCP's JSON-RPC 2.0 messages; of the four options, it is the only one the lesson names."
-    },
-    {
-      "stage": "post",
-      "question": "When should a tool be split into its own MCP server instead of staying inline?",
-      "options": [
-        "When it is called fewer than 10 times per day, since low-traffic tools are always safe to keep inline",
-        "When it returns more than 1KB of data, since payload size alone determines whether a server should be separate — and applies unchanged even when the lesson's stated preconditions fail",
-        "Never; MCP is only useful for local development tools and cannot be exposed to more than one host",
-        "When the tool is called from two or more different hosts and is read-only/cacheable, making a shared server worth the overhead"
+        "It omits `delete_user` entirely because destructive tools cannot be advertised",
+        "It marks `add` with `destructiveHint: true` because every tool mutates server state",
+        "It requires a second approval request before returning either tool's schema",
+        "It flags `delete_user` with `destructiveHint`"
       ],
       "correct": 3,
-      "explanation": "A tool used by only one host, or one with side effects that must stay tightly scoped, is usually simpler to keep inline; the shared-server overhead pays off once multiple hosts need the same read-only, cacheable capability."
+      "explanation": "The decorator stores `destructive=True` for `delete_user`. `tools/list` exposes that metadata so a host can require confirmation before a mutating call; both tools remain discoverable."
+    },
+    {
+      "stage": "check",
+      "question": "What does the client receive from `resources/read` for URI `config://app`?",
+      "options": [
+        "A `contents` list with the URI, `text/plain` MIME type, and the JSON application config text",
+        "A JSON-RPC error because resources can be listed but never read",
+        "A tool-call envelope containing the `add` function's sum",
+        "The prompt template for `code_review`, because resources and prompts share one response field"
+      ],
+      "correct": 0,
+      "explanation": "The registered `app_config` resource returns a JSON string. `resources/read` wraps it in `contents` with the original URI and `mimeType: text/plain`; it does not invoke a tool or prompt."
+    },
+    {
+      "stage": "check",
+      "question": "What shape does `prompts/get` return for `code_review(language=\"Python\", code=\"x = 1\")`?",
+      "options": [
+        "A list of tool schemas with `language` and `code` as required properties",
+        "`messages` with one rendered user text",
+        "A raw string with no JSON-RPC result wrapper",
+        "A resource `contents` list whose URI is `code_review://Python`"
+      ],
+      "correct": 1,
+      "explanation": "The prompt handler formats the reviewer instruction and `prompts/get` returns it as `messages: [{role: \"user\", content: {type: \"text\", text: ...}}]`."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Model Context Protocol (MCP)?",
+      "question": "What JSON-RPC error does `MCPServer.handle` return for an unknown method such as `ping`?",
       "options": [
-        "Apply the lesson's decision or implementation workflow to a concrete case",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Code `-32602` with the message `missing key`",
+        "Code `0` with a successful empty result",
+        "Code `-32601` with an `unknown method: ping` message",
+        "No response, because unknown requests are discarded by the in-memory pipe"
       ],
-      "correct": 0,
-      "explanation": "“Apply the lesson's decision or implementation workflow to a concrete case” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The dispatcher has an explicit fallback for unrecognized methods and returns a JSON-RPC 2.0 error with code `-32601`, preserving the request ID. Missing parameters use `-32602` instead."
+    },
+    {
+      "stage": "post",
+      "question": "If `MCPClient.request(\"tools/call\", {\"name\": \"missing\"})` reaches a `KeyError`, what does the client do?",
+      "options": [
+        "It silently returns `None` so the model can choose a different tool",
+        "It registers a new no-op tool named `missing` and retries the request",
+        "It converts the missing tool into a resource read at the same name",
+        "It raises `RuntimeError` from the server error"
+      ],
+      "correct": 3,
+      "explanation": "`MCPServer.handle` converts missing dictionary keys into an error response. `MCPClient.request` checks for `error` and raises `RuntimeError(response[\"error\"][\"message\"])`, making dispatch failures visible to the caller."
     }
   ]
 }

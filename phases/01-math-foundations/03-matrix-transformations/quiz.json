@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is an eigenvector of a matrix?",
+      "question": "Where does the point [1, 0] go under a counterclockwise 90-degree rotation?",
       "options": [
-        "The largest row in the matrix",
-        "A vector that the matrix only scales (never rotates) when multiplied",
-        "A vector perpendicular to all columns of the matrix",
-        "The diagonal entries of the matrix expressed as a vector — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "An eigenvector v satisfies Av = lambda*v, meaning the matrix A only stretches v by the scalar factor lambda (the eigenvalue) without changing its direction."
-    },
-    {
-      "stage": "check",
-      "question": "What does the determinant of a 2D transformation matrix represent geometrically?",
-      "options": [
-        "The angle of rotation applied by the matrix",
-        "The factor by which the matrix scales area",
-        "The number of eigenvectors the matrix has",
-        "The trace of the matrix"
-      ],
-      "correct": 1,
-      "explanation": "The determinant measures how much the transformation scales area. det=1 preserves area (rotation), det=2 doubles area, det=0 crushes to a lower dimension, and det=-1 preserves area but flips orientation."
-    },
-    {
-      "stage": "check",
-      "question": "Why does the order of matrix transformations matter? (i.e., why is R @ S different from S @ R?)",
-      "options": [
-        "Matrix addition is not commutative",
-        "Matrix multiplication is not commutative: rotating then scaling gives a different result than scaling then rotating",
-        "The determinants are different for each order",
-        "One order produces a larger matrix than the other, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path"
-      ],
-      "correct": 1,
-      "explanation": "Matrix multiplication is not commutative. Rotating (1,0) by 90 degrees then scaling by (2,0.5) gives (0,0.5), but scaling first then rotating gives (0,2). The geometric operations compose differently."
-    },
-    {
-      "stage": "check",
-      "question": "In a recurrent neural network, what happens when the weight matrix has eigenvalues with magnitude greater than 1?",
-      "options": [
-        "The network learns faster",
-        "Outputs explode exponentially over time steps (exploding gradient problem)",
-        "The network becomes more stable",
-        "The eigenvalues converge to 1 over training, before defining the measurement, acceptance threshold, or rollback path"
-      ],
-      "correct": 1,
-      "explanation": "Repeated multiplication by a matrix amplifies the eigenvalue directions. Eigenvalues > 1 cause exponential growth (exploding gradients), while eigenvalues < 1 cause exponential decay (vanishing gradients)."
-    },
-    {
-      "stage": "post",
-      "question": "The matrix A = [[2, 1], [1, 2]] has eigenvalues 3 and 1. What does eigendecomposition A = V @ D @ V^(-1) reveal?",
-      "options": [
-        "A is equivalent to two rotations",
-        "A stretches space by 3x along the [1,1] direction and leaves the [1,-1] direction unchanged",
-        "A compresses all vectors by a factor of 2",
-        "A has rank 1 and maps all vectors to a line — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "The eigenvalue 3 with eigenvector [1,1] means A stretches 3x along the diagonal. The eigenvalue 1 with eigenvector [1,-1] means A leaves the anti-diagonal unchanged. D holds {3,1}, V holds the eigenvectors."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Matrix Transformations?",
-      "options": [
-        "Compose multiple transformations by matrix multiplication and verify that order matters",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "[0, 1]",
+        "[0, -1]",
+        "[-1, 0]",
+        "[1, 1]"
       ],
       "correct": 0,
-      "explanation": "“Compose multiple transformations by matrix multiplication and verify that order matters” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The rotation matrix [[0,-1],[1,0]] maps [x,y] to [-y,x], so [1,0] becomes [0,1]."
+    },
+    {
+      "stage": "check",
+      "question": "What does scaling_2d(2, 3) do to the point [1, 1]?",
+      "options": [
+        "[1, 1]",
+        "[2, 3]",
+        "[5, 5]",
+        "[3, 2]"
+      ],
+      "correct": 1,
+      "explanation": "The diagonal scaling matrix multiplies the x coordinate by 2 and the y coordinate by 3."
+    },
+    {
+      "stage": "check",
+      "question": "With R a 90-degree rotation and S=diag(2,0.5), what is S @ R @ [1,0]?",
+      "options": [
+        "[0, 2]",
+        "[2, 0]",
+        "[0, 0.5]",
+        "[1, 0.5]"
+      ],
+      "correct": 2,
+      "explanation": "R first maps [1,0] to [0,1]. S then scales that result to [0,0.5]. Matrix order records the rightmost operation first."
+    },
+    {
+      "stage": "check",
+      "question": "What are the eigenvalues of [[2, 1], [1, 2]]?",
+      "options": [
+        "2 and 2",
+        "4 and 0",
+        "1 and -1",
+        "3 and 1"
+      ],
+      "correct": 3,
+      "explanation": "The characteristic polynomial is lambda^2 - 4 lambda + 3, which factors as (lambda-3)(lambda-1)."
+    },
+    {
+      "stage": "post",
+      "question": "What does det(reflection_y()) = -1 tell you about a 2D reflection?",
+      "options": [
+        "It preserves area but reverses orientation",
+        "It doubles the area",
+        "It collapses the plane to a line",
+        "It preserves orientation and changes neither axis"
+      ],
+      "correct": 0,
+      "explanation": "A determinant of absolute value one preserves area magnitude. The negative sign indicates an orientation flip, as reflection across the y-axis does."
+    },
+    {
+      "stage": "post",
+      "question": "For covariance-like matrix [[3, 1], [1, 3]], which direction is the principal direction with the largest eigenvalue?",
+      "options": [
+        "[1, -1] (up to normalization)",
+        "[1, 1] (up to normalization)",
+        "[1, 0] only",
+        "[0, 0]"
+      ],
+      "correct": 1,
+      "explanation": "The vector [1,1] has eigenvalue 4, while [1,-1] has eigenvalue 2. PCA selects the direction associated with the larger variance."
     }
   ]
 }

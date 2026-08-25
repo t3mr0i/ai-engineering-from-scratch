@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does a ViT turn an image into a sequence of tokens?",
+      "question": "For image_size=64 and patch_size=16, how many image patches does PatchEmbedding create?",
       "options": [
-        "Flattens the entire image into one vector",
-        "Applies a conv with kernel_size = stride = patch_size to split the image into non-overlapping patches and linearly project each to a token embedding in one operation",
-        "Runs a CNN first and uses its feature map as tokens — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "Sorts pixel intensities"
+        "4",
+        "64",
+        "16",
+        "256"
       ],
-      "correct": 1,
-      "explanation": "The first layer of a ViT is a conv with kernel_size = stride = 16, turning a 224x224 image into a 14x14 grid of 16x16 patches, each projected to dim=768. That single conv does both patchification and projection. The result is 196 tokens that a standard transformer encoder can process."
+      "correct": 2,
+      "explanation": "There are 64/16=4 patches along each axis, giving 4*4=16 patches."
     },
     {
       "stage": "check",
-      "question": "What is the [CLS] token in ViT and why is it needed?",
+      "question": "What shape does vit.patch(x) return for x shaped (2,3,64,64) and dim=192?",
       "options": [
-        "A learned vector prepended to the token sequence; after N transformer layers its output aggregates the whole image and feeds the classifier head",
-        "A special pixel value",
-        "A placeholder for missing data, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "A dropout mask"
+        "(2,192,16)",
+        "(2,17,192)",
+        "(16,3,192)",
+        "(2,16,192)"
+      ],
+      "correct": 3,
+      "explanation": "The convolution creates (B,192,4,4), flatten(2) gives 16 positions, and transpose makes (B,16,192)."
+    },
+    {
+      "stage": "check",
+      "question": "What is the token shape immediately after adding the CLS token in ViT?",
+      "options": [
+        "(2,17,192)",
+        "(2,16,192)",
+        "(2,192,17)",
+        "(17,2,192)"
       ],
       "correct": 0,
-      "explanation": "ViT follows BERT's convention: prepend a learned vector (the CLS token) to the patch sequence. Self-attention lets every token see every other token, so the CLS token aggregates global information from all patches. The classifier reads only the CLS output. Alternative designs use average-pooling over all patch tokens (used by ConvNeXt and many post-ViT models)."
+      "explanation": "The learned CLS token adds one position to the 16 patch tokens, while the batch and embedding dimensions stay unchanged."
     },
     {
       "stage": "check",
-      "question": "Why did the original ViT paper need JFT-300M pretraining to beat ResNet, and why does DeiT not?",
+      "question": "What shape must ViT.pos_embed have for this configuration?",
       "options": [
-        "ViT is broken without JFT-300M, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "ViT has weaker inductive biases than CNNs; without enough data it overfits. DeiT showed that with strong augmentation (RandAugment, Mixup, CutMix), stochastic depth, and optionally CNN distillation, ViTs train fine on ImageNet-1k alone",
-        "DeiT uses different attention",
-        "The ViT paper was wrong"
+        "(2,17,192)",
+        "(1,17,192)",
+        "(1,16,192)",
+        "(17,192)"
       ],
       "correct": 1,
-      "explanation": "ViT's lack of inductive bias (no locality, no translation equivariance baked in) means the network has to learn these from data. With 1M ImageNet images that is hard; with 300M JFT images it is easy. DeiT replaced the data with training-recipe improvements: heavy augmentation, stochastic depth, and distillation from a CNN teacher, all of which compensate for the lack of priors."
-    },
-    {
-      "stage": "check",
-      "question": "Pre-LayerNorm (`x = x + sublayer(LN(x))`) vs post-LayerNorm (`x = LN(x + sublayer(x))`) — which is used in modern transformers and why?",
-      "options": [
-        "Post-LN; it is simpler",
-        "Pre-LN; it trains deeper networks stably without learning-rate warmup and avoids the gradient instabilities that post-LN suffers past about 6 layers",
-        "They are identical",
-        "Neither; modern transformers skip LayerNorm, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "Post-LN was the original transformer (2017) and required careful warmup + small learning rates past 6-8 layers. Pre-LN (Xiong et al., 2020; used by ViT, GPT-2+, every modern LLM) is numerically more stable: the residual stream accumulates without passing through LN, and each sublayer operates on a normalised input. Every transformer deeper than 12 layers uses pre-LN."
+      "explanation": "It broadcasts across batches and includes one positional vector for each patch plus the CLS position."
     },
     {
       "stage": "post",
-      "question": "Swin Transformer introduces windowed attention. What problem does it solve?",
+      "question": "Which token is fed to ViT's final classification head?",
       "options": [
-        "Vanishing gradients",
-        "Full attention has O((H*W)^2) cost; Swin restricts attention to local windows of 7x7 patches, reducing cost to O(H*W * window^2). Alternating blocks shift the window by half its size so information eventually mixes across the image",
-        "BatchNorm not supported — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "Overfitting to texture"
+        "The mean of the raw RGB pixels",
+        "The last patch token only, x[:,-1]",
+        "The CLS token at x[:,0] after the final LayerNorm",
+        "All tokens flattened without normalization"
       ],
-      "correct": 1,
-      "explanation": "A 224x224 image with 4x4 patches has 56*56 = 3136 tokens; full attention is 3136^2 = ~10M pairs per layer. Swin attends only within 7x7 windows, giving 49^2 = 2401 pairs per window (plus the window count). Shifted windows in alternating blocks mix information across windows over a few layers. This brings a CNN-like locality prior back to the transformer without giving up attention."
+      "correct": 2,
+      "explanation": "The forward method applies self.ln(x[:,0]) and sends that single embedding to self.head."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Vision Transformers (ViT)?",
+      "question": "What does the ViT block's self-attention operate over?",
       "options": [
-        "Explain why ViT was thought to need massive pretraining data until DeiT and MAE proved otherwise",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Only the height dimension of the original image",
+        "The class logits after the head",
+        "One scalar per convolutional filter",
+        "The sequence of patch and CLS tokens"
       ],
-      "correct": 0,
-      "explanation": "“Explain why ViT was thought to need massive pretraining data until DeiT and MAE proved otherwise” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 3,
+      "explanation": "MultiheadAttention receives the token sequence, allowing each patch representation to interact with other patches and CLS."
     }
   ]
 }

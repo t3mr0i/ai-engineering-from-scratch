@@ -1,78 +1,78 @@
 {
   "lesson": "12-kv-cache-flash-attention",
-  "title": "KV Cache, Flash Attention & Inference Optimization",
+  "title": "KV Cache, Flash Attention, and Inference Optimization",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to KV Cache, Flash Attention & Inference Optimization?",
+      "question": "What does KVCache.append(k, v) retain for a later decode step?",
       "options": [
-        "Derive the mechanism behind KV Cache, Flash Attention & Inference Optimization from tensor operations",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Derive the mechanism behind KV Cache, Flash Attention & Inference Optimization from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of KV Cache, Flash Attention & Inference Optimization?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the core component without relying on a transformer framework",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through KV Cache, Flash Attention & Inference Optimization?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Trace tensor shapes and information flow through the implementation",
-        "Treat one successful example as proof that every edge case works"
+        "It stores only the newest query and recomputes all keys",
+        "It averages k and v into one scalar and discards their positions",
+        "It appends k to K and v to V so future queries can attend to the full prefix",
+        "It appends values to K but leaves V unchanged"
       ],
       "correct": 2,
-      "explanation": "“Trace tensor shapes and information flow through the implementation” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The cache maintains parallel K and V lists; every decode step appends the current pair before calling attention_full."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits KV Cache, Flash Attention & Inference Optimization?",
+      "question": "For N=10, how many cumulative attention operations does decode_naive report?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate the computational and modeling trade-offs introduced by KV Cache, Flash Attention & Inference Opti...",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate the computational and modeling trade-offs introduced by KV Cache, Flash Attention & Inference Opti...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for KV Cache, Flash Attention & Inference Optimization?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Derive the mechanism behind KV Cache, Flash Attention & Inference Optimization from tensor operations"
+        "100",
+        "10",
+        "20",
+        "55"
       ],
       "correct": 3,
-      "explanation": "“Derive the mechanism behind KV Cache, Flash Attention & Inference Optimization from tensor operations” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The loop counts 1+2+...+10 = 10*11/2 = 55 prefix positions attended across all decode steps."
+    },
+    {
+      "stage": "check",
+      "question": "What numerical idea lets tiled_softmax_dot combine blocks without storing one full score row?",
+      "options": [
+        "It carries a running maximum and normalization sum while rescaling the partial weighted value sum",
+        "It replaces softmax with an unnormalized sum of raw dot products",
+        "It drops every score below zero before normalizing",
+        "It recomputes the complete attention matrix after each tile"
+      ],
+      "correct": 0,
+      "explanation": "new_m, exp_old, and s rescale previous contributions when a later tile has a larger score maximum, preserving the softmax result."
+    },
+    {
+      "stage": "check",
+      "question": "What is the formula implemented by kv_cache_bytes(N, n_layers, n_heads_kv, d_head, dtype=2)?",
+      "options": [
+        "N+n_layers+n_heads_kv+d_head+dtype bytes",
+        "2*N*n_layers*n_heads_kv*d_head*dtype bytes",
+        "N*n_layers*d_head divided by n_heads_kv",
+        "2*N*dtype independent of layers and head width"
+      ],
+      "correct": 1,
+      "explanation": "The leading 2 accounts for separate K and V tensors; the remaining factors count positions, layers, KV heads, head width, and bytes per element."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for KV Cache, Flash Attention & Inference Optimization?",
+      "question": "Why can decode_cached avoid rebuilding earlier K and V projections even though each query still attends to a growing prefix?",
       "options": [
-        "Implement the core component without relying on a transformer framework",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "It stores only attention weights, which are independent of K and V",
+        "It attends only to the newest token and ignores the prefix",
+        "It appends each new K/V pair once and reuses the cache for later attention calls",
+        "It uses top-k sampling to remove old keys"
       ],
-      "correct": 0,
-      "explanation": "“Implement the core component without relying on a transformer framework” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "decode_cached appends the current pair and passes cache.K/cache.V to attention_full; the prefix representations are not recomputed."
+    },
+    {
+      "stage": "post",
+      "question": "What should happen when tiled_softmax_dot is run with tile=1 versus tile=32 on the demo's 10 keys?",
+      "options": [
+        "The output dimension changes from 8 to 32",
+        "Only tile=1 is normalized; tile=32 returns raw values",
+        "Tile=32 sees no keys because it is larger than the sequence",
+        "Both should agree with attention_full up to floating-point reassociation"
+      ],
+      "correct": 3,
+      "explanation": "Tile size changes how blocks are accumulated, not the mathematical attention; the demo reports tiny maximum absolute differences for each size."
     }
   ]
 }

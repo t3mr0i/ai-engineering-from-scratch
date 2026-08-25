@@ -63,6 +63,18 @@ Early 2026: AutoGen v0.7.x is stable for research and prototyping. Microsoft has
 
 
 
+## Build It
+
+Reconstruct **AutoGen v0.4: Actor Model and Agent Framework** by following `Message` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.
+
+## Use It
+
+Call `Message` from a small caller with the smallest valid record {"id": 1}. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-actor-runtime.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [AutoGen v0.4, Microsoft Research](https://www.microsoft.com/en-us/research/articles/autogen-v0-4-reimagining-the-foundation-of-agentic-ai-for-scale-extensibility-and-robustness/) — the redesign post
@@ -71,10 +83,20 @@ Early 2026: AutoGen v0.7.x is stable for research and prototyping. Microsoft has
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Describe the actor model: agents as actors, messages as the only IPC, failure isolation per actor.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Name AutoGen v0.4's three API layers — Core, AgentChat, Extensions — and what each is for.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain why decoupling message delivery from handling gives fault isolation and natural concurrency.
+Keep two runs side by side for **AutoGen v0.4: Actor Model and Agent Framework**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
+
+1. **Read the first result.** From `code/`, run `python3 main.py` using the smallest valid record {"id": 1}. Follow `Message`, `Actor`, `receive`. Expect validation names the missing field or rejects the request; it must not silently accept an incomplete record; capture the first printed shape, metric, status, or summary field and state which part supports **Describe the actor model: agents as actors, messages as the only IPC, failure isolation per actor.**.
+2. **Run a two-value comparison.** Repeat the command after changing only the optional field: use the same record with one optional field changed. Predict the direction of the change, then compare the two output values. Explain why **Name AutoGen v0.4's three API layers — Core, AgentChat, Extensions — and what each is for.** says the other inputs should stay fixed.
+3. **Try an adversarial fixture.** Feed the implementation a record missing the required "id" field. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Explain why decoupling message delivery from handling gives fault isolation and natural concurrency.** and record the exception text if the code rejects the case.
+4. **Write the operator note.** Open `outputs/skill-actor-runtime.md` and add a worked example using the smallest valid record {"id": 1}. Include the input contract, one expected output field, and a named acceptance check for **Implement a stdlib actor runtime in Python and port a two-agent code-review flow onto it.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Describe the actor model: agents as actors, messages as the only IPC, failure isolation per actor,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain why decoupling message delivery from handling gives fault isolation and natural concurrency,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **AutoGen v0.4: Actor Model and Agent Framework** should contain:
+
+- the `python3 main.py` output for the smallest valid record {"id": 1}, with `Message`, `Actor`, `receive` traced to the value or shape that supports **Describe the actor model: agents as actors, messages as the only IPC, failure isolation per actor.**;
+- a before/after comparison for the optional field, where the same record with one optional field changed changes the observation in the direction predicted by **Name AutoGen v0.4's three API layers — Core, AgentChat, Extensions — and what each is for.**;
+- a recorded result for a record missing the required "id" field that matches the implementation’s validation or empty-result contract and explains the evidence for **Explain why decoupling message delivery from handling gives fault isolation and natural concurrency.**; and
+- an updated `outputs/skill-actor-runtime.md` example with a concrete input, expected output field, and acceptance check tied to **Implement a stdlib actor runtime in Python and port a two-agent code-review flow onto it.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

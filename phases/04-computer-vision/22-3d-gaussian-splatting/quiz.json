@@ -1,78 +1,78 @@
 {
   "lesson": "22-3d-gaussian-splatting",
-  "title": "3D Gaussian Splatting from Scratch",
+  "title": "3D Gaussian Splatting",
   "questions": [
     {
       "stage": "pre",
-      "question": "Why did 3D Gaussian Splatting largely replace NeRF as the production default for photorealistic scene reconstruction by 2026?",
+      "question": "Where is a 3D Gaussian density largest?",
       "options": [
-        "Gaussian Splatting produces higher image quality than NeRF in every case — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "3DGS is explicit (no MLP per pixel): rendering is GPU rasterisation at 100+ fps, training takes minutes instead of hours, scenes are editable, and Khronos + OpenUSD both standardised it in 2026",
-        "NeRF was retracted from the research record",
-        "PyTorch stopped supporting NeRF operators"
-      ],
-      "correct": 1,
-      "explanation": "3DGS swaps an implicit MLP for millions of explicit 3D Gaussians. Rendering becomes sorted alpha compositing that GPUs run at 100+ fps on consumer hardware. Training runs in minutes. Every Gaussian is editable. By 2026 Khronos ratified a glTF extension for 3DGS and OpenUSD 26.03 shipped a native schema, turning 3DGS into a portable production format."
-    },
-    {
-      "stage": "check",
-      "question": "A 3D Gaussian in a scene carries position, rotation, scale, opacity, and what additional representation to handle view-dependent colour (like specular highlights)?",
-      "options": [
-        "A second RGB texture",
-        "A small MLP per Gaussian, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "Spherical harmonics coefficients: up to degree 3 gives 16 coefficients per colour channel, evaluated against the viewing direction at render time",
-        "A light probe cubemap"
+        "At the farthest point from its mean",
+        "Only where its covariance is zero",
+        "At its mean",
+        "At every point with the same depth"
       ],
       "correct": 2,
-      "explanation": "Spherical harmonics are the Fourier basis on the sphere. Each Gaussian stores learned SH coefficients that encode how its colour varies with viewing direction. At render time you evaluate the coefficients against the unit vector from pixel to Gaussian centre, giving specular highlights, mild reflections, and view-dependent shading without textures or MLPs."
+      "explanation": "The exponent is zero at the mean and decreases away from it, so the Gaussian reaches its maximum there."
     },
     {
       "stage": "check",
-      "question": "During 3DGS training, densification includes 'clone' and 'split' operations. What triggers each?",
+      "question": "Why does the renderer sort Gaussian centers from near to far before compositing?",
       "options": [
-        "Nothing — Gaussians are fixed after initialisation, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "High gradient magnitude with small scale triggers clone (more local detail needed); high gradient with large scale triggers split (one Gaussian too smooth to fit the region). Opacity-below-threshold triggers pruning",
-        "Time since last checkpoint",
-        "Random sampling during every epoch"
+        "Sorting makes every covariance diagonal",
+        "Farther points must always be drawn first for a larger image",
+        "Depth order is used only to choose the SH degree",
+        "Front-to-back order lets nearer opacity hide farther color"
       ],
-      "correct": 1,
-      "explanation": "Adaptive densification is what lets 3DGS grow from ~100k SfM-seeded Gaussians to 1-5M at convergence. Clone duplicates under-resolved small Gaussians; split breaks up over-large Gaussians into two smaller ones; prune drops Gaussians whose sigmoid opacity has decayed below the threshold. These three operations plus gradient descent on parameters are the whole training dynamics."
+      "correct": 3,
+      "explanation": "Alpha compositing is order dependent: a foreground Gaussian should consume transmittance before a background Gaussian contributes."
     },
     {
       "stage": "check",
-      "question": "The colour equation for one pixel in both NeRF and 3DGS is `C = sum_i alpha_i * T_i * c_i` where `T_i = prod_{j<i}(1 - alpha_j)`. What does this shared equation say about the two methods?",
+      "question": "After a splat with opacity a, how is the remaining transmittance updated?",
       "options": [
-        "They are mathematically identical in every way, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "Both integrate the same volumetric rendering equation; the difference is only in the representation (implicit MLP samples vs explicit sparse Gaussians) and the rendering procedure (ray marching vs rasterisation) — which is why their image quality is comparable",
-        "NeRF is strictly better",
-        "3DGS is strictly better"
-      ],
-      "correct": 1,
-      "explanation": "The shared equation is the classical volumetric render. NeRF evaluates it by sampling along rays and querying an MLP. 3DGS evaluates it by projecting Gaussians to 2D and alpha-compositing sorted primitives per pixel. Same physics, same loss, different data structures and rendering algorithms. That identity is why they land at similar final PSNR / LPIPS; the practical gap is speed and editability."
-    },
-    {
-      "stage": "post",
-      "question": "You want to ship a 3DGS scene across Unreal Engine, Vision Pro, Blender, and a Three.js web viewer in 2026. Which export format is the safest bet?",
-      "options": [
-        "Raw `.ply` alone",
-        "glTF with the `KHR_gaussian_splatting` extension (Khronos RC Feb 2026) and/or OpenUSD 26.03 with `UsdVolParticleField3DGaussianSplat`; these are the two ratified/standardised formats in 2026",
-        "A custom binary blob per viewer — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "PNG strips of the 3D Gaussians"
-      ],
-      "correct": 1,
-      "explanation": "Up to 2024, every viewer had its own format. Khronos ratified KHR_gaussian_splatting for glTF in Feb 2026 and OpenUSD 26.03 added a native 3DGS schema in April 2026. Exporting to either gives you portability across engines, viewers, and pipelines. `.ply` remains the interchange lingua franca for research but is less structured. For cross-tool production, glTF + USD is the 2026 answer."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for 3D Gaussian Splatting from Scratch?",
-      "options": [
-        "State the six per-Gaussian parameters (position, rotation quaternion, scale, opacity, spherical harmonics c...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "T is multiplied by 1-a",
+        "T is replaced by a",
+        "T is increased by a",
+        "T is divided by 1-a"
       ],
       "correct": 0,
-      "explanation": "“State the six per-Gaussian parameters (position, rotation quaternion, scale, opacity, spherical harmonics c...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The renderer keeps the fraction of light not absorbed by the splat, so T becomes T*(1-a)."
+    },
+    {
+      "stage": "check",
+      "question": "What image shape does render_gaussians return when H=W=48 and colors have three channels?",
+      "options": [
+        "(3,48,48,48)",
+        "(48,48,3)",
+        "(48,3)",
+        "(48,48,1)"
+      ],
+      "correct": 1,
+      "explanation": "The output buffer is an H by W image with an RGB color vector at each pixel."
+    },
+    {
+      "stage": "post",
+      "question": "Which construction gives a rotated, scaled Gaussian covariance in the lesson?",
+      "options": [
+        "Sigma = R + S, which is always a covariance",
+        "Sigma = S R^T without a matching rotation",
+        "Sigma = R S R^T, with positive scales represented before squaring",
+        "Sigma = the RGB color matrix of the splat"
+      ],
+      "correct": 2,
+      "explanation": "The code builds a diagonal scale matrix, rotates it with R, and uses R S R^T; exponentiated scales keep the covariance well behaved."
+    },
+    {
+      "stage": "post",
+      "question": "How many spherical-harmonic basis values are used for degree 3 in the demo?",
+      "options": [
+        "3",
+        "9",
+        "32",
+        "16"
+      ],
+      "correct": 3,
+      "explanation": "A degree-l spherical-harmonic expansion has (l+1)^2 terms, giving 16 bases when l=3."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does entity linking add on top of NER?",
+      "question": "What does disambiguate return for a mention absent from ALIAS_INDEX?",
       "options": [
-        "Translations",
-        "Sentiment polarity",
-        "Part-of-speech tags — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "It maps each detected mention to a unique entry in a knowledge base (Wikidata, Wikipedia, or a domain KB)"
+        "(None, 0.0)",
+        "The first entity in KB_DESC",
+        "(mention, 1.0)",
+        "A random candidate and its prior"
       ],
-      "correct": 3,
-      "explanation": "EL turns a mention into a canonical KB id, disambiguating between same-name entities."
+      "correct": 0,
+      "explanation": "The function checks candidates and immediately returns None, 0.0 when the alias is unknown."
     },
     {
       "stage": "check",
-      "question": "What are the two main subtasks in entity linking?",
+      "question": "How is a candidate score formed when use_prior=True?",
       "options": [
-        "Tokenization and parsing",
-        "POS tagging and lemmatization, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "Embedding and clustering",
-        "Candidate generation (shortlist of plausible KB entries) and disambiguation (pick the right one given context)"
+        "Only the candidate prior, ignoring context",
+        "Jaccard context-description overlap plus 0.1 times the candidate prior",
+        "The raw count of characters in the mention",
+        "The inverse document frequency of the alias"
       ],
-      "correct": 3,
-      "explanation": "EL decomposes into proposing candidates then ranking them by contextual fit."
+      "correct": 1,
+      "explanation": "The code computes score = jac + 0.1 * prior after comparing context tokens with KB description tokens."
     },
     {
       "stage": "check",
-      "question": "Why must mention recall be reported alongside disambiguation accuracy?",
+      "question": "What changes when use_prior=False?",
       "options": [
-        "Mention recall is mandatory by GDPR, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "Recall replaces precision",
-        "Disambiguation cannot recover from missing candidates; the pipeline is bounded by candidate-generation recall",
-        "Recall is required by spaCy"
+        "The context is ignored and the first alias wins",
+        "All candidate descriptions are removed from KB_DESC",
+        "Every candidate gets prior=1.0, so only equal prior offsets remain and context overlap decides the ranking",
+        "The score becomes a probability that sums to one"
       ],
       "correct": 2,
-      "explanation": "If candidates miss the gold entity, no disambiguator can fix it; recall floors pipeline quality."
+      "explanation": "The branch sets prior to 1.0 for every candidate instead of reading PRIORS."
     },
     {
       "stage": "check",
-      "question": "How does GENRE perform entity linking?",
+      "question": "Which candidate should the context \"Jordan borders Syria, Iraq, and Saudi Arabia\" favor?",
       "options": [
-        "Decodes the entity's canonical name token-by-token under constrained decoding over a trie of valid KB ids",
-        "By BM25",
-        "By computing TF-IDF, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "By PageRank"
+        "Q41421, Michael Jordan the basketball player",
+        "Q254110, Michael B. Jordan the actor",
+        "Q3308285, Michael I. Jordan the professor",
+        "Q810, the country of Jordan"
       ],
-      "correct": 0,
-      "explanation": "GENRE generates the canonical KB name with constrained decoding to guarantee a valid id."
+      "correct": 3,
+      "explanation": "The geographic neighbors overlap the country description, so its Jaccard context score is strongest."
     },
     {
       "stage": "post",
-      "question": "What is NIL handling in entity linking?",
+      "question": "Why is the prior useful for an ambiguous alias such as Apple when context overlap ties?",
       "options": [
-        "Predicting a 'not in KB' label when no candidate is a real match (emerging entities, obscure people)",
-        "Returning the entire candidate list — and applies unchanged even when the lesson's stated preconditions fail",
-        "Lowercasing the input",
-        "Skipping every mention"
+        "It adds a small popularity or prior-probability signal to break a context tie",
+        "It guarantees the company is always selected even in fruit context",
+        "It replaces alias lookup with a spelling correction",
+        "It makes every candidate description identical"
       ],
       "correct": 0,
-      "explanation": "NIL prediction prevents guessing wrong KB ids for entities the KB does not cover."
+      "explanation": "The 0.1 prior term can prefer a common candidate, but the context score still contributes."
     },
     {
       "stage": "post",
-      "question": "Why does popularity bias hurt entity linking in specialized domains?",
+      "question": "What does run_eval report for its test cases?",
       "options": [
-        "Models trained on web data over-predict frequent entities (e.g. basketball Jordan over the ML researcher Michael I. Jordan)",
-        "It biases toward older entities only, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "Popularity removes NIL",
-        "Popularity helps recall"
+        "Only the highest score across all aliases",
+        "The number and percentage of predicted entity IDs equal to the gold IDs",
+        "A token-level BLEU score for each context",
+        "The number of unresolved pronouns"
       ],
-      "correct": 0,
-      "explanation": "Popularity priors skew predictions away from less-common, domain-specific name-clashes."
+      "correct": 1,
+      "explanation": "It increments correct when pred == gold and prints correct/len(test_cases) as accuracy."
     }
   ]
 }

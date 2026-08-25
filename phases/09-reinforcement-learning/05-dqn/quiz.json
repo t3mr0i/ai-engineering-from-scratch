@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Deep Q-Networks (DQN)?",
+      "question": "What does state_features((2, 1)) contain when GRID=4?",
       "options": [
-        "Formulate Deep Q-Networks (DQN) in terms of states, actions, rewards, and objectives",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
+        "A length-16 one-hot vector with its 1 at index 2*4+1=9",
+        "A length-4 vector containing the row and column twice",
+        "The four Q values computed by the network",
+        "A random feature vector whose length changes with the state"
       ],
       "correct": 0,
-      "explanation": "“Formulate Deep Q-Networks (DQN) in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "state_features allocates GRID*GRID zeros and sets feat[r*GRID+c] to 1.0, so (2,1) maps to index 9."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Deep Q-Networks (DQN)?",
+      "question": "What does forward(net, x) produce in this DQN?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the central update rule from first principles",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "Only the hidden activations; actions are selected elsewhere",
+        "A ReLU hidden vector and four linear Q values, one per action",
+        "A probability distribution whose entries must sum to one",
+        "A scalar reward and the next GridWorld state"
       ],
       "correct": 1,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "forward applies ReLU to the hidden layer and then computes one linear output for each of the four actions; Q values are not softmaxed."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Deep Q-Networks (DQN)?",
+      "question": "For a nonterminal transition in train_step, what target is used for action a?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Trace learning signals through a self-terminating experiment",
-        "Treat one successful example as proof that every edge case works"
+        "The current online Q(s,a) with no reward",
+        "r only, regardless of done",
+        "r + gamma * max(q_next), where q_next comes from the target network",
+        "The mean of all actions in the online network"
       ],
       "correct": 2,
-      "explanation": "“Trace learning signals through a self-terminating experiment” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "When done is false, train_step evaluates state_features(s_next) with target and sets y=r+gamma*max(q_next)."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Deep Q-Networks (DQN)?",
+      "question": "What changes in train_step when a sampled transition has done=True?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate convergence, stability, and exploration trade-offs",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate convergence, stability, and exploration trade-offs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Deep Q-Networks (DQN)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Formulate Deep Q-Networks (DQN) in terms of states, actions, rewards, and objectives"
+        "The transition is removed from the minibatch",
+        "The target uses gamma squared times the terminal Q value",
+        "The action target becomes the average reward in the replay buffer",
+        "The target is just r, so no terminal value is bootstrapped"
       ],
       "correct": 3,
-      "explanation": "“Formulate Deep Q-Networks (DQN) in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The done branch assigns y=r; the target network is consulted only for nonterminal transitions."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Deep Q-Networks (DQN)?",
+      "question": "Why does main keep a separate target network and call clone every 200 environment steps?",
       "options": [
-        "Implement the central update rule from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "To hold the bootstrap Q values fixed between periodic synchronizations",
+        "To make the online network output a probability distribution",
+        "To store actions that were rejected by epsilon-greedy",
+        "To increase the replay buffer capacity from 2,000 to 20,000"
       ],
       "correct": 0,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The target network supplies a slower-moving q_next; main copies online into target when step_count reaches each sync interval."
+    },
+    {
+      "stage": "post",
+      "question": "How does main's exploration schedule change with episode number ep?",
+      "options": [
+        "epsilon grows from 0.05 to 1.0 forever",
+        "epsilon is max(0.05, 1.0 - ep/200), so it decays but never drops below 0.05",
+        "epsilon is always exactly 0.2 because the target network clips it",
+        "epsilon is sampled independently from the replay buffer"
+      ],
+      "correct": 1,
+      "explanation": "The expression starts at 1.0, linearly decreases over 200 episodes, and applies a 0.05 floor for later training."
     }
   ]
 }

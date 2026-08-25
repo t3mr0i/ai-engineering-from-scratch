@@ -212,6 +212,18 @@ graph TD
 
 
 
+## Build It
+
+Reconstruct **Fine-Tuning with LoRA & QLoRA** by following `LoRALayer` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `LoRALayer` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-lora-advisor.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - Hu et al., "LoRA: Low-Rank Adaptation of Large Language Models" (2021) -- the original paper introducing the low-rank decomposition method, tested on GPT-3 175B with rank as low as 4
@@ -225,10 +237,20 @@ graph TD
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement LoRA by injecting low-rank adapter matrices (A and B) into a pretrained model's attention layers.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Calculate the parameter savings of LoRA vs full fine-tuning: rank r with d_model dimensions trains 2*r*d parameters instead of d^2.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Fine-tune a model using QLoRA (4-bit quantized base + LoRA adapters) to fit within consumer GPU memory.
+Make the experiment auditable. Save the input, output, and one sentence explaining how the result bears on the claim.
+
+1. **Trace the happy path.** Run [`main.py`](../code/main.py) with `python3 main.py` from the lesson's `code/` directory. Record the smallest input that demonstrates “Implement LoRA by injecting low-rank adapter matrices (A and B) into a pretrained model's attention layers”. Point to `main.py` and name the returned field or printed value that serves as evidence.
+2. **Perturb the input.** Change exactly one input, threshold, or option that affects “Calculate the parameter savings of LoRA vs full fine-tuning: rank r with d_model dimensions trains 2*r*d parameters instead of d^2”. Predict the direction of the change before running it, then compare the two outputs and explain why the other fields should stay stable.
+3. **Test a failure case.** Construct a case that stresses “Fine-tune a model using QLoRA (4-bit quantized base + LoRA adapters) to fit within consumer GPU memory”: choose an empty collection, missing field, maximum-sized value, malformed record, or another boundary that fits this lesson. Write the expected behavior first and distinguish an intentional guard from an accidental crash.
+4. **Transfer the result.** Open `outputs/prompt-lora-advisor.md` and adapt one example to a real workflow. State the owner, evidence, and next decision required for “Merge LoRA weights back into the base model for deployment and compare inference speed with and without adapters”; mark any assumption that the demo does not establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement LoRA by injecting low-rank adapter matrices (A and B) into a pretrained model's attention layers,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Fine-tune a model using QLoRA (4-bit quantized base + LoRA adapters) to fit within consumer GPU memory,” and cite a repeatable check rather than relying on visual inspection alone.
+A useful submission records `python3 main.py`, the observed output, and the conclusion drawn from it. It should contain:
+
+- evidence for “Implement LoRA by injecting low-rank adapter matrices (A and B) into a pretrained model's attention layers” with the relevant input and returned field;
+- a one-variable comparison that makes “Calculate the parameter savings of LoRA vs full fine-tuning: rank r with d_model dimensions trains 2*r*d parameters instead of d^2” visible;
+- a predicted and observed boundary result for “Fine-tune a model using QLoRA (4-bit quantized base + LoRA adapters) to fit within consumer GPU memory”, including why the behavior is safe; and
+- one concrete update to `outputs/prompt-lora-advisor.md` that applies “Merge LoRA weights back into the base model for deployment and compare inference speed with and without adapters” without hiding uncertainty.
+
+Use `main.py` to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.

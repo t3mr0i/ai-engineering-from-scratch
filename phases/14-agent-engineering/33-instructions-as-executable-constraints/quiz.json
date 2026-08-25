@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the difference between an aspirational rule and an operational rule?",
+      "question": "Which rule slugs does the seeded `agent-rules.md` parser produce?",
       "options": [
-        "Aspirational rules have no check ('be careful'); operational rules carry a machine-checkable function the workbench can run",
-        "Aspirational rules are paid features bundled with premium workbench tooling; operational rules are free",
-        "Operational rules are simply longer prose descriptions written for onboarding new team members who are joining the repository",
-        "Aspirational rules require a manager's sign-off before the agent is ever allowed to act on any of them"
+        "Only `startup/state-file-fresh` and `done/tests-pass`.",
+        "Five rules about tools, prompts, and model selection.",
+        "`startup/state-file-fresh`, `forbidden/no-release-script-edits`, `done/tests-pass`, `uncertainty/open-question-note`, and `approval/new-dependency`.",
+        "No rules, because headings with slashes are ignored."
       ],
-      "correct": 0,
-      "explanation": "Operational rules are testable; aspirational rules are wishes."
+      "correct": 2,
+      "explanation": "`parse_rules` reads the five seeded `##` blocks and extracts each heading as the slug, matching the list printed by the demo."
     },
     {
       "stage": "check",
-      "question": "What five categories does the lesson cover most rules with?",
+      "question": "Why does the bad trace fail `uncertainty/open-question-note`?",
       "options": [
-        "Read, write, exec, fork, and exit as five POSIX process primitives",
-        "Plan, act, reflect, refine, and ship as agent-loop stages",
-        "Low, medium, high, critical, and fatal as severity labels",
-        "Startup, forbidden, definition of done, uncertainty, approval"
+        "Its confidence is 0.9 and it asked for help.",
+        "It has no edited files, so uncertainty cannot be scored.",
+        "Its tests exit 1, which is the only input to the uncertainty rule.",
+        "Its confidence is 0.4 and it did not ask for help; the rule requires confidence at least 0.7 or a question."
       ],
       "correct": 3,
-      "explanation": "Startup, forbidden, definition of done, uncertainty handling, approval boundaries are the five."
+      "explanation": "`opened_question_when_unsure` returns `confidence >= 0.7 or asked_for_help`; the bad trace has 0.4 and `False`, so it fails."
     },
     {
       "stage": "check",
-      "question": "What does the lesson say a rule that doesn't fit any of the five categories usually needs?",
+      "question": "What does `RuleChecker.state_file_fresh` return for the bad trace?",
       "options": [
-        "It gets logged as a low-severity warning until someone recategorizes it",
-        "It usually wants to be split into two separate, single-purpose rules",
-        "It becomes a sixth catch-all category reserved for edge cases",
-        "It is dropped from the rule set until a clean category exists"
+        "`False`, because `read_state_file` is false.",
+        "`True`, because every trace is assumed to read state.",
+        "`True`, because only the file's timestamp matters.",
+        "It raises when the state file was not read."
       ],
-      "correct": 1,
-      "explanation": "The lesson says: \"A rule that does not fit one of these five usually wants to be two rules. Force the split.\""
+      "correct": 0,
+      "explanation": "The checker directly returns `trace.read_state_file`; the bad trace sets that field to `False`, while the good trace sets it to `True`."
     },
     {
       "stage": "check",
-      "question": "What four parts does each rule carry, per the lesson?",
+      "question": "What input makes the `done/tests-pass` check fail?",
       "options": [
-        "A slug, a priority score, a named owner, and a scheduled review date",
-        "A category, a severity label, an author name, and a changelog entry",
-        "A slug, a category, a description, and a named check function",
-        "A slug, a long description, a test file path, and a version number"
-      ],
-      "correct": 2,
-      "explanation": "The lesson says each rule has a slug, a category, a one-line description, and a check field that names a function in rule_checker.py."
-    },
-    {
-      "stage": "post",
-      "question": "What happens to stale rules in agent-rules.md, per the lesson?",
-      "options": [
-        "They get moved into a separate archive file for quarterly audit",
-        "They get deleted outright rather than left commented out in place",
-        "They stay commented out so their history is preserved inline",
-        "They get flagged red but stay active until a human approves removal"
+        "An exit code of 0 with no added dependencies.",
+        "A `tests_exit_code` of 1.",
+        "Confidence of 0.9 and a clean file list.",
+        "An empty `approvals` list when no dependency was added."
       ],
       "correct": 1,
-      "explanation": "The lesson says stale rules get deleted, not commented out, because the workbench is the source of truth, not the chat log of how the team felt last quarter."
+      "explanation": "`tests_pass` is exactly `trace.tests_exit_code == 0`; the bad trace uses exit code 1 and therefore fails the rule."
     },
     {
       "stage": "post",
-      "question": "What does the lesson's reachability test require of the router?",
+      "question": "Why does the bad trace fail `approval/new-dependency`?",
       "options": [
-        "Any rule must be reachable within a single hop, inlined in the router",
-        "Any rule must be reachable within five hops, described loosely in prose",
-        "Any rule must be reachable in two hops, with topic docs linked by path",
-        "The whole rule encyclopedia must be re-read fully once per session"
+        "It has an approval for every dependency but a low confidence score.",
+        "It adds no dependency, which the checker always rejects.",
+        "It lists `fastapi` in `added_dependencies` but has no matching approval.",
+        "The checker permits only the standard-library dependency `json`."
       ],
       "correct": 2,
-      "explanation": "The lesson says the reachability test requires an agent to reach any rule in at most two hops from the router, so the router must link every topic doc by path, not describe it in prose."
+      "explanation": "The bad trace contains `fastapi` and an empty approvals list. `new_dependency_approved` requires every added dependency to appear in approvals."
+    },
+    {
+      "stage": "post",
+      "question": "When does `opened_question_when_unsure` pass despite confidence below 0.7?",
+      "options": [
+        "When a release-script edit is present.",
+        "When tests exit with code 1.",
+        "It never passes below 0.7.",
+        "When the trace asks for help, because `asked_for_help` is the alternative to high confidence."
+      ],
+      "correct": 3,
+      "explanation": "The rule is an OR: a low-confidence trace passes if `asked_for_help` is true, even though the confidence threshold itself is not met."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Skills and Agent SDKs — Anthropic Skills, AGENTS.md, OpenAI Apps SDK?",
+      "question": "What does parse_frontmatter return for a well-formed SKILL.md?",
       "options": [
-        "Distinguish the three layers: AGENTS.md (project context), SKILL.md (reusable know-how), MCP (tools)",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Distinguish the three layers: AGENTS.md (project context), SKILL.md (reusable know-how), MCP (tools)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Skills and Agent SDKs — Anthropic Skills, AGENTS.md, OpenAI Apps SDK?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Write a SKILL.md with YAML frontmatter and progressive disclosure",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Write a SKILL.md with YAML frontmatter and progressive disclosure” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Skills and Agent SDKs — Anthropic Skills, AGENTS.md, OpenAI Apps SDK?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Load skills filesystem-style into an agent runtime",
-        "Treat one successful example as proof that every edge case works"
+        "Only the first line of the file",
+        "A compiled Python module",
+        "a frontmatter dict plus the body",
+        "An empty dictionary whenever the body is nonempty"
       ],
       "correct": 2,
-      "explanation": "“Load skills filesystem-style into an agent runtime” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The parser requires --- delimiters, extracts colon-separated frontmatter fields, and returns the remaining body separately."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Skills and Agent SDKs — Anthropic Skills, AGENTS.md, OpenAI Apps SDK?",
+      "question": "What does discover_skills find in the lesson fixtures?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Compose a skill with an MCP server and an AGENTS.md so one package works in Claude Code, Cursor, and Codex",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Compose a skill with an MCP server and an AGENTS.md so one package works in Claude Code, Cursor, and Codex” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Skills and Agent SDKs — Anthropic Skills, AGENTS.md, OpenAI Apps SDK?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Distinguish the three layers: AGENTS.md (project context), SKILL.md (reusable know-how), MCP (tools)"
+        "One skill with an unnamed directory",
+        "Every file under /tmp including style-guide.md",
+        "No skills because discovery requires network access",
+        "two named skills"
       ],
       "correct": 3,
-      "explanation": "“Distinguish the three layers: AGENTS.md (project context), SKILL.md (reusable know-how), MCP (tools)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The fixture root contains two valid SKILL.md directories; discovery sorts them and indexes the parsed names."
+    },
+    {
+      "stage": "check",
+      "question": "Why does invoking release-notes-writer read style-guide.md?",
+      "options": [
+        "The body reference triggers a style-guide read",
+        "The file is always loaded for every skill",
+        "The MCP server sends it as an OAuth token",
+        "The parser mistakes the filename for the skill name"
+      ],
+      "correct": 0,
+      "explanation": "agent_run loads the skill body first, notices its style-guide.md reference, then reads that subresource before composing the final prompt."
+    },
+    {
+      "stage": "check",
+      "question": "What does read_subresource return when a requested file is absent?",
+      "options": [
+        "None, which crashes the agent",
+        "(no such subresource: filename)",
+        "A new empty file",
+        "The full SKILL.md body"
+      ],
+      "correct": 1,
+      "explanation": "The helper returns a visible diagnostic string for a missing subresource rather than raising or silently inventing content."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Skills and Agent SDKs — Anthropic Skills, AGENTS.md, OpenAI Apps SDK?",
+      "question": "How do the three instruction layers differ in the demo?",
       "options": [
-        "Write a SKILL.md with YAML frontmatter and progressive disclosure",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "They are three copies of the same prompt",
+        "MCP supplies static prose while AGENTS.md executes tools",
+        "AGENTS=context, SKILL=workflow, MCP=tools",
+        "SKILL.md is used only for authentication"
       ],
-      "correct": 0,
-      "explanation": "“Write a SKILL.md with YAML frontmatter and progressive disclosure” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "The demo prints the hierarchy: repository guidance from AGENTS, task-specific skill instructions, and tool capabilities from MCP."
+    },
+    {
+      "stage": "post",
+      "question": "What does load_skill require before returning a Skill object?",
+      "options": [
+        "Only a directory name",
+        "A network URL and an OAuth token",
+        "A compiled SDK package",
+        "valid SKILL.md with name"
+      ],
+      "correct": 3,
+      "explanation": "load_skill checks that SKILL.md exists and its frontmatter contains name; malformed or unnamed files are not loaded as skills."
     }
   ]
 }

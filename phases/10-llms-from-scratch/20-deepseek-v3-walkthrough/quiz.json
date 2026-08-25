@@ -4,75 +4,45 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to DeepSeek-V3 Architecture Walkthrough?",
-      "options": [
-        "Read the DeepSeek-V3 config top to bottom and explain each field in terms of the six GPT-2 knobs plus four...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Read the DeepSeek-V3 config top to bottom and explain each field in terms of the six GPT-2 knobs plus four...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of DeepSeek-V3 Architecture Walkthrough?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Derive the total parameter count (671B), active parameter count (37B), and the components that contribute t...",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Derive the total parameter count (671B), active parameter count (37B), and the components that contribute t...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through DeepSeek-V3 Architecture Walkthrough?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Compute the KV cache footprint of MLA at 128k context and compare to what a same-active-param dense model w...",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "How many initial layers does `compute_totals` treat as dense before the MoE layers begin?",
+      "options": ["8, from `num_experts_per_tok`.", "61, because every layer is dense.", "3, from `first_k_dense_layers`.", "256, from `num_experts`."],
       "correct": 2,
-      "explanation": "“Compute the KV cache footprint of MLA at 128k context and compare to what a same-active-param dense model w...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The configuration sets `first_k_dense_layers` to 3, so the remaining 58 of 61 layers use the MoE calculation."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits DeepSeek-V3 Architecture Walkthrough?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "State the four DeepSeek-specific innovations (MLA, MTP, auxiliary-loss-free routing, DualPipe) and name whi...",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“State the four DeepSeek-specific innovations (MLA, MTP, auxiliary-loss-free routing, DualPipe) and name whi...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for DeepSeek-V3 Architecture Walkthrough?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Read the DeepSeek-V3 config top to bottom and explain each field in terms of the six GPT-2 knobs plus four..."
-      ],
+      "question": "For a DeepSeek-V3 MoE layer in this calculator, how many routed experts are active for one token?",
+      "options": ["All 256 experts.", "One expert, regardless of the route.", "None; only the shared expert runs.", "The top 8 routed experts, plus the always-on shared expert."],
       "correct": 3,
-      "explanation": "“Read the DeepSeek-V3 config top to bottom and explain each field in terms of the six GPT-2 knobs plus four...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "`num_experts_per_tok` is 8 and `shared_experts` is 1; the active layer includes both contributions."
+    },
+    {
+      "stage": "check",
+      "question": "At context length `ctx`, which quantity drives `compute_totals`'s MLA KV-cache byte estimate?",
+      "options": ["`num_layers * kv_lora_rank * ctx * 2` bytes, using BF16's two bytes per value.", "`vocab_size * ctx` bytes only.", "`num_experts * ctx` bytes.", "`hidden_size * ctx` bytes with no layer factor."],
+      "correct": 0,
+      "explanation": "The report calculates `n_layers * kv_lora_rank * max_seq * 2`, retaining the compressed latent per layer and position in two-byte values."
+    },
+    {
+      "stage": "check",
+      "question": "Why is `c.mtp_module` added to `total` but not to `active` in `compute_totals`?",
+      "options": ["The MTP module is counted twice in total by mistake.", "The calculator treats the MTP module as training overhead rather than a core active forward component.", "MTP has no parameters in the configuration.", "Active MoE layers already include every MTP parameter."],
+      "correct": 1,
+      "explanation": "The code includes the configured MTP module in total parameter storage but leaves it out of the core per-forward active estimate."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for DeepSeek-V3 Architecture Walkthrough?",
-      "options": [
-        "Derive the total parameter count (671B), active parameter count (37B), and the components that contribute t...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Derive the total parameter count (671B), active parameter count (37B), and the components that contribute t...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "question": "How many parameters does `swiglu_mlp_params(hidden, ff)` assign to one expert MLP?",
+      "options": ["`hidden + ff`.", "`4 * hidden * hidden`.", "`3 * hidden * ff`.", "`hidden * ff / 3`."],
+      "correct": 2,
+      "explanation": "The function counts gate, up, and down projections, each contributing a hidden-by-intermediate-sized matrix."
+    },
+    {
+      "stage": "post",
+      "question": "How does `ArchReport.active_ratio` relate its two parameter totals?",
+      "options": ["It is `total / active`.", "It is the number of experts divided by the vocabulary size.", "It is `active - total` in bytes.", "It is `active / total`."],
+      "correct": 3,
+      "explanation": "The dataclass is constructed with `active_ratio=active / total`, showing the fraction of stored parameters used in the modeled core forward."
     }
   ]
 }

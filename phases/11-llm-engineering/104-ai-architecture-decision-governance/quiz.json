@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does the lesson say a decision log that only records 'we picked GPT-4o because it was the best model' fails at the first contract renewal?",
+      "question": "Which information does validate_adr require before an ADR can pass?",
       "options": [
-        "It doesn't record boundary conditions — the cost threshold, latency SLA, or data classification that would trigger reverting the decision",
-        "It doesn't name the model version pinned at selection time — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "It fails to mention which vendor hosts the model",
-        "It was never reviewed by a security architect"
+        "The full required-field set plus non-empty cost, capability, compliance, and deprecation triggers",
+        "Only an ADR id, model name, and a benchmark screenshot",
+        "A vendor contract but no cost projection or review date",
+        "A model tier and owner; trigger conditions are optional notes"
       ],
       "correct": 0,
-      "explanation": "The lesson calls boundary conditions the 'living part' of an AI ADR. Without them recorded, there's nothing to check the decision against when conditions change — the document becomes a museum exhibit rather than something a renewal negotiation can actually use."
+      "explanation": "validate_adr checks every name in REQUIRED_FIELDS and then requires all four categories in REQUIRED_TRIGGERS. Warnings about cost or aliases do not replace those completeness gates."
     },
     {
       "stage": "check",
-      "question": "Which two fields does an AI ADR add on top of the traditional five-field ADR format, according to the lesson's table?",
+      "question": "Why does AI-ADR-003 fail validation?",
       "options": [
-        "Budget and headcount",
-        "Trigger conditions and owner/review date",
-        "Test coverage and code review sign-off",
-        "Marketing approval and legal disclaimer, with no need to inspect intermediate results or test edge cases"
+        "Its efficient model tier is forbidden for embeddings",
+        "The owner is empty and all four trigger categories are missing",
+        "Its review date is in the future, so proposed ADRs cannot be checked",
+        "Its public data classification requires a dedicated endpoint"
       ],
       "correct": 1,
-      "explanation": "Beyond extending status, context, decision, consequences, and alternatives with AI-specific detail, the AI ADR adds trigger conditions (events that mandate re-evaluation) and an owner plus hard review date — neither exists in a traditional ADR, and AI models move faster than annual review cycles."
+      "explanation": "The ADR has an empty owner and an empty trigger_conditions dictionary. validate_adr reports the missing owner plus cost, capability, compliance, and deprecation trigger gaps."
     },
     {
       "stage": "check",
-      "question": "According to the vendor security boundaries section, what distinguishes dedicated provisioned throughput from shared multi-tenant inference?",
+      "question": "What monthly cost does project_monthly_cost calculate for AI-ADR-001?",
       "options": [
-        "Dedicated throughput is always cheaper per token",
-        "Dedicated throughput isolates data from other tenants and gives predictable latency, at higher cost than the shared default",
-        "Shared multi-tenant inference is only available for on-premises deployments",
-        "Dedicated throughput requires a pinned model version, while shared endpoints never do, because one plausible output is sufficient production evidence"
+        "$2,000.00, because the ceiling is the projected spend",
+        "$115.20, because only prompt tokens are billed",
+        "$230.40, combining prompt and completion costs at 8,000 requests per day",
+        "$1,152.00, because the 30-day multiplier applies twice"
       ],
-      "correct": 1,
-      "explanation": "The three endpoint tiers trade cost against isolation: shared multi-tenant is cheapest and default, dedicated provisioned throughput keeps data from mixing across tenants with predictable latency, and on-premises/BYOC gives the strongest isolation at the highest ops cost."
+      "correct": 2,
+      "explanation": "Prompt cost is 600*8,000*30/1,000,000*0.80 = $115.20 and completion cost is 120*8,000*30/1,000,000*4.00 = $115.20. The total is $230.40, below the $2,000 ceiling."
     },
     {
       "stage": "check",
-      "question": "The lesson's cost governance formula projects monthly_cost from prompt tokens, completion tokens, daily_requests, and price_per_mtok. What does it warn is the minimum thing this calculation prevents?",
+      "question": "What warning does validate_adr produce for AI-ADR-002?",
       "options": [
-        "A model deprecation notice arriving without warning",
-        "A 10x traffic spike turning into a budget surprise",
-        "A vendor changing its training-data opt-out policy",
-        "A latency SLA violation during a regional outage"
+        "The ADR is rejected because frontier models have no trigger conditions",
+        "The owner is missing, so no cost is computed",
+        "The review date is invalid because it uses an ISO date",
+        "Projected monthly cost is $20,520, above the $5,000 ceiling"
       ],
-      "correct": 1,
-      "explanation": "The lesson is explicit that this isn't sophisticated modelling — projecting cost at expected production volume rather than prototype volume is the minimum calculation needed so a sudden traffic spike doesn't blow past budget unnoticed."
+      "correct": 3,
+      "explanation": "The 18,000-token prompt and 4,000-token completion at 120 requests per day cost $9,720 and $10,800 respectively. The $20,520 projection exceeds the ceiling, so validation passes but emits a cost warning."
     },
     {
       "stage": "post",
-      "question": "Which of the four standard trigger categories fires when a cheaper-tier model reaches the benchmark score the team originally measured for the more expensive tier?",
+      "question": "Which ADRs contribute to print_register_summary's accepted monthly-spend total?",
       "options": [
-        "Cost trigger",
-        "Capability trigger",
-        "Compliance trigger",
-        "Deprecation trigger"
+        "AI-ADR-001 and AI-ADR-002, because both have status accepted",
+        "All three ADRs, because proposed decisions are included for planning",
+        "Only AI-ADR-003, because it is the one still under review",
+        "None, because the register counts only deprecated decisions"
       ],
-      "correct": 1,
-      "explanation": "The capability trigger specifically covers a new efficient-tier model catching up to the benchmark score recorded at selection time — motivating a downgrade that saves cost without a quality regression, which is exactly why that benchmark needs to be recorded, not just referenced."
+      "correct": 0,
+      "explanation": "The summary adds projected costs only when status equals accepted. ADR-001 and ADR-002 are accepted; the proposed embedding ADR is displayed but excluded from the accepted-spend total."
     },
     {
       "stage": "post",
-      "question": "Why does the lesson say a third-party MCP server should be treated as a vendor relationship in an AI ADR, even though it looks like a library?",
+      "question": "What does the portfolio summary do with AI-ADR-003's proposed status?",
       "options": [
-        "Because MCP servers always charge per API call",
-        "Because it carries its own data classification and vendor accountability for whatever flows through it, the same as any other vendor",
-        "Because MCP servers cannot be self-hosted under any circumstances",
-        "Because Phase 11 · 14 requires every MCP server to be listed in the register regardless of use, with no need to inspect intermediate results or test edge cases"
+        "It marks the ADR overdue and adds its cost to accepted spend",
+        "It displays the proposed entry but excludes it from accepted spend and overdue-accepted review alerts",
+        "It automatically changes proposed to accepted after validation",
+        "It retires the ADR because its trigger conditions are empty"
       ],
       "correct": 1,
-      "explanation": "The lesson connects back to the MCP lesson's framing of tool-call boundaries as scope contracts: an AI ADR should record which MCP server endpoints are used and the data classification of what flows through each, because a third-party server is a real vendor relationship even when it's integrated like a library."
+      "explanation": "build_register validates every entry, but print_register_summary adds cost and overdue markers only for status='accepted'. Proposed ADR-003 remains visible without being treated as an approved decision."
     }
   ]
 }

@@ -110,6 +110,18 @@ For smaller runs (under 1k GPUs), DualPipe is overkill — pipeline bubbles are 
 
 
 
+## Build It
+
+Reconstruct **DualPipe Parallelism** by following `ScheduleStats` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
+
+## Use It
+
+Call `ScheduleStats` from a small caller with the demo’s smallest built-in fixture. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-dualpipe-planner.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [DeepSeek-AI — DeepSeek-V3 Technical Report (arXiv:2412.19437), Section 3.3.2 and Figure 5](https://arxiv.org/abs/2412.19437) — the primary DualPipe reference
@@ -121,10 +133,20 @@ For smaller runs (under 1k GPUs), DualPipe is overkill — pipeline bubbles are 
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Name the four components of a DualPipe forward-backward chunk and why each one gets its own overlap window.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain the pipeline bubble problem at scale, and what "bubble-free" means in practice versus in marketing.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Trace a DualPipe schedule by hand for 8 PP ranks and 16 micro-batches and confirm the forward and reverse streams fill each other's idle slots.
+This lab follows `ScheduleStats` and `bubble_1f1b` on a controlled fixture; write down the value before changing the input.
+
+1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using the demo’s smallest built-in fixture. Follow `ScheduleStats`, `bubble_1f1b`, `bubble_zero_bubble`. Expect the result reports the empty case explicitly or raises the documented validation error; capture the first printed shape, metric, status, or summary field and state which part supports **Name the four components of a DualPipe forward-backward chunk and why each one gets its own overlap window.**.
+2. **Change the controlled parameter.** Repeat the command after changing only the primary fixture value: use the same fixture with its primary value changed from 1 to 2. Predict the direction of the change, then compare the two output values. Explain why **Explain the pipeline bubble problem at scale, and what "bubble-free" means in practice versus in marketing.** says the other inputs should stay fixed.
+3. **Exercise the guard.** Feed the implementation an empty fixture {}. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Trace a DualPipe schedule by hand for 8 PP ranks and 16 micro-batches and confirm the forward and reverse streams fill each other's idle slots.** and record the exception text if the code rejects the case.
+4. **Prepare the artifact for reuse.** Open `outputs/skill-dualpipe-planner.md` and add a worked example using the demo’s smallest built-in fixture. Include the input contract, one expected output field, and a named acceptance check for **State the tradeoff DualPipeV (Sea AI Lab, 2025) makes: drops the 2x parameter replication at the cost of a slightly larger bubble when Expert Parallelism is inactive.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Name the four components of a DualPipe forward-backward chunk and why each one gets its own overlap window,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Trace a DualPipe schedule by hand for 8 PP ranks and 16 micro-batches and confirm the forward and reverse streams fill each other's idle slots,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **DualPipe Parallelism** should contain:
+
+- the `python3 main.py` output for the demo’s smallest built-in fixture, with `ScheduleStats`, `bubble_1f1b`, `bubble_zero_bubble` traced to the value or shape that supports **Name the four components of a DualPipe forward-backward chunk and why each one gets its own overlap window.**;
+- a before/after comparison for the primary fixture value, where the same fixture with its primary value changed from 1 to 2 changes the observation in the direction predicted by **Explain the pipeline bubble problem at scale, and what "bubble-free" means in practice versus in marketing.**;
+- a recorded result for an empty fixture {} that matches the implementation’s validation or empty-result contract and explains the evidence for **Trace a DualPipe schedule by hand for 8 PP ranks and 16 micro-batches and confirm the forward and reverse streams fill each other's idle slots.**; and
+- an updated `outputs/skill-dualpipe-planner.md` example with a concrete input, expected output field, and acceptance check tied to **State the tradeoff DualPipeV (Sea AI Lab, 2025) makes: drops the 2x parameter replication at the cost of a slightly larger bubble when Expert Parallelism is inactive.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

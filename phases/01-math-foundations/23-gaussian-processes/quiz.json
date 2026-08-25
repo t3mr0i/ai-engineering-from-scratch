@@ -4,45 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does a Gaussian process prior describe?",
-      "options": ["A distribution over possible functions", "One fixed polynomial selected before seeing data", "A lookup table whose uncertainty is always zero", "A classifier boundary that cannot represent regression"],
-      "correct": 0,
-      "explanation": "A GP prior assigns a joint Gaussian distribution to every finite set of function values."
-    },
-    {
-      "stage": "check",
-      "question": "What does the RBF length scale control?",
-      "options": ["The number of observations stored", "How quickly correlation falls with input distance", "The target's measurement unit only", "The Cholesky algorithm's loop count regardless of matrix size"],
-      "correct": 1,
-      "explanation": "Short length scales allow faster variation; long length scales correlate points over larger distances."
-    },
-    {
-      "stage": "check",
-      "question": "Why use Cholesky solves instead of an explicit covariance inverse?",
-      "options": ["They remove the need for a kernel", "They guarantee the model is correctly specified", "They are more numerically stable for positive-definite systems", "They make posterior variance independent of observations"],
+      "question": "With signal_variance=1, what is rbf_kernel([x], [x]) for any input x?",
+      "options": [
+        "0",
+        "The length scale",
+        "1",
+        "The input value x"
+      ],
       "correct": 2,
-      "explanation": "Triangular solves avoid forming an explicit inverse and expose factorization failures clearly."
+      "explanation": "The squared distance from x to itself is zero, so exp(0)=1 and the diagonal equals the signal variance."
     },
     {
       "stage": "check",
-      "question": "Where should posterior variance usually be smallest under a smooth kernel?",
-      "options": ["Infinitely far from every input", "Near well-observed training inputs", "At a randomly chosen plot boundary", "Everywhere equally after a single measurement"],
-      "correct": 1,
-      "explanation": "Conditioning reduces uncertainty most strongly near informative observations."
-    },
-    {
-      "stage": "post",
-      "question": "What does high marginal likelihood establish?",
-      "options": ["The model will be correct on every future domain", "The kernel is legally safe to deploy", "No held-out evaluation is needed", "The setting balances data fit and covariance complexity within the assumed model"],
+      "question": "What does increasing the RBF length_scale usually do?",
+      "options": [
+        "It makes every off-diagonal covariance exactly zero",
+        "It changes the number of training observations",
+        "It increases observation noise even when noise_variance is fixed",
+        "It makes points farther apart remain more correlated, producing smoother functions"
+      ],
       "correct": 3,
-      "explanation": "Marginal likelihood compares settings under the chosen GP assumptions; it does not validate those assumptions on its own."
+      "explanation": "The exponent divides squared distance by length_scale^2. A larger scale decays more slowly with distance and encodes longer-range smoothness."
+    },
+    {
+      "stage": "check",
+      "question": "Why does gp_posterior use a Cholesky solve instead of explicitly inverting the covariance matrix?",
+      "options": [
+        "Triangular solves are more stable and avoid forming an unnecessary explicit inverse",
+        "An inverse cannot represent a square covariance matrix",
+        "Cholesky changes the target values into binary labels",
+        "The posterior formula does not contain a covariance matrix"
+      ],
+      "correct": 0,
+      "explanation": "The code solves K alpha=y through the Cholesky factor. This is numerically safer and lets stable_cholesky add bounded jitter when duplicate inputs make K nearly singular."
+    },
+    {
+      "stage": "check",
+      "question": "What should happen to GP posterior variance far outside the training inputs?",
+      "options": [
+        "It must become exactly zero because no data are present",
+        "It generally rises toward the prior variance as the kernel cross-covariance fades",
+        "It equals the training mean at every extrapolation point",
+        "It is determined only by the number of test points"
+      ],
+      "correct": 1,
+      "explanation": "An RBF kernel gives distant test points little connection to observations. The model reverts toward its prior mean and uncertainty rather than becoming confident."
     },
     {
       "stage": "post",
-      "question": "What is the best response to conflicting duplicate inputs?",
-      "options": ["Model observation noise and inspect conditioning", "Silently delete the target with the larger magnitude", "Set all posterior variances to zero", "Increase length scale until every function becomes constant"],
-      "correct": 0,
-      "explanation": "Explicit noise represents conflicting measurements and bounded jitter handles only numerical conditioning."
+      "question": "How does select_length_scale choose among candidate kernel scales?",
+      "options": [
+        "It always chooses the smallest candidate",
+        "It chooses the scale with the largest raw training input",
+        "It computes each log marginal likelihood and selects the largest score",
+        "It minimizes posterior variance on the final test region"
+      ],
+      "correct": 2,
+      "explanation": "The helper evaluates log_marginal_likelihood for each candidate and returns max(scores, key=scores.get), balancing fit and complexity through the GP evidence."
+    },
+    {
+      "stage": "post",
+      "question": "Why is selecting GP hyperparameters on a final test region a leakage problem?",
+      "options": [
+        "The RBF kernel cannot evaluate points outside training",
+        "Noise variance becomes negative automatically",
+        "Cholesky no longer returns a triangular factor",
+        "The test outcomes influence the prior settings, making reported uncertainty optimistic"
+      ],
+      "correct": 3,
+      "explanation": "The test region is meant to estimate generalization after choices are fixed. Using it to tune length scale or noise leaks evaluation information into the model."
     }
   ]
 }

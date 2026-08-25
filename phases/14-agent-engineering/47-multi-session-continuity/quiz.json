@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is chat history a weak state store?",
+      "question": "Which schema version does the SessionState fixture accept?",
       "options": [
-        "It is always too short to be useful in practice",
-        "It cannot contain any working prose at all",
-        "It can be missing or detached from the task",
-        "It is defined by a strict versioned JSON schema"
+        "0",
+        "Any positive integer",
+        "1",
+        "The current Python version"
       ],
       "correct": 2,
-      "explanation": "Repository state must survive transcript boundaries."
+      "explanation": "SCHEMA_VERSION is the integer 1, and validate rejects a loaded state whose schema_version differs from that value."
     },
     {
       "stage": "check",
-      "question": "What should next_action contain?",
+      "question": "What does record_step do when the same step and touched path are recorded twice?",
       "options": [
-        "A vague aspiration for the whole task",
-        "Every possible future task in one field",
-        "A model's confidence score for the run",
-        "One concrete continuation step"
+        "It appends both copies to preserve every transcript event",
+        "It raises because duplicate progress is invalid",
+        "It replaces the whole state with a blank snapshot",
+        "It keeps each value once and still updates next_action"
       ],
       "correct": 3,
-      "explanation": "A single action makes resumption operational."
+      "explanation": "record_step is idempotent: it checks membership before appending completed steps or touched files, then sets next_action to run acceptance checks."
     },
     {
       "stage": "check",
-      "question": "Why use an atomic replace for state?",
+      "question": "How does save_state protect a previously valid snapshot during a write?",
       "options": [
-        "To increase the state file's size on disk",
-        "To avoid leaving a half-written snapshot",
-        "To hide blockers from the next session",
-        "To remove schema validation on load"
+        "It writes a .tmp sibling and atomically replaces the destination",
+        "It deletes the destination before opening it for writing",
+        "It keeps the state only in the Python process until shutdown",
+        "It appends JSON objects to the existing file without validation"
+      ],
+      "correct": 0,
+      "explanation": "save_state validates first, writes JSON to destination.name + '.tmp', then uses Path.replace; an interrupted write does not expose a half-written destination."
+    },
+    {
+      "stage": "check",
+      "question": "Which status value would SessionState.validate reject?",
+      "options": [
+        "blocked",
+        "paused",
+        "complete",
+        "in_progress"
       ],
       "correct": 1,
-      "explanation": "The previous valid state remains if writing is interrupted."
+      "explanation": "The allowed statuses are in_progress, blocked, and complete; paused is not part of this state schema."
     },
     {
-      "stage": "check",
-      "question": "What is a blocker?",
+      "stage": "post",
+      "question": "What summary does build_handoff produce after the demo records two steps?",
       "options": [
-        "A reason to erase the session's prior progress",
-        "A completed check with no further action needed",
-        "An optional title field carrying no meaning at all here",
-        "A durable fact requiring retry, question, or escalation"
+        "2 steps complete; session=session-2",
+        "T-101 resumed from session-1",
+        "2 step(s) recorded; status=in_progress",
+        "status=complete; blockers=0"
+      ],
+      "correct": 2,
+      "explanation": "The handoff formats len(completed_steps) and state.status, so the resumed demo reports 2 step(s) recorded; status=in_progress."
+    },
+    {
+      "stage": "post",
+      "question": "After the demo resumes as session-2 and records its second step, what is next_action?",
+      "options": [
+        "inspect the task",
+        "request human approval",
+        "continue the previous session",
+        "run acceptance checks"
       ],
       "correct": 3,
-      "explanation": "Blockers guide the next session's decision."
-    },
-    {
-      "stage": "post",
-      "question": "Which field identifies the continuity chain?",
-      "options": [
-        "task_id, which links sessions to the same work",
-        "completed_steps, which lists finished steps only",
-        "touched_files, which lists the paths that were edited",
-        "blockers, which lists durable facts needing retry"
-      ],
-      "correct": 0,
-      "explanation": "Task identity links sessions to the same work."
-    },
-    {
-      "stage": "post",
-      "question": "What should a handoff keep separate from state?",
-      "options": [
-        "Commands and review risks",
-        "The task's identity field",
-        "Its single next action",
-        "The list of touched files"
-      ],
-      "correct": 0,
-      "explanation": "Receipts explain what happened without bloating the core state."
+      "explanation": "Every successful record_step sets next_action to run acceptance checks, which is the value included in the handoff."
     }
   ]
 }

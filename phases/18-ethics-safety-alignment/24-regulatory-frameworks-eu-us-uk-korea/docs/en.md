@@ -87,6 +87,18 @@ Lesson 18 is lab-voluntary governance; Lesson 24 is regulatory; Lesson 25 is an 
 
 
 
+## Build It
+
+Reconstruct **Regulatory Frameworks — EU, US, UK, Korea** by following `main` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+
+## Use It
+
+Call `main` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-regulatory-map.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [EU AI Act text (Regulation 2024/1689)](https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai) — the regulation and timeline
@@ -96,10 +108,20 @@ Lesson 18 is lab-voluntary governance; Lesson 24 is regulatory; Lesson 25 is an 
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Describe the EU AI Act risk tiers (prohibited, high-risk, general-purpose, limited-risk) and the Feb 2025 / Aug 2025 / Aug 2026 / Aug 2027 / Dec 2027 / Aug 2028 timeline.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Describe the three chapters of the GPAI Code of Practice and which providers each binds.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe the 2025 rebrands: UK AISI -> AI Security Institute; US AISI -> CAISI; what each rebrand implies about policy direction.
+Use `main` as the trace: start from an 8x8 synthetic image, keep the raw output, and tie each observation to a named objective.
+
+1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using an 8x8 synthetic image. Follow `main`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **Describe the EU AI Act risk tiers (prohibited, high-risk, general-purpose, limited-risk) and the Feb 2025 / Aug 2025 / Aug 2026 / Aug 2027 / Dec 2027 / Aug 2028 timeline.**.
+2. **Vary one named input.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Describe the three chapters of the GPAI Code of Practice and which providers each binds.** says the other inputs should stay fixed.
+3. **Probe the empty case.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Describe the 2025 rebrands: UK AISI -> AI Security Institute; US AISI -> CAISI; what each rebrand implies about policy direction.** and record the exception text if the code rejects the case.
+4. **Package a usable handoff.** Open `outputs/skill-regulatory-map.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **State the core provision of Korea's AI Framework Act.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Describe the EU AI Act risk tiers (prohibited, high-risk, general-purpose, limited-risk) and the Feb 2025 / Aug 2025 / Aug 2026 / Aug 2027 / Dec 2027 / Aug 2028 timeline,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe the 2025 rebrands: UK AISI -> AI Security Institute; US AISI -> CAISI; what each rebrand implies about policy direction,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Regulatory Frameworks — EU, US, UK, Korea** should contain:
+
+- the `python3 main.py` output for an 8x8 synthetic image, with `main` traced to the value or shape that supports **Describe the EU AI Act risk tiers (prohibited, high-risk, general-purpose, limited-risk) and the Feb 2025 / Aug 2025 / Aug 2026 / Aug 2027 / Dec 2027 / Aug 2028 timeline.**;
+- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Describe the three chapters of the GPAI Code of Practice and which providers each binds.**;
+- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Describe the 2025 rebrands: UK AISI -> AI Security Institute; US AISI -> CAISI; what each rebrand implies about policy direction.**; and
+- an updated `outputs/skill-regulatory-map.md` example with a concrete input, expected output field, and acceptance check tied to **State the core provision of Korea's AI Framework Act.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

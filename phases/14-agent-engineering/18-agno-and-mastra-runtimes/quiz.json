@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which language pairing does the lesson recommend for each runtime?",
+      "question": "After the Python handler serves three requests for session `s001`, how many history entries does that session contain?",
       "options": [
-        "Agno for TypeScript, Mastra for Python and Rust bindings together",
-        "Agno for Python (FastAPI-shaped), Mastra for TypeScript (Vercel AI SDK-shaped)",
-        "Both are Rust-first runtimes with absolutely no Python or TypeScript bindings at all",
-        "Both are Go-first runtimes built entirely for the Vercel ecosystem"
-      ],
-      "correct": 1,
-      "explanation": "Agno is Python (FastAPI-shaped); Mastra is TypeScript (Vercel AI SDK-shaped)."
-    },
-    {
-      "stage": "check",
-      "question": "What is Agno's recommended production deployment shape?",
-      "options": [
-        "A long-lived stateful daemon that keeps every single agent resident in memory permanently",
-        "A serverless cron worker that only polls for new agent tasks on a fixed schedule daily",
-        "A stateless session-scoped FastAPI backend; each request starts a fresh agent and session state lives in a DB",
-        "A WebSocket-only server that keeps one persistent open connection per agent instance"
-      ],
-      "correct": 2,
-      "explanation": "Stateless FastAPI per request; session state externalized to a DB."
-    },
-    {
-      "stage": "check",
-      "question": "What are Mastra's three primitives?",
-      "options": [
-        "Actor, Message, Inbox, the classic actor-model trio",
-        "Plan, Worker, Solver, the planning-based agent trio",
-        "Node, Edge, State, the graph-execution trio",
-        "Agents, Tools, Workflows, Mastra's three primitives"
-      ],
-      "correct": 3,
-      "explanation": "Agents (LLM + role), Tools (Zod-typed), and Workflows are Mastra's three primitives."
-    },
-    {
-      "stage": "check",
-      "question": "Roughly what agent-instantiation cost does Agno target per its docs?",
-      "options": [
-        "About 2 microseconds with about 3.75 KiB per agent",
-        "About 200 milliseconds and roughly 100 MiB per agent instance",
-        "About 1 full second and roughly 1 GiB of memory per agent",
-        "About 10 minutes and roughly 4 GiB of memory per agent"
+        "6: each request appends one user turn and one assistant turn.",
+        "3: the handler stores only the assistant replies.",
+        "1: the fresh agent overwrites the session on every request.",
+        "9: each request also stores the workflow's three intermediate steps."
       ],
       "correct": 0,
-      "explanation": "Agno's docs cite about 2 microseconds and about 3.75 KiB per agent."
+      "explanation": "`AgnoSession` appends the incoming prompt and the generated reply for every request, so three requests produce six strings in `s001` history."
     },
     {
-      "stage": "post",
-      "question": "What does Mastra's Unified Model Router give?",
+      "stage": "check",
+      "question": "How does the Python `MastraAgent` represent an unknown tool call?",
       "options": [
-        "A queue that batches and rate-limits tool calls before sending them to the model",
-        "A single client surface for thousands of models across many providers",
-        "A vector database layer used for long-term semantic memory storage",
-        "A graph checkpointer that snapshots workflow state between steps"
+        "It raises a `KeyError` before recording any trace entry.",
+        "It records the tool with result `error: unknown` and continues to the final output.",
+        "It silently treats the unknown call as a successful search.",
+        "It asks the workflow to supply a replacement tool before returning."
       ],
       "correct": 1,
-      "explanation": "Mastra's Unified Model Router cites 3,300+ models across 94 providers."
+      "explanation": "The Python-shaped agent appends `(tool_name, \"error: unknown\")` for an unregistered call; it still formats the final processed-tools output."
+    },
+    {
+      "stage": "check",
+      "question": "What final string does the Python workflow produce for `agent engineering 2026`?",
+      "options": [
+        "`found 3 results for agent engineering 2026`",
+        "`summary: agent engineering 2026`",
+        "`summary: found 3 results for agent engineering 2026`",
+        "`normalize -> search -> summarize`"
+      ],
+      "correct": 2,
+      "explanation": "The sequential steps normalize the query, search to produce `found 3 results ...`, and summarize that prior output with the `summary:` prefix."
+    },
+    {
+      "stage": "check",
+      "question": "What does the TypeScript schema check return for `checkSchema({query: \"string\"}, {})`?",
+      "options": [
+        "`field query: expected string, got undefined`",
+        "`ok`",
+        "`field query: expected string, got object`",
+        "`missing field query`"
+      ],
+      "correct": 3,
+      "explanation": "The schema checker first tests required keys; because the input object lacks `query`, it returns `missing field query` before checking a value type."
     },
     {
       "stage": "post",
-      "question": "When is perf-for-perf's-sake the wrong reason to pick Agno?",
+      "question": "What does `AgnoAgent.run(prompt)` do in this lesson's minimal runtime?",
       "options": [
-        "When the project is already running on Python 3.13 in production today",
-        "When the deployment target happens to be any AWS region outside us-east-1",
-        "When the workload is one slow agent call per request and overhead is not the bottleneck",
-        "When the observability stack already in use happens to be Langfuse instead"
+        "It invokes the supplied function with `prompt`; session history is managed by the surrounding handler.",
+        "It automatically loads the last ten turns from every session before invoking the function.",
+        "It runs a Mastra workflow and converts the result into a TypeScript tool trace.",
+        "It persists the prompt in a database even when no session object is provided."
       ],
-      "correct": 2,
-      "explanation": "2 microseconds matters at chat fan-in scale, not for a single slow call per request."
+      "correct": 0,
+      "explanation": "`AgnoAgent.run` is deliberately small: it calls `fn(prompt)`. The example handler owns session lookup and appends the user/reply turns around that call."
+    },
+    {
+      "stage": "post",
+      "question": "Which stack pairing matches the lesson's runtime examples?",
+      "options": [
+        "Agno with a TypeScript/Vercel server; Mastra with a Python/FastAPI server.",
+        "Agno with Python and FastAPI; Mastra with TypeScript and a Vercel/Next-shaped stack.",
+        "Both runtimes with Rust-only services and no language-specific adapter.",
+        "Both runtimes with browser-only JavaScript and no server adapter."
+      ],
+      "correct": 1,
+      "explanation": "The examples keep the language boundaries explicit: Agno is the Python/FastAPI-shaped path, while Mastra is the TypeScript/Vercel AI SDK-shaped path."
     }
   ]
 }

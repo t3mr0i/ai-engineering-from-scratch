@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the key behavioral difference between extractive and abstractive summarization?",
+      "question": "How does sentence_split divide \"First fact. Second fact!\"?",
       "options": [
-        "Extractive uses TF-IDF; abstractive uses Word2Vec — and applies unchanged even when the lesson's stated preconditions fail",
-        "Extractive returns sentences verbatim from the source; abstractive generates new text and can hallucinate",
-        "Extractive is multilingual only",
-        "Extractive is slower than abstractive"
-      ],
-      "correct": 1,
-      "explanation": "Extractive lifts sentences verbatim; abstractive rewrites and risks hallucination."
-    },
-    {
-      "stage": "check",
-      "question": "What does ROUGE measure?",
-      "options": [
-        "Embedding similarity",
-        "N-gram and longest-common-subsequence overlap between system and reference summaries",
-        "Reading time",
-        "Token-level perplexity, with no need to inspect intermediate results or test edge cases"
-      ],
-      "correct": 1,
-      "explanation": "ROUGE-1/2/L measure unigram, bigram, and LCS overlap with references."
-    },
-    {
-      "stage": "check",
-      "question": "How does TextRank score sentences in extractive summarization?",
-      "options": [
-        "By raw word count",
-        "By comparing to a reference summary, because one plausible output is sufficient production evidence",
-        "By running a PageRank-style iteration over a graph where edges are sentence-similarity weights",
-        "By embedding cosine to the question"
+        "[\"First\", \"fact\", \"Second\", \"fact\"]",
+        "[\"First fact. Second fact!\"]",
+        "[\"First fact.\", \"Second fact!\"]",
+        "[\"First fact\", \"Second fact\"] without punctuation"
       ],
       "correct": 2,
-      "explanation": "TextRank uses PageRank over a sentence-similarity graph; highly connected sentences score highest."
+      "explanation": "The regex splits after ., !, or ? followed by whitespace and keeps each sentence ending punctuation."
     },
     {
       "stage": "check",
-      "question": "Why enable stemming when computing ROUGE?",
+      "question": "What does similarity(s1, s2) measure in this TextRank implementation?",
       "options": [
-        "Without stemming, 'running' and 'run' count as different tokens and ROUGE undercounts true overlap",
-        "To speed up ROUGE",
-        "Stemming normalizes case",
-        "Stemming is required by the rouge-score package, before defining the measurement, acceptance threshold, or rollback path"
+        "Cosine similarity between learned transformer embeddings",
+        "The edit distance between the two raw strings",
+        "The number of sentences between s1 and s2",
+        "Word-count overlap divided by a logarithmic function of the two vocabulary sizes"
+      ],
+      "correct": 3,
+      "explanation": "It builds Counters from lowercase words, sums their intersection, and divides by log(len(w1)+1)+log(len(w2)+1)."
+    },
+    {
+      "stage": "check",
+      "question": "What does textrank return when the document has at most top_k sentences?",
+      "options": [
+        "All parsed sentences in their original order",
+        "An empty list because ranking is unnecessary",
+        "Only the first top_k-1 sentences",
+        "A random sample of top_k sentences"
       ],
       "correct": 0,
-      "explanation": "Stemming merges morphological variants so ROUGE credits semantically equivalent forms."
+      "explanation": "The early n <= top_k branch returns sentences directly rather than constructing a graph."
+    },
+    {
+      "stage": "check",
+      "question": "Why does textrank sort the selected sentence indices after ranking them?",
+      "options": [
+        "It makes every sentence have the same graph score",
+        "It preserves the original document order in the extractive summary",
+        "It removes sentences whose score is zero",
+        "It sorts words alphabetically inside each sentence"
+      ],
+      "correct": 1,
+      "explanation": "The score ranking chooses important indices; a second sort makes the extracted text readable in source order."
     },
     {
       "stage": "post",
-      "question": "Which 2026 metric is purpose-built to detect summary hallucinations via NLI entailment?",
+      "question": "What denominator does rouge_n use for its overlap score?",
       "options": [
-        "BLEU",
-        "ROUGE-L — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "Faithfulness checks (e.g. FactCC or RAGAS faithfulness) using NLI between source and summary claims",
-        "chrF"
+        "The total number of hypothesis n-grams",
+        "The number of sentences in the article",
+        "The total number of reference n-grams",
+        "The vocabulary size of the corpus"
       ],
       "correct": 2,
-      "explanation": "NLI-based faithfulness scoring flags claims in the summary not entailed by the source."
+      "explanation": "The implementation divides clipped overlap by sum(ref_ngrams.values()), making this a reference-coverage recall."
     },
     {
       "stage": "post",
-      "question": "Why is extractive summarization preferred for compliance-adjacent content?",
+      "question": "What is the central difference between the demo TextRank and an abstractive summarizer?",
       "options": [
-        "Outputs are lifted verbatim from the source, eliminating the abstractive hallucination class",
-        "It is faster",
-        "Extractive supports longer outputs, with no need to inspect intermediate results or test edge cases",
-        "ROUGE scores are higher"
+        "TextRank translates sentences and abstractive models only count words",
+        "TextRank requires labels for every sentence, while abstractive models do not read text",
+        "They are identical except for the output file extension",
+        "TextRank selects source sentences, while an abstractive model can generate new wording"
       ],
-      "correct": 0,
-      "explanation": "Verbatim extraction cannot invent content, which matters where factuality is regulated."
+      "correct": 3,
+      "explanation": "The code returns selected original strings; rewriting content requires a generation model rather than sentence extraction."
     }
   ]
 }

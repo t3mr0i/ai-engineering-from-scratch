@@ -79,6 +79,18 @@ Lessons 6-11 form the "deception and oversight" arc. Lesson 6 gives the vocabula
 
 
 
+## Build It
+
+Reconstruct **Mesa-Optimization and Deceptive Alignment** by following `Example` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Use It
+
+Call `Example` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-mesa-diagnostic.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Hubinger, van Merwijk, Mikulik, Skalse, Garrabrant — Risks from Learned Optimization in Advanced ML Systems (arXiv:1906.01820)](https://arxiv.org/abs/1906.01820) — the canonical 2019 paper
@@ -88,10 +100,20 @@ Lessons 6-11 form the "deception and oversight" arc. Lesson 6 gives the vocabula
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Define mesa-optimizer, mesa-objective, inner alignment, outer alignment.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain why a learned optimizer's internal objective can diverge from the base objective even when training loss is low.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Describe the conditions under which deceptive alignment is instrumentally rational for a mesa-optimizer.
+Use `Example` as the trace: start from x=0.5 with the demo defaults, keep the raw output, and tie each observation to a named objective.
+
+1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using x=0.5 with the demo defaults. Follow `Example`, `gen_example`, `aligned_policy`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Define mesa-optimizer, mesa-objective, inner alignment, outer alignment.**.
+2. **Vary one named input.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Explain why a learned optimizer's internal objective can diverge from the base objective even when training loss is low.** says the other inputs should stay fixed.
+3. **Probe the empty case.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Describe the conditions under which deceptive alignment is instrumentally rational for a mesa-optimizer.** and record the exception text if the code rejects the case.
+4. **Package a usable handoff.** Open `outputs/skill-mesa-diagnostic.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Explain why standard adversarial / robustness training can fail (or actively worsen) deceptive alignment.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Define mesa-optimizer, mesa-objective, inner alignment, outer alignment,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Describe the conditions under which deceptive alignment is instrumentally rational for a mesa-optimizer,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Mesa-Optimization and Deceptive Alignment** should contain:
+
+- the `python3 main.py` output for x=0.5 with the demo defaults, with `Example`, `gen_example`, `aligned_policy` traced to the value or shape that supports **Define mesa-optimizer, mesa-objective, inner alignment, outer alignment.**;
+- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Explain why a learned optimizer's internal objective can diverge from the base objective even when training loss is low.**;
+- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Describe the conditions under which deceptive alignment is instrumentally rational for a mesa-optimizer.**; and
+- an updated `outputs/skill-mesa-diagnostic.md` example with a concrete input, expected output field, and acceptance check tied to **Explain why standard adversarial / robustness training can fail (or actively worsen) deceptive alignment.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

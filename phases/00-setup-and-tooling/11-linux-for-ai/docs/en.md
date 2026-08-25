@@ -35,6 +35,18 @@ graph TD
     root --> proc["proc/ and /sys/<br/>Virtual files — kernel and hardware info"]
 ```
 
+## Build It
+
+Reconstruct **Linux for AI** by following `main` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
+
+## Use It
+
+Call `main` from a small caller with the demo’s smallest built-in fixture. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/artifact-card.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
+
 ## Exercises
 
 1. **Explain the mechanism.** Give a concrete example and a counterexample that demonstrate this objective: Navigate the Linux file system and perform essential file operations from the command line.

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why must AI-generated finance narratives be reviewed carefully?",
+      "question": "Why must an AI-generated finance narrative be checked against source data?",
       "options": [
-        "They can sound plausible while hiding weak data, wrong assumptions, or missing approvals",
-        "They use a different tone from the commentary the controlling team normally writes — and applies unchanged even when the lesson's stated preconditions fail",
-        "They take longer to produce than the manual variance commentary they replace",
-        "They cannot reach the ledger directly, so every figure has to be typed in by hand"
+        "Plausible prose can hide a source mismatch, an unstated forecast assumption, a variance gap, or an approval problem",
+        "Finance narratives are useful only when the model writes them without a controller",
+        "A consistent tone is more important than whether the figures trace to the ledger",
+        "Source checks are needed only when an external reader sees the report"
       ],
       "correct": 0,
-      "explanation": "Finance outputs require source traceability, visible assumptions, and approval controls. A fluent narrative is not evidence."
+      "explanation": "The finance review sheet links claims to evidence and names approval ownership. A fluent explanation does not prove that its figures or assumptions are correct."
     },
     {
       "stage": "check",
-      "question": "An AI draft explains a budget variance using a figure that does not match the ledger. Which signal is that?",
+      "question": "The monthly commentary fixture has two matched signals, impact=4, and uncertainty=4. Which result is correct?",
       "options": [
-        "Source mismatch - the narrative and the underlying data disagree, so the source trace failed",
-        "Forecast uncertainty - the projection carries a range the narrative did not state clearly, with no need to inspect intermediate results or test edge cases",
-        "Approval risk - the commentary was shared before the approval owner had reviewed it",
-        "Variance gap - a movement in the numbers was left without any explanation at all"
-      ],
-      "correct": 0,
-      "explanation": "Source mismatch is the signal where the narrative and the source data disagree. The matching control is the source trace, which has to run before AI-assisted analysis is shared."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Python artifact produce?",
-      "options": [
-        "An approval that releases the commentary into the management report",
-        "A ranked finance AI review plan with matched controls and rationale",
-        "An ERP integration that posts the corrected figures back to the ledger",
-        "A forecast whose confidence interval is guaranteed by the source data"
+        "14 and guided pilot",
+        "16 and launch gate required",
+        "18 and team practice",
+        "20 and awareness only"
       ],
       "correct": 1,
-      "explanation": "The artifact supports review and control selection. Approval owners remain accountable for what is released."
+      "explanation": "The score is 4*2 + 4 + 2*2 = 16. That is the first value in the launch-gate band."
     },
     {
       "stage": "check",
-      "question": "Which control belongs to this lesson?",
+      "question": "Which category does choose_category assign to the monthly commentary fixture?",
       "options": [
-        "A tone guide that keeps the commentary consistent with last quarter's report",
-        "A rule that variance below a threshold needs no explanation in the narrative",
-        "A shared drafting inbox where any controller can publish the final commentary directly",
-        "An assumption log that records what each figure assumed and why it was chosen"
+        "source",
+        "forecast",
+        "approval",
+        "variance"
+      ],
+      "correct": 2,
+      "explanation": "Two matches plus impact 4 and uncertainty 4 give index 10 modulo 4 = 2. CATEGORIES[2] is approval."
+    },
+    {
+      "stage": "check",
+      "question": "Which controls does recommend include when a finance Scenario has two matched signals?",
+      "options": [
+        "source trace only",
+        "approval owner and variance check",
+        "source trace and assumption log only",
+        "source trace, assumption log, and variance check"
       ],
       "correct": 3,
-      "explanation": "An assumption log makes finance reasoning visible. Source trace, variance check, and a named approval owner are the other controls this lesson teaches."
+      "explanation": "The implementation takes the first three controls for two matches: source trace, assumption log, and variance check. Approval owner remains the fourth control."
     },
     {
       "stage": "post",
-      "question": "When should finance AI work require a launch gate?",
+      "question": "What priority does Scenario(\"team draft\", \"Approved wording task with no listed signals.\", (), impact=2, uncertainty=2) receive?",
       "options": [
-        "Only when the commentary will be read outside the finance department",
-        "Only when the analysis covers a full year rather than a single month",
-        "Only when the model, rather than a controller, produced the first draft",
-        "When impact, uncertainty, and approval or source-trace risk are high"
-      ],
-      "correct": 3,
-      "explanation": "High-risk finance workflows need explicit review before use, scaled to impact, uncertainty, and approval or source risk."
-    },
-    {
-      "stage": "post",
-      "question": "What should variance explanations be linked to?",
-      "options": [
-        "The evidence and the source data that each figure was drawn from",
-        "The tone and phrasing agreed for the management reporting pack",
-        "The assumptions the drafter used, whether or not they were reviewed",
-        "A reusable prompt that produces commentary in a consistent format"
+        "awareness only with score 6",
+        "guided pilot with score 10",
+        "launch gate required with score 16",
+        "team practice with score 8"
       ],
       "correct": 0,
-      "explanation": "Finance narratives should remain traceable to evidence. Assumptions must be logged and checked rather than carried forward unreviewed."
+      "explanation": "Its base score is 2*2 + 2 = 6. The artifact reserves team practice for scores of 7 to 10, so this fixture is awareness only."
+    },
+    {
+      "stage": "post",
+      "question": "What should sheet-finance-ai-review.md preserve beside an AI-written variance explanation?",
+      "options": [
+        "Only the final paragraph, so the report remains concise",
+        "The source trace, assumptions, variance check, approval owner, and evidence behind each figure",
+        "A model confidence number without the ledger or reporting period",
+        "The prompt wording, even if no person signs off on the result"
+      ],
+      "correct": 1,
+      "explanation": "The review sheet makes a finance narrative auditable. It connects each explanation to source data and keeps approval responsibility with the controller or named owner."
     }
   ]
 }

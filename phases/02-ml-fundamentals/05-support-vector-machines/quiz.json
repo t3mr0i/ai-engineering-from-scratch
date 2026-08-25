@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What are support vectors in an SVM?",
+      "question": "For hinge loss max(0, 1-yf(x)), what is the loss when y=1 and f(x)=0.5?",
       "options": [
-        "All data points in the training set",
-        "The training points closest to the decision boundary that determine the hyperplane",
-        "The feature vectors after kernel transformation — and applies unchanged even when the lesson's stated preconditions fail",
-        "The weight vectors learned during training"
-      ],
-      "correct": 1,
-      "explanation": "Support vectors are the training points that lie exactly on the margin boundaries. They are the only points that determine the decision hyperplane. Removing non-support-vector points does not change the boundary."
-    },
-    {
-      "stage": "check",
-      "question": "What does the SVM maximize when finding the decision boundary?",
-      "options": [
-        "The number of correctly classified training points, with no need to inspect intermediate results or test edge cases",
-        "The margin -- the distance between the decision boundary and the nearest points of each class",
-        "The total distance from all points to the boundary",
-        "The complexity of the decision boundary"
-      ],
-      "correct": 1,
-      "explanation": "SVMs find the hyperplane that maximizes the margin between the two classes. A wider margin leads to better generalization on unseen data."
-    },
-    {
-      "stage": "check",
-      "question": "What happens when you increase the C parameter in an SVM?",
-      "options": [
-        "The margin gets wider and more misclassifications are allowed, because one plausible output is sufficient production evidence",
-        "The margin gets narrower, fewer misclassifications are tolerated, and the model may overfit",
-        "The kernel function changes from linear to RBF",
-        "The number of support vectors always increases"
-      ],
-      "correct": 1,
-      "explanation": "Large C penalizes misclassifications heavily, producing a narrow margin that closely fits the training data. This can lead to overfitting. Small C allows more violations for a wider, more regularized margin."
-    },
-    {
-      "stage": "check",
-      "question": "How does the kernel trick enable SVMs to learn nonlinear boundaries?",
-      "options": [
-        "It replaces the SVM with a neural network",
-        "It computes dot products in a high-dimensional space without explicitly mapping data to that space",
-        "It removes outliers from the dataset before training",
-        "It adds polynomial features to the input data directly, before defining the measurement, acceptance threshold, or rollback path"
-      ],
-      "correct": 1,
-      "explanation": "The kernel trick replaces every dot product x_i . x_j with K(x_i, x_j), computing the dot product in a high-dimensional (even infinite-dimensional for RBF) feature space without ever constructing it."
-    },
-    {
-      "stage": "post",
-      "question": "Hinge loss is zero when y * f(x) >= 1. What does this mean in terms of classification?",
-      "options": [
-        "The point is misclassified",
-        "The point is correctly classified and lies outside the margin",
-        "The point is exactly on the decision boundary",
-        "The point is a noise sample that should be ignored — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "When y * f(x) >= 1, the point is correctly classified AND lies on or beyond the margin boundary. Only points inside the margin or misclassified (y * f(x) < 1) contribute to the hinge loss."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Support Vector Machines?",
-      "options": [
-        "Explain the maximum margin principle and identify support vectors from a trained model",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "0.5",
+        "1.5",
+        "0",
+        "-0.5"
       ],
       "correct": 0,
-      "explanation": "“Explain the maximum margin principle and identify support vectors from a trained model” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The margin is y f(x)=0.5, so the hinge loss is max(0,1-0.5)=0.5."
+    },
+    {
+      "stage": "check",
+      "question": "Which training examples are support vectors in a soft-margin linear SVM?",
+      "options": [
+        "Only examples far beyond the correct margin",
+        "Examples on or inside the margin that affect the boundary",
+        "Every example with a missing feature",
+        "Only the examples in the test set"
+      ],
+      "correct": 1,
+      "explanation": "Points on the margin or violating it contribute to the objective and determine the fitted boundary."
+    },
+    {
+      "stage": "check",
+      "question": "What is the usual effect of increasing C in a soft-margin SVM?",
+      "options": [
+        "All training points are discarded",
+        "The kernel is automatically changed to RBF",
+        "Misclassification is penalized more, often producing a narrower margin",
+        "The margin is forced to zero regardless of the data"
+      ],
+      "correct": 2,
+      "explanation": "A larger C emphasizes training errors, allowing less violation at the cost of a less-regularized boundary."
+    },
+    {
+      "stage": "check",
+      "question": "What does an RBF kernel provide in the SVM formulation?",
+      "options": [
+        "A guarantee that every feature is standardized",
+        "A replacement for the hinge loss with cross-entropy",
+        "A method that removes all support vectors",
+        "A way to model nonlinear boundaries through pairwise similarities"
+      ],
+      "correct": 3,
+      "explanation": "The kernel computes inner products in an implicit feature space, allowing nonlinear decision boundaries without constructing that space explicitly."
+    },
+    {
+      "stage": "post",
+      "question": "Two classes are linearly separable. Which boundary does the hard-margin SVM prefer?",
+      "options": [
+        "The separating boundary with the largest margin to the nearest points",
+        "The boundary that passes through the most training points",
+        "The boundary with the largest intercept",
+        "A random boundary followed by nearest-neighbor voting"
+      ],
+      "correct": 0,
+      "explanation": "Maximizing the minimum distance to either class gives the maximum-margin separator."
+    },
+    {
+      "stage": "post",
+      "question": "Your labels include a few unavoidable errors. Which SVM choice is most sensible?",
+      "options": [
+        "Use a hard margin so every noisy point controls the boundary",
+        "Use a soft margin and tune C rather than demanding perfect separation",
+        "Remove the hinge loss and fit class means",
+        "Set every feature weight to one before training"
+      ],
+      "correct": 1,
+      "explanation": "A soft margin permits selected violations, preventing a noisy label from forcing an extreme boundary."
     }
   ]
 }

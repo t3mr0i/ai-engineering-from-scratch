@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does dialogue state tracking maintain across turns?",
+      "question": "What canonical cuisine does extract_cuisine(\"I would like pasta\") return?",
       "options": [
-        "A free-text history only",
-        "A slot-value dictionary representing the user's current goal, updated after every turn",
-        "An embedding of the conversation — and applies unchanged even when the lesson's stated preconditions fail",
-        "A POS-tagged transcript"
-      ],
-      "correct": 1,
-      "explanation": "DST keeps a structured slot-value map that the backend can act on."
-    },
-    {
-      "stage": "check",
-      "question": "What does Joint Goal Accuracy (JGA) measure?",
-      "options": [
-        "Fraction of turns where every slot is exactly correct (all-or-nothing)",
-        "Average slot accuracy, with no need to inspect intermediate results or test edge cases",
-        "Latency per turn",
-        "Cosine similarity"
+        "italian",
+        "pasta",
+        "any",
+        "None"
       ],
       "correct": 0,
-      "explanation": "JGA is the strict per-turn match across all slots; per-slot accuracy is more lenient."
+      "explanation": "pasta is listed as an Italian synonym and the extractor returns the canonical key italian."
     },
     {
       "stage": "check",
-      "question": "Why does regenerating the whole state from history each turn handle user corrections naturally?",
+      "question": "What value does extract_area(\"A table in the centre\") return?",
       "options": [
-        "It uses fewer tokens, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "It runs on GPU",
-        "It avoids embeddings",
-        "Reading the full history lets the model re-derive the final state including 'actually...' corrections without explicit rollback logic"
+        "centre",
+        "center",
+        "east",
+        "None"
       ],
-      "correct": 3,
-      "explanation": "Full-history regeneration absorbs corrections by recomputing the final state from the entire conversation."
+      "correct": 1,
+      "explanation": "The code maps the British spelling centre to the canonical value center."
     },
     {
       "stage": "check",
-      "question": "Which 2026 pattern gives a guaranteed-valid slot dict in 5 lines of code?",
+      "question": "What does extract_people(\"For six diners\") return?",
       "options": [
-        "Hand-written regex, before defining the measurement, acceptance threshold, or rollback path",
-        "BM25 retrieval",
-        "LLM + Instructor + Pydantic schema with constrained or validated output",
-        "TF-IDF classifier"
+        "\"six\"",
+        "0",
+        "6",
+        "None"
       ],
       "correct": 2,
-      "explanation": "Pydantic schema + Instructor validates the LLM's state output against the slot ontology automatically."
+      "explanation": "The word-to-number map converts six to the integer 6."
+    },
+    {
+      "stage": "check",
+      "question": "What happens when update_state sees a new extracted price?",
+      "options": [
+        "It keeps the first price forever",
+        "It deletes every other slot",
+        "It raises whenever the utterance contains a correction cue",
+        "It overwrites the previous price with the newly extracted canonical value"
+      ],
+      "correct": 3,
+      "explanation": "For each slot, a non-None extractor result is assigned directly to new_state[slot]."
     },
     {
       "stage": "post",
-      "question": "Why version your DST schema?",
+      "question": "When does is_negation(utterance, slot) return True?",
       "options": [
-        "Adding new slots post-hoc invalidates older training data and breaks longitudinal evaluation",
-        "Required by JSON",
-        "Reduce token count — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "Speed gains"
+        "A negation cue such as \"never mind\" occurs and the slot name also appears in the utterance",
+        "Any utterance contains the word no, regardless of slot",
+        "The slot currently has a nonempty value",
+        "A correction cue and a price synonym occur together"
       ],
       "correct": 0,
-      "explanation": "Unversioned schema changes silently break training data alignment and eval comparability."
+      "explanation": "The helper checks any NEGATION_CUES and requires slot in the lowercased utterance."
     },
     {
       "stage": "post",
-      "question": "Why must DST for compliance-sensitive domains include a rule-based check alongside LLM extraction?",
+      "question": "What does the demo Joint Goal Accuracy count as correct?",
       "options": [
-        "Rules avoid embeddings, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "LLM-only DST can mis-extract destructive parameters (amount, account, date); a rules layer enforces deterministic constraints",
-        "LLMs are slower",
-        "Rules are multilingual"
+        "A dialogue is correct when one slot matches",
+        "A dialogue is correct only when the complete predicted slot dictionary equals its gold dictionary",
+        "Only the cuisine slot is compared",
+        "Any nonempty state receives one point"
       ],
       "correct": 1,
-      "explanation": "Compliance domains require deterministic enforcement; rules catch slot errors that LLMs introduce."
+      "explanation": "The demo compares state == d[\"gold\"] for each dialogue before averaging the matches."
     }
   ]
 }

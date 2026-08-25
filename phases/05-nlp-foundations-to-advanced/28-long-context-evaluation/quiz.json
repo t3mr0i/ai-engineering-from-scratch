@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the original NIAH benchmark measure?",
+      "question": "Where does insert_needle place a needle when depth_ratio=0.5?",
       "options": [
-        "Tokenizer fertility",
-        "Whether the model can retrieve a planted fact at controlled depths across a long context",
-        "Embedding cosine drift",
-        "Multi-hop reasoning only — and applies unchanged even when the lesson's stated preconditions fail"
+        "Always at the first token",
+        "After the final token regardless of filler length",
+        "At position int(len(filler_words)*0.5)",
+        "At a random position independent of depth_ratio"
+      ],
+      "correct": 2,
+      "explanation": "The function computes pos=int(len(words)*depth_ratio) and inserts the needle at that word boundary."
+    },
+    {
+      "stage": "check",
+      "question": "What is effective_capacity=20000 in mock_retrieval_model?",
+      "options": [
+        "The number of tokens generated as an answer",
+        "The number of needles inserted into every test",
+        "A probability that the model attends to each word",
+        "A hard cutoff: a recognized needle is returned only when its preceding context is at most 20,000 words"
+      ],
+      "correct": 3,
+      "explanation": "The loop checks before <= effective_capacity and returns no answer for matches beyond that point."
+    },
+    {
+      "stage": "check",
+      "question": "What does score_single_needle return when the expected word is not found before capacity?",
+      "options": [
+        "0",
+        "1",
+        "The depth ratio",
+        "The context length"
+      ],
+      "correct": 0,
+      "explanation": "mock_retrieval_model returns no answer, which does not contain expected, so the score is zero."
+    },
+    {
+      "stage": "check",
+      "question": "How does score_multi_needle summarize several expected needles?",
+      "options": [
+        "The longest needle position only",
+        "The fraction of expected values found before the capacity cutoff",
+        "A binary score that requires exactly one needle",
+        "The average number of filler words per needle"
       ],
       "correct": 1,
-      "explanation": "NIAH = needle in a haystack: plant a fact, ask the model to retrieve it, sweep depth and length."
-    },
-    {
-      "stage": "check",
-      "question": "Why is the advertised context window often very different from the usable context?",
-      "options": [
-        "Attention degrades with length and task; spec-sheet maximums rarely hold under multi-hop or reasoning loads",
-        "Tokenizers truncate, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "Embeddings overflow",
-        "Beam search slows"
-      ],
-      "correct": 0,
-      "explanation": "Effective context for reasoning is usually 25-50% of the advertised max."
-    },
-    {
-      "stage": "check",
-      "question": "What does RULER add over NIAH?",
-      "options": [
-        "Translation tasks",
-        "Faster inference",
-        "Per-token logprobs, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "Thirteen task types across retrieval, multi-hop tracing, aggregation, and QA at multiple context lengths"
-      ],
-      "correct": 3,
-      "explanation": "RULER expands NIAH into a multi-task long-context benchmark catching models that saturate NIAH but fail elsewhere."
-    },
-    {
-      "stage": "check",
-      "question": "What is the 'lost in the middle' effect?",
-      "options": [
-        "Models under-attend to content placed in the middle of long inputs; depth=0.5 often performs worse than depth=0 or 1",
-        "Models reorder tokens",
-        "Models forget the first token, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "Models lose punctuation"
-      ],
-      "correct": 0,
-      "explanation": "Mid-context content is least attended; sweeping depth exposes the U-shaped accuracy curve."
+      "explanation": "It counts expected values present in found and divides hits by len(expected_list)."
     },
     {
       "stage": "post",
-      "question": "Why must NIAH-only evaluation be supplemented with multi-hop tests?",
+      "question": "What grid does run_niah_grid sweep in the demo?",
       "options": [
-        "Multi-hop is faster",
-        "NIAH lacks ground truth",
-        "NIAH cannot run on long context — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "Frontier models can ace single-needle retrieval but still fail multi-hop variable-tracing or aggregation tasks"
+        "Only one length at the deepest position",
+        "The vocabulary size at every sentence boundary",
+        "Each requested context length at each requested depth ratio",
+        "Question types without changing context length"
       ],
-      "correct": 3,
-      "explanation": "Retrieval pass does not imply reasoning pass; multi-hop benchmarks expose the real ceiling."
+      "correct": 2,
+      "explanation": "The nested loops iterate over depths and lengths, insert the same needle, and record a 0/1 score."
     },
     {
       "stage": "post",
-      "question": "What does NoLiMa stress?",
+      "question": "Why should a long-context report add multi-needle or aggregation tasks to NIAH?",
       "options": [
-        "Streaming output, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "Latency",
-        "Tokenization",
-        "Needles that share no literal tokens with the query, so retrieval requires a semantic reasoning step"
+        "Multi-needle tasks always require fewer context tokens",
+        "Aggregation removes the need to measure retrieval depth",
+        "Single-needle tests cannot be reproduced with a fixed seed",
+        "A model can pass isolated needle lookup while failing to combine several distant pieces of evidence"
       ],
       "correct": 3,
-      "explanation": "NoLiMa removes lexical overlap so the model must reason rather than match keywords."
+      "explanation": "The lesson notes that a single needle can saturate; multi-needle tasks expose broader retrieval and reasoning failures."
     }
   ]
 }

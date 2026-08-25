@@ -93,6 +93,18 @@ If the new model is distinctly different (different behavior, different cost cur
 
 
 
+## Build It
+
+Reconstruct **Shadow Traffic, Canary Rollout, and Progressive Deployment for LLMs** by following `Regression` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
+
+## Use It
+
+Call `Regression` from a small caller with the demo’s smallest built-in fixture. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-rollout-runbook.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [TianPan — Releasing AI Features Without Breaking Production](https://tianpan.co/blog/2026-04-09-llm-gradual-rollout-shadow-canary-ab-testing)
@@ -103,10 +115,20 @@ If the new model is distinctly different (different behavior, different cost cur
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Distinguish shadow mode (zero-impact compare), canary (live traffic progressive), and A/B (stability-confirmed comparison).
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Enumerate five LLM-specific canary metrics (latency, cost/request, error/refusal, output-length distribution, user feedback).
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Explain why LLM non-determinism (up to 15%) changes what "stable" means in a rollout.
+Keep two runs side by side for **Shadow Traffic, Canary Rollout, and Progressive Deployment for LLMs**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
+
+1. **Read the first result.** From `code/`, run `python3 main.py` using the demo’s smallest built-in fixture. Follow `Regression`, `measure_stage`, `check_gates`. Expect the result reports the empty case explicitly or raises the documented validation error; capture the first printed shape, metric, status, or summary field and state which part supports **Distinguish shadow mode (zero-impact compare), canary (live traffic progressive), and A/B (stability-confirmed comparison).**.
+2. **Run a two-value comparison.** Repeat the command after changing only the primary fixture value: use the same fixture with its primary value changed from 1 to 2. Predict the direction of the change, then compare the two output values. Explain why **Enumerate five LLM-specific canary metrics (latency, cost/request, error/refusal, output-length distribution, user feedback).** says the other inputs should stay fixed.
+3. **Try an adversarial fixture.** Feed the implementation an empty fixture {}. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Explain why LLM non-determinism (up to 15%) changes what "stable" means in a rollout.** and record the exception text if the code rejects the case.
+4. **Write the operator note.** Open `outputs/skill-rollout-runbook.md` and add a worked example using the demo’s smallest built-in fixture. Include the input contract, one expected output field, and a named acceptance check for **Design a rollback path that takes seconds (policy flip) not hours (redeploy).**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Distinguish shadow mode (zero-impact compare), canary (live traffic progressive), and A/B (stability-confirmed comparison),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Explain why LLM non-determinism (up to 15%) changes what "stable" means in a rollout,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Shadow Traffic, Canary Rollout, and Progressive Deployment for LLMs** should contain:
+
+- the `python3 main.py` output for the demo’s smallest built-in fixture, with `Regression`, `measure_stage`, `check_gates` traced to the value or shape that supports **Distinguish shadow mode (zero-impact compare), canary (live traffic progressive), and A/B (stability-confirmed comparison).**;
+- a before/after comparison for the primary fixture value, where the same fixture with its primary value changed from 1 to 2 changes the observation in the direction predicted by **Enumerate five LLM-specific canary metrics (latency, cost/request, error/refusal, output-length distribution, user feedback).**;
+- a recorded result for an empty fixture {} that matches the implementation’s validation or empty-result contract and explains the evidence for **Explain why LLM non-determinism (up to 15%) changes what "stable" means in a rollout.**; and
+- an updated `outputs/skill-rollout-runbook.md` example with a concrete input, expected output field, and acceptance check tied to **Design a rollback path that takes seconds (policy flip) not hours (redeploy).**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

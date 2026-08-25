@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the 'curse of dimensionality'?",
+      "question": "What must PCA do before forming the covariance matrix?",
       "options": [
-        "High-dimensional data takes too long to download",
-        "As dimensions grow, distances become meaningless, volume concentrates in corners, and you need exponentially more data",
-        "Neural networks cannot process data with more than 100 features — and applies unchanged even when the lesson's stated preconditions fail",
-        "High-dimensional data always contains noise"
+        "Sort every row lexicographically",
+        "Replace all features with their absolute values",
+        "Center each feature by subtracting its sample mean",
+        "Normalize labels into one-hot vectors"
       ],
-      "correct": 1,
-      "explanation": "In high dimensions, all pairwise distances converge to similar values, data points spread to corners, and maintaining sample density requires exponentially more data. Dimensionality reduction counteracts these effects."
+      "correct": 2,
+      "explanation": "Centering makes the covariance describe variation around the data mean rather than the location of the cloud."
     },
     {
       "stage": "check",
-      "question": "What does PCA find?",
+      "question": "For centered points [1,1], [2,2], [3,3], which PCA direction captures the variance?",
       "options": [
-        "The most important features by name",
-        "The orthogonal directions of maximum variance in the data",
-        "Clusters of similar data points",
-        "The optimal number of features to keep, with no need to inspect intermediate results or test edge cases"
+        "[1, -1] after normalization",
+        "[1, 0] only",
+        "[0, 0]",
+        "[1, 1] after normalization"
       ],
-      "correct": 1,
-      "explanation": "PCA computes the eigenvectors of the covariance matrix, which are orthogonal directions ranked by how much data variance they capture. The first principal component points along the direction of maximum spread."
+      "correct": 3,
+      "explanation": "All points lie on the diagonal x=y. The first principal component follows that line; the perpendicular direction has zero variance."
     },
     {
       "stage": "check",
-      "question": "After running PCA on 784-dimensional MNIST data with k=50 components, you find 95% of variance is captured. What does this tell you?",
+      "question": "Eigenvalues of a covariance matrix are 9 and 1. What explained-variance ratio does PC1 have?",
       "options": [
-        "Only 50 pixels matter in each image",
-        "The data effectively lives in a ~50-dimensional subspace; the remaining 734 dimensions are mostly noise or redundancy",
-        "95% of images belong to the same class, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "The model will achieve 95% accuracy"
-      ],
-      "correct": 1,
-      "explanation": "95% explained variance with 50 components means the essential structure of 784-dimensional data is captured by just 50 directions. The rest carries only 5% of the variation -- mostly noise."
-    },
-    {
-      "stage": "check",
-      "question": "Why should you NOT use t-SNE as preprocessing before training a classifier?",
-      "options": [
-        "t-SNE is too slow for large datasets",
-        "t-SNE is designed for visualization only: it distorts global distances, is stochastic, and the output coordinates have no consistent meaning across runs",
-        "t-SNE reduces data to exactly 2 dimensions which is too few, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "t-SNE requires the labels to be known in advance"
-      ],
-      "correct": 1,
-      "explanation": "t-SNE preserves local neighborhoods but distorts global structure. Distances between clusters are meaningless, and different runs produce different layouts. Use PCA for preprocessing and t-SNE/UMAP only for visualization."
-    },
-    {
-      "stage": "post",
-      "question": "When would you choose kernel PCA over standard PCA?",
-      "options": [
-        "When you have more samples than features",
-        "When the data lies on a nonlinear manifold that standard PCA cannot separate, like concentric circles",
-        "When you need the fastest possible computation",
-        "When you want interpretable principal components — and applies unchanged even when the lesson's stated preconditions fail"
-      ],
-      "correct": 1,
-      "explanation": "Standard PCA finds linear subspaces. If data has nonlinear structure (e.g., two concentric rings), PCA projects both onto the same line. Kernel PCA maps data to a higher-dimensional space where the structure becomes linear."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Dimensionality Reduction?",
-      "options": [
-        "Use explained variance ratio and the elbow method to choose the number of principal components",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "0.9",
+        "0.1",
+        "9",
+        "0.5"
       ],
       "correct": 0,
-      "explanation": "“Use explained variance ratio and the elbow method to choose the number of principal components” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Explained variance uses eigenvalue divided by the total: 9/(9+1)=0.9."
+    },
+    {
+      "stage": "check",
+      "question": "Which interpretation of a 2D t-SNE plot is safest?",
+      "options": [
+        "Every global distance is preserved exactly",
+        "Local neighborhoods are emphasized, but distances between separate clusters are not reliable",
+        "The layout is deterministic regardless of seed",
+        "It can only represent linear projections"
+      ],
+      "correct": 1,
+      "explanation": "t-SNE is stochastic and optimizes local neighborhood structure. Apparent spacing between clusters should not be read as a global metric."
+    },
+    {
+      "stage": "post",
+      "question": "What generally happens in UMAP when n_neighbors is increased?",
+      "options": [
+        "Every point becomes an isolated cluster",
+        "The input dimension increases by n_neighbors",
+        "The embedding considers broader neighborhoods and tends to preserve more global structure",
+        "The algorithm becomes exactly the same as PCA"
+      ],
+      "correct": 2,
+      "explanation": "Larger neighborhoods connect more of the data graph, trading some local detail for a stronger view of global relationships."
+    },
+    {
+      "stage": "post",
+      "question": "Why can RBF kernel PCA separate concentric circles when ordinary PCA cannot?",
+      "options": [
+        "PCA always discards the labels, while kernel PCA reads them from the target column",
+        "The RBF kernel guarantees that every point maps to a different class",
+        "Kernel PCA skips centering and therefore preserves all original coordinates",
+        "The kernel represents nonlinear similarity in a feature space where the circles can become linearly separable"
+      ],
+      "correct": 3,
+      "explanation": "A linear projection cannot turn concentric rings into separated lines in the original plane. The RBF similarity provides a nonlinear feature geometry before the principal directions are taken."
     }
   ]
 }

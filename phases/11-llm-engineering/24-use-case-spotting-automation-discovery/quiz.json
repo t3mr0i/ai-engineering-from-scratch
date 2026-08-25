@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why should AI Use Case Spotting and Automation Discovery be taught as a workflow instead of only as tool awareness?",
+      "question": "What must a discovery conversation expose before an AI idea can be treated as a use case?",
       "options": [
-        "Because brainstorming even more ideas always produces more shippable use cases",
-        "Because excitement in a workshop is by itself evidence that a use case will succeed",
-        "Because teams need shared signals, controls, and decision rules they can apply to real work",
-        "Because any workflow that happens to mention text is automatically a good candidate AI use case"
+        "The workflow, observable pain, available data, owner, risk, and a value measure",
+        "A preferred vendor and a promise that the model will replace the whole workflow",
+        "A polished demo, even if nobody can name the decision or the affected metric",
+        "A long list of possible prompts without a person responsible for the outcome"
       ],
-      "correct": 2,
-      "explanation": "The lesson is built around reusable operating artifacts — not the idea that more brainstormed ideas ship themselves, that workshop excitement is evidence, or that mentioning text alone qualifies a use case."
+      "correct": 0,
+      "explanation": "The canvas turns enthusiasm into a testable plan by naming the workflow, signals, owner, risk, and metric. A tool choice or prompt list does not establish that the work is viable."
     },
     {
       "stage": "check",
-      "question": "In the lesson's opening example, why did none of the sixty workshop ideas ship three months later?",
+      "question": "For Scenario(\"manual reporting\", ..., (\"repeatable workflow\", \"text-heavy input\"), impact=4, uncertainty=3, what score does score_scenario return?",
       "options": [
-        "The workshop simply ran out of time before every one of the sixty ideas could be scored",
-        "No one separated attractive-sounding ideas from viable use cases with real pain, data, and a value hypothesis",
-        "Leadership rejected the entire sixty-idea backlog outright, citing budget constraints for the whole program, with no need to inspect intermediate results or test edge cases",
-        "The ideas were technically sound but the team lacked the API access needed to build any of them"
+        "11, because only impact and uncertainty contribute",
+        "15, from 4 times 2 plus 3 plus two matched signals at two points each",
+        "17, because every control adds two points to the scenario",
+        "20, because any scenario with text-heavy input is capped immediately"
       ],
       "correct": 1,
-      "explanation": "The lesson's opening example ships nothing because the sixty ideas were never separated into viable use cases — ones with real pain, data, repeatability, and a value hypothesis — not because of a time crunch, a budget rejection, or missing API access."
+      "explanation": "The base is 4 times 2 plus 3, or 11. The two matched signals add 4, giving 15, below the cap of 20."
     },
     {
       "stage": "check",
-      "question": "What does the Python artifact produce for AI Use Case Spotting and Automation Discovery?",
+      "question": "Which rule does score_scenario apply after counting matched signals?",
       "options": [
-        "A ranked plan with category, score, priority, controls, and rationale",
-        "A finished automation script that is ready to deploy without a pilot",
-        "A single yes/no verdict on whether a given idea is worth pursuing at all",
-        "A slide summarizing every workshop idea for the steering committee"
-      ],
-      "correct": 0,
-      "explanation": "The lesson's Python artifact outputs a ranked plan — category, score, priority, controls, and rationale — not a ready-to-deploy script, a flat yes/no verdict, or a steering-committee slide."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to the lesson design?",
-      "options": [
-        "Assuming a repeatable-sounding workflow needs no data-readiness check before a pilot",
-        "Skipping the owner signoff because everyone in the workshop had already agreed on it",
-        "Treating the workshop's enthusiasm as the risk review that the idea still has not had",
-        "A pilot metric, so the team has a measurable value hypothesis before spending budget"
-      ],
-      "correct": 3,
-      "explanation": "The lesson's controls include a pilot metric — a measurable value hypothesis before committing budget — the opposite of skipping the data-readiness check, the owner signoff, or the risk review."
-    },
-    {
-      "stage": "post",
-      "question": "When should a scenario become a launch-gate discussion rather than a casual awareness exercise?",
-      "options": [
-        "When impact, uncertainty, and matched risk signals such as measurable pain are all high",
-        "Only when the use case happens to involve a customer-facing chatbot interface of some kind",
-        "Only when more than sixty competing ideas came out of one and the same discovery workshop",
-        "Never — a promising use case can always wait until the next portfolio review comes around"
-      ],
-      "correct": 0,
-      "explanation": "High-impact, uncertain, risk-heavy use cases need a launch gate regardless of the interface, how many ideas competed for attention, or whether a review is already scheduled."
-    },
-    {
-      "stage": "post",
-      "question": "What is the main purpose of the output template?",
-      "options": [
-        "To formally replace the portfolio owner's decision about what gets funded next",
-        "To keep the workshop's low-scoring ideas hidden from the rest of the group entirely",
-        "To create a reusable worksheet or prompt teams keep applying after the course ends",
-        "To automatically generate completion certificates once the workshop has ended"
+        "It divides the impact by the number of signals to avoid rewarding busy workflows",
+        "It returns the raw score even when a scenario has more than twenty points",
+        "It adds two points per match to impact times two plus uncertainty, then caps the result at 20",
+        "It assigns launch gate required whenever the description contains the word owner"
       ],
       "correct": 2,
-      "explanation": "The output template is meant to become a reusable worksheet or prompt teams keep applying — not a substitute for the portfolio owner's funding call, a way to hide low scores, or an automatic certificate generator."
+      "explanation": "The implementation computes base = impact * 2 + uncertainty, adds len(matches) * 2, and wraps the result in min(20, ...). Priority is decided separately."
+    },
+    {
+      "stage": "check",
+      "question": "A scenario contains three recognized signals. Which controls does recommend select with the lesson's CONTROLS list?",
+      "options": [
+        "Only owner signoff, because the final control is the most important one",
+        "No controls until the score reaches the launch-gate threshold",
+        "The first two controls only, regardless of how many signals matched",
+        "The first four controls: pilot metric, risk review, data readiness check, and owner signoff"
+      ],
+      "correct": 3,
+      "explanation": "recommend slices CONTROLS to 1 plus the match count, with a minimum of two and a maximum of the full list. Three matches therefore select all four controls."
+    },
+    {
+      "stage": "post",
+      "question": "What category does choose_category return for a Scenario with no matched signals?",
+      "options": [
+        "assist, the first entry in CATEGORIES",
+        "predict, because missing signals imply a forecasting problem",
+        "automate, because an empty signal list is treated as a fast path",
+        "retrieve, because discovery starts with searching for more data"
+      ],
+      "correct": 0,
+      "explanation": "The no-match branch returns CATEGORIES[0]. In this lesson that list begins with assist; it does not guess a more specific solution from missing evidence."
+    },
+    {
+      "stage": "post",
+      "question": "Why does build_plan sort its rows by score before printing the reusable discovery canvas?",
+      "options": [
+        "It hides low-scoring ideas so the workshop only discusses the top row",
+        "It lets a team review the highest-scoring scenarios first while retaining category, priority, controls, and rationale for each row",
+        "It changes every scenario's score to its position in the portfolio",
+        "It converts each Scenario into a final deployment ticket without a human decision"
+      ],
+      "correct": 1,
+      "explanation": "build_plan keeps one output row per scenario, then sorts by score in descending order. The ordering supports prioritization; the returned fields still show why each row received its score."
     }
   ]
 }

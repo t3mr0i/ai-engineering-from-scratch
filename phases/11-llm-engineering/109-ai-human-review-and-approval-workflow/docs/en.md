@@ -109,6 +109,18 @@ Minimum audit record fields:
 
 
 
+## Build It
+
+Reconstruct **Designing Human-in-the-Loop Review and Approval Gates for AI Workflows (2026)** by following `RiskTier` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.
+
+## Use It
+
+Call `RiskTier` from a small caller with the smallest valid record {"id": 1}. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-hitl-gate-designer.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [ISO/IEC 42001:2023 — AI Management Systems](https://www.iso.org/standard/81230.html) — the international standard for human oversight requirements in AI deployments; the compliance anchor for Tier 3/4 gates.
@@ -119,10 +131,20 @@ Minimum audit record fields:
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Explain the production problem addressed by Designing Human-in-the-Loop Review and Approval Gates for AI Workflows (2026).
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Apply the lesson's decision or implementation workflow to a concrete case.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Measure quality, cost, latency, and risk with explicit acceptance criteria.
+Treat this as a lab exercise. Preserve the setup and result, then explain which observation is doing the evidentiary work.
+
+1. **Trace the happy path.** Run [main.py](../code/main.py) with `python3 main.py` from the lesson's `code/` directory. Record the smallest input that demonstrates “Explain the production problem addressed by Designing Human-in-the-Loop Review and Approval Gates for AI Workflows (2026)”. Point to `classify_risk()`, `run_gate()`, `is_rubber_stamp()` and name the returned field or printed value that serves as evidence.
+2. **Perturb the input.** Change exactly one input, threshold, or option that affects “Apply the lesson's decision or implementation workflow to a concrete case”. Predict the direction of the change before running it, then compare the two outputs and explain why the other fields should stay stable.
+3. **Test a failure case.** Construct a case that stresses “Measure quality, cost, latency, and risk with explicit acceptance criteria”: choose an empty collection, missing field, maximum-sized value, malformed record, or another boundary that fits this lesson. Write the expected behavior first and distinguish an intentional guard from an accidental crash.
+4. **Transfer the result.** Open outputs/skill-hitl-gate-designer.md and adapt one example to a real workflow. State the owner, evidence, and next decision required for “Identify failure modes and define a safe rollback or review path”; mark any assumption that the demo does not establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Explain the production problem addressed by Designing Human-in-the-Loop Review and Approval Gates for AI Workflows (2026),” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Measure quality, cost, latency, and risk with explicit acceptance criteria,” and cite a repeatable check rather than relying on visual inspection alone.
+A complete handoff records python3 main.py, the observed output, and the reasoning behind it. Check:
+
+- evidence for “Explain the production problem addressed by Designing Human-in-the-Loop Review and Approval Gates for AI Workflows (2026)” with the relevant input and returned field;
+- a one-variable comparison that makes “Apply the lesson's decision or implementation workflow to a concrete case” visible;
+- a predicted and observed boundary result for “Measure quality, cost, latency, and risk with explicit acceptance criteria”, including why the behavior is safe; and
+- one concrete update to outputs/skill-hitl-gate-designer.md that applies “Identify failure modes and define a safe rollback or review path” without hiding uncertainty.
+
+Use classify_risk(), run_gate(), is_rubber_stamp() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.

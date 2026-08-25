@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why should AI Ecosystem and Vendor Landscape be taught as a workflow instead of only as tool awareness?",
+      "question": "Why should a vendor landscape compare evidence across layers instead of ranking brands from a demo?",
       "options": [
-        "Because the vendor with the most impressive demo is usually the right choice for the stack",
-        "Because a copilot and a vector database can be compared as direct alternatives to each other",
-        "Because teams need shared signals, controls, and decision rules they can apply to real work",
-        "Because brand familiarity is a reliable shortcut when a team lacks a map of the ecosystem"
+        "A familiar brand is always safer than an unfamiliar platform",
+        "A vector database, a model, and an application are interchangeable if their demos look similar",
+        "The decision depends on signals such as residency, integration, governance, lock-in, and an explicit exit path",
+        "Vendor evaluation is complete once the most feature-rich product has been identified"
       ],
       "correct": 2,
-      "explanation": "The lesson is built around reusable operating artifacts — shared signals, controls, and decision rules — not the idea that the best demo wins, that a copilot and a vector database are alternatives, or that brand familiarity substitutes for an ecosystem map."
+      "explanation": "The lesson treats vendor choice as an operating-model decision. Architecture fit, data handling, governance, pilot evidence, and reversibility matter alongside visible features."
     },
     {
       "stage": "check",
-      "question": "In the lesson's opening example, why did the vendor discussion turn brand-driven?",
+      "question": "For the copilot selection fixture, which control list does recommend return?",
       "options": [
-        "Every shortlisted vendor refused to run a pilot test before a contract was signed, leaving no evidence, with no need to inspect intermediate results or test edge cases",
-        "The evaluation criteria were drawn so narrowly that only a single supplier could ever satisfy them",
-        "Data residency requirements ruled out every vendor the team was most interested in evaluating first",
-        "The team had no shared map of the AI stack, so tools from different layers were compared as alternatives"
+        "evaluation criteria and pilot test, but no exit plan",
+        "security review only, because a demo already supplies the other evidence",
+        "exit plan and security review, skipping the trial",
+        "evaluation criteria, pilot test, and exit plan"
       ],
       "correct": 3,
-      "explanation": "The lesson's opening example has a team comparing a copilot, an agent platform, a vector database, and a workflow tool as if they were alternatives; without a shared map of the layered ecosystem the conversation defaults to brands — not because of a pilot refusal, over-narrow criteria, or a data residency exclusion."
+      "explanation": "The fixture has two matched signals, so recommend takes the first three controls from CONTROLS: evaluation criteria, pilot test, and exit plan. Security review is fourth and is not selected until at least three signals match."
     },
     {
       "stage": "check",
-      "question": "What does the Python artifact produce for AI Ecosystem and Vendor Landscape?",
+      "question": "What score does the copilot selection fixture receive with impact=4, uncertainty=3, and two matched signals?",
       "options": [
-        "A signed vendor contract ready for procurement to countersign",
-        "A ranked plan with category, score, priority, controls, and rationale",
-        "A live feature comparison scraped from each vendor's own website, because one plausible output is sufficient production evidence",
-        "A single winner per category, chosen without stated criteria"
+        "15",
+        "11",
+        "17",
+        "20"
+      ],
+      "correct": 0,
+      "explanation": "The formula gives 4*2 + 3 + 2*2 = 15. The cap is not reached, so priority_for labels it guided pilot."
+    },
+    {
+      "stage": "check",
+      "question": "Which priority is returned for a vendor scenario with score 15?",
+      "options": [
+        "awareness only",
+        "guided pilot",
+        "team practice",
+        "launch gate required"
       ],
       "correct": 1,
-      "explanation": "The lesson's Python artifact outputs a ranked plan — category, score, priority, controls, and rationale — not a procurement-ready contract, a scraped feature comparison, or an unexplained per-category winner."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to the lesson design?",
-      "options": [
-        "Letting a polished vendor demo stand in for the pilot test the team still owes itself",
-        "Skipping the security review because the vendor is already used elsewhere in the group",
-        "Evaluation criteria, written down before demos so the comparison rests on evidence not hype",
-        "Postponing the exit plan until lock-in risk has already shown up in a renewal negotiation, before defining the measurement, acceptance threshold, or rollback path"
-      ],
-      "correct": 2,
-      "explanation": "The lesson's controls include evaluation criteria defined before demos, keeping the decision on evidence instead of hype — the opposite of treating a demo as a pilot, skipping the security review, or postponing the exit plan until lock-in bites."
+      "explanation": "Scores from 11 through 15 use the guided pilot band. A launch gate starts at 16."
     },
     {
       "stage": "post",
-      "question": "When should a scenario become a launch-gate discussion rather than a casual awareness exercise?",
+      "question": "What category does choose_category use when a vendor Scenario has no matched signals?",
       "options": [
-        "Only when the vendor's product happens to be hosted outside the European Union",
-        "Only when a vendor demo has revealed a feature that the architecture review did not anticipate",
-        "When impact, uncertainty, and matched risk signals such as lock-in risk are all running high",
-        "Never — a vendor choice can always be revisited at the next contract renewal window"
+        "application, because no signals imply a user-facing product",
+        "orchestration, because an empty signal list needs a workflow layer",
+        "model, the first category in the lesson's list",
+        "platform, because platform decisions come before model decisions"
       ],
       "correct": 2,
-      "explanation": "High-impact, uncertain, lock-in-heavy vendor decisions need a launch gate regardless of hosting location, what a demo happened to surface, or whether a renewal window is coming."
+      "explanation": "The implementation returns CATEGORIES[0] for an empty match list. In this lesson CATEGORIES[0] is model; it does not infer a layer from missing evidence."
     },
     {
       "stage": "post",
-      "question": "What is the main purpose of the output template?",
+      "question": "What decision does matrix-ai-vendor-evaluation.md help a team make after a pilot?",
       "options": [
-        "To formally replace procurement's authority over which vendor finally gets signed",
-        "To keep the known weaknesses of the preferred vendor out of the comparison entirely",
-        "To automatically generate completion certificates for participants once the workshop ends",
-        "To create a reusable matrix or prompt that teams can keep applying after the course ends"
+        "Whether the vendor's marketing copy is persuasive enough to approve a contract",
+        "Whether the most familiar brand should replace the architecture review",
+        "Whether a feature demo can stand in for residency, security, and integration evidence",
+        "Whether the evidence supports a choice, a further trial, or an exit plan with known trade-offs"
       ],
       "correct": 3,
-      "explanation": "The output template is an ecosystem map and vendor evaluation matrix teams keep applying after the course — not a substitute for procurement authority, a way to hide a favored vendor's weaknesses, or an automatic certificate generator."
+      "explanation": "The matrix keeps evaluation criteria, pilot observations, security review, and reversibility together. It informs procurement and architecture decisions without making the worksheet the approver."
     }
   ]
 }

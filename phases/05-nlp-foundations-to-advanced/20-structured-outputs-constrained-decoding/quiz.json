@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is prompt-only 'return JSON' not enough for production?",
+      "question": "What format does PhoneFSM accept?",
       "options": [
-        "JSON is too verbose a format, so it wastes context tokens compared to a more compact serialization like YAML",
-        "Native structured-output APIs already guarantee 100% valid JSON on every provider, so plain prompting is a redundant, wasted step",
-        "Frontier models comply most of the time but not always; the small fraction of malformed outputs still breaks downstream parsers",
-        "Prompting is fundamentally unable to describe a schema at all, so the model has no idea what fields are expected"
+        "Any twelve characters from the alphabet",
+        "A phone number with two digits in every group",
+        "Three digits, a hyphen, three digits, a hyphen, and four digits",
+        "Only a sequence of hyphens with no digits"
       ],
       "correct": 2,
-      "explanation": "Prompt-only structure works ~80% of the time on frontier models; production needs harder guarantees."
+      "explanation": "The states encode the pattern \\\\d{3}-\\\\d{3}-\\\\d{4}, reaching accept_state 12 after ten digits and two hyphens."
     },
     {
       "stage": "check",
-      "question": "What does constrained decoding modify at each generation step?",
+      "question": "What may PhoneFSM.valid_next return at state 3?",
       "options": [
-        "The logit vector, masking tokens that would invalidate the target grammar so only valid continuations can be sampled",
-        "The KV cache, evicting entries for any token that does not match the target schema's expected structure",
-        "The tokenizer's vocabulary, temporarily removing invalid subword tokens before the next forward pass",
-        "The training loss, penalizing the model's gradient whenever it emits a token that falls outside the target grammar entirely"
-      ],
-      "correct": 0,
-      "explanation": "A logit processor sets invalid tokens to -inf so the softmax cannot sample them."
-    },
-    {
-      "stage": "check",
-      "question": "Why might constrained decoding be faster than free generation?",
-      "options": [
-        "It swaps in a smaller distilled model automatically whenever a schema-constrained request is detected",
-        "Forced scaffold tokens (e.g. '{\"name\": \"') can be emitted directly without sampling, and the valid-token search space shrinks",
-        "It avoids running softmax entirely by short-circuiting straight from logits to the final output tokens",
-        "It skips backpropagation entirely, since the logit processor supposedly already knows what the correct final answer will be, because one plausible output is sufficient production evidence"
-      ],
-      "correct": 1,
-      "explanation": "Determined tokens skip sampling and reduced valid-token sets shrink the decode cost."
-    },
-    {
-      "stage": "check",
-      "question": "Which schema design choice prevents premature commitment by the model?",
-      "options": [
-        "Putting the 'answer' field first, so the model states its conclusion before it has generated any of the supporting reasoning text",
-        "Using shorter field key names, since shorter keys reduce the number of tokens the model has to commit to",
-        "Using snake_case field names instead of camelCase, since the tokenizer handles underscores more predictably",
-        "Placing reasoning fields before the answer/decision field, so the model works through the logic before committing to an answer"
+        "The ten digits",
+        "An empty list because state 3 is accepting",
+        "Every character in the alphabet",
+        "[\"-\"]"
       ],
       "correct": 3,
-      "explanation": "Field order is logic: putting reasoning first lets the model think before locking in an answer."
+      "explanation": "After three digits, state 3 requires the first hyphen before more digits can be consumed."
     },
     {
-      "stage": "post",
-      "question": "What is the limitation of FSM-based constrained decoding tools like Outlines?",
+      "stage": "check",
+      "question": "What does PhoneFSM.transition(3, \"7\") return?",
       "options": [
-        "Recursive schemas have to be flattened; truly recursive structures need CFG-based engines such as XGrammar",
-        "They are not deterministic, so the same schema and prompt can still produce different structures across runs",
-        "They lock you to OpenAI's API, since finite-state machines only compile against OpenAI's proprietary schema format",
-        "They only support enum-typed fields, so any schema with strings or numbers falls back to free-form generation"
+        "None, because state 3 allows only a hyphen",
+        "4, because every character advances the FSM",
+        "3, because digits are ignored",
+        "12, because a digit completes the phone number"
       ],
       "correct": 0,
-      "explanation": "FSMs cannot represent unbounded recursion; CFG engines handle it."
+      "explanation": "transition checks ch against valid_next(state); a digit is invalid at state 3."
+    },
+    {
+      "stage": "check",
+      "question": "How does mask_logits represent a character that is invalid in the current FSM state?",
+      "options": [
+        "It doubles the invalid logit so it is sampled first",
+        "It replaces that character logit with negative infinity",
+        "It deletes the character from the alphabet permanently",
+        "It sets all valid logits to zero and keeps invalid ones unchanged"
+      ],
+      "correct": 1,
+      "explanation": "softmax treats -inf as zero probability while retaining the full alphabet indexing."
     },
     {
       "stage": "post",
-      "question": "Why is Instructor described as not modifying logits?",
+      "question": "Why does generate_constrained produce a string matching the phone regex with the supplied alphabet?",
       "options": [
-        "It applies live gradient updates during inference to nudge the model's weights toward producing valid outputs, with no need to inspect intermediate results or test edge cases",
-        "Instructor formats the schema into the prompt and parses/retries the output; logit masking happens server-side or not at all",
-        "Anthropic's terms of service require third-party libraries to avoid touching raw logits directly",
-        "It only edits the prompt text, without ever validating or retrying against the returned response"
+        "It retries unconstrained strings until one happens to match",
+        "It copies PHONE_REGEX into the generated output",
+        "It samples only characters allowed by the FSM at each state until the accept state",
+        "It always returns the same hard-coded phone number"
       ],
-      "correct": 1,
-      "explanation": "Instructor uses provider-side structured output plus client-side validation and retries, not logit masking."
+      "correct": 2,
+      "explanation": "Every transition is validated before the state advances, so the completed string follows the FSM format."
+    },
+    {
+      "stage": "post",
+      "question": "What is the main difference between generate_unconstrained and generate_constrained?",
+      "options": [
+        "The unconstrained version uses real model logits and the constrained version uses no randomness",
+        "The constrained version can emit any length, while the unconstrained version stops at state 12",
+        "They use different phone formats but the same transition checks",
+        "The unconstrained version samples the whole alphabet at every step, while the constrained version masks invalid choices"
+      ],
+      "correct": 3,
+      "explanation": "Both use toy random logits; only constrained generation applies valid_next and mask_logits before sampling."
     }
   ]
 }

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does Voyager treat as the action space?",
+      "question": "What does the first execution of `craft_iron_pickaxe` fail on in the demo?",
       "options": [
-        "Text prompts only, refined through repeated few-shot examples",
-        "Reinforcement learning Q-values updated after every environment step",
-        "Executable code (JavaScript functions) stored, retrieved, and composed",
-        "Primitive Minecraft commands issued directly to the game's low-level control API"
+        "The crafting table is absent from the context.",
+        "The ore miner returns a non-numeric string.",
+        "The v1 skill has no `gather_sticks` dependency, so crafting reports that two sticks are missing.",
+        "The retriever cannot find a skill named `craft_iron_pickaxe`."
       ],
       "correct": 2,
-      "explanation": "Voyager's contribution is making code the action: skills are programs, not raw commands."
+      "explanation": "v1 depends on `mine_ore` and `place_crafting_table` but not `gather_sticks`; the executor reaches the craft function with zero sticks."
     },
     {
       "stage": "check",
-      "question": "What three components define a Voyager agent?",
+      "question": "What is the last name in `lib.topo_order(\"craft_iron_pickaxe\")` after v2 is registered?",
       "options": [
-        "Encoder, decoder, and value head, borrowed from actor-critic RL",
-        "Planner, executor, and judge, each a separate LLM call",
-        "Retriever, generator, and ranker, the standard RAG pipeline",
-        "Automatic curriculum, skill library, iterative prompting"
+        "`mine_ore`",
+        "`place_crafting_table`",
+        "`gather_sticks`",
+        "`craft_iron_pickaxe`"
       ],
       "correct": 3,
-      "explanation": "Voyager structures the agent around curriculum, skill library, and iterative prompting."
+      "explanation": "Dependencies are visited before the processed parent is appended, so the composed craft skill is last."
     },
     {
       "stage": "check",
-      "question": "What three signals can return from a skill execution attempt?",
+      "question": "What does registering a second `Skill` named `craft_iron_pickaxe` with the default `dedup=True` do?",
       "options": [
-        "Success, error (with stack trace), self-verification failure",
-        "Pass, fail, and retry after a short fixed cooldown period",
-        "Green, yellow, and red status flags shown on the monitoring dashboard",
-        "Heartbeat, ack, and nack messages exchanged between two cooperating actors"
+        "It refines the existing object to version 2 and stores its old code in `history`.",
+        "It creates a second independent entry with the same name.",
+        "It rejects the skill because duplicate names are always errors.",
+        "It increments the version but discards the new function and dependencies."
       ],
       "correct": 0,
-      "explanation": "Voyager's iterative prompting mechanism is driven by these three signals folded back into the next version."
+      "explanation": "The deduplication branch updates the existing skill, appends the old code, copies the new metadata, and increments `version`."
     },
     {
       "stage": "check",
-      "question": "How does the automatic curriculum pick the next task?",
+      "question": "What score does `SkillLibrary.search` use for a skill description?",
       "options": [
-        "Always the single hardest available task, to force the fastest possible rate of learning",
-        "Just above current capability, based on environment state and skill inventory (the exploration sweet spot)",
-        "A fixed user-supplied list of tasks, replayed in exactly the same order every single episode",
-        "Random uniform sampling over the entire action space, with no regard at all for the agent's current skill level"
+        "The number of tags, divided by the skill version.",
+        "The overlap of query and description tokens divided by their union size.",
+        "A random score so exploration does not favor familiar skills.",
+        "The execution result returned by the skill's function."
       ],
       "correct": 1,
-      "explanation": "The proposer aims for tasks just above current capability so progress is steady."
+      "explanation": "Retrieval uses token sets and computes `len(q_tokens & d_tokens) / len(q_tokens | d_tokens)`, optionally after a tag filter."
     },
     {
       "stage": "post",
-      "question": "Which 2026 product is the lesson's clearest match for the Voyager skill?",
+      "question": "What is the final context after the demo re-executes the refined v2 craft skill?",
       "options": [
-        "Pinecone's vector indices, used for nearest-neighbor similarity lookup at query time",
-        "AWS Lambda layers, shared binary dependencies attached to serverless functions",
-        "Claude Agent SDK skills: named, retrievable code plus instructions loaded on demand",
-        "OpenAI's fine-tuning jobs, which bake new behavior into the model weights permanently"
+        "`failed=True` and an empty inventory",
+        "`failed=False` and inventory `['ore', 'stick']`",
+        "`failed=False` and inventory `['iron_pickaxe']`",
+        "`failed=True` because v2 still lacks a table dependency"
       ],
       "correct": 2,
-      "explanation": "Agent SDK skills match Voyager's named-retrievable-composable code pattern."
+      "explanation": "The v2 dependency tuple gathers sticks, mines ore, and places the table before crafting, yielding one `iron_pickaxe` with `failed=False`."
     },
     {
       "stage": "post",
-      "question": "Why does the lesson recommend dedup on write for the skill library?",
+      "question": "What does `execute` do when a dependency name is missing from the library?",
       "options": [
-        "LLM providers reject function-calling schemas that contain duplicate tool names during registration",
-        "Git's content-addressable storage already blocks byte-identical duplicate commits from the skill repo",
-        "Without dedup, the same skill gets added many times with slightly different descriptions; retrieval should return one canonical version",
-        "Disk storage for the skill library is expensive, so deduplication is primarily a cost-saving measure rather than a retrieval-quality one"
+        "It skips the missing dependency and still marks the run successful.",
+        "It registers a placeholder skill with an empty function.",
+        "It raises the missing-name error out of the caller before writing the log.",
+        "It logs `missing skill: ...`, sets `context[\"failed\"] = True`, and returns the context."
       ],
-      "correct": 2,
-      "explanation": "Near-duplicate descriptions collapse to a single canonical skill so retrieval stays clean."
+      "correct": 3,
+      "explanation": "`execute` detects a `None` skill, appends a missing-skill log entry, marks the context failed, and returns without continuing."
     }
   ]
 }

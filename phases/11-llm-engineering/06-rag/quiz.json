@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does RAG stand for and what problem does it solve?",
+      "question": "With `chunk_size=4` and `overlap=1`, how does `chunk_text` advance after producing its first four-word chunk?",
       "options": [
-        "Recurrent Attention Generation -- replacing quadratic attention so longer documents fit into the prompt",
-        "Reduced Architecture Generation -- shrinking the model so it can be retrained on new documents cheaply",
-        "Ranked Answer Grounding -- scoring several candidate answers and returning the one that scores highest",
-        "Retrieval-Augmented Generation -- giving LLMs access to external knowledge they weren't trained on"
+        "It advances by four words and starts the next chunk with no overlap",
+        "It advances by one word and creates four nearly identical chunks",
+        "It advances by three words, so the next chunk reuses the final overlapping word",
+        "It stops after the first chunk because overlap is reserved for query-time retrieval"
+      ],
+      "correct": 2,
+      "explanation": "The start index increases by `chunk_size - overlap`, which is 3 here. The next chunk therefore begins one word before the previous chunk ended."
+    },
+    {
+      "stage": "check",
+      "question": "Why does `tfidf_embed` use the pipeline's fitted vocabulary and IDF values for both documents and the query?",
+      "options": [
+        "It lets every query create new dimensions, which improves recall even though stored vectors change shape",
+        "It replaces cosine similarity with exact string matching after the vector is built",
+        "It guarantees that a term absent from all documents receives the largest possible IDF",
+        "It ensures a query coordinate means the same term as the corresponding coordinate in every stored chunk"
       ],
       "correct": 3,
-      "explanation": "RAG retrieves relevant documents from an external knowledge base and adds them to the prompt. This gives the LLM access to up-to-date, domain-specific information without retraining."
+      "explanation": "A shared vocabulary is required for coordinate-wise dot products. The query is embedded with the same term-to-index mapping and IDF learned from indexed chunks, while unknown terms contribute zero."
     },
     {
       "stage": "check",
-      "question": "Why is RAG preferred over fine-tuning for most knowledge-grounded applications?",
+      "question": "What instruction does `build_rag_prompt` add when the retrieved passages do not support an answer?",
       "options": [
-        "RAG bakes your documents permanently into the model's weights, so the answers stay correct even when the vector store is offline or empty",
-        "RAG is cheaper, instantly updatable when documents change, and provides source attribution -- fine-tuning is expensive and becomes stale",
-        "RAG removes hallucination entirely, since a model handed retrieved passages can only repeat text that already appears in them",
-        "RAG teaches the model a style and reasoning pattern that prompting alone cannot reach, which fine-tuning is unable to do"
-      ],
-      "correct": 1,
-      "explanation": "Fine-tuning costs thousands of dollars, produces a static model that becomes stale as documents change, and offers no source attribution. RAG updates instantly (just update the document store), costs only embedding + storage, and can cite its sources."
-    },
-    {
-      "stage": "check",
-      "question": "What is the correct order of steps in a basic RAG pipeline?",
-      "options": [
-        "Embed the documents, generate a draft answer, then chunk that draft and store its embeddings for the next query",
-        "Chunk documents, embed chunks, store in vector DB, embed query, retrieve similar chunks, generate answer with context",
-        "Embed the query, generate the answer, then retrieve documents afterwards to check the finished answer against them, because one plausible output is sufficient production evidence",
-        "Store whole documents unchunked, query the LLM first, then append the matching documents to its finished response"
-      ],
-      "correct": 1,
-      "explanation": "Ingestion: chunk documents -> embed chunks -> store in vector DB. Query time: embed the user's query -> retrieve top-K similar chunks -> add chunks to prompt -> generate answer grounded in retrieved context."
-    },
-    {
-      "stage": "check",
-      "question": "What is a common failure mode in basic RAG systems?",
-      "options": [
-        "Retrieved chunks are semantically similar to the query but do not contain the answer, e.g. revenue strategy text when the query asked for Q3 revenue numbers",
-        "Cosine similarity cannot compare chunks of different lengths, so long documents always rank ahead of the short chunk holding the answer, however relevant it is",
-        "Brute-force cosine search silently drops vectors past the first hundred thousand, so newly added documents are never retrieved at all anymore",
-        "Re-indexing after a document changes invalidates every earlier embedding, so the whole vector store has to be rebuilt from scratch each time"
+        "It names the insufficient-information fallback",
+        "It asks the model to invent a likely answer and label the invented details as retrieval results",
+        "It discards the question and returns the highest-scoring chunk directly to the caller",
+        "It retries retrieval until at least five passages contain the question's exact words"
       ],
       "correct": 0,
-      "explanation": "Semantic search finds text that 'sounds like' the query, not necessarily text that 'answers' it. A query about revenue might retrieve chunks discussing revenue strategy rather than the chunk containing the actual number."
+      "explanation": "The prompt explicitly limits the answer to the supplied context and names a fixed fallback sentence for missing evidence. This makes unsupported answers distinguishable from grounded ones."
+    },
+    {
+      "stage": "check",
+      "question": "What does `search(query_embedding, stored_embeddings, top_k=2)` return?",
+      "options": [
+        "The two original text chunks, with no indication of their vector similarity",
+        "Index/similarity pairs sorted from highest cosine similarity to lowest",
+        "A single average embedding computed from the two nearest chunks",
+        "A dictionary keyed by source name, with the query vector stored under `query`"
+      ],
+      "correct": 1,
+      "explanation": "The function computes cosine similarity for each stored vector, sorts `(index, similarity)` pairs in descending order, and returns the first `top_k` pairs."
     },
     {
       "stage": "post",
-      "question": "How do you evaluate RAG quality?",
+      "question": "If `simple_generate` finds no meaningful word overlap between the question and retrieved chunks, which answer does it produce?",
       "options": [
-        "By measuring end-to-end latency, since retrieval under 200ms and generation under three seconds define a pipeline that is working correctly",
-        "Using both retrieval metrics (did we find the right chunks?) and generation metrics (is the answer faithful to the retrieved context?)",
-        "By counting how many chunks were retrieved, since production systems converge on a k of between five and ten chunks per query",
-        "By checking that every retrieved chunk falls in the 256 to 512 token range with the standard 50-token overlap between chunks"
+        "The first retrieved chunk verbatim, because an empty overlap is treated as a tie",
+        "A zero-length string, so the caller can distinguish retrieval from generation",
+        "It returns `I don't have enough information.`",
+        "A second query embedding built from the chunk titles"
       ],
-      "correct": 1,
-      "explanation": "RAG evaluation has two parts: retrieval quality (precision/recall of retrieved chunks against ground truth) and generation quality (faithfulness to context, relevance to query, no hallucination beyond retrieved information)."
+      "correct": 2,
+      "explanation": "After extracting the question, `simple_generate` scores sentence overlap. If no sentence has a positive score, it returns the explicit insufficient-information fallback instead of fabricating text."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for RAG (Retrieval-Augmented Generation)?",
+      "question": "Which artifacts does `RAGPipeline.query(question, top_k=3)` return for inspection?",
       "options": [
-        "Implement semantic search using a vector database (ChromaDB, FAISS, or Pinecone) with proper indexing",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "Only the generated answer; retrieval details are private implementation state",
+        "The query embedding, BM25 ranking, and model temperature used for generation",
+        "The answer and a list of document IDs, but not the prompt that was sent to generation",
+        "Question, answer, prompt, and retrieved source records"
       ],
-      "correct": 0,
-      "explanation": "“Implement semantic search using a vector database (ChromaDB, FAISS, or Pinecone) with proper indexing” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 3,
+      "explanation": "The pipeline returns a dictionary containing `question`, `answer`, `prompt`, and `retrieved`. Each retrieved record includes the chunk text, source, and similarity so a learner can audit grounding."
     }
   ]
 }

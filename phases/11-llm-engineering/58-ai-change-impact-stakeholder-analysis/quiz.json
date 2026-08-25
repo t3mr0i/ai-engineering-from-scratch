@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is often missing from AI rollout plans?",
+      "question": "What makes an AI change-impact assessment useful to the people who must adopt the change?",
       "options": [
-        "Extra tool screenshots and feature demos, which rollout plans already cover heavily",
-        "A rollout plan kept hidden from affected teams until adoption has already been measured",
-        "Role-specific impact, stakeholder planning, communication, and manager enablement",
-        "Nothing beyond tool access and one training session, which cover adoption on their own"
+        "It maps affected roles, adoption complexity, communication needs, manager dependencies, and practical support",
+        "It announces the tool first and lets each role infer what will change",
+        "It treats a single executive sponsor as sufficient evidence of readiness",
+        "It measures adoption only after rollout, when the easiest mitigations are gone"
       ],
-      "correct": 2,
-      "explanation": "AI rollouts usually focus on tools and training; what goes missing is role impact, stakeholder needs, communication, and manager enablement — not more screenshots, a concealed plan, or the assumption that tool access alone drives adoption."
+      "correct": 0,
+      "explanation": "A change plan connects the system to real work. Role impact, adoption risk, manager support, clear messages, and a feedback route make the assessment actionable before rollout."
     },
     {
       "stage": "check",
-      "question": "A new AI assistant goes live, but team leads say they cannot explain to their people what is now expected of them day to day. Which of the lesson's four signals does this match most directly?",
+      "question": "The assistant rollout fixture matches three signals and has people_impact=5 and adoption_complexity=5. What priority does recommend return?",
       "options": [
-        "Role impact — the tasks a specific role performs are changing because of the rollout",
-        "Manager dependency — adoption stalls because leads cannot brief their teams on expectations",
-        "Communication gap — affected people never received a message explaining the change at all, with no need to inspect intermediate results or test edge cases",
-        "Adoption risk — the change is likely to stall even though the tool itself works fine"
+        "stakeholder engagement with score 15",
+        "change plan required with score 20",
+        "communication prep with score 17",
+        "light update with score 13"
       ],
       "correct": 1,
-      "explanation": "Team leads who cannot explain the new expectations is the lesson's manager-dependency signal, answered with a manager brief — distinct from role impact (the tasks themselves changing), a communication gap (no message sent), or general adoption risk."
+      "explanation": "The base is 5*2 + 5 = 15. Three matches add 6, so the capped score is 20 and the recommendation is change plan required."
     },
     {
       "stage": "check",
-      "question": "What does the Python artifact produce?",
+      "question": "Which category does choose_category select for the assistant rollout fixture?",
       "options": [
-        "A finished organisation chart showing every role after the AI rollout is complete",
-        "A deployed AI assistant that is already live for all of the affected teams",
-        "A training certificate confirming each affected employee completed onboarding",
-        "A ranked change-impact plan mapping signals to stakeholder and manager controls"
+        "impact assessment",
+        "communication plan",
+        "adoption plan",
+        "manager enablement"
       ],
-      "correct": 3,
-      "explanation": "The artifact ranks rollout scenarios and maps signals such as adoption risk to controls like impact map, stakeholder plan, communication script, and manager brief — it does not produce an org chart, deploy the assistant, or certify training."
+      "correct": 2,
+      "explanation": "The category index is (3 matches + 5 people impact + 5 adoption complexity) modulo 4 = 1. CATEGORIES[1] is adoption plan."
     },
     {
       "stage": "check",
-      "question": "Which control belongs to this lesson?",
+      "question": "The workflow change fixture has one matched signal, people_impact=4, and adoption_complexity=3. Which result is correct?",
       "options": [
-        "Manager brief — material that lets leads explain the change and the new expectations",
-        "Skipping the communication script so each team improvises its own rollout message, before defining the measurement, acceptance threshold, or rollback path",
-        "Hiding the role-impact analysis so affected staff do not worry before the launch",
-        "Dropping the stakeholder plan because training attendance already proves adoption"
-      ],
-      "correct": 0,
-      "explanation": "The lesson's controls are impact map, stakeholder plan, communication script, and manager brief — a manager brief gives leads the material to explain the change, unlike skipping the script, hiding role impact, or dropping the stakeholder plan."
-    },
-    {
-      "stage": "post",
-      "question": "When does an AI rollout need a formal change plan?",
-      "options": [
-        "When people impact, adoption complexity, role impact, or manager dependency is high",
-        "Only when no role's daily work changes as a result of introducing the AI tool",
-        "Only after adoption has already failed and teams have returned to the old process — and applies unchanged even when the lesson's stated preconditions fail",
-        "Never — one training session covers everything an AI rollout plan needs to cover"
-      ],
-      "correct": 0,
-      "explanation": "High people impact, adoption complexity, role impact, or manager dependency are exactly the signals that call for structured change planning — not the absence of role changes, a post-mortem after adoption failed, or training on its own."
-    },
-    {
-      "stage": "post",
-      "question": "What should stakeholder planning clarify?",
-      "options": [
-        "Only which vendor supplies the AI tool being introduced across the affected teams",
-        "Only the launch date, since the rest of the rollout can be worked out afterwards",
-        "Nothing about who owns communication, since each affected team will sort that out",
-        "Who is affected, what changes, what message they need, and who reinforces it"
+        "communication prep with score 13",
+        "change plan required with score 15",
+        "light update with score 9",
+        "stakeholder engagement with score 13"
       ],
       "correct": 3,
-      "explanation": "Stakeholder planning is specific about who is affected, what changes for them, the message they need, and who reinforces it — not just the vendor, the launch date, or an unowned communication effort."
+      "explanation": "The score is 4*2 + 3 + 2 = 13, which belongs to stakeholder engagement. The communication-gap match also keeps the first two controls in the recommendation."
+    },
+    {
+      "stage": "post",
+      "question": "A no-match Scenario has people_impact=2 and adoption_complexity=1. What priority follows from the score?",
+      "options": [
+        "light update with score 5",
+        "communication prep with score 7",
+        "stakeholder engagement with score 11",
+        "change plan required with score 16"
+      ],
+      "correct": 0,
+      "explanation": "The no-match base is 2*2 + 1 = 5, below the score-7 threshold for communication prep. The correct priority is light update."
+    },
+    {
+      "stage": "post",
+      "question": "What should map-ai-change-impact.md give a manager before the assistant rollout?",
+      "options": [
+        "A launch date without any explanation of changed responsibilities",
+        "A role-impact map, stakeholder plan, communication script, manager brief, and feedback route",
+        "A model score that replaces conversations with managers and affected teams",
+        "One generic announcement that treats every role as affected in the same way"
+      ],
+      "correct": 1,
+      "explanation": "The map turns impact analysis into enablement. It gives managers a role-specific message, a plan for stakeholders, a script for conversations, and a way to surface adoption problems."
     }
   ]
 }

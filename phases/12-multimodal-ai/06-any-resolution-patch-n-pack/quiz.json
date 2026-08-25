@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Any-Resolution Vision: Patch-n'-Pack and NaFlex?",
+      "question": "For Image('A', h=6, w=4) with patch=2, what grid and sequence does Image.seq return?",
       "options": [
-        "Pack patches from a batch of variable-resolution images into one sequence and build the block-diagonal atte...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "A 3x2 grid and 6 patch tokens",
+        "A 2x3 grid and 5 patch tokens",
+        "A 6x4 grid and 24 patch tokens",
+        "A 1x1 grid because the image is smaller than 336px"
       ],
       "correct": 0,
-      "explanation": "“Pack patches from a batch of variable-resolution images into one sequence and build the block-diagonal atte...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Image.grid divides height and width independently: 6//2=3 and 4//2=2. seq multiplies them, giving 3*2 = 6 tokens."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Any-Resolution Vision: Patch-n'-Pack and NaFlex?",
+      "question": "What total length does pack_batch compute for the toy images A (6 tokens) and B (4x8 at patch 2)?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Pick between AnyRes tiling (LLaVA-NeXT), NaFlex (SigLIP 2), and M-RoPE (Qwen2-VL) for a given task",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "12, because B contributes only its height",
+        "14, because B contributes 2x4=8 tokens and A contributes 6",
+        "16, because the two image grids are padded to the same square",
+        "48, because every patch is counted once per image dimension"
       ],
       "correct": 1,
-      "explanation": "“Pick between AnyRes tiling (LLaVA-NeXT), NaFlex (SigLIP 2), and M-RoPE (Qwen2-VL) for a given task” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "B has grid 2x4 and therefore 8 tokens. pack_batch concatenates variable lengths without padding: 6 + 8 = 14."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through Any-Resolution Vision: Patch-n'-Pack and NaFlex?",
+      "question": "For the same [6, 8] packed lengths, what are mask_nonzero and mask_size?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Compute token budgets for OCR, charts, and photography without resizing",
-        "Treat one successful example as proof that every edge case works"
+        "196 and 100, because the dense matrix keeps only diagonal cells",
+        "14 and 196, because each token sees one cell",
+        "100 and 196, from 6x6 plus 8x8 allowed cells inside a 14x14 matrix",
+        "84 and 100, because both blocks are rectangular"
       ],
       "correct": 2,
-      "explanation": "“Compute token budgets for OCR, charts, and photography without resizing” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The block-diagonal mask allows 6^2 + 8^2 = 36 + 64 = 100 cells. The dense storage is total^2 = 14^2 = 196 cells."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Any-Resolution Vision: Patch-n'-Pack and NaFlex?",
+      "question": "What does anyres_cost return for an image no larger than the 336px tile, such as 300x300?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Name the three failure modes of square-resize: squished text, cropped content, wasted tokens on padding",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Name the three failure modes of square-resize: squished text, cropped content, wasted tokens on padding” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Any-Resolution Vision: Patch-n'-Pack and NaFlex?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Pack patches from a batch of variable-resolution images into one sequence and build the block-diagonal atte..."
+        "576, because the thumbnail is omitted for a small image",
+        "2,304, because the image is padded to a 2x2 grid",
+        "729, because AnyRes always uses a 27x27 patch grid",
+        "1,152, because one 24x24 tile and one 24x24 thumbnail are counted"
       ],
       "correct": 3,
-      "explanation": "“Pack patches from a batch of variable-resolution images into one sequence and build the block-diagonal atte...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "For a small image, the tile grid is 1x1. A 336/14 crop has 24x24=576 tokens, and anyres_cost still adds the 576-token thumbnail, totaling 1,152."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Any-Resolution Vision: Patch-n'-Pack and NaFlex?",
+      "question": "What does square_cost(img, side=336, patch=14) return for every image in this toy?",
       "options": [
-        "Pick between AnyRes tiling (LLaVA-NeXT), NaFlex (SigLIP 2), and M-RoPE (Qwen2-VL) for a given task",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "576, because the fixed square has a 24x24 patch grid",
+        "The native image's H//14 multiplied by W//14",
+        "The AnyRes tile count plus a thumbnail",
+        "0 for images whose aspect ratio is not square"
       ],
       "correct": 0,
-      "explanation": "“Pick between AnyRes tiling (LLaVA-NeXT), NaFlex (SigLIP 2), and M-RoPE (Qwen2-VL) for a given task” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "square_cost ignores the source aspect ratio and computes (336//14)^2 = 24^2 = 576. That fixed baseline is why it can lose detail on tall documents."
+    },
+    {
+      "stage": "post",
+      "question": "What do cu_seqlens=[0, 6, 14] and build_dense_mask encode for the packed batch?",
+      "options": [
+        "They make all 14 tokens attend across both images",
+        "They mark image boundaries so attention stays inside the 6-token and 8-token blocks",
+        "They sort images by pixel area before projection",
+        "They reserve six CLS tokens before the second image"
+      ],
+      "correct": 1,
+      "explanation": "The cumulative offsets identify [0,6) and [6,14). build_dense_mask writes ones only within each interval, preventing cross-image attention while retaining each image's internal attention."
     }
   ]
 }

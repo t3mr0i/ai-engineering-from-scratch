@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Proximal Policy Optimization (PPO)?",
+      "question": "What does collect_rollout store so PPO can compare the new policy with the behavior policy?",
       "options": [
-        "Formulate Proximal Policy Optimization (PPO) in terms of states, actions, rewards, and objectives",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Formulate Proximal Policy Optimization (PPO) in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Proximal Policy Optimization (PPO)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Implement the central update rule from first principles",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Proximal Policy Optimization (PPO)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Trace learning signals through a self-terminating experiment",
-        "Treat one successful example as proof that every edge case works"
+        "Only terminal states and their rewards",
+        "A copy of the target network for every environment",
+        "Each transition's old value estimate and log probability of the sampled action",
+        "A sorted list of all legal actions, with no sampled action"
       ],
       "correct": 2,
-      "explanation": "“Trace learning signals through a self-terminating experiment” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "Each record stores v_old and log_pi_old alongside x, a, r, and done; these are needed for GAE and the PPO ratio."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Proximal Policy Optimization (PPO)?",
+      "question": "How does gae(buffer) compute the one-step residual at a nonterminal record?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Evaluate convergence, stability, and exploration trade-offs",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Evaluate convergence, stability, and exploration trade-offs” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Proximal Policy Optimization (PPO)?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Formulate Proximal Policy Optimization (PPO) in terms of states, actions, rewards, and objectives"
+        "delta = r - v_old, ignoring the next state",
+        "delta = gamma * v_old - r",
+        "delta = max(action probabilities) - v_old",
+        "delta = r + gamma*next_v - v_old, with next_v set to zero at done"
       ],
       "correct": 3,
-      "explanation": "“Formulate Proximal Policy Optimization (PPO) in terms of states, actions, rewards, and objectives” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The code uses the next stored old value unless done is true, then feeds delta into the same lambda-return recurrence as actor-critic."
+    },
+    {
+      "stage": "check",
+      "question": "What is the PPO probability ratio for a record in ppo_update?",
+      "options": [
+        "exp(logp - log_pi_old), comparing the current policy's sampled-action probability with the old one",
+        "logp + log_pi_old, which compares two rewards",
+        "probability of the best action divided by the episode length",
+        "The KL divergence between all current and old logits"
+      ],
+      "correct": 0,
+      "explanation": "The implementation computes logp for rec['a'] under theta and sets ratio=exp(logp-rec['log_pi_old'])."
+    },
+    {
+      "stage": "check",
+      "question": "When does ppo_update set pg_scale to zero with eps=0.2?",
+      "options": [
+        "Whenever the reward is negative, regardless of the ratio",
+        "When a positive advantage has ratio above 1+eps or a negative advantage has ratio below 1-eps",
+        "Whenever the minibatch has fewer than 32 records",
+        "Only when the current policy exactly matches the old policy"
+      ],
+      "correct": 1,
+      "explanation": "The clipped predicate checks the direction-specific trust-region boundary; clipped records receive no policy-gradient update in this toy implementation."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Proximal Policy Optimization (PPO)?",
+      "question": "What does ppo_update return after its epochs and minibatches?",
       "options": [
-        "Implement the central update rule from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "The new policy's greedy action at (0,0)",
+        "Only the number of transitions in buffer",
+        "Mean log-policy divergence and the fraction of samples whose updates were clipped",
+        "A replacement environment and a fresh replay buffer"
       ],
-      "correct": 0,
-      "explanation": "“Implement the central update rule from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "correct": 2,
+      "explanation": "It computes mean_kl from old-logp minus new-logp and clip_frac from clip_hits/total, then returns both metrics."
+    },
+    {
+      "stage": "post",
+      "question": "Which setup does main use for each PPO rollout update?",
+      "options": [
+        "One environment for 4 steps and no value function",
+        "32 environments for 8 epochs, with eps=0.05",
+        "A replay buffer sampled forever after training ends",
+        "8 environments for up to 50 steps, followed by 4 PPO epochs with a 0.2 clip range"
+      ],
+      "correct": 3,
+      "explanation": "collect_rollout defaults to n_envs=8 and horizon=50; ppo_update defaults to epochs=4 and eps=0.2, matching the printed setup."
     }
   ]
 }

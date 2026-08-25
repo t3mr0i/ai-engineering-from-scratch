@@ -436,6 +436,18 @@ result = await run_function_calling_loop(query)
 print_loop_result(result)
 ```
 
+## Build It
+
+Reconstruct **Function Calling & Tool Use** by following `register_tool` on a graph with edges (0,1) and (1,2). Run `npx tsx main.ts` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.
+
+## Use It
+
+Call `register_tool` from a small caller with a graph with edges (0,1) and (1,2). Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/prompt-tool-designer.md` with the command `npx tsx main.ts`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [OpenAI Function Calling Guide](https://platform.openai.com/docs/guides/function-calling) -- the definitive reference for tool use with GPT-4o, including parallel calls, forced calling, and structured arguments
@@ -449,10 +461,20 @@ print_loop_result(result)
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Implement a function calling loop: define tool schemas, parse the model's tool-call JSON, execute functions, and return results.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Design tool schemas with clear descriptions and typed parameters that the model can reliably invoke.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Build a multi-turn agent loop that chains multiple function calls to answer complex queries.
+Begin with a control run and leave a short receipt: input, output, and the reasoning that connects them to the objective.
+
+1. **Start with a known input.** Run [`main.ts`](../code/main.ts) with `npx tsx main.ts` from the lesson's `code/` directory. Record the smallest input that demonstrates “Implement a function calling loop: define tool schemas, parse the model's tool-call JSON, execute functions, and return results”. Point to `registerTool()`, `calculator()`, `getWeather()` and name the returned field or printed value that serves as evidence.
+2. **Run a controlled comparison.** Change exactly one input, threshold, or option that affects “Design tool schemas with clear descriptions and typed parameters that the model can reliably invoke”. Predict the direction of the change before running it, then compare the two outputs and explain why the other fields should stay stable.
+3. **Try the smallest valid counterexample.** Construct a case that stresses “Build a multi-turn agent loop that chains multiple function calls to answer complex queries”: choose an empty collection, missing field, maximum-sized value, malformed record, or another boundary that fits this lesson. Write the expected behavior first and distinguish an intentional guard from an accidental crash.
+4. **Transfer the result.** Open `outputs/prompt-tool-designer.md` and adapt one example to a real workflow. State the owner, evidence, and next decision required for “Handle function calling edge cases: parallel tool calls, error propagation, and preventing infinite tool loops”; mark any assumption that the demo does not establish.
 
 ## Reference Solution
 
-Use the canonical [main.ts](../code/main.ts) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Implement a function calling loop: define tool schemas, parse the model's tool-call JSON, execute functions, and return results,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Build a multi-turn agent loop that chains multiple function calls to answer complex queries,” and cite a repeatable check rather than relying on visual inspection alone.
+Keep the solution auditable: run `npx tsx main.ts`, save the output, and explain what it demonstrates. Include:
+
+- evidence for “Implement a function calling loop: define tool schemas, parse the model's tool-call JSON, execute functions, and return results” with the relevant input and returned field;
+- a one-variable comparison that makes “Design tool schemas with clear descriptions and typed parameters that the model can reliably invoke” visible;
+- a predicted and observed boundary result for “Build a multi-turn agent loop that chains multiple function calls to answer complex queries”, including why the behavior is safe; and
+- one concrete update to `outputs/prompt-tool-designer.md` that applies “Handle function calling edge cases: parallel tool calls, error propagation, and preventing infinite tool loops” without hiding uncertainty.
+
+Use `registerTool()`, `calculator()`, `getWeather()` to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.

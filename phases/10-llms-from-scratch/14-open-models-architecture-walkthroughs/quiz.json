@@ -4,75 +4,45 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to Open Models: Architecture Walkthroughs?",
-      "options": [
-        "Read the config.json of Llama 3, Mistral, Mixtral, Gemma 2, Qwen 2.5, and DeepSeek-V3 and explain every field",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Read the config.json of Llama 3, Mistral, Mixtral, Gemma 2, Qwen 2.5, and DeepSeek-V3 and explain every field” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "Which task best demonstrates practical understanding of Open Models: Architecture Walkthroughs?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Name the specific architectural change each model made versus GPT-2 Small and justify it from first principles",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Name the specific architectural change each model made versus GPT-2 Small and justify it from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "check",
-      "question": "What should a learner inspect while working through Open Models: Architecture Walkthroughs?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, because one plausible output is sufficient production evidence",
-        "Compute parameter count, KV cache size, and activation memory for any open model from its config alone",
-        "Treat one successful example as proof that every edge case works"
-      ],
+      "question": "What attention scheme does `attention_scheme` report for a model with 32 query heads and 8 KV heads?",
+      "options": ["MHA, because query and KV heads are always equal.", "MLA, regardless of the configuration.", "GQA (grouped-query attention).", "MQA, because there is only one query head."],
       "correct": 2,
-      "explanation": "“Compute parameter count, KV cache size, and activation memory for any open model from its config alone” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The function labels the case where query heads exceed KV heads but KV heads are greater than one as GQA."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits Open Models: Architecture Walkthroughs?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Pick the right open model for a deployment target given latency, memory, and capability constraints",
-        "Choose a production framework before defining the core mechanism, before defining the measurement, acceptance threshold, or rollback path",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Pick the right open model for a deployment target given latency, memory, and capability constraints” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for Open Models: Architecture Walkthroughs?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism — and applies unchanged even when the lesson's stated preconditions fail",
-        "Treat one successful example as proof that every edge case works",
-        "Read the config.json of Llama 3, Mistral, Mixtral, Gemma 2, Qwen 2.5, and DeepSeek-V3 and explain every field"
-      ],
+      "question": "In the calculator's MoE report, which experts contribute to `active_mlp` for a top-2 configuration with one shared expert?",
+      "options": ["All experts, including every inactive route.", "Only the router matrix; no expert MLP.", "One routed expert and two shared experts.", "Two routed experts and the always-on shared expert."],
       "correct": 3,
-      "explanation": "“Read the config.json of Llama 3, Mistral, Mixtral, Gemma 2, Qwen 2.5, and DeepSeek-V3 and explain every field” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The active estimate uses `top_k * expert_params + shared_experts * expert_params`, representing the selected routed experts plus the shared expert."
+    },
+    {
+      "stage": "check",
+      "question": "Which formula does `mlp_params` use for a SwiGLU block with hidden size `h` and intermediate size `ff`?",
+      "options": ["`3 * h * ff`.", "`2 * h + ff`.", "`4 * h * h` regardless of `ff`.", "`h * ff / 3`."],
+      "correct": 0,
+      "explanation": "SwiGLU has gate, up, and down projections, so the calculator counts three h-by-ff-sized matrices."
+    },
+    {
+      "stage": "check",
+      "question": "Why does the `analyze` report use a latent rank for MLA's KV-cache estimate?",
+      "options": ["MLA stores only the vocabulary logits.", "MLA caches a compressed latent representation rather than one full KV vector per KV head.", "MLA has no attention keys or values.", "The latent rank is the number of MoE experts."],
+      "correct": 1,
+      "explanation": "The code's MLA branch computes cache bytes from `kv_lora_rank`, which is the compressed K/V latent retained across decoding positions."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for Open Models: Architecture Walkthroughs?",
-      "options": [
-        "Name the specific architectural change each model made versus GPT-2 Small and justify it from first principles",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 0,
-      "explanation": "“Name the specific architectural change each model made versus GPT-2 Small and justify it from first principles” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "question": "Which routing configuration belongs to the `mixtral8x7b` entry?",
+      "options": ["Dense MLP with no experts.", "256 experts with top-8 routing and one shared expert.", "8 experts with top-2 routing and no shared expert.", "One expert selected from 256 for every token."],
+      "correct": 2,
+      "explanation": "The configuration table sets `experts=8` and `top_k=2` for Mixtral, with MoE enabled; the shared-expert setting is not the DeepSeek-V3 one."
+    },
+    {
+      "stage": "post",
+      "question": "For a standard attention layer, which terms does `attention_params_per_layer` add?",
+      "options": ["Only the output projection and layer norm.", "The embedding matrix and every expert MLP.", "One Q matrix and one shared scalar.", "Q, K, V, and output projections, with K/V sized by the number of KV heads."],
+      "correct": 3,
+      "explanation": "The standard branch counts `h*h` for Q, `2*h*(kv_heads*head_dim)` for K and V, and `h*h` for the output projection."
     }
   ]
 }

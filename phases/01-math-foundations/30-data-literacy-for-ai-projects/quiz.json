@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why should data literacy be part of AI training before a model is selected?",
+      "question": "Which finding should block an AI pilot until the team investigates it?",
       "options": [
-        "Because model selection is never important",
-        "Because teams need to know whether sources are allowed, fresh, representative, and good enough",
-        "Because all internal documents are automatically safe",
-        "Because evaluation can be skipped when data is available — and applies unchanged even when the lesson's stated preconditions fail"
+        "The source owner is unclear, the data is stale, or a field is sensitive",
+        "The project has a short README",
+        "The model uses a small Python module",
+        "The team prefers a different editor"
+      ],
+      "correct": 0,
+      "explanation": "The artifact's SIGNALS identify ownership, freshness, quality, and privacy issues that affect feasibility and controls before a pilot starts."
+    },
+    {
+      "stage": "check",
+      "question": "For a Scenario with impact=2, uncertainty=2, and one matched signal, what score does score_scenario return?",
+      "options": [
+        "4",
+        "8",
+        "6",
+        "20"
       ],
       "correct": 1,
-      "explanation": "AI feasibility depends on source quality, ownership, permissions, and evaluation before model choice becomes meaningful."
+      "explanation": "The formula is impact*2 + uncertainty + 2*matches = 2*2 + 2 + 2 = 8."
     },
     {
       "stage": "check",
-      "question": "Which signal is explicitly part of this lesson?",
+      "question": "What priority does priority_for(8) assign?",
       "options": [
-        "stale data",
-        "GPU fan speed",
-        "Image crop size",
-        "Database page cache"
+        "launch gate required",
+        "guided pilot",
+        "team practice",
+        "awareness only"
       ],
-      "correct": 0,
-      "explanation": "Stale data is one of the readiness signals used by the artifact."
+      "correct": 2,
+      "explanation": "Scores from 7 through 10 return team practice. Guided pilot starts at 11, and launch gate required starts at 16."
     },
     {
       "stage": "check",
-      "question": "What does the Python artifact produce?",
+      "question": "What does recommend include even for a scenario with only one matched signal?",
       "options": [
-        "A ranked plan with category, score, priority, controls, and rationale",
-        "A trained retrieval model",
-        "A production data lake",
-        "An automatic GDPR approval, because one plausible output is sufficient production evidence"
+        "Only a score with no operational action",
+        "Every possible control regardless of the scenario",
+        "A model architecture and training dataset",
+        "At least two controls, plus a category, score, priority, and rationale"
       ],
-      "correct": 0,
-      "explanation": "The artifact is a lightweight triage planner for classroom and project use."
-    },
-    {
-      "stage": "check",
-      "question": "Which control belongs to the lesson design?",
-      "options": [
-        "source inventory",
-        "Ignoring source ownership",
-        "Skipping quality thresholds",
-        "Treating all documents as public"
-      ],
-      "correct": 0,
-      "explanation": "A source inventory helps teams make the evidence base explicit."
+      "correct": 3,
+      "explanation": "The implementation takes at least the first two controls and records why the scenario received its score. The artifact is a planning aid, not a model trainer."
     },
     {
       "stage": "post",
-      "question": "When should a data scenario become a launch-gate discussion?",
+      "question": "A knowledge assistant uses stale SharePoint data and has no clear source owner, with impact=4 and uncertainty=4. What should the worksheet recommend first?",
       "options": [
-        "When impact, uncertainty, and data risk signals are high",
-        "Only when the UI is finished",
-        "Only when the model is open source — and applies unchanged even when the lesson's stated preconditions fail",
-        "Never; data readiness is optional"
+        "Treat it as a launch-gate case and record source inventory, freshness, and ownership controls",
+        "Start the pilot without an owner because retrieval fixes stale data automatically",
+        "Ignore the signals until a model has been selected",
+        "Use only a larger context window as the governance control"
       ],
       "correct": 0,
-      "explanation": "High-risk data conditions require stronger controls before launch."
+      "explanation": "The two matched signals add four points to a base of twelve, producing score 16 and the launch-gate priority. Controls must address the data operation, not just the model."
     },
     {
       "stage": "post",
-      "question": "What is the main purpose of the reusable worksheet?",
+      "question": "What does a useful data-readiness worksheet add to a model choice?",
       "options": [
-        "To replace data ownership",
-        "To make data assumptions visible enough for teams to challenge and improve them",
-        "To hide quality gaps from stakeholders",
-        "To approve every use case automatically, with no need to inspect intermediate results or test edge cases"
+        "It replaces the need to inspect any source data",
+        "It records source ownership, quality and freshness checks, privacy classification, and an evaluation sample",
+        "It guarantees a model will meet every accuracy target",
+        "It treats a pilot approval as proof of production readiness"
       ],
       "correct": 1,
-      "explanation": "The worksheet creates a practical shared artifact for discovery and pilot planning."
+      "explanation": "The artifact turns feasibility signals into lightweight controls and an evaluation plan. It supports a decision; it does not certify model quality by itself."
     }
   ]
 }

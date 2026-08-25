@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What must AI support automation preserve?",
+      "question": "What must an AI support workflow preserve when it drafts or classifies tickets?",
       "options": [
-        "The first-response time, even when the answer is still unverified",
-        "Service ownership, explicit escalation criteria, and support quality",
-        "The existing ticket categories, left unchanged by the new workflow — and applies unchanged even when the lesson's stated preconditions fail",
-        "The agent headcount, so knowledge articles keep being written"
-      ],
-      "correct": 1,
-      "explanation": "AI support should reduce friction without hiding accountability or service risk. Ownership and escalation criteria have to survive the automation."
-    },
-    {
-      "stage": "check",
-      "question": "A service AI drafts good responses but corrected answers never feed back anywhere. What is missing?",
-      "options": [
-        "The service scope - the workflow has not defined which ticket types it may handle",
-        "The confidence rule - uncertain drafts reach agents without being flagged first",
-        "The escalation path - there is no defined route for tickets the model cannot answer, with no need to inspect intermediate results or test edge cases",
-        "The learning loop - corrections have to update the knowledge source for the next ticket"
-      ],
-      "correct": 3,
-      "explanation": "The lesson closes its workflow with a learning loop and lists knowledge updates as one of its four controls. Without it, corrections never reach the knowledge source and the same gap reappears on the next ticket."
-    },
-    {
-      "stage": "check",
-      "question": "What does the Python artifact produce?",
-      "options": [
-        "A ranked support AI readiness plan with controls and rationale",
-        "A production ticketing system that routes incoming service requests",
-        "An automatic closure for tickets answered with high confidence",
-        "A service contract fixing the response times support commits to"
+        "Service ownership, a confidence rule, explicit escalation, and a way to update knowledge",
+        "Fast closure of every ticket, even when the answer has not been checked",
+        "The existing ticket volume target, regardless of whether answers are correct",
+        "A broad scope that lets the assistant attempt every request without a handoff"
       ],
       "correct": 0,
-      "explanation": "The artifact helps choose controls for support workflows before AI is introduced into them."
+      "explanation": "Support quality includes ownership and recovery paths. Scope, confidence thresholds, escalation, and knowledge updates stop helpful automation from becoming silent failure."
     },
     {
       "stage": "check",
-      "question": "Which control belongs to this lesson?",
+      "question": "The ticket assistant fixture has three matched signals, impact=4, and uncertainty=4. Which result does the artifact produce?",
       "options": [
-        "An SLA display that hides the breach risk so agents are not distracted",
-        "A knowledge base frozen at go-live so answers stay consistent over time",
-        "An escalation path that names where a ticket goes when the model is unsure",
-        "A service scope left open, so the assistant can attempt any incoming ticket"
+        "18 and team practice",
+        "18 and launch gate required",
+        "14 and guided pilot",
+        "20 and awareness only"
+      ],
+      "correct": 1,
+      "explanation": "The score is 4*2 + 4 + 3*2 = 18. That result is launch gate required under the common priority thresholds."
+    },
+    {
+      "stage": "check",
+      "question": "Which category does choose_category assign to the ticket assistant fixture?",
+      "options": [
+        "volume",
+        "knowledge",
+        "escalation",
+        "service level"
       ],
       "correct": 2,
-      "explanation": "Escalation paths preserve accountability. Service scope, a confidence threshold, and knowledge updates are the other controls this lesson teaches."
+      "explanation": "With three matches, impact 4, and uncertainty 4, the index is 11 modulo 4 = 3. CATEGORIES[3] is escalation."
+    },
+    {
+      "stage": "check",
+      "question": "Which controls are selected for a support Scenario with three matched signals?",
+      "options": [
+        "service scope and confidence threshold only",
+        "confidence threshold and escalation path only",
+        "knowledge update alone, because corrections are the main signal",
+        "service scope, confidence threshold, escalation path, and knowledge update"
+      ],
+      "correct": 3,
+      "explanation": "Three matches select the complete four-control list. The workflow therefore has a defined scope, review threshold, handoff path, and learning loop."
     },
     {
       "stage": "post",
-      "question": "When should service AI require stronger controls?",
+      "question": "The incident intake fixture has one escalation-risk signal, impact=4, and uncertainty=3. Which priority is returned?",
       "options": [
-        "When ticket volume, SLA pressure, or escalation risk is running high",
-        "Only when tickets arrive in a language the support team cannot read — and applies unchanged even when the lesson's stated preconditions fail",
-        "Only when the assistant drafts replies rather than classifying them",
-        "Only when the service desk runs outside normal business hours"
+        "guided pilot",
+        "launch gate required",
+        "awareness only",
+        "team practice"
       ],
       "correct": 0,
-      "explanation": "High-impact service workflows need stronger readiness controls. The signals are ticket volume, SLA pressure, knowledge gaps, and escalation risk."
+      "explanation": "The score is 4*2 + 3 + 2 = 13. Scores from 11 through 15 are guided pilot."
     },
     {
       "stage": "post",
-      "question": "Why are confidence thresholds useful?",
+      "question": "Why are confidence thresholds useful in a service AI readiness checklist?",
       "options": [
-        "They let the assistant close low-risk tickets without any agent involvement",
-        "They prevent silent automation failure and trigger review or escalation",
-        "They rank knowledge articles so the most-used answer is suggested first",
-        "They set the SLA target that the automated responses are measured against"
+        "They let the assistant close every low-confidence ticket without an agent",
+        "They flag uncertain answers for review or escalation instead of allowing silent automation failure",
+        "They replace the service scope by letting the model choose its own ticket types",
+        "They set the contractual SLA target without reference to answer quality"
       ],
       "correct": 1,
-      "explanation": "Confidence thresholds keep uncertain cases in controlled paths and prevent silent automation failure."
+      "explanation": "A threshold is a decision boundary for review. It keeps the service owner involved when evidence is weak and helps the team learn from corrected answers."
     }
   ]
 }

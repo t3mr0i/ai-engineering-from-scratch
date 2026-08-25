@@ -108,6 +108,18 @@ EAGLE trains a small draft model SEPARATELY after pre-training. MTP bakes the dr
 
 
 
+## Build It
+
+Reconstruct **Multi-Token Prediction (MTP)** by following `rand_matrix` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+
+## Use It
+
+Call `rand_matrix` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-mtp-planner.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [DeepSeek-AI — DeepSeek-V3 Technical Report (arXiv:2412.19437)](https://arxiv.org/abs/2412.19437) — the full sequential MTP description (Section 2.2), including the joint-loss equations and the 1.8× speedup at inference
@@ -118,10 +130,20 @@ EAGLE trains a small draft model SEPARATELY after pre-training. MTP bakes the dr
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: State the MTP training objective and derive the joint loss across prediction depths.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain the difference between Gloeckle et al.'s parallel MTP heads (2024) and DeepSeek-V3's sequential MTP modules and why the sequential design preserves the causal chain.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Compute the parameter and memory overhead of adding MTP modules to a pre-training run.
+Use `rand_matrix` as the trace: start from tokens=["red","fox"], keep the raw output, and tie each observation to a named objective.
+
+1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using tokens=["red","fox"]. Follow `rand_matrix`, `matvec`, `add`. Expect the attention/embedding shape follows the token count and each valid attention row remains normalized; capture the first printed shape, metric, status, or summary field and state which part supports **State the MTP training objective and derive the joint loss across prediction depths.**.
+2. **Vary one named input.** Repeat the command after changing only the token sequence: use tokens=["red","fox","runs"]. Predict the direction of the change, then compare the two output values. Explain why **Explain the difference between Gloeckle et al.'s parallel MTP heads (2024) and DeepSeek-V3's sequential MTP modules and why the sequential design preserves the causal chain.** says the other inputs should stay fixed.
+3. **Probe the empty case.** Feed the implementation tokens=[]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Compute the parameter and memory overhead of adding MTP modules to a pre-training run.** and record the exception text if the code rejects the case.
+4. **Package a usable handoff.** Open `outputs/skill-mtp-planner.md` and add a worked example using tokens=["red","fox"]. Include the input contract, one expected output field, and a named acceptance check for **Implement one MTP module from scratch: the shared embedding, the per-depth transformer block, the projection, and the shared output head.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “State the MTP training objective and derive the joint loss across prediction depths,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Compute the parameter and memory overhead of adding MTP modules to a pre-training run,” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **Multi-Token Prediction (MTP)** should contain:
+
+- the `python3 main.py` output for tokens=["red","fox"], with `rand_matrix`, `matvec`, `add` traced to the value or shape that supports **State the MTP training objective and derive the joint loss across prediction depths.**;
+- a before/after comparison for the token sequence, where tokens=["red","fox","runs"] changes the observation in the direction predicted by **Explain the difference between Gloeckle et al.'s parallel MTP heads (2024) and DeepSeek-V3's sequential MTP modules and why the sequential design preserves the causal chain.**;
+- a recorded result for tokens=[] that matches the implementation’s validation or empty-result contract and explains the evidence for **Compute the parameter and memory overhead of adding MTP modules to a pre-training run.**; and
+- an updated `outputs/skill-mtp-planner.md` example with a concrete input, expected output field, and acceptance check tied to **Implement one MTP module from scratch: the shared embedding, the per-depth transformer block, the projection, and the shared output head.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.

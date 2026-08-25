@@ -324,6 +324,14 @@ The `p > 0` mask is the same convention every ML framework uses: by definition, 
 | Nats | "ML's unit" | Information measured with natural log. Used by PyTorch and TensorFlow by default. |
 | Negative log-likelihood | "NLL loss" | Identical to cross-entropy loss for one-hot labels. Minimizing it maximizes the probability of correct predictions. |
 
+## Build It
+
+Reconstruct **Information Theory** by following `information_content` on the text "red fox". Run `run main.text` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
+
+## Ship It
+
+Hand off `outputs/skill-information-theory.md` with the command `run main.text`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [Shannon 1948: A Mathematical Theory of Communication](https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf) - the original paper, still readable

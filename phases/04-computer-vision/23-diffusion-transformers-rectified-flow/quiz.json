@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why did 2024+ SOTA text-to-image models (SD3, FLUX, Z-Image) replace the U-Net denoiser with a Diffusion Transformer (DiT)?",
+      "question": "How many 2x2 patches does a 16x16 image produce in TinyDiT?",
       "options": [
-        "Transformers are easier to write",
-        "DiT scales more predictably than U-Net (same scaling-law regime as LLMs), handles long-range spatial dependencies better for prompt-accurate generation, and pairs naturally with text encoders via cross or joint attention",
-        "U-Net is not supported on GPUs anymore — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence",
-        "DiT has fewer parameters"
-      ],
-      "correct": 1,
-      "explanation": "DiT treats diffusion as just another sequence-modelling task. It scales like language models, avoids the fixed inductive bias of convolutions that can bottleneck long-range structure, and integrates cleanly with transformer text encoders. Every 2026 SOTA model — SD3, FLUX.1, FLUX.2, SD4, Z-Image, Qwen-Image — is a DiT."
-    },
-    {
-      "stage": "check",
-      "question": "Rectified flow trains the model to predict velocity `v = epsilon - x_0` along a straight-line interpolation between data and noise. Why does this enable 20-step sampling instead of 1000?",
-      "options": [
-        "It does not; rectified flow also needs 1000 steps, with no need to inspect intermediate results or test edge cases, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path",
-        "The learned ODE is closer to a straight line than DDPM's curved SDE, so few-step Euler integration produces accurate samples; combined with distillation you get 1-4 step variants like FLUX schnell",
-        "Euler is strictly better than DDIM",
-        "It requires a bigger model"
-      ],
-      "correct": 1,
-      "explanation": "DDPM's reverse process is a stochastic curved path that needs many small steps. Rectified flow defines a straight-line interpolation; the learned velocity is approximately constant along the trajectory. Integrating a near-straight ODE takes few steps. SD3 and FLUX sample at 20-30 steps full quality; schnell/turbo/LCM distil this further to 1-4 steps."
-    },
-    {
-      "stage": "check",
-      "question": "MMDiT (SD3) uses two sets of weights, one for text tokens and one for image tokens, that share a single joint attention layer. Why?",
-      "options": [
-        "To save memory",
-        "Text and image embeddings are conceptually different distributions; separate weights let each modality process its own representation while the joint attention lets them interact; the result is better text-image alignment and prompt following than a single shared stream",
-        "It is a legacy design",
-        "Only image tokens actually go through the attention, because one plausible output is sufficient production evidence, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases"
-      ],
-      "correct": 1,
-      "explanation": "Stable Diffusion 3's MMDiT keeps per-modality weight streams to preserve the different statistics of text and image tokens while a joint self-attention layer lets them fuse. This is structurally more expressive than concatenate-and-share (which SD1/2 used), and empirically lifts prompt adherence and text rendering. FLUX extends this to alternating double-stream / single-stream blocks for efficiency."
-    },
-    {
-      "stage": "check",
-      "question": "What does AdaLN-Zero mean in a DiT block, and why does it help?",
-      "options": [
-        "A layer norm with zero epsilon",
-        "Adaptive LayerNorm whose modulation MLP is initialised to zero so the block starts as identity; training then learns the scale/shift/gate, which stabilises very deep diffusion transformers",
-        "A LayerNorm that is only applied 50% of the time, before defining the measurement, acceptance threshold, or rollback path — and applies unchanged even when the lesson's stated preconditions fail",
-        "A LayerNorm with zero mean"
-      ],
-      "correct": 1,
-      "explanation": "AdaLN predicts scale, shift, and gate from the conditioning vector. 'Zero' means the MLP is initialised to zero, so the gate starts at 0 and the block acts as identity. Gradients slowly nudge the modulation away from zero, which prevents the deep stack from diverging early in training. It is the DiT-equivalent of ResNet's residual zero-init and is used in every modern diffusion transformer."
-    },
-    {
-      "stage": "post",
-      "question": "FLUX.1-schnell can produce an image in 4 steps. Which technique lets it do that?",
-      "options": [
-        "A different base architecture than FLUX.1-dev — and applies unchanged even when the lesson's stated preconditions fail, with no need to inspect intermediate results or test edge cases",
-        "Distillation — schnell is trained from a slow many-step teacher using adversarial / consistency-style objectives so that 1-4 denoising steps match the teacher's 20-30 step output",
-        "Lower precision weights",
-        "Smaller parameter count"
-      ],
-      "correct": 1,
-      "explanation": "Schnell / Turbo / LCM variants use step distillation. A small-step student learns to match the many-step teacher's output. The base architecture and parameter count are often identical (FLUX.1-dev and schnell are both 12B). Distillation is what makes sub-1-second inference practical. This is the same idea as SDXL Turbo, SD Turbo, and Latent Consistency Models."
-    },
-    {
-      "stage": "post",
-      "question": "What is the best completion criterion for Diffusion Transformers & Rectified Flow?",
-      "options": [
-        "Explain rectified flow: why a straight-line trajectory between noise and data lets models sample in 20 step...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism, with no need to inspect intermediate results or test edge cases",
-        "Treat one successful example as proof that every edge case works"
+        "64",
+        "8",
+        "32",
+        "256"
       ],
       "correct": 0,
-      "explanation": "“Explain rectified flow: why a straight-line trajectory between noise and data lets models sample in 20 step...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "There are 16/2=8 patches along each axis, so the token sequence has 8*8=64 patches."
+    },
+    {
+      "stage": "check",
+      "question": "What is the initial effect of AdaLNZero's zero residual gate?",
+      "options": [
+        "All token features are permanently zero",
+        "Attention and MLP residual updates start at zero",
+        "The input image is converted to one token",
+        "The timestep embedding is discarded"
+      ],
+      "correct": 1,
+      "explanation": "The branches can learn useful updates, but their residual contribution is initially gated off for a stable start."
+    },
+    {
+      "stage": "check",
+      "question": "Which interpolation defines x_t in the rectified-flow helper?",
+      "options": [
+        "x_t = t x_0 + epsilon",
+        "x_t = x_0 - t epsilon for every t",
+        "x_t = (1-t)x_0 + t epsilon",
+        "x_t = x_0 / (1-t)"
+      ],
+      "correct": 2,
+      "explanation": "The path starts at the data sample x_0 when t=0 and reaches the noise sample epsilon when t=1."
+    },
+    {
+      "stage": "check",
+      "question": "What velocity target matches that straight interpolation?",
+      "options": [
+        "epsilon + x_0",
+        "x_0 / epsilon",
+        "t(epsilon - x_0)",
+        "epsilon - x_0"
+      ],
+      "correct": 3,
+      "explanation": "Differentiating (1-t)x_0+t epsilon with respect to t gives the constant vector epsilon-x_0."
+    },
+    {
+      "stage": "post",
+      "question": "With 20 Euler steps from t=0 to t=1, what step size does the sampler use?",
+      "options": [
+        "0.05",
+        "0.2",
+        "1.0",
+        "20.0"
+      ],
+      "correct": 0,
+      "explanation": "The interval has length one, so dt=1/20=0.05."
+    },
+    {
+      "stage": "post",
+      "question": "What shape does TinyDiT restore after unpatchifying a batch of 4 RGB 16x16 images?",
+      "options": [
+        "(4,64,3)",
+        "(4,3,16,16)",
+        "(4,3,8,8)",
+        "(64,4,16,16)"
+      ],
+      "correct": 1,
+      "explanation": "The patch grid is rearranged back into the original batch, channel, height, and width dimensions."
     }
   ]
 }

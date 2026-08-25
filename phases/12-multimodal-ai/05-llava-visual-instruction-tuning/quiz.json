@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which learning outcome is central to LLaVA and Visual Instruction Tuning?",
+      "question": "What dimensions does the toy MLPProjector use in demo_projector?",
       "options": [
-        "Build a 2-layer MLP projector that maps ViT patch embeddings (dim 1024) to an LLM's embedding dim (dim 4096)",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "16 -> 32 -> 24, mapping each ViT patch to the toy LLM dimension",
+        "24 -> 16 -> 32, because the LLM is the input tower",
+        "16 -> 24 with no hidden layer",
+        "32 -> 16 -> 24, because HIDDEN_DIM is the patch size"
       ],
       "correct": 0,
-      "explanation": "“Build a 2-layer MLP projector that maps ViT patch embeddings (dim 1024) to an LLM's embedding dim (dim 4096)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "PATCH_DIM is 16, HIDDEN_DIM is 32, and LLM_DIM is 24. MLPProjector.forward applies W1/GELU and then W2, giving 16 -> 32 -> 24."
     },
     {
       "stage": "check",
-      "question": "Which task best demonstrates practical understanding of LLaVA and Visual Instruction Tuning?",
+      "question": "How many parameters does MLPProjector(16, 32, 24) report?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Walk the LLaVA two-stage recipe: (1) projector alignment on 558k caption pairs, (2) visual instruction tuni...",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "1,280, counting only the two weight matrices",
+        "1,336, including 32 first-layer biases and 24 second-layer biases",
+        "1,536, because GELU adds a learned parameter per hidden unit",
+        "768, because the two layers share weights"
       ],
       "correct": 1,
-      "explanation": "“Walk the LLaVA two-stage recipe: (1) projector alignment on 558k caption pairs, (2) visual instruction tuni...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The first affine layer has 32*16+32 = 544 parameters and the second has 24*32+24 = 792. Their sum is 1,336; GELU itself has no learned parameters here."
     },
     {
       "stage": "check",
-      "question": "What should a learner inspect while working through LLaVA and Visual Instruction Tuning?",
+      "question": "What prompt structure does build_llava_prompt place around the image placeholder?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Construct a LLaVA-format prompt with the image token placeholder, system prompt, and user/assistant turns",
-        "Treat one successful example as proof that every edge case works"
+        "Only the raw image bytes, with no role labels",
+        "A JSON array containing the image token and no assistant turn",
+        "SYSTEM text, then USER with <image> and the request, then ASSISTANT:",
+        "USER text first, then a separate image message after the assistant answer"
       ],
       "correct": 2,
-      "explanation": "“Construct a LLaVA-format prompt with the image token placeholder, system prompt, and user/assistant turns” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The returned raw_prompt is assembled as SYSTEM, USER: <image> plus the user text, and an ASSISTANT: continuation. The image placeholder is later replaced by projected visual tokens."
     },
     {
       "stage": "check",
-      "question": "Which evaluation habit best fits LLaVA and Visual Instruction Tuning?",
+      "question": "How many visual tokens does demo_anyres report for the 2x2 AnyRes layout plus one thumbnail?",
       "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Explain why the community moved from Q-Former to MLP despite Q-Former's token-budget win",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
-      ],
-      "correct": 1,
-      "explanation": "“Explain why the community moved from Q-Former to MLP despite Q-Former's token-budget win” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
-    },
-    {
-      "stage": "post",
-      "question": "Which workflow provides the strongest evidence of mastery for LLaVA and Visual Instruction Tuning?",
-      "options": [
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works",
-        "Build a 2-layer MLP projector that maps ViT patch embeddings (dim 1024) to an LLM's embedding dim (dim 4096)"
+        "2,304, because only the four tiles are counted",
+        "576, because the thumbnail replaces the tiles",
+        "3,456, because each tile is counted twice",
+        "2,880, from four 576-token tiles plus one 576-token thumbnail"
       ],
       "correct": 3,
-      "explanation": "“Build a 2-layer MLP projector that maps ViT patch embeddings (dim 1024) to an LLM's embedding dim (dim 4096)” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "The 2x2 configuration has four tiles and one thumbnail. With 576 tokens per visual crop, the total is (4+1)*576 = 2,880."
     },
     {
       "stage": "post",
-      "question": "What is the best completion criterion for LLaVA and Visual Instruction Tuning?",
+      "question": "How many projected visual tokens does fake_vit_output feed through the projector?",
       "options": [
-        "Walk the LLaVA two-stage recipe: (1) projector alignment on 558k caption pairs, (2) visual instruction tuni...",
-        "Skip validation and trust the first plausible-looking output",
-        "Choose a production framework before defining the core mechanism",
-        "Treat one successful example as proof that every edge case works"
+        "16, each changing from PATCH_DIM=16 to LLM_DIM=24",
+        "24, because the output dimension determines the token count",
+        "32, because HIDDEN_DIM is the number of patches",
+        "576, because every base image uses 576 tokens in production LLaVA"
       ],
       "correct": 0,
-      "explanation": "“Walk the LLaVA two-stage recipe: (1) projector alignment on 558k caption pairs, (2) visual instruction tuni...” is one of this lesson’s stated outcomes; the other choices bypass its required reasoning or validation."
+      "explanation": "fake_vit_output returns PATCH_COUNT=16 vectors. The projector changes each vector's width, not the number of rows, so the result is 16 tokens of dimension 24."
+    },
+    {
+      "stage": "post",
+      "question": "What is the distinction between the two LLaVA training stages in the lesson?",
+      "options": [
+        "Stage 1 trains the frozen vision encoder; stage 2 removes the LLM",
+        "Stage 1 aligns the projector on captions; stage 2 trains projector plus LLM on visual instructions",
+        "Stage 1 uses diffusion loss; stage 2 uses only image reconstruction",
+        "Stage 1 handles video; stage 2 handles text-only classification"
+      ],
+      "correct": 1,
+      "explanation": "The recipe first learns the visual-to-language projection on image-caption pairs. It then continues with visual instruction turns, typically updating the projector and language model together."
     }
   ]
 }

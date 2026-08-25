@@ -84,6 +84,18 @@ Phase 17 · 17 disaggregated serving + LMCache compounds: KV transfers from pref
 
 
 
+## Build It
+
+Reconstruct **vLLM Production Stack with LMCache KV Offloading** by following `Request` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+
+## Use It
+
+Call `Request` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+
+## Ship It
+
+Hand off `outputs/skill-vllm-stack-decider.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+
 ## Further Reading
 
 - [vLLM Blog — KV Offloading Connector (Jan 2026)](https://blog.vllm.ai/2026/01/08/kv-offloading-connector.html)
@@ -94,10 +106,20 @@ Phase 17 · 17 disaggregated serving + LMCache compounds: KV transfers from pref
 
 ## Exercises
 
-1. **Establish a baseline.** Run the lesson demo, then capture the inputs, outputs, and one invariant that demonstrates this objective: Diagram the vLLM production-stack layers: router, engines, KV offload, observability.
-2. **Change one variable.** Modify a single input or parameter and use the resulting evidence to investigate this objective: Explain the KV Offloading Connector API (v0.9.0+) and how the 0.11.0 asynchronous path hides offload latency.
-3. **Probe an edge case.** Predict the result before running it, compare prediction with observation, and explain the discrepancy while applying this objective: Quantify when LMCache CPU-DRAM helps (KV > HBM) vs adds overhead (KV small enough to fit HBM).
+Use `Request` as the trace: start from x=0.5 with the demo defaults, keep the raw output, and tie each observation to a named objective.
+
+1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using x=0.5 with the demo defaults. Follow `Request`, `make_workload`, `simulate`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Diagram the vLLM production-stack layers: router, engines, KV offload, observability.**.
+2. **Vary one named input.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Explain the KV Offloading Connector API (v0.9.0+) and how the 0.11.0 asynchronous path hides offload latency.** says the other inputs should stay fixed.
+3. **Probe the empty case.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Quantify when LMCache CPU-DRAM helps (KV > HBM) vs adds overhead (KV small enough to fit HBM).** and record the exception text if the code rejects the case.
+4. **Package a usable handoff.** Open `outputs/skill-vllm-stack-decider.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Pick between native vLLM CPU offload and LMCache connector given deployment constraints.**; note what the demo cannot establish.
 
 ## Reference Solution
 
-Use the canonical [main.py](../code/main.py) as the executable baseline. A complete solution records a successful run, identifies the invariant tied to “Diagram the vLLM production-stack layers: router, engines, KV offload, observability,” and changes only one variable for the comparison. The edge-case result must distinguish the prediction from the observation, explain the cause using “Quantify when LMCache CPU-DRAM helps (KV > HBM) vs adds overhead (KV small enough to fit HBM),” and cite a repeatable check rather than relying on visual inspection alone.
+A checkable result for **vLLM Production Stack with LMCache KV Offloading** should contain:
+
+- the `python3 main.py` output for x=0.5 with the demo defaults, with `Request`, `make_workload`, `simulate` traced to the value or shape that supports **Diagram the vLLM production-stack layers: router, engines, KV offload, observability.**;
+- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Explain the KV Offloading Connector API (v0.9.0+) and how the 0.11.0 asynchronous path hides offload latency.**;
+- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Quantify when LMCache CPU-DRAM helps (KV > HBM) vs adds overhead (KV small enough to fit HBM).**; and
+- an updated `outputs/skill-vllm-stack-decider.md` example with a concrete input, expected output field, and acceptance check tied to **Pick between native vLLM CPU offload and LMCache connector given deployment constraints.**.
+
+Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
