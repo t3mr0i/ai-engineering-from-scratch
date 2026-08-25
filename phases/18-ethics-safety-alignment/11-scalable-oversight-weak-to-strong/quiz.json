@@ -1,0 +1,78 @@
+{
+  "lesson": "scalable-oversight-weak-to-strong",
+  "title": "Scalable Oversight and Weak-to-Strong Generalization",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What question does the weak-to-strong experiment operationalize?",
+      "options": [
+        "Can a strong model recover useful structure from labels supplied by a weaker supervisor?",
+        "Can a tokenizer preserve all weak-model errors?",
+        "Can a human label every frontier-model token manually?",
+        "Can a reward model remove the need for evaluation data?"
+      ],
+      "correct": 0,
+      "explanation": "The experiment trains a strong classifier on weak labels and compares it with the strong model's gold-label ceiling. Positive recovery asks whether the strong model's priors improve on the weak supervisor."
+    },
+    {
+      "stage": "check",
+      "question": "How does the toy compute Performance Gap Recovered (PGR)?",
+      "options": [
+        "(ceiling - weak-alone) / strong-on-weak",
+        "(strong-on-weak - weak-alone) / (ceiling - weak-alone)",
+        "strong-on-weak / ceiling",
+        "weak-alone - ceiling"
+      ],
+      "correct": 1,
+      "explanation": "run uses pgr = (w2s_acc - weak_alone) / (ceiling - weak_alone + 1e-12). A value of 0 means no improvement over the weak labeler; 1 would reach the gold-trained ceiling."
+    },
+    {
+      "stage": "check",
+      "question": "What limitation is built into weak_label in this demo?",
+      "options": [
+        "It trains on x[0], x[1], and x[2] with the gold separator",
+        "It has no stochastic errors and therefore always reaches 1.0",
+        "It thresholds x[0] alone and flips that answer with probability 1 - accuracy",
+        "It reads the strong model's predictions before producing labels"
+      ],
+      "correct": 2,
+      "explanation": "The gold label uses x[0] + x[1] - 0.5*x[2], but weak_label uses only x[0] > 0 and then injects noise. The strong learner can recover some missing structure from its own representation."
+    },
+    {
+      "stage": "check",
+      "question": "Which method is a scalable-oversight mechanism rather than a tokenizer or optimizer change?",
+      "options": [
+        "Replacing all labels with token IDs",
+        "Increasing the sampling temperature",
+        "Removing the strong model's pre-training",
+        "Task decomposition, recursive reward modeling, or debate"
+      ],
+      "correct": 3,
+      "explanation": "These mechanisms make a difficult task easier for a weaker overseer to inspect or compare. They improve the quality of the oversight signal before weak-to-strong learning exploits the strong model's priors."
+    },
+    {
+      "stage": "post",
+      "question": "The demo reports PGR values above zero for weak accuracies 0.6, 0.7, 0.8, and 0.9. What does that evidence support?",
+      "options": [
+        "The strong model can generalize beyond some weak-label errors, but PGR is evidence of recovery rather than a proof of alignment",
+        "Weak labels are unnecessary because the strong model was trained on gold labels",
+        "PGR proves every strong model is aligned with human intent",
+        "A positive PGR means the weak model was more accurate than the ceiling"
+      ],
+      "correct": 0,
+      "explanation": "The weak-to-strong run uses weak_labeled data, while the ceiling is trained separately on gold labels. Positive PGR measures useful generalization in this task; it does not establish that the recovered behaviour is safe or aligned."
+    },
+    {
+      "stage": "post",
+      "question": "What assumption underlies AI-safety-via-debate?",
+      "options": [
+        "A judge must know the complete hidden chain of thought",
+        "A convincing true argument is easier for the overseer to recognize than a convincing false one",
+        "Both debaters must share the same private objective",
+        "Debate works only when the weaker model is larger than the debaters"
+      ],
+      "correct": 1,
+      "explanation": "Debate tries to turn a hard direct judgment into an interaction where false claims can be challenged. Its safety premise is comparative: the judge can identify the stronger truthful argument even if it cannot solve the original task alone."
+    }
+  ]
+}

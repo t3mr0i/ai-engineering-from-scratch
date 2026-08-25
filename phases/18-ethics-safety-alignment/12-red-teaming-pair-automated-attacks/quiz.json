@@ -1,0 +1,78 @@
+{
+  "lesson": "red-teaming-pair-automated-attacks",
+  "title": "Red-Teaming: PAIR and Automated Attacks",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Why does the toy benchmark use repeated attacker trials instead of one hand-written jailbreak?",
+      "options": [
+        "A single prompt cannot estimate attack success against a moving target; a budgeted sample is needed",
+        "Manual testers are unable to read any response",
+        "Every manual prompt is automatically rejected by the target",
+        "Attack success is independent of the target's filter"
+      ],
+      "correct": 2,
+      "explanation": "benchmark runs 30 trials and gives each attacker a 20-query budget. ASR and mean queries are then measurable across stochastic target and attacker behaviour rather than inferred from one example."
+    },
+    {
+      "stage": "check",
+      "question": "What does pair_loop retain for the next PAIR attacker prompt?",
+      "options": [
+        "Only the target's model weights",
+        "The previous prompt/response history as in-context feedback",
+        "A hidden gradient from the target model",
+        "The judge's private training data"
+      ],
+      "correct": 3,
+      "explanation": "pair_loop appends (prompt, response) to history after every query and passes that list to the next attacker function. This is black-box iterative refinement; no target gradients are required."
+    },
+    {
+      "stage": "check",
+      "question": "Why does the semantic_filter_target resist the paraphrase and roleplay attackers better than keyword_filter_target?",
+      "options": [
+        "It uses a larger vocabulary file but no semantic cues",
+        "It ignores all target responses and always refuses",
+        "It checks risk-adjacent terms and roleplay cues in addition to forbidden substrings",
+        "It has white-box access to the attacker logits"
+      ],
+      "correct": 0,
+      "explanation": "semantic_filter_target counts terms such as make, procedure, and method and rejects roleplay cues such as pretend. Those checks catch the paraphrase and roleplay templates that avoid the narrow FORBIDDEN_TERMS list."
+    },
+    {
+      "stage": "check",
+      "question": "Why must an ASR report include both a query budget and a judge identity?",
+      "options": [
+        "Because every judge gives the same answer once the budget is fixed",
+        "Because ASR changes with allowed attempts and with the rule used to call a response a success",
+        "Because only JailbreakBench permits reporting ASR",
+        "Because the query budget determines the model's parameter count"
+      ],
+      "correct": 1,
+      "explanation": "In the demo, pair_loop stops at 20 queries and judge returns true only when the exact harmful payload appears. Changing either limit or judge definition changes the reported success rate."
+    },
+    {
+      "stage": "post",
+      "question": "Which automated attack family is described as tree-of-attacks with pruning?",
+      "options": [
+        "GCG",
+        "PAP",
+        "TAP",
+        "PAIR"
+      ],
+      "correct": 2,
+      "explanation": "Tree-of-Attacks with Pruning (TAP) branches candidate attack paths and prunes weak ones. It is distinct from PAIR's sequential refinement and GCG's white-box suffix search."
+    },
+    {
+      "stage": "post",
+      "question": "Which benchmark is described as covering 510 behaviours across seven categories with semantic and functional harm tests?",
+      "options": [
+        "TruthfulQA",
+        "WMDP",
+        "JailbreakBench",
+        "HarmBench"
+      ],
+      "correct": 3,
+      "explanation": "HarmBench supplies a standardized harmful-behaviour suite and evaluates both semantic compliance and functional harm. That makes it more than a single prompt list or a domain-only capability benchmark."
+    }
+  ]
+}

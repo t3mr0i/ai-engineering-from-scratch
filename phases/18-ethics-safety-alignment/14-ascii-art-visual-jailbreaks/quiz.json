@@ -1,0 +1,78 @@
+{
+  "lesson": "ascii-art-visual-jailbreaks",
+  "title": "ASCII Art and Visual Jailbreaks",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What does cloak_prompt do to the word \"bomb\" in the demo?",
+      "options": [
+        "It deletes the word and leaves no representation for the model",
+        "It encrypts the word with a public key",
+        "It replaces the literal word with a placeholder followed by a 5-row ASCII rendering",
+        "It changes the prompt into an image file"
+      ],
+      "correct": 2,
+      "explanation": "cloak_prompt replaces each listed word with [word-i], then appends the glyph block returned by render_word. The literal substring is absent even though a capable model can read the visual letters."
+    },
+    {
+      "stage": "check",
+      "question": "Why does the repository's keyword_filter return false for the cloaked prompt?",
+      "options": [
+        "The forbidden list is empty",
+        "The exact lowercase substring \"bomb\" no longer occurs in the placeholder-plus-glyph text",
+        "The filter detects visual letters before checking text",
+        "The filter runs only on the model output"
+      ],
+      "correct": 3,
+      "explanation": "keyword_filter performs a simple substring search over text.lower(). Since cloak_prompt removes the literal word and inserts ASCII punctuation, this text-only detector sees no forbidden token."
+    },
+    {
+      "stage": "check",
+      "question": "What does the toy perplexity heuristic actually measure?",
+      "options": [
+        "The probability assigned by a language model to each token",
+        "The number of model layers that can read the glyphs",
+        "The ratio of non-alphanumeric, non-whitespace characters to total characters",
+        "The fraction of forbidden words in the original prompt"
+      ],
+      "correct": 0,
+      "explanation": "perplexity_heuristic counts characters that are neither alphanumeric nor whitespace and divides by text length. It is only a structural proxy, so a threshold can confuse unusual legitimate formats with attacks."
+    },
+    {
+      "stage": "check",
+      "question": "What are the two conceptual steps of ArtPrompt?",
+      "options": [
+        "Sample a new model and then fine-tune its tokenizer",
+        "Translate the request and then compress it into bytes",
+        "Search gradients for a suffix and then hide it in audio",
+        "Identify safety-relevant words, substitute non-semantic visual text, and place that encoding in a cloaked prompt"
+      ],
+      "correct": 1,
+      "explanation": "ArtPrompt first identifies the word carrying the safety meaning, then encodes that word as ASCII art while leaving the surrounding request readable. The attack moves interpretation from token semantics to visual recognition."
+    },
+    {
+      "stage": "post",
+      "question": "What capability does the ViTC benchmark probe?",
+      "options": [
+        "Whether a model can read non-semantic visual prompts such as ASCII art or Wingdings",
+        "Whether a model can compress a vision tensor",
+        "Whether a model's training set contains toxic examples",
+        "Whether a model can call tools without a schema"
+      ],
+      "correct": 2,
+      "explanation": "ViTC tests the recognition channel that lets a model recover meaning from unusual visual encodings. Better visual-text understanding can therefore increase exposure to ArtPrompt-style bypasses."
+    },
+    {
+      "stage": "post",
+      "question": "How does StructuralSleight extend the ArtPrompt idea?",
+      "options": [
+        "It restricts attacks to image pixels only",
+        "It generalizes to uncommon text-encoded structures such as trees, nested JSON, CSV-in-JSON, and diff-like code",
+        "It replaces visual encodings with a model-weight backdoor",
+        "It requires hundreds of faux dialogue turns"
+      ],
+      "correct": 3,
+      "explanation": "The shared weakness is format-specific interpretation: a safety layer may inspect ordinary text while the model reconstructs meaning from a structured representation. UTES broadens that attack surface beyond ASCII art."
+    }
+  ]
+}

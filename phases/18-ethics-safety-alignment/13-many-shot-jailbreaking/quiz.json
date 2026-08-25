@@ -1,0 +1,78 @@
+{
+  "lesson": "many-shot-jailbreaking",
+  "title": "Many-Shot Jailbreaking",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What context property does many-shot jailbreaking exploit?",
+      "options": [
+        "A long context can contain many faux user-assistant compliance examples before the target request",
+        "A tokenizer assigns identical IDs to every safety word",
+        "A sliding window always drops the system message after two turns",
+        "The model must be fine-tuned on the attacker's examples"
+      ],
+      "correct": 0,
+      "explanation": "MSJ treats the long prompt as in-context training data: repeated compliant demonstrations make a harmful response pattern look like the task to continue. No weight update or special tokenizer is needed."
+    },
+    {
+      "stage": "check",
+      "question": "What power-law does target_asr use for a positive shot count n?",
+      "options": [
+        "ASR = n / alpha with no cap",
+        "ASR = min(1, a0 + c * n^alpha)",
+        "ASR = a0 - c * log(n)",
+        "ASR = 1 only when n is exactly 256"
+      ],
+      "correct": 1,
+      "explanation": "The function sets c=0.03 and returns min(1.0, a0 + c*(n_shots**alpha)) for n>0. That sublinear power law explains gradual growth followed by saturation rather than a fixed threshold."
+    },
+    {
+      "stage": "check",
+      "question": "What does defense_adjusted change in the toy implementation?",
+      "options": [
+        "It makes every attack use zero shots",
+        "It raises alpha as the context grows",
+        "It caps the effective shot count at 16 before evaluating target_asr",
+        "It replaces the target with a keyword filter"
+      ],
+      "correct": 2,
+      "explanation": "defense_adjusted computes eff = min(n_shots, 16), so requests with 32, 128, or 512 nominal shots use the same modelled ASR as 16. This preserves the toy's benign-context assumption while suppressing the long-pattern effect."
+    },
+    {
+      "stage": "check",
+      "question": "Why is long-context MSJ defense a capability-safety trade-off?",
+      "options": [
+        "A classifier can disable all attention without affecting any task",
+        "Pattern extraction from examples supports benign in-context learning as well as harmful compliance patterns",
+        "Many-shot attacks work only when temperature is zero",
+        "The defense must alter the model's training labels permanently"
+      ],
+      "correct": 3,
+      "explanation": "The same ability to infer a task from demonstrations powers useful few-shot or in-context learning. A defense must distinguish harmful patterns, not simply suppress all example-based adaptation."
+    },
+    {
+      "stage": "post",
+      "question": "What reduction is cited for Anthropic's classifier-based prompt-modification defense on the tested MSJ setting?",
+      "options": [
+        "61% to 2% attack success",
+        "99% to 50% attack success",
+        "30% to 25% attack success",
+        "2% to 61% attack success"
+      ],
+      "correct": 0,
+      "explanation": "The lesson reports a reduction from 61% to 2%, not a claim of universal zero risk. It is an example of pattern-aware prompt modification rather than a general prohibition on long contexts."
+    },
+    {
+      "stage": "post",
+      "question": "How can MSJ and PAIR be combined?",
+      "options": [
+        "They are mutually exclusive because PAIR needs white-box gradients",
+        "PAIR can search for an attack structure, after which many-shot examples amplify that structure in context",
+        "MSJ works only on models that PAIR cannot query",
+        "PAIR automatically removes every many-shot demonstration"
+      ],
+      "correct": 1,
+      "explanation": "PAIR supplies iterative black-box search over prompts, while MSJ supplies a long in-context behavioural pattern. Composing them increases the attack surface, so defenses should be evaluated against both."
+    }
+  ]
+}
