@@ -1,5 +1,5 @@
 {
-  "lesson": "dual-use-risk-cyber-bio-chem-nuclear",
+  "lesson": "30-dual-use-risk-cyber-bio-chem-nuclear",
   "title": "Dual-Use Risk — Cyber, Bio, Chem, Nuclear Uplift",
   "questions": [
     {
@@ -45,7 +45,6 @@
         "0.25x, the random multiple-choice baseline",
         "2.53x, which was insufficient to rule out ASL-3",
         "79x, the wet-lab efficiency demonstration",
-        "80–90%, the cyber campaign estimate",
         "80–90%, the cyber campaign estimate"
       ],
       "correct": 1,
@@ -57,8 +56,8 @@
       "options": [
         "The two measures are synonyms with different units",
         "Expert capability is always lower because experts ignore model output",
-        "Novice-relative uplift measures only hardware access",
-        "A model can give novices a large multiplicative uplift while an expert extracts a much higher absolute capability ceiling"
+        "A model can give novices a large multiplicative uplift while an expert extracts a much higher absolute capability ceiling",
+        "Novice-relative uplift measures only hardware access"
       ],
       "correct": 2,
       "explanation": "Novice-relative uplift compares against a status-quo baseline; expert-absolute capability asks what a motivated expert can elicit and execute. A safety case that addresses only novice prompts can miss expert elicitation."

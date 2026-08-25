@@ -1,5 +1,5 @@
 {
-  "lesson": "moderation-systems-openai-perspective-llamaguard",
+  "lesson": "29-moderation-systems-openai-perspective-llamaguard",
   "title": "Moderation Systems — OpenAI, Perspective, Llama Guard",
   "questions": [
     {
@@ -32,8 +32,8 @@
       "options": [
         "The output layer is the only layer that can parse Python",
         "Input moderation always runs after generation",
-        "Output moderation changes the model's weights",
-        "Outputs can contain hallucinated or bypassed harmful content that was not present in the user's input"
+        "Outputs can contain hallucinated or bypassed harmful content that was not present in the user's input",
+        "Output moderation changes the model's weights"
       ],
       "correct": 2,
       "explanation": "run checks input, custom rules, then generation, and finally applies the same category scoring to output. The output layer catches failures introduced during generation or by an evasion that input inspection missed."

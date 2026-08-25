@@ -1,5 +1,5 @@
 {
-  "lesson": "bias-representational-harm",
+  "lesson": "20-bias-representational-harm",
   "title": "Bias and Representational Harm",
   "questions": [
     {
@@ -56,8 +56,8 @@
       "options": [
         "Input, output, and custom moderation layers",
         "Pre-training, PPO, and DPO losses",
-        "Accuracy, latency, and memory only",
-        "Embedding-based, probability-based, and generated-text-based measures"
+        "Embedding-based, probability-based, and generated-text-based measures",
+        "Accuracy, latency, and memory only"
       ],
       "correct": 2,
       "explanation": "Embedding tests expose associations, probability tests expose stereotyped likelihoods, and generated-text tests measure downstream behaviour. No one family covers representational and allocational harms by itself."

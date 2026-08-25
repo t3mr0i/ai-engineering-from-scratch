@@ -1,5 +1,5 @@
 {
-  "lesson": "echoleak-cves-for-ai",
+  "lesson": "25-echoleak-cves-for-ai",
   "title": "EchoLeak and the Emergence of CVEs for AI",
   "questions": [
     {
@@ -44,8 +44,8 @@
       "options": [
         "Training, inference, and deployment",
         "Prompt, tokenizer, and context window",
-        "Retrieval, privileged scope, and output/network exfiltration",
-        "Model size, latency, and cost"
+        "Model size, latency, and cost",
+        "Retrieval, privileged scope, and output/network exfiltration"
       ],
       "correct": 3,
       "explanation": "An attacker-controlled retrieval item is only the first step. The model must also reach a privileged scope and send the result across an output boundary; defending one boundary alone leaves another path open."

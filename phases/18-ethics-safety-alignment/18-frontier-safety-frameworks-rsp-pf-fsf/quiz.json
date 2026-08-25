@@ -1,5 +1,5 @@
 {
-  "lesson": "frontier-safety-frameworks-rsp-pf-fsf",
+  "lesson": "18-frontier-safety-frameworks-rsp-pf-fsf",
   "title": "Frontier Safety Frameworks — RSP, PF, FSF",
   "questions": [
     {
@@ -23,7 +23,7 @@
         "Biosafety levels measure model helpfulness",
         "Both use increasing levels to connect capability or hazard evidence with increasingly strict controls"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "The analogy is operational: a level is a threshold for safeguards, not a claim that AI and biological hazards are identical. The lesson's table lists ASL-3 as the cited CBRN activation point."
     },
     {
@@ -47,7 +47,7 @@
         "A rule requiring every lab to use the same CBRN test",
         "A replacement for a safety case with a model card"
       ],
-      "correct": 3,
+      "correct": 1,
       "explanation": "The table marks such a clause in all three entries. It creates a governance race-to-the-bottom risk: external competitive pressure can weaken a commitment that was intended to track capability."
     },
     {

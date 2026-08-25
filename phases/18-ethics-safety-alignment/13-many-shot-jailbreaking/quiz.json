@@ -1,5 +1,5 @@
 {
-  "lesson": "many-shot-jailbreaking",
+  "lesson": "13-many-shot-jailbreaking",
   "title": "Many-Shot Jailbreaking",
   "questions": [
     {
@@ -43,7 +43,7 @@
       "question": "Why is long-context MSJ defense a capability-safety trade-off?",
       "options": [
         "A classifier can disable all attention without affecting any task",
-        "Pattern extraction from examples supports benign in-context learning as well as harmful compliance patterns",
+        "It requires a new fine-tuning run for each prompt",
         "Many-shot attacks work only when temperature is zero",
         "Pattern extraction from examples supports benign in-context learning as well as harmful compliance patterns"
       ],
