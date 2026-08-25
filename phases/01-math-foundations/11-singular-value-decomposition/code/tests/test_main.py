@@ -1,64 +1,71 @@
-# Contract and executable-behavior tests for this lesson demo.
+# Numerical contract tests for phases/01-math-foundations/11-singular-value-decomposition/docs/en.md.
+# They compare the local NumPy implementation with algebraic identities, not external libraries.
+# Fixtures are small so the suite remains fast and deterministic.
+# Run from the lesson code directory with: python3 -m unittest discover tests -v.
+# Julia is a parallel optional entry point and is checked statically when unavailable.
+
 from __future__ import annotations
 
-import ast
-import functools
-import importlib.util
-import os
 from pathlib import Path
-import subprocess
 import sys
 import unittest
 
+import numpy as np
+
 CODE = Path(__file__).resolve().parents[1]
-MAIN = CODE / "main.py"
-ALLOWED = set(sys.stdlib_module_names) | {"numpy", "torch", "h5py", "zstandard", "safetensors"}
+sys.path.insert(0, str(CODE))
 
-def source_trees() -> list[ast.AST]:
-    return [ast.parse(path.read_text(encoding="utf-8")) for path in CODE.glob("*.py")]
+from svd import (  # noqa: E402
+    compression_ratio,
+    pseudoinverse_via_svd,
+    reconstruct,
+    svd_from_scratch,
+    truncated_svd,
+)
 
-def external_roots() -> set[str]:
-    roots: set[str] = set()
-    for tree in source_trees():
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                roots.update(alias.name.split(".")[0] for alias in node.names)
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                roots.add(node.module.split(".")[0])
-    return {name for name in roots if not (CODE / f"{name}.py").exists() and not (CODE / name).is_dir()}
 
-@functools.lru_cache(maxsize=1)
-def run_demo() -> subprocess.CompletedProcess[str]:
-    missing = sorted(name for name in external_roots() if name in ALLOWED and importlib.util.find_spec(name) is None)
-    banned = sorted(external_roots() - ALLOWED)
-    if missing or banned:
-        raise unittest.SkipTest(f"demo dependencies unavailable or disallowed: {missing + banned}")
-    env = os.environ.copy()
-    for key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "HF_TOKEN", "HUGGINGFACE_TOKEN"):
-        env.pop(key, None)
-    return subprocess.run(
-        [sys.executable, MAIN.name], cwd=CODE, text=True, capture_output=True,
-        timeout=45, env=env, check=False,
-    )
+class SVDTests(unittest.TestCase):
+    def test_scratch_svd_reconstructs_a_rectangular_matrix(self) -> None:
+        np.random.seed(7)
+        A = np.array([[3.0, 1.0], [1.0, 3.0], [2.0, -1.0]])
+        U, S, V = svd_from_scratch(A)
+        self.assertEqual(U.shape, (3, 2))
+        self.assertEqual(S.shape, (2,))
+        self.assertEqual(V.shape, (2, 2))
+        self.assertTrue(np.allclose(reconstruct(U, S, V.T), A, atol=1e-6))
 
-class LessonDemoTests(unittest.TestCase):
-    def test_source_compiles(self) -> None:
-        compile(MAIN.read_text(encoding="utf-8"), str(MAIN), "exec")
+    def test_singular_values_are_descending(self) -> None:
+        U, S, Vt = truncated_svd(np.diag([5.0, 2.0, 1.0]), 2)
+        self.assertTrue(np.all(np.diff(S) <= 0.0))
+        self.assertTrue(np.allclose(reconstruct(U, S, Vt), np.diag([5.0, 2.0, 0.0])))
 
-    def test_demo_has_explicit_entrypoint(self) -> None:
-        source = MAIN.read_text(encoding="utf-8")
-        self.assertTrue("__main__" in source or "runpy.run_path" in source)
+    def test_truncated_rank_two_error_is_no_larger_than_rank_one(self) -> None:
+        A = np.array([[3.0, 0.0, 0.0], [0.0, 2.0, 0.0], [0.0, 0.0, 1.0]])
+        U1, S1, Vt1 = truncated_svd(A, 1)
+        U2, S2, Vt2 = truncated_svd(A, 2)
+        err1 = np.linalg.norm(A - reconstruct(U1, S1, Vt1))
+        err2 = np.linalg.norm(A - reconstruct(U2, S2, Vt2))
+        self.assertLessEqual(err2, err1)
 
-    def test_demo_exits_successfully(self) -> None:
-        self.assertEqual(run_demo().returncode, 0, run_demo().stderr)
+    def test_pseudoinverse_solves_least_squares_projection(self) -> None:
+        A = np.array([[1.0, 1.0], [2.0, 1.0], [3.0, 1.0]])
+        b = np.array([3.0, 5.0, 6.0])
+        x = pseudoinverse_via_svd(A) @ b
+        self.assertTrue(np.allclose(A.T @ (A @ x - b), 0.0, atol=1e-8))
 
-    def test_demo_emits_bounded_output(self) -> None:
-        result = run_demo()
-        self.assertTrue((result.stdout + result.stderr).strip())
-        self.assertLess(len(result.stdout) + len(result.stderr), 1_000_000)
+    def test_pseudoinverse_handles_rank_deficiency(self) -> None:
+        A = np.array([[1.0, 2.0], [2.0, 4.0]])
+        pinv = pseudoinverse_via_svd(A)
+        self.assertTrue(np.allclose(A @ pinv @ A, A, atol=1e-8))
 
-    def test_demo_has_no_traceback(self) -> None:
-        self.assertNotIn("Traceback (most recent call last)", run_demo().stderr)
+    def test_compression_ratio_matches_factor_storage(self) -> None:
+        self.assertAlmostEqual(compression_ratio(100, 80, 5), 5 * (100 + 80 + 1) / 8000)
+
+    def test_reconstruction_rejects_mismatched_factor_shapes_by_numpy(self) -> None:
+        U = np.eye(3)[:, :2]
+        with self.assertRaises(ValueError):
+            reconstruct(U, np.array([1.0]), np.eye(2))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,14 +1,26 @@
+# Bayesian inference helpers for phases/01-math-foundations/07-bayes-theorem/docs/en.md.
+# Covers Bayes updates, a smoothed log-space Naive Bayes classifier, and Beta updates.
+# The canonical main.py entry point runs deterministic, offline fixtures only.
+# Validation keeps malformed priors, empty models, and mismatched training data explicit.
+# Run from this directory with: python3 main.py
+
 import math
 from collections import defaultdict
 
 
 def bayes(prior, likelihood, false_positive_rate):
+    if not all(0.0 <= value <= 1.0 for value in (prior, likelihood, false_positive_rate)):
+        raise ValueError("probabilities must be between 0 and 1")
     evidence = likelihood * prior + false_positive_rate * (1 - prior)
+    if evidence == 0:
+        raise ValueError("evidence probability must be positive")
     posterior = likelihood * prior / evidence
     return posterior
 
 
 def sequential_bayes(prior, likelihood, false_positive_rate, num_tests):
+    if num_tests < 0:
+        raise ValueError("num_tests must be non-negative")
     current = prior
     for i in range(num_tests):
         current = bayes(current, likelihood, false_positive_rate)
@@ -25,6 +37,10 @@ class NaiveBayes:
         self.vocab = set()
 
     def train(self, documents, labels):
+        if len(documents) != len(labels):
+            raise ValueError("documents and labels must have equal length")
+        if not documents:
+            raise ValueError("at least one training document is required")
         for doc, label in zip(documents, labels):
             self.class_counts[label] += 1
             words = doc.lower().split()
@@ -46,6 +62,8 @@ class NaiveBayes:
         )
 
     def predict(self, document):
+        if not self.class_counts:
+            raise ValueError("classifier has not been trained")
         words = document.lower().split()
         best_class = None
         best_score = float("-inf")
@@ -61,6 +79,8 @@ class NaiveBayes:
         return best_class
 
     def predict_proba(self, document):
+        if not self.class_counts:
+            raise ValueError("classifier has not been trained")
         words = document.lower().split()
         scores = {}
 

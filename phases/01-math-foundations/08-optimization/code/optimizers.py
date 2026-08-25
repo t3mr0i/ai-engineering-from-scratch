@@ -1,3 +1,9 @@
+# Optimizers for phases/01-math-foundations/08-optimization/docs/en.md.
+# Implements Rosenbrock gradients, gradient descent, momentum, Adam, and guarded trajectories.
+# The comparison is a finite, offline fixture; no framework or plotting dependency is needed.
+# Convergence reporting uses a text table so the artifact remains portable and deterministic.
+# Run this reference directly with: python3 optimizers.py
+
 import math
 
 
@@ -120,12 +126,11 @@ def print_trajectory(name, history, func, steps_to_show=10):
         print(f"  {total:6d}  {final[0]:10.6f}  {final[1]:10.6f}  {loss:14.8f}  {dist:8.4f}")
 
 
-def print_ascii_convergence(results, func, steps=5000):
+def print_convergence_summary(results, func, steps=5000):
     print(f"\n{'=' * 60}")
-    print("  CONVERGENCE COMPARISON (log10 loss over steps)")
+    print("  CONVERGENCE COMPARISON (sampled loss values)")
     print(f"{'=' * 60}")
 
-    width = 50
     sample_points = 40
     interval = max(1, steps // sample_points)
 
@@ -138,25 +143,10 @@ def print_ascii_convergence(results, func, steps=5000):
         if not losses:
             continue
 
-        max_log = 5.0
-        min_log = -8.0
-        log_range = max_log - min_log
-
-        bar = []
-        for loss in losses:
-            log_loss = math.log10(loss + 1e-15)
-            log_loss = max(min_log, min(max_log, log_loss))
-            normalized = (log_loss - min_log) / log_range
-            pos = int(normalized * (width - 1))
-            bar.append(pos)
-
         print(f"\n  {name}:")
-        print(f"  loss 1e-8 {'.' * width} 1e+5")
-        for i, pos in enumerate(bar):
+        for i, loss in enumerate(losses):
             step_num = i * interval
-            line = [' '] * width
-            line[pos] = '*'
-            print(f"  {step_num:5d} |{''.join(line)}|")
+            print(f"  step {step_num:5d}: loss={loss:.6e}")
 
         final_loss = func(history[-1])
         conv_step = find_convergence_step(history, func)
@@ -185,7 +175,7 @@ def demo_comparison():
         results.append((name, history))
         print_trajectory(name, history, rosenbrock)
 
-    print_ascii_convergence(results, rosenbrock, steps)
+    print_convergence_summary(results, rosenbrock, steps)
 
     print(f"\n{'=' * 60}")
     print("  FINAL RESULTS")

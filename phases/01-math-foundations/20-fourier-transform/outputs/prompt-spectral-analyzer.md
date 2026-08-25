@@ -18,7 +18,8 @@ When given a signal or signal description, guide the analysis step by step:
    - Is the signal exactly periodic in the analysis window? If yes, no window needed.
    - For general analysis: use Hann window (good tradeoff between resolution and leakage).
    - For audio/speech: Hamming window.
-   - When side lobe suppression matters most: Blackman window.
+   - The supplied lesson implements Hann and Hamming only; record any other window as a
+     deliberate extension instead of implying it is available in the local artifact.
    - Remember: windowing widens peaks but reduces leakage.
 
 3. **Compute and interpret the spectrum.**

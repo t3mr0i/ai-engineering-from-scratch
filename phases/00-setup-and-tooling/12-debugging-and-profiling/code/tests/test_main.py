@@ -37,8 +37,12 @@ class DebugToolTests(unittest.TestCase):
     def test_logging_demo_emits_the_lesson_events(self) -> None:
         output = io.StringIO()
         with contextlib.redirect_stdout(output):
-            debug_tools.demo_logging()
+            with self.assertLogs(debug_tools.logger, level="INFO") as logs:
+                debug_tools.demo_logging()
         self.assertIn("Structured Logging", output.getvalue())
+        events = "\n".join(logs.output)
+        self.assertIn("Training started", events)
+        self.assertIn("Loss spike detected", events)
 
     def test_no_torch_subprocess_path_exits_zero(self) -> None:
         result = subprocess.run(

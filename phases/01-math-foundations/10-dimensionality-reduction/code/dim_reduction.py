@@ -1,333 +1,165 @@
+# Dimensionality-reduction primitives for phases/01-math-foundations/10-dimensionality-reduction/docs/en.md.
+# Implements linear PCA and a small kernel-PCA projection with NumPy, from the covariance algebra.
+# The fixtures are synthetic and deterministic; no dataset download or plotting package is used.
+# Canonical execution is `python3 main.py` from this code directory.
+# Tests import the same PCA and kernel_pca functions used by the demo.
+
+from __future__ import annotations
+
 import numpy as np
 
 
 class PCA:
-    def __init__(self, n_components):
+    """A small covariance-eigendecomposition PCA implementation."""
+
+    def __init__(self, n_components: int):
+        if not isinstance(n_components, int) or n_components <= 0:
+            raise ValueError("n_components must be a positive integer")
         self.n_components = n_components
-        self.components = None
-        self.mean = None
-        self.eigenvalues = None
-        self.explained_variance_ratio_ = None
+        self.components: np.ndarray | None = None
+        self.mean: np.ndarray | None = None
+        self.eigenvalues: np.ndarray | None = None
+        self.explained_variance_ratio_: np.ndarray | None = None
 
-    def fit(self, X):
+    def fit(self, X: np.ndarray) -> "PCA":
+        X = np.asarray(X, dtype=float)
+        if X.ndim != 2 or X.shape[0] < 2:
+            raise ValueError("PCA.fit expects a 2D array with at least two samples")
+        if self.n_components > min(X.shape):
+            raise ValueError("n_components cannot exceed the sample or feature count")
         self.mean = np.mean(X, axis=0)
-        X_centered = X - self.mean
-
-        cov_matrix = np.cov(X_centered, rowvar=False)
-
-        eigenvalues, eigenvectors = np.linalg.eigh(cov_matrix)
-
-        sorted_idx = np.argsort(eigenvalues)[::-1]
-        eigenvalues = eigenvalues[sorted_idx]
-        eigenvectors = eigenvectors[:, sorted_idx]
-
+        centered = X - self.mean
+        covariance = centered.T @ centered / (X.shape[0] - 1)
+        eigenvalues, eigenvectors = np.linalg.eigh(covariance)
+        order = np.argsort(eigenvalues)[::-1]
+        eigenvalues = np.maximum(eigenvalues[order], 0.0)
+        eigenvectors = eigenvectors[:, order]
         self.components = eigenvectors[:, : self.n_components].T
         self.eigenvalues = eigenvalues[: self.n_components]
-        total_var = np.sum(eigenvalues)
-        self.explained_variance_ratio_ = self.eigenvalues / total_var
-
+        total_variance = float(np.sum(eigenvalues))
+        if total_variance == 0.0:
+            self.explained_variance_ratio_ = np.zeros(self.n_components)
+        else:
+            self.explained_variance_ratio_ = self.eigenvalues / total_variance
         return self
 
-    def transform(self, X):
-        X_centered = X - self.mean
-        return X_centered @ self.components.T
+    def _require_fitted(self) -> None:
+        if self.components is None or self.mean is None:
+            raise RuntimeError("fit must be called before transform")
 
-    def fit_transform(self, X):
-        self.fit(X)
-        return self.transform(X)
+    def transform(self, X: np.ndarray) -> np.ndarray:
+        self._require_fitted()
+        X = np.asarray(X, dtype=float)
+        if X.ndim != 2 or X.shape[1] != len(self.mean):
+            raise ValueError("X must be 2D with the fitted feature count")
+        return (X - self.mean) @ self.components.T
 
-    def inverse_transform(self, X_reduced):
+    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+        return self.fit(X).transform(X)
+
+    def inverse_transform(self, X_reduced: np.ndarray) -> np.ndarray:
+        self._require_fitted()
+        X_reduced = np.asarray(X_reduced, dtype=float)
+        if X_reduced.ndim != 2 or X_reduced.shape[1] != self.n_components:
+            raise ValueError("X_reduced must have one column per retained component")
         return X_reduced @ self.components + self.mean
 
 
-def demo_synthetic():
-    print("=" * 60)
-    print("PCA on synthetic 3D data")
-    print("=" * 60)
-
-    np.random.seed(42)
-    n_samples = 500
-
-    t = np.random.uniform(0, 2 * np.pi, n_samples)
-    x1 = 3 * np.cos(t) + np.random.normal(0, 0.2, n_samples)
-    x2 = 3 * np.sin(t) + np.random.normal(0, 0.2, n_samples)
-    x3 = 0.5 * x1 + 0.3 * x2 + np.random.normal(0, 0.1, n_samples)
-
-    X = np.column_stack([x1, x2, x3])
-
-    pca = PCA(n_components=2)
-    X_reduced = pca.fit_transform(X)
-
-    print(f"Original shape: {X.shape}")
-    print(f"Reduced shape:  {X_reduced.shape}")
-    print(f"Explained variance ratios: {pca.explained_variance_ratio_}")
-    print(f"Total variance captured: {sum(pca.explained_variance_ratio_):.4f}")
-
-    X_reconstructed = pca.inverse_transform(X_reduced)
-    mse = np.mean((X - X_reconstructed) ** 2)
-    print(f"Reconstruction MSE: {mse:.6f}")
-    print()
+def make_synthetic_data(seed: int = 42, n_samples: int = 240) -> np.ndarray:
+    """Create a noisy 3D ellipse with a correlated third feature."""
+    rng = np.random.default_rng(seed)
+    theta = rng.uniform(0.0, 2.0 * np.pi, n_samples)
+    x = 3.0 * np.cos(theta) + rng.normal(0.0, 0.12, n_samples)
+    y = 1.2 * np.sin(theta) + rng.normal(0.0, 0.12, n_samples)
+    z = 0.5 * x - 0.25 * y + rng.normal(0.0, 0.06, n_samples)
+    return np.column_stack((x, y, z))
 
 
-def demo_mnist():
-    print("=" * 60)
-    print("PCA on MNIST digits")
-    print("=" * 60)
-
-    from sklearn.datasets import fetch_openml
-
-    mnist = fetch_openml("mnist_784", version=1, as_frame=False, parser="auto")
-    X = mnist.data[:5000].astype(float)
-    y = mnist.target[:5000].astype(int)
-
-    pca_50 = PCA(n_components=50)
-    X_pca50 = pca_50.fit_transform(X)
-    print(f"50 components capture {sum(pca_50.explained_variance_ratio_):.2%} of variance")
-
-    pca_2d = PCA(n_components=2)
-    X_pca2d = pca_2d.fit_transform(X)
-    print(f"2 components capture {sum(pca_2d.explained_variance_ratio_):.2%} of variance")
-
-    for k in [10, 50, 200]:
-        pca_k = PCA(n_components=k)
-        X_k = pca_k.fit_transform(X)
-        X_rec = pca_k.inverse_transform(X_k)
-        mse = np.mean((X - X_rec) ** 2)
-        var = sum(pca_k.explained_variance_ratio_)
-        print(f"k={k:>3d}  variance={var:.4f}  reconstruction_mse={mse:.2f}")
-
-    print()
-    return X, y, X_pca2d
+def make_concentric_circles(seed: int = 42, n_per_ring: int = 80) -> tuple[np.ndarray, np.ndarray]:
+    rng = np.random.default_rng(seed)
+    angles = rng.uniform(0.0, 2.0 * np.pi, 2 * n_per_ring)
+    radii = np.concatenate((
+        1.0 + rng.normal(0.0, 0.04, n_per_ring),
+        3.0 + rng.normal(0.0, 0.04, n_per_ring),
+    ))
+    points = np.column_stack((radii * np.cos(angles), radii * np.sin(angles)))
+    labels = np.repeat([0, 1], n_per_ring)
+    return points, labels
 
 
-def demo_sklearn_comparison(X, X_ours):
-    print("=" * 60)
-    print("Comparison: our PCA vs sklearn PCA")
-    print("=" * 60)
-
-    from sklearn.decomposition import PCA as SklearnPCA
-
-    sklearn_pca = SklearnPCA(n_components=2)
-    X_sklearn = sklearn_pca.fit_transform(X)
-
-    pca_ours = PCA(n_components=2)
-    pca_ours.fit(X)
-
-    print(f"Our explained variance:     {pca_ours.explained_variance_ratio_}")
-    print(f"Sklearn explained variance: {sklearn_pca.explained_variance_ratio_}")
-
-    diff = np.abs(np.abs(X_ours) - np.abs(X_sklearn))
-    print(f"Max absolute difference (sign-invariant): {diff.max():.10f}")
-    print()
-
-
-def demo_tsne(X, y):
-    print("=" * 60)
-    print("t-SNE on MNIST (5000 samples)")
-    print("=" * 60)
-
-    from sklearn.manifold import TSNE
-
-    pca_pre = PCA(n_components=50)
-    X_pca = pca_pre.fit_transform(X)
-
-    tsne = TSNE(n_components=2, perplexity=30, random_state=42)
-    X_tsne = tsne.fit_transform(X_pca)
-    print(f"t-SNE output shape: {X_tsne.shape}")
-    print(f"t-SNE x range: [{X_tsne[:, 0].min():.1f}, {X_tsne[:, 0].max():.1f}]")
-    print(f"t-SNE y range: [{X_tsne[:, 1].min():.1f}, {X_tsne[:, 1].max():.1f}]")
-    print()
-
-
-def demo_umap(X, y):
-    print("=" * 60)
-    print("UMAP on MNIST (5000 samples)")
-    print("=" * 60)
-
-    try:
-        from umap import UMAP
-
-        pca_pre = PCA(n_components=50)
-        X_pca = pca_pre.fit_transform(X)
-
-        reducer = UMAP(n_components=2, n_neighbors=15, min_dist=0.1, random_state=42)
-        X_umap = reducer.fit_transform(X_pca)
-        print(f"UMAP output shape: {X_umap.shape}")
-        print(f"UMAP x range: [{X_umap[:, 0].min():.1f}, {X_umap[:, 0].max():.1f}]")
-        print(f"UMAP y range: [{X_umap[:, 1].min():.1f}, {X_umap[:, 1].max():.1f}]")
-    except ImportError:
-        print("Install umap-learn to run this demo: pip install umap-learn")
-
-    print()
-
-
-def demo_pca_preprocessing(X, y):
-    print("=" * 60)
-    print("PCA as preprocessing for logistic regression")
-    print("=" * 60)
-
-    from sklearn.decomposition import PCA as SklearnPCA
-    from sklearn.linear_model import LogisticRegression
-    from sklearn.model_selection import train_test_split
-    from sklearn.metrics import accuracy_score
-
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
-
-    for k in [10, 30, 50, 100, 200, 784]:
-        if k < X_train.shape[1]:
-            pca_k = SklearnPCA(n_components=k)
-            X_tr = pca_k.fit_transform(X_train)
-            X_te = pca_k.transform(X_test)
-            var_captured = sum(pca_k.explained_variance_ratio_)
-        else:
-            X_tr = X_train
-            X_te = X_test
-            var_captured = 1.0
-
-        clf = LogisticRegression(max_iter=1000, random_state=42)
-        clf.fit(X_tr, y_train)
-        acc = accuracy_score(y_test, clf.predict(X_te))
-        print(f"k={k:>3d}  accuracy={acc:.4f}  variance={var_captured:.4f}")
-
-    print()
-
-
-def kernel_pca(X, n_components, kernel="rbf", gamma=1.0):
-    n = X.shape[0]
-
+def kernel_pca(X: np.ndarray, n_components: int, kernel: str = "rbf", gamma: float = 1.0) -> np.ndarray:
+    """Return centered kernel-PCA coordinates for the training rows in X."""
+    X = np.asarray(X, dtype=float)
+    if X.ndim != 2 or len(X) < 2:
+        raise ValueError("kernel_pca expects a 2D array with at least two rows")
+    if not isinstance(n_components, int) or n_components <= 0 or n_components > len(X):
+        raise ValueError("n_components must be between 1 and the sample count")
+    if gamma <= 0:
+        raise ValueError("gamma must be positive")
+    gram = X @ X.T
     if kernel == "rbf":
-        sq_dists = np.sum(X ** 2, axis=1).reshape(-1, 1) + np.sum(X ** 2, axis=1).reshape(1, -1) - 2 * X @ X.T
-        K = np.exp(-gamma * sq_dists)
+        squared_distances = np.maximum(
+            np.sum(X * X, axis=1, keepdims=True)
+            + np.sum(X * X, axis=1, keepdims=True).T
+            - 2.0 * gram,
+            0.0,
+        )
+        K = np.exp(-gamma * squared_distances)
     elif kernel == "poly":
-        K = (X @ X.T + 1) ** gamma
+        K = (gram + 1.0) ** gamma
+    elif kernel == "linear":
+        K = gram
     else:
-        K = X @ X.T
-
-    one_n = np.ones((n, n)) / n
-    K_centered = K - one_n @ K - K @ one_n + one_n @ K @ one_n
-
-    eigenvalues, eigenvectors = np.linalg.eigh(K_centered)
-
-    sorted_idx = np.argsort(eigenvalues)[::-1]
-    eigenvalues = eigenvalues[sorted_idx]
-    eigenvectors = eigenvectors[:, sorted_idx]
-
-    top_vals = eigenvalues[:n_components]
-    top_vecs = eigenvectors[:, :n_components]
-
-    for i in range(n_components):
-        if top_vals[i] > 1e-10:
-            top_vecs[:, i] = top_vecs[:, i] / np.sqrt(top_vals[i])
-
-    return top_vecs * top_vals[:n_components]
+        raise ValueError(f"unknown kernel: {kernel}")
+    one = np.ones((len(X), len(X))) / len(X)
+    centered = K - one @ K - K @ one + one @ K @ one
+    eigenvalues, eigenvectors = np.linalg.eigh(centered)
+    order = np.argsort(eigenvalues)[::-1]
+    eigenvalues = np.maximum(eigenvalues[order][:n_components], 0.0)
+    eigenvectors = eigenvectors[:, order][:, :n_components]
+    return eigenvectors * np.sqrt(eigenvalues)
 
 
-def reconstruction_error(X, X_reconstructed):
-    return np.mean((X - X_reconstructed) ** 2)
+def reconstruction_error(X: np.ndarray, X_reconstructed: np.ndarray) -> float:
+    X = np.asarray(X, dtype=float)
+    X_reconstructed = np.asarray(X_reconstructed, dtype=float)
+    if X.shape != X_reconstructed.shape:
+        raise ValueError("arrays must have the same shape")
+    return float(np.mean((X - X_reconstructed) ** 2))
 
 
-def demo_kernel_pca():
-    print("=" * 60)
-    print("KERNEL PCA: Concentric circles")
-    print("=" * 60)
-
-    np.random.seed(42)
-    n_per_ring = 200
-
-    theta_inner = np.random.uniform(0, 2 * np.pi, n_per_ring)
-    r_inner = 1.0 + np.random.normal(0, 0.1, n_per_ring)
-    inner = np.column_stack([r_inner * np.cos(theta_inner), r_inner * np.sin(theta_inner)])
-
-    theta_outer = np.random.uniform(0, 2 * np.pi, n_per_ring)
-    r_outer = 3.0 + np.random.normal(0, 0.1, n_per_ring)
-    outer = np.column_stack([r_outer * np.cos(theta_outer), r_outer * np.sin(theta_outer)])
-
-    X_circles = np.vstack([inner, outer])
-    labels = np.array([0] * n_per_ring + [1] * n_per_ring)
-
-    pca_linear = PCA(n_components=1)
-    X_linear = pca_linear.fit_transform(X_circles)
-
-    inner_range_linear = (X_linear[labels == 0].min(), X_linear[labels == 0].max())
-    outer_range_linear = (X_linear[labels == 1].min(), X_linear[labels == 1].max())
-
-    print(f"\n  Data: {n_per_ring} points per ring, 2 concentric circles")
-    print("\n  Linear PCA (1 component):")
-    print(f"    Inner ring range: [{inner_range_linear[0]:.2f}, {inner_range_linear[1]:.2f}]")
-    print(f"    Outer ring range: [{outer_range_linear[0]:.2f}, {outer_range_linear[1]:.2f}]")
-    overlap = inner_range_linear[1] > outer_range_linear[0] and outer_range_linear[1] > inner_range_linear[0]
-    print(f"    Overlapping: {overlap} (linear PCA cannot separate circles)")
-
-    X_kpca = kernel_pca(X_circles, n_components=2, kernel="rbf", gamma=0.5)
-
-    inner_mean = X_kpca[labels == 0, 0].mean()
-    outer_mean = X_kpca[labels == 1, 0].mean()
-    separation = abs(outer_mean - inner_mean)
-
-    print("\n  Kernel PCA (RBF, gamma=0.5, 2 components):")
-    print(f"    Inner ring PC1 mean: {inner_mean:.4f}")
-    print(f"    Outer ring PC1 mean: {outer_mean:.4f}")
-    print(f"    Separation on PC1: {separation:.4f}")
-    print("    Kernel PCA separates the circles in the first component")
-
-    for g in [0.1, 0.5, 1.0, 5.0]:
-        X_k = kernel_pca(X_circles, n_components=2, kernel="rbf", gamma=g)
-        inner_m = X_k[labels == 0, 0].mean()
-        outer_m = X_k[labels == 1, 0].mean()
-        sep = abs(outer_m - inner_m)
-        print(f"    gamma={g:<4}  separation={sep:.4f}")
-
-    print()
+def demo_synthetic() -> None:
+    X = make_synthetic_data()
+    pca = PCA(n_components=2)
+    reduced = pca.fit_transform(X)
+    reconstructed = pca.inverse_transform(reduced)
+    print("PCA from scratch on a deterministic 3D fixture")
+    print(f"  input shape: {X.shape}")
+    print(f"  projected shape: {reduced.shape}")
+    print(f"  explained ratios: {np.round(pca.explained_variance_ratio_, 4)}")
+    print(f"  reconstruction MSE: {reconstruction_error(X, reconstructed):.6f}")
 
 
-def demo_reconstruction_error():
-    print("=" * 60)
-    print("RECONSTRUCTION ERROR vs NUMBER OF COMPONENTS")
-    print("=" * 60)
+def demo_kernel() -> None:
+    X, labels = make_concentric_circles()
+    linear = PCA(n_components=1).fit_transform(X)
+    nonlinear = kernel_pca(X, n_components=2, gamma=0.5)
+    print("Kernel PCA on concentric-circle fixture")
+    print(f"  rows per class: {int(np.sum(labels == 0))}, {int(np.sum(labels == 1))}")
+    print(f"  linear projection shape: {linear.shape}")
+    print(f"  RBF projection shape: {nonlinear.shape}")
+    print(f"  RBF coordinate ranges: {np.round(nonlinear.min(axis=0), 3)} .. {np.round(nonlinear.max(axis=0), 3)}")
 
-    np.random.seed(42)
-    n_samples = 300
-    n_features = 20
-    n_informative = 5
 
-    base = np.random.randn(n_samples, n_informative)
-    mixing = np.random.randn(n_informative, n_features)
-    noise = np.random.randn(n_samples, n_features) * 0.1
-    X = base @ mixing + noise
-
-    total_var_pca = PCA(n_components=n_features)
-    total_var_pca.fit(X)
-    all_eigenvalues = total_var_pca.eigenvalues
-
-    print(f"\n  Data: {n_samples} samples, {n_features} features, {n_informative} informative")
-    print(f"\n  {'k':>4s}  {'Recon MSE':>12s}  {'Explained Var':>14s}  {'Cumulative':>11s}")
-    print(f"  {'':->4s}  {'':->12s}  {'':->14s}  {'':->11s}")
-
-    cumulative = 0.0
-    for k in [1, 2, 3, 5, 10, 15, 20]:
-        pca_k = PCA(n_components=k)
-        X_reduced = pca_k.fit_transform(X)
-        X_reconstructed = pca_k.inverse_transform(X_reduced)
-        mse = reconstruction_error(X, X_reconstructed)
-        cumulative = sum(pca_k.explained_variance_ratio_)
-        ev = pca_k.explained_variance_ratio_[-1] if k > 0 else 0
-        print(f"  {k:>4d}  {mse:>12.4f}  {ev:>14.6f}  {cumulative:>11.4f}")
-
-    print(f"\n  The data is effectively {n_informative}-dimensional.")
-    print(f"  After k={n_informative}, reconstruction error drops to near-noise level.")
-    print("  Additional components capture only noise variance.")
-    print()
+def demo_method_choice() -> None:
+    print("Method choice is a modeling decision, not a hidden dependency")
+    print("  PCA: linear variance-preserving projection; this lesson implements it.")
+    print("  t-SNE: stochastic local-neighborhood visualization; compare seeds before interpretation.")
+    print("  UMAP: graph-based visualization; n_neighbors trades local detail for broader structure.")
+    print("  Kernel PCA: nonlinear similarity geometry; the local RBF fixture above is implemented here.")
 
 
 if __name__ == "__main__":
-    demo_kernel_pca()
-    demo_reconstruction_error()
     demo_synthetic()
-
-    X, y, X_pca2d = demo_mnist()
-    demo_sklearn_comparison(X, X_pca2d)
-    demo_tsne(X, y)
-    demo_umap(X, y)
-    demo_pca_preprocessing(X, y)
+    demo_kernel()
+    demo_method_choice()

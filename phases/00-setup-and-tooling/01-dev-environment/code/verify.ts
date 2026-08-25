@@ -1,6 +1,6 @@
 // TypeScript companion for phases/00-setup-and-tooling/01-dev-environment/docs/en.md.
 // Probes command presence with execFileSync and never invokes a shell.
-// Required checks are Node.js, Git, Python, and Cargo; Deno is optional.
+// Required checks are Node.js, Git, and Python; Cargo and Deno are optional.
 // Uses Node's standard library only and mirrors the Rust/Python comparison probes.
 // Reference: https://nodejs.org/api/child_process.html.
 
@@ -41,7 +41,7 @@ const PROBES: Probe[] = [
   {
     name: "TypeScript runner (tsx)",
     required: false,
-    run: () => whichVersion("npx", ["-y", "tsx", "--version"]),
+    run: () => whichVersion("npx", ["--no-install", "tsx", "--version"]),
   },
   {
     name: "Git",

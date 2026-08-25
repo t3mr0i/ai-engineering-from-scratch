@@ -1,64 +1,73 @@
-# Contract and executable-behavior tests for this lesson demo.
+# Shape and indexing tests for phases/01-math-foundations/12-tensor-operations/docs/en.md.
+# The custom Tensor tests keep the row-major implementation honest; NumPy checks the AI fixtures.
+# Every assertion is local and deterministic.
+# Run from the lesson code directory with: python3 -m unittest discover tests -v.
+# No framework tensor package is required.
+
 from __future__ import annotations
 
-import ast
-import functools
-import importlib.util
-import os
 from pathlib import Path
-import subprocess
 import sys
 import unittest
 
+import numpy as np
+
 CODE = Path(__file__).resolve().parents[1]
-MAIN = CODE / "main.py"
-ALLOWED = set(sys.stdlib_module_names) | {"numpy", "torch", "h5py", "zstandard", "safetensors"}
+sys.path.insert(0, str(CODE))
 
-def source_trees() -> list[ast.AST]:
-    return [ast.parse(path.read_text(encoding="utf-8")) for path in CODE.glob("*.py")]
+from tensors import Tensor  # noqa: E402
 
-def external_roots() -> set[str]:
-    roots: set[str] = set()
-    for tree in source_trees():
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                roots.update(alias.name.split(".")[0] for alias in node.names)
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                roots.add(node.module.split(".")[0])
-    return {name for name in roots if not (CODE / f"{name}.py").exists() and not (CODE / name).is_dir()}
 
-@functools.lru_cache(maxsize=1)
-def run_demo() -> subprocess.CompletedProcess[str]:
-    missing = sorted(name for name in external_roots() if name in ALLOWED and importlib.util.find_spec(name) is None)
-    banned = sorted(external_roots() - ALLOWED)
-    if missing or banned:
-        raise unittest.SkipTest(f"demo dependencies unavailable or disallowed: {missing + banned}")
-    env = os.environ.copy()
-    for key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "HF_TOKEN", "HUGGINGFACE_TOKEN"):
-        env.pop(key, None)
-    return subprocess.run(
-        [sys.executable, MAIN.name], cwd=CODE, text=True, capture_output=True,
-        timeout=45, env=env, check=False,
-    )
+class TensorTests(unittest.TestCase):
+    def test_nested_tensor_shape_rank_size_and_stride(self) -> None:
+        tensor = Tensor([[1, 2, 3], [4, 5, 6]])
+        self.assertEqual(tensor.shape, (2, 3))
+        self.assertEqual(tensor.rank, 2)
+        self.assertEqual(tensor.size, 6)
+        self.assertEqual(tensor.strides, (3, 1))
 
-class LessonDemoTests(unittest.TestCase):
-    def test_source_compiles(self) -> None:
-        compile(MAIN.read_text(encoding="utf-8"), str(MAIN), "exec")
+    def test_indexing_and_assignment_use_row_major_offsets(self) -> None:
+        tensor = Tensor([[1, 2], [3, 4]])
+        self.assertEqual(tensor[1, 0], 3)
+        tensor[0, 1] = 9
+        self.assertEqual(tensor.to_list(), [[1, 9], [3, 4]])
 
-    def test_demo_has_explicit_entrypoint(self) -> None:
-        source = MAIN.read_text(encoding="utf-8")
-        self.assertTrue("__main__" in source or "runpy.run_path" in source)
+    def test_reshape_supports_one_inferred_dimension(self) -> None:
+        tensor = Tensor(list(range(12)), shape=(2, 6))
+        reshaped = tensor.reshape((-1, 3))
+        self.assertEqual(reshaped.shape, (4, 3))
+        self.assertEqual(reshaped.to_list()[2], [6, 7, 8])
 
-    def test_demo_exits_successfully(self) -> None:
-        self.assertEqual(run_demo().returncode, 0, run_demo().stderr)
+    def test_permute_and_transpose_preserve_values(self) -> None:
+        tensor = Tensor(list(range(24)), shape=(2, 3, 4))
+        permuted = tensor.permute((1, 0, 2))
+        self.assertEqual(permuted.shape, (3, 2, 4))
+        self.assertEqual(permuted[2, 1, 3], tensor[1, 2, 3])
+        self.assertEqual(tensor.transpose(0, 1).shape, (3, 2, 4))
 
-    def test_demo_emits_bounded_output(self) -> None:
-        result = run_demo()
-        self.assertTrue((result.stdout + result.stderr).strip())
-        self.assertLess(len(result.stdout) + len(result.stderr), 1_000_000)
+    def test_reductions_and_elementwise_operations_keep_shapes(self) -> None:
+        a = Tensor([[1, 2], [3, 4]])
+        b = Tensor([[10, 20], [30, 40]])
+        self.assertEqual((a + b).to_list(), [[11, 22], [33, 44]])
+        self.assertEqual((a * 2).to_list(), [[2, 4], [6, 8]])
+        self.assertEqual(a.sum(), 10)
+        self.assertEqual(a.sum(axis=0).to_list(), [4.0, 6.0])
 
-    def test_demo_has_no_traceback(self) -> None:
-        self.assertNotIn("Traceback (most recent call last)", run_demo().stderr)
+    def test_invalid_nested_shape_and_partial_indexing_raise(self) -> None:
+        with self.assertRaises(ValueError):
+            Tensor([[1, 2], [3]])
+        with self.assertRaises(IndexError):
+            Tensor([[1, 2]])[0]
+
+    def test_numpy_attention_einsum_shapes_match_contract(self) -> None:
+        q = np.zeros((2, 4, 8, 16))
+        k = np.zeros_like(q)
+        v = np.zeros_like(q)
+        scores = np.einsum("bhtd,bhsd->bhts", q, k)
+        output = np.einsum("bhts,bhsd->bhtd", scores, v)
+        self.assertEqual(scores.shape, (2, 4, 8, 8))
+        self.assertEqual(output.shape, (2, 4, 8, 16))
+
 
 if __name__ == "__main__":
     unittest.main()

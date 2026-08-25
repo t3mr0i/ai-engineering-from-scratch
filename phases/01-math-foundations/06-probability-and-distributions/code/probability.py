@@ -1,3 +1,9 @@
+# Probability helpers for phases/01-math-foundations/06-probability-and-distributions/docs/en.md.
+# Implements PMFs, PDFs, sampling, stable softmax, log probabilities, and marginals from scratch.
+# This Python reference is stdlib-only; the canonical runnable entry point is main.jl.
+# The final report is a deterministic text summary, so no plotting package is required.
+# Run this reference directly with: python3 probability.py
+
 import math
 import random
 
@@ -130,6 +136,18 @@ def demonstrate_clt(dist_fn, n_per_sample, n_averages):
     return averages
 
 
+def distribution_summary():
+    """Return compact, deterministic values suitable for a text handoff or test."""
+    logits = [2.0, 1.0, 0.1]
+    return {
+        "bernoulli_pmf": [bernoulli_pmf(k, 0.7) for k in (0, 1)],
+        "poisson_pmf_zero": poisson_pmf(0, 3),
+        "normal_pdf_zero": normal_pdf(0, 0, 1),
+        "softmax": softmax(logits),
+        "cross_entropy_target_0": cross_entropy_loss(logits, 0),
+    }
+
+
 if __name__ == "__main__":
     print("=" * 60)
     print("PROBABILITY AND DISTRIBUTIONS")
@@ -242,84 +260,9 @@ if __name__ == "__main__":
         print(f"    n={n:2d}: mean={avg_mean:.4f}, std={avg_std:.4f}")
     print("  As n grows, std shrinks and distribution approaches normal.")
 
-    print("\n--- Visualization ---")
-    try:
-        import matplotlib
-        matplotlib.use("Agg")
-        import matplotlib.pyplot as plt
-
-        fig, axes = plt.subplots(2, 3, figsize=(15, 9))
-
-        ax = axes[0][0]
-        ax.set_title("Bernoulli PMF (p=0.7)")
-        ax.bar([0, 1], [bernoulli_pmf(0, 0.7), bernoulli_pmf(1, 0.7)],
-               color=["#4a90d9", "#d94a4a"], width=0.4)
-        ax.set_xlabel("k")
-        ax.set_ylabel("P(X=k)")
-        ax.set_xticks([0, 1])
-
-        ax = axes[0][1]
-        ax.set_title("Poisson PMF (lambda=3)")
-        ks = list(range(12))
-        ax.bar(ks, [poisson_pmf(k, 3) for k in ks], color="#4a90d9", width=0.6)
-        ax.set_xlabel("k")
-        ax.set_ylabel("P(X=k)")
-
-        ax = axes[0][2]
-        ax.set_title("Normal PDF")
-        xs = [i * 0.01 - 5 for i in range(1001)]
-        for mu_val, sigma_val, label in [(0, 1, "N(0,1)"), (0, 2, "N(0,2)"), (2, 0.5, "N(2,0.5)")]:
-            ys = [normal_pdf(x, mu_val, sigma_val) for x in xs]
-            ax.plot(xs, ys, label=label, linewidth=2)
-        ax.set_xlabel("x")
-        ax.set_ylabel("f(x)")
-        ax.legend()
-
-        ax = axes[1][0]
-        ax.set_title("Uniform PDF [a=1, b=4]")
-        xs_u = [i * 0.01 - 1 for i in range(701)]
-        ys_u = [uniform_pdf(x, 1, 4) for x in xs_u]
-        ax.plot(xs_u, ys_u, color="#4a90d9", linewidth=2)
-        ax.fill_between(xs_u, ys_u, alpha=0.3, color="#4a90d9")
-        ax.set_xlabel("x")
-        ax.set_ylabel("f(x)")
-        ax.set_ylim(0, 0.5)
-
-        ax = axes[1][1]
-        ax.set_title("Central Limit Theorem")
-        for n_val, color in [(1, "#aaaaaa"), (2, "#88aacc"), (5, "#4a90d9"), (30, "#d94a4a")]:
-            avgs = demonstrate_clt(random.random, n_val, 10000)
-            ax.hist(avgs, bins=50, alpha=0.5, color=color, label=f"n={n_val}", density=True)
-        ax.set_xlabel("Sample mean")
-        ax.set_ylabel("Density")
-        ax.legend()
-
-        ax = axes[1][2]
-        ax.set_title("Softmax Output")
-        logit_sets = [
-            ([1, 1, 1], "equal [1,1,1]"),
-            ([2, 1, 0], "spread [2,1,0]"),
-            ([10, 1, 0], "sharp [10,1,0]"),
-        ]
-        x_positions = range(3)
-        width = 0.25
-        for idx, (lg, label) in enumerate(logit_sets):
-            sm = softmax(lg)
-            offset = (idx - 1) * width
-            ax.bar([x + offset for x in x_positions], sm, width=width, label=label)
-        ax.set_xlabel("Class")
-        ax.set_ylabel("Probability")
-        ax.set_xticks(list(x_positions))
-        ax.set_xticklabels(["Class 0", "Class 1", "Class 2"])
-        ax.legend()
-
-        plt.tight_layout()
-        plt.savefig("probability_distributions.png", dpi=150)
-        print("  Saved: probability_distributions.png")
-        plt.close()
-
-    except ImportError:
-        print("  matplotlib not available, skipping visualization.")
+    print("\n--- Text summary (stdlib only) ---")
+    for name, value in distribution_summary().items():
+        print(f"  {name}: {value}")
 
     print("\n" + "=" * 60)
     print("All probability computations complete.")

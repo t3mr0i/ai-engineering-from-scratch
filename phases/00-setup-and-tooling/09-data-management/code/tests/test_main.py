@@ -72,6 +72,8 @@ class DataUtilityTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             make_splits(rows, train_ratio=0.9, val_ratio=0.2)
         with self.assertRaises(ValueError):
+            stream_dataset(max_rows=0)
+        with self.assertRaises(ValueError):
             stream_dataset(max_rows=-1)
 
     def test_canonical_demo_is_offline_and_successful(self) -> None:

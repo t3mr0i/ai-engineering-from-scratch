@@ -1,397 +1,231 @@
+"""Small, inspectable clustering algorithms implemented with the Python stdlib."""
+
+# Lesson: phases/02-ml-fundamentals/07-unsupervised-learning/docs/en.md
+# The module implements K-Means, DBSCAN, a spherical GMM, and agglomerative linkage.
+# Inputs are rectangular non-empty numeric rows; validation makes edge cases visible.
+# The demo compares compact blobs with density-based labels and reports local metrics.
+
+from __future__ import annotations
+
 import math
 import random
 
 
+def _data(data):
+    rows = [list(map(float, row)) for row in data]
+    if not rows or not rows[0] or any(len(row) != len(rows[0]) for row in rows):
+        raise ValueError("data must be a non-empty rectangular matrix")
+    return rows
+
+
 def euclidean_distance(a, b):
-    return math.sqrt(sum((ai - bi) ** 2 for ai, bi in zip(a, b)))
+    left, right = list(a), list(b)
+    if not left or len(left) != len(right):
+        raise ValueError("vectors must be non-empty and have equal length")
+    return math.sqrt(sum((x - y) ** 2 for x, y in zip(left, right)))
 
 
 def kmeans(data, k, max_iterations=100, seed=42):
-    random.seed(seed)
-    n_features = len(data[0])
-
-    centroids = random.sample(data, k)
-
-    for iteration in range(max_iterations):
-        clusters = [[] for _ in range(k)]
-        assignments = []
-
-        for point in data:
-            distances = [euclidean_distance(point, c) for c in centroids]
-            nearest = distances.index(min(distances))
-            clusters[nearest].append(point)
-            assignments.append(nearest)
-
-        new_centroids = []
-        for cluster in clusters:
-            if len(cluster) == 0:
-                new_centroids.append(random.choice(data))
-                continue
-            centroid = [
-                sum(point[j] for point in cluster) / len(cluster)
-                for j in range(n_features)
-            ]
-            new_centroids.append(centroid)
-
-        if all(
-            euclidean_distance(old, new) < 1e-6
-            for old, new in zip(centroids, new_centroids)
-        ):
-            print(f"  Converged at iteration {iteration + 1}")
+    rows = _data(data)
+    if not 1 <= k <= len(rows) or max_iterations < 1:
+        raise ValueError("k must be between 1 and the number of rows")
+    rng = random.Random(seed)
+    centroids = [list(row) for row in rng.sample(rows, k)]
+    assignments = [-1] * len(rows)
+    for _ in range(max_iterations):
+        new_assignments = [min(range(k), key=lambda j: euclidean_distance(row, centroids[j])) for row in rows]
+        clusters = [[row for row, label in zip(rows, new_assignments) if label == j] for j in range(k)]
+        new_centroids = [
+            [sum(row[d] for row in cluster) / len(cluster) for d in range(len(rows[0]))] if cluster else list(centroids[j])
+            for j, cluster in enumerate(clusters)
+        ]
+        assignments = new_assignments
+        if all(euclidean_distance(old, new) < 1e-8 for old, new in zip(centroids, new_centroids)):
+            centroids = new_centroids
             break
-
         centroids = new_centroids
-
     return assignments, centroids
 
 
 def compute_inertia(data, assignments, centroids):
-    total = 0.0
-    for point, cluster_id in zip(data, assignments):
-        total += euclidean_distance(point, centroids[cluster_id]) ** 2
-    return total
+    rows = _data(data)
+    if len(rows) != len(assignments) or not centroids:
+        raise ValueError("assignments must match data and centroids cannot be empty")
+    if any(not 0 <= label < len(centroids) for label in assignments):
+        raise ValueError("assignment index is out of range")
+    return sum(euclidean_distance(row, centroids[label]) ** 2 for row, label in zip(rows, assignments))
 
 
 def silhouette_score(data, assignments):
-    n = len(data)
-    if n < 2:
-        return 0.0
-
+    rows = _data(data)
+    if len(rows) != len(assignments):
+        raise ValueError("assignments must match data")
     clusters = {}
-    for i, c in enumerate(assignments):
-        clusters.setdefault(c, []).append(i)
-
+    for index, label in enumerate(assignments):
+        clusters.setdefault(label, []).append(index)
     if len(clusters) < 2:
         return 0.0
-
     scores = []
-    for i in range(n):
-        own_cluster = assignments[i]
-        own_members = [j for j in clusters[own_cluster] if j != i]
-
-        if len(own_members) == 0:
+    for index, own_label in enumerate(assignments):
+        own = [j for j in clusters[own_label] if j != index]
+        if not own:
             scores.append(0.0)
             continue
-
-        a = sum(euclidean_distance(data[i], data[j]) for j in own_members) / len(own_members)
-
-        b = float("inf")
-        for cluster_id, members in clusters.items():
-            if cluster_id == own_cluster:
-                continue
-            avg_dist = sum(euclidean_distance(data[i], data[j]) for j in members) / len(members)
-            b = min(b, avg_dist)
-
-        if max(a, b) == 0:
-            scores.append(0.0)
-        else:
-            scores.append((b - a) / max(a, b))
-
+        within = sum(euclidean_distance(rows[index], rows[j]) for j in own) / len(own)
+        between = min(sum(euclidean_distance(rows[index], rows[j]) for j in members) / len(members) for label, members in clusters.items() if label != own_label)
+        scores.append((between - within) / max(within, between) if max(within, between) else 0.0)
     return sum(scores) / len(scores)
 
 
 def find_best_k(data, max_k=10):
-    print("Elbow method:")
-    inertias = []
-    for k in range(1, max_k + 1):
-        assignments, centroids = kmeans(data, k)
-        inertia = compute_inertia(data, assignments, centroids)
-        inertias.append(inertia)
-        print(f"  K={k}: inertia={inertia:.2f}")
-
-    print("\nSilhouette scores:")
-    for k in range(2, max_k + 1):
-        assignments, centroids = kmeans(data, k)
-        score = silhouette_score(data, assignments)
-        print(f"  K={k}: silhouette={score:.4f}")
-
-    return inertias
+    rows = _data(data)
+    if not 1 <= max_k <= len(rows):
+        raise ValueError("max_k must be between 1 and the number of rows")
+    return [compute_inertia(rows, *kmeans(rows, k)) for k in range(1, max_k + 1)]
 
 
 def dbscan(data, eps, min_samples):
-    n = len(data)
-    labels = [-1] * n
+    rows = _data(data)
+    if eps <= 0 or min_samples < 1:
+        raise ValueError("eps must be positive and min_samples at least one")
+    labels = [-1] * len(rows)
+    visited = [False] * len(rows)
     cluster_id = 0
 
-    def region_query(point_idx):
-        neighbors = []
-        for i in range(n):
-            if euclidean_distance(data[point_idx], data[i]) <= eps:
-                neighbors.append(i)
-        return neighbors
+    def neighbors(index):
+        return [j for j, row in enumerate(rows) if euclidean_distance(rows[index], row) <= eps]
 
-    visited = [False] * n
-
-    for i in range(n):
-        if visited[i]:
+    for index in range(len(rows)):
+        if visited[index]:
             continue
-        visited[i] = True
-
-        neighbors = region_query(i)
-
-        if len(neighbors) < min_samples:
-            labels[i] = -1
+        visited[index] = True
+        nearby = neighbors(index)
+        if len(nearby) < min_samples:
             continue
-
-        labels[i] = cluster_id
-        seed_set = list(neighbors)
-        seed_set.remove(i)
-
-        j = 0
-        while j < len(seed_set):
-            q = seed_set[j]
-
-            if not visited[q]:
-                visited[q] = True
-                q_neighbors = region_query(q)
-                if len(q_neighbors) >= min_samples:
-                    for nb in q_neighbors:
-                        if nb not in seed_set:
-                            seed_set.append(nb)
-
-            if labels[q] == -1:
-                labels[q] = cluster_id
-
-            j += 1
-
+        labels[index] = cluster_id
+        queue = list(nearby)
+        cursor = 0
+        while cursor < len(queue):
+            current = queue[cursor]
+            cursor += 1
+            if not visited[current]:
+                visited[current] = True
+                current_neighbors = neighbors(current)
+                if len(current_neighbors) >= min_samples:
+                    queue.extend(item for item in current_neighbors if item not in queue)
+            if labels[current] == -1:
+                labels[current] = cluster_id
         cluster_id += 1
-
     return labels
 
 
 def gmm(data, k, max_iterations=100, seed=42):
-    random.seed(seed)
-    n = len(data)
-    d = len(data[0])
-
-    indices = random.sample(range(n), k)
-    means = [list(data[i]) for i in indices]
+    rows = _data(data)
+    if not 1 <= k <= len(rows) or max_iterations < 1:
+        raise ValueError("k and max_iterations are invalid")
+    rng = random.Random(seed)
+    dimension = len(rows[0])
+    means = [list(row) for row in rng.sample(rows, k)]
     variances = [1.0] * k
-    weights = [1.0 / k] * k
+    weights = [1 / k] * k
+    responsibilities = [[1 / k] * k for _ in rows]
 
-    def gaussian_pdf(x, mean, variance):
-        d = len(x)
-        coeff = 1.0 / ((2 * math.pi * variance) ** (d / 2))
-        exponent = -sum((xi - mi) ** 2 for xi, mi in zip(x, mean)) / (2 * variance)
-        return coeff * math.exp(max(exponent, -500))
+    def density(row, mean, variance):
+        coefficient = (2 * math.pi * variance) ** (-dimension / 2)
+        exponent = -sum((value - center) ** 2 for value, center in zip(row, mean)) / (2 * variance)
+        return coefficient * math.exp(max(-500, exponent))
 
-    for iteration in range(max_iterations):
-        responsibilities = []
-        for i in range(n):
-            probs = []
-            for j in range(k):
-                probs.append(weights[j] * gaussian_pdf(data[i], means[j], variances[j]))
-            total = sum(probs)
-            if total == 0:
-                total = 1e-300
-            responsibilities.append([p / total for p in probs])
-
-        old_means = [list(m) for m in means]
-
+    for _ in range(max_iterations):
+        for i, row in enumerate(rows):
+            probabilities = [weights[j] * density(row, means[j], variances[j]) for j in range(k)]
+            total = sum(probabilities) or 1e-300
+            responsibilities[i] = [value / total for value in probabilities]
+        old = [list(mean) for mean in means]
         for j in range(k):
-            r_sum = sum(responsibilities[i][j] for i in range(n))
-            if r_sum < 1e-10:
+            mass = sum(resp[j] for resp in responsibilities)
+            if mass <= 1e-12:
                 continue
-
-            weights[j] = r_sum / n
-
-            for dim in range(d):
-                means[j][dim] = sum(
-                    responsibilities[i][j] * data[i][dim] for i in range(n)
-                ) / r_sum
-
-            variances[j] = sum(
-                responsibilities[i][j]
-                * sum((data[i][dim] - means[j][dim]) ** 2 for dim in range(d))
-                for i in range(n)
-            ) / (r_sum * d)
-            variances[j] = max(variances[j], 1e-6)
-
-        shift = sum(
-            euclidean_distance(old_means[j], means[j]) for j in range(k)
-        )
-        if shift < 1e-6:
-            print(f"  GMM converged at iteration {iteration + 1}")
+            weights[j] = mass / len(rows)
+            means[j] = [sum(resp[j] * row[d] for resp, row in zip(responsibilities, rows)) / mass for d in range(dimension)]
+            variances[j] = max(1e-6, sum(resp[j] * sum((row[d] - means[j][d]) ** 2 for d in range(dimension)) for resp, row in zip(responsibilities, rows)) / (mass * dimension))
+        if sum(euclidean_distance(before, after) for before, after in zip(old, means)) < 1e-7:
             break
-
-    assignments = []
-    for i in range(n):
-        assignments.append(responsibilities[i].index(max(responsibilities[i])))
-
+    assignments = [max(range(k), key=responsibility.__getitem__) for responsibility in responsibilities]
     return assignments, means, weights, responsibilities
 
 
 def agglomerative_clustering(data, n_clusters=3, linkage="ward"):
-    n = len(data)
-    cluster_map = {i: [i] for i in range(n)}
-    active_clusters = list(range(n))
-    merge_history = []
+    rows = _data(data)
+    if not 1 <= n_clusters <= len(rows) or linkage not in {"single", "complete", "average", "ward"}:
+        raise ValueError("n_clusters or linkage is invalid")
+    clusters = {i: [i] for i in range(len(rows))}
+    active = list(clusters)
+    history = []
 
-    def cluster_distance(c1_indices, c2_indices):
+    def distance(left, right):
+        pairs = [euclidean_distance(rows[i], rows[j]) for i in clusters[left] for j in clusters[right]]
         if linkage == "single":
-            return min(
-                euclidean_distance(data[i], data[j])
-                for i in c1_indices
-                for j in c2_indices
-            )
-        elif linkage == "complete":
-            return max(
-                euclidean_distance(data[i], data[j])
-                for i in c1_indices
-                for j in c2_indices
-            )
-        elif linkage == "average":
-            total = sum(
-                euclidean_distance(data[i], data[j])
-                for i in c1_indices
-                for j in c2_indices
-            )
-            return total / (len(c1_indices) * len(c2_indices))
-        elif linkage == "ward":
-            merged = c1_indices + c2_indices
-            centroid_merged = [
-                sum(data[i][d] for i in merged) / len(merged)
-                for d in range(len(data[0]))
-            ]
-            centroid_1 = [
-                sum(data[i][d] for i in c1_indices) / len(c1_indices)
-                for d in range(len(data[0]))
-            ]
-            centroid_2 = [
-                sum(data[i][d] for i in c2_indices) / len(c2_indices)
-                for d in range(len(data[0]))
-            ]
-            var_merged = sum(
-                euclidean_distance(data[i], centroid_merged) ** 2 for i in merged
-            )
-            var_1 = sum(
-                euclidean_distance(data[i], centroid_1) ** 2 for i in c1_indices
-            )
-            var_2 = sum(
-                euclidean_distance(data[i], centroid_2) ** 2 for i in c2_indices
-            )
-            return var_merged - var_1 - var_2
+            return min(pairs)
+        if linkage == "complete":
+            return max(pairs)
+        if linkage == "average":
+            return sum(pairs) / len(pairs)
+        merged = clusters[left] + clusters[right]
+        mean = [sum(rows[i][d] for i in merged) / len(merged) for d in range(len(rows[0]))]
+        left_mean = [sum(rows[i][d] for i in clusters[left]) / len(clusters[left]) for d in range(len(rows[0]))]
+        right_mean = [sum(rows[i][d] for i in clusters[right]) / len(clusters[right]) for d in range(len(rows[0]))]
+        return sum(euclidean_distance(rows[i], mean) ** 2 for i in merged) - sum(euclidean_distance(rows[i], left_mean) ** 2 for i in clusters[left]) - sum(euclidean_distance(rows[i], right_mean) ** 2 for i in clusters[right])
 
-    next_id = n
-    while len(active_clusters) > n_clusters:
-        best_dist = float("inf")
-        best_pair = None
-
-        for idx_a in range(len(active_clusters)):
-            for idx_b in range(idx_a + 1, len(active_clusters)):
-                c_a = active_clusters[idx_a]
-                c_b = active_clusters[idx_b]
-                dist = cluster_distance(cluster_map[c_a], cluster_map[c_b])
-                if dist < best_dist:
-                    best_dist = dist
-                    best_pair = (c_a, c_b)
-
-        c_a, c_b = best_pair
-        cluster_map[next_id] = cluster_map[c_a] + cluster_map[c_b]
-        merge_history.append((c_a, c_b, best_dist, len(cluster_map[next_id])))
-        active_clusters.remove(c_a)
-        active_clusters.remove(c_b)
-        active_clusters.append(next_id)
+    next_id = len(rows)
+    while len(active) > n_clusters:
+        left, right = min(((a, b) for pos, a in enumerate(active) for b in active[pos + 1:]), key=lambda pair: distance(*pair))
+        clusters[next_id] = clusters[left] + clusters[right]
+        history.append((left, right, distance(left, right), len(clusters[next_id])))
+        active.remove(left)
+        active.remove(right)
+        active.append(next_id)
         next_id += 1
-
-    labels = [0] * n
-    for cluster_label, cluster_id in enumerate(active_clusters):
-        for point_idx in cluster_map[cluster_id]:
-            labels[point_idx] = cluster_label
-
-    return labels, merge_history
+    labels = [next(index for index, cluster in enumerate(active) if point in clusters[cluster]) for point in range(len(rows))]
+    return labels, history
 
 
-def make_blobs(centers, n_per_cluster=50, spread=0.5, seed=42):
-    random.seed(seed)
-    data = []
-    true_labels = []
-    for label, (cx, cy) in enumerate(centers):
+def make_blobs(centers, n_per_cluster=30, spread=0.5, seed=42):
+    if not centers or n_per_cluster < 1 or spread < 0:
+        raise ValueError("centers, n_per_cluster, and spread are invalid")
+    rng = random.Random(seed)
+    data, labels = [], []
+    for label, center in enumerate(centers):
         for _ in range(n_per_cluster):
-            x = cx + random.gauss(0, spread)
-            y = cy + random.gauss(0, spread)
-            data.append([x, y])
-            true_labels.append(label)
-    return data, true_labels
-
-
-def make_moons(n_samples=200, noise=0.1, seed=42):
-    random.seed(seed)
-    data = []
-    labels = []
-    n_half = n_samples // 2
-    for i in range(n_half):
-        angle = math.pi * i / n_half
-        x = math.cos(angle) + random.gauss(0, noise)
-        y = math.sin(angle) + random.gauss(0, noise)
-        data.append([x, y])
-        labels.append(0)
-    for i in range(n_half):
-        angle = math.pi * i / n_half
-        x = 1 - math.cos(angle) + random.gauss(0, noise)
-        y = 1 - math.sin(angle) - 0.5 + random.gauss(0, noise)
-        data.append([x, y])
-        labels.append(1)
+            data.append([value + rng.gauss(0, spread) for value in center])
+            labels.append(label)
     return data, labels
 
 
+def make_moons(n_samples=100, noise=0.1, seed=42):
+    if n_samples < 2 or noise < 0:
+        raise ValueError("n_samples and noise are invalid")
+    rng = random.Random(seed)
+    half = n_samples // 2
+    data, labels = [], []
+    for label, offset in ((0, (0, 0)), (1, (1, -0.5))):
+        for i in range(half):
+            angle = math.pi * i / max(half - 1, 1)
+            sign = 1 if label == 0 else -1
+            data.append([offset[0] + math.cos(angle) + rng.gauss(0, noise), offset[1] + sign * math.sin(angle) + rng.gauss(0, noise)])
+            labels.append(label)
+    return data, labels
+
+
+def run_demo():
+    data, _ = make_blobs([[0, 0], [4, 0], [0, 4]], n_per_cluster=20, spread=0.2)
+    assignments, centroids = kmeans(data, 3)
+    density_labels = dbscan(data, eps=0.6, min_samples=3)
+    _, _, weights, responsibilities = gmm(data, 3)
+    print("Unsupervised learning")
+    print(f"kmeans_inertia={compute_inertia(data, assignments, centroids):.3f} silhouette={silhouette_score(data, assignments):.3f}")
+    print(f"dbscan_clusters={len({label for label in density_labels if label >= 0})} gmm_weights={[round(value, 3) for value in weights]}")
+    print(f"responsibility_sum={sum(responsibilities[0]):.3f}")
+
+
 if __name__ == "__main__":
-    centers = [[2, 2], [8, 3], [5, 8]]
-    data, true_labels = make_blobs(centers, n_per_cluster=50, spread=0.8)
-
-    print("=== K-Means on 3 blobs ===")
-    assignments, centroids = kmeans(data, k=3)
-    print(f"  Centroids: {[[round(c, 2) for c in cent] for cent in centroids]}")
-    sil = silhouette_score(data, assignments)
-    print(f"  Silhouette score: {sil:.4f}")
-
-    print("\n=== Elbow Method ===")
-    find_best_k(data, max_k=6)
-
-    print("\n=== DBSCAN on 3 blobs ===")
-    db_labels = dbscan(data, eps=1.5, min_samples=5)
-    n_clusters = len(set(db_labels) - {-1})
-    n_noise = db_labels.count(-1)
-    print(f"  Found {n_clusters} clusters, {n_noise} noise points")
-
-    print("\n=== GMM on 3 blobs ===")
-    gmm_assignments, gmm_means, gmm_weights, _ = gmm(data, k=3)
-    print(f"  Means: {[[round(m, 2) for m in mean] for mean in gmm_means]}")
-    print(f"  Weights: {[round(w, 3) for w in gmm_weights]}")
-    gmm_sil = silhouette_score(data, gmm_assignments)
-    print(f"  Silhouette score: {gmm_sil:.4f}")
-
-    print("\n=== Hierarchical Clustering on 3 blobs (Ward linkage) ===")
-    small_data = data[:30]
-    hc_labels, merges = agglomerative_clustering(small_data, n_clusters=3)
-    hc_sil = silhouette_score(small_data, hc_labels)
-    print(f"  Silhouette score: {hc_sil:.4f}")
-    print(f"  Last 3 merges: {[(a, b, round(d, 2)) for a, b, d, _ in merges[-3:]]}")
-
-    print("\n=== DBSCAN on moons (non-spherical clusters) ===")
-    moon_data, moon_labels = make_moons(n_samples=200, noise=0.1)
-    moon_db = dbscan(moon_data, eps=0.3, min_samples=5)
-    n_moon_clusters = len(set(moon_db) - {-1})
-    n_moon_noise = moon_db.count(-1)
-    print(f"  Found {n_moon_clusters} clusters, {n_moon_noise} noise points")
-
-    print("\n=== K-Means on moons (will fail to separate) ===")
-    moon_km, moon_centroids = kmeans(moon_data, k=2)
-    moon_sil = silhouette_score(moon_data, moon_km)
-    print(f"  Silhouette score: {moon_sil:.4f}")
-    print("  K-Means splits moons poorly because they are not spherical")
-
-    print("\n=== Anomaly detection with DBSCAN ===")
-    anomaly_data = list(data)
-    anomaly_data.append([20.0, 20.0])
-    anomaly_data.append([-5.0, -5.0])
-    anomaly_data.append([15.0, 0.0])
-    anomaly_labels = dbscan(anomaly_data, eps=1.5, min_samples=5)
-    anomalies = [
-        anomaly_data[i]
-        for i in range(len(anomaly_labels))
-        if anomaly_labels[i] == -1
-    ]
-    print(f"  Detected {len(anomalies)} anomalies")
-    for a in anomalies[-3:]:
-        print(f"    Point {[round(v, 2) for v in a]}")
+    run_demo()

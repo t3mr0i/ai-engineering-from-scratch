@@ -1,193 +1,46 @@
 # Linear Regression
 
-> Linear regression draws the best straight line through your data. It is the "hello world" of machine learning.
+> Fit a line twice: once by repeated gradients and once by solving the least-squares geometry directly.
 
 **Type:** Build
-**Languages:** Julia
-**Prerequisites:** Phase 1 (Linear Algebra, Calculus, Optimization), Phase 2 Lesson 1
-**Time:** ~90 minutes
+**Languages:** Python, Julia
+**Prerequisites:** Phase 01 linear algebra, calculus, and optimization
+**Time:** ~65 minutes
 
 ## Learning Objectives
 
-- Derive the gradient descent update rules for mean squared error and implement linear regression from scratch
-- Compare gradient descent and the normal equation in terms of computational complexity and when to use each
-- Build a multiple linear regression model with feature standardization and interpret the learned weights
-- Explain how Ridge regression (L2 regularization) prevents overfitting by penalizing large weights
+- Derive the mean-squared-error gradients for a line w*x+b.
+- Compare iterative gradient descent with the scalar normal equation.
+- Standardize multiple features without changing row order.
+- Explain why Ridge adds an L2 penalty to the weights but not the intercept.
+- Check a fit with cost history and R-squared rather than training output alone.
 
-## The Problem
+## The model
 
-You have data: house sizes and their sale prices. You want to predict the price of a new house given its size. You could eyeball it on a scatter plot, but you need a formula. You need a line that best fits the data so you can plug in any size and get a price prediction.
+For a row x, the scratch model predicts w*x+b. LinearRegression.compute_gradients returns the derivatives of mean squared error, and fit subtracts learning_rate times each gradient for the requested number of epochs. LinearRegressionNormal computes the scalar closed form: the slope is covariance divided by the variance of x, and the intercept is mean(y)-w*mean(x). The Julia entry point implements the same fixture with Julia standard libraries; the Python path is the easiest route for the tests.
 
-Linear regression gives you that line. More importantly, it introduces the entire ML training loop: define a model, define a cost function, optimize the parameters. Every ML algorithm follows this same pattern. Master it here with the simplest case, and you will recognize it everywhere.
-
-This is not just for simple problems. Linear regression is used in production systems for demand forecasting, A/B test analysis, financial modeling, and as a baseline for every regression task.
-
-## The Concept
-
-### The Model
-
-Linear regression assumes a linear relationship between input (x) and output (y):
-
-```
-y = wx + b
-```
-
-- `w` (weight/slope): how much y changes when x increases by 1
-- `b` (bias/intercept): the value of y when x = 0
-
-For multiple inputs (features), this extends to:
-
-```
-y = w1*x1 + w2*x2 + ... + wn*xn + b
-```
-
-Or in vector form: `y = w^T * x + b`
-
-The goal: find the values of w and b that make the predicted y as close as possible to the actual y across all training examples.
-
-### The Cost Function (Mean Squared Error)
-
-How do you measure "as close as possible"? You need a single number that captures how wrong your predictions are. The most common choice is Mean Squared Error (MSE):
-
-```
-MSE = (1/n) * sum((y_predicted - y_actual)^2)
-```
-
-Why squared? Two reasons. First, it penalizes large errors more than small errors (an error of 10 is 100x worse than an error of 1, not 10x). Second, the squared function is smooth and differentiable everywhere, which makes optimization straightforward.
-
-The cost function creates a surface. For a single weight w and bias b, the MSE surface looks like a bowl (a convex paraboloid). The bottom of the bowl is where MSE is minimized. Training means finding that bottom.
-
-### Gradient Descent
-
-Gradient descent finds the bottom of the bowl by taking steps downhill.
-
-```mermaid
-flowchart TD
-    A[Initialize w and b randomly] --> B[Compute predictions: y_hat = wx + b]
-    B --> C[Compute cost: MSE]
-    C --> D[Compute gradients: dMSE/dw, dMSE/db]
-    D --> E[Update parameters]
-    E --> F{Cost low enough?}
-    F -->|No| B
-    F -->|Yes| G[Done: optimal w and b found]
-```
-
-The gradients tell you two things: which direction to move each parameter, and how much to move.
-
-For MSE with y_hat = wx + b:
-
-```
-dMSE/dw = (2/n) * sum((y_hat - y) * x)
-dMSE/db = (2/n) * sum(y_hat - y)
-```
-
-The update rule:
-
-```
-w = w - learning_rate * dMSE/dw
-b = b - learning_rate * dMSE/db
-```
-
-The learning rate controls step size. Too large: you overshoot the minimum and diverge. Too small: training takes forever. Typical starting values: 0.01, 0.001, or 0.0001.
-
-### The Normal Equation (Closed-Form Solution)
-
-For linear regression specifically, there is a direct formula that gives the optimal weights without any iteration:
-
-```
-w = (X^T * X)^(-1) * X^T * y
-```
-
-This inverts a matrix to solve for w in one step. It works perfectly for small datasets. For large datasets (millions of rows or thousands of features), gradient descent is preferred because matrix inversion is O(n^3) in the number of features.
-
-### Multiple Linear Regression
-
-With multiple features, the model becomes:
-
-```
-y = w1*x1 + w2*x2 + ... + wn*xn + b
-```
-
-Everything works the same: MSE is the cost function, gradient descent updates all weights simultaneously. The only difference is that you are fitting a hyperplane instead of a line.
-
-Feature scaling matters here. If one feature ranges from 0 to 1 and another ranges from 0 to 1,000,000, gradient descent will struggle because the cost surface becomes elongated. Standardize features (subtract mean, divide by standard deviation) before training.
-
-### Polynomial Regression
-
-What if the relationship is not linear? You can still use linear regression by creating polynomial features:
-
-```
-y = w1*x + w2*x^2 + w3*x^3 + b
-```
-
-This is still "linear" regression because the model is linear in the weights (w1, w2, w3). You are just using nonlinear features of x.
-
-Higher-degree polynomials can fit more complex curves but risk overfitting. A degree-10 polynomial will pass through every point in a 10-point dataset but predict poorly on new data.
-
-### R-Squared Score
-
-MSE tells you how wrong you are, but the number depends on the scale of y. R-squared (R^2) gives a scale-independent measure:
-
-```
-R^2 = 1 - (sum of squared residuals) / (sum of squared deviations from mean)
-    = 1 - SS_res / SS_tot
-```
-
-- R^2 = 1.0: perfect predictions
-- R^2 = 0.0: the model is no better than predicting the mean every time
-- R^2 < 0.0: the model is worse than predicting the mean
-
-### Regularization Preview (Ridge Regression)
-
-When you have many features, the model can overfit by assigning large weights. Ridge regression (L2 regularization) adds a penalty:
-
-```
-Cost = MSE + lambda * sum(w_i^2)
-```
-
-The penalty term discourages large weights. The hyperparameter lambda controls the tradeoff: higher lambda means smaller weights and more regularization. This is covered in depth in a later lesson. For now, know that it exists and why it helps.
-
-
-
+MultipleLinearRegression generalizes the dot product to rows such as [size, bedrooms, age]. standardize returns scaled rows plus the training means and standard deviations. RidgeRegression adds alpha*sum(w squared) to the objective and its gradient; the bias is left unpenalized. PolynomialRegression creates [x, x squared, ...] features, so scaling the input before fitting matters for high degrees.
 
 ## Build It
 
-Reconstruct **Linear Regression** by following `LinearRegression` on x=0.5 with the demo defaults. Run `julia main.jl` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+Run python3 main.py from code/. The seeded fixture contains 80 noisy samples from approximately y=3x+7. The output reports gradient and normal-equation coefficients, an R-squared value, the means of two standardized features, and Ridge weights. Re-run with the same seed before comparing a change in learning rate.
+
+The four-row fixture X=[0,1,2,3], y=[7,10,13,16] has exact slope 3 and intercept 7. Fit it with LinearRegression and LinearRegressionNormal, then compare both pairs of parameters.
 
 ## Use It
 
-Call `LinearRegression` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+Use the normal equation for a small, static scalar feature when a direct solution is convenient. Use gradient descent when the representation is larger or the data arrives in repeated batches. For multiple features, call standardize on the training rows and reuse its returned means and standard deviations for validation data. A zero-variance column becomes zero after scaling; it must not create a division-by-zero failure.
 
 ## Ship It
 
-Hand off `outputs/skill-regression.md` with the command `julia main.jl`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [An Introduction to Statistical Learning (ISLR)](https://www.statlearning.com/) -- free PDF, chapters 3 and 6 cover linear regression and regularization with practical R examples
-- [The Elements of Statistical Learning (ESL)](https://hastie.su.domains/ElemStatLearn/) -- free PDF, the more mathematical companion to ISLR with deeper treatment of ridge and lasso
-- [Stanford CS229 Lecture Notes on Linear Regression](https://cs229.stanford.edu/main_notes.pdf) -- Andrew Ng's notes deriving the normal equation and gradient descent from first principles
-- [scikit-learn LinearRegression documentation](https://scikit-learn.org/stable/modules/linear_model.html) -- practical reference for LinearRegression, Ridge, Lasso, and ElasticNet with code examples
+outputs/skill-regression.md is a handoff template for recording the target definition, split, final MSE/R-squared, and coefficient interpretation. Ship the values with the seed and feature-scaling statistics. A high training R-squared alone is not evidence that a noisy relation will generalize.
 
 ## Exercises
 
-Keep two runs side by side for **Linear Regression**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
-
-1. **Read the first result.** From `code/`, run `julia main.jl` using x=0.5 with the demo defaults. Follow `LinearRegression`, `predict`, `compute_cost`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Derive the gradient descent update rules for mean squared error and implement linear regression from scratch**.
-2. **Run a two-value comparison.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Compare gradient descent and the normal equation in terms of computational complexity and when to use each** says the other inputs should stay fixed.
-3. **Try an adversarial fixture.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Build a multiple linear regression model with feature standardization and interpret the learned weights** and record the exception text if the code rejects the case.
-4. **Write the operator note.** Open `outputs/skill-regression.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Explain how Ridge regression (L2 regularization) prevents overfitting by penalizing large weights**; note what the demo cannot establish.
+1. On the four-row fixture, verify that both fits recover w=3 and b=7 within optimizer tolerance and that the gradient cost falls from its first recorded value.
+2. Standardize [[1,10],[2,20],[3,30]]; report means [2,20] and explain why the transformed columns have mean zero.
+3. Fit Ridge and ordinary multiple regression on the same standardized rows. Compare the weight norm and identify the L2 term responsible for the difference.
 
 ## Reference Solution
 
-A checkable result for **Linear Regression** should contain:
-
-- the `julia main.jl` output for x=0.5 with the demo defaults, with `LinearRegression`, `predict`, `compute_cost` traced to the value or shape that supports **Derive the gradient descent update rules for mean squared error and implement linear regression from scratch**;
-- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Compare gradient descent and the normal equation in terms of computational complexity and when to use each**;
-- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Build a multiple linear regression model with feature standardization and interpret the learned weights**; and
-- an updated `outputs/skill-regression.md` example with a concrete input, expected output field, and acceptance check tied to **Explain how Ridge regression (L2 regularization) prevents overfitting by penalizing large weights**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
-## Guided Demo
-
-Use the [10–15 minute guided demo](demo.md) to predict an invariant, run the canonical entrypoint, change one variable, and probe a failure case.
+The normal fit is exactly w=3, b=7, R-squared is 1 on the noiseless fixture, and gradient descent approaches those values while its cost_history decreases. Standardization returns the two stated means and nonzero scale for each column. Ridge's weights are smaller on the same data because only the weight gradient receives 2*alpha*w; the intercept is not shrunk.

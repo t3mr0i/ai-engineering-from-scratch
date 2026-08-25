@@ -1,274 +1,52 @@
 # Matrix Transformations
 
-> A matrix is a machine that reshapes space. Learn what it does to every point, and you understand the whole transformation.
+> A transformation is a rule for moving every point; its matrix makes the rule executable.
 
 **Type:** Build
 **Languages:** Python, Julia
-**Prerequisites:** Phase 1, Lessons 01-02 (Linear Algebra Intuition, Vectors & Matrices Operations)
-**Time:** ~75 minutes
+**Prerequisites:** Phase 1, Lesson 02 (Vectors, Matrices & Operations)
+**Time:** ~70 minutes
 
 ## Learning Objectives
 
-- Construct rotation, scaling, shearing, and reflection matrices and apply them to 2D and 3D points
-- Compose multiple transformations by matrix multiplication and verify that order matters
-- Compute eigenvalues and eigenvectors of 2x2 matrices from the characteristic equation
-- Explain why eigenvalues determine PCA directions, RNN stability, and spectral clustering behavior
-
-## The Problem
-
-You read about PCA and see "find the eigenvectors of the covariance matrix." You read about model stability and see "check if all eigenvalues have magnitude less than 1." You read about data augmentation and see "apply a random rotation." None of this makes sense until you understand what matrices do to space geometrically.
-
-Matrices are not just grids of numbers. They are spatial machines. A rotation matrix spins points. A scaling matrix stretches them. A shearing matrix tilts them. Every transformation a neural network applies to data is one of these operations or a composition of them. This lesson makes those operations concrete.
-
-## The Concept
-
-### Transformations as matrices
-
-Every linear transformation in 2D can be written as a 2x2 matrix. The matrix tells you exactly where the basis vectors [1, 0] and [0, 1] end up. Everything else follows.
-
-```mermaid
-graph LR
-    subgraph Before["Standard Basis"]
-        e1["e1 = [1, 0] (along x)"]
-        e2["e2 = [0, 1] (along y)"]
-    end
-    subgraph Transform["Matrix M"]
-        M["M = columns are new basis vectors"]
-    end
-    subgraph After["After Transformation M"]
-        e1p["e1' = new x-basis"]
-        e2p["e2' = new y-basis"]
-    end
-    e1 --> M --> e1p
-    e2 --> M --> e2p
-```
-
-### Rotation
-
-A 2D rotation by angle theta keeps distances and angles intact. It moves every point along a circular arc.
-
-```mermaid
-graph LR
-    subgraph Before["Before Rotation"]
-        A["A(2, 1)"]
-        B["B(0, 2)"]
-    end
-    subgraph Rot["Rotate 45 degrees"]
-        R["R(θ) = [[cos θ, -sin θ], [sin θ, cos θ]]"]
-    end
-    subgraph After["After Rotation"]
-        Ap["A'(0.71, 2.12)"]
-        Bp["B'(-1.41, 1.41)"]
-    end
-    A --> R --> Ap
-    B --> R --> Bp
-```
-
-In 3D, you rotate around an axis. Each axis has its own rotation matrix:
-
-```
-Rz(theta) = | cos  -sin  0 |     Rotate around z-axis
-            | sin   cos  0 |     (x-y plane spins, z stays)
-            |  0     0   1 |
-
-Rx(theta) = | 1   0     0    |   Rotate around x-axis
-            | 0  cos  -sin   |   (y-z plane spins, x stays)
-            | 0  sin   cos   |
-
-Ry(theta) = |  cos  0  sin |     Rotate around y-axis
-            |   0   1   0  |     (x-z plane spins, y stays)
-            | -sin  0  cos |
-```
-
-### Scaling
-
-Scaling stretches or compresses along each axis independently.
-
-```mermaid
-graph LR
-    subgraph Before["Before Scaling"]
-        A["A(2, 1)"]
-        B["B(0, 2)"]
-    end
-    subgraph Scale["Scale sx=2, sy=0.5"]
-        S["S = [[2, 0], [0, 0.5]]"]
-    end
-    subgraph After["After Scaling"]
-        Ap["A'(4, 0.5)"]
-        Bp["B'(0, 1)"]
-    end
-    A --> S --> Ap
-    B --> S --> Bp
-```
-
-### Shearing
-
-Shearing tilts one axis while keeping the other fixed. It turns rectangles into parallelograms.
-
-```mermaid
-graph LR
-    subgraph Before["Before Shear"]
-        A["A(1, 0)"]
-        B["B(0, 1)"]
-    end
-    subgraph Shear["Shear in x, k=1"]
-        Sh["Shx = [[1, k], [0, 1]]"]
-    end
-    subgraph After["After Shear"]
-        Ap["A(1, 0) unchanged"]
-        Bp["B'(1, 1) shifted"]
-    end
-    A --> Sh --> Ap
-    B --> Sh --> Bp
-```
-
-Shear matrices:
-- `Shx = [[1, k], [0, 1]]` shifts x by k * y
-- `Shy = [[1, 0], [k, 1]]` shifts y by k * x
-
-### Reflection
-
-Reflection mirrors points across an axis or line.
-
-```mermaid
-graph LR
-    subgraph Before["Before Reflection"]
-        A["A(2, 1)"]
-    end
-    subgraph Reflect["Reflect across y-axis"]
-        R["[[-1, 0], [0, 1]]"]
-    end
-    subgraph After["After Reflection"]
-        Ap["A'(-2, 1)"]
-    end
-    A --> R --> Ap
-```
-
-Reflection matrices:
-- Reflect across y-axis: `[[-1, 0], [0, 1]]`
-- Reflect across x-axis: `[[1, 0], [0, -1]]`
-
-### Composition: chaining transformations
-
-Applying transformation A then B is the same as multiplying their matrices: `result = B @ A @ point`. Order matters. Rotate then scale gives different results than scale then rotate.
-
-```mermaid
-graph LR
-    subgraph Path1["Rotate 90 then Scale (2, 0.5)"]
-        P1["(1, 0)"] -->|"Rotate 90"| P2["(0, 1)"] -->|"Scale"| P3["(0, 0.5)"]
-    end
-```
-
-Composed: `S @ R = [[0, -2], [0.5, 0]]`
-
-```mermaid
-graph LR
-    subgraph Path2["Scale (2, 0.5) then Rotate 90"]
-        Q1["(1, 0)"] -->|"Scale"| Q2["(2, 0)"] -->|"Rotate 90"| Q3["(0, 2)"]
-    end
-```
-
-Composed: `R @ S = [[0, -0.5], [2, 0]]`
-
-Different results. Matrix multiplication is not commutative.
-
-### Eigenvalues and eigenvectors
-
-Most vectors change direction when a matrix hits them. Eigenvectors are special: the matrix only scales them, never rotates them. The scaling factor is the eigenvalue.
-
-```
-A @ v = lambda * v
-
-v is the eigenvector (direction that survives)
-lambda is the eigenvalue (how much it stretches)
-
-Example: A = | 2  1 |
-             | 1  2 |
-
-Eigenvector [1, 1] with eigenvalue 3:
-  A @ [1,1] = [3, 3] = 3 * [1, 1]     (same direction, scaled by 3)
-
-Eigenvector [1, -1] with eigenvalue 1:
-  A @ [1,-1] = [1, -1] = 1 * [1, -1]  (same direction, unchanged)
-```
-
-The matrix stretches space by 3x along [1, 1] and keeps [1, -1] unchanged. Every other direction is a mix of these two.
-
-### Eigendecomposition
-
-If a matrix has n linearly independent eigenvectors, it can be decomposed:
-
-```
-A = V @ D @ V^(-1)
-
-V = matrix whose columns are eigenvectors
-D = diagonal matrix of eigenvalues
-V^(-1) = inverse of V
-
-This says: rotate into eigenvector coordinates, scale along each axis, rotate back.
-```
-
-### Why eigenvalues matter
-
-**PCA.** The eigenvectors of the covariance matrix are the principal components. The eigenvalues tell you how much variance each component captures. Sort by eigenvalue, keep the top k, and you have dimensionality reduction.
-
-**Stability.** In recurrent networks and dynamical systems, eigenvalues with magnitude > 1 cause outputs to explode. Magnitude < 1 causes them to vanish. This is the vanishing/exploding gradient problem stated in one sentence.
-
-**Spectral methods.** Graph neural networks use eigenvalues of the adjacency matrix. Spectral clustering uses eigenvalues of the Laplacian. The eigenvectors reveal the structure of the graph.
-
-### Determinant as volume scaling factor
-
-The determinant of a transformation matrix tells you how much it scales area (2D) or volume (3D).
-
-```
-det = 1:   area preserved (rotation)
-det = 2:   area doubled
-det = 0:   space crushed to lower dimension (singular)
-det = -1:  area preserved but orientation flipped (reflection)
-
-| det(Rotation) | = 1        (always)
-| det(Scale sx, sy) | = sx * sy
-| det(Shear) | = 1           (area preserved)
-| det(Reflection) | = -1     (orientation flipped)
-```
-
-
-
+- Build 2D and 3D rotation, scaling, shearing, and reflection matrices.
+- Predict how composition order changes a point and how determinants multiply.
+- Compute `2 x 2` eigenvalues/eigenvectors and check `A @ v = lambda * v`.
+- Interpret determinant sign and magnitude as orientation and area scaling.
+- Connect the largest covariance eigenvalue to a principal direction without treating PCA as magic.
 
 ## Build It
 
-Reconstruct **Matrix Transformations** by following `rotation_2d` on the two-element input [1.0, 2.0]. Run `python3 main.py` and verify that the printed shape/value follows the stated formula, and the zero case does not produce an unexplained finite substitute for an undefined quantity.
+The Python implementation is in `transformations.py`; `main.py` delegates to it, and `main.jl` runs the Julia counterpart. Start with:
+
+```bash
+python3 main.py
+julia main.jl
+```
+
+`rotation_2d(pi/2)` sends `[1,0]` to `[0,1]` (up to round-off). `scaling_2d(2,3)` sends `[1,1]` to `[2,3]`. The lesson's shear is `[[1,kx],[ky,1]]`, so `shearing_2d(1,0)` sends `[1,1]` to `[2,1]`. `reflection_y()` sends `[2,1]` to `[-2,1]`.
+
+The unit-square demo applies four matrices to each corner and prints each determinant. Rotation and shear have determinant `1` in their fixtures; `scaling_2d(2,0.5)` also has determinant `1`; reflection has determinant `-1`. The magnitude tells how area scales, while the sign records orientation reversal.
 
 ## Use It
 
-Call `rotation_2d` from a small caller with the two-element input [1.0, 2.0]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+Composition is read right to left. With `R=rotation_2d(pi/2)`, `S=scaling_2d(2,0.5)`, and `p=[1,0]`, `S @ R @ p` rotates first and then scales, while `R @ S @ p` scales first and then rotates. The two results differ because matrix multiplication is not commutative. The implementation checks rectangular shapes in `mat_vec_mul` and `mat_mul` and raises a clear `ValueError` for an invalid product.
+
+For `A=[[2,1],[1,2]]`, the eigenvalues are `3` and `1`. The eigenvector for `3` points along `[1,1]`; the one for `1` points along `[1,-1]`. For the rotation matrix, the eigenvalues are complex and the demo deliberately reports that there are no real eigenvectors. For `A=[[3,1],[0,2]]`, the eigendecomposition demo reconstructs `A` from `V @ D @ V^-1`.
+
+The final PCA preview uses covariance matrix `[[2,1],[1,3]]`. The eigenvector paired with the larger eigenvalue is the direction of greatest variance in this two-dimensional fixture. This is a local calculation, not a claim that every dataset is well described by one component.
 
 ## Ship It
 
-Hand off `outputs/prompt-transformation-visualizer.md` with the command `python3 main.py`, the accepted input shape (the two-element input [1.0, 2.0]), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [3Blue1Brown: Linear Transformations](https://www.3blue1brown.com/lessons/linear-transformations) -- visual intuition for how matrices reshape space
-- [3Blue1Brown: Eigenvectors and Eigenvalues](https://www.3blue1brown.com/lessons/eigenvalues) -- the best visual explanation of what eigenvectors mean geometrically
-- [MIT 18.06 Lecture 21: Eigenvalues and Eigenvectors](https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/) -- Gilbert Strang's classic treatment
+`outputs/prompt-transformation-visualizer.md` turns a user-supplied `2 x 2` or `3 x 3` matrix into a determinant/eigenpair report. The handoff should require the matrix shape, transformed unit-square corners, determinant, and an eigenvector residual. If NumPy is installed, the Python demo prints a comparison; the from-scratch path remains the primary artifact and works without it.
 
 ## Exercises
 
-This lab follows `rotation_2d` and `rotation_3d_z` on a controlled fixture; write down the value before changing the input.
-
-1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using the two-element input [1.0, 2.0]. Follow `rotation_2d`, `rotation_3d_z`, `rotation_3d_x`. Expect the printed shape/value follows the stated formula, and the zero case does not produce an unexplained finite substitute for an undefined quantity; capture the first printed shape, metric, status, or summary field and state which part supports **Construct rotation, scaling, shearing, and reflection matrices and apply them to 2D and 3D points**.
-2. **Change the controlled parameter.** Repeat the command after changing only the second input value: use the same input with the second value changed to 3.0. Predict the direction of the change, then compare the two output values. Explain why **Compose multiple transformations by matrix multiplication and verify that order matters** says the other inputs should stay fixed.
-3. **Exercise the guard.** Feed the implementation the zero vector [0.0, 0.0]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Compute eigenvalues and eigenvectors of 2x2 matrices from the characteristic equation** and record the exception text if the code rejects the case.
-4. **Prepare the artifact for reuse.** Open `outputs/prompt-transformation-visualizer.md` and add a worked example using the two-element input [1.0, 2.0]. Include the input contract, one expected output field, and a named acceptance check for **Explain why eigenvalues determine PCA directions, RNN stability, and spectral clustering behavior**; note what the demo cannot establish.
+1. Run the rotation and reflection fixtures and verify the Euclidean length of `[1,0]` is unchanged by each orthogonal transformation.
+2. Compute both `S @ R @ [1,0]` and `R @ S @ [1,0]` for the matrices in the demo. Explain which operation is applied first in each expression.
+3. For `A=[[2,1],[1,2]]`, normalize `[1,1]`, multiply it by `A`, and check that the result is `3` times the normalized vector.
+4. Pass a `(2,2)` matrix and a length-three vector to `mat_vec_mul`. Record the exact error and explain which shape invariant it protects.
 
 ## Reference Solution
 
-A checkable result for **Matrix Transformations** should contain:
-
-- the `python3 main.py` output for the two-element input [1.0, 2.0], with `rotation_2d`, `rotation_3d_z`, `rotation_3d_x` traced to the value or shape that supports **Construct rotation, scaling, shearing, and reflection matrices and apply them to 2D and 3D points**;
-- a before/after comparison for the second input value, where the same input with the second value changed to 3.0 changes the observation in the direction predicted by **Compose multiple transformations by matrix multiplication and verify that order matters**;
-- a recorded result for the zero vector [0.0, 0.0] that matches the implementation’s validation or empty-result contract and explains the evidence for **Compute eigenvalues and eigenvectors of 2x2 matrices from the characteristic equation**; and
-- an updated `outputs/prompt-transformation-visualizer.md` example with a concrete input, expected output field, and acceptance check tied to **Explain why eigenvalues determine PCA directions, RNN stability, and spectral clustering behavior**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+The 90-degree rotation maps `[1,0]` to `[0,1]`; `S @ R @ [1,0]` is `[0,0.5]`, whereas `R @ S @ [1,0]` is `[0,2]`. The normalized `[1,1]` direction is an eigenvector with eigenvalue `3`. An invalid length-three vector raises `ValueError("matrix columns must match vector length")`. The covariance preview's larger eigenvalue is paired with its first principal direction as printed by the local eigensolver.

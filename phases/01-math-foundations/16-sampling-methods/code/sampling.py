@@ -1,19 +1,90 @@
+# Sampling primitives for phases/01-math-foundations/16-sampling-methods/docs/en.md.
+# Implements inverse-CDF, rejection, importance, MCMC, decoding, reparameterization, and stratification.
+# Uses Python's standard library and prints text summaries instead of requiring a plotting package.
+# Canonical execution is `python3 main.py` from this code directory.
+# Tests cover deterministic formulas, support bounds, and candidate-set invariants.
+
 import math
 import random
 
 random.seed(42)
 
 
+def _require_positive(value, name):
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or not math.isfinite(value)
+        or value <= 0
+    ):
+        raise ValueError(f"{name} must be a finite value greater than zero")
+    return value
+
+
+def _require_nonnegative_int(value, name):
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise ValueError(f"{name} must be a non-negative integer")
+    return value
+
+
+def _require_positive_int(value, name):
+    if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+        raise ValueError(f"{name} must be a positive integer")
+    return value
+
+
+def _validate_logits(logits):
+    values = list(logits)
+    if not values:
+        raise ValueError("logits must be non-empty")
+    if any(not math.isfinite(value) for value in values):
+        raise ValueError("logits must contain only finite values")
+    return values
+
+
+def _validate_probability_vector(probs):
+    values = list(probs)
+    if not values:
+        raise ValueError("probabilities must be non-empty")
+    if any(not math.isfinite(value) or value < 0 for value in values):
+        raise ValueError("probabilities must be finite and non-negative")
+    if sum(values) <= 0:
+        raise ValueError("probabilities must have positive total mass")
+    return values
+
+
+def _validate_k(k, size):
+    if isinstance(k, bool) or not isinstance(k, int) or not 1 <= k <= size:
+        raise ValueError(f"k must be an integer in [1, {size}]")
+
+
+def _validate_top_p(p):
+    if (
+        isinstance(p, bool)
+        or not isinstance(p, (int, float))
+        or not math.isfinite(p)
+        or not 0 < p <= 1
+    ):
+        raise ValueError("p must be a finite value in (0, 1]")
+
+
 def sample_uniform(a, b):
+    if not math.isfinite(a) or not math.isfinite(b) or b <= a:
+        raise ValueError("sample_uniform requires finite bounds with a < b")
     return a + (b - a) * random.random()
 
 
 def sample_exponential_inverse_cdf(lam):
+    _require_positive(lam, "lambda")
     u = random.random()
+    while u == 0:
+        u = random.random()
     return -math.log(u) / lam
 
 
 def verify_inverse_cdf(lam, n=10000):
+    _require_positive(lam, "lambda")
+    _require_positive_int(n, "n")
     samples = [sample_exponential_inverse_cdf(lam) for _ in range(n)]
     empirical_mean = sum(samples) / len(samples)
     theoretical_mean = 1.0 / lam
@@ -23,29 +94,39 @@ def verify_inverse_cdf(lam, n=10000):
 
 
 def normal_pdf(x, mu, sigma):
+    _require_positive(sigma, "sigma")
     coeff = 1.0 / (sigma * math.sqrt(2 * math.pi))
     exponent = -0.5 * ((x - mu) / sigma) ** 2
     return coeff * math.exp(exponent)
 
 
 def sample_normal_box_muller(mu=0.0, sigma=1.0):
+    _require_positive(sigma, "sigma")
     u1 = random.random()
+    while u1 == 0:
+        u1 = random.random()
     u2 = random.random()
     z = math.sqrt(-2 * math.log(u1)) * math.cos(2 * math.pi * u2)
     return mu + sigma * z
 
 
 def rejection_sample(target_pdf, proposal_sample, proposal_pdf, M):
+    _require_positive(M, "M")
     attempts = 0
     while True:
         x = proposal_sample()
         u = random.random()
         attempts += 1
-        if u < target_pdf(x) / (M * proposal_pdf(x)):
+        proposal_density = proposal_pdf(x)
+        if proposal_density <= 0:
+            raise ValueError("proposal_pdf must be positive at sampled points")
+        if u < target_pdf(x) / (M * proposal_density):
             return x, attempts
 
 
 def rejection_sample_batch(target_pdf, proposal_sample, proposal_pdf, M, n):
+    _require_positive(M, "M")
+    _require_positive_int(n, "n")
     samples = []
     total_attempts = 0
     for _ in range(n):
@@ -57,6 +138,10 @@ def rejection_sample_batch(target_pdf, proposal_sample, proposal_pdf, M, n):
 
 
 def truncated_normal_demo(mu, sigma, a, b, n=5000):
+    _require_positive(sigma, "sigma")
+    _require_positive_int(n, "n")
+    if not math.isfinite(a) or not math.isfinite(b) or b <= a:
+        raise ValueError("truncation bounds must be finite with a < b")
     norm_const = sum(
         normal_pdf(a + (b - a) * i / 1000, mu, sigma) * (b - a) / 1000
         for i in range(1001)
@@ -84,11 +169,15 @@ def truncated_normal_demo(mu, sigma, a, b, n=5000):
 
 
 def importance_sampling_estimate(f, target_pdf, proposal_pdf, proposal_sample, n):
+    _require_positive_int(n, "n")
     weighted_sum = 0.0
     weight_sum = 0.0
     for _ in range(n):
         x = proposal_sample()
-        w = target_pdf(x) / proposal_pdf(x)
+        proposal_density = proposal_pdf(x)
+        if proposal_density <= 0:
+            raise ValueError("proposal_pdf must be positive at sampled points")
+        w = target_pdf(x) / proposal_density
         weighted_sum += f(x) * w
         weight_sum += w
     unnormalized = weighted_sum / n
@@ -125,6 +214,7 @@ def importance_sampling_demo():
 
 
 def monte_carlo_pi(n):
+    _require_positive_int(n, "n")
     inside = 0
     for _ in range(n):
         x = random.uniform(-1, 1)
@@ -135,6 +225,9 @@ def monte_carlo_pi(n):
 
 
 def monte_carlo_integral(f, a, b, n):
+    _require_positive_int(n, "n")
+    if not math.isfinite(a) or not math.isfinite(b) or b <= a:
+        raise ValueError("integration bounds must be finite with a < b")
     total = 0.0
     for _ in range(n):
         x = sample_uniform(a, b)
@@ -143,6 +236,9 @@ def monte_carlo_integral(f, a, b, n):
 
 
 def metropolis_hastings(target_log_pdf, x0, n_samples, burn_in, proposal_std=1.0):
+    _require_positive_int(n_samples, "n_samples")
+    _require_nonnegative_int(burn_in, "burn_in")
+    _require_positive(proposal_std, "proposal_std")
     samples = []
     x = x0
     accepted = 0
@@ -165,6 +261,9 @@ def metropolis_hastings(target_log_pdf, x0, n_samples, burn_in, proposal_std=1.0
 
 
 def metropolis_hastings_2d(target_log_pdf, x0, y0, n_samples, burn_in, proposal_std=0.5):
+    _require_positive_int(n_samples, "n_samples")
+    _require_nonnegative_int(burn_in, "burn_in")
+    _require_positive(proposal_std, "proposal_std")
     samples = []
     x, y = x0, y0
     accepted = 0
@@ -194,6 +293,10 @@ def bimodal_log_pdf(x):
 
 
 def gibbs_sampling_2d(rho, n_samples, burn_in):
+    _require_positive_int(n_samples, "n_samples")
+    _require_nonnegative_int(burn_in, "burn_in")
+    if not math.isfinite(rho) or not -1 < rho < 1:
+        raise ValueError("rho must be strictly between -1 and 1")
     x, y = 0.0, 0.0
     samples = []
 
@@ -207,6 +310,7 @@ def gibbs_sampling_2d(rho, n_samples, burn_in):
 
 
 def softmax(logits):
+    logits = _validate_logits(logits)
     max_l = max(logits)
     exps = [math.exp(z - max_l) for z in logits]
     total = sum(exps)
@@ -214,6 +318,7 @@ def softmax(logits):
 
 
 def sample_from_probs(probs):
+    probs = _validate_probability_vector(probs)
     r = random.random()
     cumsum = 0.0
     for i, p in enumerate(probs):
@@ -224,23 +329,23 @@ def sample_from_probs(probs):
 
 
 def temperature_sample(logits, temperature):
-    if temperature <= 0:
-        return logits.index(max(logits))
+    logits = _validate_logits(logits)
+    _require_positive(temperature, "temperature")
     scaled = [z / temperature for z in logits]
     probs = softmax(scaled)
     return sample_from_probs(probs)
 
 
 def temperature_distribution(logits, temperature):
-    if temperature <= 0:
-        result = [0.0] * len(logits)
-        result[logits.index(max(logits))] = 1.0
-        return result
+    logits = _validate_logits(logits)
+    _require_positive(temperature, "temperature")
     scaled = [z / temperature for z in logits]
     return softmax(scaled)
 
 
 def top_k_sample(logits, k):
+    logits = _validate_logits(logits)
+    _validate_k(k, len(logits))
     indexed = sorted(enumerate(logits), key=lambda x: -x[1])
     top = indexed[:k]
     top_logits = [l for _, l in top]
@@ -250,6 +355,8 @@ def top_k_sample(logits, k):
 
 
 def top_k_distribution(logits, k):
+    logits = _validate_logits(logits)
+    _validate_k(k, len(logits))
     probs = softmax(logits)
     indexed = sorted(enumerate(probs), key=lambda x: -x[1])
     result = [0.0] * len(logits)
@@ -262,6 +369,8 @@ def top_k_distribution(logits, k):
 
 
 def top_p_sample(logits, p):
+    logits = _validate_logits(logits)
+    _validate_top_p(p)
     probs = softmax(logits)
     indexed = sorted(enumerate(probs), key=lambda x: -x[1])
     cumsum = 0.0
@@ -279,6 +388,8 @@ def top_p_sample(logits, p):
 
 
 def top_p_distribution(logits, p):
+    logits = _validate_logits(logits)
+    _validate_top_p(p)
     probs = softmax(logits)
     indexed = sorted(enumerate(probs), key=lambda x: -x[1])
     cumsum = 0.0
@@ -296,6 +407,7 @@ def top_p_distribution(logits, p):
 
 
 def reparam_sample(mu, sigma):
+    _require_positive(sigma, "sigma")
     epsilon = random.gauss(0, 1)
     z = mu + sigma * epsilon
     return z, epsilon
@@ -329,11 +441,14 @@ def gumbel_sample():
 
 
 def gumbel_max_sample(log_probs):
+    log_probs = _validate_logits(log_probs)
     gumbels = [lp + gumbel_sample() for lp in log_probs]
     return gumbels.index(max(gumbels))
 
 
 def gumbel_softmax_sample(log_probs, temperature):
+    log_probs = _validate_logits(log_probs)
+    _require_positive(temperature, "temperature")
     gumbels = [lp + gumbel_sample() for lp in log_probs]
     scaled = [g / temperature for g in gumbels]
     return softmax(scaled)
@@ -348,6 +463,7 @@ def gumbel_softmax_straight_through(log_probs, temperature):
 
 
 def stratified_sample_1d(n):
+    _require_positive_int(n, "n")
     samples = []
     for i in range(n):
         u = random.random()
@@ -356,6 +472,8 @@ def stratified_sample_1d(n):
 
 
 def compare_sampling_variance(f, n, n_trials=200):
+    _require_positive_int(n, "n")
+    _require_positive_int(n_trials, "n_trials")
     standard_estimates = []
     stratified_estimates = []
 
@@ -593,155 +711,9 @@ if __name__ == "__main__":
         print(f"    Unique sequences: {unique}/3")
         print()
 
-    print("\n--- 14. Visualizations ---")
-    try:
-        import matplotlib
-        matplotlib.use("Agg")
-        import matplotlib.pyplot as plt
-
-        fig, axes = plt.subplots(3, 3, figsize=(18, 16))
-
-        ax = axes[0][0]
-        ax.set_title("Inverse CDF: Exponential Samples")
-        exp_samples = [sample_exponential_inverse_cdf(1.0) for _ in range(10000)]
-        ax.hist(exp_samples, bins=60, density=True, alpha=0.7, color="#4a90d9",
-                label="Samples")
-        xs_exp = [i * 0.05 for i in range(160)]
-        ys_exp = [math.exp(-x) for x in xs_exp]
-        ax.plot(xs_exp, ys_exp, "r-", linewidth=2, label="True PDF")
-        ax.set_xlabel("x")
-        ax.set_ylabel("Density")
-        ax.legend()
-
-        ax = axes[0][1]
-        ax.set_title("Rejection Sampling: Truncated Normal")
-        rej_samples, _ = truncated_normal_demo(0, 1, -1, 2, n=5000)
-        ax.hist(rej_samples, bins=50, density=True, alpha=0.7, color="#4a90d9",
-                label="Samples")
-        xs_tn = [-1 + 3 * i / 200 for i in range(201)]
-        ys_tn = [normal_pdf(x, 0, 1) for x in xs_tn]
-        area = sum(ys_tn) * 3 / 200
-        ys_tn_norm = [y / area for y in ys_tn]
-        ax.plot(xs_tn, ys_tn_norm, "r-", linewidth=2, label="True PDF (normalized)")
-        ax.set_xlabel("x")
-        ax.set_ylabel("Density")
-        ax.legend()
-
-        ax = axes[0][2]
-        ax.set_title("Monte Carlo: Estimating Pi")
-        n_mc_vis = 5000
-        mc_x = [random.uniform(-1, 1) for _ in range(n_mc_vis)]
-        mc_y = [random.uniform(-1, 1) for _ in range(n_mc_vis)]
-        inside_x = [mc_x[i] for i in range(n_mc_vis) if mc_x[i]**2 + mc_y[i]**2 <= 1]
-        inside_y = [mc_y[i] for i in range(n_mc_vis) if mc_x[i]**2 + mc_y[i]**2 <= 1]
-        outside_x = [mc_x[i] for i in range(n_mc_vis) if mc_x[i]**2 + mc_y[i]**2 > 1]
-        outside_y = [mc_y[i] for i in range(n_mc_vis) if mc_x[i]**2 + mc_y[i]**2 > 1]
-        ax.scatter(inside_x, inside_y, s=1, c="#4a90d9", alpha=0.5)
-        ax.scatter(outside_x, outside_y, s=1, c="#d94a4a", alpha=0.5)
-        theta = [2 * math.pi * i / 200 for i in range(201)]
-        circle_x = [math.cos(t) for t in theta]
-        circle_y = [math.sin(t) for t in theta]
-        ax.plot(circle_x, circle_y, "k-", linewidth=1.5)
-        ax.set_aspect("equal")
-        pi_est = 4 * len(inside_x) / n_mc_vis
-        ax.set_xlabel(f"pi ~ {pi_est:.4f}")
-
-        ax = axes[1][0]
-        ax.set_title("MCMC: Bimodal Distribution")
-        mcmc_samples, _ = metropolis_hastings(
-            bimodal_log_pdf, x0=0.0, n_samples=20000, burn_in=5000, proposal_std=2.0
-        )
-        ax.hist(mcmc_samples, bins=80, density=True, alpha=0.7, color="#4a90d9",
-                label="MCMC samples")
-        xs_bm = [-8 + 16 * i / 400 for i in range(401)]
-        ys_bm = [math.exp(bimodal_log_pdf(x)) for x in xs_bm]
-        area_bm = sum(ys_bm) * 16 / 400
-        ys_bm_norm = [y / area_bm for y in ys_bm]
-        ax.plot(xs_bm, ys_bm_norm, "r-", linewidth=2, label="True density")
-        ax.set_xlabel("x")
-        ax.set_ylabel("Density")
-        ax.legend()
-
-        ax = axes[1][1]
-        ax.set_title("Gibbs Sampling: 2D Gaussian (rho=0.8)")
-        gibbs_vis = gibbs_sampling_2d(0.8, n_samples=3000, burn_in=500)
-        gvx = [s[0] for s in gibbs_vis]
-        gvy = [s[1] for s in gibbs_vis]
-        ax.scatter(gvx, gvy, s=2, alpha=0.3, c="#4a90d9")
-        ax.plot(gvx[:100], gvy[:100], "r-", alpha=0.3, linewidth=0.5)
-        ax.set_xlabel("x")
-        ax.set_ylabel("y")
-        ax.set_aspect("equal")
-
-        ax = axes[1][2]
-        ax.set_title("Temperature Scaling")
-        temps = [0.1, 0.5, 1.0, 2.0, 5.0]
-        bar_width = 0.15
-        positions = list(range(len(token_logits)))
-        for t_idx, temp in enumerate(temps):
-            dist = temperature_distribution(token_logits, temp)
-            offset = (t_idx - 2) * bar_width
-            bars = [pos + offset for pos in positions]
-            ax.bar(bars, dist, bar_width, label=f"T={temp}", alpha=0.8)
-        ax.set_xticks(positions)
-        ax.set_xticklabels(vocab, rotation=45)
-        ax.set_ylabel("Probability")
-        ax.legend(fontsize=8)
-
-        ax = axes[2][0]
-        ax.set_title("Top-k vs Top-p Distributions")
-        k_dist = top_k_distribution(token_logits, k=3)
-        p_dist = top_p_distribution(token_logits, p=0.9)
-        full_dist = softmax(token_logits)
-        x_pos = list(range(len(token_logits)))
-        w = 0.25
-        ax.bar([x - w for x in x_pos], full_dist, w, label="Full", alpha=0.8, color="#aaaaaa")
-        ax.bar(x_pos, k_dist, w, label="Top-3", alpha=0.8, color="#4a90d9")
-        ax.bar([x + w for x in x_pos], p_dist, w, label="Top-p=0.9", alpha=0.8, color="#d94a4a")
-        ax.set_xticks(x_pos)
-        ax.set_xticklabels(vocab, rotation=45)
-        ax.set_ylabel("Probability")
-        ax.legend(fontsize=8)
-
-        ax = axes[2][1]
-        ax.set_title("Gumbel-Softmax: Temperature Effect")
-        taus = [0.1, 0.5, 1.0, 5.0]
-        g_log_probs = [math.log(p) for p in [0.5, 0.3, 0.15, 0.05]]
-        n_trials_vis = 500
-        for tau in taus:
-            max_vals = []
-            for _ in range(n_trials_vis):
-                soft = gumbel_softmax_sample(g_log_probs, tau)
-                max_vals.append(max(soft))
-            ax.hist(max_vals, bins=30, alpha=0.5, label=f"tau={tau}", density=True)
-        ax.set_xlabel("Max component value")
-        ax.set_ylabel("Density")
-        ax.legend(fontsize=8)
-
-        ax = axes[2][2]
-        ax.set_title("Stratified vs Standard Sampling")
-        n_strat_vis = 20
-        standard_pts = sorted([random.random() for _ in range(n_strat_vis)])
-        stratified_pts = sorted(stratified_sample_1d(n_strat_vis))
-        ax.scatter(standard_pts, [1] * n_strat_vis, s=30, c="#d94a4a", label="Standard",
-                   zorder=3)
-        ax.scatter(stratified_pts, [0] * n_strat_vis, s=30, c="#4a90d9", label="Stratified",
-                   zorder=3)
-        for i in range(n_strat_vis + 1):
-            ax.axvline(i / n_strat_vis, color="#cccccc", linewidth=0.5, linestyle="--")
-        ax.set_yticks([0, 1])
-        ax.set_yticklabels(["Stratified", "Standard"])
-        ax.set_xlabel("Sample value")
-        ax.legend()
-        ax.set_ylim(-0.5, 1.5)
-
-        plt.tight_layout()
-        plt.savefig("sampling_methods.png", dpi=150)
-        print("  Saved: sampling_methods.png")
-        plt.close()
-
-    except ImportError:
-        print("  matplotlib not available, skipping visualization.")
+    print("\n--- 14. Text summary (no plotting dependency) ---")
+    print("  The numerical fixtures above are the reproducible artifact.")
+    print("  Inspect distributions with returned lists or a notebook; this demo stays stdlib-only.")
 
     print("\n" + "=" * 65)
     print("All sampling methods complete.")

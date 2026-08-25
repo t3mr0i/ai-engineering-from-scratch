@@ -1,3 +1,9 @@
+# Linear-system primitives for phases/01-math-foundations/17-linear-systems/docs/en.md.
+# Implements pivoted elimination, LU, Cholesky, least squares, ridge, and CG with NumPy.
+# The comparisons use local deterministic fixtures; no estimator library is required.
+# Canonical execution is `python3 main.py` from this code directory.
+# Tests exercise residuals, reconstructions, and solver-specific invariants.
+
 import numpy as np
 
 
@@ -271,18 +277,7 @@ def demo_ridge():
         wnorm = np.linalg.norm(w)
         print(f"lambda={lam:>5.1f}  w={np.round(w, 3)}  ||w||={wnorm:.3f}  ||Xw-y||={r:.3f}")
 
-    try:
-        from sklearn.linear_model import Ridge
-
-        print("\nCompare with sklearn Ridge:")
-        for lam in [0.1, 1.0, 10.0]:
-            w_ours = ridge_regression(X, y, lam)
-            ridge_sk = Ridge(alpha=lam, fit_intercept=False)
-            ridge_sk.fit(X, y)
-            diff = np.max(np.abs(w_ours - ridge_sk.coef_))
-            print(f"  lambda={lam:>5.1f}  max diff from sklearn: {diff:.2e}")
-    except ImportError:
-        print("\nInstall scikit-learn for sklearn comparison: pip install scikit-learn")
+    print("\nRidge path uses the same from-scratch Cholesky solve for every lambda.")
     print()
 
 
@@ -407,15 +402,6 @@ def demo_linear_regression_full():
 
     w_numpy = np.linalg.lstsq(X, y, rcond=None)[0]
     print(f"NumPy lstsq:          {np.round(w_numpy, 4)}")
-
-    try:
-        from sklearn.linear_model import LinearRegression
-
-        lr = LinearRegression(fit_intercept=False)
-        lr.fit(X, y)
-        print(f"sklearn:              {np.round(lr.coef_, 4)}")
-    except ImportError:
-        print("sklearn:              (install scikit-learn for comparison)")
 
     y_pred = X @ w_normal
     mse = np.mean((y - y_pred) ** 2)

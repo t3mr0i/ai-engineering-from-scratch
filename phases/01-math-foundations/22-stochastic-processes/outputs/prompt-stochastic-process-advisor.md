@@ -30,7 +30,7 @@ When the user describes a problem, classify it:
 
 | Problem type | Process | Key parameters |
 |-------------|---------|---------------|
-| "I need to sample from a posterior" | Metropolis-Hastings | proposal_std, burn-in, chain length |
+| "I need to sample from a posterior" | Metropolis-Hastings | proposal_std, caller-managed discarded prefix, chain length |
 | "I want to generate images/audio" | Diffusion (forward + reverse chains) | noise schedule, number of steps |
 | "I need to model state transitions" | Markov chain | transition matrix P, state space |
 | "I want to find an optimal policy" | MDP + RL | states, actions, rewards, discount |
@@ -51,7 +51,8 @@ For **Markov chains**:
 For **MCMC sampling**:
 1. Define the target log-probability (up to a constant is fine)
 2. Choose proposal distribution (Gaussian with tunable std)
-3. Run chain with burn-in (discard first 10-25% of samples)
+3. If the application needs burn-in, discard a documented prefix in the caller; this lesson's
+   `metropolis_hastings` returns the requested samples and does not hide a burn-in phase.
 4. Check acceptance rate (target 23-50%)
 5. Check convergence (multiple chains from different starting points)
 6. Compute effective sample size (account for autocorrelation)

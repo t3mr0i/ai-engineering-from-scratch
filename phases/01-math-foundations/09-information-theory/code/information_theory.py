@@ -1,3 +1,9 @@
+# Information-theory primitives for phases/01-math-foundations/09-information-theory/docs/en.md.
+# Builds entropy, cross-entropy, KL divergence, mutual information, and perplexity from scratch.
+# Uses only Python's standard library so every numerical step remains inspectable offline.
+# Canonical execution is `python3 main.py` from this code directory.
+# The printed fixtures are deterministic where a seed is used.
+
 import math
 import random
 

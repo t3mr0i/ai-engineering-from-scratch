@@ -1,459 +1,81 @@
 # Numerical Stability
 
-> Floating point is a leaky abstraction. It will bite you during training, and you will not see it coming.
+> Treat overflow, cancellation, and finite precision as explicit failure modes in the training loop.
 
-**Type:** Build
+**Type:** Learn
 **Languages:** Python
-**Language:** Python
-**Prerequisites:** Phase 1, Lessons 01-04
-**Time:** ~120 minutes
+**Prerequisites:** Phase 1, Lessons 04–05 (calculus and autodiff)
+**Time:** ~55 minutes
 
 ## Learning Objectives
 
-- Implement numerically stable softmax and log-sum-exp using the max-subtraction trick
-- Identify overflow, underflow, and catastrophic cancellation in floating-point computations
-- Verify analytical gradients against numerical gradients using centered finite differences
-- Explain why bfloat16 is preferred over float16 for training and how loss scaling prevents gradient underflow
+- Stabilize softmax, log-sum-exp, sigmoid, and cross-entropy with algebraically equivalent formulas.
+- Diagnose cancellation in variance and finite differences rather than tuning blindly.
+- Compare value clipping with norm clipping and state which invariant each preserves.
+- Explain the range/precision trade-off of simulated float16 and bfloat16 values.
+- Use Welford variance, layer normalization, and finite checks as local debugging tools.
 
-## The Problem
+## Failure modes in the code
 
-Your model trains for three hours, then the loss becomes NaN. You add a print statement. The logits are fine at step 9,000. At step 9,001 they are `inf`. By step 9,002 every gradient is `nan` and training is dead.
+The naive softmax evaluates `exp(z)` directly. For logits near `1000`, it can overflow; for all very negative logits it can produce `0/0`. `softmax_stable` subtracts the maximum. `logsumexp_stable` uses the same shift, and `log_softmax_stable` feeds stable cross-entropy without materializing fragile probabilities.
 
-Or: your model trains to completion but accuracy is 2% worse than the paper claims. You check everything. Architecture matches. Hyperparameters match. Data matches. The problem is that the paper used float32 and you used float16 without the right scaling. Thirty-two bits of accumulated rounding error quietly ate your accuracy.
+Binary cross-entropy is implemented from logits with
 
-Or: you implement cross-entropy loss from scratch. It works on small logits. When logits exceed 100, it returns `inf`. The softmax overflowed because `exp(100)` is larger than float32 can represent. Every ML framework handles this with a two-line trick. You did not know the trick existed.
-
-Numerical stability is not a theoretical concern. It is the difference between a training run that succeeds and one that silently fails. Every serious ML bug you will debug eventually comes down to floating point.
-
-## The Concept
-
-### IEEE 754: How Computers Store Real Numbers
-
-Computers store real numbers as floating point values following the IEEE 754 standard. A float has three parts: a sign bit, an exponent, and a mantissa (significand).
-
-```
-Float32 layout (32 bits total):
-[1 sign] [8 exponent] [23 mantissa]
-
-Value = (-1)^sign * 2^(exponent - 127) * 1.mantissa
+```text
+max(0, logit) - y_true*logit + log(exp(-max(0,logit)) + exp(logit-max(0,logit)))
 ```
 
-The mantissa determines precision (how many significant digits). The exponent determines range (how large or small a number can be).
-
-```
-Format     Bits   Exponent  Mantissa  Decimal digits  Range (approx)
-float64    64     11        52        ~15-16          +/- 1.8e308
-float32    32     8         23        ~7-8            +/- 3.4e38
-float16    16     5         10        ~3-4            +/- 65,504
-bfloat16   16     8         7         ~2-3            +/- 3.4e38
-```
-
-float32 gives you about 7 decimal digits of precision. That means it can tell apart 1.0000001 and 1.0000002, but not 1.00000001 and 1.00000002. After 7 digits, everything is rounding noise.
-
-float16 gives you about 3 digits. The largest number it can represent is 65,504. That is disturbingly small for ML where logits, gradients, and activations routinely exceed this.
-
-bfloat16 is Google's answer to float16's range problem. It has the same 8-bit exponent as float32 (same range, up to 3.4e38) but only 7 mantissa bits (less precision than float16). For training neural networks, range matters more than precision, so bfloat16 usually wins.
-
-### Why 0.1 + 0.2 != 0.3
-
-The number 0.1 cannot be represented exactly in binary floating point. In base 2, it is a repeating fraction:
-
-```
-0.1 in binary = 0.0001100110011001100110011... (repeating forever)
-```
-
-Float32 truncates this to 23 bits of mantissa. The stored value is approximately 0.100000001490116. Similarly, 0.2 is stored as approximately 0.200000002980232. Their sum is 0.300000004470348, not 0.3.
-
-```
-In Python:
->>> 0.1 + 0.2
-0.30000000000000004
-
->>> 0.1 + 0.2 == 0.3
-False
-```
-
-This matters for ML because:
-
-1. Loss comparisons like `if loss < threshold` can give wrong answers
-2. Accumulating many small values (gradient updates over thousands of steps) drifts from the true sum
-3. Checksums and reproducibility tests fail if you compare floats with `==`
-
-The fix: never compare floats with `==`. Use `abs(a - b) < epsilon` or `math.isclose()`.
-
-### Catastrophic Cancellation
-
-When you subtract two nearly equal floating point numbers, the significant digits cancel and you are left with rounding noise promoted to leading digits.
-
-```
-a = 1.0000001    (stored as 1.00000011920929 in float32)
-b = 1.0000000    (stored as 1.00000000000000 in float32)
-
-True difference:  0.0000001
-Computed:         0.00000011920929
-
-Relative error: 19.2%
-```
-
-That is a 19% relative error from a single subtraction. In ML, this happens whenever you:
-
-- Compute variance of data with a large mean: `E[x^2] - E[x]^2` when E[x] is large
-- Subtract nearly equal log-probabilities
-- Compute finite-difference gradients with too-small epsilon
-
-The fix: rearrange formulas to avoid subtracting large, nearly equal numbers. For variance, use the Welford algorithm or center the data first. For log-probabilities, work in log-space throughout.
-
-### Overflow and Underflow
-
-Overflow happens when a result is too large to represent. Underflow happens when it is too small (closer to zero than the smallest representable positive number).
-
-```
-Float32 boundaries:
-  Maximum:  3.4028235e+38
-  Minimum positive (normal): 1.175e-38
-  Minimum positive (denorm): 1.401e-45
-  Overflow:  anything > 3.4e38 becomes inf
-  Underflow: anything < 1.4e-45 becomes 0.0
-```
-
-The `exp()` function is the primary source of overflow in ML:
-
-```
-exp(88.7)  = 3.40e+38   (barely fits in float32)
-exp(89.0)  = inf         (overflow)
-exp(-87.3) = 1.18e-38   (barely above underflow)
-exp(-104)  = 0.0         (underflow to zero)
-```
-
-The `log()` function hits the other direction:
-
-```
-log(0.0)   = -inf
-log(-1.0)  = nan
-log(1e-45) = -103.3      (fine)
-log(1e-46) = -inf        (input underflowed to 0, then log(0) = -inf)
-```
-
-In ML, `exp()` appears in softmax, sigmoid, and probability computations. `log()` appears in cross-entropy, log-likelihoods, and KL divergence. The combination `log(exp(x))` is a minefield without the right tricks.
-
-### The Log-Sum-Exp Trick
-
-Computing `log(sum(exp(x_i)))` directly is numerically dangerous. If any `x_i` is large, `exp(x_i)` overflows. If all `x_i` are very negative, every `exp(x_i)` underflows to zero and `log(0)` is `-inf`.
-
-The trick: subtract the maximum value before exponentiating.
-
-```
-log(sum(exp(x_i))) = max(x) + log(sum(exp(x_i - max(x))))
-```
-
-Why this works: after subtracting `max(x)`, the largest exponent is `exp(0) = 1`. No overflow is possible. At least one term in the sum is 1, so the sum is at least 1, and `log(1) = 0`. No underflow to `-inf` is possible.
-
-Proof:
-
-```
-log(sum(exp(x_i)))
-= log(sum(exp(x_i - c + c)))                    (add and subtract c)
-= log(sum(exp(x_i - c) * exp(c)))               (exp(a+b) = exp(a)*exp(b))
-= log(exp(c) * sum(exp(x_i - c)))               (factor out exp(c))
-= c + log(sum(exp(x_i - c)))                    (log(a*b) = log(a) + log(b))
-```
-
-Set `c = max(x)` and overflow is eliminated.
-
-This trick appears everywhere in ML:
-- Softmax normalization
-- Cross-entropy loss computation
-- Log-probability summation in sequence models
-- Mixture of Gaussians
-- Variational inference
-
-```python fillin
-import math
-
-def naive_log_sum_exp(x):
-    return math.log(sum(math.exp(xi) for xi in x))
-
-# Logits a real model can produce -- naive log-sum-exp overflows here.
-logits = [1000.0, 1001.0, 1002.0]
-try:
-    print("naive:", naive_log_sum_exp(logits))
-except OverflowError as e:
-    print("naive OverflowError:", e)
-
-def stable_log_sum_exp(x):
-    c = {{blank:max(x)}}
-    shifted_sum = sum(math.exp(xi - c) for xi in x)
-    return {{blank:c + math.log(shifted_sum)}}
-
-result = stable_log_sum_exp(logits)
-expected = 1002.4076059644438
-if math.isfinite(result) and abs(result - expected) < 1e-6:
-    print("PASS")
-else:
-    print("WRONG:", result)
-```
-
-### Why Softmax Needs the Max-Subtraction Trick
-
-Softmax converts logits to probabilities:
-
-```
-softmax(x_i) = exp(x_i) / sum(exp(x_j))
-```
-
-Without the trick, logits of [100, 101, 102] cause overflow:
-
-```
-exp(100) = 2.69e43
-exp(101) = 7.31e43
-exp(102) = 1.99e44
-sum      = 2.99e44
-
-These overflow float32 (max ~3.4e38)? No, 2.69e43 < 3.4e38? Actually:
-exp(88.7) is already at the float32 limit.
-exp(100) = inf in float32.
-```
-
-With the trick, subtract max(x) = 102:
-
-```
-exp(100 - 102) = exp(-2) = 0.135
-exp(101 - 102) = exp(-1) = 0.368
-exp(102 - 102) = exp(0)  = 1.000
-sum = 1.503
-
-softmax = [0.090, 0.245, 0.665]
-```
-
-The probabilities are identical. The computation is safe. This is not an optimization. It is a requirement for correctness.
-
-### NaN and Inf: Detection and Prevention
-
-`nan` (Not a Number) and `inf` (infinity) propagate virally through computation. One `nan` in a gradient update makes the weight `nan`, which makes every subsequent output `nan`. Training is dead within one step.
-
-How `inf` appears:
-- `exp()` of a large positive number
-- Division by zero: `1.0 / 0.0`
-- `float32` overflow in accumulations
-
-How `nan` appears:
-- `0.0 / 0.0`
-- `inf - inf`
-- `inf * 0`
-- `sqrt()` of a negative number
-- `log()` of a negative number
-- Any arithmetic involving an existing `nan`
-
-Detection:
-
-```python
-import math
-
-math.isnan(x)       # True if x is nan
-math.isinf(x)       # True if x is +inf or -inf
-math.isfinite(x)    # True if x is neither nan nor inf
-```
-
-Prevention strategies:
-
-1. Clamp inputs to `exp()`: `exp(clamp(x, -80, 80))`
-2. Add epsilon to denominators: `x / (y + 1e-8)`
-3. Add epsilon inside `log()`: `log(x + 1e-8)`
-4. Use stable implementations (log-sum-exp, stable softmax)
-5. Gradient clipping to prevent weight explosion
-6. Check for `nan`/`inf` after every forward pass during debugging
-
-### Numerical Gradient Checking
-
-Analytical gradients (from backpropagation) can have bugs. Numerical gradient checking verifies them by computing gradients with finite differences.
-
-The centered difference formula:
-
-```
-df/dx ~= (f(x + h) - f(x - h)) / (2h)
-```
-
-This is O(h^2) accurate, much better than the forward difference `(f(x+h) - f(x)) / h` which is only O(h).
-
-Choosing h: too large and the approximation is wrong. Too small and catastrophic cancellation destroys the answer. `h = 1e-5` to `1e-7` is typical.
-
-The check: compute the relative difference between analytical and numerical gradients.
-
-```
-relative_error = |grad_analytical - grad_numerical| / max(|grad_analytical|, |grad_numerical|, 1e-8)
-```
-
-Rules of thumb:
-- relative_error < 1e-7: perfect, gradient is correct
-- relative_error < 1e-5: acceptable, probably correct
-- relative_error > 1e-3: something is wrong
-- relative_error > 1: gradient is completely wrong
-
-Always check gradients when implementing a new layer or loss function. PyTorch provides `torch.autograd.gradcheck()` for this.
-
-### Mixed Precision Training
-
-Modern GPUs have specialized hardware (Tensor Cores) that compute float16 matrix multiplications 2-8x faster than float32. Mixed precision training exploits this:
-
-```
-1. Maintain float32 master copy of weights
-2. Forward pass in float16 (fast)
-3. Compute loss in float32 (prevents overflow)
-4. Backward pass in float16 (fast)
-5. Scale gradients to float32
-6. Update float32 master weights
-```
-
-The problem with pure float16 training: gradients are often very small (1e-8 or smaller). Float16 underflows anything below ~6e-8 to zero. Your model stops learning because all gradient updates are zero.
-
-The fix is loss scaling:
-
-```
-1. Multiply loss by a large scale factor (e.g., 1024)
-2. Backward pass computes gradients of (loss * 1024)
-3. All gradients are 1024x larger (pushed above float16 underflow)
-4. Divide gradients by 1024 before updating weights
-5. Net effect: same update, but no underflow
-```
-
-Dynamic loss scaling adjusts the scale factor automatically. Start with a large value (65536). If gradients overflow to `inf`, halve it. If N steps pass without overflow, double it.
-
-### bfloat16 vs float16: Why bfloat16 Wins for Training
-
-```
-float16:   [1 sign] [5 exponent]  [10 mantissa]
-bfloat16:  [1 sign] [8 exponent]  [7 mantissa]
-```
-
-float16 has more precision (10 mantissa bits vs 7) but limited range (max ~65,504). bfloat16 has less precision but the same range as float32 (max ~3.4e38).
-
-For training neural networks:
-
-- Activations and logits regularly exceed 65,504 during training spikes. float16 overflows; bfloat16 handles it.
-- Loss scaling is required with float16 but usually unnecessary with bfloat16 because its range covers the gradient magnitude spectrum.
-- bfloat16 is a simple truncation of float32: drop the bottom 16 bits of the mantissa. Conversion is trivial and lossless in the exponent.
-
-float16 is preferred for inference where values are bounded and precision matters more. bfloat16 is preferred for training where range matters more. This is why TPUs and modern NVIDIA GPUs (A100, H100) have native bfloat16 support.
-
-### Gradient Clipping
-
-Exploding gradients happen when gradients grow exponentially through many layers (common in RNNs, deep networks, and transformers). A single large gradient can corrupt all weights in one step.
-
-Two types of clipping:
-
-**Clip by value:** clamp each gradient element independently.
-
-```
-grad = clamp(grad, -max_val, max_val)
-```
-
-Simple but can change the direction of the gradient vector.
-
-**Clip by norm:** scale the entire gradient vector so its norm does not exceed a threshold.
-
-```
-if ||grad|| > max_norm:
-    grad = grad * (max_norm / ||grad||)
-```
-
-Preserves the direction of the gradient. This is what `torch.nn.utils.clip_grad_norm_()` does. It is the standard choice.
-
-Typical values: `max_norm=1.0` for transformers, `max_norm=0.5` for RL, `max_norm=5.0` for simpler networks.
-
-Gradient clipping is not a hack. It is a safety mechanism. Without it, a single outlier batch can produce a gradient large enough to ruin weeks of training.
-
-### Normalization Layers as Numerical Stabilizers
-
-Batch normalization, layer normalization, and RMS normalization are usually presented as regularizers that help training converge. They are also numerical stabilizers.
-
-Without normalization, activations can grow or shrink exponentially through layers:
-
-```
-Layer 1: values in [0, 1]
-Layer 5: values in [0, 100]
-Layer 10: values in [0, 10,000]
-Layer 50: values in [0, inf]
-```
-
-Normalization recenters and rescales activations at every layer:
-
-```
-LayerNorm(x) = (x - mean(x)) / (std(x) + epsilon) * gamma + beta
-```
-
-The `epsilon` (typically 1e-5) prevents division by zero when all activations are identical. The learned parameters `gamma` and `beta` let the network restore any scale it needs.
-
-This keeps values in a numerically safe range throughout the network, preventing both overflow in the forward pass and gradient explosion in the backward pass.
-
-### Common ML Numerical Bugs
-
-**Bug: Loss is NaN after a few epochs.**
-Cause: logits grew too large, softmax overflowed. Or learning rate is too high and weights diverged.
-Fix: use stable softmax (max subtraction), reduce learning rate, add gradient clipping.
-
-**Bug: Loss is stuck at log(num_classes).**
-Cause: model outputs are near-uniform probabilities. Often means gradients are vanishing or the model is not learning at all.
-Fix: check that data labels are correct, verify the loss function, check for dead ReLUs.
-
-**Bug: Validation accuracy is lower than expected by 1-3%.**
-Cause: mixed precision without proper loss scaling. Gradient underflow silently zeroes out small updates.
-Fix: enable dynamic loss scaling, or switch to bfloat16.
-
-**Bug: Gradient norms are 0.0 for some layers.**
-Cause: dead ReLU neurons (all inputs negative), or float16 underflow.
-Fix: use LeakyReLU or GELU, use gradient scaling, check weight initialization.
-
-**Bug: Model works on one GPU but gives different results on another.**
-Cause: non-deterministic floating point accumulation order. GPU parallel reductions sum in different orders on different hardware, and floating point addition is not associative.
-Fix: accept small differences (1e-6), or set `torch.use_deterministic_algorithms(True)` and accept the speed penalty.
-
-**Bug: `exp()` returns `inf` in loss computation.**
-Cause: raw logits passed to `exp()` without the max-subtraction trick.
-Fix: use `torch.nn.functional.log_softmax()` which implements log-sum-exp internally.
-
-**Bug: Training diverges after switching from float32 to float16.**
-Cause: float16 cannot represent gradient magnitudes below 6e-8 or activations above 65,504.
-Fix: use mixed precision with loss scaling (AMP), or use bfloat16 instead.
-
-
-
+The implementation also includes stable sigmoid branches, centered finite differences, norm/value clipping, `simulate_float16`, `simulate_bfloat16`, Welford variance, and epsilon-protected layer normalization.
+`binary_cross_entropy_stable` requires `y_true` to be exactly `0` or `1`; it is not a soft-label or probability-target helper.
 
 ## Build It
 
-Reconstruct **Numerical Stability** by following `softmax_naive` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+Run the local diagnostic sequence:
+
+```bash
+cd phases/01-math-foundations/13-numerical-stability/code
+python3 main.py
+```
+
+The output deliberately shows both a safe and an unsafe path: `softmax_naive([1000,1001,1002])` is not called as an assertion because the failure is expected, while the stable result is printed and checked. Later sections print a cancellation fixture around `1e8`, gradient checks, clipping, precision conversion, layer normalization, and common training-loop bugs.
+
+Inspect the stable path directly:
+
+```python
+from numerical import cross_entropy_stable, logsumexp_stable, softmax_stable
+
+logits = [1000.0, 1001.0, 1002.0]
+assert sum(softmax_stable(logits)) == 1.0
+print(logsumexp_stable(logits))
+print(cross_entropy_stable(2, logits))
+```
 
 ## Use It
 
-Call `softmax_naive` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+Use Welford's online update when values have a large common offset and small spread. The local implementation returns population variance (dividing by `n`), while the statistics lesson separately exposes sample variance. Keep that denominator in an experiment record.
+
+Use `clip_by_value` when component bounds are the contract; it can change direction. Use `clip_by_norm` when the direction should remain unchanged and only the total magnitude is capped. `layer_norm(values, epsilon=1e-5)` keeps a constant vector finite instead of dividing by zero.
+
+The float-format helpers are simulations, not hardware measurements: float16 has a smaller exponent range, while bfloat16 preserves a wider range with fewer fraction bits. Report the input value and conversion function when discussing the result.
 
 ## Ship It
 
-Hand off `outputs/prompt-numerical-debugger.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [What Every Computer Scientist Should Know About Floating-Point Arithmetic (Goldberg 1991)](https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html) -- the definitive reference, dense but complete
-- [Mixed Precision Training (Micikevicius et al., 2018)](https://arxiv.org/abs/1710.03740) -- the NVIDIA paper that introduced loss scaling for float16 training
-- [AMP: Automatic Mixed Precision (PyTorch docs)](https://pytorch.org/docs/stable/amp.html) -- practical guide to mixed precision in PyTorch
-- [bfloat16 format (Google Cloud TPU docs)](https://cloud.google.com/tpu/docs/bfloat16) -- why Google chose this format for TPUs
-- [Kahan Summation (Wikipedia)](https://en.wikipedia.org/wiki/Kahan_summation_algorithm) -- algorithm for reducing rounding error in floating point sums
+The reusable artifact is [the numerical-debugger prompt](../../13-numerical-stability/outputs/prompt-numerical-debugger.md). It requires a reproduction input, the first non-finite operation, the stabilized formula, and a finite-value assertion. That turns “training exploded” into a falsifiable diagnosis.
 
 ## Exercises
 
-Use `softmax_naive` as the trace: start from x=0.5 with the demo defaults, keep the raw output, and tie each observation to a named objective.
-
-1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using x=0.5 with the demo defaults. Follow `softmax_naive`, `softmax_stable`, `logsumexp_naive`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Implement numerically stable softmax and log-sum-exp using the max-subtraction trick**.
-2. **Vary one named input.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Identify overflow, underflow, and catastrophic cancellation in floating-point computations** says the other inputs should stay fixed.
-3. **Probe the empty case.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Verify analytical gradients against numerical gradients using centered finite differences** and record the exception text if the code rejects the case.
-4. **Package a usable handoff.** Open `outputs/prompt-numerical-debugger.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Explain why bfloat16 is preferred over float16 for training and how loss scaling prevents gradient underflow**; note what the demo cannot establish.
+1. Compare stable softmax and stable log-sum-exp for `[800,801]` and `[800,801,802]`; record finite outputs and probability sums.
+2. Compute a centered finite-difference derivative with `h=1e-5` and `h=1e-12` for `f(x)=x^2` at `x=2`. Explain the cancellation introduced by the smaller step.
+3. Apply `clip_by_value([3,4],2)` and `clip_by_norm([3,4],2)`. Record each norm and explain which operation preserves direction.
 
 ## Reference Solution
 
-A checkable result for **Numerical Stability** should contain:
+Subtracting the maximum keeps the relative logits unchanged and returns a finite probability vector summing to one. The `h=1e-12` finite difference can lose significant digits because `f(x+h)` and `f(x-h)` round to nearly the same number. Value clipping returns `[2,2]` and changes direction; norm clipping returns `[1.2,1.6]` with norm 2 and preserves the 3:4 ratio. Acceptance checks use `math.isfinite`, `math.isclose`, and the explicit norm calculation.
 
-- the `python3 main.py` output for x=0.5 with the demo defaults, with `softmax_naive`, `softmax_stable`, `logsumexp_naive` traced to the value or shape that supports **Implement numerically stable softmax and log-sum-exp using the max-subtraction trick**;
-- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Identify overflow, underflow, and catastrophic cancellation in floating-point computations**;
-- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Verify analytical gradients against numerical gradients using centered finite differences**; and
-- an updated `outputs/prompt-numerical-debugger.md` example with a concrete input, expected output field, and acceptance check tied to **Explain why bfloat16 is preferred over float16 for training and how loss scaling prevents gradient underflow**.
+## Tests
 
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+```bash
+python3 -m unittest discover tests -v
+```
+
+Twelve tests cover stable softmax/log-sum-exp, logits cross-entropy, binary cross-entropy at both overflow directions and moderate logits, target validation, sigmoid branches, Welford cancellation, clipping, layer normalization, finite differences, and simulated format range.

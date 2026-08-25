@@ -52,15 +52,15 @@
     },
     {
       "stage": "post",
-      "question": "What two conditions are required before the Python main program calls raw HTTP?",
+      "question": "What three conditions are required before the Python main program calls raw HTTP?",
       "options": [
         "A tracked .env file and a nonempty prompt",
         "A provider SDK import and a GPU",
-        "ANTHROPIC_LIVE=1 and a nonempty ANTHROPIC_API_KEY",
+        "ANTHROPIC_LIVE=1, a nonempty ANTHROPIC_API_KEY, and a nonempty ANTHROPIC_MODEL",
         "A JSON response and a rate-limit error"
       ],
       "correct": 2,
-      "explanation": "The program checks the explicit live flag first and then requires the environment key. Otherwise it stays on the local fixture path."
+      "explanation": "The program checks the explicit live flag, key, and model name. If any is missing, it prints the local fixture response and does not call the network."
     },
     {
       "stage": "post",

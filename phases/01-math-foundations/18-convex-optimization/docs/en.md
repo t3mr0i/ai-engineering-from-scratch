@@ -1,494 +1,60 @@
 # Convex Optimization
 
-> Convex problems have one valley. Neural networks have millions. Knowing the difference matters.
+> Convexity gives a global statement about local search; the code makes that statement testable on small fixtures.
 
 **Type:** Build
 **Languages:** Python
-**Language:** Python
-**Prerequisites:** Phase 1, Lessons 04 (Calculus for ML), 08 (Optimization)
+**Prerequisites:** Phase 1, Lessons 04 and 08 (calculus and first-order optimization)
 **Time:** ~90 minutes
 
 ## Learning Objectives
 
-- Test whether a function is convex using the definition, second derivative, and Hessian criteria
-- Implement Newton's method and compare its quadratic convergence against gradient descent
-- Solve constrained optimization problems using Lagrange multipliers and interpret KKT conditions
-- Explain why neural network loss landscapes are non-convex yet SGD still finds good solutions
-
-## The Problem
-
-Lesson 08 taught you gradient descent, momentum, and Adam. Those optimizers walk downhill on any surface. But they come with no guarantees. Gradient descent on a non-convex landscape might land in a bad local minimum, get stuck on a saddle point, or oscillate forever. You used it anyway because neural networks are non-convex and there is no alternative.
-
-But many problems in machine learning are convex. Linear regression, logistic regression, SVMs, LASSO, ridge regression. For these, something stronger exists: optimization with mathematical guarantees. A convex problem has exactly one valley. Any algorithm that walks downhill will reach the global minimum. No restarts needed. No learning rate schedules. No prayer.
-
-Understanding convexity does three things. First, it tells you when your problem is easy (convex) versus hard (non-convex). Second, it gives you faster tools like Newton's method for convex problems. Third, it explains concepts that appear throughout ML: regularization as a constraint, duality in SVMs, and why deep learning works despite violating every nice property convexity gives you.
-
-## The Concept
-
-### Convex sets
-
-A set S is convex if for any two points in S, the line segment between them also lies entirely in S.
-
-| Convex sets | Not convex |
-|---|---|
-| **Rectangle**: any two points inside can be connected by a line segment that stays inside | **Star/crescent shape**: a line between two interior points can pass outside the set |
-| **Triangle**: same property holds for all interior points | **Donut/annulus**: the hole means some line segments leave the set |
-| The line segment between any two points stays within the set | The line segment between some pairs of points exits the set |
-
-Formal test: for any points x, y in S and any t in [0, 1], the point tx + (1-t)y is also in S.
-
-Examples of convex sets:
-- A line, a plane, all of R^n
-- A ball (circle, sphere, hypersphere)
-- A halfspace: {x : a^T x <= b}
-- The intersection of any number of convex sets
-
-Examples of non-convex sets:
-- A donut (annulus)
-- The union of two disjoint circles
-- Any set with a "dent" or "hole"
-
-### Convex functions
-
-A function f is convex if its domain is a convex set and for any two points x, y in its domain and any t in [0, 1]:
-
-```
-f(tx + (1-t)y) <= t*f(x) + (1-t)*f(y)
-```
-
-Geometrically: the line segment between any two points on the graph lies above or on the graph.
-
-| Property | Convex function | Non-convex function |
-|---|---|---|
-| **Line segment test** | The line between any two points on the graph lies **above or on** the curve | The line between some points on the graph dips **below** the curve |
-| **Shape** | Single bowl/valley curving upward | Multiple peaks and valleys with mixed curvature |
-| **Local minima** | Every local minimum is the global minimum | Multiple local minima may exist at different heights |
-
-Common convex functions:
-- f(x) = x^2 (parabola)
-- f(x) = |x| (absolute value)
-- f(x) = e^x (exponential)
-- f(x) = max(0, x) (ReLU, though piecewise linear)
-- f(x) = -log(x) for x > 0 (negative log)
-- Any linear function f(x) = a^T x + b (both convex and concave)
-
-### Testing for convexity
-
-Three practical tests, from easiest to most rigorous.
-
-**Test 1: Second derivative test (1D).** If f''(x) >= 0 for all x, then f is convex.
-
-- f(x) = x^2: f''(x) = 2 >= 0. Convex.
-- f(x) = x^3: f''(x) = 6x. Negative for x < 0. Not convex.
-- f(x) = e^x: f''(x) = e^x > 0. Convex.
-
-**Test 2: Hessian test (multivariate).** If the Hessian matrix H(x) is positive semidefinite for all x, then f is convex. The Hessian is the matrix of second partial derivatives.
-
-**Test 3: Definition test.** Check the inequality f(tx + (1-t)y) <= t*f(x) + (1-t)*f(y) directly. Useful for functions where derivatives are hard to compute.
-
-### Why convexity matters
-
-The central theorem of convex optimization:
-
-**For a convex function, every local minimum is a global minimum.**
-
-This means gradient descent cannot get trapped. Any downhill path leads to the same answer. The algorithm is guaranteed to converge to the optimal solution.
-
-```mermaid
-graph LR
-    subgraph "Convex: ONE answer"
-        direction TB
-        C1["Loss surface has a single valley"] --> C2["Gradient descent ALWAYS finds the global minimum"]
-    end
-    subgraph "Non-convex: MANY traps"
-        direction TB
-        N1["Loss surface has multiple valleys and peaks"] --> N2["Gradient descent may get stuck in a local minimum"]
-        N2 --> N3["Global minimum might be missed"]
-    end
-```
-
-Consequences:
-- No need for random restarts
-- No need for sophisticated learning rate schedules
-- Convergence proofs are possible (rate depends on function properties)
-- The solution is unique (up to flat regions)
-
-### Convex vs non-convex in ML
-
-| Problem | Convex? | Why |
-|---------|---------|-----|
-| Linear regression (MSE) | Yes | Loss is quadratic in weights |
-| Logistic regression | Yes | Log-loss is convex in weights |
-| SVM (hinge loss) | Yes | Maximum of linear functions |
-| LASSO (L1 regression) | Yes | Sum of convex functions is convex |
-| Ridge regression (L2) | Yes | Quadratic + quadratic = convex |
-| Neural network (any loss) | No | Nonlinear activations create non-convex landscape |
-| k-means clustering | No | Discrete assignment step |
-| Matrix factorization | No | Product of unknowns |
-
-Linear models with convex losses are convex. The moment you add hidden layers with nonlinear activations, convexity breaks.
-
-### The Hessian matrix
-
-The Hessian H of a function f: R^n -> R is the n x n matrix of second partial derivatives.
-
-```
-H[i][j] = d^2 f / (dx_i dx_j)
-```
-
-For f(x, y) = x^2 + 3xy + y^2:
-
-```
-df/dx = 2x + 3y       d^2f/dx^2 = 2      d^2f/dxdy = 3
-df/dy = 3x + 2y       d^2f/dydx = 3      d^2f/dy^2 = 2
-
-H = [ 2  3 ]
-    [ 3  2 ]
-```
-
-The Hessian tells you about curvature:
-- Eigenvalues all positive: the function curves upward in every direction (convex at that point)
-- Eigenvalues all negative: curves downward in every direction (concave, a local max)
-- Mixed signs: saddle point (curves up in some directions, down in others)
-- Zero eigenvalue: flat in that direction (degenerate)
-
-For convexity, the Hessian must be positive semidefinite (all eigenvalues >= 0) everywhere, not just at one point.
-
-### Newton's method
-
-Gradient descent uses first-order information (the gradient). Newton's method uses second-order information (the Hessian). It fits a quadratic approximation at the current point and jumps directly to the minimum of that quadratic.
-
-```
-Update rule:
-  x_new = x - H^(-1) * gradient
-
-Compare to gradient descent:
-  x_new = x - lr * gradient
-```
-
-Newton's method replaces the scalar learning rate with the inverse Hessian. This automatically adjusts the step size and direction based on local curvature.
-
-```mermaid
-graph TD
-    subgraph "Gradient Descent"
-        GD1["Start"] --> GD2["Step 1"]
-        GD2 --> GD3["Step 2"]
-        GD3 --> GD4["..."]
-        GD4 --> GD5["Step ~500: Converged"]
-        GD_note["Follows gradient blindly — many small steps"]
-    end
-    subgraph "Newton's Method"
-        NM1["Start"] --> NM2["Step 1"]
-        NM2 --> NM3["..."]
-        NM3 --> NM4["Step ~5: Converged"]
-        NM_note["Uses curvature for optimal steps"]
-    end
-```
-
-Advantages:
-- Quadratic convergence near the minimum (error squares each step)
-- No learning rate to tune
-- Scale-invariant (works regardless of how you parameterize the problem)
-
-Disadvantages:
-- Computing the Hessian costs O(n^2) memory and O(n^3) to invert
-- For a neural network with 1 million weights, that is 10^12 entries and 10^18 operations
-- Not practical for deep learning
-
-### Constrained optimization
-
-Unconstrained optimization: minimize f(x) over all x.
-Constrained optimization: minimize f(x) subject to constraints.
-
-Real problems have constraints. You want to minimize cost but your budget is limited. You want to minimize error but your model complexity is bounded.
-
-```mermaid
-graph LR
-    subgraph "Unconstrained"
-        U1["Loss function"] --> U2["Free minimum: lowest point of the loss surface"]
-    end
-    subgraph "Constrained"
-        C1["Loss function"] --> C2["Constrained minimum: lowest point within the feasible region"]
-        C3["Constraint boundary limits the search space"]
-    end
-```
-
-### Lagrange multipliers
-
-The method of Lagrange multipliers converts a constrained problem into an unconstrained one.
-
-Problem: minimize f(x) subject to g(x) = 0.
-
-Solution: introduce a new variable (the Lagrange multiplier lambda) and solve the unconstrained problem:
-
-```
-L(x, lambda) = f(x) + lambda * g(x)
-```
-
-At the solution, the gradient of L is zero:
-
-```
-dL/dx = df/dx + lambda * dg/dx = 0
-dL/dlambda = g(x) = 0
-```
-
-Geometric intuition: at the constrained minimum, the gradient of f must be parallel to the gradient of the constraint g. If they were not parallel, you could move along the constraint surface and reduce f further.
-
-```mermaid
-graph LR
-    A["Contours of f(x,y): concentric ellipses"] --- S["Solution point"]
-    B["Constraint curve g(x,y) = 0"] --- S
-    S --- C["At the solution, gradient of f is parallel to gradient of g"]
-```
-
-Example: minimize f(x,y) = x^2 + y^2 subject to x + y = 1.
-
-```
-L = x^2 + y^2 + lambda(x + y - 1)
-
-dL/dx = 2x + lambda = 0  =>  x = -lambda/2
-dL/dy = 2y + lambda = 0  =>  y = -lambda/2
-dL/dlambda = x + y - 1 = 0
-
-From first two: x = y
-Substituting: 2x = 1, so x = y = 0.5, lambda = -1
-```
-
-The closest point on the line x + y = 1 to the origin is (0.5, 0.5).
-
-### KKT conditions
-
-The Karush-Kuhn-Tucker conditions extend Lagrange multipliers to inequality constraints.
-
-Problem: minimize f(x) subject to g_i(x) <= 0 for i = 1, ..., m.
-
-The KKT conditions (necessary for optimality):
-
-```
-1. Stationarity:    df/dx + sum(lambda_i * dg_i/dx) = 0
-2. Primal feasibility:  g_i(x) <= 0  for all i
-3. Dual feasibility:    lambda_i >= 0  for all i
-4. Complementary slackness:  lambda_i * g_i(x) = 0  for all i
-```
-
-Complementary slackness is the key insight: either the constraint is active (g_i = 0, the solution sits on the boundary) or the multiplier is zero (the constraint does not matter). A constraint that does not affect the solution has lambda = 0.
-
-KKT conditions are central to SVMs. The support vectors are the data points where the constraint is active (lambda > 0). All other data points have lambda = 0 and do not affect the decision boundary.
-
-### Regularization as constrained optimization
-
-L1 and L2 regularization are not arbitrary tricks. They are constrained optimization problems in disguise.
-
-**L2 regularization (Ridge):**
-
-```
-minimize  Loss(w)  subject to  ||w||^2 <= t
-
-Equivalent unconstrained form:
-minimize  Loss(w) + lambda * ||w||^2
-```
-
-The constraint ||w||^2 <= t defines a ball (circle in 2D, sphere in 3D). The solution is where the loss contours first touch this ball.
-
-**L1 regularization (LASSO):**
-
-```
-minimize  Loss(w)  subject to  ||w||_1 <= t
-
-Equivalent unconstrained form:
-minimize  Loss(w) + lambda * ||w||_1
-```
-
-The constraint ||w||_1 <= t defines a diamond (rotated square in 2D).
-
-| Property | L2 constraint (circle) | L1 constraint (diamond) |
-|---|---|---|
-| **Constraint shape** | Circle (sphere in higher dims) | Diamond (rotated square in 2D) |
-| **Where loss contour touches** | Smooth boundary — any point on the circle | Corner — aligned with an axis |
-| **Solution behavior** | Weights are small but nonzero | Some weights are exactly zero (sparse) |
-| **Result** | Weight shrinkage | Feature selection |
-
-This explains why L1 produces sparse models (feature selection) while L2 only shrinks weights. The diamond has corners aligned with axes. Loss contours are more likely to touch a corner, setting one or more weights exactly to zero.
-
-### Duality
-
-Every constrained optimization problem (the primal) has a companion problem (the dual). For convex problems, the primal and dual have the same optimal value. This is strong duality.
-
-The Lagrangian dual function:
-
-```
-Primal: minimize f(x) subject to g(x) <= 0
-Lagrangian: L(x, lambda) = f(x) + lambda * g(x)
-Dual function: d(lambda) = min_x L(x, lambda)
-Dual problem: maximize d(lambda) subject to lambda >= 0
-```
-
-Why duality matters:
-- The dual problem is sometimes easier to solve than the primal
-- SVMs are solved in their dual form, where the problem depends on dot products between data points (enabling the kernel trick)
-- The dual provides a lower bound on the primal optimum, useful for checking solution quality
-
-For SVMs specifically:
-
-```
-Primal: find w, b that maximize the margin 2/||w|| subject to
-        y_i(w^T x_i + b) >= 1 for all i
-
-Dual:   maximize sum(alpha_i) - 0.5 * sum_ij(alpha_i * alpha_j * y_i * y_j * x_i^T x_j)
-        subject to alpha_i >= 0 and sum(alpha_i * y_i) = 0
-
-The dual only involves dot products x_i^T x_j.
-Replace x_i^T x_j with K(x_i, x_j) to get the kernel trick.
-```
-
-### Why deep learning works despite non-convexity
-
-Neural network loss functions are wildly non-convex. By every classical measure, optimizing them should fail. Yet stochastic gradient descent finds good solutions reliably. Several factors explain this.
-
-**Most local minima are good enough.** In high-dimensional spaces, random critical points (where the gradient is zero) are overwhelmingly saddle points, not local minima. The few local minima that exist tend to have loss values close to the global minimum. Getting trapped in a terrible local minimum is extremely unlikely when the parameter space has millions of dimensions.
-
-**Saddle points, not local minima, are the real obstacle.** In a function with n parameters, a saddle point has a mix of positive and negative curvature directions. For a random critical point in high dimensions, the probability of all n eigenvalues being positive (local minimum) is roughly 2^(-n). Almost all critical points are saddle points. SGD's noise helps escape them.
-
-**Overparameterization smooths the landscape.** Networks with more parameters than training examples have smoother, more connected loss surfaces. Wider networks have fewer bad local minima. This is counterintuitive but empirically consistent.
-
-**Loss landscape structure:**
-
-| Property | Low-dimensional space | High-dimensional space |
-|---|---|---|
-| **Landscape** | Many isolated peaks and valleys | Smoothly connected valleys |
-| **Minima** | Many isolated local minima | Few bad local minima; most are near-optimal |
-| **Navigation** | Hard to find global minimum | Many paths lead to good solutions |
-| **Critical points** | Mix of local minima and saddle points | Overwhelmingly saddle points, not local minima |
-
-**Stochastic noise acts as implicit regularization.** Mini-batch SGD adds noise that prevents settling into sharp minima. Sharp minima overfit; flat minima generalize. The noise biases optimization toward flat regions of the loss landscape.
-
-### Second-order methods in practice
-
-Pure Newton's method is impractical for large models. Several approximations make second-order information usable.
-
-**L-BFGS (Limited-memory BFGS):** Approximates the inverse Hessian using the last m gradient differences. Requires O(mn) memory instead of O(n^2). Works well for problems with up to ~10,000 parameters. Used in classical ML (logistic regression, CRFs) but not deep learning.
-
-**Natural gradient:** Uses the Fisher information matrix (expected Hessian of the log-likelihood) instead of the standard Hessian. This accounts for the geometry of probability distributions. K-FAC (Kronecker-Factored Approximate Curvature) approximates the Fisher matrix as a Kronecker product, making it practical for neural networks.
-
-**Hessian-free optimization:** Uses conjugate gradient to solve Hx = g without ever forming H. Only requires Hessian-vector products, which can be computed in O(n) time via automatic differentiation.
-
-**Diagonal approximations:** Adam's second moment is a diagonal approximation of the Hessian's diagonal. AdaHessian extends this by using actual Hessian diagonal elements via Hutchinson's estimator.
-
-| Method | Memory | Per-step cost | When to use |
-|--------|--------|--------------|-------------|
-| Gradient descent | O(n) | O(n) | Baseline, large models |
-| Newton's method | O(n^2) | O(n^3) | Small convex problems |
-| L-BFGS | O(mn) | O(mn) | Medium convex problems |
-| Adam | O(n) | O(n) | Deep learning default |
-| K-FAC | O(n) | O(n) per layer | Research, large-batch training |
-
-
-## Use It
-
-Convexity analysis applies directly when choosing ML models and solvers.
-
-For convex problems (logistic regression, SVMs, LASSO):
-- Use dedicated solvers (liblinear, CVXPY, scipy.optimize.minimize with method='L-BFGS-B')
-- Expect a unique global solution
-- Second-order methods are practical and fast
-
-For non-convex problems (neural networks):
-- Use first-order methods (SGD, Adam)
-- Accept that the solution depends on initialization and randomness
-- Use overparameterization, noise, and learning rate schedules as implicit regularization
-- Do not waste time searching for the global minimum. A good local minimum is sufficient.
-
-```python fillin
-import numpy as np
-from scipy.optimize import minimize
-
-# Ridge regression is convex: L-BFGS reaches the same optimum no matter
-# where it starts. Two wildly different starting points should agree.
-rng = np.random.default_rng(0)
-X = rng.normal(size=(20, 3))
-true_w = np.array([2.0, -1.0, 0.5])
-y = X @ true_w
-d = X.shape[1]
-lam = 0.1
-
-def loss(w):
-    return np.sum((y - X @ w) ** 2) + lam * np.sum(w ** 2)
-
-def grad(w):
-    return {{blank:-2 * X.T @ (y - X @ w) + 2 * lam * w}}
-
-result_a = minimize(fun=loss, x0=np.zeros(d), method='L-BFGS-B', jac=grad)
-result_b = minimize(fun=loss, x0={{blank:np.full(d, 100.0)}}, method='L-BFGS-B', jac=grad)
-
-if np.allclose(result_a.x, result_b.x, atol=1e-3):
-    print("PASS")
-else:
-    print("WRONG:", result_a.x, result_b.x)
-```
-
-For SVMs, the dual formulation lets you use the kernel trick:
-
-```python
-from sklearn.svm import SVC
-
-svm = SVC(kernel='rbf', C=1.0)
-svm.fit(X_train, y_train)
-print(f"Support vectors: {svm.n_support_}")
-```
-
-
-## Key Terms
-
-| Term | What it means |
-|------|---------------|
-| Convex set | A set where the line segment between any two points in the set stays inside the set |
-| Convex function | A function where the line between any two points on its graph lies above or on the graph. Equivalently, Hessian is positive semidefinite everywhere |
-| Local minimum | A point lower than all nearby points. For convex functions, every local minimum is the global minimum |
-| Global minimum | The lowest point of a function over its entire domain |
-| Hessian matrix | The matrix of all second partial derivatives. Encodes curvature information |
-| Positive semidefinite | A matrix whose eigenvalues are all non-negative. The multidimensional analogue of "second derivative >= 0" |
-| Condition number | Ratio of largest to smallest eigenvalue of the Hessian. High condition number means elongated valleys and slow gradient descent |
-| Newton's method | Second-order optimizer that uses the inverse Hessian to determine step direction and size. Quadratic convergence near the minimum |
-| Lagrange multiplier | A variable introduced to convert a constrained optimization problem into an unconstrained one |
-| KKT conditions | Necessary conditions for optimality with inequality constraints. Generalize Lagrange multipliers |
-| Complementary slackness | At the solution, either a constraint is active or its multiplier is zero. Never both nonzero |
-| Duality | Every constrained problem has a companion dual problem. For convex problems, both have the same optimal value |
-| Strong duality | Primal and dual optimal values are equal. Holds for convex problems satisfying Slater's condition |
-| L-BFGS | Approximate second-order method that stores the last m gradient differences instead of the full Hessian |
-| Saddle point | A point where the gradient is zero but it is a minimum in some directions and a maximum in others |
-| Overparameterization | Using more parameters than training examples. Smooths the loss landscape and reduces bad local minima |
+- Apply the convexity inequality to sampled one- and two-dimensional functions.
+- Read eigenvalues of a two-by-two Hessian as local curvature evidence.
+- Compare gradient descent and Newton updates on the same quadratic objective.
+- Solve a simple equality-constrained problem with the local Lagrange loop.
+- Explain why convexity removes spurious local minima without promising fast convergence.
 
 ## Build It
 
-Reconstruct **Convex Optimization** by following `check_convexity` on a graph with edges (0,1) and (1,2). Run `python3 main.py` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.
+The standard-library implementation is in `code/convex.py`. Run the deterministic demonstration with:
+
+```bash
+cd phases/01-math-foundations/18-convex-optimization/code
+python3 main.py
+```
+
+`check_convexity(f, dim, bounds, samples)` samples `x`, `y`, and `t`, then counts violations of `f(tx+(1-t)y) <= t f(x)+(1-t) f(y)`. It is a numerical probe, not a proof. The seeded run classifies `x^2`, `|x|`, `exp(x)`, a two-dimensional bowl, and ReLU as convex fixtures, while `sin(x)`, `x^3`, `-x^2`, and saddle-shaped functions produce violations.
+
+For the Hessian fixture `[[10, 0], [0, 2]]`, `hessian_eigenvalues_2d` returns eigenvalues `10` and `2`, so `is_positive_semidefinite_2d` is true. The saddle Hessian `[[2, 0], [0, -2]]` has mixed signs and is not positive semidefinite.
+
+## Use It
+
+`optimize_gd` stores every accepted point in its history. On `f(x,y)=x^2+3y^2`, pass gradient `[2x,6y]` and a small learning rate; the history should approach `[0,0]`. `newtons_method` uses `H^{-1}g` and reaches the minimizer of a well-conditioned quadratic in far fewer steps, but only the two-by-two inverse path is implemented.
+
+`lagrange_solve` updates both `x` and the multiplier. For `f=x^2+y^2` and equality `x+y-1=0`, use `f_grad=[2x,2y]`, `g_grad=[1,1]`, and start at `[0,0]`; the final point should be near `[0.5,0.5]`. The local function is a teaching loop, not a general KKT solver: its step sizes and iteration count are explicit inputs.
+
+Convexity means every local minimum is global on a convex domain, but it does not imply uniqueness, good conditioning, or that a finite-step implementation has converged. Non-convex neural-network losses can still be useful even though the guarantee does not apply.
 
 ## Ship It
 
-Hand off `outputs/skill-convexity-checker.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [Boyd & Vandenberghe: Convex Optimization](https://web.stanford.edu/~boyd/cvxbook/) - the standard textbook, freely available online
-- [Bottou, Curtis, Nocedal: Optimization Methods for Large-Scale Machine Learning (2018)](https://arxiv.org/abs/1606.04838) - bridges convex optimization theory and deep learning practice
-- [Choromanska et al.: The Loss Surfaces of Multilayer Networks (2015)](https://arxiv.org/abs/1412.0233) - why non-convex neural network landscapes are not as bad as they seem
-- [Nocedal & Wright: Numerical Optimization](https://link.springer.com/book/10.1007/978-0-387-40065-5) - comprehensive reference for Newton's method, L-BFGS, and constrained optimization
+The reusable artifact is [the convexity checker](../../18-convex-optimization/outputs/skill-convexity-checker.md). A useful handoff records the function, domain/bounds, Hessian evidence or sampled violation count, optimizer, step size, stopping criterion, and final constraint residual.
 
 ## Exercises
 
-This lab follows `check_convexity` and `hessian_eigenvalues_2d` on a controlled fixture; write down the value before changing the input.
-
-1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using a graph with edges (0,1) and (1,2). Follow `check_convexity`, `hessian_eigenvalues_2d`, `is_positive_semidefinite_2d`. Expect degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly; capture the first printed shape, metric, status, or summary field and state which part supports **Test whether a function is convex using the definition, second derivative, and Hessian criteria**.
-2. **Change the controlled parameter.** Repeat the command after changing only the edge list: use the same graph with an isolated node 3. Predict the direction of the change, then compare the two output values. Explain why **Implement Newton's method and compare its quadratic convergence against gradient descent** says the other inputs should stay fixed.
-3. **Exercise the guard.** Feed the implementation a graph with no edges. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Solve constrained optimization problems using Lagrange multipliers and interpret KKT conditions** and record the exception text if the code rejects the case.
-4. **Prepare the artifact for reuse.** Open `outputs/skill-convexity-checker.md` and add a worked example using a graph with edges (0,1) and (1,2). Include the input contract, one expected output field, and a named acceptance check for **Explain why neural network loss landscapes are non-convex yet SGD still finds good solutions**; note what the demo cannot establish.
+1. Run `check_convexity(lambda x: x[0]**2, 1, samples=500)` and then the same call for `sin(x[0])`; record violations rather than treating a pass as a formal proof.
+2. Evaluate the eigenvalues and PSD result for `[[10,0],[0,2]]` and `[[2,0],[0,-2]]`.
+3. Compare the lengths and final points from `optimize_gd` and `newtons_method` on `x^2+3y^2`.
+4. Use `lagrange_solve` for `x+y=1` and report the final constraint value `g_val(x)` alongside the point.
 
 ## Reference Solution
 
-A checkable result for **Convex Optimization** should contain:
+The bowl has no sampled convexity violations; the sine fixture does. The positive Hessian has eigenvalues `10` and `2`, whereas the saddle has one negative eigenvalue. Newton's history is shorter on the quadratic because the Hessian supplies curvature. The Lagrange run should end close to equal coordinates with a small `x+y-1` residual; changing `lr` or `lr_lambda` changes the numerical path, so record them.
 
-- the `python3 main.py` output for a graph with edges (0,1) and (1,2), with `check_convexity`, `hessian_eigenvalues_2d`, `is_positive_semidefinite_2d` traced to the value or shape that supports **Test whether a function is convex using the definition, second derivative, and Hessian criteria**;
-- a before/after comparison for the edge list, where the same graph with an isolated node 3 changes the observation in the direction predicted by **Implement Newton's method and compare its quadratic convergence against gradient descent**;
-- a recorded result for a graph with no edges that matches the implementation’s validation or empty-result contract and explains the evidence for **Solve constrained optimization problems using Lagrange multipliers and interpret KKT conditions**; and
-- an updated `outputs/skill-convexity-checker.md` example with a concrete input, expected output field, and acceptance check tied to **Explain why neural network loss landscapes are non-convex yet SGD still finds good solutions**.
+## Tests
 
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+```bash
+python3 -m unittest discover tests -v
+```
+
+Tests cover the convexity inequality on known functions, Hessian eigenvalues/PSD decisions, gradient and Newton convergence, the equality constraint, singular Hessian handling, and the canonical output path.

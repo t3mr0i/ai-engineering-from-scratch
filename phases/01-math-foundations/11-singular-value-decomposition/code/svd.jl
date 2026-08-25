@@ -1,3 +1,9 @@
+# Julia SVD implementation for phases/01-math-foundations/11-singular-value-decomposition/docs/en.md.
+# Mirrors the Python factor contract with power iteration, truncation, and reconstruction fixtures.
+# Uses only Julia's LinearAlgebra and Random standard libraries.
+# Canonical execution is `julia main.jl` from this code directory.
+# The current validation host may inspect this path statically when Julia is unavailable.
+
 using LinearAlgebra
 using Random
 

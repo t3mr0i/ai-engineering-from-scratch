@@ -1,4 +1,12 @@
+# Julia implementation for phases/01-math-foundations/01-linear-algebra-intuition/docs/en.md.
+# Demonstrates vector arithmetic, normalization, rotation, and a dense-layer shape.
+# Uses only Julia's LinearAlgebra and Random standard libraries; the seed fixes the layer fixture.
+# The file is included by the canonical main.jl entry point.
+# Run from this directory with: julia main.jl
+
 using LinearAlgebra
+using Random
+Random.seed!(42)
 
 println("=== Vectors ===")
 a = [1.0, 2.0, 3.0]

@@ -1,3 +1,9 @@
+# Complex arithmetic for phases/01-math-foundations/19-complex-numbers/docs/en.md.
+# Implements rectangular/polar operations, roots of unity, and a from-scratch DFT.
+# The demo uses only the Python standard library and deterministic local signals.
+# Canonical execution is `python3 main.py` from this code directory.
+# Tests cover arithmetic identities, rotations, and Fourier round trips.
+
 import math
 import os
 
@@ -401,7 +407,8 @@ def demo_positional_encoding():
 
 def write_skill_output():
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    output_path = os.path.join(script_dir, "outputs", "skill-complex-arithmetic.md")
+    lesson_dir = os.path.dirname(script_dir)
+    output_path = os.path.join(lesson_dir, "outputs", "skill-complex-arithmetic.md")
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     try:
         with open(output_path, "w") as f:

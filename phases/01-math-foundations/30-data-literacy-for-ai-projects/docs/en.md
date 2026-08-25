@@ -1,111 +1,115 @@
 # Data Literacy for AI Projects
 
-> AI projects fail early when nobody can say which data is allowed, fresh, representative, and good enough for the decision.
+> Make ownership, freshness, quality, privacy, and evaluation evidence visible before choosing a model.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 11 Lesson 05 (Context Engineering), Phase 11 Lesson 10 (Evaluation & Testing)
-**Time:** ~45 minutes
-**Capability:** Foundation - Data Literacy
+**Prerequisites:** Phase 0, Lessons 01–02 (environment setup and collaboration)
+**Time:** ~55 minutes
 
 ## Learning Objectives
 
-- Identify the data signals that decide whether an AI workflow is feasible
-- Build a small Python data-readiness triage artifact
-- Map data quality, privacy, freshness, ownership, and evaluation into one worksheet
-- Use data-readiness controls before a pilot starts
-- Explain when a use case needs awareness, cleanup, a guided pilot, or a launch gate
-
-## The Problem
-
-A team wants an assistant for customer or employee questions. The prompt looks simple, but the data is spread across SharePoint folders, old exports, local spreadsheets, and undocumented process notes. Some content is stale, some is sensitive, and nobody owns the final answer quality.
-
-The lesson teaches participants to ask the data questions before discussing model choice. Good AI use cases start with the evidence base, not with a demo.
-
-## The Concept
-
-Data literacy for AI is the ability to reason about sources, quality, representativeness, permissions, and evaluation. The point is not to turn every learner into a data engineer. The point is to make every learner able to spot when the data story is too weak for reliable AI.
-
-```mermaid
-flowchart LR
-    B[Business question] --> S[Source inventory]
-    S --> Q[Quality and freshness]
-    Q --> P[Privacy and ownership]
-    P --> E[Evaluation sample]
-    E --> D[Decision]
-```
-
-### Signals to Look For
-
-- unclear source owner
-- stale data
-- quality issue
-- sensitive field
-
-### Controls to Teach
-
-- source inventory
-- quality threshold
-- privacy classification
-- evaluation sample
-
-### Target Roles
-
-- Business & Strategy Consulting
-- Products & Value Streams
-- Corporate Functions
-- Leadership
-
-
-## Use It
-
-Use the artifact in discovery, requirements work, and pilot reviews. It creates a shared vocabulary for data quality without requiring a full data-platform deep dive.
-
-### Workshop Flow
-
-1. Start with one real workflow and list the sources it would use.
-2. Mark source owners, freshness, sensitivity, and known quality issues.
-3. Score the scenario with the Python artifact.
-4. Decide whether the next step is cleanup, a pilot, or a governance gate.
-5. Save the worksheet with the project brief.
-
-## Reusable Artifact
-
-Data-readiness triage worksheet.
-
-The template in `outputs/worksheet-data-readiness-triage.md` can be copied into a discovery note, product brief, or AI initiative intake.
-
-## Key Takeaways
-
-- Data literacy is an operating skill for every AI project role.
-- Model choice cannot compensate for stale, uncontrolled, or unowned sources.
-- Evaluation samples should be planned before a pilot starts.
-- Data controls should be lightweight enough that teams actually use them.
+- Represent a data-readiness case with source ownership, freshness, quality, and field metadata.
+- Match complete normalized phrases without treating `source`, `quality`, or `field` alone as a finding.
+- Derive readiness signals from structured evidence such as refresh age and measured quality rate.
+- Map each finding to its own category, control set, and evidence request.
+- Produce a sorted triage handoff without presenting it as a data-quality certificate.
 
 ## Build It
 
-Reconstruct **Data Literacy for AI Projects** by following `Scenario` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
+Run the offline standard-library worksheet:
+
+```bash
+cd phases/01-math-foundations/30-data-literacy-for-ai-projects/code
+python3 main.py
+```
+
+`Scenario` accepts the four canonical phrases `unclear source owner`, `stale data`,
+`quality issue`, and `sensitive field`. Known aliases include `missing source owner`,
+`outdated data`, `data quality issue`, and `PII field`; an unknown explicit phrase such as
+`source` raises `ValueError`. Narrative matching uses complete normalized phrases, so the
+single word `quality` is not a finding by itself.
+
+The structured fields make this lesson different from a text-only checklist:
+
+- `source_owner=None` or `"unknown"` derives `unclear source owner`.
+- `freshness_days > 30` derives `stale data`.
+- `quality_rate < 0.95` derives `quality issue`.
+- A non-empty `sensitive_fields` tuple derives `sensitive field`.
+
+`impact` and `uncertainty` are integers from 0 through 5. The score is
+`min(20, impact*2 + uncertainty + 2*number_of_signals)`. It prioritizes follow-up; it does
+not certify the source or approve a model.
+
+## Use It
+
+The worksheet maps findings to the data operation they affect:
+
+| Signal | Category | Controls | Evidence to request |
+|---|---|---|---|
+| `unclear source owner` | ownership | source inventory, named data steward | owner name and escalation route |
+| `stale data` | freshness | freshness SLA, refresh timestamp | last refresh timestamp, freshness target |
+| `quality issue` | quality | quality threshold, evaluation sample | missingness or validity measurement |
+| `sensitive field` | privacy | privacy classification, field minimization | field inventory and access purpose |
+
+`categories_for_signals`, `controls_for_signals`, and `evidence_for_signals` preserve this fixed
+domain order and take the union of every matched signal. A healthy, named, recent source with a
+quality rate of at least 0.95 receives `unclassified` and the baseline `intended-use record`
+control; it is not silently treated as production-ready.
+
+Try a source-evidence fixture:
+
+```python
+from main import Scenario, recommend
+
+scenario = Scenario(
+    "customer table",
+    "The extract is being assessed before a pilot.",
+    (),
+    impact=4,
+    uncertainty=4,
+    source_owner=None,
+    freshness_days=91,
+    quality_rate=0.80,
+    sensitive_fields=("email",),
+)
+recommendation = recommend(scenario)
+assert recommendation.categories == ("ownership", "freshness", "quality", "privacy")
+assert "freshness SLA" in recommendation.controls
+assert "field inventory and access purpose" in recommendation.evidence
+```
 
 ## Ship It
 
-Hand off `outputs/worksheet-data-readiness-triage.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
+The handoff artifact is [the data-readiness worksheet](../../30-data-literacy-for-ai-projects/outputs/worksheet-data-readiness-triage.md).
+Attach the source inventory, owner, refresh timestamp, quality measurement, field classification,
+controls, evidence gaps, and review date to the project brief. The output supports a model-choice
+conversation; it cannot substitute for a representative evaluation.
 
 ## Exercises
 
-This lab follows `Scenario` and `Recommendation` on a controlled fixture; write down the value before changing the input.
-
-1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using the demo’s smallest built-in fixture. Follow `Scenario`, `Recommendation`, `normalize`. Expect the result reports the empty case explicitly or raises the documented validation error; capture the first printed shape, metric, status, or summary field and state which part supports **Identify the data signals that decide whether an AI workflow is feasible**.
-2. **Change the controlled parameter.** Repeat the command after changing only the primary fixture value: use the same fixture with its primary value changed from 1 to 2. Predict the direction of the change, then compare the two output values. Explain why **Build a small Python data-readiness triage artifact** says the other inputs should stay fixed.
-3. **Exercise the guard.** Feed the implementation an empty fixture {}. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Map data quality, privacy, freshness, ownership, and evaluation into one worksheet** and record the exception text if the code rejects the case.
-4. **Prepare the artifact for reuse.** Open `outputs/worksheet-data-readiness-triage.md` and add a worked example using the demo’s smallest built-in fixture. Include the input contract, one expected output field, and a named acceptance check for **Use data-readiness controls before a pilot starts**; note what the demo cannot establish.
+1. Compare a description containing `quality` with one containing `quality issue`; only the latter
+   should match when structured evidence is healthy.
+2. Construct a scenario with `source_owner=None`, `freshness_days=45`, and `quality_rate=0.90`;
+   verify the owner, freshness, and quality signals are all derived.
+3. Add `sensitive_fields=("employee_id",)` and verify the privacy category and field-minimization
+   control join the existing union.
+4. Try `quality_rate=1.1`, `freshness_days=-1`, and `impact=6`; verify each input is rejected.
 
 ## Reference Solution
 
-A checkable result for **Data Literacy for AI Projects** should contain:
+The source-evidence fixture has four findings: an unknown owner, a 91-day refresh age, a quality
+rate below 0.95, and one sensitive field. Its score is capped at 20, and its categories are
+ownership, freshness, quality, and privacy. The resulting controls contain source inventory,
+freshness SLA, quality threshold, evaluation sample, privacy classification, and field
+minimization. A description containing only `source` or `quality` contributes no phrase match.
 
-- the `python3 main.py` output for the demo’s smallest built-in fixture, with `Scenario`, `Recommendation`, `normalize` traced to the value or shape that supports **Identify the data signals that decide whether an AI workflow is feasible**;
-- a before/after comparison for the primary fixture value, where the same fixture with its primary value changed from 1 to 2 changes the observation in the direction predicted by **Build a small Python data-readiness triage artifact**;
-- a recorded result for an empty fixture {} that matches the implementation’s validation or empty-result contract and explains the evidence for **Map data quality, privacy, freshness, ownership, and evaluation into one worksheet**; and
-- an updated `outputs/worksheet-data-readiness-triage.md` example with a concrete input, expected output field, and acceptance check tied to **Use data-readiness controls before a pilot starts**.
+## Tests
 
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+```bash
+python3 -m unittest discover tests -v
+```
+
+The tests cover generic-word rejection, alias phrases, structured evidence derivation, each
+domain mapping, multi-signal control unions, unknown signals, metadata and score bounds, the
+healthy baseline, and deterministic JSON handoff ordering.

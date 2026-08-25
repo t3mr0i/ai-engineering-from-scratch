@@ -1,3 +1,9 @@
+# Singular-value decomposition primitives for phases/01-math-foundations/11-singular-value-decomposition/docs/en.md.
+# Demonstrates power iteration, reconstruction, compression, pseudoinverses, and PCA's SVD link.
+# NumPy is the only dependency; all comparisons and fixtures run locally without downloads.
+# Canonical execution is `python3 main.py` from this code directory.
+# The implementation keeps the raw SVD steps importable for focused tests.
+
 import numpy as np
 
 
@@ -574,15 +580,6 @@ def demo_pca_is_svd():
     cumulative = np.cumsum(explained)
     print(f"\n  Explained variance ratio: {np.round(explained, 4)}")
     print(f"  Cumulative:               {np.round(cumulative, 4)}")
-
-    try:
-        from sklearn.decomposition import PCA
-        pca = PCA(n_components=n_features)
-        pca.fit(X)
-        print(f"\n  sklearn PCA variance ratio: {np.round(pca.explained_variance_ratio_, 4)}")
-        print(f"  Match with our SVD: {np.allclose(explained, pca.explained_variance_ratio_, atol=1e-6)}")
-    except ImportError:
-        pass
 
     print()
 

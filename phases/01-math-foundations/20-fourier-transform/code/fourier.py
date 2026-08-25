@@ -1,3 +1,9 @@
+# Fourier primitives for phases/01-math-foundations/20-fourier-transform/docs/en.md.
+# Implements complex DFT/IDFT, radix-2 FFT, windows, spectra, and convolution.
+# The demo uses only the Python standard library and local deterministic signals.
+# Canonical execution is `python3 main.py` from this code directory.
+# Tests compare transforms, convolution, and positional-encoding fixtures.
+
 import math
 
 

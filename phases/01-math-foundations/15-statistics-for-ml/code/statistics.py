@@ -1,3 +1,9 @@
+# Statistical estimators for phases/01-math-foundations/15-statistics-for-ml/docs/en.md.
+# Implements descriptive summaries, correlations, t/chi-square tests, bootstrap intervals, and A/B fixtures.
+# Uses only Python's standard library; p-values are intentionally transparent numerical approximations.
+# Canonical execution is `python3 main.py` from this code directory.
+# Tests use small seeded samples and avoid external statistics packages.
+
 import math
 import random
 

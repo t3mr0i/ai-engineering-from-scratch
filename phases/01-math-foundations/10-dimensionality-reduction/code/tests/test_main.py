@@ -1,64 +1,79 @@
-# Contract and executable-behavior tests for this lesson demo.
+# Numerical contract tests for phases/01-math-foundations/10-dimensionality-reduction/docs/en.md.
+# The tests use the local NumPy implementation and deterministic synthetic fixtures.
+# No dataset download, plotting library, sklearn, or UMAP installation is needed.
+# Run from the lesson code directory with: python3 -m unittest discover tests -v.
+# The canonical demo is tested separately from these focused numerical assertions.
+
 from __future__ import annotations
 
-import ast
-import functools
-import importlib.util
-import os
 from pathlib import Path
-import subprocess
 import sys
 import unittest
 
+import numpy as np
+
 CODE = Path(__file__).resolve().parents[1]
-MAIN = CODE / "main.py"
-ALLOWED = set(sys.stdlib_module_names) | {"numpy", "torch", "h5py", "zstandard", "safetensors"}
+sys.path.insert(0, str(CODE))
 
-def source_trees() -> list[ast.AST]:
-    return [ast.parse(path.read_text(encoding="utf-8")) for path in CODE.glob("*.py")]
+from dim_reduction import (  # noqa: E402
+    PCA,
+    kernel_pca,
+    make_concentric_circles,
+    make_synthetic_data,
+    reconstruction_error,
+)
 
-def external_roots() -> set[str]:
-    roots: set[str] = set()
-    for tree in source_trees():
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                roots.update(alias.name.split(".")[0] for alias in node.names)
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                roots.add(node.module.split(".")[0])
-    return {name for name in roots if not (CODE / f"{name}.py").exists() and not (CODE / name).is_dir()}
 
-@functools.lru_cache(maxsize=1)
-def run_demo() -> subprocess.CompletedProcess[str]:
-    missing = sorted(name for name in external_roots() if name in ALLOWED and importlib.util.find_spec(name) is None)
-    banned = sorted(external_roots() - ALLOWED)
-    if missing or banned:
-        raise unittest.SkipTest(f"demo dependencies unavailable or disallowed: {missing + banned}")
-    env = os.environ.copy()
-    for key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "HF_TOKEN", "HUGGINGFACE_TOKEN"):
-        env.pop(key, None)
-    return subprocess.run(
-        [sys.executable, MAIN.name], cwd=CODE, text=True, capture_output=True,
-        timeout=45, env=env, check=False,
-    )
+class DimensionalityReductionTests(unittest.TestCase):
+    def test_pca_centers_and_projects_to_requested_shape(self) -> None:
+        X = make_synthetic_data(n_samples=40)
+        pca = PCA(2)
+        reduced = pca.fit_transform(X)
+        self.assertEqual(reduced.shape, (40, 2))
+        self.assertTrue(np.allclose(reduced.mean(axis=0), 0.0, atol=1e-10))
 
-class LessonDemoTests(unittest.TestCase):
-    def test_source_compiles(self) -> None:
-        compile(MAIN.read_text(encoding="utf-8"), str(MAIN), "exec")
+    def test_pca_variance_ratios_are_ordered_and_bounded(self) -> None:
+        pca = PCA(3).fit(make_synthetic_data(n_samples=60))
+        ratios = pca.explained_variance_ratio_
+        self.assertTrue(np.all(ratios >= 0.0))
+        self.assertTrue(np.all(np.diff(ratios) <= 1e-12))
+        self.assertAlmostEqual(float(ratios.sum()), 1.0, places=8)
 
-    def test_demo_has_explicit_entrypoint(self) -> None:
-        source = MAIN.read_text(encoding="utf-8")
-        self.assertTrue("__main__" in source or "runpy.run_path" in source)
+    def test_pca_reconstruction_error_is_lower_with_more_components(self) -> None:
+        X = make_synthetic_data(n_samples=80)
+        one = PCA(1).fit_transform(X)
+        three_pca = PCA(3)
+        three = three_pca.fit_transform(X)
+        self.assertLessEqual(
+            reconstruction_error(X, three_pca.inverse_transform(three)),
+            reconstruction_error(X, PCA(1).fit(X).inverse_transform(one)),
+        )
 
-    def test_demo_exits_successfully(self) -> None:
-        self.assertEqual(run_demo().returncode, 0, run_demo().stderr)
+    def test_pca_rejects_unfitted_and_wrong_feature_shapes(self) -> None:
+        pca = PCA(2)
+        with self.assertRaises(RuntimeError):
+            pca.transform(np.zeros((2, 3)))
+        pca.fit(np.zeros((3, 3)))
+        with self.assertRaises(ValueError):
+            pca.transform(np.zeros((2, 2)))
 
-    def test_demo_emits_bounded_output(self) -> None:
-        result = run_demo()
-        self.assertTrue((result.stdout + result.stderr).strip())
-        self.assertLess(len(result.stdout) + len(result.stderr), 1_000_000)
+    def test_rbf_kernel_pca_is_centered_and_has_requested_shape(self) -> None:
+        X, _ = make_concentric_circles(n_per_ring=20)
+        projected = kernel_pca(X, n_components=2, gamma=0.5)
+        self.assertEqual(projected.shape, (40, 2))
+        self.assertTrue(np.allclose(projected.mean(axis=0), 0.0, atol=1e-10))
 
-    def test_demo_has_no_traceback(self) -> None:
-        self.assertNotIn("Traceback (most recent call last)", run_demo().stderr)
+    def test_kernel_pca_rejects_unknown_kernel_and_bad_gamma(self) -> None:
+        X, _ = make_concentric_circles(n_per_ring=5)
+        with self.assertRaises(ValueError):
+            kernel_pca(X, 2, kernel="made-up")
+        with self.assertRaises(ValueError):
+            kernel_pca(X, 2, gamma=0.0)
+
+    def test_reconstruction_error_checks_shapes(self) -> None:
+        with self.assertRaises(ValueError):
+            reconstruction_error(np.zeros((2, 2)), np.zeros((2, 1)))
+
 
 if __name__ == "__main__":
     unittest.main()

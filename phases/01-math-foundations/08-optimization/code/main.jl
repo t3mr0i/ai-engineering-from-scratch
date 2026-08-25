@@ -1,10 +1,8 @@
-# Optimization in Julia. GradientDescent, SGD+Momentum, and Adam
-# implemented as mutable structs with a common `step!` method.
-# Driven on the Rosenbrock and saddle-point functions to show
-# convergence, divergence, and saddle escape behavior.
-# Stdlib only. Sources:
-#   https://docs.julialang.org/en/v1/manual/types/#Composite-Types
-#   https://arxiv.org/abs/1412.6980  (Adam: Kingma & Ba)
+# Canonical Julia demo for phases/01-math-foundations/08-optimization/docs/en.md.
+# Implements GradientDescent, SGDMomentum, and Adam with a common stateful step! method.
+# Runs guarded Rosenbrock, learning-rate, momentum, and saddle-point fixtures.
+# Sources: Julia composite types documentation and Kingma & Ba's Adam paper.
+# Run from this directory with: julia main.jl
 
 using Printf
 
@@ -134,11 +132,10 @@ function print_trajectory(name::String, history, f; steps_to_show::Int=10)
 end
 
 
-function print_ascii_convergence(results, f; steps::Int=5000)
+function print_convergence_summary(results, f; steps::Int=5000)
     println("\n" * "=" ^ 60)
-    println("  CONVERGENCE COMPARISON (log10 loss over steps)")
+    println("  CONVERGENCE COMPARISON (sampled loss values)")
     println("=" ^ 60)
-    width = 50
     sample_points = 40
     interval = max(1, steps ÷ sample_points)
     for (name, history) in results
@@ -149,23 +146,10 @@ function print_ascii_convergence(results, f; steps::Int=5000)
             i += interval
         end
         isempty(losses) && continue
-        max_log = 5.0
-        min_log = -8.0
-        log_range = max_log - min_log
-        bars = Int[]
-        for loss in losses
-            ll = log10(loss + 1e-15)
-            ll = clamp(ll, min_log, max_log)
-            normalized = (ll - min_log) / log_range
-            push!(bars, Int(round(normalized * (width - 1))))
-        end
         println("\n  $name:")
-        println("  loss 1e-8 " * "."^width * " 1e+5")
-        for (idx, pos) in enumerate(bars)
+        for (idx, loss) in enumerate(losses)
             step_num = (idx - 1) * interval
-            line = fill(' ', width)
-            line[clamp(pos + 1, 1, width)] = '*'
-            println("  " * lpad(string(step_num), 5) * " |" * String(line) * "|")
+            @printf("  step %5d: loss=%.6e\n", step_num, loss)
         end
         final_loss = f(history[end])
         conv_step = find_convergence_step(history, f)
@@ -197,7 +181,7 @@ function demo_comparison()
         print_trajectory(name, history, rosenbrock)
     end
 
-    print_ascii_convergence(results, rosenbrock; steps=steps)
+    print_convergence_summary(results, rosenbrock; steps=steps)
 
     println("\n" * "=" ^ 60)
     println("  FINAL RESULTS")

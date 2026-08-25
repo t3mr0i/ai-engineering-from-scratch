@@ -1,3 +1,9 @@
+# Matrix transformations for phases/01-math-foundations/03-matrix-transformations/docs/en.md.
+# Builds rotations, scales, shears, reflections, eigenpairs, and compositions from scratch.
+# Inputs are small rectangular Python lists so every shape and determinant is inspectable.
+# The optional NumPy comparison is only a second implementation, never a required dependency.
+# Run from this directory with: python3 main.py
+
 import math
 
 
@@ -38,6 +44,8 @@ def reflection_y():
 
 
 def mat_vec_mul(matrix, vector):
+    if not matrix or any(len(row) != len(vector) for row in matrix):
+        raise ValueError("matrix columns must match vector length")
     return [
         sum(matrix[i][j] * vector[j] for j in range(len(vector)))
         for i in range(len(matrix))
@@ -45,8 +53,12 @@ def mat_vec_mul(matrix, vector):
 
 
 def mat_mul(a, b):
+    if not a or not b or any(len(row) != len(a[0]) for row in a) or any(len(row) != len(b[0]) for row in b):
+        raise ValueError("matrices must be non-empty and rectangular")
     rows_a, cols_b = len(a), len(b[0])
     cols_a = len(a[0])
+    if cols_a != len(b):
+        raise ValueError(f"matrix shapes do not align: ({rows_a}, {cols_a}) and ({len(b)}, {cols_b})")
     return [
         [sum(a[i][k] * b[k][j] for k in range(cols_a)) for j in range(cols_b)]
         for i in range(rows_a)

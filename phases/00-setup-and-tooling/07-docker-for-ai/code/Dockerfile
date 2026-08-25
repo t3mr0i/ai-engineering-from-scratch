@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN python3 -m pip install --no-cache-dir \
     numpy \
     safetensors \
-    torch==2.3.1 \
+    torch==2.4.1 \
     --index-url https://download.pytorch.org/whl/cu124
 
 WORKDIR /workspace

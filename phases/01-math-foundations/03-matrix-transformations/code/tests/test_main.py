@@ -12,6 +12,16 @@ import unittest
 
 CODE = Path(__file__).resolve().parents[1]
 MAIN = CODE / "main.py"
+sys.path.insert(0, str(CODE))
+from transformations import (  # noqa: E402
+    det_2x2,
+    eigenvalues_2x2,
+    mat_mul,
+    mat_vec_mul,
+    reflection_y,
+    rotation_2d,
+    scaling_2d,
+)
 ALLOWED = set(sys.stdlib_module_names) | {"numpy", "torch", "h5py", "zstandard", "safetensors"}
 
 def source_trees() -> list[ast.AST]:
@@ -59,6 +69,32 @@ class LessonDemoTests(unittest.TestCase):
 
     def test_demo_has_no_traceback(self) -> None:
         self.assertNotIn("Traceback (most recent call last)", run_demo().stderr)
+
+    def test_rotation_fixture(self) -> None:
+        result = mat_vec_mul(rotation_2d(3.141592653589793 / 2), [1.0, 0.0])
+        self.assertAlmostEqual(result[0], 0.0, places=7)
+        self.assertAlmostEqual(result[1], 1.0, places=7)
+
+    def test_scaling_and_reflection(self) -> None:
+        self.assertEqual(mat_vec_mul(scaling_2d(2, 3), [1.0, 1.0]), [2.0, 3.0])
+        self.assertEqual(mat_vec_mul(reflection_y(), [2.0, 1.0]), [-2.0, 1.0])
+
+    def test_composition_order(self) -> None:
+        r = rotation_2d(3.141592653589793 / 2)
+        s = scaling_2d(2, 0.5)
+        self.assertEqual([round(v, 7) for v in mat_vec_mul(mat_mul(s, r), [1.0, 0.0])], [0.0, 0.5])
+        self.assertEqual([round(v, 7) for v in mat_vec_mul(mat_mul(r, s), [1.0, 0.0])], [0.0, 2.0])
+
+    def test_determinant_and_eigenvalues(self) -> None:
+        self.assertEqual(det_2x2([[1, 0], [0, -1]]), -1)
+        values = eigenvalues_2x2([[2, 1], [1, 2]])
+        self.assertEqual(sorted(values), [1.0, 3.0])
+
+    def test_shape_errors_are_explicit(self) -> None:
+        with self.assertRaises(ValueError):
+            mat_vec_mul([[1, 0], [0, 1]], [1, 2, 3])
+        with self.assertRaises(ValueError):
+            mat_mul([[1, 2]], [[1, 2]])
 
 if __name__ == "__main__":
     unittest.main()

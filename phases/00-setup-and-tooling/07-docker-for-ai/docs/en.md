@@ -17,7 +17,7 @@
 
 ## What this lesson audits
 
-The Python entrypoint does not call Docker. `inspect_container_config()` reads the supplied `Dockerfile` and `docker-compose.yml` with `Path` and regular expressions, then returns a small JSON summary. This keeps the lesson runnable on a machine without Docker while making the configuration contract concrete. The files use only allowlisted Python packages (`numpy`, `safetensors`, and optional `torch`) if an image is actually built.
+The Python entrypoint does not call Docker. `inspect_container_config()` reads the supplied `Dockerfile` and `docker-compose.yml` with `Path` and regular expressions, then returns a small JSON summary. This keeps the lesson runnable on a machine without Docker while making the configuration contract concrete. The files use only allowlisted Python packages (`numpy`, `safetensors`, and `torch==2.4.1`) if an image is actually built; the PyTorch previous-version instructions list that release with the CUDA 12.4 wheel index.
 
 ```mermaid
 flowchart LR
@@ -54,7 +54,7 @@ The expected summary for the checked-in files is:
 
 ## Use It
 
-Read the two configuration files alongside the JSON. The image installs Python 3 plus the allowlisted NumPy, safetensors, and PyTorch packages; it sets `/workspace` and `/models` as container volumes. Compose additionally mounts the repository at `/workspace`, a named `model_cache` at `/models`, and `~/datasets` at `/data`. The command is a self-terminating Python readiness print, not an inference service.
+Read the two configuration files alongside the JSON. The image installs Python 3 plus NumPy, safetensors, and `torch==2.4.1` from the CUDA 12.4 wheel index; it sets `/workspace` and `/models` as container volumes. Compose additionally mounts the repository at `/workspace`, a named `model_cache` at `/models`, and `~/datasets` at `/data`. The command is a self-terminating Python readiness print, not an inference service. Verify version/index pairings against the [official PyTorch previous-version instructions](https://docs.pytorch.org/get-started/previous-versions/) when changing them.
 
 If Docker is already installed, `docker compose -f code/docker-compose.yml config` is a useful syntax check. A real `docker build` downloads a large CUDA image and packages, so record that as a separate runtime experiment rather than hiding it inside the Python audit.
 

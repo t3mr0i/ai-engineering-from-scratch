@@ -1,17 +1,34 @@
+"""Linear SVM and kernel primitives implemented with the Python standard library."""
+
+# Lesson: phases/02-ml-fundamentals/05-support-vector-machines/docs/en.md
+# The primal optimizer uses hinge loss and an explicit lambda regularizer.
+# Kernel helpers expose linear, polynomial, and RBF similarities for inspection.
+# The demo is deterministic after each generator or split receives its seed.
+
 import math
 import random
 
 
+def _pair(a, b):
+    left, right = list(a), list(b)
+    if not left or len(left) != len(right):
+        raise ValueError("vectors must be non-empty and have equal length")
+    return left, right
+
+
 def dot(a, b):
-    return sum(ai * bi for ai, bi in zip(a, b))
+    left, right = _pair(a, b)
+    return sum(ai * bi for ai, bi in zip(left, right))
 
 
 def vec_add(a, b):
-    return [ai + bi for ai, bi in zip(a, b)]
+    left, right = _pair(a, b)
+    return [ai + bi for ai, bi in zip(left, right)]
 
 
 def vec_sub(a, b):
-    return [ai - bi for ai, bi in zip(a, b)]
+    left, right = _pair(a, b)
+    return [ai - bi for ai, bi in zip(left, right)]
 
 
 def vec_scale(a, s):
@@ -19,7 +36,10 @@ def vec_scale(a, s):
 
 
 def vec_norm(a):
-    return math.sqrt(dot(a, a))
+    values = list(a)
+    if not values:
+        raise ValueError("vector must be non-empty")
+    return math.sqrt(sum(value * value for value in values))
 
 
 def linear_kernel(x, z):
@@ -27,15 +47,23 @@ def linear_kernel(x, z):
 
 
 def polynomial_kernel(x, z, degree=3, c=1.0):
+    if degree < 1:
+        raise ValueError("degree must be positive")
     return (dot(x, z) + c) ** degree
 
 
 def rbf_kernel(x, z, gamma=0.5):
+    if gamma <= 0:
+        raise ValueError("gamma must be positive")
     diff = vec_sub(x, z)
     return math.exp(-gamma * dot(diff, diff))
 
 
 def hinge_loss(X, y, w, b):
+    if not X or len(X) != len(y):
+        raise ValueError("X and y must be non-empty and equal length")
+    if any(label not in (-1, 1) for label in y):
+        raise ValueError("SVM labels must be -1 or 1")
     n = len(X)
     total = 0.0
     for i in range(n):
@@ -45,6 +73,8 @@ def hinge_loss(X, y, w, b):
 
 
 def svm_objective(X, y, w, b, lambda_param):
+    if lambda_param < 0:
+        raise ValueError("lambda_param must be non-negative")
     reg = 0.5 * lambda_param * dot(w, w)
     loss = hinge_loss(X, y, w, b)
     return reg + loss
@@ -52,6 +82,8 @@ def svm_objective(X, y, w, b, lambda_param):
 
 class LinearSVM:
     def __init__(self, lr=0.001, lambda_param=0.01, n_epochs=1000):
+        if lr <= 0 or lambda_param < 0 or n_epochs < 1:
+            raise ValueError("lr, lambda_param, and n_epochs are invalid")
         self.lr = lr
         self.lambda_param = lambda_param
         self.n_epochs = n_epochs
@@ -60,6 +92,10 @@ class LinearSVM:
         self.loss_history = []
 
     def fit(self, X, y):
+        if not X or len(X) != len(y) or any(label not in (-1, 1) for label in y):
+            raise ValueError("X and y must be non-empty with -1/1 labels")
+        if any(len(row) != len(X[0]) for row in X):
+            raise ValueError("all feature rows must have equal width")
         n_features = len(X[0])
         n_samples = len(X)
         self.w = [0.0] * n_features
@@ -89,7 +125,11 @@ class LinearSVM:
                 loss = svm_objective(X, y, self.w, self.b, self.lambda_param)
                 self.loss_history.append((epoch, loss))
 
+        return self
+
     def predict(self, X):
+        if self.w is None:
+            raise RuntimeError("fit must be called before predict")
         return [1 if dot(self.w, x) + self.b >= 0 else -1 for x in X]
 
     def decision_function(self, X):
@@ -111,6 +151,8 @@ class LinearSVM:
 
 
 def accuracy(y_true, y_pred):
+    if not y_true or len(y_true) != len(y_pred):
+        raise ValueError("accuracy needs equal, non-empty vectors")
     correct = sum(1 for a, b in zip(y_true, y_pred) if a == b)
     return correct / len(y_true)
 

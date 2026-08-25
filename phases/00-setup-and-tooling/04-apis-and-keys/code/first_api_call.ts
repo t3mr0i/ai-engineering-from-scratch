@@ -1,6 +1,6 @@
 // TypeScript companion for phases/00-setup-and-tooling/04-apis-and-keys/docs/en.md.
 // Builds the same Messages-shaped request with a deterministic local fixture.
-// Network access requires LIVE=1 and ANTHROPIC_API_KEY; MOCK=1 always wins.
+// Network access requires LIVE=1, ANTHROPIC_API_KEY, and ANTHROPIC_MODEL; MOCK=1 always wins.
 // Uses Node's standard library and global fetch, with no SDK dependency.
 // Reference: https://docs.anthropic.com/en/api/messages.
 
@@ -65,8 +65,12 @@ const MOCK_RESPONSE: MessagesResponse = {
   usage: { input_tokens: 12, output_tokens: 28 },
 };
 
-async function callMessages(apiKey: string, request: MessagesRequest): Promise<MessagesResponse> {
-  if (process.env.MOCK === "1" || process.env.LIVE !== "1" || !apiKey) {
+async function callMessages(
+  apiKey: string,
+  request: MessagesRequest,
+  liveEnabled: boolean,
+): Promise<MessagesResponse> {
+  if (!liveEnabled || !apiKey || request.model === "lesson-fixture") {
     return MOCK_RESPONSE;
   }
 
@@ -90,23 +94,26 @@ async function callMessages(apiKey: string, request: MessagesRequest): Promise<M
 async function main(): Promise<number> {
   const env = mergeEnv();
   const apiKey = env.ANTHROPIC_API_KEY ?? "";
-  const usingMock = process.env.MOCK === "1" || process.env.LIVE !== "1" || !apiKey;
+  const liveEnabled = env.LIVE === "1";
+  const liveModel = env.ANTHROPIC_MODEL?.trim() ?? "";
+  const usingMock =
+    env.MOCK === "1" || !liveEnabled || !apiKey || !liveModel || liveModel === "lesson-fixture";
 
   process.stdout.write("=== API Calls ===\n\n");
   process.stdout.write(
     usingMock
-      ? "Mode: MOCK (no network). Set LIVE=1 and export ANTHROPIC_API_KEY for a live call.\n\n"
+      ? "Mode: MOCK (no network). Set LIVE=1, ANTHROPIC_API_KEY, and ANTHROPIC_MODEL for a live call.\n\n"
       : "Mode: LIVE.\n\n",
   );
 
   const request: MessagesRequest = {
-    model: "lesson-fixture",
+    model: usingMock ? "lesson-fixture" : liveModel,
     max_tokens: 256,
     messages: [{ role: "user", content: "What is a neural network in one sentence?" }],
   };
 
   try {
-    const response = await callMessages(apiKey, request);
+    const response = await callMessages(apiKey, request, !usingMock);
     const text = response.content[0]?.text ?? "";
     process.stdout.write(`response: ${text}\n`);
     process.stdout.write(

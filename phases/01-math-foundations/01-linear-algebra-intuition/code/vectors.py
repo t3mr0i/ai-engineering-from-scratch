@@ -1,18 +1,28 @@
+# Linear algebra primitives for phases/01-math-foundations/01-linear-algebra-intuition/docs/en.md.
+# Implements vectors, projections, Gram-Schmidt, and small matrix products from scratch.
+# The demo connects these operations to a deterministic dense-layer shape calculation.
+# It intentionally uses Python's standard library instead of NumPy.
+# Run from this directory with: python3 main.py
+
+
 class Vector:
     def __init__(self, components):
         self.components = list(components)
         self.dim = len(self.components)
 
     def __add__(self, other):
+        self._require_same_dimension(other)
         return Vector([a + b for a, b in zip(self.components, other.components)])
 
     def __sub__(self, other):
+        self._require_same_dimension(other)
         return Vector([a - b for a, b in zip(self.components, other.components)])
 
     def __mul__(self, scalar):
         return Vector([x * scalar for x in self.components])
 
     def dot(self, other):
+        self._require_same_dimension(other)
         return sum(a * b for a, b in zip(self.components, other.components))
 
     def magnitude(self):
@@ -20,9 +30,14 @@ class Vector:
 
     def normalize(self):
         mag = self.magnitude()
+        if mag == 0:
+            raise ValueError("cannot normalize the zero vector")
         return Vector([x / mag for x in self.components])
 
     def cosine_similarity(self, other):
+        self._require_same_dimension(other)
+        if self.magnitude() == 0 or other.magnitude() == 0:
+            raise ValueError("cosine similarity needs two non-zero vectors")
         return self.dot(other) / (self.magnitude() * other.magnitude())
 
     def angle_between(self, other):
@@ -32,8 +47,15 @@ class Vector:
         return math.degrees(math.acos(cos_theta))
 
     def project_onto(self, other):
+        self._require_same_dimension(other)
+        if other.dot(other) == 0:
+            raise ValueError("cannot project onto the zero vector")
         scalar = self.dot(other) / other.dot(other)
         return Vector([scalar * x for x in other.components])
+
+    def _require_same_dimension(self, other):
+        if not isinstance(other, Vector) or self.dim != other.dim:
+            raise ValueError(f"vector dimensions must match: {self.dim} and {getattr(other, 'dim', '?')}")
 
     def __repr__(self):
         return f"Vector({self.components})"
@@ -81,14 +103,22 @@ def gram_schmidt(vectors):
 class Matrix:
     def __init__(self, rows):
         self.rows = [list(row) for row in rows]
+        if not self.rows or not self.rows[0]:
+            raise ValueError("matrix must have at least one non-empty row")
+        if any(len(row) != len(self.rows[0]) for row in self.rows):
+            raise ValueError("matrix rows must have equal length")
         self.shape = (len(self.rows), len(self.rows[0]))
 
     def __matmul__(self, other):
         if isinstance(other, Vector):
+            if self.shape[1] != other.dim:
+                raise ValueError(f"matrix/vector shapes do not align: {self.shape} and ({other.dim},)")
             return Vector([
                 sum(self.rows[i][j] * other.components[j] for j in range(self.shape[1]))
                 for i in range(self.shape[0])
             ])
+        if not isinstance(other, Matrix) or self.shape[1] != other.shape[0]:
+            raise ValueError(f"matrix shapes do not align: {self.shape} and {getattr(other, 'shape', '?')}")
         rows = []
         for i in range(self.shape[0]):
             row = []

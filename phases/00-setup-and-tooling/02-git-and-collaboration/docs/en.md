@@ -81,7 +81,30 @@ Check the rule with `git status --ignored`; keep code, configuration, and small 
 
 1. Repeat the temporary-repository run and change one file on the experiment branch. Use `git diff --staged` to show exactly what the commit will contain.
 2. Add a `.pt` file and a source file, then confirm that only the checkpoint is ignored. Remove the temporary directory by its explicit path when finished.
-3. In a fresh temporary repository, create the experiment branch after a base commit. Make one commit on `main` and a different-file commit on `experiment/new-optimizer` before the first merge. Inspect the diverged graph, then merge with `git merge --no-ff experiment/new-optimizer` and record why the histories can combine without a content conflict.
+3. In a fresh temporary repository, create the experiment branch after a base commit. Make one commit on `main` and a different-file commit on `experiment/new-optimizer` before the first merge. Inspect the diverged graph, demonstrate that `--ff-only` refuses the divergence, then use a regular merge because the files differ:
+
+   ```bash
+   tmp_dir=$(mktemp -d)
+   cd "$tmp_dir"
+   git init && git branch -M main
+   git config user.name "Lesson User"
+   git config user.email "lesson@example.invalid"
+   printf '%s\n' base > README.md
+   git add README.md && git commit -m base
+   git checkout -b experiment/new-optimizer
+   printf '%s\n' optimizer > config.txt
+   git add config.txt && git commit -m optimizer
+   git checkout main
+   printf '%s\n' notes > NOTES.md
+   git add NOTES.md && git commit -m notes
+   git log --oneline --decorate --graph --all
+   git merge --ff-only experiment/new-optimizer || echo 'ff-only correctly refused'
+   git merge --no-ff experiment/new-optimizer
+   git log --oneline --decorate --graph --all
+   rm -rf "$tmp_dir"
+   ```
+
+   Record why the two branch tips can combine without a content conflict.
 4. Read the last three commits with `git log --oneline --decorate --graph` and write one sentence describing the parent of each commit.
 
 ## Reference Solution

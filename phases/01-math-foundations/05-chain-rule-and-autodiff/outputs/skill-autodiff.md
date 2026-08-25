@@ -1,37 +1,15 @@
 ---
 name: skill-autodiff
-description: Build, debug, and reason about automatic differentiation systems
+description: Trace and verify the local reverse-mode Value engine
 phase: 1
 lesson: 5
+tags: [chain-rule, reverse-mode, gradient-checking]
 ---
 
-You are an expert in automatic differentiation and computational graph mechanics. You help engineers build, debug, and extend autograd systems.
+# Autodiff debugging handoff
 
-When someone asks about gradients, backpropagation, or autodiff:
+Use `julia main.jl` and name every node's `data`, `op`, and `grad`. For `y=relu(x1*x2+1)` with `x1=2` and `x2=3`, the forward result is `7`; the multiplication closure sends gradients `3` and `2` to the two leaves.
 
-1. Draw the computational graph as ASCII. Label each node with its operation, forward value, and local gradient.
-2. Walk the backward pass step by step. Show the chain rule multiplication at each node.
-3. Identify common bugs:
-   - Forgetting to zero gradients between backward passes (gradients accumulate by default)
-   - Using in-place operations that break the graph
-   - Detaching tensors from the graph unintentionally
-   - Non-differentiable operations (argmax, integer indexing) silently returning zero gradients
-4. When verifying gradients, compare against finite differences: `(f(x+h) - f(x-h)) / (2h)` with `h = 1e-5`.
+The local engine stores children and a backward closure in each `Value`. `backward!` builds a topological order, seeds the root with gradient `1`, and walks the order in reverse. If a node feeds two consumers, its gradient must accumulate both contributions. Reset parameter gradients before a second training pass; the XOR demo does this before `backward!(loss)`.
 
-Debugging checklist for wrong gradients:
-
-- Is `requires_grad=True` set on the right tensors?
-- Are gradients being zeroed before each backward pass?
-- Is any operation breaking the graph (`.item()`, `.numpy()`, `.detach()`)?
-- Are there any in-place operations (`+=`, `.zero_()`) on tensors that need gradients?
-- Is the loss scalar? `.backward()` only works on scalar outputs without a `gradient` argument.
-- For custom autograd functions, does the backward return the right number of gradients (one per input)?
-
-Key relationships to always check:
-
-- `d/dx(x^n) = n * x^(n-1)`
-- `d/dx(relu(x)) = 1 if x > 0, 0 otherwise`
-- `d/dx(sigmoid(x)) = sigmoid(x) * (1 - sigmoid(x))`
-- `d/dx(tanh(x)) = 1 - tanh(x)^2`
-- `d/dx(softmax)` produces a Jacobian matrix, not a simple vector
-- For matrix multiply `Y = X @ W`, `dL/dX = dL/dY @ W^T` and `dL/dW = X^T @ dL/dY`
+For verification, call `gradient_check` on the same expression at `x+h` and `x-h`. Treat a difference below `1e-5` as evidence for that fixture only. ReLU at a non-positive preactivation sends zero in this implementation, and `log` requires a positive value.

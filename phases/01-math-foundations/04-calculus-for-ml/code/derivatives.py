@@ -1,3 +1,9 @@
+# Calculus helpers for phases/01-math-foundations/04-calculus-for-ml/docs/en.md.
+# Provides finite differences, gradients, Hessians, Taylor approximations, and training demos.
+# The canonical entry point is main.jl; this Python file is a readable standard-library reference.
+# Numeric fixtures use float64-scale steps and expose the same calculus identities as the Julia demo.
+# Run this reference directly with: python3 derivatives.py
+
 import math
 import random
 

@@ -1,146 +1,72 @@
 # Tensor Operations
 
-> Tensors are the common language between data and deep learning. Every image, every sentence, every gradient flows through them.
+> Make shape, stride, contraction, and attention invariants visible before a framework hides them.
 
 **Type:** Build
 **Languages:** Python
-**Language:** Python
-**Prerequisites:** Phase 1, Lessons 01 (Linear Algebra Intuition), 02 (Vectors, Matrices & Operations)
-**Time:** ~90 minutes
+**Prerequisites:** Phase 1, Lessons 01–03 (vectors, matrices, transformations)
+**Time:** ~55 minutes
 
 ## Learning Objectives
 
-- Implement a tensor class with shape, strides, reshape, transpose, and element-wise operations from scratch
-- Apply broadcasting rules to operate on tensors of different shapes without copying data
-- Write einsum expressions for dot products, matrix multiplications, outer products, and batched operations
-- Trace the exact tensor shapes through every step of multi-head attention
+- Represent a nested tensor as flat row-major data with explicit shape and strides.
+- Apply reshape, squeeze, unsqueeze, transpose, permute, and flatten without changing element order.
+- Distinguish element-wise operations from broadcasting and matrix contraction.
+- Read common `einsum` subscripts and predict the output shape.
+- Trace multi-head attention from `(B,T,E)` through `(B,H,T,D)` scores and values.
 
-## The Problem
+## Two layers of the lesson
 
-You build a transformer. The forward pass looks clean. You run it and get: `RuntimeError: mat1 and mat2 shapes cannot be multiplied (32x768 and 512x768)`. You stare at the shapes. You try a transpose. Now it says `Expected 4D input (got 3D input)`. You add an unsqueeze. Something else breaks.
+`code/tensors.py` contains a small `Tensor` class. A `(2,3)` value stores six elements and has strides `(3,1)`: moving along axis 0 skips three flat entries and moving along axis 1 skips one. The class intentionally rejects partial indexing and mismatched element-wise shapes instead of silently broadcasting.
 
-Shape errors are the most common bug in deep learning code. They are not hard conceptually -- each operation has a shape contract -- but they multiply fast. A transformer has dozens of reshapes, transposes, and broadcasts chained together. One wrong axis and the error cascades. Worse, some shape mistakes do not throw errors at all. They silently produce garbage by broadcasting along the wrong dimension or summing over the wrong axis.
-
-Matrices handle pairwise relationships between two sets of things. Real data does not fit into two dimensions. A batch of 32 RGB images at 224x224 is a 4D tensor: `(32, 3, 224, 224)`. Self-attention with 12 heads is also 4D: `(batch, heads, seq_len, head_dim)`. You need a data structure that generalizes to any number of dimensions, with operations that compose cleanly across all of them. That structure is the tensor. Master its operations and shape errors become trivially debuggable.
-
-## The Concept
-
-### What a tensor is
-
-A tensor is a multi-dimensional array of numbers with a uniform data type. The number of dimensions is the **rank** (or **order**). Each dimension is an **axis**. The **shape** is a tuple listing the size along each axis.
-
-```mermaid
-graph LR
-    S["Scalar<br/>rank 0<br/>shape: ()"] --> V["Vector<br/>rank 1<br/>shape: (3,)"]
-    V --> M["Matrix<br/>rank 2<br/>shape: (2,3)"]
-    M --> T3["3D Tensor<br/>rank 3<br/>shape: (2,2,2)"]
-    T3 --> T4["4D Tensor<br/>rank 4<br/>shape: (B,C,H,W)"]
-```
-
-Total elements = product of all sizes. A shape `(2, 3, 4)` holds `2 * 3 * 4 = 24` elements.
-
-### Tensor shapes in deep learning
-
-Different data types map to specific tensor shapes by convention.
-
-```mermaid
-graph TD
-    subgraph Vision
-        V1["(B, C, H, W)<br/>32, 3, 224, 224"]
-    end
-    subgraph NLP
-        N1["(B, T, D)<br/>16, 128, 768"]
-    end
-    subgraph Attention
-        A1["(B, H, T, D)<br/>16, 12, 128, 64"]
-    end
-    subgraph Weights
-        W1["Linear: (out, in)<br/>Conv2D: (out_c, in_c, kH, kW)<br/>Embedding: (vocab, dim)"]
-    end
-```
-
-PyTorch uses NCHW (channels-first). TensorFlow defaults to NHWC (channels-last). Mismatched layouts cause silent slowdowns or errors.
-
-### How memory layout works
-
-A 2D array in memory is a 1D sequence of bytes. **Strides** tell you how many elements to skip to move one step along each axis.
-
-```mermaid
-graph LR
-    subgraph "Row-major (C order)"
-        R["a b c d e f<br/>strides: (3, 1)"]
-    end
-    subgraph "Column-major (F order)"
-        C["a d b e c f<br/>strides: (1, 2)"]
-    end
-```
-
-Transpose does not move data. It swaps the strides, making the tensor **non-contiguous** -- the elements for a row are no longer adjacent in memory.
-
-### Broadcasting rules
-
-Broadcasting lets you operate on tensors of different shapes without copying data. Align shapes from the right. Two dimensions are compatible when they are equal or one is 1. Fewer dimensions get padded with 1s on the left.
-
-```
-Tensor A:     (8, 1, 6, 1)
-Tensor B:        (7, 1, 5)
-Padded B:     (1, 7, 1, 5)
-Result:       (8, 7, 6, 5)
-```
-
-### Einsum: the universal tensor operation
-
-Einstein summation labels each axis with a letter. Axes in the input but not the output get summed. Axes in both are kept.
-
-```mermaid
-graph LR
-    subgraph "matmul: ik,kj -> ij"
-        A["A(I,K)"] --> |"sum over k"| C["C(I,J)"]
-        B["B(K,J)"] --> |"sum over k"| C
-    end
-```
-
-Key patterns: `i,i->` (dot product), `i,j->ij` (outer product), `ii->` (trace), `ij->ji` (transpose), `bij,bjk->bik` (batch matmul), `bhtd,bhsd->bhts` (attention scores).
-
-
-
+The same file uses NumPy for production-shaped examples. NumPy broadcasting aligns trailing axes: a bias of shape `(hidden,)` can be added to `(batch,sequence,hidden)`. `einsum` makes contractions explicit: `ij,jk->ik` contracts `j`, while `bhts,bhsd->bhtd` contracts the key-token axis.
 
 ## Build It
 
-Reconstruct **Tensor Operations** by following `Tensor` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+Run the bounded demo:
+
+```bash
+cd phases/01-math-foundations/12-tensor-operations/code
+python3 main.py
+```
+
+The first sections print custom-tensor indexing and strides, reshape/permute results, broadcasting shapes, and common `einsum` patterns. The attention fixture uses `B=2`, `H=4`, `T=8`, `D=16`, so `E=64`; scores have shape `(2,4,8,8)` and the value contraction returns `(2,4,8,16)`.
+
+Inspect the custom storage directly:
+
+```python
+from tensors import Tensor
+
+t = Tensor([[1, 2, 3], [4, 5, 6]])
+assert t.shape == (2, 3)
+assert t.strides == (3, 1)
+assert t.transpose(0, 1).to_list() == [[1, 4], [2, 5], [3, 6]]
+```
 
 ## Use It
 
-Call `Tensor` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+Use `reshape((-1,3))` only when the element count is divisible by three; the implementation infers the missing dimension. `squeeze` removes singleton axes and `unsqueeze` inserts one, which is often the clearest way to make a broadcast contract explicit.
+
+For attention, split `(B,T,E)` into `(B,T,H,D)`, transpose to `(B,H,T,D)`, compute scores with `einsum('bhtd,bhsd->bhts')`, normalize over the final token axis, then contract with `V`. The two token axes in the score matrix are query and key positions; the feature axis `D` is gone after the dot product.
 
 ## Ship It
 
-Hand off `outputs/prompt-tensor-debugger.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [NumPy Broadcasting](https://numpy.org/doc/stable/user/basics.broadcasting.html) -- The canonical rules with visual examples
-- [PyTorch Tensor Views](https://pytorch.org/docs/stable/tensor_view.html) -- When views work and when they copy
-- [einops](https://github.com/arogozhnikov/einops) -- A library that makes tensor reshaping readable and safe
-- [The Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/) -- Visualizes the tensor shapes flowing through attention
-- [Einstein Summation in NumPy](https://numpy.org/doc/stable/reference/generated/numpy.einsum.html) -- Full einsum documentation with examples
+The reusable artifacts are [the tensor debugger prompt](../../12-tensor-operations/outputs/prompt-tensor-debugger.md) and [the shape prompt](../../12-tensor-operations/outputs/prompt-tensor-shapes.md). Use them to require a shape table at every reshape, transpose, broadcast, and contraction boundary. A shape table is evidence; “the model should broadcast” is not.
 
 ## Exercises
 
-Work from the smallest fixture that the Tensor Operations demo already understands, then make one deliberate change and record what moved.
-
-1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using tokens=["red","fox"]. Follow `Tensor`, `shape`, `rank`. Expect the attention/embedding shape follows the token count and each valid attention row remains normalized; capture the first printed shape, metric, status, or summary field and state which part supports **Implement a tensor class with shape, strides, reshape, transpose, and element-wise operations from scratch**.
-2. **Perturb one field.** Repeat the command after changing only the token sequence: use tokens=["red","fox","runs"]. Predict the direction of the change, then compare the two output values. Explain why **Apply broadcasting rules to operate on tensors of different shapes without copying data** says the other inputs should stay fixed.
-3. **Check the failure boundary.** Feed the implementation tokens=[]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Write einsum expressions for dot products, matrix multiplications, outer products, and batched operations** and record the exception text if the code rejects the case.
-4. **Make the result repeatable.** Open `outputs/prompt-tensor-debugger.md` and add a worked example using tokens=["red","fox"]. Include the input contract, one expected output field, and a named acceptance check for **Trace the exact tensor shapes through every step of multi-head attention**; note what the demo cannot establish.
+1. Construct `Tensor(list(range(24)), shape=(2,3,4))`, permute `(1,0,2)`, and verify that `permuted[2,1,3] == tensor[1,2,3]`.
+2. Add a `(4,)` bias to a `(2,3,4)` NumPy array and record the result shape. Then try a `(3,)` bias and explain the mismatch.
+3. Predict and run the score shape when `T=5` and `Q,K` have shape `(2,4,5,16)`. Record the output shape after multiplying by `V` with the same shape.
 
 ## Reference Solution
 
-A checkable result for **Tensor Operations** should contain:
+The permuted tensor has shape `(3,2,4)` and keeps the indexed value because only axis order changes. The `(4,)` bias broadcasts over the first two axes; `(3,)` aligns to the last axis and is rejected for hidden size four. With `T=5`, scores are `(2,4,5,5)` and attention output is `(2,4,5,16)`. The acceptance evidence is the exact shape and index checks, not a visual inspection.
 
-- the `python3 main.py` output for tokens=["red","fox"], with `Tensor`, `shape`, `rank` traced to the value or shape that supports **Implement a tensor class with shape, strides, reshape, transpose, and element-wise operations from scratch**;
-- a before/after comparison for the token sequence, where tokens=["red","fox","runs"] changes the observation in the direction predicted by **Apply broadcasting rules to operate on tensors of different shapes without copying data**;
-- a recorded result for tokens=[] that matches the implementation’s validation or empty-result contract and explains the evidence for **Write einsum expressions for dot products, matrix multiplications, outer products, and batched operations**; and
-- an updated `outputs/prompt-tensor-debugger.md` example with a concrete input, expected output field, and acceptance check tied to **Trace the exact tensor shapes through every step of multi-head attention**.
+## Tests
 
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+```bash
+python3 -m unittest discover tests -v
+```
+
+Seven tests cover storage/strides, indexing and assignment, inferred reshape, permutations, reductions and element-wise operations, invalid shapes, and attention einsum output shapes.

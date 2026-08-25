@@ -30,7 +30,7 @@ flowchart LR
     F --> C[output summary]
 ```
 
-Rows have the concrete schema `id`, `text`, and binary `label`. The loader rejects missing columns, malformed JSON, non-integer IDs/labels, and labels outside 0/1. The fingerprint is a compact change detector, not proof that labels or sampling are semantically correct.
+Rows have the concrete schema `id`, `text`, and binary `label`. The loader rejects missing columns, malformed JSON, non-integer IDs/labels, and labels outside 0/1. `stream_dataset` requires a positive `max_rows`; zero and negative limits raise `ValueError` before the file is read. The fingerprint is a compact change detector, not proof that labels or sampling are semantically correct.
 
 ## Build It
 

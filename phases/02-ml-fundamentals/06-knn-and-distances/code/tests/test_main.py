@@ -1,64 +1,62 @@
-# Contract and executable-behavior tests for this lesson demo.
-from __future__ import annotations
-
-import ast
-import functools
-import importlib.util
-import os
-from pathlib import Path
-import subprocess
 import sys
 import unittest
+from pathlib import Path
 
-CODE = Path(__file__).resolve().parents[1]
-MAIN = CODE / "main.py"
-ALLOWED = set(sys.stdlib_module_names) | {"numpy", "torch", "h5py", "zstandard", "safetensors"}
+sys.path.insert(0, str(Path(__file__).parents[1]))
+from knn import (  # noqa: E402
+    KDTree,
+    KNN,
+    cosine_distance,
+    l1_distance,
+    l2_distance,
+    minkowski_distance,
+    mse,
+    standardize,
+)
 
-def source_trees() -> list[ast.AST]:
-    return [ast.parse(path.read_text(encoding="utf-8")) for path in CODE.glob("*.py")]
 
-def external_roots() -> set[str]:
-    roots: set[str] = set()
-    for tree in source_trees():
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                roots.update(alias.name.split(".")[0] for alias in node.names)
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                roots.add(node.module.split(".")[0])
-    return {name for name in roots if not (CODE / f"{name}.py").exists() and not (CODE / name).is_dir()}
+class KNNTests(unittest.TestCase):
+    def test_distance_values(self):
+        self.assertAlmostEqual(l1_distance([1, 2], [4, 6]), 7)
+        self.assertAlmostEqual(l2_distance([1, 2], [4, 6]), 5)
+        self.assertAlmostEqual(cosine_distance([1, 0], [2, 0]), 0)
 
-@functools.lru_cache(maxsize=1)
-def run_demo() -> subprocess.CompletedProcess[str]:
-    missing = sorted(name for name in external_roots() if name in ALLOWED and importlib.util.find_spec(name) is None)
-    banned = sorted(external_roots() - ALLOWED)
-    if missing or banned:
-        raise unittest.SkipTest(f"demo dependencies unavailable or disallowed: {missing + banned}")
-    env = os.environ.copy()
-    for key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "HF_TOKEN", "HUGGINGFACE_TOKEN"):
-        env.pop(key, None)
-    return subprocess.run(
-        [sys.executable, MAIN.name], cwd=CODE, text=True, capture_output=True,
-        timeout=45, env=env, check=False,
-    )
+    def test_minkowski_variants(self):
+        self.assertAlmostEqual(minkowski_distance([0, 0], [3, 4], 2), 5)
+        self.assertEqual(minkowski_distance([0, 0], [3, 4], float("inf")), 4)
 
-class LessonDemoTests(unittest.TestCase):
-    def test_source_compiles(self) -> None:
-        compile(MAIN.read_text(encoding="utf-8"), str(MAIN), "exec")
+    def test_classification_majority_and_weighted_vote(self):
+        model = KNN(k=3).fit([[0], [1], [10]], ["near", "near", "far"])
+        self.assertEqual(model.predict([[0.5]]), ["near"])
+        weighted = KNN(k=2, weighted=True).fit([[0], [10]], ["near", "far"])
+        self.assertEqual(weighted.predict([[0.1]]), ["near"])
 
-    def test_demo_has_explicit_entrypoint(self) -> None:
-        source = MAIN.read_text(encoding="utf-8")
-        self.assertTrue("__main__" in source or "runpy.run_path" in source)
+    def test_regression_and_mse(self):
+        model = KNN(k=3, task="regression").fit([[0], [1], [2]], [10, 14, 16])
+        self.assertAlmostEqual(model.predict([[1]])[0], 40 / 3)
+        self.assertAlmostEqual(mse([10, 14], [11, 12]), 2.5)
 
-    def test_demo_exits_successfully(self) -> None:
-        self.assertEqual(run_demo().returncode, 0, run_demo().stderr)
+    def test_standardize_and_constant_column(self):
+        scaled, means, stds = standardize([[1, 10], [2, 10], [3, 10]])
+        self.assertEqual(means, [2, 10])
+        self.assertEqual(scaled[0][1], 0.0)
+        self.assertGreater(stds[0], 0)
 
-    def test_demo_emits_bounded_output(self) -> None:
-        result = run_demo()
-        self.assertTrue((result.stdout + result.stderr).strip())
-        self.assertLess(len(result.stdout) + len(result.stderr), 1_000_000)
+    def test_kdtree_returns_nearest_original_index(self):
+        tree = KDTree([[0, 0], [5, 5], [1, 0]])
+        result = tree.query([0.2, 0], k=2)
+        self.assertEqual([row[1] for row in result], [0, 2])
 
-    def test_demo_has_no_traceback(self) -> None:
-        self.assertNotIn("Traceback (most recent call last)", run_demo().stderr)
+    def test_invalid_shapes_and_k_are_rejected(self):
+        with self.assertRaises(ValueError):
+            l2_distance([1], [1, 2])
+        with self.assertRaises(ValueError):
+            KNN(k=0)
+        with self.assertRaises(ValueError):
+            KNN(k=4).fit([[0], [1]], [0, 1])
+        with self.assertRaises(ValueError):
+            minkowski_distance([0], [1], 0)
+
 
 if __name__ == "__main__":
     unittest.main()

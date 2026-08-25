@@ -1,7 +1,7 @@
 # Companion probe for phases/00-setup-and-tooling/01-dev-environment/docs/en.md.
 # Checks interpreter and command presence without importing project packages.
 # GPU/PyTorch evidence is optional and is never required for the core result.
-# Uses Python's standard library only; run with: python3 code/verify.py.
+# Core checks use Python's standard library; the optional GPU branch imports allowlisted torch.
 # Keep this comparison probe separate from the canonical Rust entrypoint.
 
 import sys

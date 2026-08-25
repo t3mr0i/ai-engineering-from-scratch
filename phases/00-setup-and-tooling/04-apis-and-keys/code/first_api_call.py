@@ -77,6 +77,9 @@ def call_raw_http(
 ) -> dict[str, object]:
     """Send one explicitly requested HTTP call; tests can inject an opener."""
 
+    model = request.get("model")
+    if not isinstance(model, str) or not model.strip() or model == DEFAULT_MODEL:
+        raise ValueError("a real ANTHROPIC_MODEL is required for a live request")
     body = json.dumps(request).encode("utf-8")
     http_request = urllib.request.Request(
         API_URL,
@@ -99,21 +102,36 @@ def print_response(response: Mapping[str, object]) -> None:
 
 
 def main() -> int:
-    request = build_request()
     print("=== API Request Lab ===")
-    print(f"request: {json.dumps(request, sort_keys=True)}")
 
     live_requested = os.environ.get("ANTHROPIC_LIVE") == "1"
     api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+    live_model = os.environ.get("ANTHROPIC_MODEL", "").strip()
     if not live_requested:
+        request = build_request()
+        print(f"request: {json.dumps(request, sort_keys=True)}")
         print("mode: MOCK (no network; set ANTHROPIC_LIVE=1 to opt in)")
         print_response(mock_response(request))
         return 0
+    missing = []
     if not api_key:
-        print("mode: MOCK (live mode requested, but ANTHROPIC_API_KEY is missing)")
+        missing.append("ANTHROPIC_API_KEY")
+    if not live_model:
+        missing.append("ANTHROPIC_MODEL")
+    if missing or live_model == DEFAULT_MODEL:
+        request = build_request()
+        print(f"request: {json.dumps(request, sort_keys=True)}")
+        reason = (
+            f"missing {', '.join(missing)}"
+            if missing
+            else "ANTHROPIC_MODEL must name a provider model, not lesson-fixture"
+        )
+        print(f"mode: MOCK (live mode requested, but {reason})")
         print_response(mock_response(request))
         return 0
 
+    request = build_request(model=live_model)
+    print(f"request: {json.dumps(request, sort_keys=True)}")
     print("mode: LIVE (explicit opt-in)")
     try:
         print_response(call_raw_http(api_key, request))

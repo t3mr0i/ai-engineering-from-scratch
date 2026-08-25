@@ -1,3 +1,9 @@
+# Convex-optimization primitives for phases/01-math-foundations/18-convex-optimization/docs/en.md.
+# Implements sampled convexity checks, 2-D Hessian helpers, GD, Newton, and Lagrange updates.
+# The demo uses only Python's standard library and bounded deterministic fixtures.
+# Canonical execution is `python3 main.py` from this code directory.
+# Tests assert curvature, optimizer, constraint, and singular-Hessian behavior.
+
 import math
 import random
 

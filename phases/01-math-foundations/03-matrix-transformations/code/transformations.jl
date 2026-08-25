@@ -1,3 +1,9 @@
+# Julia transformations for phases/01-math-foundations/03-matrix-transformations/docs/en.md.
+# Mirrors the Python fixtures with standard-library rotations, eigenpairs, and PCA preview.
+# Matrices remain explicit so determinants, composition order, and shapes are visible.
+# The canonical entry point is main.jl; no external packages are required.
+# Run from this directory with: julia main.jl
+
 using LinearAlgebra
 
 

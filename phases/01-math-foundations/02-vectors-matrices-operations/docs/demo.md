@@ -1,10 +1,6 @@
 # Guided demo: Vectors, Matrices & Operations
 
-> **Time:** 10–15 minutes · **Question:** What observable evidence shows that you can build a Matrix class with element-wise operations, matrix multiplication, transpose, determinant, and inverse?
-
-## Before you run
-
-Write one predicted invariant for the baseline. Tie it to this objective: **Build a Matrix class with element-wise operations, matrix multiplication, transpose, determinant, and inverse.** Do not inspect the output first.
+> **Time:** 10–15 minutes · **Question:** Can you predict the result and shape of each operation before the interpreter prints it?
 
 ## Run the baseline
 
@@ -14,17 +10,16 @@ From the repository root:
 python3 phases/01-math-foundations/02-vectors-matrices-operations/code/main.py
 ```
 
-The command must print a bounded result and exit with status 0. Locate the part of the output that provides evidence for **Build a Matrix class with element-wise operations, matrix multiplication, transpose, determinant, and inverse**. Record the exact input, the relevant output, and the invariant in one sentence.
+Find the `A * B (element-wise)` and `A @ B (matrix multiply)` sections. For `A=[[1,2],[3,4]]` and `B=[[5,6],[7,8]]`, record `[[5,12],[21,32]]` versus `[[19,22],[43,50]]`, then state why both products have shape `(2,2)` in this particular fixture.
 
-## Change one variable
+## Change a bias shape
 
-Change the smallest input or configuration value that helps you investigate **Distinguish element-wise multiplication from matrix multiplication and explain when each applies**. Keep every other value fixed. Run the same command again and capture a before/after pair; a screenshot without the values is not sufficient evidence.
+In `demo_broadcasting`, replace `bias = Matrix([[10,20,30]])` with `Matrix([[10],[20]])`. Predict both output rows before rerunning. The row bias produces `[[11,22,33],[14,25,36]]`; the column bias produces `[[11,12,13],[24,25,26]]`. Explain which dimension is repeated in each case.
 
-## Probe a failure
+## Probe a contract boundary
 
-Choose an edge case or violated precondition related to **Implement a single dense neural network layer (`relu(W @ x + b)`) using only the from-scratch Matrix class**. Predict whether the program should reject it, degrade gracefully, or return a different valid result. Run the probe and explain any mismatch between prediction and observation. Restore the source afterward.
+In a Python shell from `code/`, evaluate `Matrix([[1,2],[2,4]]).inverse_2x2()`. Capture `ValueError("Matrix is singular, no inverse exists")`. Then try a `(2,3) @ (2,1)` product and capture the inner-dimension error. These probes test the numerical and shape contracts, not formatting.
 
 ## Exit ticket
 
-In three sentences, state (1) the mechanism you observed, (2) the controlled change and its effect, and (3) the acceptance check that demonstrates you can **explain broadcasting rules and how bias addition works in neural network frameworks**. If the evidence is ambiguous, name the next measurement rather than claiming success.
-
+Write one sentence for each: element-wise versus matrix multiplication, why `det([[4,7],[2,6]])=10` permits an inverse, and why `(4,3) @ (3,1) + (4,1)` is a valid dense-layer step. Restore any demo edits after the exercise.

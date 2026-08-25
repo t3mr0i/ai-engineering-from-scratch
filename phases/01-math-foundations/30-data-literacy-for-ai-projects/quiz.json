@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which finding should block an AI pilot until the team investigates it?",
+      "question": "Which structured observation derives the stale data signal?",
       "options": [
-        "The source owner is unclear, the data is stale, or a field is sensitive",
-        "The project has a short README",
-        "The model uses a small Python module",
-        "The team prefers a different editor"
+        "freshness_days=45",
+        "source_owner='analytics'",
+        "quality_rate=0.99",
+        "sensitive_fields=()"
       ],
       "correct": 0,
-      "explanation": "The artifact's SIGNALS identify ownership, freshness, quality, and privacy issues that affect feasibility and controls before a pilot starts."
+      "explanation": "The local contract treats a refresh age greater than 30 days as stale data. A named owner, a quality rate above the floor, and an empty sensitive-field list do not trigger that finding."
     },
     {
       "stage": "check",
-      "question": "For a Scenario with impact=2, uncertainty=2, and one matched signal, what score does score_scenario return?",
+      "question": "A narrative says only 'the source has quality notes', while the source owner is named, freshness is 7 days, and quality_rate is 0.99. What signal is matched?",
       "options": [
-        "4",
-        "8",
-        "6",
-        "20"
+        "quality issue, because quality appears in the sentence",
+        "none, because neither the exact phrase nor the structured threshold is present",
+        "unclear source owner",
+        "sensitive field"
       ],
       "correct": 1,
-      "explanation": "The formula is impact*2 + uncertainty + 2*matches = 2*2 + 2 + 2 = 8."
+      "explanation": "The parser requires a complete phrase such as quality issue or data quality issue. The healthy structured fields also provide no derived finding."
     },
     {
       "stage": "check",
-      "question": "What priority does priority_for(8) assign?",
+      "question": "With no owner, freshness_days=91, quality_rate=0.80, and sensitive_fields=('email',), which signals are derived?",
       "options": [
-        "launch gate required",
-        "guided pilot",
-        "team practice",
-        "awareness only"
+        "stale data only",
+        "quality issue and sensitive field only",
+        "unclear source owner, stale data, quality issue, and sensitive field",
+        "unclassified"
       ],
       "correct": 2,
-      "explanation": "Scores from 7 through 10 return team practice. Guided pilot starts at 11, and launch gate required starts at 16."
+      "explanation": "None derives the owner finding, 91 exceeds the 30-day freshness limit, 0.80 is below the 0.95 quality floor, and the non-empty field tuple marks sensitive field."
     },
     {
       "stage": "check",
-      "question": "What does recommend include even for a scenario with only one matched signal?",
+      "question": "Which control union follows from quality issue plus sensitive field?",
       "options": [
-        "Only a score with no operational action",
-        "Every possible control regardless of the scenario",
-        "A model architecture and training dataset",
-        "At least two controls, plus a category, score, priority, and rationale"
+        "source inventory and named data steward",
+        "freshness SLA and refresh timestamp",
+        "intended-use record only",
+        "quality threshold, evaluation sample, privacy classification, and field minimization"
       ],
       "correct": 3,
-      "explanation": "The implementation takes at least the first two controls and records why the scenario received its score. The artifact is a planning aid, not a model trainer."
+      "explanation": "Quality maps to quality threshold and evaluation sample; sensitive field maps to privacy classification and field minimization. The implementation de-duplicates the union rather than taking a prefix."
     },
     {
       "stage": "post",
-      "question": "A knowledge assistant uses stale SharePoint data and has no clear source owner, with impact=4 and uncertainty=4. What should the worksheet recommend first?",
+      "question": "A scenario has impact=4, uncertainty=4, and all four readiness signals. What score and priority are produced?",
       "options": [
-        "Treat it as a launch-gate case and record source inventory, freshness, and ownership controls",
-        "Start the pilot without an owner because retrieval fixes stale data automatically",
-        "Ignore the signals until a model has been selected",
-        "Use only a larger context window as the governance control"
+        "20 and launch gate required",
+        "18 and guided pilot",
+        "16 and team practice",
+        "12 and awareness only"
       ],
       "correct": 0,
-      "explanation": "The two matched signals add four points to a base of twelve, producing score 16 and the launch-gate priority. Controls must address the data operation, not just the model."
+      "explanation": "The uncapped score is 4*2 + 4 + 2*4 = 20. The score remains 20 after the cap and therefore falls in the launch gate required band."
     },
     {
       "stage": "post",
-      "question": "What does a useful data-readiness worksheet add to a model choice?",
+      "question": "What does a healthy named source with freshness_days=1, quality_rate=0.99, and no sensitive fields receive?",
       "options": [
-        "It replaces the need to inspect any source data",
-        "It records source ownership, quality and freshness checks, privacy classification, and an evaluation sample",
-        "It guarantees a model will meet every accuracy target",
-        "It treats a pilot approval as proof of production readiness"
+        "A privacy classification and field minimization control",
+        "The unclassified category and the baseline intended-use record control",
+        "A stale data signal and freshness SLA",
+        "Automatic production approval"
       ],
       "correct": 1,
-      "explanation": "The artifact turns feasibility signals into lightweight controls and an evaluation plan. It supports a decision; it does not certify model quality by itself."
+      "explanation": "No phrase or structured threshold creates a finding, so the worksheet returns unclassified and its baseline control. It never turns that absence of findings into production approval."
     }
   ]
 }

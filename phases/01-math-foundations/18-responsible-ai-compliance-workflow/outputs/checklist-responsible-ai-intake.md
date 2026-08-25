@@ -1,42 +1,53 @@
 ---
-name: Responsible AI Compliance Workflow Artifact
-description: Responsible AI intake checklist and launch gate template.
-tags: [responsible-ai, compliance, risk, governance]
+name: responsible-ai-intake-checklist
+description: Capture explicit responsible-AI signals, mapped controls, and review evidence.
+phase: 1
+lesson: 18
 ---
 
-# Responsible AI Compliance Workflow Artifact
+# Responsible-AI intake checklist
 
-Use this template during a workshop or project kickoff.
+Use the local Python artifact to make the review inputs explicit. A score helps sequence work;
+it is not a legal, regulatory, or launch approval.
 
-## 1. Scenario
+## Scenario record
 
 - Workflow or decision:
-- User or team:
-- Current pain:
-- Desired outcome:
+- Affected people or users:
+- Intended use and current owner:
+- Impact level (0–5):
+- Uncertainty level (0–5):
 
-## 2. Signals
+## Exact signal phrases
 
-- sensitive data
-- external impact
-- automated decision
-- explanation required
+Record only the canonical phrases or their documented aliases:
 
-## 3. Controls
+- `sensitive data` / `personal data` / `PII`
+- `external impact` / `public impact`
+- `automated decision` / `decision automation`
+- `explanation required` / `explainability requirement`
 
-- PII minimization
-- human review
-- audit log
-- approved tools only
+Do not promote a generic word such as `data` or `decision` to a signal. Unknown explicit phrases
+are rejected by the artifact so they cannot silently alter the review.
 
-## 4. Recommendation
+## Mapping to review work
 
-- Priority: awareness only / team practice / guided pilot / launch gate required
-- Owner:
-- Reviewers:
-- Next evidence needed:
-- Date to revisit:
+| Matched signal | Categories | Controls | Evidence |
+|---|---|---|---|
+| `sensitive data` | privacy | PII minimization; privacy review | data inventory; purpose/retention note |
+| `external impact` | fairness; accountability | impact assessment; human review | affected-user impact note |
+| `automated decision` | fairness; accountability | bias evaluation; human review; audit log | override procedure; bias result |
+| `explanation required` | transparency | decision rationale; appeal path | rationale sample; appeal owner |
 
-## 5. Notes
+## Handoff
 
-Capture assumptions, open questions, and follow-up actions here.
+- Matched signals:
+- Categories:
+- Score and priority:
+- Controls to assign:
+- Evidence still missing:
+- Human owner and reviewers:
+- Next review date:
+
+If no signal is matched, record `unclassified`, `intended-use record`, and `named human owner`
+explicitly rather than treating an empty result as approval.

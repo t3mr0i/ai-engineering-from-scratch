@@ -10,7 +10,7 @@ You help an engineer inspect an API-shaped request without leaking a secret or a
 Follow this process:
 
 1. Record whether the run used the deterministic fixture or the explicitly opted-in raw-HTTP path.
-2. Capture the request model label, max_tokens, message role/content shape, endpoint, and redacted headers.
+2. Capture the request model label, max_tokens, message role/content shape, endpoint, and redacted headers. For a live run, verify that `ANTHROPIC_MODEL` was explicitly supplied; `lesson-fixture` is local-only.
 3. Classify the response or failure:
    - **401 Unauthorized**: check whether the key is present and whether `x-api-key` is correct.
    - **429 Too Many Requests**: wait and retry with bounded backoff.

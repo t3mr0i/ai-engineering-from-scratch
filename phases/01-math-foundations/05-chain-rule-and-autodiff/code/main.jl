@@ -1,10 +1,8 @@
-# Toy reverse-mode autodiff in Julia. Builds a computation graph from
-# operator overloads on a mutable Value type, runs a topological sort,
-# then walks backward applying local chain-rule closures.
-# Stdlib only. Sources:
-#   https://docs.julialang.org/en/v1/manual/methods/
-#   https://docs.julialang.org/en/v1/manual/constructors/
-#   https://docs.julialang.org/en/v1/base/base/#Base.@kwdef
+# Canonical Julia demo for phases/01-math-foundations/05-chain-rule-and-autodiff/docs/en.md.
+# Builds a mutable Value graph, topologically sorts it, and applies local chain-rule closures.
+# Includes gradient checks and a seeded XOR MLP using Julia's standard library.
+# Sources: Julia methods, constructors, and Base documentation.
+# Run from this directory with: julia main.jl
 
 using Random
 using Printf

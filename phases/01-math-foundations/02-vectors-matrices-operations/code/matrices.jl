@@ -1,3 +1,9 @@
+# Julia matrix operations for phases/01-math-foundations/02-vectors-matrices-operations/docs/en.md.
+# Demonstrates vector arithmetic, shape rules, broadcasting, inverses, and dense layers.
+# The fixtures mirror matrices.py and use only Julia's LinearAlgebra standard library.
+# The canonical wrapper is main.jl; all output is local and finite.
+# Run from this directory with: julia main.jl
+
 using LinearAlgebra
 
 

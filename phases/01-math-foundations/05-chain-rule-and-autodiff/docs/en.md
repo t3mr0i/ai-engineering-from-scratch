@@ -1,240 +1,51 @@
 # Chain Rule & Automatic Differentiation
 
-> The chain rule is the engine behind every neural network that learns.
+> Reverse-mode autodiff is the chain rule organized around one scalar output.
 
 **Type:** Build
 **Languages:** Julia
-**Language:** Python
-**Prerequisites:** Phase 1, Lesson 04 (Derivatives & Gradients)
-**Time:** ~90 minutes
+**Prerequisites:** Phase 1, Lesson 04 (Calculus for Machine Learning)
+**Time:** ~75 minutes
 
 ## Learning Objectives
 
-- Build a minimal autograd engine (Value class) that records operations and computes gradients via reverse-mode autodiff
-- Implement forward and backward passes through a computation graph using topological sort
-- Construct and train a multi-layer perceptron on XOR using only the from-scratch autograd engine
-- Verify autodiff correctness using gradient checking against numerical finite differences
-
-## The Problem
-
-You can compute derivatives of simple functions. But a neural network is not a simple function. It is hundreds of functions composed together: matrix multiply, add bias, apply activation, matrix multiply again, softmax, cross-entropy loss. The output is a function of a function of a function.
-
-To train the network, you need the gradient of the loss with respect to every single weight. Doing this by hand is impossible for millions of parameters. Doing it numerically (finite differences) is too slow.
-
-The chain rule gives you the math. Automatic differentiation gives you the algorithm. Together they let you compute exact gradients through arbitrary compositions of functions in time proportional to a single forward pass.
-
-This is how PyTorch, TensorFlow, and JAX work. You will build a miniature version from scratch.
-
-## The Concept
-
-### The Chain Rule
-
-If `y = f(g(x))`, the derivative of `y` with respect to `x` is:
-
-```
-dy/dx = dy/dg * dg/dx = f'(g(x)) * g'(x)
-```
-
-Multiply the derivatives along the chain. Each link contributes its local derivative.
-
-Example: `y = sin(x^2)`
-
-```
-g(x) = x^2       g'(x) = 2x
-f(g) = sin(g)     f'(g) = cos(g)
-
-dy/dx = cos(x^2) * 2x
-```
-
-For deeper compositions, the chain extends:
-
-```
-y = f(g(h(x)))
-
-dy/dx = f'(g(h(x))) * g'(h(x)) * h'(x)
-```
-
-Every layer in a neural network is one link in this chain.
-
-### Computational Graphs
-
-A computational graph makes the chain rule visual. Every operation becomes a node. Data flows forward through the graph. Gradients flow backward.
-
-**Forward pass (compute values):**
-
-```mermaid
-graph TD
-    x1["x1 = 2"] --> mul["* (multiply)"]
-    x2["x2 = 3"] --> mul
-    mul -->|"a = 6"| add["+ (add)"]
-    b["b = 1"] --> add
-    add -->|"c = 7"| relu["relu"]
-    relu -->|"y = 7"| y["output y"]
-```
-
-**Backward pass (compute gradients):**
-
-```mermaid
-graph TD
-    dy["dy/dy = 1"] -->|"relu'(c)=1 since c>0"| dc["dy/dc = 1"]
-    dc -->|"dc/da = 1"| da["dy/da = 1"]
-    dc -->|"dc/db = 1"| db["dy/db = 1"]
-    da -->|"da/dx1 = x2 = 3"| dx1["dy/dx1 = 3"]
-    da -->|"da/dx2 = x1 = 2"| dx2["dy/dx2 = 2"]
-```
-
-The backward pass applies the chain rule at every node, propagating gradients from output to inputs.
-
-### Forward Mode vs Reverse Mode
-
-There are two ways to apply the chain rule through a graph.
-
-**Forward mode** starts at the inputs and pushes derivatives forward. It computes `dx/dx = 1` and propagates through each operation. Good when you have few inputs and many outputs.
-
-```
-Forward mode: seed dx/dx = 1, propagate forward
-
-  x = 2       (dx/dx = 1)
-  a = x^2     (da/dx = 2x = 4)
-  y = sin(a)  (dy/dx = cos(a) * da/dx = cos(4) * 4 = -2.615)
-```
-
-**Reverse mode** starts at the output and pulls gradients backward. It computes `dy/dy = 1` and propagates through each operation in reverse. Good when you have many inputs and few outputs.
-
-```
-Reverse mode: seed dy/dy = 1, propagate backward
-
-  y = sin(a)  (dy/dy = 1)
-  a = x^2     (dy/da = cos(a) = cos(4) = -0.654)
-  x = 2       (dy/dx = dy/da * da/dx = -0.654 * 4 = -2.615)
-```
-
-Neural networks have millions of inputs (weights) and one output (loss). Reverse mode computes all gradients in one backward pass. This is why backpropagation uses reverse mode.
-
-| Mode | Seed | Direction | Best when |
-|------|------|-----------|-----------|
-| Forward | `dx_i/dx_i = 1` | Input to output | Few inputs, many outputs |
-| Reverse | `dy/dy = 1` | Output to input | Many inputs, few outputs (neural nets) |
-
-### Dual Numbers for Forward Mode
-
-Forward mode can be implemented elegantly with dual numbers. A dual number has the form `a + b*epsilon` where `epsilon^2 = 0`.
-
-```
-Dual number: (value, derivative)
-
-(2, 1) means: value is 2, derivative w.r.t. x is 1
-
-Arithmetic rules:
-  (a, a') + (b, b') = (a+b, a'+b')
-  (a, a') * (b, b') = (a*b, a'*b + a*b')
-  sin(a, a')         = (sin(a), cos(a)*a')
-```
-
-Seed the input variable with derivative 1. The derivative propagates automatically through every operation.
-
-### Building an Autograd Engine
-
-An autograd engine needs three things:
-
-1. **Value wrapping.** Wrap every number in an object that stores its value and gradient.
-2. **Graph recording.** Every operation records its inputs and the local gradient function.
-3. **Backward pass.** Topological sort the graph, then walk it in reverse, applying the chain rule at each node.
-
-This is exactly what PyTorch's `autograd` does. The `torch.Tensor` class wraps values, records operations when `requires_grad=True`, and computes gradients when you call `.backward()`.
-
-### How PyTorch Autograd Works Under the Hood
-
-When you write PyTorch code:
-
-```python
-x = torch.tensor(2.0, requires_grad=True)
-y = x ** 2 + 3 * x + 1
-y.backward()
-print(x.grad)  # 7.0 = 2*x + 3 = 2*2 + 3
-```
-
-PyTorch internally:
-
-1. Creates a `Tensor` node for `x` with `requires_grad=True`
-2. Every operation (`**`, `*`, `+`) creates a new node and records the backward function
-3. `y.backward()` triggers reverse-mode autodiff through the recorded graph
-4. Each node's `grad_fn` computes local gradients and passes them to parent nodes
-5. Gradients accumulate in `.grad` attributes via addition (not replacement)
-
-The graph is dynamic (define-by-run). A new graph is built on every forward pass. This is why PyTorch supports control flow (if/else, loops) inside models.
-
-Torch isn't available in-browser, but the mechanism it wraps -- dual numbers
-from the forward-mode section above -- is a few lines of Python:
-
-```python fillin
-class Dual:
-    """Carries (value, derivative) through every operation -- forward-mode
-    autodiff, described above. Seed the input with derivative 1."""
-    def __init__(self, value, deriv):
-        self.value = value
-        self.deriv = deriv
-
-    def __add__(self, other):
-        other = other if isinstance(other, Dual) else Dual(other, 0.0)
-        return Dual(self.value + other.value, self.deriv + other.deriv)
-
-    def __mul__(self, other):
-        other = other if isinstance(other, Dual) else Dual(other, 0.0)
-        # product rule: d(uv) = u'v + uv'
-        return Dual(self.value * other.value, {{blank:self.deriv * other.value + self.value * other.deriv}})
-
-    __radd__ = __add__
-    __rmul__ = __mul__
-
-# Same function as the torch example above: y = x**2 + 3*x + 1 at x=2.
-x = Dual(2.0, {{blank:1.0}})   # seed: dx/dx = 1
-y = x * x + 3 * x + 1          # x**2 written as x*x -- no __pow__ needed
-
-expected = {{blank:7.0}}       # matches x.grad above: 2*x + 3 = 2*2 + 3
-if abs(y.deriv - expected) < 1e-9:
-    print("PASS")
-else:
-    print("WRONG:", y.deriv)
-```
-
-
-
+- Trace a scalar computation graph and identify each local derivative.
+- Implement reverse-mode propagation with a topological ordering of `Value` nodes.
+- Handle overloaded arithmetic, powers, division, ReLU, tanh, exp, and log.
+- Compare autodiff gradients with centered finite differences using `gradient_check`.
+- Reset parameter gradients before training a small XOR MLP with the same engine.
 
 ## Build It
 
-Reconstruct **Chain Rule & Automatic Differentiation** by following `Value` on a graph with edges (0,1) and (1,2). Run `julia main.jl` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.
+The canonical implementation is `code/main.jl`; `autodiff.py` is a readable standard-library reference. Run:
+
+```bash
+julia main.jl
+```
+
+The first fixture builds `y = relu(x1*x2 + 1)` with `x1=2` and `x2=3`. Its forward value is `7`, and the backward pass prints `dy/dx1=3` and `dy/dx2=2`. `Value` stores `data`, `grad`, `children`, an operation label, and a closure assigned to `backward!`. The closure for multiplication sends `out.grad*b.data` to `a` and `out.grad*a.data` to `b`.
+
+`backward!` recursively visits children once, appends nodes in topological order, seeds the root gradient with `1`, and then walks the order backwards. This is why a shared intermediate receives contributions from every downstream path. ReLU sends no gradient when its output is non-positive; the local implementation deliberately uses `0` at the boundary.
+
+The demo also checks `x^3` at `x=2` (`y=8`, derivative `12`), a composite ReLU expression, a single neuron, exp/log, and five gradient-check fixtures. The MLP section seeds `Random` with `42` and trains a `[2,4,1]` network on XOR for 100 steps; the exact loss trajectory is a local fixture, while the invariant is that parameters are updated only after gradients are reset and backpropagated.
 
 ## Use It
 
-Call `Value` from a small caller with a graph with edges (0,1) and (1,2). Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+Build a scalar with `Value` and call `backward!` once. To inspect a graph, print each node's `data`, `op`, and `grad`; do not infer a derivative from a value alone. For a second backward pass on reused parameters, reset `grad` explicitly, just as `demo_mlp_training` does for every parameter.
+
+`gradient_check(build_expr, 0.5)` evaluates the same expression at `0.5+h` and `0.5-h` and compares the centered slope with the reverse-mode result. A small absolute difference supports the implementation for that fixture; it is not a proof for every operation or input domain. `log` still requires a positive input, and division by a zero-valued `Value` remains undefined.
 
 ## Ship It
 
-Hand off `outputs/skill-autodiff.md` with the command `julia main.jl`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [3Blue1Brown: Backpropagation calculus](https://www.youtube.com/watch?v=tIeHLnjs5U8) -- visual explanation of the chain rule in neural networks
-- [PyTorch Autograd mechanics](https://pytorch.org/docs/stable/notes/autograd.html) -- how the real system works
-- [Baydin et al., Automatic Differentiation in Machine Learning: a Survey](https://arxiv.org/abs/1502.05767) -- comprehensive reference
+`outputs/skill-autodiff.md` is a debugging reference. A useful handoff shows a Mermaid graph or a plain node table, names the local derivative at each edge, and includes one finite-difference check. It should describe the local engine rather than claim framework compatibility or silently skip zero-gradient resets.
 
 ## Exercises
 
-This lab follows `Value` and `relu` on a controlled fixture; write down the value before changing the input.
-
-1. **Trace the canonical fixture.** From `code/`, run `julia main.jl` using a graph with edges (0,1) and (1,2). Follow `Value`, `relu`, `tanh`. Expect degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly; capture the first printed shape, metric, status, or summary field and state which part supports **Build a minimal autograd engine (Value class) that records operations and computes gradients via reverse-mode autodiff**.
-2. **Change the controlled parameter.** Repeat the command after changing only the edge list: use the same graph with an isolated node 3. Predict the direction of the change, then compare the two output values. Explain why **Implement forward and backward passes through a computation graph using topological sort** says the other inputs should stay fixed.
-3. **Exercise the guard.** Feed the implementation a graph with no edges. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Construct and train a multi-layer perceptron on XOR using only the from-scratch autograd engine** and record the exception text if the code rejects the case.
-4. **Prepare the artifact for reuse.** Open `outputs/skill-autodiff.md` and add a worked example using a graph with edges (0,1) and (1,2). Include the input contract, one expected output field, and a named acceptance check for **Verify autodiff correctness using gradient checking against numerical finite differences**; note what the demo cannot establish.
+1. Trace `relu(Value(2)*Value(3)+1)` and write the two multiplication derivatives before running the demo.
+2. Add a second use of a shared `Value` to an expression and verify that its gradient is the sum of both paths after `backward!`.
+3. Run the gradient-check section and identify the expression with the largest printed difference. Explain whether the difference is a finite-difference tolerance or a derivative bug.
+4. Change only the ReLU preactivation in the composite fixture from `4` to `-1`. Predict which input gradients become zero and verify the output.
 
 ## Reference Solution
 
-A checkable result for **Chain Rule & Automatic Differentiation** should contain:
-
-- the `julia main.jl` output for a graph with edges (0,1) and (1,2), with `Value`, `relu`, `tanh` traced to the value or shape that supports **Build a minimal autograd engine (Value class) that records operations and computes gradients via reverse-mode autodiff**;
-- a before/after comparison for the edge list, where the same graph with an isolated node 3 changes the observation in the direction predicted by **Implement forward and backward passes through a computation graph using topological sort**;
-- a recorded result for a graph with no edges that matches the implementation’s validation or empty-result contract and explains the evidence for **Construct and train a multi-layer perceptron on XOR using only the from-scratch autograd engine**; and
-- an updated `outputs/skill-autodiff.md` example with a concrete input, expected output field, and acceptance check tied to **Verify autodiff correctness using gradient checking against numerical finite differences**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+For the first graph, `y=7`, `dy/dx1=3`, and `dy/dx2=2`. A shared node accumulates both downstream contributions because its `grad` is incremented, not overwritten. The gradient checker should report differences below its `1e-5` acceptance threshold for the listed expressions. A negative ReLU output has zero local derivative, so all gradients crossing that ReLU input are zero.

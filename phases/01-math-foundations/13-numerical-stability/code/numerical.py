@@ -1,3 +1,9 @@
+# Numerical-stability primitives for phases/01-math-foundations/13-numerical-stability/docs/en.md.
+# Compares naive and stabilized softmax, log-sum-exp, gradients, precision, and normalization.
+# The implementation uses only Python's standard library and deterministic local fixtures.
+# Canonical execution is `python3 main.py` from this code directory.
+# Tests import these functions directly so failures identify the unstable operation.
+
 import math
 import struct
 import random
@@ -55,12 +61,18 @@ def sigmoid_stable(x):
 
 
 def binary_cross_entropy_naive(y_true, y_pred):
+    if y_true not in (0, 1):
+        raise ValueError("y_true must be exactly 0 or 1")
     return -(y_true * math.log(y_pred) + (1 - y_true) * math.log(1 - y_pred))
 
 
 def binary_cross_entropy_stable(y_true, logit):
-    max_val = max(0.0, -logit)
-    return max_val + math.log(math.exp(-max_val) + math.exp(-logit - max_val)) - y_true * logit
+    if y_true not in (0, 1):
+        raise ValueError("y_true must be exactly 0 or 1")
+    max_val = max(0.0, logit)
+    return max_val - y_true * logit + math.log(
+        math.exp(-max_val) + math.exp(logit - max_val)
+    )
 
 
 def numerical_gradient(f, x, h=1e-5):

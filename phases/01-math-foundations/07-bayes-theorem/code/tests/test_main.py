@@ -12,6 +12,8 @@ import unittest
 
 CODE = Path(__file__).resolve().parents[1]
 MAIN = CODE / "main.py"
+sys.path.insert(0, str(CODE))
+from bayes import NaiveBayes, bayes, beta_update  # noqa: E402
 ALLOWED = set(sys.stdlib_module_names) | {"numpy", "torch", "h5py", "zstandard", "safetensors"}
 
 def source_trees() -> list[ast.AST]:
@@ -59,6 +61,35 @@ class LessonDemoTests(unittest.TestCase):
 
     def test_demo_has_no_traceback(self) -> None:
         self.assertNotIn("Traceback (most recent call last)", run_demo().stderr)
+
+    def test_bayes_medical_fixture(self) -> None:
+        posterior = bayes(0.0001, 0.99, 0.01)
+        self.assertAlmostEqual(posterior, 0.0098039, places=5)
+
+    def test_beta_update_adds_counts(self) -> None:
+        self.assertEqual(beta_update(1, 1, 3, 1), (4, 2))
+
+    def test_naive_bayes_smoothing_and_probabilities(self) -> None:
+        model = NaiveBayes(smoothing=1.0)
+        model.train(["free offer", "team meeting"], ["spam", "ham"])
+        self.assertAlmostEqual(model._log_likelihood("unseen", "spam"), __import__("math").log(1 / 6))
+        probabilities = model.predict_proba("free")
+        self.assertAlmostEqual(sum(probabilities.values()), 1.0)
+
+    def test_training_and_prediction_validation(self) -> None:
+        model = NaiveBayes()
+        with self.assertRaises(ValueError):
+            model.predict("hello")
+        with self.assertRaises(ValueError):
+            model.train(["one"], [])
+        with self.assertRaises(ValueError):
+            model.train([], [])
+
+    def test_probability_validation(self) -> None:
+        with self.assertRaises(ValueError):
+            bayes(-0.1, 0.9, 0.1)
+        with self.assertRaises(ValueError):
+            bayes(0.0, 0.0, 0.0)
 
 if __name__ == "__main__":
     unittest.main()

@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which scenario signal should trigger a closer compliance review?",
+      "question": "Which explicit signal is accepted as an alias for sensitive data?",
       "options": [
-        "Sensitive data, external impact, automated decisions, or a need for explanation",
-        "A short Python file with no users",
-        "A colorful presentation theme",
-        "A model that runs quickly on a laptop"
+        "PII",
+        "data",
+        "decision",
+        "private-ish"
       ],
       "correct": 0,
-      "explanation": "The artifact's SIGNALS list operational reasons to raise scrutiny. Runtime speed or presentation style does not determine whether a workflow affects people or protected information."
+      "explanation": "The parser normalizes PII to the canonical sensitive data signal. Generic words such as data and decision are not complete signal phrases, and private-ish is not a documented alias."
     },
     {
       "stage": "check",
-      "question": "A Scenario has impact=4, uncertainty=4, and two matched signals. What score_scenario value is produced?",
+      "question": "A scenario has impact=4, uncertainty=4, and three matched signals. What score does score_scenario return?",
       "options": [
-        "11",
         "16",
-        "9",
-        "20 before applying the cap"
+        "18",
+        "20 before applying any cap",
+        "12"
       ],
       "correct": 1,
-      "explanation": "The score is impact*2 + uncertainty + 2*matches = 8+4+4 = 16, below the cap of 20."
+      "explanation": "The calculation is 4*2 + 4 + 2*3 = 18, which is already below the maximum score of 20."
     },
     {
       "stage": "check",
-      "question": "What priority does priority_for(16) return?",
+      "question": "Which categories result from the signals automated decision and explanation required?",
       "options": [
-        "guided pilot",
-        "team practice",
-        "launch gate required",
-        "awareness only"
+        "privacy only",
+        "ownership and freshness",
+        "fairness, accountability, and transparency",
+        "unclassified only"
       ],
       "correct": 2,
-      "explanation": "The function assigns scores 16 and above to a launch gate. The lower bands begin at 11 for guided pilot, 7 for team practice, and below 7 for awareness."
+      "explanation": "Automated decision maps to fairness and accountability; explanation required adds transparency. The recommendation takes their union in fixed category order."
     },
     {
       "stage": "check",
-      "question": "Why does recommend select at least two controls even when few signals match?",
+      "question": "Which controls are produced for a scenario whose only matched signal is sensitive data?",
       "options": [
-        "The score is always exactly two",
-        "Controls are chosen randomly so no signal matters",
-        "The list is only a display label and never enters the recommendation",
-        "The artifact keeps a minimum practical control set while adding more controls for more matches"
+        "bias evaluation and audit log",
+        "freshness SLA and refresh timestamp",
+        "intended-use record only",
+        "PII minimization and privacy review"
       ],
       "correct": 3,
-      "explanation": "selected_controls takes CONTROLS up to 1+len(matches), bounded to at least two. That makes a lightweight recommendation actionable rather than empty."
+      "explanation": "The sensitive-data mapping is specific: it requests PII minimization and privacy review. Controls for automation or freshness are not added without those signals."
     },
     {
       "stage": "post",
-      "question": "An HR policy assistant handles sensitive employee information and can affect decisions. Which next step fits the artifact?",
+      "question": "A description contains only the word data and the explicit signal list is empty. What does signal_matches return?",
       "options": [
-        "Record the signals, apply PII minimization and human review, and assess whether a launch gate is required",
-        "Ship it immediately because the assistant is only text",
-        "Remove the audit log so the workflow stays lightweight",
-        "Treat the model's confidence score as the accountable decision"
+        "The sensitive data signal",
+        "All four signals",
+        "An unknown-signal error",
+        "An empty list"
       ],
-      "correct": 0,
-      "explanation": "Sensitive data and external impact are explicit signals. The workflow keeps people accountable and turns the risk assessment into controls and a rollout decision."
+      "correct": 3,
+      "explanation": "Narrative matching requires a complete normalized phrase such as sensitive data or personal data. The generic word data alone produces no match, and there is no unknown explicit signal to reject."
     },
     {
       "stage": "post",
-      "question": "What does build_plan return for a set of scenarios?",
+      "question": "Which fields does build_plan add to each serialized responsible-AI handoff row?",
       "options": [
-        "Only the highest-scoring scenario name",
-        "Rows containing each scenario, category, score, priority, controls, and rationale sorted by score",
-        "A trained classifier with no explanation fields",
-        "An unordered list of raw Scenario objects without controls"
+        "Only the scenario name and score",
+        "Signals, categories, score, priority, controls, evidence, and rationale",
+        "A trained classifier and model confidence",
+        "The raw Scenario object without a score"
       ],
       "correct": 1,
-      "explanation": "build_plan calls recommend for each scenario, serializes the recommendation fields into dictionaries, and sorts the rows from highest score to lowest."
+      "explanation": "build_plan calls recommend, keeps the matched signals and mapped categories, serializes controls and evidence, and sorts rows by descending score with a name tie-breaker."
     }
   ]
 }

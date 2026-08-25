@@ -1,33 +1,48 @@
-# Data Readiness Triage
+---
+name: data-readiness-triage-worksheet
+description: Record source evidence, readiness signals, mapped controls, and evidence gaps.
+phase: 1
+lesson: 30
+---
 
-## Workflow
+# Data-readiness triage worksheet
 
-- Business question:
-- Intended user:
-- Decision or output:
+This worksheet makes a model-choice conversation concrete. It does not certify data quality or
+replace a representative evaluation.
 
-## Source Inventory
+## Source record
 
-| Source | Owner | Freshness | Sensitivity | Known quality issue |
-|--------|-------|-----------|-------------|---------------------|
-|        |       |           |             |                     |
+| Field | Value |
+|---|---|
+| Source or dataset | |
+| Business question | |
+| Named source owner | |
+| Last refresh timestamp / age in days | |
+| Measured quality rate | |
+| Sensitive fields and access purpose | |
 
-## Readiness Signals
+## Signal contract
 
-- [ ] Unclear source owner
-- [ ] Stale data
-- [ ] Quality issue
-- [ ] Sensitive field
+Use exact phrases or documented aliases. A generic word such as `source`, `quality`, or `field`
+does not create a finding. Structured evidence can derive the following findings:
 
-## Controls
+| Finding | Trigger | Category | Controls | Evidence gap |
+|---|---|---|---|---|
+| `unclear source owner` | no owner, `unknown`, or `missing source owner` | ownership | source inventory; named data steward | owner and escalation route |
+| `stale data` | `freshness_days > 30` or `outdated data` | freshness | freshness SLA; refresh timestamp | last refresh and target |
+| `quality issue` | `quality_rate < 0.95` or `quality issue` | quality | quality threshold; evaluation sample | missingness/validity measurement |
+| `sensitive field` | non-empty sensitive-field list or `PII field` | privacy | privacy classification; field minimization | field inventory and purpose |
 
-- Source inventory:
-- Quality threshold:
-- Privacy classification:
-- Evaluation sample:
+## Handoff
 
-## Decision
+- Matched signals:
+- Categories:
+- Score and priority:
+- Controls to assign:
+- Evidence gaps:
+- Evaluation sample and acceptance threshold:
+- Decision, owner, and review date:
 
-- Next step:
-- Owner:
-- Date:
+For a healthy, named, recent source with quality rate at least `0.95`, the artifact returns
+`unclassified` and the baseline `intended-use record`. That result is a documented starting
+point, not a production approval.

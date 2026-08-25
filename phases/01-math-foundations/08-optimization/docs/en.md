@@ -1,239 +1,49 @@
 # Optimization
 
-> Training a neural network is nothing more than finding the bottom of a valley.
+> An optimizer is a stateful rule for turning a gradient into the next parameter vector.
 
 **Type:** Build
 **Languages:** Julia
-**Language:** Python
-**Prerequisites:** Phase 1, Lessons 04-05 (Derivatives, Gradients)
+**Prerequisites:** Phase 1, Lessons 04-05 (Calculus; Chain Rule & Automatic Differentiation)
 **Time:** ~75 minutes
 
 ## Learning Objectives
 
-- Implement vanilla gradient descent, SGD with momentum, and Adam from scratch
-- Compare optimizer convergence on the Rosenbrock function and explain why Adam adapts per-weight learning rates
-- Distinguish convex from non-convex loss landscapes and explain the role of saddle points in high dimensions
-- Configure learning rate schedules (step decay, cosine annealing, warmup) for training stability
-
-## The Problem
-
-You have a loss function. It tells you how wrong your model is. You have gradients. They tell you which direction makes the loss worse. Now you need a strategy for walking downhill.
-
-The naive approach is simple: move opposite the gradient. Scale the step by some number called the learning rate. Repeat. This is gradient descent, and it works. But "works" has caveats. Too large a learning rate and you overshoot the valley entirely, bouncing between walls. Too small and you crawl toward the answer over thousands of unnecessary steps. Hit a saddle point and you stop moving even though you have not found a minimum.
-
-Every optimizer in deep learning is an answer to the same question: how do you get to the bottom of the valley faster and more reliably?
-
-## The Concept
-
-### What optimization means
-
-Optimization is finding the input values that minimize (or maximize) a function. In machine learning, the function is the loss. The inputs are the model's weights. Training is optimization.
-
-```
-minimize L(w) where:
-  L = loss function
-  w = model weights (could be millions of parameters)
-```
-
-### Gradient descent (vanilla)
-
-The simplest optimizer. Compute the gradient of the loss with respect to every weight. Move each weight in the opposite direction of its gradient. Scale the step by the learning rate.
-
-```
-w = w - lr * gradient
-```
-
-That is the entire algorithm. One line.
-
-```mermaid
-graph TD
-    A["* Starting point (high loss)"] --> B["Moving downhill along gradient"]
-    B --> C["Approaching minimum"]
-    C --> D["o Minimum (low loss)"]
-```
-
-### Learning rate: the most important hyperparameter
-
-The learning rate controls step size. It determines everything about convergence.
-
-```mermaid
-graph LR
-    subgraph TooLarge["Too Large (lr = 1.0)"]
-        A1["Step 1"] -->|overshoot| A2["Step 2"]
-        A2 -->|overshoot| A3["Step 3"]
-        A3 -->|diverging| A4["..."]
-    end
-    subgraph TooSmall["Too Small (lr = 0.0001)"]
-        B1["Step 1"] -->|tiny step| B2["Step 2"]
-        B2 -->|tiny step| B3["Step 3"]
-        B3 -->|10,000 steps later| B4["Minimum"]
-    end
-    subgraph JustRight["Just Right (lr = 0.01)"]
-        C1["Start"] --> C2["..."] --> C3["Converged in ~100 steps"]
-    end
-```
-
-There is no formula for the right learning rate. You find it by experiment. Common starting points: 0.001 for Adam, 0.01 for SGD with momentum.
-
-### SGD vs batch vs mini-batch
-
-Vanilla gradient descent computes the gradient over the entire dataset before taking one step. This is called batch gradient descent. It is stable but slow.
-
-Stochastic gradient descent (SGD) computes the gradient on a single random sample and steps immediately. It is noisy but fast.
-
-Mini-batch gradient descent splits the difference. Compute the gradient over a small batch (32, 64, 128, 256 samples), then step. This is what everyone actually uses.
-
-| Variant | Batch size | Gradient quality | Speed per step | Noise |
-|---------|-----------|-----------------|---------------|-------|
-| Batch GD | Entire dataset | Exact | Slow | None |
-| SGD | 1 sample | Very noisy | Fast | High |
-| Mini-batch | 32-256 | Good estimate | Balanced | Moderate |
-
-The noise in SGD and mini-batch is not a bug. It helps escape shallow local minima and saddle points.
-
-### Momentum: the ball rolling downhill
-
-Vanilla gradient descent only looks at the current gradient. If the gradient zigzags (common in narrow valleys), progress is slow. Momentum fixes this by accumulating past gradients into a velocity term.
-
-```
-v = beta * v + gradient
-w = w - lr * v
-```
-
-The analogy: a ball rolling downhill. It does not stop and restart at every bump. It builds speed in consistent directions and dampens oscillations.
-
-```mermaid
-graph TD
-    subgraph Without["Without Momentum (zigzag, slow)"]
-        W1["Start"] -->|left| W2[" "]
-        W2 -->|right| W3[" "]
-        W3 -->|left| W4[" "]
-        W4 -->|right| W5[" "]
-        W5 -->|left| W6[" "]
-        W6 --> W7["Minimum"]
-    end
-    subgraph With["With Momentum (smooth, fast)"]
-        M1["Start"] --> M2[" "] --> M3[" "] --> M4["Minimum"]
-    end
-```
-
-`beta` (typically 0.9) controls how much history to keep. Higher beta means more momentum, smoother paths, but slower response to direction changes.
-
-### Adam: adaptive learning rates
-
-Different weights need different learning rates. A weight that rarely gets large gradients should take bigger steps when it finally does. A weight that gets huge gradients constantly should take smaller steps.
-
-Adam (Adaptive Moment Estimation) tracks two things per weight:
-
-1. First moment (m): running average of gradients (like momentum)
-2. Second moment (v): running average of squared gradients (gradient magnitude)
-
-```
-m = beta1 * m + (1 - beta1) * gradient
-v = beta2 * v + (1 - beta2) * gradient^2
-
-m_hat = m / (1 - beta1^t)    bias correction
-v_hat = v / (1 - beta2^t)    bias correction
-
-w = w - lr * m_hat / (sqrt(v_hat) + epsilon)
-```
-
-The division by `sqrt(v_hat)` is the key insight. Weights with large gradients get divided by a large number (small effective step). Weights with small gradients get divided by a small number (large effective step). Each weight gets its own adaptive learning rate.
-
-Default hyperparameters: `lr=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8`. These defaults work well for most problems.
-
-### Learning rate schedules
-
-A fixed learning rate is a compromise. Early in training, you want large steps to make fast progress. Late in training, you want small steps to fine-tune near the minimum.
-
-Common schedules:
-
-| Schedule | Formula | Use case |
-|----------|---------|----------|
-| Step decay | lr = lr * factor every N epochs | Simple, manual control |
-| Exponential decay | lr = lr_0 * decay^t | Smooth reduction |
-| Cosine annealing | lr = lr_min + 0.5 * (lr_max - lr_min) * (1 + cos(pi * t / T)) | Transformers, modern training |
-| Warmup + decay | Linear ramp up, then decay | Large models, prevents early instability |
-
-### Convex vs non-convex
-
-A convex function has one minimum. Gradient descent always finds it. A quadratic like `f(x) = x^2` is convex.
-
-Neural network loss functions are non-convex. They have many local minima, saddle points, and flat regions.
-
-```mermaid
-graph LR
-    subgraph Convex["Convex: One valley, one answer"]
-        direction TB
-        CV1["High loss"] --> CV2["Global minimum"]
-    end
-    subgraph NonConvex["Non-convex: Multiple valleys, saddle points"]
-        direction TB
-        NC1["Start"] --> NC2["Local minimum"]
-        NC1 --> NC3["Saddle point"]
-        NC1 --> NC4["Global minimum"]
-    end
-```
-
-In practice, local minima in high-dimensional neural networks are rarely a problem. Most local minima have loss values close to the global minimum. Saddle points (flat in some directions, curved in others) are the real obstacle. Momentum and noise from mini-batches help escape them.
-
-### Loss landscape visualization
-
-The loss is a function of all weights. For a model with 1 million weights, the loss landscape lives in 1,000,001-dimensional space. We visualize it by picking two random directions in weight space and plotting the loss along those directions, producing a 2D surface.
-
-```mermaid
-graph TD
-    HL["High loss region"] --> SP["Saddle point"]
-    HL --> LM["Local minimum"]
-    SP --> LM
-    SP --> GM["Global minimum"]
-    LM -.->|"shallow barrier"| GM
-    style HL fill:#ff6666,color:#000
-    style SP fill:#ffcc66,color:#000
-    style LM fill:#66ccff,color:#000
-    style GM fill:#66ff66,color:#000
-```
-
-Sharp minima generalize poorly. Flat minima generalize well. This is one reason SGD with momentum often outperforms Adam on final test accuracy: its noise prevents settling into sharp minima.
-
-
-
+- Implement vanilla gradient descent, momentum, and Adam with explicit optimizer state.
+- Derive the Rosenbrock gradient and compare optimizer trajectories on its narrow valley.
+- Explain why learning-rate size can produce slow progress, convergence, or divergence.
+- Use Hessian shape and a saddle fixture to distinguish a stationary saddle from a minimum.
+- Inspect finite, bounded trajectories instead of treating a missing update as convergence.
 
 ## Build It
 
-Reconstruct **Optimization** by following `GradientDescent` on x=0.5 with the demo defaults. Run `julia main.jl` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+`code/main.jl` is the canonical implementation. `optimizers.py` is a matching Python reference for reading and small experiments. Run:
+
+```bash
+julia main.jl
+```
+
+`GradientDescent` stores `lr`; `SGDMomentum` stores `lr`, `momentum`, and a velocity vector; `Adam` stores first and second moments, `beta1`, `beta2`, `epsilon`, and step `t`. All three expose `step!`. The optimizer loop starts Rosenbrock at `[-1,1]`, runs at most `5000` steps, and stops early if a gradient or parameter becomes non-finite or exceeds `1e15`.
+
+Rosenbrock is `f(x,y)=(1-x)^2+100(y-x^2)^2`; its minimum is the local fixture `[1,1]` with loss `0`. The learning-rate sweep compares `0.0001`, `0.0005`, `0.001`, and `0.005`. Status is derived from the observed final loss: `DIVERGED` for non-finite or loss above `1e10`, `converged` below `0.01`, otherwise `slow`. These labels describe this run, not a universal ranking of optimizers.
 
 ## Use It
 
-Call `GradientDescent` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+For one step, calculate `p - lr*g` before calling `step!`. Momentum accumulates `v <- beta*v + g`, so its first step with an empty velocity uses the raw gradient. Adam forms exponential averages of `g` and `g^2`, then bias-corrects both with `1-beta^t`; this prevents the zero initialization from shrinking the first effective update.
+
+The saddle fixture is `f(x,y)=x^2-y^2`, started at `[0.01,0.01]` for `200` steps with `lr=0.01`. Its gradient is `[2x,-2y]`; descending in `y` increases `|y|`, so the demo can report escape even though the origin has zero gradient. The trajectory guard makes overflow a visible stop condition rather than a long-running loop.
 
 ## Ship It
 
-Hand off `outputs/prompt-optimizer-guide.md` with the command `julia main.jl`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [Sebastian Ruder: An overview of gradient descent optimization algorithms](https://ruder.io/optimizing-gradient-descent/) - comprehensive survey of all major optimizers
-- [Why Momentum Really Works (Distill)](https://distill.pub/2017/momentum/) - interactive visualization of momentum dynamics
-- [Adam: A Method for Stochastic Optimization (Kingma & Ba, 2014)](https://arxiv.org/abs/1412.6980) - the original Adam paper, readable and short
-- [Visualizing the Loss Landscape of Neural Nets (Li et al., 2018)](https://arxiv.org/abs/1712.09913) - the paper that showed sharp vs flat minima
+`outputs/prompt-optimizer-guide.md` is a decision aid for selecting and checking these three local optimizers. It should ask for the objective, starting vector, gradient, learning rate, number of steps, final loss, and stop reason. It must not promise cosine schedules or a particular optimizer winner: this code implements fixed learning rates and the local Rosenbrock/saddle fixtures only.
 
 ## Exercises
 
-Use `GradientDescent` as the trace: start from x=0.5 with the demo defaults, keep the raw output, and tie each observation to a named objective.
-
-1. **Reproduce the reference path.** From `code/`, run `julia main.jl` using x=0.5 with the demo defaults. Follow `GradientDescent`, `step`, `SGDMomentum`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Implement vanilla gradient descent, SGD with momentum, and Adam from scratch**.
-2. **Vary one named input.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Compare optimizer convergence on the Rosenbrock function and explain why Adam adapts per-weight learning rates** says the other inputs should stay fixed.
-3. **Probe the empty case.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Distinguish convex from non-convex loss landscapes and explain the role of saddle points in high dimensions** and record the exception text if the code rejects the case.
-4. **Package a usable handoff.** Open `outputs/prompt-optimizer-guide.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Configure learning rate schedules (step decay, cosine annealing, warmup) for training stability**; note what the demo cannot establish.
+1. Apply `GradientDescent(lr=0.1)` to `params=[3.0]` with gradient `[6.0]`. Verify the next parameter is `2.4`.
+2. Run the Rosenbrock sweep and record which of the four local rates is labeled `converged`, `slow`, or `DIVERGED` in your environment.
+3. For the first `SGDMomentum` step with gradient `[2,-1]`, `momentum=0.9`, and an empty velocity, calculate the velocity and update by hand.
+4. Compare the saddle gradient at `[0.01,0.01]` with the gradient at `[0,0]`. Explain why a zero gradient at the exact saddle is not evidence of a minimum.
 
 ## Reference Solution
 
-A checkable result for **Optimization** should contain:
-
-- the `julia main.jl` output for x=0.5 with the demo defaults, with `GradientDescent`, `step`, `SGDMomentum` traced to the value or shape that supports **Implement vanilla gradient descent, SGD with momentum, and Adam from scratch**;
-- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Compare optimizer convergence on the Rosenbrock function and explain why Adam adapts per-weight learning rates**;
-- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Distinguish convex from non-convex loss landscapes and explain the role of saddle points in high dimensions**; and
-- an updated `outputs/prompt-optimizer-guide.md` example with a concrete input, expected output field, and acceptance check tied to **Configure learning rate schedules (step decay, cosine annealing, warmup) for training stability**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+The scalar update is `3 - 0.1*6 = 2.4`. On the first momentum step, the velocity is exactly the gradient because the initial velocity is zero. At the origin of the saddle, the gradient is `[0,0]`, but the Hessian has eigenvalues `2` and `-2`, so curvature—not the gradient alone—identifies the stationary point. Any sweep label must be copied from the actual bounded run; the code deliberately avoids a universal optimizer claim.

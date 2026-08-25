@@ -67,8 +67,8 @@ def load_and_inspect(dataset_path: str | Path = DATA_PATH, split: str = "all") -
 
 
 def stream_dataset(dataset_path: str | Path = DATA_PATH, max_rows: int = 5) -> list[Row]:
-    if max_rows < 0:
-        raise ValueError("max_rows must not be negative")
+    if max_rows <= 0:
+        raise ValueError("max_rows must be positive")
     rows: list[Row] = []
     with Path(dataset_path).open(encoding="utf-8") as handle:
         for line_number, line in enumerate(handle, start=1):

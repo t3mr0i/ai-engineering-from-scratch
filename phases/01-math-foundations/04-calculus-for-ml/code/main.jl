@@ -1,10 +1,8 @@
-# Calculus for ML in Julia. Numerical + analytical derivatives,
-# multivariate gradients, gradient descent, Hessian curvature,
-# Taylor expansion, and a tiny linear regression trained by SGD.
-# Stdlib only. Sources:
-#   https://docs.julialang.org/en/v1/manual/functions/
-#   https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/
-#   https://docs.julialang.org/en/v1/manual/arrays/
+# Canonical Julia demo for phases/01-math-foundations/04-calculus-for-ml/docs/en.md.
+# Covers finite differences, gradients, Hessians, Taylor estimates, and linear regression.
+# Uses Julia stdlib functions and LinearAlgebra for Hessian eigenvalues.
+# Sources: Julia manual functions/arrays and LinearAlgebra documentation.
+# Run from this directory with: julia main.jl
 
 using Random
 using LinearAlgebra

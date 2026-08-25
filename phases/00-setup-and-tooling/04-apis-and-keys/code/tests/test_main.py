@@ -69,15 +69,24 @@ class RequestBuilderTests(unittest.TestCase):
             captured["timeout"] = timeout
             return FakeResponse({"content": [{"text": "ok"}], "usage": {}})
 
-        response = call_raw_http("secret", build_request(), opener=opener)
+        request_payload = build_request(model="example-model")
+        response = call_raw_http("secret", request_payload, opener=opener)
         request = captured["request"]
         self.assertEqual(response["content"], [{"text": "ok"}])
         self.assertEqual(captured["timeout"], 10)
         self.assertEqual(request.full_url, API_URL)  # type: ignore[union-attr]
-        self.assertEqual(json.loads(request.data), build_request())  # type: ignore[union-attr]
+        self.assertEqual(json.loads(request.data), request_payload)  # type: ignore[union-attr]
+
+    def test_live_request_rejects_the_local_fixture_model(self) -> None:
+        with self.assertRaisesRegex(ValueError, "ANTHROPIC_MODEL"):
+            call_raw_http("secret", build_request())
 
     def test_canonical_demo_defaults_to_mock_and_exits_zero(self) -> None:
-        env = {key: value for key, value in os.environ.items() if key not in {"ANTHROPIC_API_KEY", "ANTHROPIC_LIVE"}}
+        env = {
+            key: value
+            for key, value in os.environ.items()
+            if key not in {"ANTHROPIC_API_KEY", "ANTHROPIC_LIVE", "ANTHROPIC_MODEL"}
+        }
         result = subprocess.run(
             [sys.executable, MAIN.name],
             cwd=CODE,
@@ -90,6 +99,28 @@ class RequestBuilderTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("mode: MOCK (no network", result.stdout)
         self.assertIn("lesson-fixture", result.stdout)
+        self.assertNotIn("Traceback", result.stderr)
+
+    def test_live_flag_and_key_without_model_stays_offline(self) -> None:
+        env = {
+            key: value
+            for key, value in os.environ.items()
+            if key not in {"ANTHROPIC_API_KEY", "ANTHROPIC_LIVE", "ANTHROPIC_MODEL"}
+        }
+        env.update({"ANTHROPIC_LIVE": "1", "ANTHROPIC_API_KEY": "test-only"})
+        result = subprocess.run(
+            [sys.executable, MAIN.name],
+            cwd=CODE,
+            env=env,
+            text=True,
+            capture_output=True,
+            check=False,
+            timeout=10,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("missing ANTHROPIC_MODEL", result.stdout)
+        self.assertIn("mode: MOCK", result.stdout)
+        self.assertNotIn("mode: LIVE", result.stdout)
         self.assertNotIn("Traceback", result.stderr)
 
 

@@ -1,3 +1,9 @@
+# Graph primitives for phases/01-math-foundations/21-graph-theory/docs/en.md.
+# Implements adjacency, traversals, Laplacians, spectral clustering, GNN aggregation, and PageRank.
+# NumPy is the only non-stdlib dependency; all graphs are small local fixtures.
+# Canonical execution is `python3 main.py` from this code directory.
+# Tests assert graph structure, component counts, and message-passing shapes.
+
 import numpy as np
 from collections import deque
 

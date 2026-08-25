@@ -1,320 +1,46 @@
 # What Is Machine Learning
 
-> Machine learning is teaching computers to find patterns in data instead of writing rules by hand.
+> Turn a small, labeled table into a prediction, then measure what the model did not see.
 
 **Type:** Learn
-**Languages:** None
-**Prerequisites:** Phase 1 (Math Foundations)
-**Time:** ~100 minutes
+**Languages:** Python
+**Prerequisites:** Phase 01 math foundations
+**Time:** ~55 minutes
 
 ## Learning Objectives
 
-- Explain the difference between supervised, unsupervised, and reinforcement learning and identify which type applies to a given problem
-- Implement a nearest centroid classifier from scratch and evaluate it against a random baseline
-- Distinguish between classification and regression tasks and select the appropriate loss function for each
-- Evaluate whether a given business problem is suitable for ML or better solved with deterministic rules
+- Distinguish supervised, unsupervised, and reinforcement-learning problem statements.
+- Explain why a held-out split is evidence about generalization rather than memorization.
+- Implement and inspect a nearest-centroid classifier with NumPy.
+- Compare a learned classifier with random and majority baselines.
+- Decide when a stable deterministic rule is preferable to a learned model.
 
-## The Problem
+## The idea
 
-You want to build a spam filter. The traditional approach: sit down and write hundreds of rules. "If the email contains 'FREE MONEY', mark it spam. If it has more than 3 exclamation marks, mark it spam." You spend weeks writing rules. Then spammers change their wording. Your rules break. You write more rules. The cycle never ends.
+Traditional software receives rules and data and emits an answer. In supervised learning, examples contain both features and a target; fitting turns those examples into parameters that can be applied to a new row. A house-price target is continuous (regression), while a spam label is categorical (classification). Unsupervised methods receive features without a target and expose structure such as groups. Reinforcement learning receives rewards after actions.
 
-Machine learning flips this. Instead of writing rules, you give the computer thousands of labeled emails ("spam" or "not spam") and let it figure out the rules on its own. The computer finds patterns you never would have thought of. When spammers change tactics, you retrain on new data instead of rewriting code.
-
-This shift from "programming rules" to "learning from data" is the core of machine learning. Every recommendation engine, voice assistant, self-driving car, and language model works this way.
-
-## The Concept
-
-### Learning From Data, Not Rules
-
-Traditional programming and machine learning solve problems in opposite directions.
-
-```mermaid
-flowchart LR
-    subgraph Traditional["Traditional Programming"]
-        direction LR
-        R[Rules] --> P1[Program]
-        D1[Data] --> P1
-        P1 --> O1[Output]
-    end
-
-    subgraph ML["Machine Learning"]
-        direction LR
-        D2[Data] --> P2[Learning Algorithm]
-        O2[Expected Output] --> P2
-        P2 --> M[Model / Rules]
-    end
-```
-
-Traditional programming: you write the rules. The program applies them to data to produce output.
-
-Machine learning: you provide data and expected outputs. The algorithm discovers the rules.
-
-The "model" that comes out of training IS the rules, encoded as numbers (weights, parameters). It generalizes from examples it has seen to make predictions on data it has never seen.
-
-### The Three Types of Machine Learning
-
-```mermaid
-flowchart TD
-    ML[Machine Learning] --> SL[Supervised Learning]
-    ML --> UL[Unsupervised Learning]
-    ML --> RL[Reinforcement Learning]
-
-    SL --> C[Classification]
-    SL --> R[Regression]
-
-    UL --> CL[Clustering]
-    UL --> DR[Dimensionality Reduction]
-
-    RL --> PO[Policy Optimization]
-    RL --> VL[Value Learning]
-```
-
-**Supervised Learning**: You have input-output pairs. The model learns to map inputs to outputs.
-- "Here are 10,000 photos labeled cat or dog. Learn to tell them apart."
-- "Here are house features and prices. Learn to predict the price."
-
-**Unsupervised Learning**: You have inputs only. No labels. The model finds structure on its own.
-- "Here are 10,000 customer purchase histories. Find natural groupings."
-- "Here are 1,000 dimensional data points. Reduce to 2 dimensions while keeping structure."
-
-**Reinforcement Learning**: An agent takes actions in an environment and receives rewards or penalties. It learns a strategy (policy) to maximize total reward.
-- "Play this game. +1 for winning, -1 for losing. Figure out a strategy."
-- "Control this robot arm. +1 for picking up the object, -0.01 for each second wasted."
-
-Most of what you will build in practice uses supervised learning. Unsupervised learning is common for preprocessing and exploration. Reinforcement learning powers game AI, robotics, and RLHF for language models.
-
-### Beyond the Big Three
-
-The three categories above are clean, but real-world ML often blurs the lines.
-
-**Semi-supervised learning** uses a small set of labeled data and a large set of unlabeled data. You might have 100 labeled medical images and 100,000 unlabeled ones. Techniques include:
-
-- **Label propagation:** Build a graph connecting similar data points. Labels spread from labeled nodes to unlabeled neighbors through the graph.
-- **Pseudo-labeling:** Train a model on the labeled data, use it to predict labels for unlabeled data, then retrain on everything. The model bootstraps its own training set.
-- **Consistency regularization:** The model should give the same prediction for an input and a slightly perturbed version of that input. This works even without labels.
-
-**Self-supervised learning** creates supervision from the data itself. No human labels needed at all. The model creates its own prediction task from the structure of the data.
-
-- **Masked language modeling (BERT):** Hide 15% of words in a sentence, train the model to predict the missing words. The "labels" come from the original text.
-- **Contrastive learning (SimCLR):** Take an image, create two augmented versions. Train the model to recognize they came from the same image while distinguishing them from augmented versions of other images.
-- **Next-token prediction (GPT):** Predict the next word given all previous words. Every text document becomes a training example.
-
-These are not separate categories from the big three. They are strategies that combine supervised and unsupervised ideas. Self-supervised learning is technically supervised (the model predicts something), but the labels are generated automatically, not by humans.
-
-### Classification vs Regression
-
-These are the two main supervised learning tasks.
-
-| Aspect | Classification | Regression |
-|--------|---------------|------------|
-| Output | Discrete categories | Continuous numbers |
-| Example | "Is this email spam?" | "What will the house price be?" |
-| Output space | {cat, dog, bird} | Any real number |
-| Loss function | Cross-entropy, accuracy | Mean squared error, MAE |
-| Decision | Boundaries between classes | A curve that fits the data |
-
-Classification answers "which category?" Regression answers "how much?"
-
-Some problems can be framed either way. Predicting if a stock goes up or down is classification. Predicting the exact price is regression.
-
-### The ML Workflow
-
-Every machine learning project follows the same pipeline, regardless of the algorithm.
-
-```mermaid
-flowchart LR
-    A[Collect Data] --> B[Clean & Explore]
-    B --> C[Feature Engineering]
-    C --> D[Split Data]
-    D --> E[Train Model]
-    E --> F[Evaluate]
-    F -->|Not good enough| C
-    F -->|Good enough| G[Deploy]
-    G --> H[Monitor]
-    H -->|Performance drops| A
-```
-
-**Collect Data**: Gather raw data. More data is almost always better, but quality matters more than quantity.
-
-**Clean & Explore**: Handle missing values, remove duplicates, visualize distributions, spot anomalies. This step often takes 60-80% of total project time.
-
-**Feature Engineering**: Transform raw data into features the model can use. Turn dates into day-of-week. Normalize numerical columns. Encode categorical variables. Good features matter more than fancy algorithms.
-
-**Split Data**: Divide into training, validation, and test sets. The model trains on training data, you tune hyperparameters on validation data, and you report final performance on test data.
-
-**Train Model**: Feed training data into an algorithm. The algorithm adjusts internal parameters to minimize a loss function.
-
-**Evaluate**: Measure performance on validation/test data. If performance is not acceptable, go back and try different features, algorithms, or hyperparameters.
-
-**Deploy**: Put the model into production where it makes predictions on new data.
-
-**Monitor**: Track performance over time. Data distributions change (data drift), and models degrade. When performance drops, retrain.
-
-### Training, Validation, and Test Splits
-
-This is the most important concept beginners get wrong. You must evaluate your model on data it has never seen during training. Otherwise you are measuring memorization, not learning.
-
-```mermaid
-flowchart LR
-    subgraph Dataset["Full Dataset (100%)"]
-        direction LR
-        TR["Training Set (70%)"]
-        VA["Validation Set (15%)"]
-        TE["Test Set (15%)"]
-    end
-
-    TR -->|Train model| M[Model]
-    M -->|Tune hyperparameters| VA
-    VA -->|Final evaluation| TE
-```
-
-| Split | Purpose | When used | Typical size |
-|-------|---------|-----------|-------------|
-| Training | Model learns from this data | During training | 60-80% |
-| Validation | Tune hyperparameters, compare models | After each training run | 10-20% |
-| Test | Final unbiased performance estimate | Once, at the very end | 10-20% |
-
-The test set is sacred. You look at it exactly once. If you keep adjusting your model based on test performance, you are effectively training on the test set and your reported numbers are meaningless.
-
-For small datasets, use k-fold cross-validation: split data into k parts, train on k-1 parts, validate on the remaining part, rotate, and average results.
-
-### Overfitting vs Underfitting
-
-```mermaid
-flowchart LR
-    subgraph UF["Underfitting"]
-        U1["Model too simple"]
-        U2["High bias"]
-        U3["Misses patterns"]
-    end
-
-    subgraph GF["Good Fit"]
-        G1["Right complexity"]
-        G2["Balanced"]
-        G3["Generalizes well"]
-    end
-
-    subgraph OF["Overfitting"]
-        O1["Model too complex"]
-        O2["High variance"]
-        O3["Memorizes noise"]
-    end
-
-    UF -->|Increase complexity| GF
-    GF -->|Too much complexity| OF
-```
-
-**Underfitting**: The model is too simple to capture the patterns in the data. A straight line trying to fit a curved relationship. Training error is high. Test error is high.
-
-**Overfitting**: The model is too complex and memorizes the training data, including its noise. A wiggly curve that passes through every training point but fails on new data. Training error is low. Test error is high.
-
-**Good fit**: The model captures real patterns without memorizing noise. Training error and test error are both reasonably low.
-
-Signs of overfitting:
-- Training accuracy is much higher than validation accuracy
-- The model performs well on training data but poorly on new data
-- Adding more training data improves performance (the model was memorizing, not learning)
-
-Fixes for overfitting:
-- Get more training data
-- Reduce model complexity (fewer parameters, simpler architecture)
-- Regularization (add a penalty for large weights)
-- Dropout (randomly zero out neurons during training)
-- Early stopping (stop training when validation error starts increasing)
-
-Fixes for underfitting:
-- Use a more complex model
-- Add more features
-- Reduce regularization
-- Train longer
-
-### The Bias-Variance Tradeoff
-
-This is the mathematical framework behind overfitting and underfitting.
-
-**Bias**: Error from wrong assumptions in the model. A linear model has high bias when the true relationship is nonlinear. High bias leads to underfitting.
-
-**Variance**: Error from sensitivity to small fluctuations in the training data. A model with high variance gives very different predictions when trained on different subsets of data. High variance leads to overfitting.
-
-| Model complexity | Bias | Variance | Result |
-|-----------------|------|----------|--------|
-| Too low (linear model for curved data) | High | Low | Underfitting |
-| Just right | Medium | Medium | Good generalization |
-| Too high (degree-20 polynomial for 10 points) | Low | High | Overfitting |
-
-Total error = Bias^2 + Variance + Irreducible noise
-
-You cannot reduce irreducible noise (it is randomness in the data itself). You want to find the sweet spot where bias^2 + variance is minimized.
-
-### No Free Lunch Theorem
-
-There is no single algorithm that works best for every problem. An algorithm that performs well on one class of problems will perform poorly on another. This is why data scientists try multiple algorithms and compare results.
-
-In practice, the choice depends on:
-- How much data you have
-- How many features there are
-- Whether the relationship is linear or nonlinear
-- Whether you need interpretability
-- How much compute you can afford
-
-### When NOT to Use Machine Learning
-
-ML is powerful but not always the right tool. Before reaching for a model, ask whether you actually need one.
-
-**Do not use ML when:**
-
-- **Rules are simple and well-defined.** Tax calculation, sorting algorithms, unit conversions. If you can write the logic in a few if-statements, a model adds complexity for no benefit.
-- **You have no data or very little data.** ML needs examples to learn from. With 10 data points, you cannot train anything meaningful. Collect data first.
-- **The cost of being wrong is catastrophic and you need guaranteed correctness.** Medical dosage calculation, nuclear reactor control, cryptographic verification. ML models are probabilistic. They will sometimes be wrong. If "sometimes wrong" is unacceptable, use deterministic methods.
-- **A lookup table or heuristic solves the problem.** If a simple threshold or table covers 99% of cases, adding ML increases maintenance cost without meaningful improvement.
-- **You cannot explain the decision and explainability is required.** Regulated industries (lending, insurance, criminal justice) sometimes require that every decision be fully explainable. Some ML models are interpretable (linear regression, small decision trees). Most are not.
-- **The problem changes faster than you can retrain.** If the rules change daily and retraining takes a week, the model is always stale.
-
-Use this decision flowchart:
-
-```mermaid
-flowchart TD
-    A["Do you have data?"] -->|No| B["Collect data first or use rules"]
-    A -->|Yes| C["Can you write the rules explicitly?"]
-    C -->|"Yes, and they are simple"| D["Use rules. Skip ML."]
-    C -->|"No, or they are too complex"| E["Is the cost of errors acceptable?"]
-    E -->|"No, need guaranteed correctness"| F["Use deterministic methods"]
-    E -->|Yes| G["Do you need explainability?"]
-    G -->|"Yes, strictly"| H["Use interpretable models only"]
-    G -->|"No, or partially"| I["Use ML"]
-    I --> J["Do you have enough labeled data?"]
-    J -->|Yes| K["Supervised learning"]
-    J -->|"Some labels"| L["Semi-supervised learning"]
-    J -->|"No labels"| M["Unsupervised or self-supervised"]
-```
-
-
-
+The local implementation uses a deliberately small model. NearestCentroid.fit computes one mean feature vector per class. predict compares a new row with those means using squared Euclidean distance, and score counts correct labels. It is useful because every learned number can be printed and checked; it is not a claim that centroids solve every real classification problem.
 
 ## Build It
 
-Reconstruct **What Is Machine Learning** by following `NearestCentroid` on x=0.5 with the demo defaults. Run `run main.text` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+From code/, run python3 main.py. The seeded fixture has 240 rows and two features; a 75/25 split produces train_shape=(180, 2) and test_shape=(60, 2). The output prints two centroids, held-out accuracy, and the random/majority baselines. The exact decimals are data from seed 42, not a promised production score.
+
+To inspect one decision, fit on [[0, 0], [4, 4]] with labels [0, 1]. The query [1, 1] is closer to class 0 because its squared distances are 2 and 18.
 
 ## Use It
 
-Call `NearestCentroid` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+Import NearestCentroid, fit it on rows and labels, and call predict on rows with the same feature width. fit rejects an empty matrix or a single-class training set. predict rejects a row with the wrong feature count, and calling it before fit raises RuntimeError. Keep those checks at the boundary when this artifact is embedded in a data pipeline.
 
 ## Ship It
 
-Hand off `outputs/prompt-ml-problem-framer.md` with the command `run main.text`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [An Introduction to Statistical Learning](https://www.statlearning.com/) - free textbook covering all classical ML methods with practical examples
-- [Google's Machine Learning Crash Course](https://developers.google.com/machine-learning/crash-course) - concise visual introduction to ML concepts
-- [Scikit-learn User Guide](https://scikit-learn.org/stable/user_guide.html) - the practical reference for implementing ML in Python
+The reusable handoff is outputs/prompt-ml-problem-framer.md. Before using a model, record the feature rows, target definition, split seed, baseline, and an acceptance threshold. A deterministic tax table, for example, should remain a rule: a model would add an unneeded failure mode and a harder audit trail.
 
 ## Exercises
 
-1. **Explain the mechanism.** Give a concrete example and a counterexample that demonstrate this objective: Explain the difference between supervised, unsupervised, and reinforcement learning and identify which type applies to a given problem.
-2. **Make a decision.** Compare two plausible approaches, state the assumptions, and justify a choice while applying this objective: Implement a nearest centroid classifier from scratch and evaluate it against a random baseline.
-3. **Stress-test the reasoning.** Introduce one failure condition, revise the proposed approach, and define evidence of success for this objective: Distinguish between classification and regression tasks and select the appropriate loss function for each.
+1. Run the canonical command and record all four reported metrics. Explain which two numbers are baselines.
+2. Change separation from 2.0 to 0.5 in the fixture. Predict the direction of the centroid classifier's held-out accuracy and explain why overlapping class clouds make the decision less reliable.
+3. Fit the two-row example above, then call predict([[1, 1, 2]]). Capture the ValueError and state which shape contract it enforces.
 
 ## Reference Solution
 
-A complete response first demonstrates “Explain the difference between supervised, unsupervised, and reinforcement learning and identify which type applies to a given problem” with a specific example and a genuine counterexample. It then compares the alternatives using explicit assumptions for “Implement a nearest centroid classifier from scratch and evaluate it against a random baseline.” The final stress test must name a realistic failure condition, revise the approach, and define observable acceptance evidence for “Distinguish between classification and regression tasks and select the appropriate loss function for each.” Unsupported preference statements are not sufficient.
+A correct submission shows the (180, 2)/(60, 2) split, two centroids, and three bounded accuracy values. The two-row trace assigns [1, 1] to class 0 from the 2-versus-18 distance comparison. The shape probe raises ValueError instead of silently dropping a feature, and the artifact names a deterministic rule as the baseline when no unknown mapping must be learned.

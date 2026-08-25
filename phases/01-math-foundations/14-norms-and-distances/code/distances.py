@@ -1,50 +1,115 @@
+# Distance primitives for phases/01-math-foundations/14-norms-and-distances/docs/en.md.
+# Covers vector norms, cosine/Jaccard/Edit distances, covariance-aware distance, and nearest neighbors.
+# The implementation is Python standard-library only and uses small offline fixtures.
+# Canonical execution is `python3 main.py` from this code directory.
+# Tests exercise the formulas and the edge cases that affect retrieval choices.
+
 import math
 import random
 
 
+def _validate_vector(values, name="vector"):
+    """Return a non-empty vector as a list and reject malformed inputs early."""
+    vector = list(values)
+    if not vector:
+        raise ValueError(f"{name} must be non-empty")
+    return vector
+
+
+def _validate_pair(a, b, first_name="a", second_name="b"):
+    """Validate two non-empty vectors before any coordinate-wise operation."""
+    first = _validate_vector(a, first_name)
+    second = _validate_vector(b, second_name)
+    if len(first) != len(second):
+        raise ValueError(
+            f"{first_name} and {second_name} must have equal length "
+            f"(got {len(first)} and {len(second)})"
+        )
+    return first, second
+
+
+def _validate_lp_order(p):
+    if p == float("inf"):
+        return
+    if not math.isfinite(p) or p <= 0:
+        raise ValueError("p must be positive or math.inf")
+
+
+def _validate_square_matrix(matrix, dimension=None, name="matrix"):
+    rows = [list(row) for row in matrix]
+    if not rows:
+        raise ValueError(f"{name} must be non-empty")
+    size = len(rows)
+    if any(len(row) != size for row in rows):
+        raise ValueError(f"{name} must be square")
+    if dimension is not None and size != dimension:
+        raise ValueError(
+            f"{name} dimension must match vectors ({dimension}), got {size}"
+        )
+    return rows
+
+
+def _validate_dataset(query, dataset):
+    query_vector = _validate_vector(query, "query")
+    points = list(dataset)
+    if not points:
+        raise ValueError("dataset must be non-empty")
+    for index, point in enumerate(points):
+        _validate_pair(query_vector, point, "query", f"dataset[{index}]")
+    return query_vector, points
+
+
 def l1_norm(x):
-    return sum(abs(xi) for xi in x)
+    return sum(abs(xi) for xi in _validate_vector(x))
 
 
 def l2_norm(x):
-    return math.sqrt(sum(xi ** 2 for xi in x))
+    return math.sqrt(sum(xi ** 2 for xi in _validate_vector(x)))
 
 
 def lp_norm(x, p):
+    _validate_lp_order(p)
+    vector = _validate_vector(x)
     if p == float('inf'):
-        return max(abs(xi) for xi in x)
-    return sum(abs(xi) ** p for xi in x) ** (1 / p)
+        return max(abs(xi) for xi in vector)
+    return sum(abs(xi) ** p for xi in vector) ** (1 / p)
 
 
 def linf_norm(x):
-    return max(abs(xi) for xi in x)
+    return max(abs(xi) for xi in _validate_vector(x))
 
 
 def l1_distance(a, b):
-    return sum(abs(ai - bi) for ai, bi in zip(a, b))
+    first, second = _validate_pair(a, b)
+    return sum(abs(ai - bi) for ai, bi in zip(first, second))
 
 
 def l2_distance(a, b):
-    return math.sqrt(sum((ai - bi) ** 2 for ai, bi in zip(a, b)))
+    first, second = _validate_pair(a, b)
+    return math.sqrt(sum((ai - bi) ** 2 for ai, bi in zip(first, second)))
 
 
 def lp_distance(a, b, p):
-    diff = [ai - bi for ai, bi in zip(a, b)]
+    first, second = _validate_pair(a, b)
+    diff = [ai - bi for ai, bi in zip(first, second)]
     return lp_norm(diff, p)
 
 
 def linf_distance(a, b):
-    return max(abs(ai - bi) for ai, bi in zip(a, b))
+    first, second = _validate_pair(a, b)
+    return max(abs(ai - bi) for ai, bi in zip(first, second))
 
 
 def dot_product(a, b):
-    return sum(ai * bi for ai, bi in zip(a, b))
+    first, second = _validate_pair(a, b)
+    return sum(ai * bi for ai, bi in zip(first, second))
 
 
 def cosine_similarity(a, b):
-    dot = dot_product(a, b)
-    norm_a = l2_norm(a)
-    norm_b = l2_norm(b)
+    first, second = _validate_pair(a, b)
+    dot = dot_product(first, second)
+    norm_a = l2_norm(first)
+    norm_b = l2_norm(second)
     if norm_a == 0 or norm_b == 0:
         return 0.0
     return dot / (norm_a * norm_b)
@@ -55,10 +120,12 @@ def cosine_distance(a, b):
 
 
 def mahalanobis_distance(x, y, cov_matrix):
-    n = len(x)
-    diff = [xi - yi for xi, yi in zip(x, y)]
+    first, second = _validate_pair(x, y, "x", "y")
+    n = len(first)
+    covariance = _validate_square_matrix(cov_matrix, n, "covariance")
+    diff = [xi - yi for xi, yi in zip(first, second)]
 
-    inv_cov = invert_matrix(cov_matrix)
+    inv_cov = invert_matrix(covariance)
 
     temp = [0.0] * n
     for i in range(n):
@@ -70,8 +137,9 @@ def mahalanobis_distance(x, y, cov_matrix):
 
 
 def invert_matrix(matrix):
-    n = len(matrix)
-    augmented = [row[:] + [1.0 if i == j else 0.0 for j in range(n)] for i, row in enumerate(matrix)]
+    rows = _validate_square_matrix(matrix)
+    n = len(rows)
+    augmented = [row[:] + [1.0 if i == j else 0.0 for j in range(n)] for i, row in enumerate(rows)]
 
     for col in range(n):
         max_row = col
@@ -131,8 +199,9 @@ def edit_distance(s1, s2):
 
 
 def kl_divergence(p, q):
+    first, second = _validate_pair(p, q, "p", "q")
     total = 0.0
-    for pi, qi in zip(p, q):
+    for pi, qi in zip(first, second):
         if pi > 0:
             if qi <= 0:
                 return float('inf')
@@ -141,25 +210,33 @@ def kl_divergence(p, q):
 
 
 def wasserstein_1d(p, q):
-    assert len(p) == len(q), "Distributions must have the same number of bins"
-    n = len(p)
+    first, second = _validate_pair(p, q, "p", "q")
+    n = len(first)
     cdf_p = [0.0] * n
     cdf_q = [0.0] * n
 
-    cdf_p[0] = p[0]
-    cdf_q[0] = q[0]
+    cdf_p[0] = first[0]
+    cdf_q[0] = second[0]
     for i in range(1, n):
-        cdf_p[i] = cdf_p[i - 1] + p[i]
-        cdf_q[i] = cdf_q[i - 1] + q[i]
+        cdf_p[i] = cdf_p[i - 1] + first[i]
+        cdf_q[i] = cdf_q[i - 1] + second[i]
 
     return sum(abs(cdf_p[i] - cdf_q[i]) for i in range(n))
 
 
 def compute_covariance(data):
-    n = len(data)
-    d = len(data[0])
-    means = [sum(data[i][j] for i in range(n)) / n for j in range(d)]
-    centered = [[data[i][j] - means[j] for j in range(d)] for i in range(n)]
+    rows = [list(row) for row in data]
+    if not rows:
+        raise ValueError("data must be non-empty")
+    _validate_vector(rows[0], "data row")
+    d = len(rows[0])
+    if any(len(row) != d for row in rows):
+        raise ValueError("data rows must have equal length")
+    if len(rows) < 2:
+        raise ValueError("at least two data rows are required for covariance")
+    n = len(rows)
+    means = [sum(rows[i][j] for i in range(n)) / n for j in range(d)]
+    centered = [[rows[i][j] - means[j] for j in range(d)] for i in range(n)]
     cov = [[0.0] * d for _ in range(d)]
     for i in range(d):
         for j in range(d):
@@ -168,13 +245,15 @@ def compute_covariance(data):
 
 
 def normalize_vector(v):
-    norm = l2_norm(v)
+    vector = _validate_vector(v)
+    norm = l2_norm(vector)
     if norm == 0:
-        return v[:]
-    return [vi / norm for vi in v]
+        return vector[:]
+    return [vi / norm for vi in vector]
 
 
 def find_nearest_neighbor(query, dataset, distance_fn, **kwargs):
+    query, dataset = _validate_dataset(query, dataset)
     best_idx = 0
     best_dist = float('inf')
     for i, point in enumerate(dataset):
@@ -186,6 +265,9 @@ def find_nearest_neighbor(query, dataset, distance_fn, **kwargs):
 
 
 def find_k_nearest(query, dataset, distance_fn, k=5, **kwargs):
+    query, dataset = _validate_dataset(query, dataset)
+    if not isinstance(k, int) or isinstance(k, bool) or not 1 <= k <= len(dataset):
+        raise ValueError(f"k must be an integer in [1, {len(dataset)}]")
     distances = []
     for i, point in enumerate(dataset):
         d = distance_fn(query, point, **kwargs)

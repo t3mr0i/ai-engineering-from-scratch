@@ -33,7 +33,7 @@ class ContainerAuditTests(unittest.TestCase):
         dockerfile = (CODE / "Dockerfile").read_text(encoding="utf-8")
         install_block = dockerfile.split("RUN python3 -m pip install", maxsplit=1)[1]
         packages = set(re.findall(r"^\s{4}([a-z][a-z0-9_-]*(?:==[0-9.]+)?)\s*\\?$", install_block, re.MULTILINE))
-        self.assertEqual(packages, {"numpy", "safetensors", "torch==2.3.1"})
+        self.assertEqual(packages, {"numpy", "safetensors", "torch==2.4.1"})
 
     def test_compose_requests_gpu_and_named_model_cache(self) -> None:
         compose = (CODE / "docker-compose.yml").read_text(encoding="utf-8")

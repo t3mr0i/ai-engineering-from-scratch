@@ -1,7 +1,15 @@
+# Stochastic-process primitives for phases/01-math-foundations/22-stochastic-processes/docs/en.md.
+# Implements seeded random walks, Markov chains, Langevin/MH sampling, and forward diffusion.
+# NumPy is the only non-stdlib dependency; outputs are deterministic when seeded.
+# Canonical execution is `python3 main.py` from this code directory.
+# Tests cover trajectory shapes, stationary distributions, and sampler contracts.
+
 import numpy as np
 
 
 def random_walk_1d(n_steps, seed=None):
+    if not isinstance(n_steps, int) or n_steps < 0:
+        raise ValueError("n_steps must be a non-negative integer")
     rng = np.random.RandomState(seed)
     steps = rng.choice([-1, 1], size=n_steps)
     positions = np.concatenate([[0], np.cumsum(steps)])
@@ -9,6 +17,8 @@ def random_walk_1d(n_steps, seed=None):
 
 
 def random_walk_2d(n_steps, seed=None):
+    if not isinstance(n_steps, int) or n_steps < 0:
+        raise ValueError("n_steps must be a non-negative integer")
     rng = np.random.RandomState(seed)
     directions = rng.choice(4, size=n_steps)
     dx = np.zeros(n_steps)
@@ -25,8 +35,14 @@ def random_walk_2d(n_steps, seed=None):
 class MarkovChain:
     def __init__(self, transition_matrix, state_names=None):
         self.P = np.array(transition_matrix, dtype=float)
+        if self.P.ndim != 2 or self.P.shape[0] == 0 or self.P.shape[0] != self.P.shape[1]:
+            raise ValueError("transition_matrix must be a non-empty square matrix")
+        if np.any(self.P < 0) or not np.allclose(self.P.sum(axis=1), 1.0):
+            raise ValueError("each transition row must be non-negative and sum to one")
         self.n_states = len(self.P)
         self.state_names = state_names or [str(i) for i in range(self.n_states)]
+        if len(self.state_names) != self.n_states:
+            raise ValueError("state_names must match the number of states")
 
     def step(self, current_state, rng=None):
         if rng is None:
@@ -35,6 +51,10 @@ class MarkovChain:
         return rng.choice(self.n_states, p=probs)
 
     def simulate(self, start_state, n_steps, seed=None):
+        if not 0 <= start_state < self.n_states:
+            raise ValueError("start_state must be a valid state index")
+        if not isinstance(n_steps, int) or n_steps < 0:
+            raise ValueError("n_steps must be a non-negative integer")
         rng = np.random.RandomState(seed)
         states = [start_state]
         current = start_state
@@ -47,6 +67,8 @@ class MarkovChain:
         eigenvalues, eigenvectors = np.linalg.eig(self.P.T)
         idx = np.argmin(np.abs(eigenvalues - 1.0))
         stationary = np.real(eigenvectors[:, idx])
+        if np.all(stationary <= 0):
+            stationary = -stationary
         stationary = np.clip(stationary, 0, None)
         total = stationary.sum()
         if total > 0:
@@ -54,6 +76,8 @@ class MarkovChain:
         return stationary
 
     def empirical_distribution(self, states):
+        if len(states) == 0:
+            raise ValueError("states must be non-empty")
         counts = np.zeros(self.n_states)
         for s in states:
             counts[s] += 1
@@ -61,6 +85,10 @@ class MarkovChain:
 
 
 def langevin_dynamics(grad_U, x0, dt, temperature, n_steps, seed=None):
+    if dt <= 0 or temperature < 0:
+        raise ValueError("dt must be positive and temperature must be non-negative")
+    if not isinstance(n_steps, int) or n_steps < 0:
+        raise ValueError("n_steps must be a non-negative integer")
     rng = np.random.RandomState(seed)
     x = np.array(x0, dtype=float)
     trajectory = [x.copy()]
@@ -74,6 +102,8 @@ def langevin_dynamics(grad_U, x0, dt, temperature, n_steps, seed=None):
 def metropolis_hastings(target_log_prob, proposal_std, x0, n_samples, seed=None):
     if n_samples < 1:
         raise ValueError("n_samples must be at least 1")
+    if proposal_std <= 0:
+        raise ValueError("proposal_std must be positive")
     rng = np.random.RandomState(seed)
     x = np.array(x0, dtype=float)
     samples = [x.copy()]
@@ -85,11 +115,15 @@ def metropolis_hastings(target_log_prob, proposal_std, x0, n_samples, seed=None)
             x = x_proposed
             accepted += 1
         samples.append(x.copy())
-    acceptance_rate = accepted / (n_samples - 1)
+    acceptance_rate = accepted / max(n_samples - 1, 1)
     return np.array(samples), acceptance_rate
 
 
 def diffusion_forward(signal, n_steps, beta_start=0.0001, beta_end=0.02, seed=None):
+    if not isinstance(n_steps, int) or n_steps <= 0:
+        raise ValueError("n_steps must be a positive integer")
+    if not 0 <= beta_start < beta_end < 1:
+        raise ValueError("beta schedule must satisfy 0 <= beta_start < beta_end < 1")
     rng = np.random.RandomState(seed)
     betas = np.linspace(beta_start, beta_end, n_steps)
     trajectory = [signal.copy()]

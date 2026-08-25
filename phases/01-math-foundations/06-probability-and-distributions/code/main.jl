@@ -1,10 +1,8 @@
-# Probability + distributions in Julia. Hand-written PMFs, PDFs,
-# samplers (Bernoulli, Categorical, Uniform, Normal via Box-Muller),
-# softmax + log-softmax + cross-entropy, marginals, central limit demo.
-# Stdlib only. Sources:
-#   https://docs.julialang.org/en/v1/stdlib/Random/
-#   https://docs.julialang.org/en/v1/manual/missing/
-#   https://en.wikipedia.org/wiki/Box-Muller_transform
+# Canonical Julia demo for phases/01-math-foundations/06-probability-and-distributions/docs/en.md.
+# Implements PMFs, PDFs, samplers, stable softmax, cross-entropy, marginals, and a CLT fixture.
+# Uses only Random, Statistics, and Printf from Julia's standard library.
+# Sources: Julia Random/Statistics manuals and the Box-Muller transform definition.
+# Run from this directory with: julia main.jl
 
 using Random
 using Statistics

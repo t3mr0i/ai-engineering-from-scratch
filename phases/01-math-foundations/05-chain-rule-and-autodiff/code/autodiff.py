@@ -1,3 +1,9 @@
+# Reverse-mode autodiff reference for phases/01-math-foundations/05-chain-rule-and-autodiff/docs/en.md.
+# Value records scalar operations and propagates local derivatives in reverse topological order.
+# The canonical entry point is main.jl; this Python file keeps the same educational primitives.
+# It uses only the standard library and includes gradient-checking and XOR demonstrations.
+# Run this reference directly with: python3 autodiff.py
+
 import random
 
 

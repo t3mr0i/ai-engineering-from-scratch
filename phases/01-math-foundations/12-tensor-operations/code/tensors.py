@@ -1,3 +1,9 @@
+# Tensor-shape primitives for phases/01-math-foundations/12-tensor-operations/docs/en.md.
+# Implements a row-major Tensor container alongside NumPy broadcasting and einsum fixtures.
+# NumPy is the only dependency; the custom class exposes explicit shape/stride invariants.
+# Canonical execution is `python3 main.py` from this code directory.
+# Tests exercise indexing, reshaping, permutation, reductions, and attention shapes.
+
 import numpy as np
 from functools import reduce
 from itertools import product as iterproduct

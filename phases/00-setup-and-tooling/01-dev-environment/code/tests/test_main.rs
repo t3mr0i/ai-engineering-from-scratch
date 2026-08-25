@@ -5,6 +5,7 @@ use std::process::Command;
 
 fn code_dir() -> PathBuf { std::env::current_dir().unwrap() }
 fn source() -> String { fs::read_to_string(code_dir().join("main.rs")).unwrap() }
+fn typescript_source() -> String { fs::read_to_string(code_dir().join("verify.ts")).unwrap() }
 fn binary() -> PathBuf { std::env::temp_dir().join(format!("lesson-demo-{}", std::process::id())) }
 fn compile_demo() -> std::process::Output { Command::new("rustc").args(["--edition", "2021", "main.rs", "-o"]).arg(binary()).current_dir(code_dir()).output().unwrap() }
 
@@ -16,6 +17,14 @@ fn source_has_main_entrypoint() { assert!(source().contains("fn main(")); }
 
 #[test]
 fn source_uses_stdlib_only() { assert!(!source().contains("extern crate ")); }
+
+#[test]
+fn typescript_probe_is_local_and_marks_cargo_optional() {
+    let source = typescript_source();
+    assert!(source.contains("[\"--no-install\", \"tsx\", \"--version\"]"));
+    assert!(!source.contains("[\"-y\", \"tsx\", \"--version\"]"));
+    assert!(source.contains("name: \"Rust (cargo)\",\n    required: false"));
+}
 
 #[test]
 fn demo_compiles() { let result = compile_demo(); assert!(result.status.success(), "{}", String::from_utf8_lossy(&result.stderr)); }

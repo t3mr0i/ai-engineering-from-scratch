@@ -1,235 +1,59 @@
 # Linear Algebra Intuition
 
-> Every AI model is just matrix math wearing a fancy hat.
+> Read a vector as a direction, a matrix as a transformation, and a neural-network layer as their composition.
 
 **Type:** Learn
-**Languages:** None
+**Languages:** Python, Julia
 **Prerequisites:** Phase 0
 **Time:** ~60 minutes
 
 ## Learning Objectives
 
-- Implement vector and matrix operations (addition, dot product, matrix multiply) from scratch in Python
-- Explain geometrically what the dot product, projection, and Gram-Schmidt process do
-- Determine linear independence, rank, and basis of a set of vectors using row reduction
-- Connect linear algebra concepts to their AI applications: embeddings, attention scores, and LoRA
+- Compute vector arithmetic, dot products, norms, projections, and cosine similarity from scratch.
+- Explain linear independence, rank, and the geometric purpose of Gram-Schmidt orthogonalization.
+- Apply a small matrix to a vector and predict the input and output shapes of a dense layer.
+- Use orthogonality and residual checks to decide whether a hand calculation is correct.
 
-## The Problem
+## Why this lesson matters
 
-Open any ML paper. Within the first page, you'll see vectors, matrices, dot products, and transformations. Without linear algebra intuition, these are just symbols. With it, you can see what a neural network is actually doing -- moving points around in space.
-
-You don't need to be a mathematician. You need to see what these operations mean geometrically, then code them yourself.
-
-## The Concept
-
-### Vectors Are Points (and Directions)
-
-A vector is just a list of numbers. But those numbers mean something -- they're coordinates in space.
-
-**2D vector [3, 2]:**
-
-| x | y | Point |
-|---|---|-------|
-| 3 | 2 | The vector points from origin (0,0) to (3, 2) on the plane |
-
-The vector has magnitude sqrt(3^2 + 2^2) = sqrt(13) and points up and to the right.
-
-In AI, vectors represent everything:
-- A word → a vector of 768 numbers (its "meaning" in embedding space)
-- An image → a vector of millions of pixel values
-- A user → a vector of preferences
-
-### Matrices Are Transformations
-
-A matrix transforms one vector into another. It can rotate, scale, stretch, or project.
-
-```mermaid
-graph LR
-    subgraph Before
-        A["Point A"]
-        B["Point B"]
-    end
-    subgraph Matrix["Matrix Multiplication"]
-        M["M (transformation)"]
-    end
-    subgraph After
-        A2["Point A'"]
-        B2["Point B'"]
-    end
-    A --> M
-    B --> M
-    M --> A2
-    M --> B2
-```
-
-In AI, matrices ARE the model:
-- Neural network weights → matrices that transform input into output
-- Attention scores → matrices that decide what to focus on
-- Embeddings → matrices that map words to vectors
-
-### The Dot Product Measures Similarity
-
-The dot product of two vectors tells you how similar they are.
-
-```
-a · b = a₁×b₁ + a₂×b₂ + ... + aₙ×bₙ
-
-Same direction:      a · b > 0  (similar)
-Perpendicular:       a · b = 0  (unrelated)
-Opposite direction:  a · b < 0  (dissimilar)
-```
-
-This is literally how search engines, recommendation systems, and RAG work -- find vectors with high dot products.
-
-### Linear Independence
-
-Vectors are linearly independent if no vector in the set can be written as a combination of the others. If v1, v2, v3 are independent, they span a 3D space. If one is a combination of the others, they only span a plane.
-
-Why it matters for AI: your feature matrix should have linearly independent columns. If two features are perfectly correlated (linearly dependent), the model cannot distinguish their effects. This causes multicollinearity in regression -- the weight matrix becomes unstable, and small input changes produce wild output swings.
-
-**Concrete example:**
-
-```
-v1 = [1, 0, 0]
-v2 = [0, 1, 0]
-v3 = [2, 1, 0]   # v3 = 2*v1 + v2
-```
-
-v1 and v2 are independent -- neither is a scalar multiple or combination of the other. But v3 = 2*v1 + v2, so {v1, v2, v3} is a dependent set. These three vectors all lie in the xy-plane. No matter how you combine them, you cannot reach [0, 0, 1]. You have three vectors but only two dimensions of freedom.
-
-In a dataset: if feature_3 = 2*feature_1 + feature_2, adding feature_3 gives the model zero new information. Worse, it makes the normal equations singular -- there is no unique solution for the weights.
-
-### Basis and Rank
-
-A basis is a minimal set of linearly independent vectors that span the entire space. The number of basis vectors is the dimension of the space.
-
-The standard basis for 3D space is {[1,0,0], [0,1,0], [0,0,1]}. But any three independent vectors in 3D form a valid basis. The choice of basis is a choice of coordinate system.
-
-Rank of a matrix = number of linearly independent columns = number of linearly independent rows. If rank < min(rows, cols), the matrix is rank-deficient. This means:
-- The system has infinitely many solutions (or none)
-- Information is lost in the transformation
-- The matrix cannot be inverted
-
-| Situation | Rank | What it means for ML |
-|-----------|------|---------------------|
-| Full rank (rank = min(m, n)) | Maximum possible | Unique least-squares solution exists. Model is well-conditioned. |
-| Rank deficient (rank < min(m, n)) | Below maximum | Features are redundant. Infinitely many weight solutions. Regularization needed. |
-| Rank 1 | 1 | Every column is a scaled copy of one vector. All data lies on a line. |
-| Near rank-deficient (small singular values) | Numerically low | Matrix is ill-conditioned. Tiny input noise causes large output changes. Use SVD truncation or ridge regression. |
-
-### Projection
-
-Projecting vector **a** onto vector **b** gives the component of **a** in the direction of **b**:
-
-```
-proj_b(a) = (a dot b / b dot b) * b
-```
-
-The residual (a - proj_b(a)) is perpendicular to b. This orthogonal decomposition is the foundation of least-squares fitting.
-
-Projection is everywhere in ML:
-- Linear regression minimizes the distance from observations to the column space -- the solution IS a projection
-- PCA projects data onto the directions of maximum variance
-- Attention in transformers computes projections of queries onto keys
-
-```mermaid
-graph LR
-    subgraph Projection["Projection of a onto b"]
-        direction TB
-        O["Origin"] --> |"b (direction)"| B["b"]
-        O --> |"a (original)"| A["a"]
-        O --> |"proj_b(a)"| P["projection"]
-        A -.-> |"residual (perpendicular)"| P
-    end
-```
-
-**Example:** a = [3, 4], b = [1, 0]
-
-proj_b(a) = (3*1 + 4*0) / (1*1 + 0*0) * [1, 0] = 3 * [1, 0] = [3, 0]
-
-The projection drops the y-component. This is dimensionality reduction in its simplest form -- throw away the directions you don't care about.
-
-### Gram-Schmidt Process
-
-Converting any set of independent vectors into an orthonormal basis. Orthonormal means every vector has length 1 and every pair is perpendicular.
-
-The algorithm:
-1. Take the first vector, normalize it
-2. Take the second vector, subtract its projection onto the first, normalize
-3. Take the third vector, subtract its projections onto all previous vectors, normalize
-4. Repeat for remaining vectors
-
-```
-Input:  v1, v2, v3, ... (linearly independent)
-
-u1 = v1 / |v1|
-
-w2 = v2 - (v2 dot u1) * u1
-u2 = w2 / |w2|
-
-w3 = v3 - (v3 dot u1) * u1 - (v3 dot u2) * u2
-u3 = w3 / |w3|
-
-Output: u1, u2, u3, ... (orthonormal basis)
-```
-
-This is how QR decomposition works internally. Q is the orthonormal basis, R captures the projection coefficients. QR decomposition is used in:
-- Solving linear systems (more stable than Gaussian elimination)
-- Computing eigenvalues (QR algorithm)
-- Least-squares regression (the standard numerical method)
-
-
-
-## Ship It
-
-This lesson produces:
-- `outputs/prompt-linear-algebra-tutor.md` -- a prompt for AI assistants to teach linear algebra through geometric intuition
-
-## Connections
-
-Everything in this lesson connects to specific parts of modern AI:
-
-| Concept | Where it shows up |
-|---------|------------------|
-| Dot product | Attention scores in transformers, cosine similarity in RAG |
-| Matrix multiply | Every neural network layer, every linear transformation |
-| Linear independence | Feature selection, avoiding multicollinearity |
-| Rank | Determining if a system is solvable, LoRA (low-rank adaptation) |
-| Projection | Linear regression (projecting onto column space), PCA |
-| Gram-Schmidt / QR | Numerical solvers, eigenvalue computation |
-| Orthonormal basis | Stable numerical computation, whitening transforms |
-
-LoRA deserves special mention. It fine-tunes large language models by decomposing weight updates into low-rank matrices. Instead of updating a 4096x4096 weight matrix (16M parameters), LoRA updates two matrices of size 4096x16 and 16x4096 (131K parameters). The rank-16 constraint means LoRA assumes the weight update lives in a 16-dimensional subspace of the full 4096-dimensional space. That is linear algebra doing real work.
-
-
-## Key Terms
-
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Vector | "An arrow" | A list of numbers representing a point or direction in n-dimensional space |
-| Matrix | "A table of numbers" | A transformation that maps vectors from one space to another |
-| Dot product | "Multiply and sum" | A measure of how aligned two vectors are -- the core of similarity search |
-| Embedding | "Some AI magic" | A vector that represents the meaning of something (word, image, user) |
-| Linear independence | "They don't overlap" | No vector in the set can be written as a combination of the others |
-| Rank | "How many dimensions" | The number of linearly independent columns (or rows) in a matrix |
-| Projection | "The shadow" | The component of one vector in the direction of another |
-| Basis | "The coordinate axes" | A minimal set of independent vectors that span the space |
-| Orthonormal | "Perpendicular unit vectors" | Vectors that are mutually perpendicular and each have length 1 |
+An embedding, a gradient, and a row of network weights are all vectors. A weight matrix turns one vector space into another. The names change across papers, but the operations in this lesson do not. The two runnable implementations keep the arithmetic visible: `vectors.py` uses Python lists and `vectors.jl` uses Julia arrays with `LinearAlgebra`.
 
 ## Build It
 
-Reconstruct **Linear Algebra Intuition** by following `Vector` on tokens=["red","fox"]. Run `run main.text` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+Run both canonical entry points from `code/`:
+
+```bash
+python3 main.py
+julia main.jl
+```
+
+The Python run uses `Vector([1, 2, 3])` and `Vector([4, 5, 6])`; their dot product is `32` and the first magnitude is `sqrt(14)`. It then rotates `Vector([3, 1])` with `[[0, -1], [1, 0]]`, producing `Vector([-1, 3])`. The projection fixture is `a=[3,4]` onto `b=[1,0]`, so the projection is `[3,0]` and `(a-projection)·b` prints `0.000000`.
+
+The rest of the demo makes three checks concrete:
+
+1. `is_independent([e1,e2,e3])` is true, while `[e1,e2,2e1+e2]` is dependent.
+2. `Matrix([[1,2],[2,4]]).rank()` is `1`; the rectangular `2 x 3` example has rank `2`.
+3. `gram_schmidt` returns unit vectors whose pairwise dot products are close to zero.
+
+The Julia entry point repeats the vector, rotation, and dense-layer shape fixtures. Its random weight matrix is seeded with `42`; the important contract is `(2,3) * (3,) -> (2,)`, not a particular floating-point sample.
 
 ## Use It
 
-Call `Vector` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+Use `Vector` as a small embedding diagnostic. For two non-zero vectors, compare `dot`, `magnitude`, and `cosine_similarity`: scaling one vector changes its magnitude and dot product but not its cosine similarity. For a least-squares intuition, project `[3,4]` onto `[1,0]`, retain the residual, and verify the residual is orthogonal to the target direction.
+
+`gram_schmidt([Vector([1,1]), Vector([1,0])])` is a useful hand trace. The first output is `[1/sqrt(2),1/sqrt(2)]`; the second is the normalized remainder after subtracting its projection onto the first. A zero vector cannot be normalized or used as a projection target; the Python implementation raises `ValueError` instead of returning NaNs.
+
+## Ship It
+
+The reusable artifact is `outputs/prompt-linear-algebra-tutor.md`. Give it the same small fixtures used by the code and require the learner to report the numeric result, the shape, and an invariant. A useful handoff records the command, the projection residual dot product, and the rank of `[[1,2],[2,4]]`. It should not claim to implement embeddings or attention; those are applications of the primitives, not outputs of this lesson.
 
 ## Exercises
 
-1. **Explain the mechanism.** Give a concrete example and a counterexample that demonstrate this objective: Implement vector and matrix operations (addition, dot product, matrix multiply) from scratch in Python.
-2. **Make a decision.** Compare two plausible approaches, state the assumptions, and justify a choice while applying this objective: Explain geometrically what the dot product, projection, and Gram-Schmidt process do.
-3. **Stress-test the reasoning.** Introduce one failure condition, revise the proposed approach, and define evidence of success for this objective: Determine linear independence, rank, and basis of a set of vectors using row reduction.
+1. Run `python3 main.py`, then write the arithmetic for `Vector([3,4]).project_onto(Vector([1,0]))`. Check both the returned vector and the residual dot product.
+2. Replace `Vector([2,1,0])` in the independence fixture with `Vector([0,0,1])`. Predict the boolean before running `is_independent` and explain the change in span.
+3. Apply `Matrix([[1,0,0],[0,1,0]])` to `Vector([2,-1,7])`. Record the output shape and explain which input coordinate is discarded.
+4. Feed `Vector([0,0])` to `normalize` and `project_onto`. Record both `ValueError` messages and explain why silently returning a vector would hide a numerical bug.
 
 ## Reference Solution
 
-A complete response first demonstrates “Implement vector and matrix operations (addition, dot product, matrix multiply) from scratch in Python” with a specific example and a genuine counterexample. It then compares the alternatives using explicit assumptions for “Explain geometrically what the dot product, projection, and Gram-Schmidt process do.” The final stress test must name a realistic failure condition, revise the approach, and define observable acceptance evidence for “Determine linear independence, rank, and basis of a set of vectors using row reduction.” Unsupported preference statements are not sufficient.
+The first projection is `[3,0]`, the residual is `[0,4]`, and the residual dot product is zero. Replacing the dependent third vector with `[0,0,1]` makes the three standard basis vectors independent. The `2 x 3` matrix applied to `[2,-1,7]` returns `[2,-1]`, so its output shape is `(2,)`. Both zero-vector calls must raise `ValueError`; normalization has no unit direction for zero, and projection would divide by `other·other = 0`.

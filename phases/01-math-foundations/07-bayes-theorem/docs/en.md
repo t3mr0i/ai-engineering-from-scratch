@@ -1,239 +1,51 @@
 # Bayes' Theorem
 
-> Probability is about what you expect. Bayes' theorem is about what you learn.
+> Bayes' theorem turns a prior belief and observed evidence into a posterior you can audit.
 
 **Type:** Build
 **Languages:** Python
-**Language:** Python
-**Prerequisites:** Phase 1, Lesson 06 (Probability Fundamentals)
+**Prerequisites:** Phase 1, Lesson 06 (Probability and Distributions)
 **Time:** ~75 minutes
 
 ## Learning Objectives
 
-- Apply Bayes' theorem to compute posterior probabilities from priors, likelihoods, and evidence
-- Build a Naive Bayes text classifier from scratch with Laplace smoothing and log-space computation
-- Compare MLE and MAP estimation and explain how MAP corresponds to L2 regularization
-- Implement sequential Bayesian updating using Beta-Binomial conjugate priors for A/B testing
-
-## The Problem
-
-A medical test is 99% accurate. You test positive. What are the chances you actually have the disease?
-
-Most people say 99%. The real answer depends on how rare the disease is. If 1 in 10,000 people have it, a positive result only gives you about a 1% chance of being sick. The other 99% of positive results are false alarms from healthy people.
-
-This is not a trick question. It is Bayes' theorem. Every spam filter, every medical diagnostic, every machine learning model that quantifies uncertainty uses this exact reasoning. You start with a belief. You see evidence. You update.
-
-If you build ML systems without understanding this, you will misinterpret model outputs, set bad thresholds, and ship overconfident predictions.
-
-## The Concept
-
-### From joint probability to Bayes
-
-You already know from Lesson 06 that conditional probability is:
-
-```
-P(A|B) = P(A and B) / P(B)
-```
-
-And symmetrically:
-
-```
-P(B|A) = P(A and B) / P(A)
-```
-
-Both expressions share the same numerator: P(A and B). Set them equal and rearrange:
-
-```
-P(A and B) = P(A|B) * P(B) = P(B|A) * P(A)
-
-Therefore:
-
-P(A|B) = P(B|A) * P(A) / P(B)
-```
-
-That is Bayes' theorem. Four quantities, one equation.
-
-### The four parts
-
-| Part | Name | What it means |
-|------|------|---------------|
-| P(A\|B) | Posterior | Your updated belief about A after seeing evidence B |
-| P(B\|A) | Likelihood | How probable the evidence B is if A is true |
-| P(A) | Prior | Your belief about A before seeing any evidence |
-| P(B) | Evidence | Total probability of seeing B under all possibilities |
-
-The evidence term P(B) acts as a normalizer. You can expand it using the law of total probability:
-
-```
-P(B) = P(B|A) * P(A) + P(B|not A) * P(not A)
-```
-
-### Medical test example
-
-A disease affects 1 in 10,000 people. The test is 99% accurate (catches 99% of sick people, gives false positives 1% of the time).
-
-```
-P(sick)          = 0.0001     (prior: disease is rare)
-P(positive|sick) = 0.99       (likelihood: test catches it)
-P(positive|healthy) = 0.01    (false positive rate)
-
-P(positive) = P(positive|sick) * P(sick) + P(positive|healthy) * P(healthy)
-            = 0.99 * 0.0001 + 0.01 * 0.9999
-            = 0.000099 + 0.009999
-            = 0.010098
-
-P(sick|positive) = P(positive|sick) * P(sick) / P(positive)
-                 = 0.99 * 0.0001 / 0.010098
-                 = 0.0098
-                 = 0.98%
-```
-
-Less than 1%. The prior dominates. When a condition is rare, even accurate tests produce mostly false positives. This is why doctors order confirmation tests.
-
-### Spam filter example
-
-You receive an email containing the word "lottery". Is it spam?
-
-```
-P(spam)                = 0.3      (30% of email is spam)
-P("lottery"|spam)      = 0.05     (5% of spam emails contain "lottery")
-P("lottery"|not spam)  = 0.001    (0.1% of legitimate emails contain "lottery")
-
-P("lottery") = 0.05 * 0.3 + 0.001 * 0.7
-             = 0.015 + 0.0007
-             = 0.0157
-
-P(spam|"lottery") = 0.05 * 0.3 / 0.0157
-                  = 0.955
-                  = 95.5%
-```
-
-One word shifts the probability from 30% to 95.5%. A real spam filter applies Bayes across hundreds of words simultaneously.
-
-### Naive Bayes: independence assumption
-
-Naive Bayes extends this to multiple features by assuming all features are conditionally independent given the class:
-
-```
-P(class | feature_1, feature_2, ..., feature_n)
-  = P(class) * P(feature_1|class) * P(feature_2|class) * ... * P(feature_n|class)
-    / P(feature_1, feature_2, ..., feature_n)
-```
-
-The "naive" part is the independence assumption. In text, word occurrences are not independent ("New" and "York" are correlated). But the assumption works surprisingly well in practice because the classifier only needs to rank classes, not produce calibrated probabilities.
-
-Since the denominator is the same for all classes, you can skip it and just compare numerators:
-
-```
-score(class) = P(class) * product of P(feature_i | class)
-```
-
-Pick the class with the highest score.
-
-### Maximum likelihood estimation (MLE)
-
-How do you get P(feature|class) from training data? Count.
-
-```
-P("free"|spam) = (number of spam emails containing "free") / (total spam emails)
-```
-
-This is MLE: choose the parameter values that make the observed data most likely. You are maximizing the likelihood function, which for discrete counts reduces to relative frequency.
-
-Problem: if a word never appears in spam during training, MLE gives it probability zero. One unseen word kills the entire product. Fix this with Laplace smoothing:
-
-```
-P(word|class) = (count(word, class) + 1) / (total_words_in_class + vocabulary_size)
-```
-
-Adding 1 to every count ensures no probability is ever zero.
-
-### Maximum a posteriori (MAP)
-
-MLE asks: what parameters maximize P(data|parameters)?
-
-MAP asks: what parameters maximize P(parameters|data)?
-
-By Bayes' theorem:
-
-```
-P(parameters|data) proportional to P(data|parameters) * P(parameters)
-```
-
-MAP adds a prior over the parameters themselves. If you believe parameters should be small, you encode that as a prior that penalizes large values. This is identical to L2 regularization in ML. The "ridge" penalty in ridge regression is literally a Gaussian prior on the weights.
-
-| Estimation | Optimizes | ML equivalent |
-|------------|-----------|---------------|
-| MLE | P(data\|params) | Unregularized training |
-| MAP | P(data\|params) * P(params) | L2 / L1 regularization |
-
-### Bayesian vs frequentist: the practical difference
-
-Frequentists treat parameters as fixed unknowns. They ask: "If I repeated this experiment many times, what would happen?"
-
-Bayesians treat parameters as distributions. They ask: "Given what I have observed, what do I believe about the parameters?"
-
-For building ML systems, the practical difference:
-
-| Aspect | Frequentist | Bayesian |
-|--------|-------------|----------|
-| Output | Point estimate | Distribution over values |
-| Uncertainty | Confidence intervals (about procedure) | Credible intervals (about parameter) |
-| Small data | Can overfit | Prior acts as regularization |
-| Computation | Usually faster | Often requires sampling (MCMC) |
-
-Most production ML is frequentist (SGD, point estimates). Bayesian methods shine when you need calibrated uncertainty (medical decisions, safety-critical systems) or when data is scarce (few-shot learning, cold start).
-
-### Why Bayesian thinking matters for ML
-
-The connection is deeper than analogy:
-
-**Priors are regularization.** A Gaussian prior on weights is L2 regularization. A Laplace prior is L1. Every time you add a regularization term, you are making a Bayesian statement about what parameter values you expect.
-
-**Posteriors are uncertainty.** A single predicted probability tells you nothing about how confident the model is in that estimate. Bayesian methods give you a distribution: "I think P(spam) is between 0.8 and 0.95."
-
-**Bayes updates are online learning.** Today's posterior becomes tomorrow's prior. When your model sees new data, it updates its beliefs incrementally instead of retraining from scratch.
-
-**Model comparison is Bayesian.** Bayesian information criterion (BIC), marginal likelihood, and Bayes factors all use Bayesian reasoning to choose between models without overfitting.
-
-
-
+- Compute a posterior from a prior, a likelihood, and a false-positive rate.
+- Implement sequential updates and explain why the previous posterior becomes the next prior.
+- Build a smoothed log-space `NaiveBayes` classifier with class probabilities and top words.
+- Compare MLE with Beta-prior MAP estimates and identify the effect of a stronger prior.
+- Update a Beta-Binomial belief incrementally and check it against a batch update.
 
 ## Build It
 
-Reconstruct **Bayes' Theorem** by following `bayes` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
+The offline Python entry point is:
+
+```bash
+python3 main.py
+```
+
+The medical fixture uses prior `0.0001`, sensitivity `0.99`, and false-positive rate `0.01`. `bayes` computes `0.0098` (about `0.98%`) for `P(sick|positive)`, despite the strong test likelihood. This is the base-rate calculation, not a claim about a real diagnostic test. `sequential_bayes` applies the same likelihood twice, using the first posterior as the second prior.
+
+The spam fixture trains `NaiveBayes(smoothing=1.0)` on six spam and six ham examples. It tokenizes with lowercase whitespace splitting, counts words, stores class totals, scores in log space, and normalizes with a max-shifted exponentiation in `predict_proba`. `top_words` reports smoothed class-conditional probabilities. The code has no network or model dependency.
+
+The MLE/MAP fixture observes `7` heads in `10` flips. MLE is `0.7`; the `Beta(2,2)` MAP estimate is pulled toward `0.5`, and `Beta(10,10)` pulls more strongly. `beta_update` adds successes to alpha and failures to beta. The four batches in `sequential_update_demo` end at the same Beta parameters as one batch update.
 
 ## Use It
 
-Call `bayes` from a small caller with the text "red fox". Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+For any evidence, write the four quantities before calculating: `P(H)`, `P(E|H)`, `P(E|not H)`, and the normalizer `P(E)`. A posterior is not the same as a likelihood. With a rare prior, false positives from the much larger healthy population can dominate.
+
+For `NaiveBayes`, add log priors and log smoothed likelihoods instead of multiplying many tiny probabilities. Add-one smoothing assigns an unseen word probability `(0+1)/(total_words+vocabulary_size)`; for `10` tokens and vocabulary size `5`, that is `1/15`. Empty or untrained inputs are explicit validation cases: mismatched training lengths, empty training data, and prediction before training raise `ValueError`.
 
 ## Ship It
 
-Hand off `outputs/prompt-bayesian-reasoning.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [3Blue1Brown: Bayes' theorem](https://www.youtube.com/watch?v=HZGCoVF3YvM) - visual explanation with the medical test example
-- [Stanford CS229: Generative Learning Algorithms](https://cs229.stanford.edu/notes2022fall/cs229-notes2.pdf) - naive Bayes and its connection to discriminative models
-- [Think Bayes](https://greenteapress.com/wp/think-bayes/) - free book, Bayesian statistics with Python code
-- [scikit-learn Naive Bayes](https://scikit-learn.org/stable/modules/naive_bayes.html) - production implementations and when to use each variant
+`outputs/prompt-bayesian-reasoning.md` is a reusable calculation prompt. A good handoff asks for the hypothesis/evidence definitions, the prior, both likelihood paths, the normalizer, and the posterior. It should preserve the local fixture values and mark any population claim as an assumption rather than silently presenting it as a measured fact.
 
 ## Exercises
 
-Work from the smallest fixture that the Bayes' Theorem demo already understands, then make one deliberate change and record what moved.
-
-1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using the text "red fox". Follow `bayes`, `sequential_bayes`, `NaiveBayes`. Expect the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text; capture the first printed shape, metric, status, or summary field and state which part supports **Apply Bayes' theorem to compute posterior probabilities from priors, likelihoods, and evidence**.
-2. **Perturb one field.** Repeat the command after changing only the input text: use the text "red fox runs". Predict the direction of the change, then compare the two output values. Explain why **Build a Naive Bayes text classifier from scratch with Laplace smoothing and log-space computation** says the other inputs should stay fixed.
-3. **Check the failure boundary.** Feed the implementation an empty string. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Compare MLE and MAP estimation and explain how MAP corresponds to L2 regularization** and record the exception text if the code rejects the case.
-4. **Make the result repeatable.** Open `outputs/prompt-bayesian-reasoning.md` and add a worked example using the text "red fox". Include the input contract, one expected output field, and a named acceptance check for **Implement sequential Bayesian updating using Beta-Binomial conjugate priors for A/B testing**; note what the demo cannot establish.
+1. Recalculate the medical posterior from the three printed parameters and compare it with `bayes`.
+2. Train the classifier on the bundled documents and compare `predict_proba("free money")` with `predict_proba("meeting tomorrow")`. Explain which word counts move the log score.
+3. Compute the smoothed probability of an unseen word for the `10`-token, five-word vocabulary example and verify it is non-zero.
+4. Start from `Beta(1,1)`, apply `beta_update(1,1,3,1)`, then compare its mean with `4/6`. Repeat the update in two batches and verify the parameters agree.
 
 ## Reference Solution
 
-A checkable result for **Bayes' Theorem** should contain:
-
-- the `python3 main.py` output for the text "red fox", with `bayes`, `sequential_bayes`, `NaiveBayes` traced to the value or shape that supports **Apply Bayes' theorem to compute posterior probabilities from priors, likelihoods, and evidence**;
-- a before/after comparison for the input text, where the text "red fox runs" changes the observation in the direction predicted by **Build a Naive Bayes text classifier from scratch with Laplace smoothing and log-space computation**;
-- a recorded result for an empty string that matches the implementation’s validation or empty-result contract and explains the evidence for **Compare MLE and MAP estimation and explain how MAP corresponds to L2 regularization**; and
-- an updated `outputs/prompt-bayesian-reasoning.md` example with a concrete input, expected output field, and acceptance check tied to **Implement sequential Bayesian updating using Beta-Binomial conjugate priors for A/B testing**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+The medical posterior is approximately `0.0098`. Add-one smoothing gives `1/15` for the unseen word. `Beta(1,1)` plus three successes and one failure becomes `Beta(4,2)` with mean `4/6`; sequential and batch updates commute because both add the same counts. A trained classifier returns normalized probabilities from log scores, while an untrained classifier must raise the documented `ValueError`.

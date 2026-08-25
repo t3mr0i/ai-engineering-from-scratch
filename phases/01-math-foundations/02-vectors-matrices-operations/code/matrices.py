@@ -1,3 +1,9 @@
+# Matrix operations for phases/01-math-foundations/02-vectors-matrices-operations/docs/en.md.
+# Implements shape-aware arithmetic, broadcasting, determinants, inverse_2x2, and a dense layer.
+# The implementation is deliberately small and uses only Python's standard library.
+# Its demos are called by the canonical main.py entry point.
+# Run from this directory with: python3 main.py
+
 import random
 
 
@@ -32,6 +38,10 @@ class Vector:
 class Matrix:
     def __init__(self, data):
         self.data = [list(row) for row in data]
+        if not self.data or not self.data[0]:
+            raise ValueError("matrix must have at least one non-empty row")
+        if any(len(row) != len(self.data[0]) for row in self.data):
+            raise ValueError("matrix rows must have equal length")
         self.rows = len(self.data)
         self.cols = len(self.data[0])
         self.shape = (self.rows, self.cols)
@@ -72,6 +82,8 @@ class Matrix:
         raise ValueError(f"Cannot add shapes {self.shape} and {other.shape}")
 
     def __sub__(self, other):
+        if not isinstance(other, Matrix) or other.shape != self.shape:
+            raise ValueError(f"Cannot subtract shapes {self.shape} and {getattr(other, 'shape', '?')}")
         return Matrix([
             [self.data[i][j] - other.data[i][j] for j in range(self.cols)]
             for i in range(self.rows)
@@ -84,6 +96,8 @@ class Matrix:
         ])
 
     def element_wise_multiply(self, other):
+        if not isinstance(other, Matrix) or other.shape != self.shape:
+            raise ValueError(f"Element-wise multiplication needs equal shapes: {self.shape} and {getattr(other, 'shape', '?')}")
         return Matrix([
             [self.data[i][j] * other.data[i][j] for j in range(self.cols)]
             for i in range(self.rows)

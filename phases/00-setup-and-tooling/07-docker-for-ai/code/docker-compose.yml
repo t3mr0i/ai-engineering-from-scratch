@@ -1,6 +1,6 @@
 # Compose configuration for phases/00-setup-and-tooling/07-docker-for-ai/docs/en.md.
 # Requests GPU capability and keeps model data in a named volume.
-# No notebook, vector database, or long-running service is implied by this fixture.
+# No UI, database, or long-running service is implied by this fixture.
 # Run `docker compose config` to validate syntax before any build or runtime check.
 
 services:
