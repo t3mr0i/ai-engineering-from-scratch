@@ -1,5 +1,5 @@
 # From-scratch preprocessing and model pipelines for phases/02-ml-fundamentals/13-ml-pipelines/docs/en.md.
-# NumPy is the only non-stdlib dependency; pandas and estimator frameworks are not needed.
+# NumPy is the only non-stdlib dependency; dataframe and estimator frameworks are not needed.
 # Each transformer separates fit-time state from inference-time transformation.
 # Run the compact canonical example with: python3 main.py
 
@@ -372,9 +372,8 @@ def demo_data_leakage():
     print(f"  Clean (scaler fit on train only):  {acc_clean:.3f}")
     print(f"  Difference:                        {acc_leaky - acc_clean:+.3f}")
     print()
-    print("  On this simple case the difference may be small,")
-    print("  but on real data with target encoding or feature")
-    print("  selection, leakage can inflate accuracy by 10-30%.")
+    print("  This fixture's difference is data-dependent; the contract is")
+    print("  to fit every transformer on training rows inside each fold.")
     print()
 
 

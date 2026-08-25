@@ -64,15 +64,15 @@
     },
     {
       "stage": "post",
-      "question": "What does patience in early stopping control?",
+      "question": "In this lesson's search functions, what does a larger validation score mean when the objective is neg_mse?",
       "options": [
-        "How many features are permanently removed before the first epoch",
-        "How many test examples are relabeled after each epoch",
-        "How many random seeds are averaged in one gradient",
-        "How many non-improving validation checks are tolerated before stopping"
+        "The model has a larger mean squared error on the validation rows",
+        "The candidate was scored with the held-out test rows",
+        "The candidate has a smaller validation mean squared error",
+        "The search evaluated fewer configurations than its history records"
       ],
       "correct": 3,
-      "explanation": "Patience prevents a temporary plateau from ending training immediately while still stopping once validation performance fails to improve for long enough."
+      "explanation": "neg_mse returns the negative mean squared error, so values closer to zero are better and the search selects the maximum score in its history."
     }
   ]
 }

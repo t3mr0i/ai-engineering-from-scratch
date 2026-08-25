@@ -22,7 +22,7 @@ class NaiveBayesTests(unittest.TestCase):
         np.testing.assert_array_equal(model.predict(X), y)
 
     def test_multinomial_probabilities_sum_to_one(self):
-        X, y = naive_bayes.make_text_data(80, n_features=20, seed=3)
+        X, y = naive_bayes.make_text_data(80, n_features=200, seed=3)
         model = naive_bayes.MultinomialNB().fit(X, y)
         np.testing.assert_allclose(model.predict_proba(X[:5]).sum(axis=1), np.ones(5))
 
@@ -40,14 +40,14 @@ class NaiveBayesTests(unittest.TestCase):
         self.assertTrue(np.isfinite(probabilities).all())
 
     def test_train_test_split_is_reproducible(self):
-        X, y = naive_bayes.make_text_data(40, n_features=10, seed=5)
+        X, y = naive_bayes.make_text_data(40, n_features=200, seed=5)
         first = naive_bayes.train_test_split(X, y, seed=7)
         second = naive_bayes.train_test_split(X, y, seed=7)
         for left, right in zip(first, second):
             np.testing.assert_array_equal(left, right)
 
     def test_accuracy_matches_predictions(self):
-        X, y = naive_bayes.make_text_data(60, n_features=12, seed=9)
+        X, y = naive_bayes.make_text_data(60, n_features=200, seed=9)
         model = naive_bayes.MultinomialNB().fit(X, y)
         self.assertAlmostEqual(model.score(X, y), naive_bayes.accuracy(y, model.predict(X)))
 

@@ -31,7 +31,7 @@ class FeatureEngineeringTests(unittest.TestCase):
 
     def test_target_encoding_uses_smoothing(self):
         values, mapping = features.target_encode(["a", "a", "b"], [1.0, 1.0, 0.0], smoothing=1)
-        self.assertAlmostEqual(mapping["a"], 0.75)
+        self.assertAlmostEqual(mapping["a"], 8 / 9)
         self.assertEqual(values[0], values[1])
 
     def test_tfidf_downweights_shared_word(self):

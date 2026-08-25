@@ -40,15 +40,15 @@
     },
     {
       "stage": "check",
-      "question": "What should a successful pipeline serialization test compare?",
+      "question": "After FullPipeline.fit(train), what should predict(test) reuse instead of recomputing?",
       "options": [
-        "The training labels with the feature column names",
-        "The file size with the number of classes",
-        "A newly initialized model with the original training loss",
-        "Predictions from the fitted object before and after loading"
+        "The test target to fit a new median and category list",
+        "Only the raw numeric columns, dropping city and plan",
+        "A fresh set of categories learned from the test rows",
+        "The fitted medians, scales, category order, and model weights"
       ],
       "correct": 3,
-      "explanation": "Loading the saved fitted pipeline should reproduce preprocessing and model predictions for the same input rows."
+      "explanation": "FullPipeline stores transformer state during fit: numeric medians/scales, categorical categories, and the model. Prediction transforms new rows with that state and does not refit."
     },
     {
       "stage": "post",

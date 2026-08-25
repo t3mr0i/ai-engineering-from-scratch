@@ -132,7 +132,7 @@ def f1_score(y_true, y_pred):
 
 
 def roc_curve(y_true, y_scores):
-    thresholds = sorted(set(y_scores), reverse=True)
+    thresholds = [float("inf")] + sorted(set(y_scores), reverse=True)
     tpr_list = []
     fpr_list = []
 

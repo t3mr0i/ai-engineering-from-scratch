@@ -40,15 +40,15 @@
     },
     {
       "stage": "check",
-      "question": "Why does a random forest sample features at each split as well as rows?",
+      "question": "What source of diversity does BaggingClassifier add before it averages tree predictions?",
       "options": [
-        "It guarantees that every tree sees every feature",
-        "It changes a classification target into a continuous target",
-        "It prevents bootstrap sampling from changing the data",
-        "It reduces correlation between trees when a few features are dominant"
+        "It guarantees that every bootstrap row is unique",
+        "It fits one tree on the complete dataset and copies it",
+        "It uses validation labels to choose each tree",
+        "It fits each tree on a seeded bootstrap resample of the training rows"
       ],
       "correct": 3,
-      "explanation": "Feature subsampling gives trees different candidate views, increasing diversity before their votes are averaged."
+      "explanation": "BaggingClassifier samples training rows with replacement for each tree, so the fitted trees see different row multisets before their signed predictions are averaged."
     },
     {
       "stage": "post",

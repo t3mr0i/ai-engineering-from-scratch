@@ -1,5 +1,5 @@
 # From-scratch tuning algorithms for phases/02-ml-fundamentals/12-hyperparameter-tuning/docs/en.md.
-# NumPy supplies deterministic arrays and linear algebra; Optuna is intentionally absent.
+# NumPy supplies deterministic arrays and linear algebra; the search loop is implemented locally.
 # Grid, random, and surrogate-guided search share one validation-score contract.
 # Run the compact canonical example with: python3 main.py
 

@@ -1,4 +1,4 @@
-# Bias–Variance Trade-off
+# Bias-Variance Tradeoff
 
 > Repeated fits reveal whether error comes from a rigid model, an unstable model, or the data itself.
 
