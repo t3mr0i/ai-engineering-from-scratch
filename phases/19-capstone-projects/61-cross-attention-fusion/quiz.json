@@ -30,13 +30,13 @@
       "stage": "check",
       "question": "Why is the cross-attention KV cache built once per image?",
       "options": [
-        "Image keys and values do not change as text is decoded, so projecting memory once and reusing the K and V across all decode steps is the whole inference speedup",
+        "Image keys and values do not change during text decoding, so the model projects memory once and reuses those K/V tensors across decode steps",
         "PyTorch requires caching",
         "Caching saves disk space",
         "It avoids using the GPU"
       ],
       "correct": 0,
-      "explanation": "The vision encoder runs once. Its KV projection is computed once. Each text token reuses the cache for free."
+      "explanation": "The vision encoder runs once and its image K/V projections are computed once. Reusing them avoids recomputing those projections at every decode step, but each step still projects Q, forms QK scores, applies softmax, reads the cache, and aggregates the values."
     },
     {
       "stage": "check",

@@ -21,10 +21,10 @@
         "12, so each head can run on a small GPU",
         "768, because all heads share the projection",
         "96, set by ResNet-50",
-        "64, which controls the resolution of each attention map and lets twelve heads attend independently in parallel"
+        "64 features per Q/K/V head; twelve heads use separate 64-D subspaces, and scaled attention divides by sqrt(64)"
       ],
       "correct": 3,
-      "explanation": "head_dim = hidden / heads = 64. Each head projects the token to its own 64-D q/k/v and computes its own attention map."
+      "explanation": "head_dim = hidden / heads = 64. Each head has a separate 64-D Q/K/V subspace; the attention matrix itself is T×T, and scaled dot-product attention divides its logits by sqrt(64)."
     },
     {
       "stage": "check",

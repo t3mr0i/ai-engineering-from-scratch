@@ -6,13 +6,13 @@
       "stage": "pre",
       "question": "Why is the chunking choice an upper bound on retrieval quality and not just a hyperparameter?",
       "options": [
-        "Because no embedding, reranker, or LLM downstream can recover an answer span that was cut into incoherent pieces",
+        "Because a split can leave no candidate with coherent answer evidence, making retrieval and ranking less reliable and leaving downstream models without context to compensate consistently",
         "Because the LLM never reads chunks",
         "Because the embedding model is fixed at training time",
         "Because BM25 has no role in modern RAG"
       ],
       "correct": 0,
-      "explanation": "If the chunk that holds the answer span is incoherent the embedding moves to the wrong cluster and downstream components cannot repair the damage."
+      "explanation": "Chunking sets an evidence ceiling: when no retrieved candidate contains the answer span coherently, embeddings and rerankers have less usable context to rank, and downstream models cannot reliably compensate for missing evidence. Neighboring chunks or reconstruction can help in some cases, so this is a limit rather than an absolute impossibility."
     },
     {
       "stage": "check",

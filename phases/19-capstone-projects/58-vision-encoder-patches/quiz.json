@@ -12,7 +12,7 @@
         "It avoids using a tokenizer"
       ],
       "correct": 0,
-      "explanation": "A 224x224 image is 150528 pixel tokens. Attention is quadratic in length, so 16x16 patching shrinks the sequence to 196 tokens and makes the model tractable."
+      "explanation": "A 224x224 image has 224*224 = 50,176 pixel tokens (or 150,528 scalar channel values for RGB). Attention is quadratic in token count, so 16x16 patching shrinks the sequence to 196 patch tokens and makes the model tractable."
     },
     {
       "stage": "check",
