@@ -14,10 +14,13 @@ import numpy as np
 
 
 def _array(value: object, *, name: str, ndim: int | None = None) -> np.ndarray:
+    raw = np.asarray(value)
+    if raw.dtype.kind == "b" or any(isinstance(item, (bool, np.bool_)) for item in np.asarray(value, dtype=object).reshape(-1)):
+        raise ValueError(f"{name} must be numeric, not boolean")
     arr = np.asarray(value, dtype=np.float64)
     if ndim is not None and arr.ndim != ndim:
         raise ValueError(f"{name} must have {ndim} dimensions")
-    if not np.all(np.isfinite(arr)):
+    if arr.size == 0 or not np.all(np.isfinite(arr)):
         raise ValueError(f"{name} must contain only finite values")
     return arr
 
@@ -49,12 +52,15 @@ def project_gaussian(mean_3d: object, covariance_3d: object, intrinsics: object)
     if fx <= 0.0 or fy <= 0.0 or mean[2] <= 0.0:
         raise ValueError("focal lengths and depth must be positive")
     x, y, z = mean
-    projected = np.array([fx * x / z + cx, fy * y / z + cy], dtype=np.float64)
-    jacobian = np.array(
-        [[fx / z, 0.0, -fx * x / (z * z)], [0.0, fy / z, -fy * y / (z * z)]],
-        dtype=np.float64,
-    )
-    projected_cov = jacobian @ cov @ jacobian.T
+    with np.errstate(over="ignore", invalid="ignore", divide="ignore"):
+        projected = np.array([fx * x / z + cx, fy * y / z + cy], dtype=np.float64)
+        jacobian = np.array(
+            [[fx / z, 0.0, -fx * x / (z * z)], [0.0, fy / z, -fy * y / (z * z)]],
+            dtype=np.float64,
+        )
+        projected_cov = jacobian @ cov @ jacobian.T
+    if not np.all(np.isfinite(projected)) or not np.all(np.isfinite(projected_cov)):
+        raise ValueError("projection produced a non-finite result")
     return projected, 0.5 * (projected_cov + projected_cov.T)
 
 
@@ -74,8 +80,11 @@ def eval_2d_gaussian(means: object, covariances: object, points: object) -> np.n
         inverse = np.linalg.inv(cov)
         determinant = float(np.linalg.det(cov))
         diff = flat - mean
-        exponent = -0.5 * np.einsum("pi,ij,pj->p", diff, inverse, diff)
-        density = np.exp(np.clip(exponent, -745.0, 0.0)) / (2.0 * math.pi * math.sqrt(determinant))
+        with np.errstate(over="ignore", invalid="ignore", divide="ignore"):
+            exponent = -0.5 * np.einsum("pi,ij,pj->p", diff, inverse, diff)
+            density = np.exp(np.clip(exponent, -745.0, 0.0)) / (2.0 * math.pi * math.sqrt(determinant))
+        if not np.all(np.isfinite(density)):
+            raise ValueError("Gaussian density was not finite")
         densities[index] = density.reshape(point_arr.shape[:2])
     return densities
 
@@ -102,8 +111,8 @@ def rasterise_2d(
         raise ValueError("means, covariances and colours have incompatible shapes")
     if opacity_arr.shape != (count,) or depth_arr.shape != (count,):
         raise ValueError("one opacity and depth are required per splat")
-    if np.any((opacity_arr < 0.0) | (opacity_arr > 1.0)):
-        raise ValueError("opacities must be in [0, 1]")
+    if np.any((opacity_arr < 0.0) | (opacity_arr > 1.0)) or np.any((colour_arr < 0.0) | (colour_arr > 1.0)):
+        raise ValueError("opacities and colours must be in [0, 1]")
     densities = eval_2d_gaussian(mean_arr, cov_arr, np.stack(np.meshgrid(
         np.arange(width, dtype=np.float64), np.arange(height, dtype=np.float64), indexing="xy"), axis=-1))
     alphas = np.minimum(opacity_arr[:, None, None] * densities, 1.0 - 1e-12)
@@ -112,8 +121,9 @@ def rasterise_2d(
     image = np.zeros((height, width, 3), dtype=np.float64)
     for index in order:
         contribution = transmittance * alphas[index]
-        image += contribution[..., None] * colour_arr[index]
-        transmittance *= 1.0 - alphas[index]
+        with np.errstate(over="ignore", invalid="ignore"):
+            image += contribution[..., None] * colour_arr[index]
+            transmittance *= 1.0 - alphas[index]
     if not np.all(np.isfinite(image)) or not np.all(np.isfinite(transmittance)):
         raise ValueError("splat compositing produced a non-finite result")
     return image, transmittance

@@ -55,6 +55,10 @@ class VisionLanguageTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             main.cross_modal_error_rate([[0.0, 0.0]], [[1.0, 0.0]], [0.9])
 
+    def test_cmer_rejects_confidence_outside_probability_range(self):
+        with self.assertRaises(ValueError):
+            main.cross_modal_error_rate([[1.0, 0.0]], [[1.0, 0.0]], [1.1])
+
     def test_demo_exits_and_prints_cmer(self):
         result = subprocess.run([sys.executable, "main.py"], cwd=CODE, capture_output=True, text=True, timeout=10)
         self.assertEqual(result.returncode, 0, result.stderr)

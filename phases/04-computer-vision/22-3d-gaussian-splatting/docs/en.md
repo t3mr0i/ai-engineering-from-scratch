@@ -56,7 +56,7 @@ but matching its performance or visibility rules is outside this local artifact.
 
 The reusable handoff is the `(image, residual_transmittance)` pair. Keep the camera convention,
 depth ordering, opacity range `[0,1]`, and covariance-positive-definite checks with it. Persisting
-millions of splats, compression, and view-dependent training need a separate storage and profiling
+large splat sets, compression, and view-dependent training need a separate storage and profiling
 contract; the fixture does not estimate those costs.
 
 ## Exercises

@@ -11,6 +11,9 @@ import numpy as np
 
 
 def _finite(value: object, *, name: str, ndim: int | None = None) -> np.ndarray:
+    raw = np.asarray(value)
+    if raw.dtype.kind == "b" or any(isinstance(item, (bool, np.bool_)) for item in np.asarray(value, dtype=object).reshape(-1)):
+        raise ValueError(f"{name} must be numeric, not boolean")
     array = np.asarray(value, dtype=np.float64)
     if ndim is not None and array.ndim != ndim:
         raise ValueError(f"{name} must have {ndim} dimensions")
@@ -72,8 +75,10 @@ def cross_entropy_loss(logits: object, targets: object) -> float:
         raise ValueError("targets must be a one-dimensional integer array matching the batch")
     if np.any((labels < 0) | (labels >= scores.shape[1])):
         raise ValueError("target class is outside the logits columns")
-    shifted = scores - np.max(scores, axis=1, keepdims=True)
-    logsumexp = np.max(scores, axis=1) + np.log(np.exp(shifted).sum(axis=1))
+    row_max = np.max(scores, axis=1, keepdims=True)
+    with np.errstate(over="ignore", invalid="ignore", divide="ignore"):
+        shifted = scores - row_max
+        logsumexp = row_max[:, 0] + np.log(np.exp(shifted).sum(axis=1))
     loss = float(np.mean(logsumexp - scores[np.arange(scores.shape[0]), labels.astype(int)]))
     if not np.isfinite(loss):
         raise ValueError("cross-entropy was not finite")
@@ -103,7 +108,14 @@ def cross_modal_error_rate(
     confidence = _finite(text_confidence, name="text_confidence", ndim=1)
     if image.shape != text.shape or confidence.shape != (image.shape[0],):
         raise ValueError("embedding and confidence shapes must agree")
-    if not np.isfinite(sim_threshold) or not np.isfinite(conf_threshold) or not 0.0 <= conf_threshold <= 1.0:
+    if (
+        isinstance(sim_threshold, bool) or isinstance(conf_threshold, bool)
+        or not isinstance(sim_threshold, (int, float, np.number))
+        or not isinstance(conf_threshold, (int, float, np.number))
+        or not np.isfinite(sim_threshold) or not np.isfinite(conf_threshold)
+        or not -1.0 <= sim_threshold <= 1.0 or not 0.0 <= conf_threshold <= 1.0
+        or np.any((confidence < 0.0) | (confidence > 1.0))
+    ):
         raise ValueError("thresholds must be finite and confidence threshold must be in [0, 1]")
     similarity = np.sum(image * text, axis=1)
     flagged = (confidence > conf_threshold) & (similarity < sim_threshold)

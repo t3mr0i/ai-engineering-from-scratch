@@ -14,6 +14,10 @@ import numpy as np
 
 
 def _depth_arrays(pred: object, target: object, mask: object | None = None) -> tuple[np.ndarray, np.ndarray]:
+    raw_prediction = np.asarray(pred)
+    raw_truth = np.asarray(target)
+    if raw_prediction.dtype.kind == "b" or raw_truth.dtype.kind == "b" or any(isinstance(item, (bool, np.bool_)) for item in np.asarray(pred, dtype=object).reshape(-1)) or any(isinstance(item, (bool, np.bool_)) for item in np.asarray(target, dtype=object).reshape(-1)):
+        raise ValueError("depth arrays must be numeric, not boolean")
     prediction = np.asarray(pred, dtype=np.float64)
     truth = np.asarray(target, dtype=np.float64)
     if prediction.shape != truth.shape or prediction.ndim == 0 or prediction.size == 0:
@@ -59,6 +63,9 @@ def align_scale_shift(pred: object, target: object, mask: object | None = None) 
 
 
 def depth_to_point_cloud(depth: object, intrinsics: object) -> np.ndarray:
+    raw_depth = np.asarray(depth)
+    if raw_depth.dtype.kind == "b" or any(isinstance(item, (bool, np.bool_)) for item in np.asarray(depth, dtype=object).reshape(-1)):
+        raise ValueError("depth must be numeric, not boolean")
     depth_array = np.asarray(depth, dtype=np.float64)
     camera = np.asarray(intrinsics, dtype=np.float64)
     if depth_array.ndim != 2 or depth_array.size == 0 or not np.all(np.isfinite(depth_array)) or np.any(depth_array <= 0.0):
@@ -70,8 +77,9 @@ def depth_to_point_cloud(depth: object, intrinsics: object) -> np.ndarray:
         raise ValueError("focal lengths must be positive")
     height, width = depth_array.shape
     v, u = np.meshgrid(np.arange(height), np.arange(width), indexing="ij")
-    x = (u - cx) * depth_array / fx
-    y = (v - cy) * depth_array / fy
+    with np.errstate(over="ignore", invalid="ignore", divide="ignore"):
+        x = (u - cx) * depth_array / fx
+        y = (v - cy) * depth_array / fy
     points = np.stack((x, y, depth_array), axis=-1)
     if not np.all(np.isfinite(points)):
         raise ValueError("point cloud contains non-finite coordinates")

@@ -65,6 +65,6 @@ wrong if those conventions are omitted.
 ## Reference Solution
 
 The patch fixture yields `(1,8,16)` tokens and reconstructs with maximum error `0`. Its attention
-counts are `8²=64` jointly and `2*2² + 2*4² = 80` when temporal tokens are `2` and spatial tokens
+counts are `8²=64` jointly and `4*2² + 2*4² = 48` when temporal tokens are `2` and spatial tokens
 are `4`. The default rollout produces `[0,0]`, `[1,0]`, `[1,2]`; an indivisible temporal axis
 raises `ValueError` before any frame is dropped.

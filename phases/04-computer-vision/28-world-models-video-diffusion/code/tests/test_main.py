@@ -32,7 +32,7 @@ class VideoWorldModelTests(unittest.TestCase):
         tokens, joint, divided = main.divided_attention_cost(4, 4, 4, 2, 2, 2)
         self.assertEqual(tokens, 8)
         self.assertEqual(joint, 64)
-        self.assertEqual(divided, 80)
+        self.assertEqual(divided, 48)
 
     def test_token_count_requires_exact_divisibility(self):
         with self.assertRaises(ValueError):

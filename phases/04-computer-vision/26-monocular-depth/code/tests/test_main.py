@@ -22,7 +22,7 @@ class MonocularDepthTests(unittest.TestCase):
         truth = np.array([[4.0, 2.0]])
         prediction = np.array([[5.0, 2.0]])
         self.assertAlmostEqual(main.abs_rel_error(prediction, truth), 0.125)
-        self.assertEqual(main.delta_accuracy(prediction, truth), 1.0)
+        self.assertEqual(main.delta_accuracy(prediction, truth), 0.5)
 
     def test_delta_boundary_is_strict(self):
         self.assertEqual(main.delta_accuracy([[5.0]], [[4.0]], threshold=1.25), 0.0)

@@ -104,12 +104,16 @@ class ConceptDetection:
             raise ValueError("concept must be non-empty")
         if isinstance(self.instance_id, bool) or not isinstance(self.instance_id, (int, np.integer)) or self.instance_id < 0:
             raise ValueError("instance_id must be a non-negative integer")
-        if len(self.box) != 4 or not np.all(np.isfinite(np.asarray(self.box, dtype=float))):
+        try:
+            box = np.asarray(self.box, dtype=float)
+        except (TypeError, ValueError) as error:
+            raise ValueError("box must contain four finite coordinates") from error
+        if box.shape != (4,) or not np.all(np.isfinite(box)):
             raise ValueError("box must contain four finite coordinates")
-        x1, y1, x2, y2 = self.box
+        x1, y1, x2, y2 = box
         if not (x2 > x1 and y2 > y1):
             raise ValueError("box must have positive width and height")
-        if not isinstance(self.score, (int, float, np.number)) or not np.isfinite(self.score) or not 0.0 <= self.score <= 1.0:
+        if isinstance(self.score, bool) or not isinstance(self.score, (int, float, np.number)) or not np.isfinite(self.score) or not 0.0 <= self.score <= 1.0:
             raise ValueError("score must be finite and in [0, 1]")
         if not isinstance(self.mask_rle, str) or not self.mask_rle:
             raise ValueError("mask_rle must be a non-empty encoded mask")

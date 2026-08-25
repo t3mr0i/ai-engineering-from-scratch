@@ -11,6 +11,9 @@ import numpy as np
 
 
 def _finite(value: object, *, name: str, ndim: int | None = None) -> np.ndarray:
+    raw = np.asarray(value)
+    if raw.dtype.kind == "b" or any(isinstance(item, (bool, np.bool_)) for item in np.asarray(value, dtype=object).reshape(-1)):
+        raise ValueError(f"{name} must be numeric, not boolean")
     array = np.asarray(value, dtype=np.float64)
     if ndim is not None and array.ndim != ndim:
         raise ValueError(f"{name} must have {ndim} dimensions")
@@ -113,7 +116,8 @@ def video_consistency_error(predicted: object, target: object) -> float:
     truth = _finite(target, name="target", ndim=5)
     if prediction.shape != truth.shape:
         raise ValueError("predicted and target videos must have the same shape")
-    result = float(np.mean((prediction - truth) ** 2))
+    with np.errstate(over="ignore", invalid="ignore"):
+        result = float(np.mean((prediction - truth) ** 2))
     if not np.isfinite(result):
         raise ValueError("video error was not finite")
     return result

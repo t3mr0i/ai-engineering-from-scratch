@@ -14,6 +14,9 @@ import numpy as np
 
 
 def _boxes(value: object, *, name: str) -> np.ndarray:
+    raw = np.asarray(value)
+    if raw.dtype.kind == "b" or any(isinstance(item, (bool, np.bool_)) for item in np.asarray(value, dtype=object).reshape(-1)):
+        raise ValueError(f"{name} must be numeric, not boolean")
     array = np.asarray(value, dtype=np.float64)
     if array.ndim != 2 or array.shape[1:] != (4,):
         raise ValueError(f"{name} must have shape (N, 4)")
@@ -33,11 +36,12 @@ def bbox_iou(left: object, right: object) -> np.ndarray:
     inter_top = np.maximum(first[:, None, 1], second[None, :, 1])
     inter_right = np.minimum(first[:, None, 2], second[None, :, 2])
     inter_bottom = np.minimum(first[:, None, 3], second[None, :, 3])
-    intersection = np.maximum(inter_right - inter_left, 0.0) * np.maximum(inter_bottom - inter_top, 0.0)
-    first_area = (first[:, 2] - first[:, 0]) * (first[:, 3] - first[:, 1])
-    second_area = (second[:, 2] - second[:, 0]) * (second[:, 3] - second[:, 1])
-    union = first_area[:, None] + second_area[None, :] - intersection
-    result = intersection / union
+    with np.errstate(over="ignore", invalid="ignore", divide="ignore"):
+        intersection = np.maximum(inter_right - inter_left, 0.0) * np.maximum(inter_bottom - inter_top, 0.0)
+        first_area = (first[:, 2] - first[:, 0]) * (first[:, 3] - first[:, 1])
+        second_area = (second[:, 2] - second[:, 0]) * (second[:, 3] - second[:, 1])
+        union = first_area[:, None] + second_area[None, :] - intersection
+        result = intersection / union
     if not np.all(np.isfinite(result)):
         raise ValueError("IoU calculation was not finite")
     return result
@@ -46,6 +50,8 @@ def bbox_iou(left: object, right: object) -> np.ndarray:
 def _assignment(iou: np.ndarray, threshold: float) -> list[tuple[int, int]]:
     """Maximize total IoU, allowing unmatched rows; use a bounded exact DP for small sets."""
     rows, columns = iou.shape
+    if isinstance(threshold, bool) or not isinstance(threshold, (int, float, np.number)) or not np.isfinite(threshold) or not 0.0 <= threshold <= 1.0:
+        raise ValueError("assignment threshold must be finite and in [0, 1]")
     valid = iou >= threshold
     if rows == 0 or columns == 0:
         return []
@@ -100,7 +106,7 @@ class Track:
 
 class SimpleTracker:
     def __init__(self, iou_threshold: float = 0.3, max_age: int = 5):
-        if isinstance(iou_threshold, bool) or not np.isfinite(iou_threshold) or not 0.0 <= iou_threshold <= 1.0:
+        if isinstance(iou_threshold, bool) or not isinstance(iou_threshold, (int, float, np.number)) or not np.isfinite(iou_threshold) or not 0.0 <= iou_threshold <= 1.0:
             raise ValueError("iou_threshold must be in [0, 1]")
         if isinstance(max_age, bool) or not isinstance(max_age, (int, np.integer)) or max_age < 0:
             raise ValueError("max_age must be a non-negative integer")
@@ -113,6 +119,9 @@ class SimpleTracker:
     def step(self, detections: object, frame: int) -> list[tuple[int, list[float]]]:
         if isinstance(frame, bool) or not isinstance(frame, (int, np.integer)) or frame < 0 or frame < self._last_frame:
             raise ValueError("frame must be a non-decreasing non-negative integer")
+        raw_detections = np.asarray(detections)
+        if raw_detections.dtype.kind == "b" or any(isinstance(item, (bool, np.bool_)) for item in np.asarray(detections, dtype=object).reshape(-1)):
+            raise ValueError("detections must be numeric, not boolean")
         det_array = np.asarray(detections, dtype=np.float64)
         if det_array.size == 0:
             det_array = np.empty((0, 4), dtype=np.float64)

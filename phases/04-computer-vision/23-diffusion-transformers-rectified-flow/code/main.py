@@ -14,6 +14,9 @@ import numpy as np
 
 
 def _finite(value: object, *, name: str, ndim: int | None = None) -> np.ndarray:
+    raw = np.asarray(value)
+    if raw.dtype.kind == "b" or any(isinstance(item, (bool, np.bool_)) for item in np.asarray(value, dtype=object).reshape(-1)):
+        raise ValueError(f"{name} must be numeric, not boolean")
     arr = np.asarray(value, dtype=np.float64)
     if ndim is not None and arr.ndim != ndim:
         raise ValueError(f"{name} must have {ndim} dimensions")
@@ -73,6 +76,9 @@ def rectified_flow_path(x0: object, noise: object, t: object) -> tuple[np.ndarra
     endpoint = _finite(noise, name="noise")
     if start.shape != endpoint.shape or start.ndim < 1:
         raise ValueError("x0 and noise must have the same non-empty shape")
+    raw_times = np.asarray(t)
+    if raw_times.dtype.kind == "b":
+        raise ValueError("t must be numeric, not boolean")
     times = np.asarray(t, dtype=np.float64)
     if times.ndim == 0:
         times = np.full((start.shape[0],), float(times))
@@ -81,8 +87,9 @@ def rectified_flow_path(x0: object, noise: object, t: object) -> tuple[np.ndarra
     if np.any((times < 0.0) | (times > 1.0)):
         raise ValueError("t must lie in [0, 1]")
     weights = times.reshape((times.shape[0],) + (1,) * (start.ndim - 1))
-    point = (1.0 - weights) * start + weights * endpoint
-    velocity = endpoint - start
+    with np.errstate(over="ignore", invalid="ignore"):
+        point = (1.0 - weights) * start + weights * endpoint
+        velocity = endpoint - start
     if not np.all(np.isfinite(point)) or not np.all(np.isfinite(velocity)):
         raise ValueError("flow calculation produced a non-finite value")
     return point, velocity
@@ -102,7 +109,8 @@ def euler_reverse_sample(
         velocity = _finite(velocity_fn(time, state), name="velocity")
         if velocity.shape != state.shape:
             raise ValueError("velocity_fn must preserve the state shape")
-        state -= dt * velocity
+        with np.errstate(over="ignore", invalid="ignore"):
+            state -= dt * velocity
     if not np.all(np.isfinite(state)):
         raise ValueError("Euler integration produced a non-finite sample")
     return state
