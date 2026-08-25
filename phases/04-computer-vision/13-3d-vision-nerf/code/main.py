@@ -1,123 +1,108 @@
-import math
-import torch
-import torch.nn as nn
+# Entry point for phases/04-computer-vision/13-3d-vision-nerf/docs/en.md.
+# Implements ray sampling, positional encoding, and finite-volume rendering with NumPy.
+# The density/color fixture is an equation probe, not a trained NeRF or a point-cloud loader.
+# Run from this directory with: python3 main.py
+
+from __future__ import annotations
+
+from numbers import Integral, Real
+
+import numpy as np
 
 
-class PointNet(nn.Module):
-    def __init__(self, num_classes=10):
-        super().__init__()
-        self.mlp1 = nn.Sequential(
-            nn.Conv1d(3, 64, 1), nn.BatchNorm1d(64), nn.ReLU(inplace=True),
-            nn.Conv1d(64, 64, 1), nn.BatchNorm1d(64), nn.ReLU(inplace=True),
-        )
-        self.mlp2 = nn.Sequential(
-            nn.Conv1d(64, 128, 1), nn.BatchNorm1d(128), nn.ReLU(inplace=True),
-            nn.Conv1d(128, 1024, 1), nn.BatchNorm1d(1024), nn.ReLU(inplace=True),
-        )
-        self.head = nn.Sequential(
-            nn.Linear(1024, 512), nn.BatchNorm1d(512), nn.ReLU(inplace=True),
-            nn.Dropout(0.3),
-            nn.Linear(512, 256), nn.BatchNorm1d(256), nn.ReLU(inplace=True),
-            nn.Dropout(0.3),
-            nn.Linear(256, num_classes),
-        )
-
-    def forward(self, x):
-        x = self.mlp1(x)
-        x = self.mlp2(x)
-        x = torch.max(x, dim=-1)[0]
-        return self.head(x)
+def _positive_int(value: int, name: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, Integral) or int(value) <= 0:
+        raise ValueError(f"{name} must be a positive integer")
+    return int(value)
 
 
-def positional_encoding(x, L=10):
-    freqs = 2.0 ** torch.arange(L, dtype=x.dtype, device=x.device)
-    args = x.unsqueeze(-1) * freqs * math.pi
-    sinc = torch.cat([args.sin(), args.cos()], dim=-1)
-    return sinc.reshape(*x.shape[:-1], -1)
+def _finite(value: np.ndarray, name: str) -> np.ndarray:
+    array = np.asarray(value)
+    if not np.issubdtype(array.dtype, np.number) or not np.isfinite(array).all():
+        raise ValueError(f"{name} must contain finite numeric values")
+    return array.astype(np.float64, copy=False)
 
 
-class TinyNeRF(nn.Module):
-    def __init__(self, L_pos=10, L_dir=4, hidden=128):
-        super().__init__()
-        self.L_pos = L_pos
-        self.L_dir = L_dir
-        pos_dim = 3 * 2 * L_pos
-        dir_dim = 3 * 2 * L_dir
-        self.trunk = nn.Sequential(
-            nn.Linear(pos_dim, hidden), nn.ReLU(inplace=True),
-            nn.Linear(hidden, hidden), nn.ReLU(inplace=True),
-            nn.Linear(hidden, hidden), nn.ReLU(inplace=True),
-            nn.Linear(hidden, hidden), nn.ReLU(inplace=True),
-        )
-        self.sigma = nn.Linear(hidden, 1)
-        self.color = nn.Sequential(
-            nn.Linear(hidden + dir_dim, hidden // 2), nn.ReLU(inplace=True),
-            nn.Linear(hidden // 2, 3), nn.Sigmoid(),
-        )
-
-    def forward(self, x, d):
-        x_enc = positional_encoding(x, self.L_pos)
-        d_enc = positional_encoding(d, self.L_dir)
-        h = self.trunk(x_enc)
-        sigma = torch.relu(self.sigma(h)).squeeze(-1)
-        rgb = self.color(torch.cat([h, d_enc], dim=-1))
-        return sigma, rgb
+def positional_encoding(points: np.ndarray, levels: int = 6) -> np.ndarray:
+    values = _finite(points, "points")
+    levels = _positive_int(levels, "levels")
+    if values.ndim < 1 or values.shape[-1] != 3 or values.size == 0:
+        raise ValueError("points must have a non-empty final dimension of 3")
+    frequencies = (2.0 ** np.arange(levels, dtype=np.float64)) * np.pi
+    angles = values[..., None, :] * frequencies[None, :, None]
+    encoded = np.concatenate((np.sin(angles), np.cos(angles)), axis=-2)
+    return encoded.reshape(values.shape[:-1] + (3 * 2 * levels,))
 
 
-def volumetric_render(sigma, rgb, t_vals):
-    delta = torch.cat([t_vals[1:] - t_vals[:-1], torch.full_like(t_vals[:1], 1e10)])
-    alpha = 1.0 - torch.exp(-sigma * delta)
-    trans = torch.cumprod(
-        torch.cat([torch.ones_like(alpha[..., :1]), 1.0 - alpha + 1e-10], dim=-1),
-        dim=-1,
-    )[..., :-1]
-    weights = alpha * trans
-    rendered = (weights.unsqueeze(-1) * rgb).sum(dim=-2)
-    depth = (weights * t_vals).sum(dim=-1)
+def sample_ray_points(
+    origins: np.ndarray,
+    directions: np.ndarray,
+    near: float,
+    far: float,
+    n_samples: int,
+) -> tuple[np.ndarray, np.ndarray]:
+    ray_origins, ray_directions = _finite(origins, "origins"), _finite(directions, "directions")
+    if ray_origins.shape != ray_directions.shape or ray_origins.ndim != 2 or ray_origins.shape[1] != 3 or ray_origins.shape[0] == 0:
+        raise ValueError("origins and directions must have matching non-empty (R,3) shapes")
+    n_samples = _positive_int(n_samples, "n_samples")
+    if not all(isinstance(v, Real) and np.isfinite(v) for v in (near, far)) or near < 0 or far <= near:
+        raise ValueError("near and far must be finite with 0 <= near < far")
+    t_vals = np.linspace(float(near), float(far), n_samples, dtype=np.float64)
+    points = ray_origins[:, None, :] + ray_directions[:, None, :] * t_vals[None, :, None]
+    return points, t_vals
+
+
+def volume_render(
+    sigma: np.ndarray,
+    rgb: np.ndarray,
+    t_vals: np.ndarray,
+    background: np.ndarray | None = None,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Composite finite ray samples using alpha and front-to-back transmittance."""
+    density = _finite(sigma, "sigma")
+    colors = _finite(rgb, "rgb")
+    depths = _finite(t_vals, "t_vals")
+    if density.ndim < 1 or density.shape[-1] < 2 or colors.shape != density.shape + (3,) or depths.ndim != 1 or len(depths) != density.shape[-1]:
+        raise ValueError("sigma, rgb, and t_vals have incompatible ray-sample shapes")
+    if np.any(density < 0) or np.any((colors < 0) | (colors > 1)) or np.any(np.diff(depths) <= 0):
+        raise ValueError("sigma must be non-negative, rgb in [0,1], and t_vals strictly increasing")
+    deltas = np.diff(depths)
+    deltas = np.concatenate((deltas, deltas[-1:]))
+    alpha = 1.0 - np.exp(-density * deltas)
+    transmittance = np.cumprod(np.concatenate((np.ones(density.shape[:-1] + (1,)), 1.0 - alpha + 1e-12), axis=-1), axis=-1)[..., :-1]
+    weights = alpha * transmittance
+    rendered = np.sum(weights[..., None] * colors, axis=-2)
+    depth = np.sum(weights * depths, axis=-1)
+    if background is not None:
+        backdrop = _finite(background, "background")
+        if backdrop.shape != (3,) or np.any((backdrop < 0) | (backdrop > 1)):
+            raise ValueError("background must be a finite RGB vector in [0,1]")
+        rendered = rendered + (1.0 - weights.sum(axis=-1, keepdims=True)) * backdrop
     return rendered, depth, weights
 
 
-def permutation_invariance_check():
-    pts = torch.randn(1, 3, 512)
-    net = PointNet(num_classes=5).eval()
-    idx = torch.randperm(512)
-    shuffled = pts[:, :, idx]
-    with torch.no_grad():
-        out_a = net(pts)
-        out_b = net(shuffled)
-    return (out_a - out_b).abs().max().item()
+def density_fixture(t_vals: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    depths = _finite(t_vals, "t_vals")
+    if depths.ndim != 1 or len(depths) < 2 or np.any(np.diff(depths) <= 0):
+        raise ValueError("t_vals must be an increasing one-dimensional ray")
+    center = depths.mean()
+    sigma = 4.0 * np.exp(-((depths - center) ** 2) / 0.08)
+    rgb = np.stack((np.full(len(depths), 0.2), np.linspace(0.2, 0.8, len(depths)), np.full(len(depths), 0.9)), axis=-1)
+    return sigma, rgb
 
 
-def main():
-    torch.manual_seed(0)
-
-    print("[pointnet]")
-    pts = torch.randn(4, 3, 1024)
-    net = PointNet(num_classes=10)
-    print(f"  output: {tuple(net(pts).shape)}  params: {sum(p.numel() for p in net.parameters()):,}")
-    print(f"  permutation invariance  max|diff|={permutation_invariance_check():.2e}")
-
-    print("\n[positional encoding]")
-    x = torch.randn(5, 3)
-    y = positional_encoding(x, L=10)
-    print(f"  input  {tuple(x.shape)} -> encoded {tuple(y.shape)}")
-
-    print("\n[tiny nerf forward]")
-    nerf = TinyNeRF()
-    x = torch.randn(128, 3)
-    d = torch.randn(128, 3)
-    sigma, rgb = nerf(x, d)
-    print(f"  sigma: {tuple(sigma.shape)}   rgb: {tuple(rgb.shape)}")
-
-    print("\n[volumetric render]")
-    t_vals = torch.linspace(2.0, 6.0, 64)
-    sigma_ray = torch.rand(64) * 0.5
-    rgb_ray = torch.rand(64, 3)
-    rendered, depth, weights = volumetric_render(sigma_ray, rgb_ray, t_vals)
-    print(f"  rendered colour:   {rendered.tolist()}")
-    print(f"  depth:             {depth.item():.2f}")
-    print(f"  weights sum:       {weights.sum().item():.3f}")
+def main() -> int:
+    origins = np.array([[0.0, 0.0, 0.0]])
+    directions = np.array([[0.0, 0.0, 1.0]])
+    points, t_vals = sample_ray_points(origins, directions, 2.0, 6.0, 32)
+    encoded = positional_encoding(points[0], levels=4)
+    sigma, rgb = density_fixture(t_vals)
+    rendered, depth, weights = volume_render(sigma, rgb, t_vals, background=np.array([0.0, 0.0, 0.0]))
+    print(f"rays={origins.shape} samples={points.shape} encoded={encoded.shape}")
+    print(f"rendered_rgb={rendered.round(4).tolist()} depth={float(depth[()]):.3f} weight_sum={float(weights.sum()):.3f}")
+    print("note: density and color are a deterministic volume-rendering fixture, not a trained NeRF")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

@@ -1,160 +1,74 @@
-# Video Understanding — Temporal Modeling
+# Video Understanding: Sample Time Before Modeling It
 
-> A video is a sequence of images plus the physics that connects them. Every video model either treats time as an extra axis (3D conv), a sequence to attend over (transformer), or a feature to extract once and pool (2D+pool).
+> A video model sees a sequence; a careless split or sampler can erase that sequence before the model starts.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 4 Lesson 03 (CNNs), Phase 4 Lesson 04 (Image Classification)
-**Time:** ~45 minutes
+**Prerequisites:** Phase 04 Lesson 03 (CNNs: LeNet to ResNet Shape Reasoning), Phase 03 sequence-shape concepts
+**Time:** ~55 minutes
 
 ## Learning Objectives
 
-- Distinguish the three main video-modelling approaches (2D+pool, 3D conv, spatio-temporal transformer) and predict their cost and accuracy trade-offs
-- Implement frame sampling, temporal pooling, and a 2D+pool baseline classifier in PyTorch
-- Explain why I3D's "inflated" 3D kernels transfer well from ImageNet weights and what a factorised (2+1)D conv does differently
-- Read the standard action-recognition datasets and metrics: Kinetics-400/600, UCF101, Something-Something V2; top-1 accuracy at the clip and video level
+- Keep video axes and temporal indices explicit when sampling frames.
+- Compare uniform coverage with a contiguous dense clip.
+- Pool frame features without mixing samples across a temporal batch.
+- Inflate a 2D kernel into a temporal kernel while preserving its spatial average.
+- Split time contiguously so future frames cannot leak into a training fixture.
 
-## The Problem
+## Temporal contracts
 
-A 30-second video at 30 fps is 900 images. Naively, video classification is image classification run 900 times followed by some kind of aggregation. That works when the action is visible in almost every frame (sports, cooking, exercise videos) and fails badly when the action is defined by motion itself: "pushing something from left to right" looks like two still objects in every single frame.
-
-The core question for every video architecture is: when does temporal structure get modelled, and how? The answer drives everything else — compute cost, pretraining strategy, whether you can reuse ImageNet weights, what datasets the model trains on.
-
-This lesson is deliberately shorter than the static-image lessons. The core image machinery is already in place, and video understanding is mostly about the temporal story: sampling, modelling, and aggregating.
-
-## The Concept
-
-### The three architectural families
+The lesson is a NumPy temporal-geometry lab, not a pretrained video classifier. `sample_uniform(total,T)` returns `T` valid indices spread over the full sequence; if a sequence is shorter than `T`, its last frame is repeated to preserve the requested length. `sample_dense(total,T,rng)` returns one contiguous clip when enough frames exist, using a seeded start.
 
 ```mermaid
 flowchart LR
-    V["Video clip<br/>(T frames)"] --> A1["2D + pool<br/>run 2D CNN per frame,<br/>average over time"]
-    V --> A2["3D conv<br/>convolve over<br/>T x H x W"]
-    V --> A3["Spatio-temporal<br/>transformer<br/>attention over<br/>(t, h, w) tokens"]
-
-    A1 --> C["Logits"]
-    A2 --> C
-    A3 --> C
-
-    style A1 fill:#dbeafe,stroke:#2563eb
-    style A2 fill:#fef3c7,stroke:#d97706
-    style A3 fill:#dcfce7,stroke:#16a34a
+    A["frame indices"] --> B["sample uniform or dense clip"]
+    B --> C["frame features (T,D)"]
+    C --> D["temporal pool"]
+    A --> E["contiguous train/test split"]
 ```
 
-### 2D + pool
+`temporal_pool` accepts `(T,D)` or `(N,T,D)` and averages only the selected time indices. It never treats a feature dimension as time. `temporal_split` returns `[0,boundary)` and `[boundary,N)`; this is a simple forecasting-style boundary, not a claim that every video task must use chronological validation.
 
-Take a 2D CNN (ResNet, EfficientNet, ViT). Run it independently on every sampled frame. Average (or max-pool, or attention-pool) the per-frame embeddings. Feed the pooled vector to a classifier.
-
-Pros:
-- ImageNet pretraining transfers directly.
-- Simplest to implement.
-- Cheap: T frames * single-image inference cost.
-
-Cons:
-- Cannot model motion. Action = aggregate of appearances.
-- Temporal pooling is order-invariant; "open door" and "close door" look the same.
-
-When to use: appearance-heavy tasks, transfer learning on small video datasets, initial baselines.
-
-### 3D convolutions
-
-Replace 2D (H, W) kernels with 3D (T, H, W) kernels. The network convolves over both space and time. Early family: C3D, I3D, SlowFast.
-
-I3D trick: take a pretrained 2D ImageNet model, "inflate" each 2D kernel by copying it along a new time axis. A 3x3 2D conv becomes a 3x3x3 3D conv. This gives the 3D model strong pretrained weights instead of training from scratch.
-
-Pros:
-- Directly models motion.
-- I3D inflation gives free transfer learning.
-
-Cons:
-- T/8 more FLOPs than the 2D counterpart (for temporal kernel of 3 stacked 3 times).
-- Temporal kernels are small; long-range motion needs a pyramid or dual-stream approach.
-
-When to use: action recognition where motion is the signal (Something-Something V2, Kinetics with motion-heavy classes).
-
-### Spatio-temporal transformers
-
-Tokenise the video into a grid of space-time patches and attend across all of them. TimeSformer, ViViT, Video Swin, VideoMAE.
-
-Attention patterns that matter:
-- **Joint** — one big attention over (t, h, w). Quadratic in `T*H*W`; expensive.
-- **Divided** — two attentions per block: one over time, one over space. Linear-ish scaling.
-- **Factorised** — time attention alternates with space attention across blocks.
-
-Pros:
-- SOTA accuracy on every major benchmark.
-- Transfers from image transformers (ViT) via patch inflation.
-- Supports long-context video via sparse attention.
-
-Cons:
-- Compute-hungry.
-- Requires careful attention pattern choice or runtime balloons.
-
-When to use: large datasets, high-fidelity video understanding, multi-modal video+text tasks.
-
-### Frame sampling
-
-A 10-second clip at 30 fps is 300 frames; feeding all 300 to any model is wasteful. Standard strategies:
-
-- **Uniform sampling** — pick T frames evenly across the clip. Default for 2D+pool.
-- **Dense sampling** — random contiguous T-frame window. Common for 3D convs because motion requires neighbouring frames.
-- **Multi-clip** — sample multiple T-frame windows from the same video, classify each, average predictions at test time.
-
-T is usually 8, 16, 32, or 64. Higher T = more temporal signal at more compute.
-
-### Evaluation
-
-Two levels:
-- **Clip-level accuracy** — model sees one T-frame clip, reports top-k.
-- **Video-level accuracy** — average clip-level predictions across multiple clips per video; higher and more stable.
-
-**Worked example (hypothetical).** A model that scores 78% per clip and 82% per video benefits more from test-time averaging than one scoring 80% and 81%. Always report both aggregation levels.
-
-### Datasets you will meet
-
-- **Kinetics-400 / 600 / 700** — the general-purpose action dataset. 400k clips; YouTube URLs (many now dead).
-- **Something-Something V2** — motion-defined actions ("moving X from left to right"). Cannot be solved by 2D+pool.
-- **UCF-101**, **HMDB-51** — older, smaller, still reported.
-- **AVA** — action *localisation* in space and time; harder than classification.
-
-
-
+Inflating a 2D kernel `(out,in,H,W)` to `(out,in,K_t,H,W)` repeats the spatial kernel over time and divides by `K_t`. Summing the temporal slices therefore recovers the original kernel. `conv2plus1d_parameter_count` reports the two-factor parameter formula for a spatial convolution followed by a temporal one; it does not instantiate a framework layer.
 
 ## Build It
 
-Reconstruct **Video Understanding — Temporal Modeling** by following `sample_uniform` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+Run from `code/`:
+
+```bash
+python3 main.py
+```
+
+The demo samples 8 frames from a 30-frame sequence, pools a small `(T,D)` feature matrix, inflates a `(4,3,3,3)` kernel, and prints the non-overlapping temporal split. No frame backbone or weights are loaded.
 
 ## Use It
 
-Call `sample_uniform` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+```python
+import sys
+import numpy as np
+
+sys.path.insert(0, "code")
+import main as video
+
+indices = video.sample_dense(20, 5, np.random.default_rng(3))
+features = np.arange(20 * 4, dtype=float).reshape(20, 4)
+summary = video.temporal_pool(features, indices)
+assert summary.shape == (4,)
+```
+
+Before training a video model, record whether the split is by video, scene, or time. A frame-level random split can put near-duplicate frames on both sides and make a metric look better without testing temporal generalization.
 
 ## Ship It
 
-Hand off `outputs/prompt-video-architecture-picker.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [I3D: Quo Vadis, Action Recognition (Carreira & Zisserman, 2017)](https://arxiv.org/abs/1705.07750) — introduces inflation and the Kinetics dataset
-- [R(2+1)D: A Closer Look at Spatiotemporal Convolutions (Tran et al., 2018)](https://arxiv.org/abs/1711.11248) — factorised conv, still a strong baseline
-- [TimeSformer: Is Space-Time Attention All You Need? (Bertasius et al., 2021)](https://arxiv.org/abs/2102.05095) — the first strong video transformer
-- [VideoMAE (Tong et al., 2022)](https://arxiv.org/abs/2203.12602) — masked autoencoder pretraining for video; current dominant pretraining recipe
+`outputs/skill-frame-sampler-auditor.md` records total frames, requested count, index range, repetition policy, and seed. `outputs/prompt-video-architecture-picker.md` asks whether a task needs frame pooling, a 3D kernel, or a temporal transformer based on the required temporal interaction—not on a model name alone.
 
 ## Exercises
 
-Work from the smallest fixture that the Video Understanding — Temporal Modeling demo already understands, then make one deliberate change and record what moved.
-
-1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using tokens=["red","fox"]. Follow `sample_uniform`, `sample_dense`, `FramePool`. Expect the attention/embedding shape follows the token count and each valid attention row remains normalized; capture the first printed shape, metric, status, or summary field and state which part supports **Distinguish the three main video-modelling approaches (2D+pool, 3D conv, spatio-temporal transformer) and predict their cost and accuracy trade-offs**.
-2. **Perturb one field.** Repeat the command after changing only the token sequence: use tokens=["red","fox","runs"]. Predict the direction of the change, then compare the two output values. Explain why **Implement frame sampling, temporal pooling, and a 2D+pool baseline classifier in PyTorch** says the other inputs should stay fixed.
-3. **Check the failure boundary.** Feed the implementation tokens=[]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Explain why I3D's "inflated" 3D kernels transfer well from ImageNet weights and what a factorised (2+1)D conv does differently** and record the exception text if the code rejects the case.
-4. **Make the result repeatable.** Open `outputs/prompt-video-architecture-picker.md` and add a worked example using tokens=["red","fox"]. Include the input contract, one expected output field, and a named acceptance check for **Read the standard action-recognition datasets and metrics: Kinetics-400/600, UCF101, Something-Something V2; top-1 accuracy at the clip and video level**; note what the demo cannot establish.
+1. Compute `sample_uniform(10,4)` and check `[0,2,5,7]`. Explain why all indices remain below 10.
+2. Run `sample_dense(20,5,default_rng(3))` twice and verify a contiguous, identical clip. Compare its temporal span with uniform sampling.
+3. Inflate an all-ones `(2,3,3,3)` kernel with `time_kernel=5`. Sum along the time axis and verify the original kernel returns.
+4. Split 10 frames at `train_fraction=0.6`. Confirm that the last training index is 5, the first test index is 6, and no index appears in both sets. Explain how this prevents a simple future-frame leak.
 
 ## Reference Solution
 
-A checkable result for **Video Understanding — Temporal Modeling** should contain:
-
-- the `python3 main.py` output for tokens=["red","fox"], with `sample_uniform`, `sample_dense`, `FramePool` traced to the value or shape that supports **Distinguish the three main video-modelling approaches (2D+pool, 3D conv, spatio-temporal transformer) and predict their cost and accuracy trade-offs**;
-- a before/after comparison for the token sequence, where tokens=["red","fox","runs"] changes the observation in the direction predicted by **Implement frame sampling, temporal pooling, and a 2D+pool baseline classifier in PyTorch**;
-- a recorded result for tokens=[] that matches the implementation’s validation or empty-result contract and explains the evidence for **Explain why I3D's "inflated" 3D kernels transfer well from ImageNet weights and what a factorised (2+1)D conv does differently**; and
-- an updated `outputs/prompt-video-architecture-picker.md` example with a concrete input, expected output field, and acceptance check tied to **Read the standard action-recognition datasets and metrics: Kinetics-400/600, UCF101, Something-Something V2; top-1 accuracy at the clip and video level**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+Uniform sampling of 10 frames into four slots gives floors of `0,2.5,5,7.5`, hence `[0,2,5,7]`. The dense sampler produces one seeded contiguous range. Kernel inflation repeats each spatial slice five times and divides by five, so its time sum equals the 2D kernel. A 60% split places indices 0–5 in training and 6–9 in test; the boundary is the evidence that the two sets do not overlap.

@@ -1,78 +1,78 @@
 {
   "lesson": "10-image-generation-diffusion",
-  "title": "Image Generation — Diffusion Models",
+  "title": "Diffusion: Forward Noise and Reverse Algebra",
   "questions": [
     {
       "stage": "pre",
-      "question": "What does linear_beta_schedule(T=200) return?",
+      "question": "What does a forward diffusion step change?",
       "options": [
-        "A single beta selected from the image mean",
-        "A 200x200 covariance matrix",
-        "A length-200 tensor linearly interpolating from beta_start to beta_end",
-        "A list of denoised images"
-      ],
-      "correct": 2,
-      "explanation": "torch.linspace creates one beta for each of the T forward-noising steps."
-    },
-    {
-      "stage": "check",
-      "question": "What is the shape of q_sample(x0, t, noise, schedule) relative to x0?",
-      "options": [
-        "One scalar per timestep",
-        "The shape of the beta vector",
-        "A class-logit matrix",
-        "The same shape as x0"
-      ],
-      "correct": 3,
-      "explanation": "The schedule coefficients are reshaped to broadcast over channels and spatial dimensions, so the noisy sample retains x0's image shape."
-    },
-    {
-      "stage": "check",
-      "question": "What target does train_step use for the TinyUNet's MSE loss?",
-      "options": [
-        "The Gaussian noise sampled for the selected timestep",
-        "The clean image class label",
-        "The original timestep integer as a pixel map",
-        "The denoised image from a previous epoch"
+        "It adds schedule-controlled noise to a clean sample",
+        "It predicts a class label from the clean sample",
+        "It removes noise using a trained U-Net",
+        "It changes the image height without changing values"
       ],
       "correct": 0,
-      "explanation": "The model receives x_t and t and is trained with F.mse_loss(pred, noise), learning to predict the injected noise."
+      "explanation": "The forward process constructs x_t from x_0 and supplied noise using alpha_bar_t; denoising belongs to the reverse process."
     },
     {
       "stage": "check",
-      "question": "What does q_sample combine to construct x_t?",
+      "question": "Which quantity controls how much of x₀ remains in `q_sample` at timestep t?",
       "options": [
-        "x0 divided by the timestep plus a class embedding",
-        "sqrt(alpha_bar_t)*x0 plus sqrt(1-alpha_bar_t)*noise",
-        "Only the noise tensor, with x0 discarded",
-        "The denoiser output plus the beta index"
+        "The raw beta alone",
+        "The cumulative product alpha_bar_t",
+        "The number of classes",
+        "The DDIM eta value"
       ],
       "correct": 1,
-      "explanation": "The closed form uses the cumulative alpha product to mix the clean image and standard Gaussian noise at any selected t."
+      "explanation": "The clean coefficient is sqrt(alpha_bar_t), where alpha_bar multiplies all prior alpha values."
+    },
+    {
+      "stage": "check",
+      "question": "If the exact noise passed to `q_sample` is known, how does `predict_x0_from_eps` behave?",
+      "options": [
+        "It recovers x₀ up to floating-point roundoff",
+        "It always returns pure Gaussian noise",
+        "It needs a class label before it can run",
+        "It clips every element to [-1,1]"
+      ],
+      "correct": 0,
+      "explanation": "The function algebraically inverts x_t = sqrt(alpha_bar)x0 + sqrt(1-alpha_bar)epsilon; it is not a learned denoiser."
+    },
+    {
+      "stage": "check",
+      "question": "What does `eta=0` mean for the local `ddim_step`?",
+      "options": [
+        "No additional stochastic term is added, so the same inputs repeat exactly",
+        "The beta schedule is discarded",
+        "The predicted noise is replaced by zeros",
+        "The step must move from an earlier to a later timestep"
+      ],
+      "correct": 0,
+      "explanation": "The local DDIM-style formula uses no random sigma term when eta is zero; the reverse relation still requires t_prev < t."
     },
     {
       "stage": "post",
-      "question": "How does sample_ddim differ from sample_ddpm in this code when eta=0?",
+      "question": "Why must a training record name whether the model predicts epsilon, x₀, or velocity?",
       "options": [
-        "It starts from a clean image instead of Gaussian noise",
-        "It trains the U-Net after every reverse step",
-        "It uses a shorter chosen timestep sequence and no additional random noise",
-        "It never calls the model with a timestep"
+        "Each target changes the meaning of the network output and its loss",
+        "The target name determines the image file format",
+        "Only epsilon targets can use a beta schedule",
+        "The target choice changes the number of RGB channels"
       ],
-      "correct": 2,
-      "explanation": "DDIM selects a reduced sequence of timesteps; eta=0 sets sigma to zero, making the update deterministic for a given initial noise."
+      "correct": 0,
+      "explanation": "The same noisy input can be paired with different parameterizations; a loss and sampler must interpret the prediction consistently."
     },
     {
       "stage": "post",
-      "question": "Why does TinyUNet receive t as a separate argument?",
+      "question": "For a schedule with T=20, which timestep vector is valid for a batch?",
       "options": [
-        "The timestep is the image's class label",
-        "t determines the number of output channels",
-        "The U-Net cannot process spatial tensors without an integer",
-        "The denoiser must condition its prediction on the noise level"
+        "[-1, 4]",
+        "[0, 7, 19] for a three-sample batch",
+        "[1, 20]",
+        "[0.5, 3.5]"
       ],
-      "correct": 3,
-      "explanation": "The time embedding is projected into the encoder features so the same network can predict noise at different corruption levels."
+      "correct": 1,
+      "explanation": "Timesteps are integer indices in [0,T), so 0, 7, and 19 are valid for T=20 while -1, 20, and fractional values are not."
     }
   ]
 }

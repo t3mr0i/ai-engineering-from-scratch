@@ -1,147 +1,89 @@
-# Image Generation — GANs
+# GANs: Two Objectives, Two Update Boundaries
 
-> A GAN is two neural networks in a fixed game. One draws, one critiques. They get better together until the drawings fool the critic.
+> A GAN is a coupled game: the discriminator learns a test while the generator learns to pass it.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 4 Lesson 03 (CNNs), Phase 3 Lesson 06 (Optimizers), Phase 3 Lesson 07 (Regularization)
-**Time:** ~75 minutes
+**Prerequisites:** Phase 03 Lesson 03 (Backpropagation), Phase 04 Lesson 04 (Image Classification)
+**Time:** ~55 minutes
 
 ## Learning Objectives
 
-- Explain the minimax game between generator and discriminator and why the equilibrium corresponds to p_model = p_data
-- Implement a DCGAN in PyTorch and get it to generate coherent 32x32 synthetic images in under 60 lines
-- Stabilise GAN training with the three standard tricks: non-saturating loss, spectral norm, TTUR (two-timescale update rule)
-- Read training curves that distinguish healthy convergence from mode collapse, oscillation, and discriminator-wins-completely
+- Write stable binary cross-entropy losses directly from logits.
+- Distinguish the minimax generator objective from the non-saturating training objective.
+- Keep discriminator and generator gradients on separate update boundaries.
+- Trace a scalar generator and discriminator without confusing the toy fixture with an image GAN.
+- Use seeded batches and finite-loss checks to diagnose a short adversarial run.
 
-## The Problem
+## The local game
 
-Classification teaches a network to map images to labels. Generation inverts the problem: sample new images that look like they came from the same distribution. There is no "correct" output you can diff against; there is only a distribution you want to mimic.
+This lesson uses a one-dimensional GAN because the loss signs are easier to inspect than a convolutional image model. The generator maps a latent scalar `z` to `fake = g_weight*z + g_bias`. The discriminator maps a scalar sample to a logit `d_weight*sample + d_bias`. Real samples come from a small normal fixture centered near `2.0`; this is a local target distribution, not a dataset claim.
 
-The standard loss functions (MSE, cross-entropy) cannot measure "did this sample come from the real distribution." Minimising per-pixel error produces blurry averages, not realistic samples. The breakthrough was to learn the loss: train a second network whose job is to tell real from fake, and use its judgement to push the generator.
+For a discriminator, real labels are one and fake labels are zero:
 
-GANs (Goodfellow et al., 2014) defined that framework. By 2018 StyleGAN was producing 1024x1024 faces indistinguishable from photographs. Diffusion models have since taken the throne on quality and controllability, but every trick that makes diffusion practical — normalisation choices, latent spaces, feature losses — was first understood on GANs.
+```text
+L_D = mean(softplus(-real_logit)) + mean(softplus(fake_logit))
+```
 
-## The Concept
+The minimax generator objective minimizes `softplus(fake_logit)`, equivalent to `-log(1-D(G(z)))`. In practice the local update uses the non-saturating objective:
 
-### The two networks
+```text
+L_G_non_sat = mean(softplus(-fake_logit))
+```
+
+Both expressions use the same stable `softplus(x)=max(x,0)+log1p(exp(-abs(x)))` identity. They are different objectives; one should not be swapped into an explanation merely because both mention the discriminator.
 
 ```mermaid
 flowchart LR
-    Z["z ~ N(0, I)<br/>noise"] --> G["Generator<br/>transposed convs"]
-    G --> FAKE["Fake image"]
-    REAL["Real image"] --> D["Discriminator<br/>conv classifier"]
-    FAKE --> D
-    D --> OUT["P(real)"]
-
-    style G fill:#dbeafe,stroke:#2563eb
-    style D fill:#fef3c7,stroke:#d97706
-    style OUT fill:#dcfce7,stroke:#16a34a
+    Z["z batch"] --> G["linear generator"]
+    G --> F["fake samples"]
+    R["real fixture"] --> D["linear discriminator"]
+    F --> D
+    D --> LD["update D"]
+    D --> LG["update G with non-saturating loss"]
 ```
 
-The **generator** G takes a vector of noise `z` and outputs an image. The **discriminator** D takes an image and outputs a single scalar: the probability that the image is real.
-
-### The game
-
-G wants D to be wrong. D wants to be right. Formally:
-
-```
-min_G max_D  E_x[log D(x)] + E_z[log(1 - D(G(z)))]
-```
-
-Read right to left: D is maximising accuracy on real (`log D(real)`) and fake (`log (1 - D(fake))`) images. G is minimising D's accuracy on fakes — it wants `D(G(z))` to be high.
-
-Goodfellow proved that this minimax has a global equilibrium where `p_G = p_data`, D outputs 0.5 everywhere, and the Jensen-Shannon divergence between generated and real distributions is zero. The hard part is getting there.
-
-### Non-saturating loss
-
-The form above is numerically unstable. Early in training, `D(G(z))` is near zero for every fake, so `log(1 - D(G(z)))` has vanishing gradients with respect to G. The fix: flip G's loss.
-
-```
-L_D = -E_x[log D(x)] - E_z[log(1 - D(G(z)))]
-L_G = -E_z[log D(G(z))]                          # non-saturating
-```
-
-Now when `D(G(z))` is near zero, G's loss is large and its gradient is informative. Every modern GAN trains with this variant.
-
-### DCGAN architecture rules
-
-Radford, Metz, Chintala (2015) distilled years of failed experiments into five rules that make GAN training stable:
-
-1. Replace pooling with strided convs (both nets).
-2. Use batch norm in both generator and discriminator, except output of G and input of D.
-3. Remove fully connected layers on deeper architectures.
-4. G uses ReLU on all layers except output (tanh for output in [-1, 1]).
-5. D uses LeakyReLU (negative_slope=0.2) on all layers.
-
-Every modern conv-based GAN (StyleGAN, BigGAN, GigaGAN) still starts from these rules and replaces pieces one at a time.
-
-### Failure modes and their signatures
-
-```mermaid
-flowchart LR
-    M1["Mode collapse<br/>G produces a narrow<br/>set of outputs"] --> S1["D loss low,<br/>G loss oscillating,<br/>sample variety drops"]
-    M2["Vanishing gradients<br/>D wins completely"] --> S2["D accuracy ~100%,<br/>G loss huge and static"]
-    M3["Oscillation<br/>G and D keep trading<br/>wins forever"] --> S3["Both losses swing<br/>wildly with no downward trend"]
-
-    style M1 fill:#fecaca,stroke:#dc2626
-    style M2 fill:#fecaca,stroke:#dc2626
-    style M3 fill:#fecaca,stroke:#dc2626
-```
-
-- **Mode collapse**: G finds one image that fools D and produces only that. Fix: add minibatch discrimination, spectral norm, or label-conditioning.
-- **Discriminator wins**: D becomes too strong too fast, G's gradients vanish. Fix: smaller D, lower D learning rate, or apply label smoothing on the real labels.
-- **Oscillation**: the two nets trade wins without ever approaching equilibrium. Fix: TTUR (D learns faster than G by a factor of 2-4), or switch to Wasserstein loss.
-
-### Evaluation
-
-GANs have no ground truth, so how do you know they are working?
-
-- **Sample inspection** — just look at 64 samples at the end of every epoch. Non-negotiable.
-- **FID (Fréchet Inception Distance)** — distance between Inception-v3 feature distributions of real and generated sets. Lower is better. Community standard.
-- **Inception Score** — older, more brittle; prefer FID.
-- **Precision/Recall for generative models** — measures quality (precision) and coverage (recall) separately. More informative than FID alone.
-
-For a small synthetic-data run, sample inspection is enough.
-
-
-
+`gan_step` computes the discriminator gradients using fake values as a detached batch, updates `d_weight`/`d_bias`, then computes the generator gradient through the updated discriminator. It does not use a framework optimizer, spectral normalization, image convolutions, or a claim about convergence.
 
 ## Build It
 
-Reconstruct **Image Generation — GANs** by following `Generator` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+Run from `code/`:
+
+```bash
+python3 main.py
+```
+
+The demo runs 80 seeded scalar steps and prints finite final losses, parameters, and a fake-batch mean. The acceptance condition is that the run is deterministic and bounded; a short adversarial trace is not a quality score.
 
 ## Use It
 
-Call `Generator` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+```python
+import sys
+import numpy as np
+
+sys.path.insert(0, "code")
+import main as gan
+
+real = np.array([1.5, 2.0, 2.2])
+z = np.array([-1.0, 0.0, 1.0])
+params = {"g_weight": 0.15, "g_bias": -0.5, "d_weight": 0.2, "d_bias": 0.0}
+params, losses = gan.gan_step(params, real, z)
+assert np.isfinite([losses["d_loss"], losses["g_loss"]]).all()
+```
+
+When moving to an image GAN, preserve this order: discriminator fake samples are detached for the discriminator update, then the generator receives a fresh discriminator evaluation. Report image range, batch shape, and both loss definitions before interpreting a curve.
 
 ## Ship It
 
-Hand off `outputs/prompt-gan-training-triage.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [Generative Adversarial Networks (Goodfellow et al., 2014)](https://arxiv.org/abs/1406.2661) — the paper that started it all
-- [DCGAN (Radford, Metz, Chintala, 2015)](https://arxiv.org/abs/1511.06434) — the architecture rules that made GANs trainable
-- [Spectral Normalization for GANs (Miyato et al., 2018)](https://arxiv.org/abs/1802.05957) — the single most useful stabilisation trick
-- [StyleGAN3 (Karras et al., 2021)](https://arxiv.org/abs/2106.12423) — the SOTA GAN; reads like a greatest-hits album of every trick from the last decade
+`outputs/skill-dcgan-scaffold.md` is a loss-and-update checklist for a future convolutional implementation. `outputs/prompt-gan-training-triage.md` asks for the update order, logit ranges, separate optimizer state, and a bounded fixture run. Neither artifact suggests installing a framework or downloading a checkpoint.
 
 ## Exercises
 
-Use `Generator` as the trace: start from an 8x8 synthetic image, keep the raw output, and tie each observation to a named objective.
-
-1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using an 8x8 synthetic image. Follow `Generator`, `forward`, `Discriminator`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **Explain the minimax game between generator and discriminator and why the equilibrium corresponds to p_model = p_data**.
-2. **Vary one named input.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Implement a DCGAN in PyTorch and get it to generate coherent 32x32 synthetic images in under 60 lines** says the other inputs should stay fixed.
-3. **Probe the empty case.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Stabilise GAN training with the three standard tricks: non-saturating loss, spectral norm, TTUR (two-timescale update rule)** and record the exception text if the code rejects the case.
-4. **Package a usable handoff.** Open `outputs/prompt-gan-training-triage.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **Read training curves that distinguish healthy convergence from mode collapse, oscillation, and discriminator-wins-completely**; note what the demo cannot establish.
+1. Evaluate the two generator losses on logits `[-4,0,1]`. Explain why the non-saturating loss strongly penalizes a fake logit of `-4` while the minimax expression does not have the same gradient emphasis.
+2. Derive the discriminator logit gradients for one real value `r` and one fake value `f`: `sigmoid(d(r))-1` and `sigmoid(d(f))`. Check the signs in `gan_step`.
+3. Run `gan_step` once and compare `g_weight` and `d_weight` before and after. Identify which batch is detached conceptually and why the generator still uses the discriminator's current weight.
+4. Run `train_toy_gan(steps=12,batch_size=8,seed=3)` twice. Compare both loss histories and record the finite-value acceptance check; do not call the final fake mean an image-quality metric.
 
 ## Reference Solution
 
-A checkable result for **Image Generation — GANs** should contain:
-
-- the `python3 main.py` output for an 8x8 synthetic image, with `Generator`, `forward`, `Discriminator` traced to the value or shape that supports **Explain the minimax game between generator and discriminator and why the equilibrium corresponds to p_model = p_data**;
-- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Implement a DCGAN in PyTorch and get it to generate coherent 32x32 synthetic images in under 60 lines**;
-- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Stabilise GAN training with the three standard tricks: non-saturating loss, spectral norm, TTUR (two-timescale update rule)**; and
-- an updated `outputs/prompt-gan-training-triage.md` example with a concrete input, expected output field, and acceptance check tied to **Read training curves that distinguish healthy convergence from mode collapse, oscillation, and discriminator-wins-completely**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+For logits `[-4,0,1]`, `softplus(-logit)` is the non-saturating generator loss and weights a badly rejected fake heavily; `softplus(logit)` is the minimax form. The discriminator gradients have the real-minus-one and fake probabilities shown above. A step changes both parameter groups, but the discriminator sees the generator output as a detached value before its own update. Repeating the same seeded 12-step run gives identical histories and finite values, which is the useful local regression—not evidence that the toy game has converged.

@@ -1,64 +1,81 @@
-# Contract and executable-behavior tests for this lesson demo.
 from __future__ import annotations
 
-import ast
-import functools
 import importlib.util
-import os
 from pathlib import Path
 import subprocess
 import sys
 import unittest
 
+import numpy as np
+
+
 CODE = Path(__file__).resolve().parents[1]
-MAIN = CODE / "main.py"
-ALLOWED = set(sys.stdlib_module_names) | {"numpy", "torch", "h5py", "zstandard", "safetensors"}
+spec = importlib.util.spec_from_file_location("cnn_shapes", CODE / "main.py")
+cnn = importlib.util.module_from_spec(spec)
+assert spec.loader is not None
+spec.loader.exec_module(cnn)
 
-def source_trees() -> list[ast.AST]:
-    return [ast.parse(path.read_text(encoding="utf-8")) for path in CODE.glob("*.py")]
 
-def external_roots() -> set[str]:
-    roots: set[str] = set()
-    for tree in source_trees():
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                roots.update(alias.name.split(".")[0] for alias in node.names)
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                roots.add(node.module.split(".")[0])
-    return {name for name in roots if not (CODE / f"{name}.py").exists() and not (CODE / name).is_dir()}
+class CNNShapeTests(unittest.TestCase):
+    def test_lenet_trace_matches_classic_32_pixel_path(self) -> None:
+        trace = dict(cnn.lenet_shape_trace())
+        self.assertEqual(trace["conv1+tanh"], (1, 6, 28, 28))
+        self.assertEqual(trace["avgpool2"], (1, 16, 5, 5))
+        self.assertEqual(trace["flatten"], (1, 400))
+        self.assertEqual(trace["logits"], (1, 10))
 
-@functools.lru_cache(maxsize=1)
-def run_demo() -> subprocess.CompletedProcess[str]:
-    missing = sorted(name for name in external_roots() if name in ALLOWED and importlib.util.find_spec(name) is None)
-    banned = sorted(external_roots() - ALLOWED)
-    if missing or banned:
-        raise unittest.SkipTest(f"demo dependencies unavailable or disallowed: {missing + banned}")
-    env = os.environ.copy()
-    for key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "HF_TOKEN", "HUGGINGFACE_TOKEN"):
-        env.pop(key, None)
-    return subprocess.run(
-        [sys.executable, MAIN.name], cwd=CODE, text=True, capture_output=True,
-        timeout=45, env=env, check=False,
-    )
+    def test_conv_shape_and_values_are_nchw(self) -> None:
+        x = np.ones((2, 1, 4, 4), dtype=np.float32)
+        w = np.ones((3, 1, 3, 3), dtype=np.float32)
+        result = cnn.conv2d_nchw(x, w, padding=1)
+        self.assertEqual(result.shape, (2, 3, 4, 4))
+        self.assertEqual(float(result[0, 0, 1, 1]), 9.0)
 
-class LessonDemoTests(unittest.TestCase):
-    def test_source_compiles(self) -> None:
-        compile(MAIN.read_text(encoding="utf-8"), str(MAIN), "exec")
+    def test_avg_pool_and_relu(self) -> None:
+        x = np.array([[[[-1, 2], [3, 5]]]], dtype=np.float32)
+        np.testing.assert_allclose(cnn.avg_pool2d(x, kernel=2), [[[[2.25]]]])
+        np.testing.assert_array_equal(cnn.relu(x), [[[[0, 2], [3, 5]]]])
 
-    def test_demo_has_explicit_entrypoint(self) -> None:
-        source = MAIN.read_text(encoding="utf-8")
-        self.assertTrue("__main__" in source or "runpy.run_path" in source)
+    def test_dense_uses_output_by_feature_weights(self) -> None:
+        x = np.array([[1.0, 2.0], [0.0, 1.0]])
+        w = np.array([[1.0, 0.0], [0.0, 2.0]])
+        np.testing.assert_allclose(cnn.dense(x, w, np.array([1.0, -1.0])), [[2.0, 3.0], [1.0, 1.0]])
 
-    def test_demo_exits_successfully(self) -> None:
-        self.assertEqual(run_demo().returncode, 0, run_demo().stderr)
+    def test_residual_add_requires_matching_branches(self) -> None:
+        x = np.ones((1, 4, 3, 3))
+        np.testing.assert_allclose(cnn.residual_add(x, np.zeros_like(x)), x)
+        with self.assertRaises(ValueError):
+            cnn.residual_add(x, np.zeros((1, 5, 3, 3)))
+        with self.assertRaises(ValueError):
+            cnn.residual_add(x, np.zeros((4, 3, 3)))
+        with self.assertRaises(ValueError):
+            cnn.residual_add(np.zeros((0, 4, 3, 3)), np.zeros((0, 4, 3, 3)))
 
-    def test_demo_emits_bounded_output(self) -> None:
-        result = run_demo()
-        self.assertTrue((result.stdout + result.stderr).strip())
-        self.assertLess(len(result.stdout) + len(result.stderr), 1_000_000)
+    def test_parameter_counts_are_positive_and_class_count_changes_head(self) -> None:
+        counts = cnn.model_parameter_counts(7)
+        self.assertTrue(all(value > 0 for value in counts.values()))
+        self.assertGreater(cnn.model_parameter_counts(7)["LeNet5"], cnn.model_parameter_counts(3)["LeNet5"])
+        with self.assertRaises(ValueError):
+            cnn.model_parameter_counts(0)
 
-    def test_demo_has_no_traceback(self) -> None:
-        self.assertNotIn("Traceback (most recent call last)", run_demo().stderr)
+    def test_invalid_shapes_and_nonfinite_values_are_rejected(self) -> None:
+        with self.assertRaises(ValueError):
+            cnn.conv2d_nchw(np.zeros((1, 3, 4, 4)), np.zeros((2, 2, 3, 3)))
+        with self.assertRaises(ValueError):
+            cnn.avg_pool2d(np.zeros((1, 1, 2, 2)), kernel=3)
+        with self.assertRaises(ValueError):
+            cnn.dense(np.ones((2, 2)), np.ones((3, 3)))
+        with self.assertRaises(ValueError):
+            cnn.dense(np.empty((0, 2)), np.ones((3, 2)))
+        with self.assertRaises(ValueError):
+            cnn.relu(np.array([np.nan]))
+
+    def test_canonical_demo_exits_cleanly(self) -> None:
+        result = subprocess.run([sys.executable, "main.py"], cwd=CODE, capture_output=True, text=True, check=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("LeNet-5", result.stdout)
+        self.assertNotIn("Traceback", result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()

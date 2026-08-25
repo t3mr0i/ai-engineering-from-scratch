@@ -5,8 +5,7 @@
 
 from __future__ import annotations
 
-import math
-from numbers import Real
+from numbers import Integral
 from typing import Sequence
 
 import numpy as np
@@ -17,9 +16,9 @@ IMAGENET_STD = np.array([0.229, 0.224, 0.225], dtype=np.float32)
 
 
 def _positive_int(value: int, name: str) -> int:
-    if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+    if isinstance(value, bool) or not isinstance(value, Integral) or int(value) <= 0:
         raise ValueError(f"{name} must be a positive integer")
-    return value
+    return int(value)
 
 
 def _rgb_hwc(image: np.ndarray, name: str = "image") -> np.ndarray:
@@ -37,7 +36,7 @@ def synthetic_image(height: int = 8, width: int = 8, seed: int = 0) -> np.ndarra
     """Return a deterministic uint8 HWC RGB fixture with a visible gradient."""
     height = _positive_int(height, "height")
     width = _positive_int(width, "width")
-    if isinstance(seed, bool) or not isinstance(seed, int):
+    if isinstance(seed, bool) or not isinstance(seed, Integral):
         raise ValueError("seed must be an integer")
     rng = np.random.default_rng(seed)
     yy, xx = np.meshgrid(
@@ -77,6 +76,17 @@ def rgb_to_grayscale(rgb: np.ndarray) -> np.ndarray:
     array = _rgb_hwc(rgb)
     weights = np.array([0.299, 0.587, 0.114], dtype=np.float32)
     return (array.astype(np.float32) @ weights).astype(np.float32)
+
+
+def rgb_to_ycbcr(rgb: np.ndarray) -> np.ndarray:
+    """Return full-range BT.601-like Y, Cb, Cr values for an RGB HWC array."""
+    array = _rgb_hwc(rgb).astype(np.float32)
+    matrix = np.array(
+        [[0.299, 0.587, 0.114], [-0.168736, -0.331264, 0.5], [0.5, -0.418688, -0.081312]],
+        dtype=np.float32,
+    )
+    offset = np.array([0.0, 128.0, 128.0], dtype=np.float32)
+    return (array @ matrix.T + offset).astype(np.float32)
 
 
 def rgb_to_hsv(rgb: np.ndarray) -> np.ndarray:
@@ -140,7 +150,7 @@ def main() -> int:
     chw = hwc_to_chw(raw)
     print(f"layout HWC={raw.shape} CHW={chw.shape} roundtrip={np.array_equal(chw_to_hwc(chw), raw)}")
     hsv = rgb_to_hsv(raw)
-    print(f"gray_shape={rgb_to_grayscale(raw).shape} hsv_ranges=({hsv[...,0].min():.1f},{hsv[...,1].max():.2f},{hsv[...,2].max():.2f})")
+    print(f"gray_shape={rgb_to_grayscale(raw).shape} ycbcr_shape={rgb_to_ycbcr(raw).shape} hsv_ranges=({hsv[...,0].min():.1f},{hsv[...,1].max():.2f},{hsv[...,2].max():.2f})")
     normalized = preprocess_imagenet(raw)
     restored = deprocess_imagenet(normalized)
     print(f"normalized_shape={normalized.shape} roundtrip_max_error={int(np.abs(restored.astype(int)-raw.astype(int)).max())}")

@@ -1,226 +1,84 @@
 # Convolutions from Scratch
 
-> A convolution is a tiny dense layer you slide across an image, sharing the same weights at every location.
+> A convolutional layer is a shared dot product over local image neighborhoods.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 3 (Deep Learning Core), Phase 4 Lesson 01 (Image Fundamentals)
-**Time:** ~75 minutes
+**Prerequisites:** Phase 04 Lesson 01 (Image Fundamentals), Phase 03 Lesson 03 (Backpropagation)
+**Time:** ~60 minutes
 
 ## Learning Objectives
 
-- Implement 2D convolution from scratch using only NumPy, including the nested-loop version and a vectorised `im2col` version
-- Compute output spatial size for any combination of input size, kernel size, padding, and stride, and justify the `(H - K + 2P) / S + 1` formula
-- Hand-design kernels (edge, blur, sharpen, Sobel) and explain why each one produces the pattern of activations it does
-- Stack convolutions into a feature extractor and connect the depth-of-the-stack to the size of the receptive field
+- Distinguish mathematical convolution from the cross-correlation used by the local layer.
+- Calculate output height and width from kernel, padding, stride, and dilation.
+- Implement the same CHW operation with nested loops and an `im2col` matrix multiplication.
+- Explain how padding and stride change border coverage and spatial resolution.
+- Compute a stack's receptive-field side length and verify it on a small fixture.
 
-## The Problem
+## The operation
 
-A fully connected layer on a 224x224 RGB image would need 224 * 224 * 3 = 150,528 input weights per neuron. A single hidden layer with 1,000 units is already 150 million parameters — before you have learnt anything useful. Worse, that layer has no notion that a dog in the top-left and a dog in the bottom-right are the same pattern. It treats every pixel position as independent, which is exactly wrong for images: translating a cat by three pixels should not force the network to relearn the concept.
+`conv2d_naive` and `conv2d_im2col` accept one finite CHW input and an OCHW weight tensor. The first axis of the weights is output channel, the second is input channel. At each output position the implementation multiplies the selected patch by the kernel in the same orientation. That is cross-correlation; a mathematical convolution would flip the kernel first. The distinction matters for asymmetric filters such as `KERNELS["sobel_x"]`.
 
-The two properties an image model needs are **translation equivariance** (the output shifts when the input shifts) and **parameter sharing** (the same feature detector runs everywhere). Dense layers give you neither. Convolution gives you both for free.
+For one spatial axis, the effective kernel width with dilation `D` is `D*(K-1)+1`. The output formula is:
 
-Convolution was not invented for deep learning. It is the same operation that powers JPEG compression, Gaussian blur in Photoshop, edge detection in industrial vision, and every audio filter ever shipped. The reason CNNs dominated ImageNet from 2012 to 2020 is that convolution is the correct prior for data where nearby values are related and the same pattern can appear anywhere.
+```text
+H_out = floor((H + 2P - D*(K-1) - 1) / S) + 1
+```
 
-## The Concept
-
-### One kernel, sliding
-
-A 2D convolution takes a small weight matrix called the kernel (or filter), slides it across the input, and at each location computes the sum of element-wise products. That sum becomes one output pixel.
+The function `output_size` rejects a footprint that cannot fit and rejects non-positive stride/kernel values. `pad2d` adds zeros only around the final two axes. `im2col` records each receptive field as one column in scan order `(y, x)`, then the vectorized implementation multiplies flattened OCHW kernels by that matrix. Equal results are a regression invariant, not an assumption about floating-point bit identity.
 
 ```mermaid
 flowchart LR
-    subgraph IN["Input (H x W)"]
-        direction LR
-        I1["5 x 5 image"]
-    end
-    subgraph K["Kernel (3 x 3)"]
-        K1["learned<br/>weights"]
-    end
-    subgraph OUT["Output (H-2 x W-2)"]
-        O1["3 x 3 map"]
-    end
-    I1 --> |"slide kernel<br/>compute dot product<br/>at each position"| O1
-    K1 --> O1
-
-    style IN fill:#dbeafe,stroke:#2563eb
-    style K fill:#fef3c7,stroke:#d97706
-    style OUT fill:#dcfce7,stroke:#16a34a
+    I["CHW image"] --> P["pad2d"]
+    P --> W["scan receptive fields"]
+    W --> N["naive sums"]
+    W --> C["im2col matrix"]
+    C --> M["kernel matrix multiply"]
+    N --> O["OCHW output"]
+    M --> O
 ```
 
-A concrete 3x3 example on a 5x5 input (no padding, stride 1):
-
-```
-Input X (5 x 5):                Kernel W (3 x 3):
-
-  1  2  0  1  2                   1  0 -1
-  0  1  3  1  0                   2  0 -2
-  2  1  0  2  1                   1  0 -1
-  1  0  2  1  3
-  2  1  1  0  1
-
-The kernel slides across every valid 3 x 3 window. Output Y is 3 x 3:
-
- Y[0,0] = sum( W * X[0:3, 0:3] )
- Y[0,1] = sum( W * X[0:3, 1:4] )
- Y[0,2] = sum( W * X[0:3, 2:5] )
- Y[1,0] = sum( W * X[1:4, 0:3] )
- ... and so on
-```
-
-That one formula — **shared weights, locality, sliding window** — is the entire idea. Everything else is bookkeeping.
-
-### Output size formula
-
-Given input spatial size `H`, kernel size `K`, padding `P`, stride `S`:
-
-```
-H_out = floor( (H - K + 2P) / S ) + 1
-```
-
-Memorise this. You will compute it dozens of times per architecture.
-
-| Scenario | H | K | P | S | H_out |
-|----------|---|---|---|---|-------|
-| Valid conv, no padding | 32 | 3 | 0 | 1 | 30 |
-| Same conv (preserves size) | 32 | 3 | 1 | 1 | 32 |
-| Downsample by 2 | 32 | 3 | 1 | 2 | 16 |
-| Pool 2x2 | 32 | 2 | 0 | 2 | 16 |
-| Large receptive field | 32 | 7 | 3 | 2 | 16 |
-
-"Same padding" means pick P so that H_out == H when S == 1. For odd K, that is P = (K - 1) / 2. That is why 3x3 kernels dominate — they are the smallest odd kernel that still has a centre.
-
-### Padding
-
-Without padding, every convolution shrinks the feature map. Stack 20 of them and your 224x224 image becomes 184x184, which wastes compute on the border and complicates residual connections that need matching shapes.
-
-```
-Zero padding (P = 1) on a 5 x 5 input:
-
-  0  0  0  0  0  0  0
-  0  1  2  0  1  2  0
-  0  0  1  3  1  0  0
-  0  2  1  0  2  1  0       Now the kernel can centre on pixel
-  0  1  0  2  1  3  0       (0, 0) and still have three rows and
-  0  2  1  1  0  1  0       three columns of values to multiply.
-  0  0  0  0  0  0  0
-```
-
-Modes you meet in practice: `zero` (most common), `reflect` (mirror the edge, avoids hard borders in generative models), `replicate` (copy the edge), `circular` (wrap around, used in toroidal problems).
-
-### Stride
-
-Stride is the step size of the slide. `stride=1` is the default. `stride=2` halves the spatial dimensions and is the classic way to downsample inside a CNN without a separate pooling layer — every modern architecture (ResNet, ConvNeXt, MobileNet) uses strided convs in place of max-pool somewhere.
-
-```
-Stride 1 on a 5 x 5 input, 3 x 3 kernel:
-
-  starts: (0,0) (0,1) (0,2)        -> output row 0
-          (1,0) (1,1) (1,2)        -> output row 1
-          (2,0) (2,1) (2,2)        -> output row 2
-
-  Output: 3 x 3
-
-Stride 2 on the same input:
-
-  starts: (0,0) (0,2)              -> output row 0
-          (2,0) (2,2)              -> output row 1
-
-  Output: 2 x 2
-```
-
-### Multiple input channels
-
-Real images have three channels. A 3x3 convolution on an RGB input is actually a 3x3x3 volume: one 3x3 slice per input channel. At each spatial position, you multiply and sum across all three slices and add a bias.
-
-```
-Input:   (C_in,  H,  W)        3 x 5 x 5
-Kernel:  (C_in,  K,  K)        3 x 3 x 3 (one kernel)
-Output:  (1,     H', W')       2D map
-
-For a layer that produces C_out output channels, you stack C_out kernels:
-
-Weight:  (C_out, C_in, K, K)   e.g. 64 x 3 x 3 x 3
-Output:  (C_out, H', W')       64 x 3 x 3
-
-Parameter count: C_out * C_in * K * K + C_out   (the + C_out is biases)
-```
-
-That last line is the one you will calculate when planning a model. A 64-channel 3x3 conv on a 3-channel input has `64 * 3 * 3 * 3 + 64 = 1,792` parameters. Cheap.
-
-### The im2col trick
-
-Nested loops are easy to read but slow. GPUs want big matrix multiplies. The trick: flatten every receptive-field window of the input into one column of a big matrix, flatten the kernel into a row, and the whole convolution becomes a single matmul.
-
-```mermaid
-flowchart LR
-    X["Input<br/>(C_in, H, W)"] --> IM2COL["im2col<br/>(extract patches)"]
-    IM2COL --> COLS["Cols matrix<br/>(C_in * K * K, H_out * W_out)"]
-    W["Weight<br/>(C_out, C_in, K, K)"] --> FLAT["Flatten<br/>(C_out, C_in * K * K)"]
-    FLAT --> MM["matmul"]
-    COLS --> MM
-    MM --> OUT["Output<br/>(C_out, H_out * W_out)<br/>reshape to (C_out, H_out, W_out)"]
-
-    style X fill:#dbeafe,stroke:#2563eb
-    style W fill:#fef3c7,stroke:#d97706
-    style OUT fill:#dcfce7,stroke:#16a34a
-```
-
-Every production conv implementation is some variant of this plus cache-tiling tricks (direct conv, Winograd, FFT conv for large kernels). Understand im2col and you understand the core.
-
-### Receptive field
-
-A single 3x3 conv looks at 9 input pixels. Stack two 3x3 convs and a neuron in the second layer looks at 5x5 input pixels. Three 3x3 convs give 7x7. In general:
-
-```
-RF after L stacked K x K convs (stride 1) = 1 + L * (K - 1)
-
-With strides:   RF grows multiplicatively with stride along each layer.
-```
-
-The entire reason "3x3 all the way down" works (VGG, ResNet, ConvNeXt) is that two 3x3 convs see the same input area as one 5x5 conv but with fewer parameters and an extra non-linearity in between.
-
-
-
+`max_pool2d` uses the same output-size arithmetic but takes a maximum rather than a learned weighted sum. Its padded border uses `-inf` for floating-point inputs and the dtype minimum for integer inputs, so an out-of-image value cannot beat a real negative pixel. `receptive_field` tracks both the current jump between neighboring features and the pixels seen by a feature after a sequence of `(kernel, stride[, dilation])` layers.
 
 ## Build It
 
-Reconstruct **Convolutions from Scratch** by following `pad2d` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+Run:
+
+```bash
+python3 main.py
+```
+
+The demo compares the loop and `im2col` paths on a `(3, 9, 11)` fixture with four output channels, stride two, and padding two. It then applies `sobel_x` to a left/right step, prints the formula for three `H=32` settings, and evaluates a three-layer receptive field. The output is a small audit trail: shape, maximum numerical difference, edge response, and integer shape calculations.
 
 ## Use It
 
-Call `pad2d` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+```python
+import sys
+import numpy as np
+
+sys.path.insert(0, "code")
+import main as conv
+
+x = np.arange(25, dtype=np.float32).reshape(1, 5, 5)
+w = np.ones((1, 1, 3, 3), dtype=np.float32)
+y = conv.conv2d_im2col(x, w, padding=1)
+assert y.shape == (1, 5, 5)
+assert np.allclose(y, conv.conv2d_naive(x, w, padding=1))
+```
+
+This is a single-sample educational kernel. A production implementation also defines batching, memory layout, device placement, and gradient behavior; those are not silently supplied here.
 
 ## Ship It
 
-Hand off `outputs/prompt-cnn-architect.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [A guide to convolution arithmetic for deep learning (Dumoulin & Visin, 2016)](https://arxiv.org/abs/1603.07285) — the definitive diagrams of padding/stride/dilation that every course quietly copies
-- [CS231n: Convolutional Neural Networks for Visual Recognition](https://cs231n.github.io/convolutional-networks/) — the canonical lecture notes, including the original im2col explanation
-- [The Annotated ConvNet (fast.ai)](https://nbviewer.org/github/fastai/fastbook/blob/master/13_convolutions.ipynb) — a notebook that walks from manual convolution to a trained digit classifier
-- [Receptive Field Arithmetic for CNNs (Dang Ha The Hien)](https://distill.pub/2019/computing-receptive-fields/) — the paper-quality interactive explainer of receptive field calculations
+`outputs/skill-conv-shape-calculator.md` is the handoff for reviewing a layer specification. It requires `H`, `K`, `P`, `S`, and `D`, reports the effective footprint and output shape, and flags a non-fitting configuration. `outputs/prompt-cnn-architect.md` asks a reviewer to compare the naive and `im2col` results before optimizing a real layer.
 
 ## Exercises
 
-This lab follows `pad2d` and `output_size` on a controlled fixture; write down the value before changing the input.
-
-1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using an 8x8 synthetic image. Follow `pad2d`, `output_size`, `conv2d_naive`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **Implement 2D convolution from scratch using only NumPy, including the nested-loop version and a vectorised `im2col` version**.
-2. **Change the controlled parameter.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Compute output spatial size for any combination of input size, kernel size, padding, and stride, and justify the `(H - K + 2P) / S + 1` formula** says the other inputs should stay fixed.
-3. **Exercise the guard.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Hand-design kernels (edge, blur, sharpen, Sobel) and explain why each one produces the pattern of activations it does** and record the exception text if the code rejects the case.
-4. **Prepare the artifact for reuse.** Open `outputs/prompt-cnn-architect.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **Stack convolutions into a feature extractor and connect the depth-of-the-stack to the size of the receptive field**; note what the demo cannot establish.
+1. With `x=np.arange(25).reshape(1,5,5)` and a `3x3` all-ones kernel, calculate `conv2d_naive(x,w,padding=0)[0,0,0]` by hand. Check that it is the sum of the first nine input values.
+2. Change only `stride` from one to two for a `7x8` input and a `3x2` kernel. Predict both output dimensions using `output_size`, then inspect `im2col(...)[0].shape`.
+3. Compare `KERNELS["sobel_x"]` and its left-right flipped version on `synthetic_step_image(8)`. Explain why this code is cross-correlation rather than kernel-flipped convolution.
+4. Use `receptive_field([(3,1), (3,2), (3,1)])` and `receptive_field([(3,1,2)])`. State which layer changes the jump and which changes the footprint without downsampling.
 
 ## Reference Solution
 
-A checkable result for **Convolutions from Scratch** should contain:
-
-- the `python3 main.py` output for an 8x8 synthetic image, with `pad2d`, `output_size`, `conv2d_naive` traced to the value or shape that supports **Implement 2D convolution from scratch using only NumPy, including the nested-loop version and a vectorised `im2col` version**;
-- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Compute output spatial size for any combination of input size, kernel size, padding, and stride, and justify the `(H - K + 2P) / S + 1` formula**;
-- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Hand-design kernels (edge, blur, sharpen, Sobel) and explain why each one produces the pattern of activations it does**; and
-- an updated `outputs/prompt-cnn-architect.md` example with a concrete input, expected output field, and acceptance check tied to **Stack convolutions into a feature extractor and connect the depth-of-the-stack to the size of the receptive field**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
-## Guided Demo
-
-Use the [10–15 minute guided demo](demo.md) to predict an invariant, run the canonical entrypoint, change one variable, and probe a failure case.
+For the `5x5` all-ones example the first valid patch sums `0+1+2+5+6+7+10+11+12 = 54`. For `H=7,K=3,P=0,S=2`, `output_size` gives `3`; for `W=8,K=2` it gives `4`. The loop and `im2col` paths agree within floating-point tolerance, while a flipped Sobel kernel reverses the sign of the edge response. The three-layer field is nine pixels wide, and a single `3x3` kernel at dilation two sees a five-pixel span.

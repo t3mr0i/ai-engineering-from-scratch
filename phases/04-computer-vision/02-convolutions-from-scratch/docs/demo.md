@@ -1,12 +1,8 @@
-# Guided demo: Convolutions from Scratch
+# Guided demo: matching two convolution paths
 
-> **Time:** 10–15 minutes · **Question:** What observable evidence shows that you can implement 2D convolution from scratch using only NumPy, including the nested-loop version and a vectorised `im2col` version?
+This short run checks one concrete invariant: the nested-loop and `im2col` implementations must agree on the same finite CHW/OCHW fixture.
 
-## Before you run
-
-Write one predicted invariant for the baseline. Tie it to this objective: **Implement 2D convolution from scratch using only NumPy, including the nested-loop version and a vectorised `im2col` version.** Do not inspect the output first.
-
-## Run the baseline
+## Run
 
 From the repository root:
 
@@ -14,17 +10,12 @@ From the repository root:
 python3 phases/04-computer-vision/02-convolutions-from-scratch/code/main.py
 ```
 
-The command must print a bounded result and exit with status 0. Locate the part of the output that provides evidence for **Implement 2D convolution from scratch using only NumPy, including the nested-loop version and a vectorised `im2col` version**. Record the exact input, the relevant output, and the invariant in one sentence.
+The first line reports a `(4,6,7)` output and a small maximum absolute difference for stride two and padding two. The Sobel line then shows a nonzero response at the synthetic left/right step. The final lines evaluate `output_size(32, K, P, S)` and the receptive field of three layers.
 
-## Change one variable
+## One controlled comparison
 
-Change the smallest input or configuration value that helps you investigate **Compute output spatial size for any combination of input size, kernel size, padding, and stride, and justify the `(H - K + 2P) / S + 1` formula**. Keep every other value fixed. Run the same command again and capture a before/after pair; a screenshot without the values is not sufficient evidence.
+In a Python shell, keep the input, weights, and bias fixed and call both functions once with `dilation=2`. Compare `np.max(np.abs(naive-im2col))`. If the shapes differ, inspect the effective footprint `D*(K-1)+1` before comparing values; a padding or stride mismatch is not a numerical tolerance problem.
 
-## Probe a failure
+## Exit check
 
-Choose an edge case or violated precondition related to **Hand-design kernels (edge, blur, sharpen, Sobel) and explain why each one produces the pattern of activations it does**. Predict whether the program should reject it, degrade gracefully, or return a different valid result. Run the probe and explain any mismatch between prediction and observation. Restore the source afterward.
-
-## Exit ticket
-
-In three sentences, state (1) the mechanism you observed, (2) the controlled change and its effect, and (3) the acceptance check that demonstrates you can **stack convolutions into a feature extractor and connect the depth-of-the-stack to the size of the receptive field**. If the evidence is ambiguous, name the next measurement rather than claiming success.
-
+Record the output shape, maximum difference, Sobel response shape, and the receptive-field integer. A valid handoff includes the exact parameter tuple and notes that these functions implement cross-correlation rather than a flipped mathematical convolution.

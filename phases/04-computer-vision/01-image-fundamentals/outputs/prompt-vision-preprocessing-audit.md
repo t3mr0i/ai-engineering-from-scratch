@@ -1,40 +1,24 @@
 ---
 name: prompt-vision-preprocessing-audit
-description: Turn any model card or dataset card into a checklist of the preprocessing invariants a vision pipeline must honour
+description: Check an image array against the local HWC, CHW, range, and normalization contract
 phase: 4
 lesson: 1
 ---
 
-You are a vision-systems reviewer. Given a model card, a dataset card, or a paper's preprocessing section, extract the complete list of invariants the serving pipeline must honour, in this exact order:
+# Vision preprocessing audit
 
-1. **Input shape** — height, width, and any fixed aspect-ratio assumptions. Flag if the model accepts variable sizes.
-2. **Channel order** — RGB or BGR. Name the library the model was trained with (torchvision, OpenCV, timm) and the channel convention it implies.
-3. **Dtype** — uint8, float16, float32. Is the model quantized (int8, int4)?
-4. **Value range** — [0, 255], [0, 1], or [-1, 1]. Extract whether pixels are divided by 255, by 127.5, or left raw.
-5. **Standardization** — per-channel mean and std. Quote the exact numbers. If ImageNet stats, name them explicitly.
-6. **Resize policy** — shorter-side resize + center crop, resize-and-pad, or direct stretch. Include the target size and interpolation method.
-7. **Color space** — RGB, YCbCr, grayscale, or other. Flag any models that operate on Y-only (super-resolution) or on LAB space.
-8. **Axis layout** — NCHW, NHWC, or batch-free. Name the framework.
+Use this handoff with the dictionary returned by `inspect_image` and the output of `code/main.py`.
 
-For each invariant, output:
+1. Record the raw `shape`, `dtype`, `[min,max]`, and three channel means.
+2. Confirm that a raw fixture is HWC `(H,W,3)` and that `hwc_to_chw` produces `(3,H,W)` without changing bytes.
+3. Record the exact mean/std arrays used by `preprocess_imagenet`; these are local convention values, not evidence about an unknown checkpoint.
+4. Run `deprocess_imagenet(preprocess_imagenet(raw))` and require maximum byte error `0` for this fixture.
+5. Record resize target and interpolation (`resize_nearest`); do not claim that nearest interpolation recovers lost detail.
 
-```
-[inv] <name>
-  value:  <exact value from the source>
-  source: <file, section, or line>
-  risk:   <what fails silently if this is wrong>
+Accepted evidence for this lesson is reproducible output from:
+
+```bash
+python3 main.py
 ```
 
-Then produce a one-line preprocessing summary in the form:
-
-```
-load -> convert(<colorspace>) -> resize(<size>, <interp>) -> crop(<size>) -> /<divisor> -> -mean /std -> transpose(<layout>) -> dtype(<dtype>)
-```
-
-Rules:
-
-- Quote exact numbers. Never round ImageNet stats to two decimals.
-- If the card is silent on an invariant, mark it `unspecified` and add it to a "questions to resolve" section at the bottom.
-- Flag silent-failure risks explicitly: channel swap, missing standardization, and wrong layout are the three most common production bugs.
-- Do not invent defaults. If the card says "standard preprocessing" without specifying, that is an unspecified invariant.
-- When two sources disagree (paper vs. code), trust the code and note the disagreement.
+Reject an array with a nonfinite value, a missing RGB axis, or a channel axis in the wrong position. A real file decoder or model card must supply any additional color-profile, crop, or batch policy.

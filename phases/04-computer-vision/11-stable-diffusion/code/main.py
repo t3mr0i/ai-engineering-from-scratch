@@ -1,88 +1,123 @@
-"""
-Stable Diffusion usage examples. Requires `diffusers`, `transformers`, and a GPU
-for any real inference. Running this on CPU without the model is a no-op summary.
-"""
+# Entry point for phases/04-computer-vision/11-stable-diffusion/docs/en.md.
+# Implements an offline latent-shape, classifier-free guidance, scheduler, and LoRA bookkeeping fixture.
+# It deliberately imports no diffusion framework and never downloads or generates a model image.
+# Run from this directory with: python3 main.py
 
-import os
-import torch
+from __future__ import annotations
 
+from numbers import Integral, Real
 
-def has_diffusers():
-    try:
-        import diffusers  # noqa: F401
-        return True
-    except ImportError:
-        return False
+import numpy as np
 
 
-def describe_pipeline():
-    print("[stable diffusion pipeline]")
-    print("  text_encoder:   CLIP-L (SD 1.5) / CLIP-L+G (SDXL) / T5-XXL (SD3, FLUX)")
-    print("  unet_params:    860M (SD 1.5) / 2.6B (SDXL) / 12B (FLUX)")
-    print("  vae_latent:     4 x 64 x 64 for 512x512 input, 4 x 128 x 128 for 1024x1024")
-    print("  vae_scale:      0.18215 (SD 1.5/2), 0.13025 (SDXL)")
-    print("  default_cfg:    7.5")
+def _positive_int(value: int, name: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, Integral) or int(value) <= 0:
+        raise ValueError(f"{name} must be a positive integer")
+    return int(value)
 
 
-def cfg_sweep_demo():
-    values = [1.0, 3.0, 5.0, 7.5, 10.0, 15.0]
-    print("\n[cfg sweep values to try on a real pipeline]")
-    for w in values:
-        effect = (
-            "unconditional" if w <= 1.0
-            else "creative but weak prompt adherence" if w < 5.0
-            else "standard" if w <= 8.0
-            else "strong adherence, possible oversaturation" if w <= 12.0
-            else "heavy artefacts"
-        )
-        print(f"  w={w:5.1f}  expected: {effect}")
+def _finite(value: np.ndarray, name: str) -> np.ndarray:
+    array = np.asarray(value)
+    if not np.issubdtype(array.dtype, np.number) or not np.isfinite(array).all():
+        raise ValueError(f"{name} must contain finite numeric values")
+    return array.astype(np.float64, copy=False)
 
 
-def text_to_image_stub(prompt, seed=42):
-    print(f"\n[text_to_image] prompt={prompt!r} seed={seed}")
-    if not has_diffusers():
-        print("  diffusers not installed. `pip install diffusers transformers accelerate` to run.")
-        return None
-    if not torch.cuda.is_available():
-        print("  CUDA not available; running SD on CPU is extremely slow. Skipping real call.")
-        return None
-    from diffusers import StableDiffusionPipeline, DPMSolverMultistepScheduler
-    pipe = StableDiffusionPipeline.from_pretrained(
-        "runwayml/stable-diffusion-v1-5",
-        torch_dtype=torch.float16,
-    ).to("cuda")
-    pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
-    gen = torch.Generator("cuda").manual_seed(seed)
-    out = pipe(prompt, guidance_scale=7.5, num_inference_steps=25, generator=gen).images[0]
-    path = os.path.expanduser("~/sd_demo.png")
-    out.save(path)
-    print(f"  saved: {path}")
+def latent_shape(
+    image_shape: tuple[int, int, int, int],
+    downsample_factor: int = 8,
+    latent_channels: int = 4,
+) -> tuple[int, int, int, int]:
+    if len(image_shape) != 4:
+        raise ValueError("image_shape must be (N,C,H,W)")
+    batch, channels, height, width = (_positive_int(v, name) for v, name in zip(image_shape, ("N", "C", "H", "W")))
+    downsample_factor = _positive_int(downsample_factor, "downsample_factor")
+    latent_channels = _positive_int(latent_channels, "latent_channels")
+    if height % downsample_factor or width % downsample_factor:
+        raise ValueError("H and W must be divisible by downsample_factor")
+    return batch, latent_channels, height // downsample_factor, width // downsample_factor
 
 
-def lora_training_sketch():
-    print("\n[lora training pseudocode]")
-    pseudo = """
-for step, batch in enumerate(dataloader):
-    images, prompts = batch
-    latents = vae.encode(images).latent_dist.sample() * 0.18215
-    t = torch.randint(0, num_train_timesteps, (batch_size,))
-    noise = torch.randn_like(latents)
-    noisy_latents = scheduler.add_noise(latents, noise, t)
-    text_emb = text_encoder(tokenizer(prompts))
-    pred_noise = unet(noisy_latents, t, text_emb)       # LoRA weights injected
-    loss = F.mse_loss(pred_noise, noise)
-    loss.backward()
-    optimizer.step()
-"""
-    print(pseudo)
+def encode_latent(image: np.ndarray, downsample_factor: int = 2, latent_channels: int = 4) -> np.ndarray:
+    value = _finite(image, "image")
+    if value.ndim != 4 or 0 in value.shape:
+        raise ValueError("image must have a non-empty (N,C,H,W) shape")
+    shape = latent_shape(value.shape, downsample_factor, latent_channels)
+    batch, channels, height, width = value.shape
+    factor = int(downsample_factor)
+    if channels > latent_channels:
+        raise ValueError("latent_channels must cover every input channel")
+    pooled = value.reshape(batch, channels, height // factor, factor, width // factor, factor).mean(axis=(3, 5))
+    latent = np.empty(shape, dtype=np.float64)
+    latent[:, :min(channels, latent_channels)] = pooled[:, :min(channels, latent_channels)]
+    if latent_channels > channels:
+        latent[:, channels:] = pooled.mean(axis=1, keepdims=True)
+    return latent
 
 
-def main():
-    describe_pipeline()
-    cfg_sweep_demo()
-    text_to_image_stub("a dog riding a skateboard in tokyo, studio ghibli style")
-    lora_training_sketch()
+def decode_latent(latent: np.ndarray, image_channels: int = 3, upsample_factor: int = 2) -> np.ndarray:
+    values = _finite(latent, "latent")
+    if values.ndim != 4 or 0 in values.shape:
+        raise ValueError("latent must have a non-empty (N,C,H,W) shape")
+    image_channels = _positive_int(image_channels, "image_channels")
+    upsample_factor = _positive_int(upsample_factor, "upsample_factor")
+    if image_channels > values.shape[1]:
+        raise ValueError("latent does not contain enough channels for the requested image")
+    expanded = np.repeat(np.repeat(values[:, :image_channels], upsample_factor, axis=2), upsample_factor, axis=3)
+    return expanded
+
+
+def classifier_free_guidance(unconditional: np.ndarray, conditional: np.ndarray, guidance_scale: float) -> np.ndarray:
+    uncond, cond = _finite(unconditional, "unconditional"), _finite(conditional, "conditional")
+    if uncond.shape != cond.shape or uncond.size == 0:
+        raise ValueError("unconditional and conditional predictions must share a non-empty shape")
+    if not isinstance(guidance_scale, Real) or not np.isfinite(guidance_scale) or guidance_scale < 0:
+        raise ValueError("guidance_scale must be finite and non-negative")
+    return uncond + float(guidance_scale) * (cond - uncond)
+
+
+def scheduler_sigmas(num_steps: int, start: float = 1.0, end: float = 0.01) -> np.ndarray:
+    num_steps = _positive_int(num_steps, "num_steps")
+    if not all(isinstance(v, Real) and np.isfinite(v) for v in (start, end)) or not 0 < end <= start:
+        raise ValueError("scheduler sigmas require finite 0 < end <= start")
+    return np.linspace(float(start), float(end), num_steps)
+
+
+def lora_update(base: np.ndarray, down: np.ndarray, up: np.ndarray, scale: float = 1.0) -> np.ndarray:
+    weights = _finite(base, "base")
+    lower, upper = _finite(down, "down"), _finite(up, "up")
+    if weights.ndim != 2 or lower.ndim != 2 or upper.ndim != 2 or lower.shape[1] != weights.shape[1] or upper.shape[0] != weights.shape[0] or upper.shape[1] != lower.shape[0]:
+        raise ValueError("base, down, and up have incompatible 2-D LoRA shapes")
+    if not isinstance(scale, Real) or not np.isfinite(scale):
+        raise ValueError("scale must be finite")
+    return weights + float(scale) * (upper @ lower)
+
+
+def pipeline_manifest() -> list[dict[str, str]]:
+    return [
+        {"component": "text_encoder", "role": "prompt -> conditioning vectors", "status": "contract only"},
+        {"component": "denoiser", "role": "predict a latent update", "status": "contract only"},
+        {"component": "scheduler", "role": "choose reverse timesteps", "status": "NumPy sigma fixture"},
+        {"component": "VAE", "role": "image <-> latent shape adapter", "status": "mean-pool fixture"},
+        {"component": "safety_check", "role": "policy gate on decoded output", "status": "not implemented here"},
+    ]
+
+
+def main() -> int:
+    image = np.linspace(-1, 1, 3 * 32 * 32).reshape(1, 3, 32, 32)
+    latent = encode_latent(image, downsample_factor=8, latent_channels=4)
+    uncond, cond = np.zeros((1, 4, 4, 4)), np.ones((1, 4, 4, 4))
+    guided = classifier_free_guidance(uncond, cond, guidance_scale=5.0)
+    down, up = np.ones((2, 4)), np.ones((4, 2))
+    adapted = lora_update(np.zeros((4, 4)), down, up, scale=0.5)
+    print("offline Stable-Diffusion component ledger:")
+    for item in pipeline_manifest():
+        print(f"  {item['component']}: {item['role']} ({item['status']})")
+    print(f"image={image.shape} latent={latent.shape} cfg_mean={guided.mean():.1f} lora_shape={adapted.shape}")
+    print(f"scheduler_sigmas={scheduler_sigmas(5).round(3).tolist()}")
+    print("note: no diffusers import, model download, or image-generation claim")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

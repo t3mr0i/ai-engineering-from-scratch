@@ -1,78 +1,78 @@
 {
   "lesson": "04-image-classification",
-  "title": "Image Classification",
+  "title": "Image Classification: A Reproducible NumPy Pipeline",
   "questions": [
     {
       "stage": "pre",
-      "question": "What shape does ArrayDataset return for one synthetic CIFAR image after __getitem__?",
+      "question": "What does synthetic_cifar(4, 3, 8, seed=0) create?",
       "options": [
-        "(32,32,3) with a one-hot NumPy label",
-        "(1,3,32,32) with a string label",
-        "(3,32,32) with a scalar integer label",
-        "(10,32,32) with a floating image index"
+        "Four downloaded CIFAR batches with 10,000 classes",
+        "A single CHW image and a scalar loss",
+        "12 local NHWC images of shape (8,8,3) and integer labels for three classes",
+        "12 grayscale images with shape (3,8,8) and floating labels"
       ],
       "correct": 2,
-      "explanation": "The dataset converts HWC NumPy data to a contiguous tensor and permutes it to CHW, while int(Y[i]) is returned as the label."
+      "explanation": "The helper creates num_per_class*num_classes local color/texture fixtures in NHWC [0,1] format; its name does not imply a dataset download."
     },
     {
       "stage": "check",
-      "question": "What does mixup_batch do to two examples when lambda is 0.7?",
+      "question": "Why does softmax subtract the largest logit before exponentiating?",
       "options": [
-        "Chooses x1 and discards every label",
-        "Averages only the class indices as an integer",
-        "Adds 0.7 to every pixel without changing the target",
-        "Forms 0.7*x1+0.3*x2 and the same convex combination of their one-hot labels"
+        "It forces the highest class probability to zero",
+        "It changes hard labels into one-hot arrays",
+        "It makes every class probability equal",
+        "It preserves the probability ratios while avoiding overflow for large finite logits"
       ],
       "correct": 3,
-      "explanation": "Mixup interpolates both inputs and one-hot targets using the sampled lambda and a shuffled partner in the batch."
+      "explanation": "Subtracting a shared maximum leaves softmax unchanged mathematically but keeps exponentials in a numerically manageable range."
     },
     {
       "stage": "check",
-      "question": "Why does soft_cross_entropy receive soft_targets rather than integer class indices?",
+      "question": "What must each row of a soft target passed to cross_entropy sum to?",
       "options": [
-        "Mixup labels are fractional class distributions",
-        "The model has no final logits",
-        "Cross-entropy cannot use log probabilities",
-        "The DataLoader returns images as labels"
+        "One",
+        "The batch size",
+        "The largest logit",
+        "Zero"
       ],
       "correct": 0,
-      "explanation": "The loss computes -sum(target*log_softmax(logits)); this supports the convex label vectors produced by mixup."
+      "explanation": "The API treats a two-dimensional target as a probability distribution over classes and rejects negative rows or rows that do not sum to one."
     },
     {
       "stage": "check",
-      "question": "What spatial size does random_crop(pad=4) return for a 32x32 image?",
+      "question": "What does mixup_batch return for two images and num_classes=2?",
       "options": [
-        "40x40",
-        "32x32",
-        "24x24",
-        "8x8"
+        "Only the image permutation, leaving labels as integer scalars",
+        "Mixed images and two-element soft label rows whose entries sum to one",
+        "A crop of each image with a new spatial shape",
+        "Logits already normalized by softmax"
       ],
       "correct": 1,
-      "explanation": "The image is padded to 40x40, then a 32x32 window is selected, preserving the classifier's input size."
+      "explanation": "Mixup interpolates a batch permutation and the corresponding one-hot labels with the same Beta-sampled coefficient."
     },
     {
       "stage": "post",
-      "question": "In evaluate, what does cm[t,p] += 1 record?",
+      "question": "What is the most useful evidence in confusion_matrix plus per_class_report?",
       "options": [
-        "One parameter update for class p",
-        "The number of training batches for class t",
-        "One example whose true class is t and predicted class is p",
-        "A pixel-level intersection over union"
+        "That a model is calibrated for every possible deployment domain",
+        "That augmentation never changed a training image",
+        "Which target/prediction pairs occur and how precision, recall, and F1 differ by class",
+        "That the local fixture is the official CIFAR test set"
       ],
       "correct": 2,
-      "explanation": "Rows represent true classes and columns represent predictions, allowing per-class precision and recall to be derived."
+      "explanation": "The matrix exposes class-specific error directions; the report derives per-class metrics and makes imbalance visible without claiming calibration or benchmark provenance."
     },
     {
       "stage": "post",
-      "question": "What happens to the learning rate in the main classification loop after each epoch?",
+      "question": "Why should the same mean/std definition be used for validation after training transforms?",
       "options": [
-        "It is reset to 0.05 before every batch",
-        "It is replaced by the validation accuracy",
-        "It is multiplied by the batch size",
-        "CosineAnnealingLR advances one scheduler step"
+        "It guarantees higher validation accuracy than training accuracy",
+        "It converts validation labels into soft mixup targets",
+        "It makes the validation split part of the training set",
+        "It keeps the feature scale comparable while leaving validation free of random augmentation"
       ],
       "correct": 3,
-      "explanation": "The code reads the current rate, trains and evaluates, then calls scheduler.step() once per epoch."
+      "explanation": "Standardization is part of the model-input contract; validation should apply its deterministic version without importing training-only random operations or leakage."
     }
   ]
 }

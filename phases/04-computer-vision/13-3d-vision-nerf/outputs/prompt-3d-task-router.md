@@ -1,67 +1,42 @@
 ---
 name: prompt-3d-task-router
-description: Route to the right 3D representation (point cloud, mesh, voxel, NeRF, Gaussian splat) based on task and input
+description: Choose a local ray representation and renderer for a bounded 3D experiment
 phase: 4
 lesson: 13
 ---
 
-You are a 3D task router.
+# Local 3D task router
 
-## Inputs
+Use this prompt with the lesson artifact when the input is a small set of posed
+rays and the next step is to decide whether density rendering is appropriate.
+It deliberately makes no claim about a trained NeRF, a checkpoint, or a point-
+cloud library; the companion demo only validates ray geometry and rendering.
 
-- `task`: classify | segment | detect | reconstruct | render_novel_view | simulate_physics
-- `input_modality`: LIDAR_points | RGB_single | RGB_posed_multi_view | mesh | depth_map
-- `output_modality`: labels | mesh | voxel | novel_image | SDF
-- `latency_budget_ms`: inference latency at test time; drives real-time vs quality trade (see Rules)
+## Request format
 
-## Decision
-
-### Classify / segment LIDAR points
--> **PointNet++** or **Point Transformer**. Use voxel-based **MinkowskiNet** if points exceed 50k per frame.
-
-### 3D object detection on LIDAR
--> **PointPillars** (fast) or **CenterPoint** (accurate).
-
-### Reconstruct a scene from posed RGB views
-- Training time tolerable (hours), max quality -> **NeRF** (reference), **Mip-NeRF 360** (unbounded scenes).
-- Training time tight, real-time rendering required -> **3D Gaussian Splatting**.
-- Very few views (1-5) -> **InstantSplat** or **Gaussian Splatting from few views**.
-
-### Render a novel view from a few posed images
--> same as reconstruction, but tune renderer for speed: Instant-NGP for MLP-backed, Gaussian Splatting for rasterised.
-
-### Mesh extraction
--> Train a NeRF / Gaussian splat, run **marching cubes** on the density field to get a mesh.
-
-### Physics simulation / robotics grasping
--> Convert to mesh or voxel; simulators prefer explicit geometry.
-
-## Output
-
-```
-[task]
-  type:     <task>
-  input:    <modality>
-  output:   <modality>
-
-[representation]
-  pick:     point_cloud | mesh | voxel | NeRF | Gaussian_splat | SDF
-
-[model]
-  name:     <specific>
-  pretrain: <if available>
-
-[notes]
-  - training compute estimate
-  - rendering speed estimate
-  - known failure modes on this task
+```text
+task: render_novel_view | inspect_density | compare_sampling
+rays: integer number of rays, at least 1
+samples_per_ray: integer, at least 2
+representation: radiance_field | point_cloud | mesh
+latency_budget_ms: finite non-negative number
 ```
 
-## Rules
+## Decision rules
 
-- Never recommend NeRF for real-time rendering (`latency_budget_ms < 33` => >= 30 fps) on commodity GPUs; Gaussian Splatting is the answer.
-- `latency_budget_ms < 100` — require Gaussian Splatting or Instant-NGP for rendering; plain NeRF will not meet the budget.
-- `latency_budget_ms >= 1000` — plain NeRF and diffusion-based methods are acceptable; quality over speed.
-- For edge / mobile, avoid any NeRF / Gaussian variant above 50MB model size; recommend mesh-based methods instead.
-- If `input_modality == RGB_single`, route to a monocular depth estimator first (e.g. DepthAnythingV2) before any 3D task.
-- Do not output SDF for tasks that need colour; SDFs encode geometry only.
+1. Choose `radiance_field` only when each ray has ordered samples with
+   `near < far` and a density/color value for every sample.
+2. Use the lesson's `volume_render` contract for a small, inspectable fixture:
+   densities must be non-negative, colors lie in `[0, 1]`, and depths increase
+   along each ray.
+3. Choose a point cloud or mesh for a task that needs explicit surfaces or
+   established geometry. Do not infer that choice from this NumPy-only demo.
+4. Treat `latency_budget_ms` as a project constraint, not as a benchmark. The
+   lesson does not measure a renderer's production throughput.
+
+## Handoff
+
+Record the selected representation, the ray/sample shapes, the sum of the
+rendering weights, and whether the fixture passed the input checks. A useful
+handoff says which observable led to the choice; it does not claim that a
+training run or novel-view quality was established.

@@ -1,78 +1,78 @@
 {
   "lesson": "12-video-understanding",
-  "title": "Video Understanding — Temporal Modeling",
+  "title": "Video Understanding: Sample Time Before Modeling It",
   "questions": [
     {
       "stage": "pre",
-      "question": "What does sample_uniform(num_frames_total=5, T=8) return after the available frames are exhausted?",
+      "question": "What extra structure must a video pipeline preserve compared with a single image?",
       "options": [
-        "Eight new frames with indices 0 through 7",
-        "Only the first frame repeated eight times",
-        "Indices 0 through 4 followed by three copies of index 4",
-        "A random permutation of all five frames"
-      ],
-      "correct": 2,
-      "explanation": "The function returns every available index and pads the sequence with the last frame until it has length T."
-    },
-    {
-      "stage": "check",
-      "question": "What input shape does FramePool expect for a batch of two clips with eight RGB frames of size 64x64?",
-      "options": [
-        "(8,2,3,64,64)",
-        "(2,3,8,64,64)",
-        "(2,8,64,64)",
-        "(2,8,3,64,64)"
-      ],
-      "correct": 3,
-      "explanation": "FramePool reads N,T from the first two dimensions, flattens them through the 2D backbone, then averages T frame features."
-    },
-    {
-      "stage": "check",
-      "question": "What output shape does FramePool return for that batch with num_classes=10?",
-      "options": [
-        "(2,10)",
-        "(8,10)",
-        "(2,8,10)",
-        "(10,64,64)"
+        "The temporal order and sampling relationship between frames",
+        "A second RGB color space for every frame",
+        "Only the largest frame's spatial resolution",
+        "A random label for each timestamp"
       ],
       "correct": 0,
-      "explanation": "Temporal mean pooling produces one 512-dimensional vector per clip, and the head maps each vector to ten logits."
+      "explanation": "Video adds a time axis. Sampling, pooling, and splitting must preserve or intentionally summarize that order."
     },
     {
       "stage": "check",
-      "question": "How does inflate_2d_to_3d initialize a 3D kernel from a 2D kernel?",
+      "question": "What does `sample_uniform(10,4)` return in this lesson?",
       "options": [
-        "Copies only the first spatial row and zeros all other slices",
-        "Repeats the 2D weights across the time kernel and divides by the time size",
-        "Randomizes every temporal slice independently",
-        "Averages the input frames before applying the 2D convolution"
+        "[0, 1, 2, 3]",
+        "[0, 2, 5, 7]",
+        "[1, 4, 7, 10]",
+        "[0, 3, 6, 9, 10]"
       ],
       "correct": 1,
-      "explanation": "The code unsqueezes the 2D weights, repeats them time_kernel times, and divides by time_kernel to preserve the response scale."
+      "explanation": "The implementation floors i*10/4 for i=0..3, producing 0, 2, 5, and 7, all valid frame indices."
+    },
+    {
+      "stage": "check",
+      "question": "What property distinguishes `sample_dense(20,5,seeded_rng)` from uniform sampling?",
+      "options": [
+        "It returns one contiguous five-frame clip with a reproducible start",
+        "It always returns the first five frames",
+        "It samples five different videos",
+        "It can return an index equal to 20"
+      ],
+      "correct": 0,
+      "explanation": "When enough frames exist, dense sampling selects start..start+T-1. The seeded generator makes the start reproducible and all indices stay below 20."
+    },
+    {
+      "stage": "check",
+      "question": "Why does `inflate_kernel_2d` divide repeated temporal slices by `time_kernel`?",
+      "options": [
+        "So summing the new temporal slices recovers the original spatial kernel",
+        "To change the number of input channels",
+        "To make every temporal slice zero",
+        "So the kernel can ignore the frame axis"
+      ],
+      "correct": 0,
+      "explanation": "Repeating the 2D weights and dividing by the number of copies preserves their temporal average and keeps the original spatial response as the time sum."
     },
     {
       "stage": "post",
-      "question": "What factorisation does Conv2Plus1D implement?",
+      "question": "For `temporal_split(10,0.6)`, which boundary is returned?",
       "options": [
-        "A temporal-only convolution followed by image resizing",
-        "Two independent 2D convolutions with no time axis",
-        "A spatial 1xKxK convolution followed by a temporal Kx1x1 convolution",
-        "A linear classifier followed by frame sampling"
+        "Training 0..5 and test 6..9",
+        "Training 0..4 and test 5..9",
+        "Training every even frame and test every odd frame",
+        "The same frame indices in both sets"
       ],
-      "correct": 2,
-      "explanation": "The spatial Conv3d mixes height and width first; BatchNorm/ReLU intervene before the temporal Conv3d mixes frames."
+      "correct": 0,
+      "explanation": "floor(10*0.6)=6, so the half-open training range is 0..5 and the test range starts at 6."
     },
     {
       "stage": "post",
-      "question": "What information can a 2D backbone plus FramePool miss compared with a true temporal model?",
+      "question": "Which architecture choice fits a task that only needs an order-insensitive average of frame features?",
       "options": [
-        "The RGB channels of every frame",
-        "The number of output classes",
-        "The spatial features within each individual frame",
-        "The order and motion pattern of frames, because it averages frame features"
+        "Temporal pooling after a frame encoder",
+        "A larger spatial kernel with no time axis",
+        "A random frame split that duplicates future clips",
+        "A detector box without any temporal aggregation"
       ],
-      "correct": 3,
-      "explanation": "Mean pooling retains an aggregate appearance signal but cannot distinguish sequences with the same frames in different temporal orders."
+      "correct": 0,
+      "explanation": "`temporal_pool` explicitly averages selected frame features. A temporal convolution or attention block is needed only when local or long-range order matters."
     }
   ]
 }

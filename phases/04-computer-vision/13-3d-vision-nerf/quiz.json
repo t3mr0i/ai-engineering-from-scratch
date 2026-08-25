@@ -1,78 +1,78 @@
 {
   "lesson": "13-3d-vision-nerf",
-  "title": "3D Vision — Point Clouds & NeRFs",
+  "title": "3D Vision — Rays and Volume Rendering",
   "questions": [
     {
       "stage": "pre",
-      "question": "What input layout does PointNet.forward expect for a batch of 512 three-dimensional points?",
+      "question": "A point has three coordinates. What is the last dimension after positional_encoding(points, levels=2)?",
       "options": [
-        "(batch,3,512)",
-        "(batch,512,3)",
-        "(3,batch,512)",
-        "(batch,512)"
-      ],
-      "correct": 0,
-      "explanation": "The first Conv1d is declared with three input channels, so coordinates are arranged as (B,3,N)."
-    },
-    {
-      "stage": "check",
-      "question": "For x with last dimension 3 and positional_encoding(x,L=10), what is the encoded last dimension?",
-      "options": [
-        "30",
-        "60",
-        "20",
-        "10"
+        "3",
+        "12",
+        "6",
+        "4"
       ],
       "correct": 1,
-      "explanation": "Each of the three coordinates receives ten sine and ten cosine values: 3*2*10=60."
+      "explanation": "Each coordinate gets sine and cosine features at two frequencies, so the final width is 3 * 2 * 2 = 12."
     },
     {
       "stage": "check",
-      "question": "What shapes does TinyNeRF.forward return for x and d shaped (128,3)?",
+      "question": "origins and directions each have shape (2, 3). What does sample_ray_points(..., n_samples=4) return?",
       "options": [
-        "sigma (3,) and rgb (128,128)",
-        "sigma (128,3) and rgb (3,128)",
-        "sigma (128,) and rgb (128,3)",
-        "sigma (1,) and rgb (128,1)"
+        "A depth vector with shape (4,)",
+        "Points with shape (4, 2, 3)",
+        "Points with shape (2, 4, 3)",
+        "A single point with shape (2, 3)"
       ],
       "correct": 2,
-      "explanation": "The density head is squeezed to one scalar per sample, while the color head emits three sigmoid channels per sample."
+      "explanation": "The sampler keeps one row per ray and adds four ordered 3D samples: (number of rays, samples, 3)."
     },
     {
       "stage": "check",
-      "question": "In volumetric_render, how is each sample's alpha computed?",
+      "question": "For density sigma=2 and interval length delta=0.5, what alpha does volume_render use?",
       "options": [
-        "sigma divided by the number of rays",
-        "The RGB channel maximum",
-        "The hard argmax of the density samples",
-        "1-exp(-sigma*delta)"
-      ],
-      "correct": 3,
-      "explanation": "The code converts volume density over interval delta into an opacity alpha using 1-exp(-sigma*delta)."
-    },
-    {
-      "stage": "post",
-      "question": "Why is PointNet's global max over the point dimension permutation-invariant?",
-      "options": [
-        "Reordering points does not change the maximum feature value in each channel",
-        "Max pooling sorts points by their original index",
-        "The network receives the same point only once",
-        "BatchNorm restores the input order after convolution"
+        "1 - exp(-1), about 0.632",
+        "2 / 0.5, equal to 4",
+        "exp(-1), about 0.368",
+        "The hard maximum of the density values"
       ],
       "correct": 0,
-      "explanation": "The per-point MLP is shared and the symmetric max reduction ignores ordering, so a shuffled point set produces the same global vector."
+      "explanation": "The opacity for an interval is alpha = 1 - exp(-sigma * delta), giving 1 - exp(-1) here."
+    },
+    {
+      "stage": "check",
+      "question": "What should a zero-density ray return when a background color is supplied?",
+      "options": [
+        "The first sample color with weight one",
+        "A NaN color because no surface was found",
+        "The color of the densest sample",
+        "The supplied background color, with zero accumulated sample weight"
+      ],
+      "correct": 3,
+      "explanation": "Zero density gives zero alpha and therefore zero sample contribution; volume_render returns the supplied background."
     },
     {
       "stage": "post",
-      "question": "What does volumetric_render's depth output represent?",
+      "question": "How does volume_render compute a ray's reported depth?",
       "options": [
-        "The farthest t value on every ray",
-        "A weighted sum of sample depths using their ray weights",
-        "The RGB channel with the highest intensity",
-        "The number of MLP layers used for the ray"
+        "It returns the largest sampled depth regardless of density",
+        "It takes the weighted sum of sample depths using the rendering weights",
+        "It averages RGB channels and interprets the result as depth",
+        "It returns the number of samples before the first nonzero density"
       ],
       "correct": 1,
-      "explanation": "The code computes (weights*t_vals).sum, so samples with greater contribution influence the rendered depth more strongly."
+      "explanation": "The implementation computes (weights * t_vals).sum along each ray, so high-contribution samples determine the depth."
+    },
+    {
+      "stage": "post",
+      "question": "Which input violation should be rejected before the volume-rendering calculation?",
+      "options": [
+        "A density below zero or colors outside [0, 1]",
+        "A ray with several ordered samples",
+        "A background color supplied for a zero-density ray",
+        "A positional encoding with more than one frequency"
+      ],
+      "correct": 0,
+      "explanation": "Density represents opacity per unit distance and must be nonnegative; the local contract also bounds RGB values and checks finite, increasing samples."
     }
   ]
 }

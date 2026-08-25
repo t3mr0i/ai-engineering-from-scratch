@@ -1,78 +1,78 @@
 {
   "lesson": "06-object-detection-yolo",
-  "title": "Object Detection — YOLO from Scratch",
+  "title": "Object Detection: YOLO Geometry and NMS",
   "questions": [
     {
       "stage": "pre",
-      "question": "Two boxes are [0,0,10,10] and [5,0,15,10]. What IoU does box_iou compute?",
+      "question": "What coordinate convention does validate_boxes enforce?",
       "options": [
-        "1/2, about 0.5",
-        "1",
-        "1/3, about 0.333",
-        "0"
+        "Normalized center-width-height boxes with values only in [0,1]",
+        "Integer corner pixels with x2<=x1 allowed for a point",
+        "Finite absolute xyxy boxes with x1<x2 and y1<y2",
+        "Four logits that have not yet been decoded"
       ],
       "correct": 2,
-      "explanation": "The intersection is 5*10=50 and the union is 100+100-50=150, so IoU=50/150=1/3."
+      "explanation": "The local geometry APIs use absolute corners and require a positive width and height; normalization is not silently assumed."
     },
     {
       "stage": "check",
-      "question": "Given the demo's five boxes and scores [0.9,0.8,0.7,0.85,0.6], what does NMS with threshold 0.4 keep?",
+      "question": "What is the IoU of [0,0,10,10] and [5,0,15,10]?",
       "options": [
-        "Indices [1,2,4]",
-        "All five indices",
-        "Only index [4]",
-        "Indices [0,3]"
+        "0.25",
+        "0.5",
+        "1.0",
+        "0.333..."
       ],
       "correct": 3,
-      "explanation": "NMS keeps the highest score in each overlapping group: box 0 suppresses 1 and 2, while box 3 suppresses 4."
+      "explanation": "The intersection area is 50 and the union is 100+100-50=150, giving 50/150 = 1/3."
     },
     {
       "stage": "check",
-      "question": "For a YOLOHead with num_anchors=3 and num_classes=5, what is the last dimension of its output?",
+      "question": "In encode(box, cell_x, cell_y, stride, anchor), what do tx and ty represent?",
       "options": [
-        "10, representing 5 box/objectness values plus 5 class values",
-        "8, representing only the box corners",
-        "5, representing classes without objectness",
-        "15, representing three complete boxes"
+        "Logits for the center offsets within the selected cell",
+        "The absolute pixel coordinates of the box's top-left corner",
+        "The anchor's width and height in pixels",
+        "The class index and confidence threshold"
       ],
       "correct": 0,
-      "explanation": "Each anchor predicts tx,ty,tw,th,objectness and five class logits: 5+num_classes=10."
+      "explanation": "The center divided by stride gives a cell-relative offset, which encode maps through a logit so decode(sigmoid(...)) can recover it."
     },
     {
       "stage": "check",
-      "question": "How is the final confidence score formed in postprocess?",
+      "question": "What does assign_targets set for the chosen anchor at an object's cell?",
       "options": [
-        "The raw box width multiplied by the class index",
-        "sigmoid(objectness) multiplied by the largest sigmoid class probability",
-        "IoU with the nearest anchor added to the objectness logit",
-        "The mean of all class logits without sigmoid"
+        "Every anchor's objectness to one and all class bits to one",
+        "Objectness one and one selected class bit, along with four encoded box values",
+        "Only the absolute xyxy box; no class target is stored",
+        "A probability distribution produced by a trained model"
       ],
       "correct": 1,
-      "explanation": "The code computes score=sigmoid(obj)*cls_probs.max(), then filters by conf_threshold before NMS."
+      "explanation": "The target row contains encoded center/size, objectness 1, and a one-hot class vector for the best width/height anchor."
     },
     {
       "stage": "post",
-      "question": "What does assign_targets use to choose an anchor for a ground-truth box?",
+      "question": "Why does yolo_loss use a separate no-objectness component?",
       "options": [
-        "The anchor with the smallest grid-cell index",
-        "The class probability predicted before training",
-        "The anchor with the largest width-height IoU against the box",
-        "A random anchor for every image"
+        "It replaces all coordinate regression for positive cells",
+        "It makes every empty cell a background class in the class vector",
+        "Most grid/anchor locations have no assigned object and need an explicit negative objectness term",
+        "It is needed only when boxes contain NaN coordinates"
       ],
       "correct": 2,
-      "explanation": "It compares the box dimensions with each anchor's dimensions, selects argmax IoU, and stores the target in the box center's grid cell."
+      "explanation": "The boolean object mask separates positive and negative objectness examples; the shape and finite-value checks still apply to the full tensor."
     },
     {
       "stage": "post",
-      "question": "What does decode do with tx and ty before converting them to a box center?",
+      "question": "How does nms resolve equal scores for overlapping boxes?",
       "options": [
-        "Clips them to the class count and treats them as pixel corners",
-        "Squares them and ignores the grid cell",
-        "Uses them as an IoU threshold",
-        "Applies sigmoid, adds the cell coordinate, and multiplies by stride"
+        "It keeps the box with the largest class ID regardless of overlap",
+        "It averages all overlapping coordinates into one class-free box",
+        "It randomizes the order so ties cannot be observed",
+        "It keeps the lower original index first, then suppresses later boxes above the IoU threshold"
       ],
       "correct": 3,
-      "explanation": "The center is (sigmoid(t)+cell_index)*stride, constraining the predicted offset to the current cell."
+      "explanation": "The lexsort key is descending score followed by original index, making tie handling deterministic before IoU suppression."
     }
   ]
 }

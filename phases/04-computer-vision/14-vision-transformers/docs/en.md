@@ -1,168 +1,122 @@
-# Vision Transformers (ViT)
+# Vision Transformers: Patches, Tokens, and Attention
 
-> Cut the image into patches, treat each patch as a word, run a standard transformer. Don't look back.
+> Make the image-to-sequence conversion visible before discussing a larger model.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 7 Lesson 02 (Self-Attention), Phase 4 Lesson 04 (Image Classification)
+**Prerequisites:** 03-cnns-lenet-to-resnet, Phase 03 self-attention concepts
 **Time:** ~45 minutes
 
 ## Learning Objectives
 
-- Implement patch embedding, learned positional embedding, class token, and transformer encoder blocks from scratch to build a minimal ViT
-- Explain why ViT was thought to need massive pretraining data until DeiT and MAE proved otherwise
-- Compare ViT, Swin, and ConvNeXt on their architectural priors (none, local window attention, conv backbone)
-- Fine-tune a pretrained ViT on a small dataset using `timm` and the standard linear-probe / fine-tune recipe
+- Calculate the number and width of non-overlapping image patches.
+- Implement a checked NCHW-to-token conversion with NumPy.
+- Explain how a class token and positional signal extend the token sequence.
+- Compute scaled dot-product attention and verify its row normalization.
+- Distinguish this bounded, untrained fixture from a production ViT checkpoint.
 
-## The Problem
+## Why turn pixels into tokens?
 
-For a decade, convolution was synonymous with computer vision. CNNs had strong inductive biases — locality, translation equivariance — that nobody thought you could replace. Then Dosovitskiy et al. (2020) showed that a plain transformer applied to flattened image patches, with no convolutional machinery at all, could match or beat the best CNNs at scale.
+A transformer sees a sequence, not a two-dimensional array. `patchify` therefore
+cuts an image into non-overlapping `P × P` blocks and flattens each block. For
+an image with shape `(N, C, H, W)`, the token count is
 
-The catch was "at scale." ViT on ImageNet-1k lost to ResNet. ViT pretrained on ImageNet-21k or JFT-300M then fine-tuned on ImageNet-1k beat it. The conclusion was that transformers lacked useful priors but could learn them from enough data. Subsequent work (DeiT, MAE, DINO) showed that with the right training recipes — strong augmentation, self-supervised pretraining, distillation — ViTs train fine on small data too.
+```text
+T = (H / P) * (W / P)
+```
 
-By 2026, pure CNNs are still competitive on edge devices (ConvNeXt is the strongest), but transformers dominate everything else: segmentation (Mask2Former, SegFormer), detection (DETR, RT-DETR), multimodal (CLIP, SigLIP), video (VideoMAE, VJEPA). The ViT block structure is the one to know.
-
-## The Concept
-
-### The pipeline
+and each raw token has `C * P * P` values. The implementation requires `P` to
+divide both spatial axes; silently dropping a border would change the input
+contract and make shape comparisons misleading.
 
 ```mermaid
 flowchart LR
-    IMG["Image<br/>(3, 224, 224)"] --> PATCH["Patch embedding<br/>conv 16x16 s=16<br/>-> (768, 14, 14)"]
-    PATCH --> FLAT["Flatten to<br/>(196, 768) tokens"]
-    FLAT --> CAT["Prepend<br/>[CLS] token"]
-    CAT --> POS["Add learned<br/>positional embed"]
-    POS --> ENC["N transformer<br/>encoder blocks"]
-    ENC --> CLS["Take [CLS]<br/>token output"]
-    CLS --> HEAD["MLP classifier"]
-
-    style PATCH fill:#dbeafe,stroke:#2563eb
-    style ENC fill:#fef3c7,stroke:#d97706
-    style HEAD fill:#dcfce7,stroke:#16a34a
+    A["NCHW image"] --> B["non-overlapping P×P blocks"]
+    B --> C["N × T × (C·P·P) tokens"]
+    C --> D["linear projection to D"]
+    D --> E["prepend CLS and add positions"]
+    E --> F["multi-head attention"]
+    F --> G["CLS logits"]
 ```
-
-Seven steps. Patches -> tokens -> attention -> classifier. Every variant (DeiT, Swin, ConvNeXt, MAE pretraining) changes one or two of the seven and leaves the rest alone.
-
-### Patch embedding
-
-The first conv is the secret. Kernel size 16, stride 16, so a 224x224 image becomes a 14x14 grid of 16x16 patches, each projected to a 768-dim embedding. That single conv both patchifies and linearly projects.
-
-```
-Input:  (3, 224, 224)
-Conv (3 -> 768, k=16, s=16, no padding):
-Output: (768, 14, 14)
-Flatten spatial: (196, 768)
-```
-
-196 patches = 196 tokens. Each token's feature dimension is 768 (ViT-B), 1024 (ViT-L), or 1280 (ViT-H).
-
-### Class token
-
-A single learned vector prepended to the sequence:
-
-```
-tokens = [CLS; patch_1; patch_2; ...; patch_196]   shape (197, 768)
-```
-
-After N transformer blocks, the `[CLS]` output is the global image representation. Classification head reads only this one vector.
-
-### Positional embedding
-
-Transformers have no built-in notion of spatial position. Add a learned vector to every token:
-
-```
-tokens = tokens + learned_pos_embedding   (also shape (197, 768))
-```
-
-The embedding is a parameter of the model; gradient-based training adapts it to 2D image structure. Sinusoidal 2D alternatives exist but are rarely used in practice.
-
-### Transformer encoder block
-
-Standard. Multi-head self-attention, MLP, residual connections, pre-LayerNorm.
-
-```
-x = x + MSA(LN(x))
-x = x + MLP(LN(x))
-
-MLP is two-layer with GELU: Linear(d -> 4d) -> GELU -> Linear(4d -> d)
-```
-
-ViT-B/16 stacks 12 of these blocks, each with 12 attention heads, totalling 86M parameters.
-
-### Why pre-LN
-
-Early transformers used post-LN (`x = LN(x + sublayer(x))`) and struggled to train past 6-8 layers without warmup. Pre-LN (`x = x + sublayer(LN(x))`) trains deeper networks stably without warmup. Every ViT and every modern LLM uses pre-LN.
-
-### Patch size trade-off
-
-- 16x16 patches -> 196 tokens, standard.
-- 32x32 patches -> 49 tokens, faster but lower resolution.
-- 8x8 patches -> 784 tokens, finer but O(n^2) attention cost scales badly.
-
-Bigger patches = fewer tokens = faster but less spatial detail. SwinV2 uses 4x4 patches in hierarchical windows.
-
-### DeiT's recipe for training ViT on ImageNet-1k
-
-The original ViT needed JFT-300M to beat CNNs. DeiT (Touvron et al., 2020) trained ViT-B to 81.8% top-1 on ImageNet-1k alone with four changes:
-
-1. Heavy augmentation: RandAugment, Mixup, CutMix, Random Erasing.
-2. Stochastic depth (drop entire blocks at random during training).
-3. Repeated augmentation (same image sampled 3 times per batch).
-4. Distillation from a CNN teacher (optional, lifts accuracy further).
-
-Every modern ViT training recipe descends from DeiT.
-
-### Swin vs ConvNeXt
-
-- **Swin** (Liu et al., 2021) — window-based attention. Each block attends within a local window; alternating blocks shift the window to mix information across windows. Brings back a CNN-like locality prior while keeping the attention operator.
-- **ConvNeXt** (Liu et al., 2022) — redesigned CNN that matches Swin's architecture choices (depthwise convs, LayerNorm, GELU, inverted bottleneck). Showed that the gap is not "attention vs convolution" but "modern training recipe + architecture."
-
-In 2026, ConvNeXt-V2 and Swin-V2 are both production-grade; the right choice depends on your inference stack (ConvNeXt compiles better for edge) and pretraining corpus.
-
-### MAE pretraining
-
-Masked Autoencoder (He et al., 2022): mask 75% of patches at random, train the encoder to process only the visible 25%, train a small decoder to reconstruct the masked patches from the encoder's output. After pretraining, discard the decoder and fine-tune the encoder.
-
-MAE makes ViT trainable on ImageNet-1k alone, hits SOTA, and is the current default self-supervised recipe.
-
-
-
 
 ## Build It
 
-Reconstruct **Vision Transformers (ViT)** by following `PatchEmbedding` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
+The canonical artifact is `code/main.py`. It uses a `(2, 3, 32, 32)` fixture,
+`patch_size=8`, `dim=24`, and `num_heads=3`. Run it from the lesson's `code/`
+directory:
+
+```bash
+python3 main.py
+```
+
+The observable contract is:
+
+| Stage | Shape or invariant |
+| --- | --- |
+| `patchify` | `(2, 16, 192)` because `4 × 4` patches each contain `3 × 8 × 8` values |
+| class-token sequence | `(2, 17, 24)`; one token is prepended |
+| attention weights | `(2, 3, 17, 17)` and each last-axis row sums to one |
+| logits | `(2, 4)` for the four local fixture classes |
+
+`scaled_dot_product_attention` divides the query-key scores by
+`sqrt(head_dim)`. A boolean mask can hide keys, but every query must retain at
+least one visible key. `softmax` uses a max shift, so large finite scores do
+not create an avoidable overflow.
 
 ## Use It
 
-Call `PatchEmbedding` from a small caller with tokens=["red","fox"]. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+Import the primitives into a caller that owns a batch of NCHW NumPy images:
+
+```python
+import numpy as np
+from main import patchify, vit_forward
+
+images = np.zeros((1, 3, 32, 32), dtype=float)
+patches = patchify(images, patch_size=8)
+result = vit_forward(images, patch_size=8, dim=24, num_heads=3, num_classes=4, seed=7)
+assert patches.shape == (1, 16, 192)
+assert result["attention"].shape == (1, 3, 17, 17)
+```
+
+The `result` mapping is a reusable inspection artifact: `patches` exposes the
+image-to-token boundary, `tokens` contains the post-attention sequence,
+`attention` exposes per-head weights, and `logits` is the output of a random,
+untrained local classifier. It is not evidence of recognition accuracy.
 
 ## Ship It
 
-Hand off `outputs/prompt-vit-vs-cnn-picker.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [An Image is Worth 16x16 Words (Dosovitskiy et al., 2020)](https://arxiv.org/abs/2010.11929) — the ViT paper
-- [DeiT: Data-efficient Image Transformers (Touvron et al., 2020)](https://arxiv.org/abs/2012.12877) — how to train ViT on ImageNet-1k alone
-- [Masked Autoencoders are Scalable Vision Learners (He et al., 2022)](https://arxiv.org/abs/2111.06377) — MAE pretraining
-- [timm documentation](https://huggingface.co/docs/timm) — the reference for every vision transformer you will use in production
+`outputs/skill-vit-patch-and-pos-embed-inspector.md` turns the shape checks into
+a handoff checklist, while `outputs/prompt-vit-vs-cnn-picker.md` records when
+this token path is appropriate. Ship the four fields above together with the
+input shape, patch size, seed, and the row-sum check. A downstream consumer can
+then reproduce the artifact without depending on PyTorch, a checkpoint, or a
+network download.
 
 ## Exercises
 
-Work from the smallest fixture that the Vision Transformers (ViT) demo already understands, then make one deliberate change and record what moved.
-
-1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using tokens=["red","fox"]. Follow `PatchEmbedding`, `forward`, `Block`. Expect the attention/embedding shape follows the token count and each valid attention row remains normalized; capture the first printed shape, metric, status, or summary field and state which part supports **Implement patch embedding, learned positional embedding, class token, and transformer encoder blocks from scratch to build a minimal ViT**.
-2. **Perturb one field.** Repeat the command after changing only the token sequence: use tokens=["red","fox","runs"]. Predict the direction of the change, then compare the two output values. Explain why **Explain why ViT was thought to need massive pretraining data until DeiT and MAE proved otherwise** says the other inputs should stay fixed.
-3. **Check the failure boundary.** Feed the implementation tokens=[]. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Compare ViT, Swin, and ConvNeXt on their architectural priors (none, local window attention, conv backbone)** and record the exception text if the code rejects the case.
-4. **Make the result repeatable.** Open `outputs/prompt-vit-vs-cnn-picker.md` and add a worked example using tokens=["red","fox"]. Include the input contract, one expected output field, and a named acceptance check for **Fine-tune a pretrained ViT on a small dataset using `timm` and the standard linear-probe / fine-tune recipe**; note what the demo cannot establish.
+1. Run `python3 main.py` and write down why `32 / 8` produces 16 patch tokens
+   and why the attention matrix has `17 × 17` entries after adding `[CLS]`.
+2. Replace the input with `(1, 3, 32, 24)` and `patch_size=8`. Predict the new
+   token count and verify it with `patchify`; then try `patch_size=7` and record
+   the explicit divisibility error.
+3. Construct two attention rows with `mask=[[True, False], [True, True]]`.
+   Verify that the first row assigns zero weight to its hidden key and that an
+   all-false row is rejected rather than normalized to a meaningless result.
+4. Change only `seed` in `vit_forward` and compare `patches` with `logits`.
+   Explain why the raw patches stay fixed while the untrained projection and
+   classifier outputs change.
 
 ## Reference Solution
 
-A checkable result for **Vision Transformers (ViT)** should contain:
+For the canonical fixture, the checkable reasoning is:
 
-- the `python3 main.py` output for tokens=["red","fox"], with `PatchEmbedding`, `forward`, `Block` traced to the value or shape that supports **Implement patch embedding, learned positional embedding, class token, and transformer encoder blocks from scratch to build a minimal ViT**;
-- a before/after comparison for the token sequence, where tokens=["red","fox","runs"] changes the observation in the direction predicted by **Explain why ViT was thought to need massive pretraining data until DeiT and MAE proved otherwise**;
-- a recorded result for tokens=[] that matches the implementation’s validation or empty-result contract and explains the evidence for **Compare ViT, Swin, and ConvNeXt on their architectural priors (none, local window attention, conv backbone)**; and
-- an updated `outputs/prompt-vit-vs-cnn-picker.md` example with a concrete input, expected output field, and acceptance check tied to **Fine-tune a pretrained ViT on a small dataset using `timm` and the standard linear-probe / fine-tune recipe**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+1. `H/P = W/P = 4`, so `T = 16`; each raw token has `3 * 8 * 8 = 192`
+   values.
+2. `add_cls_token` changes `(2, 16, 24)` into `(2, 17, 24)`, and splitting
+   24 features over three heads gives `head_dim=8`.
+3. Attention scores have shape `(2, 3, 17, 17)`. The boolean mask test has a
+   zero in its hidden-key column and every valid row sums to one.
+4. A non-dividing patch size raises `ValueError`; it does not crop the image.
+   Changing the seed leaves `patches` unchanged but changes the deterministic
+   random projection/classifier outputs. These checks establish tensor
+   plumbing, not pretrained recognition quality.

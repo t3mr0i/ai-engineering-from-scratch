@@ -1,78 +1,78 @@
 {
   "lesson": "11-stable-diffusion",
-  "title": "Stable Diffusion — Architecture & Fine-Tuning",
+  "title": "Stable Diffusion: Latents, Guidance, and Honest Boundaries",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which component in the described pipeline turns a text prompt into conditioning features?",
+      "question": "Which sequence best describes a text-conditioned latent diffusion pipeline?",
       "options": [
-        "The text encoder",
-        "The VAE decoder",
-        "The safety checker",
-        "The image scheduler alone"
+        "Conditioning, denoising/scheduling in latent space, decoding, then a safety decision",
+        "A detector box directly becomes a class label",
+        "A semantic mask is resized and no latent state is used",
+        "A GAN discriminator replaces both the scheduler and VAE"
       ],
       "correct": 0,
-      "explanation": "The text encoder converts tokenized prompt text into embeddings that condition the denoising network."
+      "explanation": "A latent diffusion pipeline separates conditioning, latent denoising, the VAE image adapter, and an output policy check."
     },
     {
       "stage": "check",
-      "question": "What guidance_scale value does text_to_image_stub pass to the real pipeline?",
+      "question": "What does `latent_shape((2,3,32,32), downsample_factor=8, latent_channels=4)` return?",
       "options": [
-        "0.18215",
-        "7.5",
-        "25",
-        "1.0"
+        "(2, 3, 4, 4)",
+        "(2, 4, 4, 4)",
+        "(2, 4, 8, 8)",
+        "(1, 4, 32, 32)"
       ],
       "correct": 1,
-      "explanation": "The call uses guidance_scale=7.5; the VAE scale and inference-step count are separate settings."
+      "explanation": "The batch is retained, four latent channels are requested, and each spatial axis is divided by eight: 32/8 = 4."
     },
     {
       "stage": "check",
-      "question": "When does text_to_image_stub return without generating an image?",
+      "question": "With unconditional zeros, conditional ones, and guidance_scale=5, what value does `classifier_free_guidance` return?",
       "options": [
-        "Whenever the prompt contains more than one noun",
-        "Only when the seed is exactly 42",
-        "When diffusers is unavailable or CUDA is unavailable",
-        "When the requested guidance scale is 7.5"
-      ],
-      "correct": 2,
-      "explanation": "The stub first checks has_diffusers() and then torch.cuda.is_available(); either missing prerequisite causes a logged skip."
-    },
-    {
-      "stage": "check",
-      "question": "What does the scheduler replacement in text_to_image_stub do?",
-      "options": [
-        "Replaces the text encoder with a classifier",
-        "Changes the VAE latent channels from four to three",
-        "Trains the safety checker on the prompt",
-        "Builds a DPMSolverMultistepScheduler from the existing scheduler configuration"
+        "0",
+        "1",
+        "4",
+        "5"
       ],
       "correct": 3,
-      "explanation": "DPMSolverMultistepScheduler.from_config(pipe.scheduler.config) preserves the pipeline's schedule settings while changing the sampler."
+      "explanation": "The formula is 0 + 5*(1-0), so every element is 5. Guidance extrapolates the conditional difference."
     },
     {
-      "stage": "post",
-      "question": "In the LoRA training sketch, what is compared by the MSE loss?",
+      "stage": "check",
+      "question": "For `base(4,4)`, `down(2,4)`, and `up(4,2)`, what is the shape of `up @ down`?",
       "options": [
-        "The U-Net's predicted noise and the sampled noise",
-        "The prompt tokens and image pixels",
-        "The VAE reconstruction and a class index",
-        "The safety score and the guidance scale"
+        "(2,2)",
+        "(4,2)",
+        "(2,4)",
+        "(4,4)"
       ],
-      "correct": 0,
-      "explanation": "The sketch samples noisy latents, predicts their noise with the U-Net, and optimizes F.mse_loss(pred_noise, noise) while LoRA weights are injected."
+      "correct": 3,
+      "explanation": "The inner rank dimension 2 contracts, leaving the outer dimensions `(4,4)`, which can be added to base."
     },
     {
       "stage": "post",
-      "question": "According to describe_pipeline, what latent spatial shape corresponds to a 512x512 input in its compact example?",
+      "question": "What does this lesson's `pipeline_manifest` establish?",
       "options": [
-        "512x512 with one channel",
-        "64x64 with four latent channels",
-        "128x128 with three latent channels",
-        "32x32 with 16 latent channels"
+        "That a released checkpoint generated an image",
+        "That each local component has an explicit role and implementation status",
+        "That the safety checker approved every prompt",
+        "That guidance scale 5 is universally optimal"
       ],
       "correct": 1,
-      "explanation": "The summary prints a 4 x 64 x 64 latent for a 512x512 image; the VAE performs the spatial compression."
+      "explanation": "The manifest is an offline ownership ledger. It explicitly marks the denoiser and safety path as contract-only, so it cannot imply inference."
+    },
+    {
+      "stage": "post",
+      "question": "Why must a real integration record its own VAE scale and scheduler configuration?",
+      "options": [
+        "The local factor-8 mean-pool fixture is a universal checkpoint standard",
+        "Latent shape and reverse updates depend on the actual model and scheduler contract",
+        "Scheduler settings affect only the filename",
+        "VAE settings are irrelevant once guidance is enabled"
+      ],
+      "correct": 1,
+      "explanation": "The lesson uses illustrative offline conventions. A real checkpoint's latent adapter and scheduler determine valid shapes and reverse equations."
     }
   ]
 }

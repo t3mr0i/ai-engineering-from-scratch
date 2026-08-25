@@ -1,167 +1,88 @@
-# 3D Vision — Point Clouds & NeRFs
+# NeRF Principles: Rays, Encoding, and Volume Rendering
 
-> 3D vision comes in two flavours. Point clouds are the sensor's raw output. NeRFs are the learned volumetric field. Both answer "what is where in space."
+> A radiance field becomes an image only after densities are accumulated along camera rays.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 4 Lesson 03 (CNNs), Phase 1 Lesson 12 (Tensor Operations)
-**Time:** ~45 minutes
+**Prerequisites:** Phase 04 Lesson 01 (Image Fundamentals), Phase 04 Lesson 10 (Image Generation — Diffusion)
+**Time:** ~60 minutes
 
 ## Learning Objectives
 
-- Distinguish explicit (point cloud, mesh, voxel) and implicit (signed distance field, NeRF) 3D representations and when each is used
-- Understand PointNet's symmetric-function trick that makes a neural network permutation-invariant over an unordered set of points
-- Trace a NeRF forward pass: ray casting, volumetric rendering, positional encoding, MLP density+colour head
-- Use `nerfstudio` or `instant-ngp` for pretrained 3D reconstruction from a small set of posed images
+- Sample ordered 3D points along rays between near and far bounds.
+- Expand 3D positions with multi-frequency sinusoidal encoding.
+- Convert density and intervals into alpha, transmittance, and rendering weights.
+- Check that colors, depths, and opacity remain finite and bounded.
+- Separate this NumPy volume-rendering fixture from a trained NeRF or point-cloud loader.
 
-## The Problem
+## Ray sampling
 
-A camera produces a 2D image. A LIDAR produces a set of 3D points with no ordering. A structure-from-motion pipeline produces a sparse cloud of 3D keypoints. A NeRF reconstructs an entire 3D scene from a handful of posed images. All of these are "vision" but none of them look like the dense tensor a CNN wants.
+`sample_ray_points` accepts matching `(R,3)` origins and directions. For `S` samples it returns points `o_r + t_s d_r` and an increasing `t_vals` vector spanning `[near,far]`. The implementation uses one shared depth grid for all rays so the tensor shape is easy to inspect. A production renderer may stratify samples per ray; that policy is not hidden here.
 
-3D vision matters because almost every high-value robot task runs in 3D: grasping, obstacle avoidance, navigation, AR occlusion, 3D content capture. A vision engineer who only understands 2D images is locked out of the fastest-growing slice of the field (AR/VR content, robotics, autonomous driving stacks, NeRF-based 3D reconstruction for real-estate or construction).
-
-The two representations dominate for different reasons. Point clouds are what sensors give you for free. NeRFs and their successors (3D Gaussian splatting, neural SDFs) are what you get when you ask a neural network to learn a scene.
-
-## The Concept
-
-### Point clouds
-
-A point cloud is an unordered set of N points in R^3, optionally each with features (colour, intensity, normal).
-
-```
-cloud = [
-  (x1, y1, z1, r1, g1, b1),
-  (x2, y2, z2, r2, g2, b2),
-  ...
-  (xN, yN, zN, rN, gN, bN),
-]
-```
-
-No grid, no connectivity. Two properties make this hard for neural networks:
-
-- **Permutation invariance** — the output must not depend on point order.
-- **Variable N** — a single model must handle clouds of different sizes.
-
-PointNet (Qi et al., 2017) solved both with one idea: apply a shared MLP to every point, then aggregate with a symmetric function (max pool). The result is a fixed-size vector that does not depend on order.
-
-```
-f(P) = max_{p in P} MLP(p)
-```
-
-This is the entire core of PointNet. Deeper variants (PointNet++, Point Transformer) add hierarchical sampling and local aggregation but the symmetric-function trick is unchanged.
-
-### The PointNet architecture
+`positional_encoding` maps each 3D coordinate to sine and cosine values at frequencies `2^l*pi` for `l=0..L-1`. A position with three coordinates therefore becomes `3*2*L` features. It is a representation function, not a learned scene.
 
 ```mermaid
 flowchart LR
-    PTS["N points<br/>(x, y, z)"] --> MLP1["shared MLP<br/>(64, 64)"]
-    MLP1 --> MLP2["shared MLP<br/>(64, 128, 1024)"]
-    MLP2 --> MAX["max pool<br/>(symmetric)"]
-    MAX --> FEAT["global feature<br/>(1024,)"]
-    FEAT --> FC["MLP classifier"]
-    FC --> CLS["class logits"]
-
-    style MLP1 fill:#dbeafe,stroke:#2563eb
-    style MAX fill:#fef3c7,stroke:#d97706
-    style CLS fill:#dcfce7,stroke:#16a34a
+    A["origin + direction"] --> B["near..far t samples"]
+    B --> C["3D points"]
+    C --> D["sin/cos positional encoding"]
+    D --> E["density + RGB fixture"]
+    E --> F["alpha / transmittance"]
+    F --> G["rendered color + depth"]
 ```
 
-"Shared MLP" means the same MLP runs on every point independently. Implemented as a 1x1 conv over the point dimension for efficiency.
+## Volume rendering
 
-### Neural Radiance Fields (NeRFs)
+For a segment of length `delta`, density `sigma` becomes opacity `alpha=1-exp(-sigma*delta)`. The weight for sample `i` is its alpha times the transmittance of all earlier samples:
 
-NeRFs (Mildenhall et al., 2020) took the question "can we reconstruct a 3D scene from N photos?" and answered with a neural network that is the scene. The network maps `(x, y, z, viewing_direction)` to `(density, colour)`. Rendering a new view is a ray-casting loop over this network.
-
-```
-NeRF MLP:  (x, y, z, theta, phi) -> (sigma, r, g, b)
-
-To render a pixel (u, v) of a new view:
-  1. Cast a ray from the camera through pixel (u, v)
-  2. Sample points along the ray at distances t_1, t_2, ..., t_N
-  3. Query the MLP at each point
-  4. Composite the colours weighted by (1 - exp(-sigma * dt))
-  5. The sum is the rendered pixel colour
+```text
+T_i = product(j < i, 1 - alpha_j)
+weight_i = T_i * alpha_i
+color = sum_i(weight_i * rgb_i)
+depth = sum_i(weight_i * t_i)
 ```
 
-A loss compares the rendered pixel to the ground-truth pixel in the training photos. Backprop through the rendering step updates the MLP. No 3D ground truth, no explicit geometry — the scene is stored in the MLP weights.
-
-### Positional encoding in NeRF
-
-A vanilla MLP on `(x, y, z)` cannot represent high-frequency details because MLPs are spectrally biased toward low frequencies. NeRF fixes this by encoding each coordinate into a Fourier feature vector before the MLP:
-
-```
-gamma(p) = (sin(2^0 pi p), cos(2^0 pi p), sin(2^1 pi p), cos(2^1 pi p), ...)
-```
-
-Up to L=10 frequency levels. This is the same trick transformers use for positions, and it appears again in diffusion time conditioning (Lesson 10). Without it, NeRFs look blurry.
-
-### Volumetric rendering
-
-```
-C(r) = sum_i T_i * (1 - exp(-sigma_i * delta_i)) * c_i
-
-T_i  = exp(- sum_{j<i} sigma_j * delta_j)
-delta_i = t_{i+1} - t_i
-```
-
-`T_i` is transmittance — how much light survives to point i. `(1 - exp(-sigma_i * delta_i))` is the opacity at point i. `c_i` is the colour. The final pixel is a weighted sum along the ray.
-
-### What replaced NeRFs
-
-Pure NeRFs are slow to train (hours) and slow to render (seconds per image). The lineage since:
-
-- **Instant-NGP** (2022) — hash-grid encoding replaces the MLP's position input; trains in seconds.
-- **Mip-NeRF 360** — handles unbounded scenes and anti-aliasing.
-- **3D Gaussian Splatting** (2023) — replaces the volumetric field with millions of 3D Gaussians; trains in minutes, renders in real time. The current production default.
-
-Almost every real NeRF product in 2026 is actually 3D Gaussian splatting. The mental model is still NeRF.
-
-### Datasets and benchmarks
-
-- **ShapeNet** — classification and segmentation of 3D CAD models as point clouds.
-- **ScanNet** — real indoor scans for segmentation.
-- **KITTI** — outdoor LIDAR point clouds for autonomous driving.
-- **NeRF Synthetic** / **Blended MVS** — posed-image datasets for view synthesis.
-- **Mip-NeRF 360** dataset — unbounded real scenes.
-
-
-
+The local implementation uses the final interval length again as a finite terminal segment and can add a background color for the remaining opacity. It requires nonnegative density, RGB in `[0,1]`, and strictly increasing depths. This avoids an implicit infinite-distance convention while retaining the front-to-back reasoning.
 
 ## Build It
 
-Reconstruct **3D Vision — Point Clouds & NeRFs** by following `PointNet` on the reported device check on CPU. Run `python3 main.py` and verify that the report distinguishes an available device from an unavailable one and records the selected backend.
+Run from `code/`:
+
+```bash
+python3 main.py
+```
+
+The demo samples one forward ray at 32 depths, encodes the points at four levels, evaluates a Gaussian-shaped density fixture, and prints rendered RGB, depth, and total weight. No scene is learned and no 3D asset is loaded.
 
 ## Use It
 
-Call `PointNet` from a small caller with the reported device check on CPU. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+```python
+import sys
+import numpy as np
+
+sys.path.insert(0, "code")
+import main as nerf
+
+points, t_vals = nerf.sample_ray_points([[0,0,0]], [[0,0,1]], 2, 6, 16)
+sigma, rgb = nerf.density_fixture(t_vals)
+color, depth, weights = nerf.volume_render(sigma, rgb, t_vals, background=np.zeros(3))
+assert color.shape == (3,)
+assert float(weights.sum()) <= 1.0
+```
+
+For a real NeRF, record camera intrinsics/extrinsics, ray normalization, positional-encoding levels, and the model's density activation. A volume-rendering equation cannot recover a missing camera convention.
 
 ## Ship It
 
-Hand off `outputs/prompt-3d-task-router.md` with the command `python3 main.py`, the accepted input shape (the reported device check on CPU), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [PointNet (Qi et al., 2017)](https://arxiv.org/abs/1612.00593) — the permutation-invariant classifier
-- [NeRF (Mildenhall et al., 2020)](https://arxiv.org/abs/2003.08934) — the paper that made 3D reconstruction from photos a neural-net problem
-- [Instant-NGP (Müller et al., 2022)](https://arxiv.org/abs/2201.05989) — hash grids, 1000x speedup
-- [3D Gaussian Splatting (Kerbl et al., 2023)](https://arxiv.org/abs/2308.04079) — the architecture that replaced NeRFs in production
+`outputs/skill-point-cloud-loader.md` is a point-cloud-versus-ray checklist: it states when point samples are inputs and when a renderer needs camera rays instead. `outputs/prompt-3d-task-router.md` asks for camera pose, depth bounds, sample count, and output type before choosing a field or point representation.
 
 ## Exercises
 
-Keep two runs side by side for **3D Vision — Point Clouds & NeRFs**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
-
-1. **Read the first result.** From `code/`, run `python3 main.py` using the reported device check on CPU. Follow `PointNet`, `forward`, `positional_encoding`. Expect the report distinguishes an available device from an unavailable one and records the selected backend; capture the first printed shape, metric, status, or summary field and state which part supports **Distinguish explicit (point cloud, mesh, voxel) and implicit (signed distance field, NeRF) 3D representations and when each is used**.
-2. **Run a two-value comparison.** Repeat the command after changing only the selected device backend: use the same check with CUDA/MPS unavailable. Predict the direction of the change, then compare the two output values. Explain why **Understand PointNet's symmetric-function trick that makes a neural network permutation-invariant over an unordered set of points** says the other inputs should stay fixed.
-3. **Try an adversarial fixture.** Feed the implementation a machine with no visible accelerator. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Trace a NeRF forward pass: ray casting, volumetric rendering, positional encoding, MLP density+colour head** and record the exception text if the code rejects the case.
-4. **Write the operator note.** Open `outputs/prompt-3d-task-router.md` and add a worked example using the reported device check on CPU. Include the input contract, one expected output field, and a named acceptance check for **Use `nerfstudio` or `instant-ngp` for pretrained 3D reconstruction from a small set of posed images**; note what the demo cannot establish.
+1. Sample `t=[2,4,6]` on a ray from the origin in the positive z direction. Write the three 3D points and check the returned shape `(1,3,3)`.
+2. Evaluate `positional_encoding(np.zeros((1,3)), levels=4)`. Count the 24 features and identify the sine and cosine halves.
+3. Render four zero-density samples over `t=[0,1,2,3]` with background `[0.2,0.3,0.4]`. Verify zero weights and exactly the background color.
+4. Set the first density to 10 and the remaining densities to zero. Check that the first weight dominates and that the total weight remains at most one.
 
 ## Reference Solution
 
-A checkable result for **3D Vision — Point Clouds & NeRFs** should contain:
-
-- the `python3 main.py` output for the reported device check on CPU, with `PointNet`, `forward`, `positional_encoding` traced to the value or shape that supports **Distinguish explicit (point cloud, mesh, voxel) and implicit (signed distance field, NeRF) 3D representations and when each is used**;
-- a before/after comparison for the selected device backend, where the same check with CUDA/MPS unavailable changes the observation in the direction predicted by **Understand PointNet's symmetric-function trick that makes a neural network permutation-invariant over an unordered set of points**;
-- a recorded result for a machine with no visible accelerator that matches the implementation’s validation or empty-result contract and explains the evidence for **Trace a NeRF forward pass: ray casting, volumetric rendering, positional encoding, MLP density+colour head**; and
-- an updated `outputs/prompt-3d-task-router.md` example with a concrete input, expected output field, and acceptance check tied to **Use `nerfstudio` or `instant-ngp` for pretrained 3D reconstruction from a small set of posed images**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+The z coordinates are 2, 4, and 6, so the sampled points are `[0,0,2]`, `[0,0,4]`, and `[0,0,6]`. Four encoding levels produce `3*2*4=24` values; zeros map to zero sine features and one cosine features. Zero density leaves full transmittance, so the background is returned. A high first density consumes most opacity before later samples, while the cumulative weights remain bounded by one.

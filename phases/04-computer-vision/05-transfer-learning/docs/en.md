@@ -1,158 +1,73 @@
-# Transfer Learning & Fine-Tuning
+# Transfer Learning: Freeze the Backbone, Train the Head
 
-> Somebody else spent a million GPU hours teaching a network what edges, textures, and object parts look like. You should borrow those features before training your own.
+> Transfer learning is a parameter-ownership decision before it is an optimizer decision.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 4 Lesson 03 (CNNs), Phase 4 Lesson 04 (Image Classification)
-**Time:** ~75 minutes
+**Prerequisites:** Phase 04 Lesson 04 (Image Classification), Phase 03 Lesson 06 (Optimizers)
+**Time:** ~55 minutes
 
 ## Learning Objectives
 
-- Distinguish feature extraction from fine-tuning and pick the right one based on dataset size, domain distance, and compute budget
-- Load a pretrained backbone, replace its classifier head, and train only the head to a working baseline in under 20 lines
-- Progressively unfreeze layers with discriminative learning rates so early generic features get smaller updates than late task-specific ones
-- Diagnose the three common failures: feature drift from too-high LR on unfrozen blocks, BN statistics collapse on tiny datasets, and catastrophic forgetting
+- Separate a fixed feature extractor from a task-specific linear classification head.
+- Count frozen and trainable parameters and state exactly what an update can change.
+- Use deterministic local image features to test a transfer-learning loop without downloading weights.
+- Explain discriminative learning rates as a staged schedule, not a guarantee of better accuracy.
+- Validate feature, label, class-count, and learning-rate contracts before training.
 
-## The Problem
+## What this lesson does and does not claim
 
-Training a ResNet-50 on ImageNet costs around 2,000 GPU-hours. Very few teams have that budget for every task they ship. What almost every team actually ships is a pretrained backbone with a new head trained on a few hundred or few thousand task-specific images.
+Real transfer learning often starts with a backbone trained on a large image corpus. This repository's allowlist and offline lesson contract make a downloaded checkpoint inappropriate for the canonical demo. `backbone_features` is therefore a deterministic local stand-in: channel means, channel variation, and horizontal/vertical edge summaries. It requires at least `2x2` spatial inputs because each edge summary is a mean over adjacent differences. It is frozen by convention because the function has no training state. `train_head` fits only a NumPy linear head on those features.
 
-This is not a shortcut. The first conv block of any ImageNet-trained CNN learns edges and Gabor-like filters. The next few blocks learn textures and simple motifs. The middle blocks learn object parts. The final blocks learn combinations that start to look like the 1,000 ImageNet categories. The first 90% of that hierarchy transfers almost unchanged to medical imaging, industrial inspection, satellite data, and every other vision task — because nature has a limited vocabulary of edges and textures. The last 10% is what you actually train.
-
-Getting transfer right has three bugs waiting for you: destroying pretrained features with a too-high learning rate, starving the model of information by freezing too much, and letting BatchNorm's running statistics drift toward a tiny dataset that the rest of the network never learnt from. This lesson walks each of them on purpose.
-
-## The Concept
-
-### Feature extraction vs fine-tuning
-
-Two regimes, picked by how much you trust the pretrained features and how much data you have.
+This distinction is important. The code demonstrates the ownership boundary and the accounting that carry over to a framework implementation; it does not claim ImageNet features, ResNet accuracy, or a useful pretrained checkpoint. `parameter_counts(..., freeze_backbone=True)` reports the head as trainable and the backbone as frozen. If the flag is false, both counts become trainable.
 
 ```mermaid
-flowchart TB
-    subgraph FE["Feature extraction — backbone frozen"]
-        FE1["Pretrained backbone<br/>(no gradient)"] --> FE2["New head<br/>(trained)"]
-    end
-    subgraph FT["Fine-tuning — end-to-end"]
-        FT1["Pretrained backbone<br/>(tiny LR)"] --> FT2["New head<br/>(normal LR)"]
-    end
-
-    style FE1 fill:#e5e7eb,stroke:#6b7280
-    style FE2 fill:#dcfce7,stroke:#16a34a
-    style FT1 fill:#fef3c7,stroke:#d97706
-    style FT2 fill:#dcfce7,stroke:#16a34a
+flowchart LR
+    A["NHWC local images"] --> B["frozen backbone_features"]
+    B --> C["N x F matrix"]
+    C --> D["trainable linear head"]
+    D --> E["logits / task report"]
 ```
 
-Rules of thumb:
-
-| Dataset size | Domain distance | Recipe |
-|--------------|-----------------|--------|
-| < 1k images | close to ImageNet | Freeze backbone, train head only |
-| 1k-10k | close | Freeze first 2-3 stages, fine-tune the rest |
-| 10k-100k | any | Fine-tune end-to-end with discriminative LR |
-| 100k+ | far | Fine-tune everything; consider training from scratch if domain is far enough |
-
-"Close to ImageNet" roughly means natural RGB photos with object-like content. Medical CT scans, overhead satellite imagery, and microscopy are far domains — the features still help, but you will need to let more layers adapt.
-
-### Why freezing works at all
-
-The ImageNet features a CNN learns are not specialised to the 1,000 categories. They are specialised to the statistics of natural images: edges at specific orientations, textures, contrast patterns, shape primitives. Those statistics are stable across almost every visual domain a human can name. That is why a model trained on ImageNet and evaluated zero-shot on CIFAR-10 with just a new linear head (no fine-tuning of the backbone) reaches 80%+ accuracy. The head is learning which of the already-learnt features to weight for this task.
-
-### Discriminative learning rates
-
-When you do unfreeze, early layers should train slower than late layers. Early layers encode generic features that you want to preserve; late layers encode task-specific structure that you need to move a lot.
-
-```
-Typical recipe:
-
-  stage 0 (stem + first group): lr = base_lr / 100    (mostly fixed)
-  stage 1:                       lr = base_lr / 10
-  stage 2:                       lr = base_lr / 3
-  stage 3 (last backbone group): lr = base_lr
-  head:                          lr = base_lr  (or slightly higher)
-```
-
-In PyTorch this is just a list of parameter groups passed to the optimizer. One model, five learning rates, zero extra code.
-
-### The BatchNorm problem
-
-BN layers hold `running_mean` and `running_var` buffers that were computed on ImageNet. If your task has a different pixel distribution — different lighting, different sensor, different colour space — those buffers are wrong. Three options in order of preference:
-
-1. **Fine-tune with BN in train mode.** Let BN update its running statistics along with everything else. Default choice when the task dataset is medium-sized (>= 5k examples).
-2. **Freeze BN in eval mode.** Keep the ImageNet statistics and train only the weights. Correct when your dataset is small enough that BN's moving average would be noisy.
-3. **Replace BN with GroupNorm.** Removes the moving-average problem entirely. Used in detection and segmentation backbones where batch size per GPU is tiny.
-
-Getting this wrong silently tanks accuracy by 5-15%.
-
-### Head design
-
-The classifier head is 1-3 linear layers plus an optional dropout. Every torchvision backbone ships a default head that you replace:
-
-```
-backbone.fc = nn.Linear(backbone.fc.in_features, num_classes)          # ResNet
-backbone.classifier[1] = nn.Linear(..., num_classes)                    # EfficientNet, MobileNet
-backbone.heads.head = nn.Linear(..., num_classes)                       # torchvision ViT
-```
-
-For small datasets, a single linear layer is usually enough. Adding a hidden layer (Linear -> ReLU -> Dropout -> Linear) helps when the task distribution is farther from the backbone's training distribution.
-
-### Layer-wise LR decay
-
-A smoother version of discriminative LR used in modern fine-tuning (BEiT, DINOv2, ViT-B fine-tunes). Instead of grouping layers into stages, give every layer a slightly smaller LR than the one above it:
-
-```
-lr_layer_k = base_lr * decay^(L - k)
-```
-
-With decay = 0.75 and L = 12 transformer blocks, the first block trains at `0.75^11 ≈ 0.04x` the head's LR. Matters more for transformer fine-tunes than for CNNs, where stage-grouped LRs are usually enough.
-
-### What to evaluate
-
-Transfer-learning runs need two numbers you would not track on a scratch run:
-
-- **Pretrained-only accuracy** — the head's accuracy with the backbone frozen. This is your floor.
-- **Fine-tuned accuracy** — the same model after end-to-end training. This is your ceiling.
-
-If fine-tuned is less than pretrained-only, you have a learning-rate or BN bug. Always print both.
-
-
-
+`discriminative_lrs` assigns a positive base rate to named stages, multiplying earlier stages by `decay` more times than later stages. It is a transparent configuration helper; it does not mutate parameters or assert that one schedule is universally optimal. `init_head` is seeded, and `train_head` reports a loss history so a reviewer can see whether the local fixture is learnable.
 
 ## Build It
 
-Reconstruct **Transfer Learning & Fine-Tuning** by following `synthetic_dataset` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+Run:
+
+```bash
+python3 main.py
+```
+
+The run creates 60 local images in three classes, extracts 12 features each, trains a head, prints the frozen-backbone/head parameter accounting, and lists rates for `stem`, `stage1`, `stage2`, and `head`. The expected observation is a finite decreasing head loss on this fixture. No network, model registry, or external weight file is touched.
 
 ## Use It
 
-Call `synthetic_dataset` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+```python
+import sys
+sys.path.insert(0, "code")
+import main as transfer
+
+images, labels = transfer.synthetic_dataset(6, 3, 12, seed=5)
+features = transfer.backbone_features(images)
+w, b, history = transfer.train_head(features, labels, 3, epochs=30, lr=0.6, seed=2)
+assert history[-1] < history[0]
+assert transfer.parameter_counts(1_000_000, w.size + b.size)["trainable"] == w.size + b.size
+```
+
+When adapting this pattern to a real model, record which layers are frozen, whether batch-normalization statistics are frozen, and which parameters each optimizer group owns. A low learning rate is not a substitute for checking those boundaries.
 
 ## Ship It
 
-Hand off `outputs/prompt-fine-tune-planner.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [How transferable are features in deep neural networks? (Yosinski et al., 2014)](https://arxiv.org/abs/1411.1792) — the paper that quantified feature transferability across layers
-- [Universal Language Model Fine-tuning (ULMFiT, Howard & Ruder, 2018)](https://arxiv.org/abs/1801.06146) — the original discriminative LR / progressive unfreezing recipe; the ideas transfer directly to vision
-- [timm documentation](https://huggingface.co/docs/timm) — the reference for modern vision backbones and the exact fine-tune defaults they were trained with
-- [A Simple Framework for Linear-Probe Evaluation (Kornblith et al., 2019)](https://arxiv.org/abs/1805.08974) — why linear-probe accuracy matters and how to report it correctly
+`outputs/skill-freeze-inspector.md` records the backbone/head counts, feature shape, trainable mask, and rates. `outputs/prompt-fine-tune-planner.md` asks for an explicit freeze stage and an acceptance metric. Both artifacts label the local feature extractor as illustrative so they cannot be mistaken for a downloaded checkpoint report.
 
 ## Exercises
 
-Use `synthetic_dataset` as the trace: start from x=0.5 with the demo defaults, keep the raw output, and tie each observation to a named objective.
-
-1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using x=0.5 with the demo defaults. Follow `synthetic_dataset`, `ArrayDataset`, `make_feature_extractor`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Distinguish feature extraction from fine-tuning and pick the right one based on dataset size, domain distance, and compute budget**.
-2. **Vary one named input.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Load a pretrained backbone, replace its classifier head, and train only the head to a working baseline in under 20 lines** says the other inputs should stay fixed.
-3. **Probe the empty case.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Progressively unfreeze layers with discriminative learning rates so early generic features get smaller updates than late task-specific ones** and record the exception text if the code rejects the case.
-4. **Package a usable handoff.** Open `outputs/prompt-fine-tune-planner.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Diagnose the three common failures: feature drift from too-high LR on unfrozen blocks, BN statistics collapse on tiny datasets, and catastrophic forgetting**; note what the demo cannot establish.
+1. Run `backbone_features` on `synthetic_dataset(3,3,8,seed=5)` and verify `(9,12)`. Split the 12 columns into means, standard deviations, horizontal edges, and vertical edges.
+2. Compare `parameter_counts(100,12,True)` and `parameter_counts(100,12,False)`. State which tensors a head-only update may change.
+3. Compute `discriminative_lrs(["stem","stage1","head"], base_lr=1e-3, decay=0.1)`. Explain why the head rate is largest in this helper and why that is only a policy choice.
+4. Train the head twice with seed `2` and assert identical histories. Then pass `lr=0` or an out-of-range label and record the explicit error.
 
 ## Reference Solution
 
-A checkable result for **Transfer Learning & Fine-Tuning** should contain:
-
-- the `python3 main.py` output for x=0.5 with the demo defaults, with `synthetic_dataset`, `ArrayDataset`, `make_feature_extractor` traced to the value or shape that supports **Distinguish feature extraction from fine-tuning and pick the right one based on dataset size, domain distance, and compute budget**;
-- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Load a pretrained backbone, replace its classifier head, and train only the head to a working baseline in under 20 lines**;
-- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Progressively unfreeze layers with discriminative learning rates so early generic features get smaller updates than late task-specific ones**; and
-- an updated `outputs/prompt-fine-tune-planner.md` example with a concrete input, expected output field, and acceptance check tied to **Diagnose the three common failures: feature drift from too-high LR on unfrozen blocks, BN statistics collapse on tiny datasets, and catastrophic forgetting**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+The local feature vector has 12 entries: three means, three standard deviations, and two three-channel edge summaries. With a frozen 100-parameter backbone and a 12-parameter head, only 12 parameters are trainable. For decay `0.1`, the stage rates increase toward the head. Repeated seeded training is identical, and the loss decreases on the local fixture; no observation supports a claim about external pretrained weights.

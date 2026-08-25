@@ -1,182 +1,199 @@
+# Entry point for phases/04-computer-vision/07-semantic-segmentation-unet/docs/en.md.
+# Provides NumPy segmentation losses, mask metrics, and a U-Net shape trace on a deterministic shape fixture.
+# It teaches the tensor contracts without pretending to train a PyTorch U-Net or a medical benchmark.
+# Run from this directory with: python3 main.py
+
+from __future__ import annotations
+
+from numbers import Integral, Real
+
 import numpy as np
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.utils.data import Dataset, DataLoader
-from torch.optim import Adam
 
 
-class DoubleConv(nn.Module):
-    def __init__(self, in_c, out_c):
-        super().__init__()
-        self.net = nn.Sequential(
-            nn.Conv2d(in_c, out_c, 3, padding=1, bias=False),
-            nn.BatchNorm2d(out_c),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(out_c, out_c, 3, padding=1, bias=False),
-            nn.BatchNorm2d(out_c),
-            nn.ReLU(inplace=True),
-        )
-
-    def forward(self, x):
-        return self.net(x)
+def _positive_int(value: int, name: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, Integral) or int(value) <= 0:
+        raise ValueError(f"{name} must be a positive integer")
+    return int(value)
 
 
-class Down(nn.Module):
-    def __init__(self, in_c, out_c):
-        super().__init__()
-        self.net = nn.Sequential(nn.MaxPool2d(2), DoubleConv(in_c, out_c))
-
-    def forward(self, x):
-        return self.net(x)
+def _finite(value: np.ndarray, name: str) -> np.ndarray:
+    array = np.asarray(value)
+    if not np.issubdtype(array.dtype, np.number) or not np.isfinite(array).all():
+        raise ValueError(f"{name} must contain finite numeric values")
+    return array
 
 
-class Up(nn.Module):
-    def __init__(self, in_c, out_c):
-        super().__init__()
-        self.up = nn.Upsample(scale_factor=2, mode="bilinear", align_corners=False)
-        self.conv = DoubleConv(in_c, out_c)
-
-    def forward(self, x, skip):
-        x = self.up(x)
-        if x.shape[-2:] != skip.shape[-2:]:
-            x = F.interpolate(x, size=skip.shape[-2:], mode="bilinear", align_corners=False)
-        x = torch.cat([skip, x], dim=1)
-        return self.conv(x)
-
-
-class UNet(nn.Module):
-    def __init__(self, in_channels=3, num_classes=3, base=32):
-        super().__init__()
-        self.inc = DoubleConv(in_channels, base)
-        self.d1 = Down(base, base * 2)
-        self.d2 = Down(base * 2, base * 4)
-        self.d3 = Down(base * 4, base * 8)
-        self.d4 = Down(base * 8, base * 16)
-        self.u1 = Up(base * 16 + base * 8, base * 8)
-        self.u2 = Up(base * 8 + base * 4, base * 4)
-        self.u3 = Up(base * 4 + base * 2, base * 2)
-        self.u4 = Up(base * 2 + base, base)
-        self.outc = nn.Conv2d(base, num_classes, 1)
-
-    def forward(self, x):
-        x1 = self.inc(x)
-        x2 = self.d1(x1)
-        x3 = self.d2(x2)
-        x4 = self.d3(x3)
-        x5 = self.d4(x4)
-        x = self.u1(x5, x4)
-        x = self.u2(x, x3)
-        x = self.u3(x, x2)
-        x = self.u4(x, x1)
-        return self.outc(x)
-
-
-def dice_loss(logits, targets, num_classes, eps=1e-6):
-    probs = F.softmax(logits, dim=1)
-    one_hot = F.one_hot(targets, num_classes).permute(0, 3, 1, 2).float()
-    dims = (0, 2, 3)
-    inter = (probs * one_hot).sum(dim=dims)
-    denom = probs.sum(dim=dims) + one_hot.sum(dim=dims)
-    dice = (2 * inter + eps) / (denom + eps)
-    return 1 - dice.mean()
-
-
-def combined_loss(logits, targets, num_classes, lam=1.0):
-    ce = F.cross_entropy(logits, targets)
-    dc = dice_loss(logits, targets, num_classes)
-    return ce + lam * dc, {"ce": ce.detach().item(), "dice": dc.detach().item()}
-
-
-@torch.no_grad()
-def iou_per_class(logits, targets, num_classes):
-    preds = logits.argmax(dim=1)
-    ious = torch.zeros(num_classes)
-    for c in range(num_classes):
-        pred_c = (preds == c)
-        true_c = (targets == c)
-        inter = (pred_c & true_c).sum().float()
-        union = (pred_c | true_c).sum().float()
-        ious[c] = (inter / union) if float(union) > 0 else float("nan")
-    return ious
-
-
-def synthetic_segmentation(num_samples=120, size=64, seed=0):
-    rng = np.random.default_rng(seed)
-    images = np.zeros((num_samples, size, size, 3), dtype=np.float32)
+def synthetic_segmentation(
+    num_samples: int = 12,
+    size: int = 32,
+    num_classes: int = 3,
+    seed: int = 0,
+) -> tuple[np.ndarray, np.ndarray]:
+    num_samples, size, num_classes = (_positive_int(num_samples, "num_samples"), _positive_int(size, "size"), _positive_int(num_classes, "num_classes"))
+    if num_classes < 2 or size < 12:
+        raise ValueError("num_classes must be at least 2 and size at least 12")
+    if isinstance(seed, bool) or not isinstance(seed, Integral):
+        raise ValueError("seed must be an integer")
+    rng = np.random.default_rng(int(seed))
+    images = np.empty((num_samples, size, size, 3), dtype=np.float32)
     masks = np.zeros((num_samples, size, size), dtype=np.int64)
     yy, xx = np.meshgrid(np.arange(size), np.arange(size), indexing="ij")
-    circle_color = np.array([0.9, 0.1, 0.1], dtype=np.float32)
-    square_color = np.array([0.1, 0.2, 0.9], dtype=np.float32)
-    for i in range(num_samples):
-        bg = np.array([0.3, 0.7, 0.3], dtype=np.float32)
-        images[i] = bg
-        cls = int(rng.integers(1, 3))
-        cx, cy = int(rng.integers(14, size - 14)), int(rng.integers(14, size - 14))
-        r = int(rng.integers(8, 14))
-        if cls == 1:
-            mask = (xx - cx) ** 2 + (yy - cy) ** 2 < r ** 2
-            images[i][mask] = circle_color
+    for index in range(num_samples):
+        background = np.array([0.25, 0.65, 0.3], dtype=np.float32)
+        image = np.broadcast_to(background, (size, size, 3)).copy()
+        class_id = 1 + index % (num_classes - 1)
+        cx = int(rng.integers(size // 3, size - size // 3))
+        cy = int(rng.integers(size // 3, size - size // 3))
+        radius = max(3, size // 6)
+        if class_id % 2:
+            shape = (xx - cx) ** 2 + (yy - cy) ** 2 <= radius ** 2
         else:
-            mask = (np.abs(xx - cx) < r) & (np.abs(yy - cy) < r)
-            images[i][mask] = square_color
-        masks[i][mask] = cls
-        images[i] += rng.normal(0, 0.02, images[i].shape)
-        images[i] = np.clip(images[i], 0, 1)
+            shape = (np.abs(xx - cx) <= radius) & (np.abs(yy - cy) <= radius)
+        color = np.zeros(3, dtype=np.float32)
+        color[(class_id - 1) % 3] = 0.9
+        image[shape] = color
+        masks[index, shape] = class_id
+        images[index] = np.clip(image + rng.normal(0, 0.02, image.shape), 0, 1)
     return images, masks
 
 
-class SegDataset(Dataset):
-    def __init__(self, images, masks):
-        self.images = images
-        self.masks = masks
-
-    def __len__(self):
-        return len(self.images)
-
-    def __getitem__(self, i):
-        img = torch.from_numpy(self.images[i]).permute(2, 0, 1).float()
-        mask = torch.from_numpy(self.masks[i]).long()
-        return img, mask
+def softmax(logits: np.ndarray, axis: int = 1) -> np.ndarray:
+    value = _finite(logits, "logits")
+    if value.ndim < 2 or not isinstance(axis, Integral) or axis < -value.ndim or axis >= value.ndim or value.shape[axis] == 0:
+        raise ValueError("logits must have a non-empty class axis")
+    shifted = value - np.max(value, axis=axis, keepdims=True)
+    exponent = np.exp(shifted)
+    return (exponent / exponent.sum(axis=axis, keepdims=True)).astype(np.float64)
 
 
-def main():
-    torch.manual_seed(0)
-    images, masks = synthetic_segmentation(num_samples=60, size=64)
-    split = int(0.85 * len(images))
-    train_ds = SegDataset(images[:split], masks[:split])
-    val_ds = SegDataset(images[split:], masks[split:])
-    train_loader = DataLoader(train_ds, batch_size=8, shuffle=True)
-    val_loader = DataLoader(val_ds, batch_size=8, shuffle=False)
+def _targets(targets: np.ndarray, n: int, height: int, width: int, num_classes: int) -> np.ndarray:
+    value = np.asarray(targets)
+    if value.shape != (n, height, width) or not np.issubdtype(value.dtype, np.integer):
+        raise ValueError("targets must have integer shape (N,H,W)")
+    if value.size == 0 or value.min() < 0 or value.max() >= num_classes:
+        raise ValueError("target labels are outside num_classes")
+    return value.astype(np.int64, copy=False)
 
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    num_classes = 3
-    model = UNet(in_channels=3, num_classes=num_classes, base=16).to(device)
-    optimizer = Adam(model.parameters(), lr=1e-3)
-    print(f"params: {sum(p.numel() for p in model.parameters()):,}")
 
-    for epoch in range(8):
-        model.train()
-        loss_sum, total = 0.0, 0
-        for x, y in train_loader:
-            x, y = x.to(device), y.to(device)
-            logits = model(x)
-            loss, _ = combined_loss(logits, y, num_classes)
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-            loss_sum += loss.detach().item() * x.size(0)
-            total += x.size(0)
+def pixel_cross_entropy(logits: np.ndarray, targets: np.ndarray) -> float:
+    value = _finite(logits, "logits")
+    if value.ndim != 4 or value.shape[0] == 0 or value.shape[1] == 0 or value.shape[2] == 0 or value.shape[3] == 0:
+        raise ValueError("logits must have non-empty NCHW shape")
+    truth = _targets(targets, value.shape[0], value.shape[2], value.shape[3], value.shape[1])
+    log_z = np.logaddexp.reduce(value, axis=1)
+    picked = np.take_along_axis(value, truth[:, None], axis=1)[:, 0]
+    return float(np.mean(log_z - picked))
 
-        model.eval()
-        iou_sum = torch.zeros(num_classes)
-        with torch.no_grad():
-            for x, y in val_loader:
-                x, y = x.to(device), y.to(device)
-                iou_sum += iou_per_class(model(x), y, num_classes).nan_to_num(0)
-        iou_mean = (iou_sum / len(val_loader)).tolist()
-        print(f"epoch {epoch}  train_loss {loss_sum/total:.3f}  iou {[f'{v:.2f}' for v in iou_mean]}")
+
+def dice_loss(logits: np.ndarray, targets: np.ndarray, num_classes: int, eps: float = 1e-7) -> float:
+    value = _finite(logits, "logits")
+    if value.ndim != 4 or value.shape[1] != num_classes:
+        raise ValueError("logits must have shape (N,num_classes,H,W)")
+    num_classes = _positive_int(num_classes, "num_classes")
+    if not isinstance(eps, Real) or not np.isfinite(eps) or eps <= 0:
+        raise ValueError("eps must be positive and finite")
+    truth = _targets(targets, value.shape[0], value.shape[2], value.shape[3], num_classes)
+    probabilities = softmax(value, axis=1)
+    one_hot = np.eye(num_classes, dtype=np.float64)[truth].transpose(0, 3, 1, 2)
+    intersection = (probabilities * one_hot).sum(axis=(0, 2, 3))
+    denominator = probabilities.sum(axis=(0, 2, 3)) + one_hot.sum(axis=(0, 2, 3))
+    dice = (2 * intersection + float(eps)) / (denominator + float(eps))
+    return float(1.0 - dice.mean())
+
+
+def combined_loss(logits: np.ndarray, targets: np.ndarray, num_classes: int, lam: float = 1.0) -> tuple[float, dict[str, float]]:
+    if not isinstance(lam, Real) or not np.isfinite(lam) or lam < 0:
+        raise ValueError("lam must be finite and non-negative")
+    ce = pixel_cross_entropy(logits, targets)
+    dice = dice_loss(logits, targets, num_classes)
+    return float(ce + float(lam) * dice), {"cross_entropy": ce, "dice_loss": dice}
+
+
+def iou_per_class(predictions: np.ndarray, targets: np.ndarray, num_classes: int) -> np.ndarray:
+    pred = _finite(predictions, "predictions")
+    num_classes = _positive_int(num_classes, "num_classes")
+    if pred.ndim == 4:
+        if pred.shape[1] != num_classes:
+            raise ValueError("logits class axis must equal num_classes")
+        predicted = pred.argmax(axis=1)
+    elif pred.ndim == 3:
+        if not np.issubdtype(pred.dtype, np.integer):
+            raise ValueError("integer masks or NCHW logits are required")
+        predicted = pred.astype(np.int64)
+    else:
+        raise ValueError("predictions must be NCHW logits or NHW integer masks")
+    truth = np.asarray(targets)
+    if truth.shape != predicted.shape or not np.issubdtype(truth.dtype, np.integer):
+        raise ValueError("targets must be an integer mask matching predictions")
+    if predicted.size == 0 or predicted.min() < 0 or predicted.max() >= num_classes or truth.min() < 0 or truth.max() >= num_classes:
+        raise ValueError("mask labels are outside num_classes")
+    result = np.full(num_classes, np.nan, dtype=np.float64)
+    for class_id in range(num_classes):
+        predicted_class = predicted == class_id
+        truth_class = truth == class_id
+        union = np.logical_or(predicted_class, truth_class).sum()
+        if union:
+            result[class_id] = np.logical_and(predicted_class, truth_class).sum() / union
+    return result
+
+
+def _mean_filter(x: np.ndarray) -> np.ndarray:
+    padded = np.pad(x, ((0, 0), (0, 0), (1, 1), (1, 1)), mode="edge")
+    output = np.zeros_like(x, dtype=np.float64)
+    for dy in range(3):
+        for dx in range(3):
+            output += padded[:, :, dy:dy + x.shape[2], dx:dx + x.shape[3]]
+    return output / 9.0
+
+
+def double_conv(x: np.ndarray) -> np.ndarray:
+    """Shape-preserving two 3x3 local averages followed by ReLU; a tiny U-Net block analogue."""
+    value = _finite(x, "x")
+    if value.ndim != 4 or 0 in value.shape:
+        raise ValueError("x must have a non-empty NCHW shape")
+    return np.maximum(_mean_filter(np.maximum(_mean_filter(value), 0)), 0).astype(np.float32)
+
+
+def unet_shape_trace(input_shape: tuple[int, int, int, int] = (1, 3, 64, 64), levels: int = 2, base: int = 16) -> list[tuple[str, tuple[int, ...]]]:
+    if len(input_shape) != 4 or any(_positive_int(v, "input dimension") <= 0 for v in input_shape):
+        raise ValueError("input_shape must be a non-empty NCHW tuple")
+    levels = _positive_int(levels, "levels")
+    base = _positive_int(base, "base")
+    if input_shape[2] % (2 ** levels) or input_shape[3] % (2 ** levels):
+        raise ValueError("height and width must be divisible by 2**levels")
+    n, channels, height, width = input_shape
+    trace = [("input", tuple(input_shape))]
+    skips = []
+    for level in range(levels):
+        channels = base * (2 ** level)
+        skips.append((channels, height, width))
+        trace.append((f"encoder_{level + 1}", (n, channels, height, width)))
+        height //= 2
+        width //= 2
+    trace.append(("bottleneck", (n, base * (2 ** levels), height, width)))
+    for level in reversed(range(levels)):
+        height *= 2
+        width *= 2
+        channels = base * (2 ** level)
+        trace.append((f"decoder_{level + 1}_with_skip", (n, channels, height, width)))
+    return trace
+
+
+def main() -> int:
+    images, masks = synthetic_segmentation(num_samples=4, size=32, seed=7)
+    n, height, width, _ = images.shape
+    logits = np.zeros((n, 3, height, width), dtype=np.float64)
+    logits[:, 0] = 0.4
+    logits[:, 1] = images[..., 0]
+    logits[:, 2] = images[..., 2]
+    total, parts = combined_loss(logits, masks, 3, lam=1.0)
+    ious = iou_per_class(logits, masks, 3)
+    print(f"fixture images={images.shape} masks={masks.shape} logits={logits.shape}")
+    print(f"loss={total:.4f} parts={parts} iou={np.round(ious, 3).tolist()}")
+    print("double_conv shape=", double_conv(logits).shape)
+    print("shape trace=", unet_shape_trace((1, 3, 64, 64), levels=2, base=8))
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

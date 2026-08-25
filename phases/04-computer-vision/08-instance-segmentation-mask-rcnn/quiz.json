@@ -1,78 +1,78 @@
 {
   "lesson": "08-instance-segmentation-mask-rcnn",
-  "title": "Instance Segmentation — Mask R-CNN",
+  "title": "Instance Segmentation: Align RoIs, Then Paste Masks",
   "questions": [
     {
       "stage": "pre",
-      "question": "For a feature map shaped (C,50,50), what shape does roi_align_single(..., output_size=7) return?",
+      "question": "Why does an instance-segmentation head need more than a semantic class mask?",
       "options": [
-        "(7,C,7)",
-        "(C,50,50)",
-        "(C,7,7)",
-        "(1,C,7,7)"
-      ],
-      "correct": 2,
-      "explanation": "The helper samples one region from one feature map and removes the temporary batch dimension, leaving channels by 7 by 7."
-    },
-    {
-      "stage": "check",
-      "question": "What does spatial_scale=1/4 do when a box is expressed in image pixels?",
-      "options": [
-        "Makes the pooled output four times larger",
-        "Changes the box into four class labels",
-        "Adds four channels to the feature map",
-        "Maps image coordinates to feature-map coordinates by multiplying them by 1/4"
-      ],
-      "correct": 3,
-      "explanation": "A feature map with stride four has coordinates one quarter as large as the original image; roi_align_single scales the box before sampling."
-    },
-    {
-      "stage": "check",
-      "question": "Why does roi_align_single use bilinear grid_sample rather than rounding each RoI bin to one pixel?",
-      "options": [
-        "It preserves subpixel information and avoids quantization of region boundaries",
-        "It removes the need for a backbone feature map",
-        "It guarantees every mask is binary before training",
-        "It turns RoIs into image-level class labels"
+        "It must produce one mask per object so two objects of the same class remain distinguishable",
+        "It replaces every box with one image-wide class ID",
+        "It removes the need to localize object boxes",
+        "It guarantees a pretrained detector has learned the new classes"
       ],
       "correct": 0,
-      "explanation": "RoIAlign samples at fractional coordinates and interpolates, unlike RoIPool's coarse coordinate quantization."
+      "explanation": "An instance mask is associated with one detected object. A semantic mask labels pixels by class but cannot identify two same-class objects separately."
     },
     {
       "stage": "check",
-      "question": "In the pretrained Mask R-CNN output, what does p['masks'] represent?",
+      "question": "A feature map is 4×4 and represents an 8×8 image. Which spatial_scale maps image coordinates to feature coordinates?",
       "options": [
-        "A single image-level class vector",
-        "One mask logit/probability map per detected instance, alongside boxes and labels",
-        "The FPN feature tensor before RoIAlign",
-        "The list of proposal anchor widths only"
+        "2.0",
+        "0.5",
+        "4.0",
+        "8.0"
       ],
       "correct": 1,
-      "explanation": "The demo prints boxes, labels, and masks as separate per-instance outputs from the detector."
+      "explanation": "Feature coordinates are half the image coordinates, so an 8-pixel image span becomes 4 feature pixels and spatial_scale is 4/8 = 0.5."
     },
     {
-      "stage": "post",
-      "question": "What changes when build_custom_maskrcnn(num_classes=5) is called?",
+      "stage": "check",
+      "question": "For a `(1,4,4)` ramp and box `[0,0,8,8]` with spatial_scale=0.5, what does 2×2 ROI Align return?",
       "options": [
-        "The FPN is replaced with a grayscale input layer",
-        "All RoIs are removed and only image classification remains",
-        "The box and mask predictors are replaced with five-class heads",
-        "The backbone is automatically quantized to INT8"
+        "[[[0, 1], [4, 5]]]",
+        "[[[2.5, 4.5], [10.5, 12.5]]]",
+        "[[[5, 7], [13, 15]]]",
+        "A scalar because the box is pooled globally"
       ],
       "correct": 2,
-      "explanation": "The function swaps FastRCNNPredictor and MaskRCNNPredictor while retaining the pretrained backbone and feature pyramid."
+      "explanation": "The image box maps to feature coordinates 0..4. Bin centers are at (1,1), (1,3), (3,1), and (3,3), which select 5, 7, 13, and 15 from the row-major ramp."
+    },
+    {
+      "stage": "check",
+      "question": "Where may `paste_mask` write true pixels for box `[2,3,6,7]`?",
+      "options": [
+        "Only the integer-covered rows 3..6 and columns 2..5",
+        "Every pixel in the image with the same class",
+        "Only the four corner pixels",
+        "The whole feature map before resizing"
+      ],
+      "correct": 0,
+      "explanation": "The mask is resized into the requested box; pixels outside that box remain false. The half-open integer region contains 4×4 = 16 pixels."
     },
     {
       "stage": "post",
-      "question": "What does freeze_backbone(model) change in the custom Mask R-CNN?",
+      "question": "Why is `mask_bce_with_logits` preferable to applying `log(sigmoid(logits))` directly?",
       "options": [
-        "Sets every model parameter to zero",
-        "Freezes only the five output class labels",
-        "Puts the mask head into training mode",
-        "Sets requires_grad=False for parameters in model.backbone, including its FPN"
+        "It makes every mask positive regardless of the logits",
+        "It combines the sigmoid algebraically with log terms and stays finite for large logits",
+        "It removes the need for binary targets",
+        "It computes IoU without comparing masks"
       ],
-      "correct": 3,
-      "explanation": "The helper iterates over model.backbone.parameters(), so the backbone/FPN stay fixed while task heads can be trained."
+      "correct": 1,
+      "explanation": "The stable expression uses max/log1p terms, avoiding overflow or log(0) when logits such as ±1000 are passed."
+    },
+    {
+      "stage": "post",
+      "question": "Two 4×4 boolean masks have intersection 6 and union 10. What does `mask_iou` report?",
+      "options": [
+        "0.4",
+        "0.6",
+        "1.6",
+        "10/6"
+      ],
+      "correct": 1,
+      "explanation": "IoU is intersection divided by union, so the report is 6/10 = 0.6. It is bounded by one for valid masks."
     }
   ]
 }

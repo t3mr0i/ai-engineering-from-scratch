@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What output height does output_size(h_in=32, k=3, p=1, s=1) return?",
+      "question": "For a CHW input and an OCHW kernel in this lesson, what does each output value compute?",
       "options": [
-        "30",
-        "31",
-        "32",
-        "34"
+        "A global average over every image channel",
+        "A dot product after rotating the kernel 180 degrees",
+        "A dot product over one local patch, without flipping the kernel",
+        "A maximum over the patch, as in max pooling"
       ],
       "correct": 2,
-      "explanation": "The formula is floor((32+2*1-3)/1)+1=32."
+      "explanation": "The implementation is cross-correlation: it multiplies a local patch and kernel in their stored orientation, then sums over input channels and kernel positions."
     },
     {
       "stage": "check",
-      "question": "What output height does a 3-wide kernel with no padding and stride 2 produce from height 32?",
+      "question": "What is output_size(32, kernel=3, padding=1, stride=2)?",
       "options": [
-        "16",
-        "14",
+        "32",
+        "15",
         "17",
-        "15"
+        "16"
       ],
       "correct": 3,
-      "explanation": "Integer division gives (32-3)//2+1=29//2+1=14+1=15."
+      "explanation": "The formula is floor((32 + 2 - 3 - 1)/2)+1 = floor(30/2)+1 = 16."
     },
     {
       "stage": "check",
-      "question": "For input shape (3,16,16), weights shape (8,3,3,3), stride 1, and padding 1, what is conv2d_naive's output shape?",
+      "question": "What does the first column of im2col(x, 2, 2) contain for x = arange(16).reshape(1,4,4)?",
       "options": [
-        "(8,16,16)",
-        "(3,16,16)",
-        "(8,14,14)",
-        "(16,16,8)"
+        "[0, 1, 4, 5]",
+        "[0, 4, 1, 5] sorted by coordinate",
+        "[5, 6, 9, 10]",
+        "[0, 1, 2, 3]"
       ],
       "correct": 0,
-      "explanation": "There are eight output channels, and same padding preserves each 16 by 16 spatial dimension."
+      "explanation": "Scan order starts at the upper-left and flattens the 2x2 patch row by row: 0, 1, 4, 5."
     },
     {
       "stage": "check",
-      "question": "What kind of structure does the Sobel x kernel emphasize in the step image used by the demo?",
+      "question": "Which change increases receptive_field([(3, 1), (3, 2), (3, 1)]) from a single-layer baseline by changing the jump?",
       "options": [
-        "Uniform regions with no intensity change",
-        "Vertical intensity changes across the x direction",
-        "Only horizontal changes across the y direction",
-        "A per-pixel class probability"
+        "The first layer's kernel of 3 only",
+        "The second layer's stride of 2",
+        "The final layer's name in the list",
+        "Zero padding applied before the stack"
       ],
       "correct": 1,
-      "explanation": "The kernel has negative weights on the left and positive weights on the right, so it responds to a left-to-right intensity transition, a vertical edge."
+      "explanation": "The stride changes the distance between neighboring downstream features; the receptive-field recurrence then weights later kernels by that jump."
     },
     {
       "stage": "post",
-      "question": "What should test_against_naive verify for the random convolution?",
+      "question": "Why can conv2d_naive and conv2d_im2col be compared directly in the lesson?",
       "options": [
-        "The im2col version always returns integer pixels",
-        "The two implementations use different kernels",
-        "The naive and im2col outputs have the same shape and a very small maximum difference",
-        "The naive version has no padding support"
+        "im2col always returns integers, so rounding hides differences",
+        "The loop path skips bias while matrix multiplication applies it twice",
+        "Both use the same CHW/OCHW contract and the same padding, stride, and dilation arithmetic",
+        "They use different kernel orientations but happen to share an output shape"
       ],
       "correct": 2,
-      "explanation": "im2col changes how patches are arranged for matrix multiplication, not the convolution itself; the numerical outputs should agree."
+      "explanation": "im2col only changes how patches are arranged; the flattened kernel products and optional bias represent the same cross-correlation."
     },
     {
       "stage": "post",
-      "question": "What receptive field does receptive_field([(3,1),(3,2)]) compute?",
+      "question": "What should happen when a 5x5 kernel is requested for a 2x2 input with no padding?",
       "options": [
-        "3",
-        "6",
-        "7",
-        "5"
+        "Return a zero-sized output silently",
+        "Wrap the input around to create a patch",
+        "Use a stride of one regardless of the requested stride",
+        "Raise ValueError because the footprint cannot fit"
       ],
       "correct": 3,
-      "explanation": "The first layer gives RF=3. The second adds (3-1)*1=2, so the final receptive field is 5; its stride changes afterward."
+      "explanation": "output_size rejects a non-positive numerator, making an impossible spatial contract explicit instead of returning an invalid or empty feature map."
     }
   ]
 }

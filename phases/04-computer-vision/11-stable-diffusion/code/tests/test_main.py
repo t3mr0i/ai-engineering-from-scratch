@@ -1,64 +1,81 @@
-# Contract and executable-behavior tests for this lesson demo.
 from __future__ import annotations
 
-import ast
-import functools
 import importlib.util
-import os
 from pathlib import Path
 import subprocess
 import sys
 import unittest
 
+import numpy as np
+
+
 CODE = Path(__file__).resolve().parents[1]
-MAIN = CODE / "main.py"
-ALLOWED = set(sys.stdlib_module_names) | {"numpy", "torch", "h5py", "zstandard", "safetensors"}
+spec = importlib.util.spec_from_file_location("sd_contracts", CODE / "main.py")
+sd = importlib.util.module_from_spec(spec)
+assert spec.loader is not None
+spec.loader.exec_module(sd)
 
-def source_trees() -> list[ast.AST]:
-    return [ast.parse(path.read_text(encoding="utf-8")) for path in CODE.glob("*.py")]
 
-def external_roots() -> set[str]:
-    roots: set[str] = set()
-    for tree in source_trees():
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                roots.update(alias.name.split(".")[0] for alias in node.names)
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                roots.add(node.module.split(".")[0])
-    return {name for name in roots if not (CODE / f"{name}.py").exists() and not (CODE / name).is_dir()}
+class StableDiffusionContractTests(unittest.TestCase):
+    def test_latent_shape_is_explicit(self) -> None:
+        self.assertEqual(sd.latent_shape((2, 3, 32, 32), 8, 4), (2, 4, 4, 4))
+        with self.assertRaises(ValueError):
+            sd.latent_shape((1, 3, 30, 32), 8, 4)
 
-@functools.lru_cache(maxsize=1)
-def run_demo() -> subprocess.CompletedProcess[str]:
-    missing = sorted(name for name in external_roots() if name in ALLOWED and importlib.util.find_spec(name) is None)
-    banned = sorted(external_roots() - ALLOWED)
-    if missing or banned:
-        raise unittest.SkipTest(f"demo dependencies unavailable or disallowed: {missing + banned}")
-    env = os.environ.copy()
-    for key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "HF_TOKEN", "HUGGINGFACE_TOKEN"):
-        env.pop(key, None)
-    return subprocess.run(
-        [sys.executable, MAIN.name], cwd=CODE, text=True, capture_output=True,
-        timeout=45, env=env, check=False,
-    )
+    def test_mean_pool_latent_and_decode_shapes(self) -> None:
+        image = np.arange(3 * 8 * 8, dtype=float).reshape(1, 3, 8, 8)
+        latent = sd.encode_latent(image, downsample_factor=2, latent_channels=4)
+        self.assertEqual(latent.shape, (1, 4, 4, 4))
+        decoded = sd.decode_latent(latent, image_channels=3, upsample_factor=2)
+        self.assertEqual(decoded.shape, image.shape)
+        with self.assertRaises(ValueError):
+            sd.decode_latent(latent, image_channels=5, upsample_factor=2)
+        with self.assertRaises(ValueError):
+            sd.encode_latent(np.zeros((1, 5, 8, 8)), downsample_factor=2, latent_channels=4)
 
-class LessonDemoTests(unittest.TestCase):
-    def test_source_compiles(self) -> None:
-        compile(MAIN.read_text(encoding="utf-8"), str(MAIN), "exec")
+    def test_classifier_free_guidance_formula(self) -> None:
+        uncond = np.zeros((2, 3))
+        cond = np.ones((2, 3))
+        np.testing.assert_allclose(sd.classifier_free_guidance(uncond, cond, 5), 5.0)
+        with self.assertRaises(ValueError):
+            sd.classifier_free_guidance(uncond, np.ones((2, 2)), 5)
 
-    def test_demo_has_explicit_entrypoint(self) -> None:
-        source = MAIN.read_text(encoding="utf-8")
-        self.assertTrue("__main__" in source or "runpy.run_path" in source)
+    def test_scheduler_sigmas_are_descending_and_finite(self) -> None:
+        sigmas = sd.scheduler_sigmas(5, 1.0, 0.1)
+        self.assertTrue(np.all(np.diff(sigmas) < 0))
+        self.assertTrue(np.isfinite(sigmas).all())
+        with self.assertRaises(ValueError):
+            sd.scheduler_sigmas(5, 0.1, 1.0)
 
-    def test_demo_exits_successfully(self) -> None:
-        self.assertEqual(run_demo().returncode, 0, run_demo().stderr)
+    def test_lora_update_has_low_rank_delta(self) -> None:
+        base = np.zeros((4, 4))
+        down = np.ones((2, 4))
+        up = np.ones((4, 2))
+        updated = sd.lora_update(base, down, up, 0.5)
+        self.assertEqual(updated.shape, (4, 4))
+        np.testing.assert_allclose(updated, 1.0)
+        with self.assertRaises(ValueError):
+            sd.lora_update(base, np.ones((3, 5)), up)
 
-    def test_demo_emits_bounded_output(self) -> None:
-        result = run_demo()
-        self.assertTrue((result.stdout + result.stderr).strip())
-        self.assertLess(len(result.stdout) + len(result.stderr), 1_000_000)
+    def test_manifest_names_roles_without_external_framework(self) -> None:
+        manifest = sd.pipeline_manifest()
+        self.assertEqual([item["component"] for item in manifest], ["text_encoder", "denoiser", "scheduler", "VAE", "safety_check"])
+        self.assertEqual(manifest[-1]["status"], "not implemented here")
 
-    def test_demo_has_no_traceback(self) -> None:
-        self.assertNotIn("Traceback (most recent call last)", run_demo().stderr)
+    def test_nonfinite_and_parameter_contracts_are_rejected(self) -> None:
+        with self.assertRaises(ValueError):
+            sd.encode_latent(np.full((1, 3, 4, 4), np.nan), 2, 4)
+        with self.assertRaises(ValueError):
+            sd.classifier_free_guidance(np.zeros(2), np.zeros(2), -1)
+        with self.assertRaises(ValueError):
+            sd.lora_update(np.zeros((2, 2)), np.zeros((1, 2)), np.zeros((2, 1)), scale=np.inf)
+
+    def test_canonical_demo_exits_cleanly(self) -> None:
+        result = subprocess.run([sys.executable, "main.py"], cwd=CODE, capture_output=True, text=True, check=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("offline Stable-Diffusion", result.stdout)
+        self.assertNotIn("Traceback", result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()

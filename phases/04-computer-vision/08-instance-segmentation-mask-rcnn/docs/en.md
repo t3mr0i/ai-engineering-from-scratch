@@ -1,155 +1,80 @@
-# Instance Segmentation — Mask R-CNN
+# Instance Segmentation: Align RoIs, Then Paste Masks
 
-> Add a tiny mask branch to a Faster R-CNN detector and you have instance segmentation. The hard part is RoIAlign, and it is harder than it looks.
+> An instance mask is useful only when its pixels stay aligned with the box that selected them.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 4 Lesson 06 (YOLO), Phase 4 Lesson 07 (U-Net)
-**Time:** ~75 minutes
+**Prerequisites:** Phase 04 Lesson 06 (Object Detection — YOLO), Phase 04 Lesson 07 (Semantic Segmentation)
+**Time:** ~55 minutes
 
 ## Learning Objectives
 
-- Trace the Mask R-CNN architecture end-to-end: backbone, FPN, RPN, RoIAlign, box head, mask head
-- Implement RoIAlign from scratch and explain why RoIPool is no longer used
-- Use the torchvision `maskrcnn_resnet50_fpn_v2` pretrained model for production-quality instance masks and read its output format correctly
-- Fine-tune Mask R-CNN on a small custom dataset by replacing the box and mask heads and keeping the backbone frozen
+- Distinguish an instance mask from a semantic mask and a detection box.
+- Map absolute image-space boxes onto a feature map with an explicit spatial scale.
+- Explain why bin-center bilinear sampling gives every RoI a fixed tensor shape.
+- Paste a small mask-logit grid back into its box without changing pixels outside that box.
+- Compute stable mask BCE and IoU while validating coordinate and target contracts.
 
-## The Problem
+## The local contract
 
-Semantic segmentation gives you one mask per class. Instance segmentation gives you one mask per object, even when two objects share a class. Counting individuals, tracking across frames, and measuring things (the bounding box of each brick in a wall, each cell in a microscope image) all demand instance segmentation.
+Mask R-CNN combines a detector with a small mask head for each selected RoI. This lesson isolates the geometry around that head. It does not download weights, instantiate `torchvision`, or claim to run a trained Mask R-CNN. The implementation is a NumPy fixture that makes the detector-to-mask boundary inspectable.
 
-Mask R-CNN (He et al., 2017) solved this by reframing instance segmentation as detection-plus-a-mask. The design was so clean that for the next five years almost every instance segmentation paper was a Mask R-CNN variant, and the torchvision implementation is still the production default for small to medium datasets.
-
-The hard engineering problem is sampling: how do you crop a fixed-size feature region out of a proposal box whose corners do not align with pixel boundaries? Getting that wrong costs tenths of a mAP point everywhere. RoIAlign is the answer.
-
-## The Concept
-
-### The architecture
+Boxes use absolute `xyxy` image coordinates with positive width and height. `roi_align` receives a `(C,H,W)` feature map and a `spatial_scale`: a scale of `0.5` means that an 8-pixel image coordinate is at feature coordinate 4. Each output bin samples its center with bilinear interpolation, so all boxes become `(C, output_height, output_width)` tensors without silently swapping x and y.
 
 ```mermaid
 flowchart LR
-    IMG["Input"] --> BB["ResNet<br/>backbone"]
-    BB --> FPN["Feature<br/>Pyramid Network"]
-    FPN --> RPN["Region<br/>Proposal<br/>Network"]
-    FPN --> RA["RoIAlign"]
-    RPN -->|"top-K proposals"| RA
-    RA --> BH["Box head<br/>(class + refine)"]
-    RA --> MH["Mask head<br/>(14x14 conv)"]
-    BH --> NMS["NMS"]
-    MH --> NMS
-    NMS --> OUT["boxes +<br/>classes + masks"]
-
-    style BB fill:#dbeafe,stroke:#2563eb
-    style FPN fill:#fef3c7,stroke:#d97706
-    style RPN fill:#fecaca,stroke:#dc2626
-    style OUT fill:#dcfce7,stroke:#16a34a
+    A["image-space xyxy box"] --> B["spatial_scale"]
+    B --> C["ROI Align: fixed C×h×w grid"]
+    C --> D["mask logits"]
+    D --> E["resize + sigmoid + threshold"]
+    E --> F["paste only inside the box"]
 ```
 
-Five pieces to understand:
+`paste_mask` uses the box's integer-covered region and bilinearly resizes logits there. Pixels outside the region remain false. `mask_bce_with_logits` computes
 
-1. **Backbone** — ResNet-50 or ResNet-101 trained on ImageNet. Produces a hierarchy of feature maps at strides 4, 8, 16, 32.
-2. **FPN (Feature Pyramid Network)** — top-down + lateral connections that give every level C channels of semantic-rich features. Detection queries the FPN level matching the object size.
-3. **RPN (Region Proposal Network)** — a small conv head that, at every anchor position, predicts "is there an object here?" and "how do I refine the box?". Produces ~1000 proposals per image.
-4. **RoIAlign** — samples a fixed-size (e.g. 7x7) feature patch from any box on any FPN level. Bilinear sampling, no quantisation.
-5. **Heads** — two-layer box head that refines the box and picks a class, plus a small conv head that outputs a `28x28` binary mask for each proposal.
-
-### Why RoIAlign, not RoIPool
-
-The original Fast R-CNN used RoIPool, which splits a proposal box into a grid, takes the maximum feature in each cell, and rounds all coordinates to integers. That rounding misaligns the feature map from the input pixel coordinates by up to a full feature-map pixel — small on a 224x224 image, catastrophic when the feature map is stride 32.
-
-```
-RoIPool:
-  box (34.7, 51.3, 98.2, 142.9)
-  round -> (34, 51, 98, 142)
-  split grid -> round each cell boundary
-  misalignment accumulates at every step
-
-RoIAlign:
-  box (34.7, 51.3, 98.2, 142.9)
-  sample at exact float coordinates using bilinear interpolation
-  no rounding anywhere
+```text
+max(logit, 0) - logit * target + log1p(exp(-abs(logit)))
 ```
 
-RoIAlign lifts mask AP by 3-4 points on COCO for free. Every detector that cares about localisation now uses it — YOLOv7 seg, RT-DETR, Mask2Former alike.
-
-### The RPN in one paragraph
-
-At every position of a feature map, place K anchor boxes of different sizes and shapes. Predict an objectness score for each anchor and a regression offset to turn the anchor into a better-fitting box. Keep the top ~1,000 boxes by score, apply NMS at IoU 0.7, and hand the survivors to the heads. The RPN is trained with its own mini-loss — the same structure as the YOLO loss from Lesson 6, just with two classes (object / no object).
-
-### The mask head
-
-For each proposal (after RoIAlign) the mask head is a tiny FCN: four 3x3 convs, a 2x deconv, a final 1x1 conv that produces `num_classes` output channels at `28x28` resolution. Only the channel corresponding to the predicted class is kept; the others are ignored. This decouples mask prediction from classification.
-
-Upsample the 28x28 mask to the proposal's original pixel size to produce the final binary mask.
-
-### Losses
-
-Mask R-CNN has four losses added together:
-
-```
-L = L_rpn_cls + L_rpn_box + L_box_cls + L_box_reg + L_mask
-```
-
-- `L_rpn_cls`, `L_rpn_box` — objectness + box regression for the RPN proposals.
-- `L_box_cls` — cross-entropy over (C+1) classes (including background) on the head's classifier.
-- `L_box_reg` — smooth L1 on the head's box refinement.
-- `L_mask` — per-pixel binary cross-entropy on the 28x28 mask output.
-
-Each loss has its own default weight; the torchvision implementation exposes them as constructor arguments.
-
-### Output format
-
-`torchvision.models.detection.maskrcnn_resnet50_fpn_v2` returns a list of dicts, one per image:
-
-```
-{
-    "boxes":  (N, 4) in (x1, y1, x2, y2) pixel coordinates,
-    "labels": (N,) class IDs, 0 = background so indices are 1-based,
-    "scores": (N,) confidence scores,
-    "masks":  (N, 1, H, W) float masks in [0, 1] — threshold at 0.5 for binary,
-}
-```
-
-The mask is full image resolution already. The 28x28 head output has been upsampled internally.
-
-
-
+instead of taking a logarithm of a saturated sigmoid. `mask_iou` compares two already-pasted boolean masks; an empty-vs-empty comparison is defined as `1.0` for this local report.
 
 ## Build It
 
-Reconstruct **Instance Segmentation — Mask R-CNN** by following `roi_align_single` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+Run from the lesson's `code/` directory:
+
+```bash
+python3 main.py
+```
+
+The demo creates a two-channel 16×20 feature fixture and one rectangle, pools it to `(1,2,3,4)`, pastes a `(1,4,5)` mask-logit grid, and reports the BCE and mask IoU. The printed values are local observations. They are not recall, AP, or evidence of a trained detector.
 
 ## Use It
 
-Call `roi_align_single` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+```python
+import sys
+import numpy as np
+
+sys.path.insert(0, "code")
+import main as instance
+
+feature = np.arange(16, dtype=float).reshape(1, 4, 4)
+pooled = instance.roi_align(feature, [[0, 0, 8, 8]], output_size=2, spatial_scale=0.5)
+assert pooled.shape == (1, 1, 2, 2)
+```
+
+Keep the coordinate systems in the handoff: image-space boxes belong in the report, while feature-space sampling is derived from `spatial_scale`. If a production model uses padding, resized images, or normalized boxes, record that adapter before comparing masks.
 
 ## Ship It
 
-Hand off `outputs/prompt-instance-vs-semantic-router.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [Mask R-CNN (He et al., 2017)](https://arxiv.org/abs/1703.06870) — the paper; section 3 on RoIAlign is the critical read
-- [FPN: Feature Pyramid Networks (Lin et al., 2017)](https://arxiv.org/abs/1612.03144) — the FPN paper; every modern detector uses it
-- [torchvision Mask R-CNN tutorial](https://pytorch.org/tutorials/intermediate/torchvision_tutorial.html) — the reference for the fine-tuning loop
-- [Detectron2 model zoo](https://github.com/facebookresearch/detectron2/blob/main/MODEL_ZOO.md) — production implementations with trained weights for nearly every detection and segmentation variant
+`outputs/skill-mask-rcnn-head-swapper.md` is now a local mask-head contract checklist: it records box coordinates, RoI shape, mask resolution, and paste policy without pretending to build a framework model. `outputs/prompt-instance-vs-semantic-router.md` asks whether a task needs one mask per object or one class mask for the whole image.
 
 ## Exercises
 
-Work from the smallest fixture that the Instance Segmentation — Mask R-CNN demo already understands, then make one deliberate change and record what moved.
-
-1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using an 8x8 synthetic image. Follow `roi_align_single`, `compare_with_torchvision_roi_align`, `load_pretrained_maskrcnn`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **Trace the Mask R-CNN architecture end-to-end: backbone, FPN, RPN, RoIAlign, box head, mask head**.
-2. **Perturb one field.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Implement RoIAlign from scratch and explain why RoIPool is no longer used** says the other inputs should stay fixed.
-3. **Check the failure boundary.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Use the torchvision `maskrcnn_resnet50_fpn_v2` pretrained model for production-quality instance masks and read its output format correctly** and record the exception text if the code rejects the case.
-4. **Make the result repeatable.** Open `outputs/prompt-instance-vs-semantic-router.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **Fine-tune Mask R-CNN on a small custom dataset by replacing the box and mask heads and keeping the backbone frozen**; note what the demo cannot establish.
+1. Use a `(1,4,4)` feature map containing `0..15` and the image-space box `[0,0,8,8]` with `spatial_scale=0.5`. Predict the four bin-center samples and compare them with `roi_align(..., output_size=2)`.
+2. Paste a 2×2 grid of logits equal to `10` into `[2,3,6,7]` on a 10×10 image. Verify that exactly the 4×4 box region is true and that a neighboring pixel remains false.
+3. Evaluate `mask_bce_with_logits` on logits `[[[1000,-1000]]]` and targets `[[[1,0]]]`. Explain why the stable expression remains finite.
+4. Create two 4×4 boolean masks with one-pixel overlap. Record the IoU and state what an empty-vs-empty mask means in this artifact.
 
 ## Reference Solution
 
-A checkable result for **Instance Segmentation — Mask R-CNN** should contain:
-
-- the `python3 main.py` output for an 8x8 synthetic image, with `roi_align_single`, `compare_with_torchvision_roi_align`, `load_pretrained_maskrcnn` traced to the value or shape that supports **Trace the Mask R-CNN architecture end-to-end: backbone, FPN, RPN, RoIAlign, box head, mask head**;
-- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Implement RoIAlign from scratch and explain why RoIPool is no longer used**;
-- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Use the torchvision `maskrcnn_resnet50_fpn_v2` pretrained model for production-quality instance masks and read its output format correctly**; and
-- an updated `outputs/prompt-instance-vs-semantic-router.md` example with a concrete input, expected output field, and acceptance check tied to **Fine-tune Mask R-CNN on a small custom dataset by replacing the box and mask heads and keeping the backbone frozen**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+For the 4×4 feature map, image coordinates `[0,0,8,8]` map to feature coordinates `[0,0,4,4]`; 2×2 bin centers are `(1,1)`, `(1,3)`, `(3,1)`, and `(3,3)`, yielding `5,7,13,15` for the row-major ramp. The 2×2 positive mask fills 16 pixels in the requested box and no pixels outside it. Extreme correct logits contribute values near zero without overflow. IoU is intersection divided by union, while the local empty-vs-empty convention is explicitly `1.0` rather than an accidental division by zero.

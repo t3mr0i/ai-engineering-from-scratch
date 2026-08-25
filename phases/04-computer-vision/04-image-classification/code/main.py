@@ -1,215 +1,259 @@
+# Entry point for phases/04-computer-vision/04-image-classification/docs/en.md.
+# Builds a small NumPy image-classification fixture with stable losses and reproducible augmentations.
+# It demonstrates data contracts, mixup, and reporting without claiming CIFAR or framework benchmark scores.
+# Run from this directory with: python3 main.py
+
+from __future__ import annotations
+
+from numbers import Integral, Real
+
 import numpy as np
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.utils.data import Dataset, DataLoader
-from torch.optim import SGD
-from torch.optim.lr_scheduler import CosineAnnealingLR
 
 
-def synthetic_cifar(num_per_class=300, num_classes=10, seed=0):
-    rng = np.random.default_rng(seed)
-    X = []
-    Y = []
-    for c in range(num_classes):
-        centre = rng.uniform(0, 1, (3,))
-        freq = 2 + c
+def _positive_int(value: int, name: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, Integral) or int(value) <= 0:
+        raise ValueError(f"{name} must be a positive integer")
+    return int(value)
+
+
+def _finite(value: np.ndarray, name: str) -> np.ndarray:
+    array = np.asarray(value)
+    if not np.issubdtype(array.dtype, np.number) or not np.isfinite(array).all():
+        raise ValueError(f"{name} must contain finite numeric values")
+    return array
+
+
+def _labels(labels: np.ndarray, n: int, num_classes: int | None = None) -> np.ndarray:
+    value = np.asarray(labels)
+    if value.ndim != 1 or len(value) != n or not np.issubdtype(value.dtype, np.integer):
+        raise ValueError("labels must be a one-dimensional integer array matching the data")
+    if len(value) == 0:
+        raise ValueError("labels must not be empty")
+    if num_classes is not None and (value.min() < 0 or value.max() >= num_classes):
+        raise ValueError("labels are outside the class range")
+    return value.astype(np.int64, copy=False)
+
+
+def synthetic_cifar(
+    num_per_class: int = 30,
+    num_classes: int = 3,
+    size: int = 16,
+    seed: int = 0,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Create small HWC [0,1] color/texture classes; this is not the CIFAR dataset."""
+    num_per_class = _positive_int(num_per_class, "num_per_class")
+    num_classes = _positive_int(num_classes, "num_classes")
+    size = _positive_int(size, "size")
+    if isinstance(seed, bool) or not isinstance(seed, Integral):
+        raise ValueError("seed must be an integer")
+    rng = np.random.default_rng(int(seed))
+    yy, xx = np.meshgrid(np.linspace(0, 1, size), np.linspace(0, 1, size), indexing="ij")
+    images: list[np.ndarray] = []
+    labels: list[int] = []
+    for class_id in range(num_classes):
+        angle = 2 * np.pi * class_id / max(num_classes, 1)
+        center = np.clip(0.5 + 0.35 * np.array([np.cos(angle), np.sin(angle), np.cos(angle + 1.2)]), 0, 1)
         for _ in range(num_per_class):
-            yy, xx = np.meshgrid(np.linspace(0, 1, 32), np.linspace(0, 1, 32), indexing="ij")
-            r = np.sin(xx * freq) * 0.5 + centre[0]
-            g = np.cos(yy * freq) * 0.5 + centre[1]
-            b = (xx + yy) * 0.5 * centre[2]
-            img = np.stack([r, g, b], axis=-1) + rng.normal(0, 0.08, (32, 32, 3))
-            img = np.clip(img, 0, 1).astype(np.float32)
-            X.append(img)
-            Y.append(c)
-    X = np.stack(X)
-    Y = np.array(Y)
-    idx = rng.permutation(len(X))
-    return X[idx], Y[idx]
+            pattern = np.stack(
+                [np.sin((class_id + 2) * np.pi * xx),
+                 np.cos((class_id + 2) * np.pi * yy),
+                 np.sin((class_id + 1) * np.pi * (xx + yy))], axis=-1
+            ) * 0.08
+            image = np.clip(center + pattern + rng.normal(0, 0.02, (size, size, 3)), 0, 1)
+            images.append(image.astype(np.float32))
+            labels.append(class_id)
+    order = rng.permutation(len(images))
+    return np.stack(images)[order], np.asarray(labels, dtype=np.int64)[order]
 
 
-class ArrayDataset(Dataset):
-    def __init__(self, X, Y, transform=None):
-        self.X = X
-        self.Y = Y
-        self.transform = transform
-
-    def __len__(self):
-        return len(self.X)
-
-    def __getitem__(self, i):
-        img = self.X[i]
-        if self.transform is not None:
-            img = self.transform(img)
-        img = torch.from_numpy(np.ascontiguousarray(img)).permute(2, 0, 1).float()
-        return img, int(self.Y[i])
+def standardize(images: np.ndarray, mean: np.ndarray | list[float], std: np.ndarray | list[float]) -> np.ndarray:
+    value = _finite(images, "images")
+    if value.ndim != 4 or value.shape[-1] != 3 or 0 in value.shape:
+        raise ValueError("images must have non-empty NHWC shape with 3 channels")
+    mean, std = _finite(mean, "mean"), _finite(std, "std")
+    if mean.shape != (3,) or std.shape != (3,) or np.any(std <= 0):
+        raise ValueError("mean and std must have shape (3,), with positive std")
+    return ((value - mean.reshape(1, 1, 1, 3)) / std.reshape(1, 1, 1, 3)).astype(np.float32)
 
 
-def standardize(mean, std):
-    mean = np.array(mean, dtype=np.float32)
-    std = np.array(std, dtype=np.float32)
-    def _fn(img):
-        return (img - mean) / std
-    return _fn
+def _rng_or_default(rng: np.random.Generator | None) -> np.random.Generator:
+    return np.random.default_rng() if rng is None else rng
 
 
-def random_hflip(p=0.5):
-    def _fn(img):
-        if np.random.random() < p:
-            return img[:, ::-1, :].copy()
-        return img
-    return _fn
+def random_hflip(image: np.ndarray, p: float = 0.5, rng: np.random.Generator | None = None) -> np.ndarray:
+    value = _finite(image, "image")
+    if value.ndim != 3 or value.shape[2] != 3 or 0 in value.shape:
+        raise ValueError("image must have non-empty HWC shape with 3 channels")
+    if not isinstance(p, Real) or not np.isfinite(p) or not 0 <= p <= 1:
+        raise ValueError("p must lie in [0,1]")
+    return value[:, ::-1, :].copy() if _rng_or_default(rng).random() < p else value.copy()
 
 
-def random_crop(pad=4):
-    def _fn(img):
-        h, w = img.shape[:2]
-        padded = np.pad(img, ((pad, pad), (pad, pad), (0, 0)), mode="reflect")
-        y = np.random.randint(0, 2 * pad + 1)
-        x = np.random.randint(0, 2 * pad + 1)
-        return padded[y:y + h, x:x + w, :]
-    return _fn
+def random_crop(image: np.ndarray, pad: int = 2, rng: np.random.Generator | None = None) -> np.ndarray:
+    value = _finite(image, "image")
+    if value.ndim != 3 or value.shape[2] != 3 or 0 in value.shape:
+        raise ValueError("image must have non-empty HWC shape with 3 channels")
+    if isinstance(pad, bool) or not isinstance(pad, Integral) or int(pad) < 0:
+        raise ValueError("pad must be a non-negative integer")
+    pad = int(pad)
+    if pad == 0:
+        return value.copy()
+    padded = np.pad(value, ((pad, pad), (pad, pad), (0, 0)), mode="reflect")
+    generator = _rng_or_default(rng)
+    top = int(generator.integers(0, 2 * pad + 1))
+    left = int(generator.integers(0, 2 * pad + 1))
+    return padded[top:top + value.shape[0], left:left + value.shape[1]].copy()
 
 
-def compose(*fns):
-    def _fn(img):
-        for fn in fns:
-            img = fn(img)
-        return img
-    return _fn
+def compose(*transforms):
+    if not transforms or any(not callable(transform) for transform in transforms):
+        raise ValueError("compose needs at least one callable transform")
+
+    def apply(image: np.ndarray) -> np.ndarray:
+        result = image
+        for transform in transforms:
+            result = transform(result)
+        return result
+
+    return apply
 
 
-def mixup_batch(x, y, num_classes, alpha=0.2):
-    if alpha <= 0:
-        return x, F.one_hot(y, num_classes).float()
-    lam = float(np.random.beta(alpha, alpha))
-    idx = torch.randperm(x.size(0), device=x.device)
-    x_mixed = lam * x + (1 - lam) * x[idx]
-    y_onehot = F.one_hot(y, num_classes).float()
-    y_mixed = lam * y_onehot + (1 - lam) * y_onehot[idx]
-    return x_mixed, y_mixed
+def softmax(logits: np.ndarray, axis: int = -1) -> np.ndarray:
+    value = _finite(logits, "logits")
+    if value.ndim == 0:
+        raise ValueError("logits must have at least one dimension")
+    if not isinstance(axis, Integral) or axis < -value.ndim or axis >= value.ndim:
+        raise ValueError("axis is outside logits dimensions")
+    shifted = value - np.max(value, axis=axis, keepdims=True)
+    exp = np.exp(shifted)
+    return (exp / exp.sum(axis=axis, keepdims=True)).astype(np.float64)
 
 
-def soft_cross_entropy(logits, soft_targets):
-    log_probs = F.log_softmax(logits, dim=-1)
-    return -(soft_targets * log_probs).sum(dim=-1).mean()
+def cross_entropy(logits: np.ndarray, targets: np.ndarray) -> float:
+    value = _finite(logits, "logits")
+    if value.ndim != 2 or value.shape[0] == 0 or value.shape[1] == 0:
+        raise ValueError("logits must have non-empty (N,C) shape")
+    target = np.asarray(targets)
+    if target.ndim == 1:
+        labels = _labels(target, value.shape[0], value.shape[1])
+        log_z = np.logaddexp.reduce(value, axis=1)
+        return float(np.mean(log_z - value[np.arange(len(labels)), labels]))
+    if target.shape != value.shape or not np.issubdtype(target.dtype, np.number) or not np.isfinite(target).all():
+        raise ValueError("soft targets must have the same finite (N,C) shape")
+    if np.any(target < 0) or not np.allclose(target.sum(axis=1), 1.0):
+        raise ValueError("each soft target row must be non-negative and sum to one")
+    log_probs = value - np.logaddexp.reduce(value, axis=1, keepdims=True)
+    return float(-np.mean(np.sum(target * log_probs, axis=1)))
 
 
-class MiniClassifier(nn.Module):
-    def __init__(self, num_classes=10):
-        super().__init__()
-        self.features = nn.Sequential(
-            nn.Conv2d(3, 32, 3, padding=1, bias=False),
-            nn.BatchNorm2d(32), nn.ReLU(inplace=True),
-            nn.Conv2d(32, 32, 3, padding=1, bias=False),
-            nn.BatchNorm2d(32), nn.ReLU(inplace=True),
-            nn.MaxPool2d(2),
-            nn.Conv2d(32, 64, 3, padding=1, bias=False),
-            nn.BatchNorm2d(64), nn.ReLU(inplace=True),
-            nn.Conv2d(64, 64, 3, padding=1, bias=False),
-            nn.BatchNorm2d(64), nn.ReLU(inplace=True),
-            nn.MaxPool2d(2),
-            nn.Conv2d(64, 128, 3, padding=1, bias=False),
-            nn.BatchNorm2d(128), nn.ReLU(inplace=True),
-        )
-        self.head = nn.Sequential(
-            nn.AdaptiveAvgPool2d(1),
-            nn.Flatten(),
-            nn.Linear(128, num_classes),
-        )
-
-    def forward(self, x):
-        return self.head(self.features(x))
+def mixup_batch(
+    x: np.ndarray,
+    y: np.ndarray,
+    num_classes: int,
+    alpha: float = 0.2,
+    rng: np.random.Generator | None = None,
+) -> tuple[np.ndarray, np.ndarray]:
+    features = _finite(x, "x")
+    if features.ndim < 2 or features.shape[0] == 0:
+        raise ValueError("x must have a non-empty batch dimension")
+    num_classes = _positive_int(num_classes, "num_classes")
+    labels = _labels(y, features.shape[0], num_classes)
+    if not isinstance(alpha, Real) or not np.isfinite(alpha) or alpha <= 0:
+        raise ValueError("alpha must be positive and finite")
+    generator = _rng_or_default(rng)
+    lam = float(generator.beta(alpha, alpha))
+    permutation = generator.permutation(features.shape[0])
+    one_hot = np.eye(num_classes, dtype=np.float64)[labels]
+    mixed_x = lam * features + (1.0 - lam) * features[permutation]
+    mixed_y = lam * one_hot + (1.0 - lam) * one_hot[permutation]
+    return mixed_x.astype(np.float32), mixed_y.astype(np.float32)
 
 
-def train_one_epoch(model, loader, optimizer, device, num_classes, use_mixup=True):
-    model.train()
-    total, correct, loss_sum = 0, 0, 0.0
-    for x, y in loader:
-        x, y = x.to(device), y.to(device)
-        if use_mixup:
-            x_m, y_soft = mixup_batch(x, y, num_classes)
-            logits = model(x_m)
-            loss = soft_cross_entropy(logits, y_soft)
-        else:
-            logits = model(x)
-            loss = F.cross_entropy(logits, y, label_smoothing=0.1)
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-        loss_sum += loss.item() * x.size(0)
-        total += x.size(0)
-        with torch.no_grad():
-            pred = logits.argmax(dim=-1)
-            correct += (pred == y).sum().item()
-    return loss_sum / total, correct / total
+def image_features(images: np.ndarray) -> np.ndarray:
+    value = _finite(images, "images")
+    if value.ndim != 4 or value.shape[-1] != 3 or 0 in value.shape:
+        raise ValueError("images must have non-empty NHWC shape with 3 channels")
+    means = value.mean(axis=(1, 2))
+    stds = value.std(axis=(1, 2))
+    return np.concatenate((means, stds), axis=1).astype(np.float64)
 
 
-@torch.no_grad()
-def evaluate(model, loader, device, num_classes):
-    model.eval()
-    total, correct = 0, 0
-    loss_sum = 0.0
-    cm = torch.zeros(num_classes, num_classes, dtype=torch.long)
-    for x, y in loader:
-        x, y = x.to(device), y.to(device)
-        logits = model(x)
-        loss = F.cross_entropy(logits, y)
-        pred = logits.argmax(dim=-1)
-        for t, p in zip(y.cpu(), pred.cpu()):
-            cm[t, p] += 1
-        loss_sum += loss.item() * x.size(0)
-        total += x.size(0)
-        correct += (pred == y).sum().item()
-    return loss_sum / total, correct / total, cm
+def train_linear_classifier(
+    features: np.ndarray,
+    labels: np.ndarray,
+    num_classes: int,
+    epochs: int = 80,
+    lr: float = 0.5,
+    seed: int = 0,
+) -> tuple[np.ndarray, np.ndarray, list[float]]:
+    x = _finite(features, "features")
+    if x.ndim != 2 or x.shape[0] == 0 or x.shape[1] == 0:
+        raise ValueError("features must have non-empty (N,F) shape")
+    num_classes = _positive_int(num_classes, "num_classes")
+    y = _labels(labels, x.shape[0], num_classes)
+    epochs = _positive_int(epochs, "epochs")
+    if not isinstance(lr, Real) or not np.isfinite(lr) or lr <= 0:
+        raise ValueError("lr must be positive and finite")
+    if isinstance(seed, bool) or not isinstance(seed, Integral):
+        raise ValueError("seed must be an integer")
+    rng = np.random.default_rng(int(seed))
+    weights = rng.normal(0, 0.01, (num_classes, x.shape[1]))
+    bias = np.zeros(num_classes, dtype=np.float64)
+    history: list[float] = []
+    one_hot = np.eye(num_classes)[y]
+    for _ in range(epochs):
+        logits = x @ weights.T + bias
+        probabilities = softmax(logits)
+        history.append(cross_entropy(logits, y))
+        gradient = (probabilities - one_hot) / x.shape[0]
+        weights -= float(lr) * gradient.T @ x
+        bias -= float(lr) * gradient.sum(axis=0)
+    return weights, bias, history
 
 
-def per_class_report(cm):
-    tp = cm.diag().float()
-    fp = cm.sum(dim=0).float() - tp
-    fn = cm.sum(dim=1).float() - tp
-    prec = tp / (tp + fp).clamp_min(1)
-    rec = tp / (tp + fn).clamp_min(1)
-    f1 = 2 * prec * rec / (prec + rec).clamp_min(1e-9)
-    return prec, rec, f1
+def confusion_matrix(targets: np.ndarray, predictions: np.ndarray, num_classes: int) -> np.ndarray:
+    target = np.asarray(targets)
+    pred = np.asarray(predictions)
+    num_classes = _positive_int(num_classes, "num_classes")
+    if target.ndim != 1 or pred.ndim != 1 or target.size == 0 or target.size != pred.size:
+        raise ValueError("targets and predictions must be non-empty, equal-length vectors")
+    target = _labels(target, len(target), num_classes)
+    pred = _labels(pred, len(pred), num_classes)
+    matrix = np.zeros((num_classes, num_classes), dtype=np.int64)
+    np.add.at(matrix, (target, pred), 1)
+    return matrix
 
 
-def main():
-    torch.manual_seed(0)
-    X, Y = synthetic_cifar(num_per_class=200)
-    split = int(0.9 * len(X))
-    X_train, Y_train = X[:split], Y[:split]
-    X_val, Y_val = X[split:], Y[split:]
+def per_class_report(matrix: np.ndarray) -> dict[str, np.ndarray]:
+    cm = np.asarray(matrix)
+    if cm.ndim != 2 or cm.shape[0] == 0 or cm.shape[0] != cm.shape[1]:
+        raise ValueError("matrix must be a non-empty square confusion matrix")
+    if cm.dtype == np.bool_ or not np.issubdtype(cm.dtype, np.integer):
+        raise ValueError("matrix must contain integer counts, not booleans or fractions")
+    if not np.isfinite(cm).all() or np.any(cm < 0):
+        raise ValueError("matrix counts must be finite and non-negative")
+    cm = cm.astype(np.float64)
+    tp = np.diag(cm)
+    precision = np.divide(tp, cm.sum(axis=0), out=np.zeros_like(tp), where=cm.sum(axis=0) > 0)
+    recall = np.divide(tp, cm.sum(axis=1), out=np.zeros_like(tp), where=cm.sum(axis=1) > 0)
+    f1 = np.divide(2 * precision * recall, precision + recall,
+                   out=np.zeros_like(tp), where=(precision + recall) > 0)
+    return {"precision": precision, "recall": recall, "f1": f1}
 
-    mean = [0.5, 0.5, 0.5]
-    std = [0.25, 0.25, 0.25]
-    train_tf = compose(random_hflip(), random_crop(pad=4), standardize(mean, std))
-    eval_tf = standardize(mean, std)
 
-    train_ds = ArrayDataset(X_train, Y_train, transform=train_tf)
-    val_ds = ArrayDataset(X_val, Y_val, transform=eval_tf)
-    train_loader = DataLoader(train_ds, batch_size=128, shuffle=True, num_workers=0)
-    val_loader = DataLoader(val_ds, batch_size=256, shuffle=False, num_workers=0)
-
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    model = MiniClassifier(num_classes=10).to(device)
-    optimizer = SGD(model.parameters(), lr=0.05, momentum=0.9, weight_decay=5e-4, nesterov=True)
-    scheduler = CosineAnnealingLR(optimizer, T_max=5)
-
-    for epoch in range(5):
-        current_lr = scheduler.get_last_lr()[0]
-        tr_loss, tr_acc = train_one_epoch(model, train_loader, optimizer, device, 10, use_mixup=True)
-        va_loss, va_acc, cm = evaluate(model, val_loader, device, 10)
-        scheduler.step()
-        print(f"epoch {epoch}  lr {current_lr:.4f}  "
-              f"train {tr_loss:.3f}/{tr_acc:.3f}  val {va_loss:.3f}/{va_acc:.3f}")
-
-    prec, rec, f1 = per_class_report(cm)
-    print("\nper-class metrics:")
-    for c in range(10):
-        print(f"  class {c}  prec {prec[c]:.3f}  rec {rec[c]:.3f}  f1 {f1[c]:.3f}")
+def main() -> int:
+    images, labels = synthetic_cifar(num_per_class=24, num_classes=3, size=12, seed=4)
+    features = image_features(images)
+    weights, bias, history = train_linear_classifier(features, labels, 3, epochs=60, lr=0.8, seed=2)
+    predictions = np.argmax(features @ weights.T + bias, axis=1)
+    matrix = confusion_matrix(labels, predictions, 3)
+    report = per_class_report(matrix)
+    print(f"fixture NHWC={images.shape} features={features.shape} classes={np.unique(labels).tolist()}")
+    print(f"linear loss: first={history[0]:.4f} last={history[-1]:.4f} accuracy={np.mean(predictions == labels):.3f}")
+    print("confusion_matrix=\n", matrix)
+    print("macro_f1=", float(report["f1"].mean()))
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

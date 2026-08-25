@@ -1,178 +1,78 @@
-# Semantic Segmentation — U-Net
+# Semantic Segmentation: U-Net Shape and Mask Metrics
 
-> Segmentation is classification at every pixel. U-Net makes it work by pairing a downsampling encoder with an upsampling decoder and wiring skip connections between them.
+> Semantic segmentation assigns a class to every pixel, so shape and metric contracts are part of the model.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 4 Lesson 03 (CNNs), Phase 4 Lesson 04 (Image Classification)
-**Time:** ~75 minutes
+**Prerequisites:** Phase 04 Lesson 03 (CNNs: LeNet to ResNet), Phase 04 Lesson 04 (Image Classification)
+**Time:** ~65 minutes
 
 ## Learning Objectives
 
-- Distinguish semantic, instance, and panoptic segmentation and pick the right task for a given problem
-- Build a U-Net from scratch in PyTorch with encoder blocks, a bottleneck, a decoder with transposed convolutions, and skip connections
-- Implement pixel-wise cross-entropy, Dice loss, and the combined loss that is the current default for medical and industrial segmentation
-- Read IoU and Dice metrics per class and diagnose whether a bad score comes from small-object recall, boundary accuracy, or class imbalance
+- Distinguish a semantic mask from instance IDs and image-level labels.
+- Keep logits in NCHW and targets in integer NHW while computing a stable pixel cross-entropy.
+- Derive macro Dice overlap from softmax probabilities and one-hot masks.
+- Interpret per-class IoU, including `NaN` for a class absent from both prediction and target.
+- Trace the spatial changes and skip resolutions of a compact U-Net without hiding rounding requirements.
 
-## The Problem
+## Dense prediction contracts
 
-Classification outputs one label per image. Detection outputs a handful of boxes per image. Segmentation outputs one label per pixel. For an input of size `H x W`, the output is a tensor of shape `H x W` (semantic) or `H x W x N_instances` (instance). That is millions of predictions per image, not one.
-
-The structure of segmentation is why it powers almost every dense-prediction vision product: medical imaging (tumour masks), autonomous driving (road, lane, obstacle), satellite (building footprints, crop boundaries), document parsing (layout zones), robotics (graspable regions). None of those tasks can be solved by putting a box around the object; they need the exact silhouette.
-
-The architectural problem is simple to state and not simple to solve: you need the network to see the global context of an image (what kind of scene is this) and the local pixel detail (exactly which pixel is road vs pavement) simultaneously. A standard CNN compresses spatially to gain context, which throws away the detail. U-Net was the design that got both.
-
-## The Concept
-
-### Semantic vs instance vs panoptic
+The local fixture contains NHWC images and integer NHW masks. Class `0` is background; the remaining classes are simple circles or squares placed by a seeded generator. It is intentionally small and synthetic. `softmax` expects a non-empty class axis and subtracts the maximum logit per pixel. `pixel_cross_entropy` therefore accepts logits `(N,C,H,W)` and labels `(N,H,W)`, while `dice_loss` uses the same shapes to form soft probabilities and one-hot masks.
 
 ```mermaid
-flowchart LR
-    IN["Input image"] --> SEM["Semantic<br/>(pixel → class)"]
-    IN --> INS["Instance<br/>(pixel → object id,<br/>only foreground classes)"]
-    IN --> PAN["Panoptic<br/>(every pixel → class + id)"]
-
-    style SEM fill:#dbeafe,stroke:#2563eb
-    style INS fill:#fef3c7,stroke:#d97706
-    style PAN fill:#dcfce7,stroke:#16a34a
+flowchart TB
+    I["NHWC shape fixture"] --> M["integer NHW mask"]
+    I --> S["NCHW logits"]
+    S --> CE["pixel_cross_entropy"]
+    S --> D["softmax + Dice"]
+    M --> CE
+    M --> D
+    S --> IOU["argmax + per-class IoU"]
+    M --> IOU
 ```
 
-- **Semantic** says "this pixel is road, that pixel is car." Two cars next to each other collapse into a single blob.
-- **Instance** says "this pixel is car #3, that pixel is car #5." Ignores background stuff ("stuff" = sky, road, grass).
-- **Panoptic** unifies both: every pixel gets a class label, every instance gets a unique id, stuff and things both segmented.
+Dice is calculated per class and averaged. The epsilon is positive and finite, so an all-zero denominator cannot create a division warning. IoU is different: when a class has no predicted or true pixels, its union is zero and the result is `NaN`, allowing a caller to exclude that class from a macro average instead of calling absence a perfect score. `combined_loss` returns both component values and a weighted sum; `lam` is nonnegative.
 
-This lesson covers semantic. The next lesson (Mask R-CNN) covers instance.
-
-### The U-Net shape
-
-```mermaid
-flowchart LR
-    subgraph ENC["Encoder (contracting)"]
-        E1["64<br/>H x W"] --> E2["128<br/>H/2 x W/2"]
-        E2 --> E3["256<br/>H/4 x W/4"]
-        E3 --> E4["512<br/>H/8 x W/8"]
-    end
-    subgraph BOT["Bottleneck"]
-        B1["1024<br/>H/16 x W/16"]
-    end
-    subgraph DEC["Decoder (expanding)"]
-        D4["512<br/>H/8 x W/8"] --> D3["256<br/>H/4 x W/4"]
-        D3 --> D2["128<br/>H/2 x W/2"]
-        D2 --> D1["64<br/>H x W"]
-    end
-    E4 --> B1 --> D4
-    E1 -. skip .-> D1
-    E2 -. skip .-> D2
-    E3 -. skip .-> D3
-    E4 -. skip .-> D4
-    D1 --> OUT["1x1 conv<br/>classes"]
-
-    style ENC fill:#dbeafe,stroke:#2563eb
-    style BOT fill:#fef3c7,stroke:#d97706
-    style DEC fill:#dcfce7,stroke:#16a34a
-```
-
-The encoder halves spatial resolution four times and doubles channels. The decoder reverses: doubles spatial resolution four times and halves channels. The skip connections concatenate matching encoder features with decoder features at every resolution. The final 1x1 conv maps `64 -> num_classes` at full resolution.
-
-Why skip connections are necessary: the decoder has seen only small feature maps by the time it tries to output pixel-level predictions. Without the skips it cannot localise edges accurately because that information was compressed away in the encoder. Skip connections hand it the high-resolution feature maps the encoder computed on the way down.
-
-### Transposed vs bilinear upsample
-
-The decoder has to expand spatial dimensions. Two options:
-
-- **Transposed convolution** (`nn.ConvTranspose2d`) — learnable upsample. Historical U-Net default. Can produce checkerboard artifacts if stride and kernel size do not divide evenly.
-- **Bilinear upsample + 3x3 conv** — smooth upsample followed by a conv. Fewer artifacts, fewer parameters, now the modern default.
-
-Both appear in the wild. For a first U-Net, bilinear is safer.
-
-### Cross-entropy on a pixel grid
-
-For semantic segmentation with C classes, the model output is `(N, C, H, W)`. The target is `(N, H, W)` with integer class IDs. Cross-entropy is identical to the classification case, just applied at every spatial position:
-
-```
-Loss = mean over (n, h, w) of -log( softmax(logits[n, :, h, w])[target[n, h, w]] )
-```
-
-`F.cross_entropy` in PyTorch handles this shape natively. No reshape needed.
-
-### Dice loss and why you need it
-
-Cross-entropy treats every pixel equally. That is wrong when one class dominates the frame (medical imaging: 99% background, 1% tumour). The network can score 99% accuracy by predicting background everywhere and still be useless.
-
-Dice loss solves this by directly optimising the overlap between predicted and true mask:
-
-```
-Dice(p, y) = 2 * sum(p * y) / (sum(p) + sum(y) + epsilon)
-Dice_loss = 1 - Dice
-```
-
-where `p` is the sigmoid/softmax probability map for a class and `y` is the binary ground-truth mask. The loss is zero only when the overlap is perfect. Because it is ratio-based, class imbalance is irrelevant.
-
-In practice, use the **combined loss**:
-
-```
-L = L_cross_entropy + lambda * L_dice       (lambda ~ 1)
-```
-
-Cross-entropy gives stable gradients early in training; Dice focuses the tail of training on actually matching the mask shape. This combination is the medical-imaging default and hard to beat on any class-imbalanced dataset.
-
-### Evaluation metrics
-
-- **Pixel accuracy** — percent of pixels predicted correctly. Cheap. Broken on imbalanced data for the same reason as accuracy in classification.
-- **IoU per class** — intersection over union for each class's mask; average across classes = mIoU.
-- **Dice (F1 on pixels)** — similar to IoU; `Dice = 2 * IoU / (1 + IoU)`. Medical imaging prefers Dice, driving community prefers IoU; they are monotonically related.
-- **Boundary F1** — measures how close predicted boundaries are to ground-truth boundaries, penalising even small shifts. Important for high-precision tasks like semiconductor inspection.
-
-**Worked example (hypothetical).** Mean IoU can hide one class at 15% when nine others are at 85%. Report IoU per class, not just mIoU.
-
-### Input resolution trade-off
-
-U-Net's encoder halves resolution four times, so the input must be divisible by 16. Medical images are often 512x512 or 1024x1024. Autonomous-driving crops are 2048x1024. The memory cost of U-Net scales with `H * W * C_max`, and at 1024x1024 with 1024 bottleneck channels the forward pass already uses gigabytes of VRAM.
-
-Two standard workarounds:
-1. Tile the input — process 256x256 tiles with overlap and stitch.
-2. Replace the bottleneck with dilated convolutions that keep spatial resolution higher but widen receptive field (the DeepLab family).
-
-For a first model, a 256x256 input with a 64-channel-base U-Net trains comfortably on 8 GB VRAM.
-
-
-
+This lesson does not train a PyTorch U-Net. `double_conv` is a shape-preserving NumPy analogue made of two edge-padded local mean filters and ReLUs. `unet_shape_trace` records encoder downsampling, a bottleneck, and decoder resolutions. It requires height and width divisible by `2**levels`; a real implementation must choose an explicit crop/interpolation policy for other sizes.
 
 ## Build It
 
-Reconstruct **Semantic Segmentation — U-Net** by following `DoubleConv` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+Run:
+
+```bash
+python3 main.py
+```
+
+The run creates four `32x32` images, builds three-channel logits, prints the finite cross-entropy/Dice components and per-class IoU, verifies the shape-preserving local block, and prints a two-level `(1,3,64,64)` trace. These values are observations from the local fixture, not medical segmentation claims.
 
 ## Use It
 
-Call `DoubleConv` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+```python
+import sys
+import numpy as np
+sys.path.insert(0, "code")
+import main as segmentation
+
+images, masks = segmentation.synthetic_segmentation(2, 16, 3, seed=4)
+logits = np.zeros((2, 3, 16, 16), dtype=float)
+loss, parts = segmentation.combined_loss(logits, masks, 3)
+assert np.isfinite(loss)
+assert segmentation.double_conv(logits).shape == logits.shape
+```
+
+For a real dataset, keep the mask integer and aligned with the image after every crop/resize. Interpolating class IDs with a smooth image interpolator creates labels that are not classes; nearest-neighbor is the appropriate policy for a categorical mask.
 
 ## Ship It
 
-Hand off `outputs/prompt-segmentation-task-picker.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [U-Net: Convolutional Networks for Biomedical Image Segmentation (Ronneberger et al., 2015)](https://arxiv.org/abs/1505.04597) — the original paper; the figure everyone copies is on page 2
-- [Fully Convolutional Networks (Long et al., 2015)](https://arxiv.org/abs/1411.4038) — the paper that first made segmentation an end-to-end conv problem
-- [segmentation_models_pytorch](https://github.com/qubvel/segmentation_models.pytorch) — the reference for production segmentation; every standard architecture plus every standard loss
-- [Lessons learned from training SOTA segmentation (kaggle.com competitions)](https://www.kaggle.com/code/iafoss/carvana-unet-pytorch) — a walkthrough of why TTA, pseudo-labeling, and class weights matter on real data
+`outputs/skill-segmentation-mask-inspector.md` records image/mask/logit shapes, class counts, IoU values, and absent-class handling. `outputs/prompt-segmentation-task-picker.md` asks whether the task is semantic or instance segmentation and whether the requested metric excludes undefined classes. The artifacts make the local semantics reusable without implying a model was trained.
 
 ## Exercises
 
-Keep two runs side by side for **Semantic Segmentation — U-Net**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
-
-1. **Read the first result.** From `code/`, run `python3 main.py` using an 8x8 synthetic image. Follow `DoubleConv`, `forward`, `Down`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **Distinguish semantic, instance, and panoptic segmentation and pick the right task for a given problem**.
-2. **Run a two-value comparison.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Build a U-Net from scratch in PyTorch with encoder blocks, a bottleneck, a decoder with transposed convolutions, and skip connections** says the other inputs should stay fixed.
-3. **Try an adversarial fixture.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Implement pixel-wise cross-entropy, Dice loss, and the combined loss that is the current default for medical and industrial segmentation** and record the exception text if the code rejects the case.
-4. **Write the operator note.** Open `outputs/prompt-segmentation-task-picker.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **Read IoU and Dice metrics per class and diagnose whether a bad score comes from small-object recall, boundary accuracy, or class imbalance**; note what the demo cannot establish.
+1. Build logits for a `2x2` binary mask with `+12` for the target class and `-12` for the other class. Confirm `dice_loss` is near zero and explain why the target is NHW rather than one-hot NCHW at the API boundary.
+2. Set both prediction and target to background for a two-class `2x2` mask. Read `iou_per_class`; explain why class one is `NaN` rather than zero or one.
+3. Change `lam` from `0` to `0.5` in `combined_loss` and verify the returned total equals `cross_entropy + lam*dice_loss`. Try `lam=-1` and preserve the validation error.
+4. Trace `unet_shape_trace((1,3,32,32), levels=2, base=8)`. Match each decoder resolution to its encoder skip and then try height `30` to see why the divisibility contract is explicit.
 
 ## Reference Solution
 
-A checkable result for **Semantic Segmentation — U-Net** should contain:
-
-- the `python3 main.py` output for an 8x8 synthetic image, with `DoubleConv`, `forward`, `Down` traced to the value or shape that supports **Distinguish semantic, instance, and panoptic segmentation and pick the right task for a given problem**;
-- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Build a U-Net from scratch in PyTorch with encoder blocks, a bottleneck, a decoder with transposed convolutions, and skip connections**;
-- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Implement pixel-wise cross-entropy, Dice loss, and the combined loss that is the current default for medical and industrial segmentation**; and
-- an updated `outputs/prompt-segmentation-task-picker.md` example with a concrete input, expected output field, and acceptance check tied to **Read IoU and Dice metrics per class and diagnose whether a bad score comes from small-object recall, boundary accuracy, or class imbalance**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+Confident matching binary logits produce a Dice loss close to zero. A background-only mask gives class-zero IoU `1` and class-one `NaN` because its union is empty. The combined loss is exactly the two returned components with the requested nonnegative weight. For a two-level trace, encoder resolutions are `32` then `16`, the bottleneck is `8`, and the decoder returns to `16` and `32`; a height of `30` is rejected rather than silently cropping a skip connection.

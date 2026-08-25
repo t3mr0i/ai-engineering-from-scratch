@@ -1,78 +1,78 @@
 {
   "lesson": "03-cnns-lenet-to-resnet",
-  "title": "CNNs — LeNet to ResNet",
+  "title": "CNNs: LeNet to ResNet Shape Reasoning",
   "questions": [
     {
       "stage": "pre",
-      "question": "For LeNet5 with a 32x32 input, what is the spatial size after conv1, 2x2 pooling, conv2, and another 2x2 pooling?",
+      "question": "After the first valid 5x5 convolution in lenet_shape_trace((1,1,32,32)), what is the tensor shape?",
       "options": [
-        "5x5",
-        "8x8",
-        "10x10",
-        "28x28"
+        "(1, 6, 28, 28)",
+        "(1, 1, 27, 27)",
+        "(1, 5, 32, 32)",
+        "(6, 1, 28, 28)"
       ],
       "correct": 0,
-      "explanation": "A 5x5 valid convolution gives 28, pooling gives 14, the second valid convolution gives 10, and pooling gives 5."
+      "explanation": "A valid 5x5 operation removes four pixels from each spatial dimension and uses six output channels in the LeNet trace."
     },
     {
       "stage": "check",
-      "question": "What is the flattened feature size feeding LeNet5's first linear layer after the final pool?",
+      "question": "Why is the LeNet flatten entry (1, 400) for the default trace?",
       "options": [
-        "6*28*28 = 4704",
-        "16*5*5 = 400",
-        "120",
-        "84"
+        "The first convolution has 400 filters",
+        "The second pool leaves 16 channels at 5x5, so 16*5*5 = 400",
+        "The input has 400 pixels after converting RGB to grayscale",
+        "The class count is multiplied by the batch size"
       ],
       "correct": 1,
-      "explanation": "The final convolution has 16 channels and a 5x5 map, matching the declared Linear(16*5*5,120)."
+      "explanation": "The trace has `(1,16,5,5)` after the second average pool; flattening multiplies only those channel and spatial dimensions."
     },
     {
       "stage": "check",
-      "question": "When does BasicBlock create a convolutional shortcut instead of nn.Identity()?",
+      "question": "What does residual_add require before adding a main and shortcut branch?",
       "options": [
-        "For every block, even when shapes already match",
-        "Only when the batch contains one image",
-        "When stride is not 1 or the input and output channel counts differ",
-        "When the final classifier has ten classes"
+        "Only matching heights; channels may differ",
+        "Matching batch size but any spatial size",
+        "Matching complete NCHW shapes",
+        "A scalar shortcut so broadcasting can choose the channels"
       ],
       "correct": 2,
-      "explanation": "The projection aligns spatial resolution and channels so the residual branch can be added to the main branch."
+      "explanation": "Elementwise addition is defined only when N, C, H, and W match in this local contract; a real projection must change a mismatched shortcut first."
     },
     {
       "stage": "check",
-      "question": "What output shape does TinyResNet produce for an input batch shaped (1,3,32,32) with num_classes=10?",
+      "question": "What does avg_pool2d(x, kernel=2) do to a (1,1,4,4) input with its default stride?",
       "options": [
-        "(1,256,4,4)",
-        "(10,32,32)",
-        "(1,3,32,32)",
-        "(1,10)"
+        "Returns (1,1,4,4) by padding every border",
+        "Returns (1,2,2,2) by treating pooling as a channel split",
+        "Returns a scalar average over the whole image",
+        "Returns (1,1,2,2) with each value the mean of a non-overlapping 2x2 window"
       ],
       "correct": 3,
-      "explanation": "AdaptiveAvgPool2d(1) and Flatten reduce the final 256-channel map to one vector per image, and the head emits ten logits."
+      "explanation": "The default stride equals the kernel, so valid non-overlapping windows halve both spatial dimensions while retaining channels."
     },
     {
       "stage": "post",
-      "question": "In BasicBlock.forward, what happens immediately before the final ReLU?",
+      "question": "If num_classes changes from 10 to 7, which part of model_parameter_counts changes?",
       "options": [
-        "The second batch-normalized branch is added to the shortcut output",
-        "The input is flattened into a class vector",
-        "The shortcut is multiplied by the batch size",
-        "The output is passed through max pooling"
+        "Only the final dense layer's output terms (84*classes + classes)",
+        "Every convolutional kernel because classes changes input channels",
+        "The 16*5*5 flatten width",
+        "The batch dimension in every trace entry"
       ],
       "correct": 0,
-      "explanation": "The code computes out=bn2(conv2(out)), adds self.shortcut(x), and only then applies F.relu."
+      "explanation": "The feature extractor and hidden dense widths stay fixed; only the final 84-to-class weight and bias terms depend on the class count."
     },
     {
       "stage": "post",
-      "question": "What is the central optimization benefit of a residual connection?",
+      "question": "Which statement correctly describes this lesson's relationship to LeNet, VGG, and ResNet?",
       "options": [
-        "It removes the need for nonlinear activations",
-        "It gives gradients a direct identity path around a block",
-        "It guarantees every convolution has stride 1",
-        "It converts image classification into segmentation"
+        "It downloads the historical LeNet weights and reproduces their test accuracy",
+        "It checks local NumPy shapes and formulas; it is not a pretrained or fully trainable framework checkpoint",
+        "It implements batch normalization and residual training exactly as a modern ResNet",
+        "It replaces all convolution with dense layers to avoid spatial contracts"
       ],
       "correct": 1,
-      "explanation": "Learning a residual correction around an identity path makes deep stacks easier to optimize than forcing every block to learn a complete transformation."
+      "explanation": "The code deliberately exposes shape/value primitives so the architecture decisions remain testable even without Torch or external weights."
     }
   ]
 }

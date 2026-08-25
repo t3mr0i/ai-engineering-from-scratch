@@ -1,239 +1,77 @@
-# Image Fundamentals — Pixels, Channels, Color Spaces
+# Image Fundamentals: Pixels, Channels, and Color Spaces
 
-> An image is a tensor of light samples. Every vision model you will ever use starts from this one fact.
+> A vision model only sees the numeric tensor that arrives at its first layer.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 1 Lesson 12 (Tensor Operations), Phase 3 Lesson 11 (Intro to PyTorch)
+**Prerequisites:** Phase 01 Lesson 01 (Linear Algebra Intuition)
 **Time:** ~45 minutes
 
 ## Learning Objectives
 
-- Explain how a continuous scene gets discretized into pixels and why sampling/quantization decisions set the ceiling on every downstream model
-- Read, slice, and inspect images as NumPy arrays and switch fluently between HWC and CHW layouts
-- Convert between RGB, grayscale, HSV, and YCbCr and justify why each color space exists
-- Apply pixel-level preprocessing (normalize, standardize, resize, channel-first) exactly as torchvision expects it
+- Inspect a deterministic RGB fixture and account for its shape, dtype, range, and channel order.
+- Convert between HWC and CHW without changing pixel values.
+- Derive grayscale, HSV, and YCbCr values for known RGB colors, including black and achromatic pixels.
+- Standardize an image with explicit channel statistics and reverse that transform without byte drift.
+- Resize a small array with nearest-neighbor sampling and state what information it cannot recover.
 
-## The Problem
+## Why the first tensor matters
 
-Every paper you will read, every pretrained weight you will download, every vision API you will call assumes a specific encoding of the input. Pass a `uint8` image where the model wants `float32` and it will still run — and silently produce garbage. Feed BGR to a network trained on RGB and accuracy collapses by ten points. Hand a model channels-last input when it expects channels-first and the first conv layer treats height as a feature channel. None of this throws an error. It just ruins your metrics and you spend a week hunting for a bug that lives in how you loaded the file.
+An image is a sampled field: a sensor records one value at each location and quantizes that measurement. The local implementation does not decode JPEG or PNG files. `synthetic_image(height, width, seed)` supplies an explicit `uint8` RGB fixture so every observation can be reproduced offline. Its shape is `(H, W, 3)`, its range is `[0, 255]`, and its last axis is ordered red, green, blue.
 
-A convolution is not complicated once you know what it is sliding over. The hard part is that "an image" means different things to a camera, a JPEG decoder, PIL, OpenCV, torchvision, and a CUDA kernel. Each stack has its own axis order, byte range, and channel convention. A vision engineer who cannot keep these straight ships broken pipelines.
-
-This lesson fixes the foundation so the rest of the phase can build on it. By the end you will know what a pixel is, why there are three numbers per pixel instead of one, what "normalize with ImageNet stats" actually does, and how to move between the two or three layouts that every other lesson in this phase will assume.
-
-## The Concept
-
-### The full preprocessing pipeline at a glance
-
-Every production vision system is the same sequence of reversible transforms. Get one step wrong and the model sees a different input than it was trained on.
+The same values may be presented to a model as `(3, H, W)`. `hwc_to_chw` only reorders axes; it must not silently normalize, swap channels, or crop. `chw_to_hwc` is the inverse. A batch would add a leading `N` axis, but this lesson deliberately keeps one image visible at a time.
 
 ```mermaid
 flowchart LR
-    A["Image file<br/>(JPEG/PNG)"] --> B["Decode<br/>uint8 HWC"]
-    B --> C["Convert<br/>colorspace<br/>(RGB/BGR/YCbCr)"]
-    C --> D["Resize<br/>shorter side"]
-    D --> E["Center crop<br/>model size"]
-    E --> F["Divide by 255<br/>float32 [0,1]"]
-    F --> G["Subtract mean<br/>Divide by std"]
-    G --> H["Transpose<br/>HWC → CHW"]
-    H --> I["Batch<br/>CHW → NCHW"]
-    I --> J["Model"]
-
-    style A fill:#fef3c7,stroke:#d97706
-    style J fill:#ddd6fe,stroke:#7c3aed
-    style G fill:#fecaca,stroke:#dc2626
-    style H fill:#bfdbfe,stroke:#2563eb
+    A["synthetic_image: uint8 HWC"] --> B["inspect_image"]
+    B --> C["HWC to CHW"]
+    C --> D["divide by 255"]
+    D --> E["channel mean/std"]
+    E --> F["model-ready CHW float32"]
 ```
 
-The two red and blue boxes are where 80% of silent failures live: missing standardization and wrong layout.
-
-### A pixel is a sample, not a square
-
-A camera sensor counts photons that land on a grid of tiny detectors. Each detector integrates light for a fraction of a second and emits a voltage proportional to how many photons hit it. The sensor then discretizes that voltage into an integer. One detector becomes one pixel.
-
-```
-Continuous scene                 Sensor grid                     Digital image
-(infinite detail)                (H x W detectors)               (H x W integers)
-
-    ~~~~~                        +--+--+--+--+--+                 210 198 180 155 120
-   ~   ~   ~                     |  |  |  |  |  |                 205 195 178 152 118
-  ~ light ~      ---->           +--+--+--+--+--+     ---->       200 190 175 150 115
-   ~~~~~                         |  |  |  |  |  |                 195 185 170 148 112
-                                 +--+--+--+--+--+                 188 180 165 145 108
-```
-
-Two choices happen at this step and they fix the ceiling on everything downstream:
-
-- **Spatial sampling** decides how many detectors per degree of the scene. Too few, and edges become jagged (aliasing). Too many, and storage and compute explode.
-- **Intensity quantization** decides how finely the voltage is bucketed. 8 bits gives 256 levels and is standard for display. 10, 12, 16 bits give smoother gradients and matter for medical imaging, HDR, and raw sensor pipelines.
-
-A pixel is not a coloured square with area. It is a single measurement. When you resize or rotate, you are resampling that measurement grid.
-
-### Why three channels
-
-One detector counts photons across the whole visible spectrum — that is grayscale. To get colour, the sensor covers the grid with a mosaic of red, green, and blue filters. After demosaicing, every spatial location has three integers: the response of the red-filtered detector, green-filtered, and blue-filtered nearby. Those three integers are a pixel's RGB triplet.
-
-```
-One pixel in memory:
-
-    (R, G, B) = (210, 140, 30)   <- reddish-orange
-
-An H x W RGB image:
-
-    shape (H, W, 3)     stored as   H rows of W pixels of 3 values
-                                    each in [0, 255] for uint8
-```
-
-Three is not magic. Depth cameras add a Z channel. Satellites add infrared and ultraviolet bands. Medical scans often have one channel (X-ray, CT) or many (hyperspectral). The number of channels is the last axis; conv layers learn to mix across it.
-
-### Two layout conventions: HWC and CHW
-
-Same tensor, two orderings. Every library picks one.
-
-```
-HWC (height, width, channels)           CHW (channels, height, width)
-
-   W ->                                    H ->
-  +-----+-----+-----+                     +-----+-----+
-H |R G B|R G B|R G B|                   C |R R R R R R|
-| +-----+-----+-----+                   | +-----+-----+
-v |R G B|R G B|R G B|                   v |G G G G G G|
-  +-----+-----+-----+                     +-----+-----+
-                                          |B B B B B B|
-                                          +-----+-----+
-
-   PIL, OpenCV, matplotlib,              PyTorch, most deep learning
-   almost every image file on disk       frameworks, cuDNN kernels
-```
-
-CHW exists because convolution kernels slide across H and W. Keeping the channel axis first means each kernel sees a contiguous 2D plane per channel, which vectorizes cleanly. Disk formats keep HWC because that matches how scanlines come out of a sensor.
-
-The one-line conversion you will type a thousand times:
-
-```
-img_chw = img_hwc.transpose(2, 0, 1)      # NumPy
-img_chw = img_hwc.permute(2, 0, 1)        # PyTorch tensor
-```
-
-Memory layout, visualised:
-
-```mermaid
-flowchart TB
-    subgraph HWC["HWC — pixels stored interleaved (PIL, OpenCV, JPEG)"]
-        H1["row 0: R G B | R G B | R G B ..."]
-        H2["row 1: R G B | R G B | R G B ..."]
-        H3["row 2: R G B | R G B | R G B ..."]
-    end
-    subgraph CHW["CHW — channels stored as stacked planes (PyTorch, cuDNN)"]
-        C1["plane R: entire H x W of red values"]
-        C2["plane G: entire H x W of green values"]
-        C3["plane B: entire H x W of blue values"]
-    end
-    HWC -->|"transpose(2, 0, 1)"| CHW
-    CHW -->|"transpose(1, 2, 0)"| HWC
-```
-
-### Byte ranges and dtype
-
-Three conventions dominate:
-
-| Convention | dtype | Range | Where you see it |
-|------------|-------|-------|------------------|
-| Raw | `uint8` | [0, 255] | Files on disk, PIL, OpenCV output |
-| Normalized | `float32` | [0.0, 1.0] | After `img.astype('float32') / 255` |
-| Standardized | `float32` | roughly [-2, +2] | After subtracting mean and dividing by std |
-
-Convolutional networks were trained on standardized inputs. ImageNet stats `mean=[0.485, 0.456, 0.406]`, `std=[0.229, 0.224, 0.225]` are the arithmetic mean and standard deviation of the three channels over the full ImageNet training set, computed on [0, 1] normalized pixels. Feeding raw `uint8` into a model that expects standardized float is the single most common silent failure in applied vision.
-
-### Color spaces and why they exist
-
-RGB is the capture format but it is not always the most useful representation for a model.
-
-```
- RGB               HSV                       YCbCr / YUV
-
- R red             H hue (angle 0-360)       Y luminance (brightness)
- G green           S saturation (0-1)        Cb chroma blue-yellow
- B blue            V value/brightness (0-1)  Cr chroma red-green
-
- Linear to         Separates color from      Separates brightness from
- sensor output     brightness. Useful for    color. JPEG and most video
-                   color thresholding, UI    codecs compress the chroma
-                   sliders, simple filters   channels harder because the
-                                             human eye is less sensitive
-                                             to chroma detail than to Y.
-```
-
-For most modern CNNs you feed RGB. You meet other spaces when:
-
-- **HSV** — classical CV code, color-based segmentation, white-balancing.
-- **YCbCr** — reading JPEG internals, video pipelines, super-resolution models that operate on Y only.
-- **Grayscale** — OCR, document models, any case where color is nuisance variable rather than signal.
-
-Grayscale from RGB is a weighted sum, not an average, because the human eye is more sensitive to green than to red or blue:
-
-```
-Y = 0.299 R + 0.587 G + 0.114 B       (ITU-R BT.601, the classic weights)
-```
-
-### Aspect ratio, resizing, and interpolation
-
-Every model has a fixed input size (224x224 for most ImageNet classifiers, 384x384 or 512x512 for modern detectors). Your images rarely match. The three resize choices that matter:
-
-- **Resize shorter side, then center crop** — the standard ImageNet recipe. Preserves aspect ratio, throws away a strip of edge pixels.
-- **Resize and pad** — preserves aspect ratio and every pixel, adds black bars. Standard for detection and OCR.
-- **Resize directly to target** — stretches the image. Cheap, distorts geometry, fine for many classification tasks.
-
-The interpolation method decides how intermediate pixels are computed when the new grid does not align with the old one:
-
-```
-Nearest neighbour     fastest, blocky, only choice for masks/labels
-Bilinear              fast, smooth, default for most image resizing
-Bicubic               slower, sharper on upscaling
-Lanczos               slowest, best quality, used for final display
-```
-
-Rule of thumb: bilinear for training, bicubic or lanczos for assets you will look at, nearest for anything containing integer class IDs.
-
-
-
+`rgb_to_grayscale` uses the BT.601 weights `0.299, 0.587, 0.114`; it is not an unweighted channel mean. `rgb_to_ycbcr` keeps luma `Y` on the RGB-like scale and offsets the two chroma channels by 128, which is convenient for an 8-bit video-style representation. `rgb_to_hsv` returns hue in degrees `[0, 360]` and saturation/value in `[0, 1]`. At black, hue and saturation are defined as zero because hue is not observable. These functions reject nonfinite values and shapes other than non-empty HWC RGB.
 
 ## Build It
 
-Reconstruct **Image Fundamentals — Pixels, Channels, Color Spaces** by following `synthetic_image` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+From this lesson's `code/` directory run:
+
+```bash
+python3 main.py
+```
+
+The demo creates an `8x10` fixture with seed `7`, reports `(8, 10, 3)` and `(3, 8, 10)`, and prints whether the layout round-trip is exact. It also reports the grayscale/HSV shapes, the standardized CHW shape, the byte round-trip error, and the shape of a `16x20` nearest-neighbor resize. The ImageNet mean/std constants in `preprocess_imagenet` are a documented convention for a local preprocessing exercise; they do not prove compatibility with a particular model checkpoint.
 
 ## Use It
 
-Call `synthetic_image` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+```python
+import sys
+import numpy as np
+
+sys.path.insert(0, "code")
+import main as vision
+
+raw = vision.synthetic_image(4, 6, seed=2)
+assert vision.inspect_image(raw)["shape"] == (4, 6, 3)
+model_input = vision.preprocess_imagenet(raw)
+assert model_input.shape == (3, 4, 6)
+restored = vision.deprocess_imagenet(model_input)
+assert np.array_equal(restored, raw)
+```
+
+The acceptance check is about this fixture's contract, not about visual quality. A real decoder, color profile, crop policy, or interpolation mode must be specified separately when an application adds file I/O.
 
 ## Ship It
 
-Hand off `outputs/prompt-vision-preprocessing-audit.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [Charles Poynton — A Guided Tour of Color Space](https://poynton.ca/PDFs/Guided_tour.pdf) — the clearest technical treatment of why there are so many color spaces and when each one matters
-- [PyTorch Vision Transforms Docs](https://pytorch.org/vision/stable/transforms.html) — the full pipeline of transforms you will actually compose in production
-- [How JPEG Works (Colt McAnlis)](https://www.youtube.com/watch?v=F1kYBnY6mwg) — a sharp visual tour of chroma subsampling, DCT, and why JPEG encodes YCbCr rather than RGB
-- [ImageNet Preprocessing Conventions (torchvision models)](https://pytorch.org/vision/stable/models.html) — the source of truth for `mean=[0.485, 0.456, 0.406]` and why every model in the zoo expects it
+The reusable handoff is `outputs/prompt-vision-preprocessing-audit.md`. Give it an observed `inspect_image` dictionary, the HWC/CHW shapes, the preprocessing constants, and the maximum byte round-trip error. A reviewer can then check a pipeline without guessing whether a reported `(3, H, W)` tensor came from a channel transpose or from a model-specific transform.
 
 ## Exercises
 
-Use `synthetic_image` as the trace: start from an 8x8 synthetic image, keep the raw output, and tie each observation to a named objective.
-
-1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using an 8x8 synthetic image. Follow `synthetic_image`, `load_rgb`, `inspect`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **Explain how a continuous scene gets discretized into pixels and why sampling/quantization decisions set the ceiling on every downstream model**.
-2. **Vary one named input.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Read, slice, and inspect images as NumPy arrays and switch fluently between HWC and CHW layouts** says the other inputs should stay fixed.
-3. **Probe the empty case.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Convert between RGB, grayscale, HSV, and YCbCr and justify why each color space exists** and record the exception text if the code rejects the case.
-4. **Package a usable handoff.** Open `outputs/prompt-vision-preprocessing-audit.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **Apply pixel-level preprocessing (normalize, standardize, resize, channel-first) exactly as torchvision expects it**; note what the demo cannot establish.
+1. Run `synthetic_image(5, 7, seed=4)` and record the exact shape, dtype, and three-channel means from `inspect_image`. Explain why the last axis has length three.
+2. Convert that fixture to CHW and back. Then intentionally pass an array shaped `(3, 5, 7)` to `hwc_to_chw`; record the `ValueError` and explain why accepting it would hide a layout bug.
+3. Evaluate `rgb_to_grayscale`, `rgb_to_ycbcr`, and `rgb_to_hsv` on `[[[255,0,0], [0,255,0], [0,0,255], [0,0,0]]]`. Predict the hue of the three primary colors, the black pixel's saturation, and the red pixel's luma before running the code.
+4. Standardize the fixture, deprocess it, and assert exact equality. Resize a `2x2` array to `4x6`; identify which input value appears at the bottom-right and why nearest-neighbor interpolation cannot create a new intermediate color.
 
 ## Reference Solution
 
-A checkable result for **Image Fundamentals — Pixels, Channels, Color Spaces** should contain:
-
-- the `python3 main.py` output for an 8x8 synthetic image, with `synthetic_image`, `load_rgb`, `inspect` traced to the value or shape that supports **Explain how a continuous scene gets discretized into pixels and why sampling/quantization decisions set the ceiling on every downstream model**;
-- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Read, slice, and inspect images as NumPy arrays and switch fluently between HWC and CHW layouts**;
-- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Convert between RGB, grayscale, HSV, and YCbCr and justify why each color space exists**; and
-- an updated `outputs/prompt-vision-preprocessing-audit.md` example with a concrete input, expected output field, and acceptance check tied to **Apply pixel-level preprocessing (normalize, standardize, resize, channel-first) exactly as torchvision expects it**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+For seed `4`, `synthetic_image(5, 7)` has shape `(5, 7, 3)` and `hwc_to_chw` has shape `(3, 5, 7)`. The primary-color probe yields hues `0, 120, 240` degrees, while black has `(0, 0, 0)` HSV. `preprocess_imagenet` followed by `deprocess_imagenet` returns the original `uint8` fixture exactly because the inverse uses the same constants and rounds back to bytes. A valid handoff records these observed fields and rejects malformed channel axes rather than silently coercing them.

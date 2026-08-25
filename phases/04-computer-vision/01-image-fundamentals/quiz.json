@@ -1,78 +1,78 @@
 {
   "lesson": "01-image-fundamentals",
-  "title": "Image Fundamentals — Pixels, Channels, Color Spaces",
+  "title": "Image Fundamentals: Pixels, Channels, and Color Spaces",
   "questions": [
     {
       "stage": "pre",
-      "question": "What shape does synthetic_image() return with its default height and width?",
+      "question": "What shape does synthetic_image(5, 7, seed=4) return?",
       "options": [
-        "(128,192,3)",
-        "(3,128,192)",
-        "(128,192)",
-        "(192,128,3)"
+        "(5, 7, 3) HWC",
+        "(3, 5, 7) CHW",
+        "(5, 3, 7) channel-middle",
+        "(1, 5, 7, 3) batched NHWC"
       ],
       "correct": 0,
-      "explanation": "The function stacks three color channels on the last axis, producing an HWC uint8 array with shape (128,192,3)."
+      "explanation": "The fixture is one uint8 RGB image in height-width-channel order, so its shape is (H,W,3) without a batch axis."
     },
     {
       "stage": "check",
-      "question": "An RGB image has HWC shape (64,80,3). What shape does hwc_to_chw return?",
+      "question": "After hwc_to_chw(raw) for a raw shape (8, 10, 3), which shape should a model-ready unbatched tensor have?",
       "options": [
-        "(64,3,80)",
-        "(3,64,80)",
-        "(64,80,3)",
-        "(80,64,3)"
+        "(8, 10, 3)",
+        "(3, 8, 10)",
+        "(10, 3, 8)",
+        "(1, 8, 10, 3)"
       ],
       "correct": 1,
-      "explanation": "transpose(2,0,1) moves the channel axis to the front, giving (channels,height,width)."
+      "explanation": "The conversion moves the channel axis to the front and preserves the pixel values, producing CHW (3,8,10)."
     },
     {
       "stage": "check",
-      "question": "Using the code's grayscale weights, what integer value does a pure red pixel [255,0,0] contribute?",
+      "question": "What HSV value does rgb_to_hsv return for an exact black pixel [0, 0, 0]?",
       "options": [
-        "255",
-        "29",
-        "76",
-        "150"
+        "[180, 1, 0]",
+        "[360, 1, 1]",
+        "[0, 0, 0]",
+        "[0, 255, 0]"
       ],
       "correct": 2,
-      "explanation": "The weighted value is 0.299*255=76.245; casting to uint8 yields 76."
+      "explanation": "Black has zero value and no measurable chroma, so the implementation defines hue and saturation as zero as well."
     },
     {
       "stage": "check",
-      "question": "What HSV values does rgb_to_hsv assign to a pure red pixel [255,0,0], apart from floating-point rounding?",
+      "question": "Which grayscale value does rgb_to_grayscale use for a pure red uint8 pixel?",
       "options": [
-        "hue 120 degrees, saturation 0, value 1",
-        "hue 255 degrees, saturation 1, value 0",
-        "hue 60 degrees, saturation 0.5, value 0.5",
-        "hue 0 degrees, saturation 1, value 1"
+        "255.0, because red is the only active channel",
+        "85.0, because it averages three channels",
+        "0.299, because output stays in normalized units",
+        "76.245, from the 0.299 red weight"
       ],
       "correct": 3,
-      "explanation": "After scaling RGB to [0,1], red is the maximum channel with delta=1, so the hue branch gives 0 degrees, saturation 1, and value 1."
+      "explanation": "The BT.601 expression is 0.299*255 + 0.587*G + 0.114*B, which is 76.245 for pure red."
     },
     {
       "stage": "post",
-      "question": "What does preprocess_imagenet do to an RGB uint8 image?",
+      "question": "What shape does preprocess_imagenet(synthetic_image(6, 5)) return?",
       "options": [
-        "Scales to [0,1], normalizes each channel, then returns CHW float32",
-        "Converts directly to grayscale and leaves channels last",
-        "Clips every channel to {0,255} and returns HWC integers",
-        "Applies a spatial convolution and returns a class label"
+        "(3, 6, 5) float32",
+        "(6, 5, 3) float32",
+        "(3, 5, 6) uint8",
+        "(1, 3, 6, 5) float32"
       ],
       "correct": 0,
-      "explanation": "The function divides by 255, subtracts ImageNet means, divides by ImageNet standard deviations, and transposes to channel-first layout."
+      "explanation": "The function divides by 255, standardizes each RGB channel, and transposes HWC to CHW without adding a batch dimension."
     },
     {
       "stage": "post",
-      "question": "An image has shape (128,192,3). What shape does resize_compare(image, scale=3) produce for each resized result?",
+      "question": "What does deprocess_imagenet(preprocess_imagenet(raw)) test on the local uint8 fixture?",
       "options": [
-        "(128,192,9)",
-        "(384,576,3)",
-        "(576,384,3)",
-        "(42,64,3)"
+        "That a pretrained classifier predicts the right class",
+        "That the same channel constants and layout recover the original bytes",
+        "That nearest resize restores discarded pixels",
+        "That HSV conversion is lossless for all images"
       ],
       "correct": 1,
-      "explanation": "PIL receives target width 192*3 and height 128*3; the resulting NumPy array is height 384, width 576, with three channels."
+      "explanation": "The pair reverses its own normalization and transpose, then rounds to uint8; it does not test model accuracy or an external checkpoint."
     }
   ]
 }

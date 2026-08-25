@@ -91,8 +91,9 @@ def relu(x: np.ndarray) -> np.ndarray:
 def dense(x: np.ndarray, weights: np.ndarray, bias: np.ndarray | None = None) -> np.ndarray:
     inputs = _numeric(x, "x")
     kernels = _numeric(weights, "weights")
-    if inputs.ndim != 2 or kernels.ndim != 2 or inputs.shape[1] != kernels.shape[1]:
-        raise ValueError("dense inputs must be (N,F) and weights (O,F)")
+    if (inputs.ndim != 2 or kernels.ndim != 2 or 0 in inputs.shape or 0 in kernels.shape
+            or inputs.shape[1] != kernels.shape[1]):
+        raise ValueError("dense inputs must have non-empty (N,F) and (O,F) shapes")
     result = inputs @ kernels.T
     if bias is not None:
         bias = _numeric(bias, "bias")
@@ -138,7 +139,7 @@ def lenet_shape_trace(input_shape: tuple[int, int, int, int] = (1, 1, 32, 32), n
 
 def residual_add(main: np.ndarray, shortcut: np.ndarray) -> np.ndarray:
     left, right = _numeric(main, "main"), _numeric(shortcut, "shortcut")
-    if left.shape != right.shape or left.ndim != 4:
+    if left.ndim != 4 or 0 in left.shape or left.shape != right.shape:
         raise ValueError("residual branches must have the same non-empty NCHW shape")
     return (left + right).astype(np.float32)
 

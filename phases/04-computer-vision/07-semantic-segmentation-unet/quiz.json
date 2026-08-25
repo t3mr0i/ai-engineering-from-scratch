@@ -1,78 +1,78 @@
 {
   "lesson": "07-semantic-segmentation-unet",
-  "title": "Semantic Segmentation — U-Net",
+  "title": "Semantic Segmentation: U-Net Shape and Mask Metrics",
   "questions": [
     {
       "stage": "pre",
-      "question": "With in_channels=3, num_classes=3, and input shape (2,3,64,64), what shape does UNet return?",
+      "question": "Which pair of shapes does pixel_cross_entropy expect?",
       "options": [
-        "(2,3,64,64)",
-        "(2,1,64,64)",
-        "(2,3,16,16)",
-        "(3,2,64,64)"
+        "Logits (N,C,H,W) and integer targets (N,H,W)",
+        "Logits (N,H,W,C) and one scalar label per image",
+        "One-hot logits (N,H,W) and RGB targets (N,H,W,3)",
+        "Boxes (N,4) and class scores (N,C)"
       ],
       "correct": 0,
-      "explanation": "The encoder downsamples and the decoder restores the spatial size; outc emits one logit map per class."
+      "explanation": "The class axis stays in NCHW logits while each target pixel stores one integer class ID in NHW."
     },
     {
       "stage": "check",
-      "question": "Two adjacent cars share the same label in a semantic segmentation mask. What does the task represent?",
+      "question": "Why does softmax in the segmentation lesson subtract a maximum per pixel?",
       "options": [
-        "Each car receives a unique instance ID",
-        "Both pixels are simply class car; the instances are not separated",
-        "The pixels become 3D point tracks",
-        "Only the nearest car is retained"
+        "To remove the background class from every mask",
+        "To keep exponentials finite while preserving each pixel's class probabilities",
+        "To make the target mask continuous for bilinear resizing",
+        "To convert NHW targets into RGB images"
       ],
       "correct": 1,
-      "explanation": "Semantic segmentation assigns a class to every pixel. Instance segmentation would distinguish car #1 from car #2."
+      "explanation": "A shared shift along the class axis leaves the probability ratios unchanged and prevents overflow for large logits."
     },
     {
       "stage": "check",
-      "question": "In Up.forward, why are the decoder tensor and skip tensor concatenated along the channel dimension?",
+      "question": "What does dice_loss measure in this implementation?",
       "options": [
-        "Concatenation removes the spatial dimensions",
-        "It converts class indices into RGB colors",
-        "The decoder gains high-resolution encoder features before DoubleConv refines them",
-        "It ensures every channel has the same semantic label"
+        "The number of pixels that differ after argmax, with no class weighting",
+        "The IoU of only the background class",
+        "One minus the mean per-class soft overlap between probabilities and one-hot targets",
+        "The number of decoder levels in the U-Net trace"
       ],
       "correct": 2,
-      "explanation": "The skip connection preserves fine spatial detail lost during pooling, while the decoder supplies the upsampled context."
+      "explanation": "Dice forms 2*intersection/(probability mass + target mass) per class, averages those scores, and returns one minus that average."
     },
     {
       "stage": "check",
-      "question": "What does dice_loss apply before comparing probabilities with one-hot targets?",
+      "question": "What does iou_per_class return for a class absent from both prediction and target?",
       "options": [
-        "Sigmoid independently over the batch dimension",
-        "An argmax that removes every non-winning class",
-        "A convolution with a 3x3 kernel",
-        "Softmax over the class dimension"
+        "1.0, because absence is a perfect match",
+        "0.0, because every absent class is a false negative",
+        "The image's average RGB value",
+        "NaN, because the union is zero and the class is undefined for that batch"
       ],
       "correct": 3,
-      "explanation": "The function converts per-class logits to probabilities with F.softmax(dim=1), then computes class-wise overlap."
+      "explanation": "The helper leaves the result as NaN when union is zero so callers can exclude undefined classes from a macro average."
     },
     {
       "stage": "post",
-      "question": "If lam=1.0, what does combined_loss return as its scalar loss?",
+      "question": "For unet_shape_trace((1,3,32,32), levels=2, base=8), what is the bottleneck shape?",
       "options": [
-        "Cross-entropy plus one Dice loss",
-        "Cross-entropy multiplied by Dice loss",
-        "Only the IoU of class zero",
-        "The mean of raw logits"
+        "(1, 32, 8, 8)",
+        "(1, 8, 32, 32)",
+        "(1, 16, 16, 16)",
+        "(1, 3, 8, 8)"
       ],
       "correct": 0,
-      "explanation": "The implementation returns ce + lam*dc, along with detached component values for logging."
+      "explanation": "Two encoder levels halve 32 to 16 and then 8, while doubling the base channel plan to 8*2^2 = 32 at the bottleneck."
     },
     {
       "stage": "post",
-      "question": "Why can iou_per_class return NaN for a class?",
+      "question": "Why does synthetic_segmentation use nearest-neighbor semantics for a categorical mask in a real pipeline?",
       "options": [
-        "Its class index is always out of range",
-        "That class has zero pixels in both prediction and target, so its union is zero",
-        "IoU is computed from logits before argmax",
-        "The code divides by the number of training epochs"
+        "Nearest interpolation guarantees the model will reach high IoU",
+        "Smooth interpolation would invent fractional class IDs between neighboring pixels",
+        "It converts every mask into a one-hot RGB photograph",
+        "It is required only for logits, not for integer targets"
       ],
       "correct": 1,
-      "explanation": "The function explicitly returns NaN when union==0; the main loop converts such values to zero before averaging."
+      "explanation": "Class IDs are categorical; resizing them with a smooth image interpolator can create values that are not valid labels."
     }
   ]
 }

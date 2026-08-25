@@ -1,147 +1,83 @@
-# Stable Diffusion — Architecture & Fine-Tuning
+# Stable Diffusion: Latents, Guidance, and Honest Boundaries
 
-> Stable Diffusion is a DDPM that runs in the latent space of a pretrained VAE, conditioned on text via cross-attention, sampled with a fast deterministic ODE solver, and steered by classifier-free guidance.
+> A diffusion pipeline is a set of contracts between text, latent, denoiser, scheduler, and safety components.
 
-**Type:** Build
+**Type:** Reference
 **Languages:** Python
-**Prerequisites:** Phase 4 Lesson 10 (Diffusion), Phase 7 Lesson 02 (Self-Attention)
-**Time:** ~75 minutes
+**Prerequisites:** Phase 04 Lesson 10 (Image Generation — Diffusion), Phase 04 Lesson 05 (Transfer Learning)
+**Time:** ~50 minutes
 
 ## Learning Objectives
 
-- Trace the five pieces of a Stable Diffusion pipeline: VAE, text encoder, U-Net, scheduler, safety checker — and what each of them actually does
-- Explain latent diffusion and why training in a 4x64x64 latent space (instead of a 3x512x512 image) reduces compute by 48x without quality loss
-- Use `diffusers` to generate images, run image-to-image, inpainting, and ControlNet-guided generation
-- Fine-tune Stable Diffusion with LoRA on a small custom dataset and load the LoRA adapter at inference
+- Explain why a latent pipeline records a spatial downsampling factor and channel count.
+- Compute classifier-free guidance from unconditional and conditional predictions.
+- Inspect a scheduler sigma sequence without confusing it with a denoiser.
+- Describe a low-rank LoRA update and validate its matrix shapes.
+- Separate an offline architecture ledger from an actual Stable Diffusion checkpoint run.
 
-## The Problem
+## What this lesson does
 
-Training a DDPM directly on 512x512 RGB images is expensive. Every training step backprops through a U-Net that sees 3x512x512 = 786,432 input values, and sampling takes 50+ forward passes through that same U-Net. At the quality level of Stable Diffusion 1.5 (released 2022), pixel-space diffusion would need roughly 256 GPU-months of training and 10-30 seconds per image on a consumer GPU.
+Stable Diffusion is commonly described as a text-conditioned latent diffusion pipeline: a text encoder creates conditioning, a denoiser predicts a diffusion update, a scheduler chooses the reverse step, a VAE maps images to and from a smaller latent grid, and a safety component applies a policy. The repository's dependency contract deliberately keeps this lesson offline. `main.py` imports only NumPy and implements the bookkeeping that can be tested without a model file.
 
-The trick that made open-weight text-to-image practical was **latent diffusion** (Rombach et al., CVPR 2022). Train a VAE that maps a 3x512x512 image to a 4x64x64 latent tensor and back, then do the diffusion in that latent space. Compute drops by `(3*512*512)/(4*64*64) = 48x`. Sampling drops from tens of seconds to under two seconds on the same GPU.
+The local latent adapter uses mean pooling, not a learned VAE. For an image `(N,C,H,W)` and factor `f`, `latent_shape` requires `H` and `W` divisible by `f` and returns `(N,latent_channels,H/f,W/f)`. `encode_latent` requires `latent_channels >= C` and adds extra channels as a mean when requested; this is a fixture convention, not a claim about any specific released checkpoint.
 
-Almost every modern image-generation model — SDXL, SD3, FLUX, HunyuanDiT, Wan-Video — is a latent diffusion model with variations on the autoencoder, the denoiser (U-Net or DiT), and the text conditioning. Learn Stable Diffusion and you have learnt the template.
+Classifier-free guidance combines two predictions:
 
-## The Concept
+```text
+guided = unconditional + guidance_scale * (conditional - unconditional)
+```
 
-### The pipeline
+The `guidance_scale` is a policy input. It is not a universal quality setting, and the function does not generate an image. `lora_update` applies `base + scale * (up @ down)` when `down` has shape `(rank,in_features)` and `up` has shape `(out_features,rank)`.
 
 ```mermaid
 flowchart LR
-    TXT["Text prompt"] --> TE["Text encoder<br/>(CLIP-L or T5)"]
-    TE --> CT["Text<br/>embedding"]
-
-    NOISE["Noise<br/>4x64x64"] --> UNET["UNet<br/>(denoiser with<br/>cross-attention<br/>to text)"]
-    CT --> UNET
-
-    UNET --> SCHED["Scheduler<br/>(DPM-Solver++,<br/>Euler)"]
-    SCHED --> LATENT["Clean latent<br/>4x64x64"]
-    LATENT --> VAE["VAE decoder"]
-    VAE --> IMG["512x512<br/>RGB image"]
-
-    style TE fill:#dbeafe,stroke:#2563eb
-    style UNET fill:#fef3c7,stroke:#d97706
-    style SCHED fill:#fecaca,stroke:#dc2626
-    style IMG fill:#dcfce7,stroke:#16a34a
+    A["prompt"] --> B["text conditioning"]
+    B --> C["denoiser prediction"]
+    C --> D["scheduler step"]
+    D --> E["latent grid"]
+    E --> F["VAE decode"]
+    F --> G["safety policy"]
 ```
 
-- **VAE** — frozen autoencoder. Encoder turns image into latents (used for img2img and training). Decoder turns latents back into an image.
-- **Text encoder** — CLIP text encoder (SD 1.x/2.x), CLIP-L + CLIP-G (SDXL), or T5-XXL (SD3/FLUX). Produces a sequence of token embeddings.
-- **U-Net** — the denoiser. Has cross-attention layers that attend from latents to the text embedding at every resolution level.
-- **Scheduler** — the sampling algorithm (DDIM, Euler, DPM-Solver++). Picks sigmas, blends predicted noise back into the latent.
-- **Safety checker** — optional NSFW / illegal-content filter on the output image.
-
-### Classifier-free guidance (CFG)
-
-Plain text conditioning learns `epsilon_theta(x_t, t, c)` for every prompt `c`. CFG trains the same network with `c` dropped 10% of the time (replaced by an empty embedding), giving a single model that predicts both the conditional and the unconditional noise. At inference:
-
-```
-eps = eps_uncond + w * (eps_cond - eps_uncond)
-```
-
-`w` is the guidance scale. `w=0` is unconditional, `w=1` is plain conditional, `w>1` pushes the output toward being "more conditioned on the prompt" at the cost of diversity. SD default is `w=7.5`.
-
-CFG is the reason text-to-image works at production quality. Without it, prompts bias the output weakly; with it, prompts dominate.
-
-### Latent space geometry
-
-The VAE's 4-channel latent is not just a compressed image. It is a manifold where arithmetic roughly corresponds to semantic edits (prompt engineering + interpolation both live here), and where the diffusion U-Net has been trained to spend its entire modelling budget. Decoding a random 4x64x64 latent does not produce a random-looking image — it produces garbage, because only a specific submanifold of latents decodes to valid images.
-
-Two consequences:
-
-1. **Img2img** = encode image to latent, add partial noise, run the denoiser, decode. Image structure survives because encoding is near-invertible; content changes based on the prompt.
-2. **Inpainting** = same as img2img but the denoiser only updates masked regions; unmasked regions are kept at the encoded latent.
-
-### The U-Net architecture
-
-The SD U-Net is a big version of the TinyUNet from Lesson 10 with three additions:
-
-- **Transformer blocks** at every spatial resolution, containing self-attention + cross-attention to the text embedding.
-- **Time embedding** via MLP on sinusoidal encoding.
-- **Skip connections** between encoder and decoder at matching resolutions.
-
-Total parameters in SD 1.5: ~860M. SDXL: ~2.6B. FLUX: ~12B. The jump in params is mostly in attention layers.
-
-### LoRA fine-tuning
-
-Full fine-tuning of Stable Diffusion needs 20+ GB of VRAM and updates 860M parameters. LoRA (Low-Rank Adaptation) keeps the base model frozen and injects small rank-decomposition matrices into the attention layers. A LoRA adapter for SD is typically 10-50 MB, trains in 10-60 minutes on a single consumer GPU, and loads at inference time as a drop-in modification.
-
-```
-Original: W_q : (d_in, d_out)   frozen
-LoRA:     W_q + alpha * (A @ B)   where A : (d_in, r), B : (r, d_out)
-
-r is typically 4-32.
-```
-
-LoRA is how almost every community fine-tune is distributed. CivitAI and Hugging Face host millions of them.
-
-### Schedulers you will see
-
-- **DDIM** — deterministic, ~50 steps, simple.
-- **Euler ancestral** — stochastic, 30-50 steps, slightly more creative samples.
-- **DPM-Solver++ 2M Karras** — deterministic, 20-30 steps, production default.
-- **LCM / TCD / Turbo** — consistency models and distilled variants; 1-4 steps at the cost of some quality.
-
-Swapping schedulers is a one-line change in `diffusers` and sometimes fixes sample issues without any retraining.
-
-
-
+The manifest labels the text encoder, denoiser, and safety check as contract-only components. There is no `diffusers` import, no network access, no weights download, and no generated PNG to mistake for Stable Diffusion inference.
 
 ## Build It
 
-Reconstruct **Stable Diffusion — Architecture & Fine-Tuning** by following `has_diffusers` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+Run from `code/`:
+
+```bash
+python3 main.py
+```
+
+The demo maps a `(1,3,32,32)` image to a `(1,4,4,4)` latent using factor 8, combines two prediction tensors with guidance scale 5, applies a rank-2 LoRA update, and prints a five-component ledger. These are local shape and matrix observations.
 
 ## Use It
 
-Call `has_diffusers` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+```python
+import sys
+import numpy as np
+
+sys.path.insert(0, "code")
+import main as sd
+
+latent = sd.encode_latent(np.zeros((1, 3, 8, 8)), downsample_factor=2, latent_channels=4)
+guided = sd.classifier_free_guidance(np.zeros_like(latent), np.ones_like(latent), 3.0)
+assert latent.shape == guided.shape == (1, 4, 4, 4)
+```
+
+For a real pipeline handoff, record the checkpoint's own VAE scaling and scheduler configuration instead of copying the local factor or guidance value. The lesson's numbers are illustrative fixture assumptions.
 
 ## Ship It
 
-Hand off `outputs/prompt-sd-pipeline-planner.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [High-Resolution Image Synthesis with Latent Diffusion (Rombach et al., 2022)](https://arxiv.org/abs/2112.10752) — the Stable Diffusion paper; includes every ablation that justifies the design
-- [Classifier-Free Diffusion Guidance (Ho & Salimans, 2022)](https://arxiv.org/abs/2207.12598) — the CFG paper
-- [LoRA: Low-Rank Adaptation of Large Language Models (Hu et al., 2021)](https://arxiv.org/abs/2106.09685) — LoRA was NLP-first; it transferred to SD with almost no changes
-- [diffusers documentation](https://huggingface.co/docs/diffusers) — the reference for every SD / SDXL / SD3 / FLUX pipeline
+`outputs/prompt-sd-pipeline-planner.md` is an offline component handoff: it records latent shape, conditioning, scheduler, and safety ownership. `outputs/skill-lora-training-setup.md` records the low-rank matrix contract and what must be checked before attaching LoRA parameters to a framework module. Neither artifact recommends installing a prohibited SDK.
 
 ## Exercises
 
-Keep two runs side by side for **Stable Diffusion — Architecture & Fine-Tuning**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
-
-1. **Read the first result.** From `code/`, run `python3 main.py` using an 8x8 synthetic image. Follow `has_diffusers`, `describe_pipeline`, `cfg_sweep_demo`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **Trace the five pieces of a Stable Diffusion pipeline: VAE, text encoder, U-Net, scheduler, safety checker — and what each of them actually does**.
-2. **Run a two-value comparison.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Explain latent diffusion and why training in a 4x64x64 latent space (instead of a 3x512x512 image) reduces compute by 48x without quality loss** says the other inputs should stay fixed.
-3. **Try an adversarial fixture.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Use `diffusers` to generate images, run image-to-image, inpainting, and ControlNet-guided generation** and record the exception text if the code rejects the case.
-4. **Write the operator note.** Open `outputs/prompt-sd-pipeline-planner.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **Fine-tune Stable Diffusion with LoRA on a small custom dataset and load the LoRA adapter at inference**; note what the demo cannot establish.
+1. Compute `latent_shape((2,3,32,32),8,4)` and explain why a 30-pixel height is rejected.
+2. With unconditional zeros and conditional ones, evaluate guidance scales 0, 1, and 5. State which scale reproduces the unconditional prediction and which reaches 5.
+3. Multiply a `(4,2)` `up` matrix by a `(2,4)` `down` matrix. Verify that the result has the same `(4,4)` shape as `base` and identify the rank bound of the update.
+4. Read `pipeline_manifest()` and label each component as implemented fixture or contract-only. Explain why the output is not evidence of image generation.
 
 ## Reference Solution
 
-A checkable result for **Stable Diffusion — Architecture & Fine-Tuning** should contain:
-
-- the `python3 main.py` output for an 8x8 synthetic image, with `has_diffusers`, `describe_pipeline`, `cfg_sweep_demo` traced to the value or shape that supports **Trace the five pieces of a Stable Diffusion pipeline: VAE, text encoder, U-Net, scheduler, safety checker — and what each of them actually does**;
-- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Explain latent diffusion and why training in a 4x64x64 latent space (instead of a 3x512x512 image) reduces compute by 48x without quality loss**;
-- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Use `diffusers` to generate images, run image-to-image, inpainting, and ControlNet-guided generation**; and
-- an updated `outputs/prompt-sd-pipeline-planner.md` example with a concrete input, expected output field, and acceptance check tied to **Fine-tune Stable Diffusion with LoRA on a small custom dataset and load the LoRA adapter at inference**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+The factor-8 shape is `(2,4,4,4)` and a 30-pixel spatial axis cannot be divided into equal factor-8 cells. Guidance 0 returns unconditional, guidance 1 returns conditional, and guidance 5 extrapolates five conditional-minus-unconditional differences. The LoRA product is `(4,4)` with rank at most 2. The manifest identifies the scheduler as a NumPy sigma fixture and the safety component as not implemented; no model or image was loaded.

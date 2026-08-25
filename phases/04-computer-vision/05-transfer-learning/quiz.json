@@ -1,78 +1,78 @@
 {
   "lesson": "05-transfer-learning",
-  "title": "Transfer Learning & Fine-Tuning",
+  "title": "Transfer Learning: Freeze the Backbone, Train the Head",
   "questions": [
     {
       "stage": "pre",
-      "question": "After make_feature_extractor(num_classes=10), which parameters are intended to receive gradients?",
+      "question": "What is frozen in the local transfer-learning fixture?",
       "options": [
-        "The replacement classifier head only",
-        "Every convolution and the old ImageNet classifier",
-        "Only BatchNorm running statistics",
-        "No parameters, because the model is in eval mode"
+        "The deterministic backbone_features computation; only the linear head has update state",
+        "The labels, while every image pixel is optimized",
+        "The final logits after they are computed",
+        "Nothing; train_head updates a hidden convolutional checkpoint"
       ],
       "correct": 0,
-      "explanation": "The function freezes the pretrained parameters, then replaces fc with a new trainable Linear layer for the target classes."
+      "explanation": "backbone_features is a fixed NumPy feature function. train_head allocates and updates only its weights and bias."
     },
     {
       "stage": "check",
-      "question": "How does make_fine_tune differ from make_feature_extractor?",
+      "question": "What shape does backbone_features return for nine RGB images?",
       "options": [
-        "It removes every convolution and keeps only the old head",
-        "It leaves the pretrained backbone parameters trainable after replacing fc",
-        "It freezes the new classifier and changes images to grayscale",
-        "It skips ImageNet normalization"
+        "(9, 3), regardless of the image size",
+        "(9, 12), for three means, three standard deviations, and two three-channel edge summaries",
+        "(3, 9), because channels are the first axis",
+        "(9, H, W, 3), because feature extraction does no reduction"
       ],
       "correct": 1,
-      "explanation": "Fine-tuning creates the same kind of new classifier but sets requires_grad=True for all model parameters."
+      "explanation": "The local extractor concatenates four groups with three values each, producing 12 features per image."
     },
     {
       "stage": "check",
-      "question": "In discriminative_param_groups, which stage receives the largest learning rate when decay=0.3?",
+      "question": "For parameter_counts(100, 12, freeze_backbone=True), how many parameters are trainable?",
       "options": [
-        "conv1 and bn1",
-        "layer1",
-        "The new fc head",
-        "All stages receive exactly the same rate"
+        "100",
+        "112",
+        "12",
+        "0"
       ],
       "correct": 2,
-      "explanation": "The exponent is zero for the last stage, fc, so it keeps base_lr; earlier backbone stages receive progressively smaller rates."
+      "explanation": "The backbone's 100 parameters are frozen, while the 12 head parameters remain trainable."
     },
     {
       "stage": "check",
-      "question": "Why can freeze_bn_stats help when fine-tuning on a tiny dataset?",
+      "question": "With stages [stem, stage1, head], base_lr=1e-3, and decay=0.1, which stage receives the largest discriminative rate?",
       "options": [
-        "It turns every convolution into a linear classifier",
-        "It increases the learning rate of the earliest layers",
-        "It removes the classifier head from the optimizer",
-        "It prevents small batches from replacing pretrained BatchNorm running statistics"
+        "stem",
+        "stage1",
+        "All three are forced to zero",
+        "head"
       ],
       "correct": 3,
-      "explanation": "The helper puts BatchNorm modules in eval mode and freezes their affine parameters, avoiding noisy running-stat updates."
+      "explanation": "The helper applies the fewest decay factors to the last stage, so head receives 1e-3 while earlier stages are smaller."
     },
     {
       "stage": "post",
-      "question": "What preprocessing does ArrayDataset apply before returning a training example?",
+      "question": "What does a decreasing train_head history on the seeded fixture establish?",
       "options": [
-        "Subtract ImageNet channel means, divide by standard deviations, then permute HWC to CHW",
-        "Convert every image to a single grayscale byte",
-        "Resize labels and leave pixels in HWC order",
-        "Apply a random crop after converting the label to a tensor"
+        "That the local fixed features allow the linear head to reduce its cross-entropy",
+        "That the features came from an ImageNet-pretrained ResNet",
+        "That the schedule is optimal for every downstream dataset",
+        "That the frozen backbone's weights changed during training"
       ],
       "correct": 0,
-      "explanation": "The dataset uses the declared ImageNet mean/std arrays and returns a float tensor with channels first."
+      "explanation": "The history is evidence about this local optimization problem only; it says nothing about provenance, universal schedules, or frozen feature mutation."
     },
     {
       "stage": "post",
-      "question": "A fine-tuning run has feature drift after unfreezing the backbone. Which first change matches the lesson's diagnosis?",
+      "question": "Why must a transfer-learning handoff name the frozen layers and optimizer groups?",
       "options": [
-        "Increase the backbone rate far above the head rate",
-        "Lower the backbone learning rates while keeping a larger rate for the new head",
-        "Replace cross-entropy with a pixel-wise mask loss",
-        "Disable the validation loop so drift cannot be measured"
+        "It allows the caller to skip all shape and label validation",
+        "A learning-rate value alone cannot tell which parameters can change",
+        "It proves a low learning rate prevents overfitting",
+        "It turns a local feature fixture into a downloaded checkpoint"
       ],
       "correct": 1,
-      "explanation": "Discriminative rates protect generic early features from large updates while allowing the task-specific head to adapt quickly."
+      "explanation": "Ownership and optimizer membership determine the actual update boundary; the local parameter-count and rate reports make that boundary auditable."
     }
   ]
 }

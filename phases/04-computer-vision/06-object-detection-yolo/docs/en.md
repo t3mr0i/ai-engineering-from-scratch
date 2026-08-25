@@ -1,178 +1,74 @@
-# Object Detection — YOLO from Scratch
+# Object Detection: YOLO Geometry and NMS
 
-> Detection is classification plus regression, run at every position in a feature map, then cleaned up with non-maximum suppression.
+> Detection turns a dense grid of raw numbers into a short list of boxes, scores, and classes.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 4 Lesson 03 (CNNs), Phase 4 Lesson 04 (Image Classification), Phase 4 Lesson 05 (Transfer Learning)
-**Time:** ~75 minutes
+**Prerequisites:** Phase 04 Lesson 02 (Convolutions from Scratch), Phase 04 Lesson 04 (Image Classification)
+**Time:** ~65 minutes
 
 ## Learning Objectives
 
-- Explain the grid-and-anchor design that turns detection into a dense prediction problem and state what every number in the output tensor means
-- Compute Intersection-over-Union between boxes and implement non-maximum suppression from scratch
-- Build a minimal YOLO-style head on top of a pretrained backbone, including the classification, objectness, and box-regression losses
-- Read a detection metric row (precision@0.5, recall, mAP@0.5, mAP@0.5:0.95) and pick which knob to turn next
+- Validate absolute `xyxy` boxes and compute pairwise intersection-over-union.
+- Encode a box center/size relative to a grid cell and decode it back with an anchor.
+- Assign one target anchor and class vector for a local object fixture.
+- Combine coordinate, objectness, no-objectness, and class losses with a stable BCE-with-logits expression.
+- Apply confidence filtering and deterministic non-maximum suppression to raw head output.
 
-## The Problem
+## Raw head to detections
 
-Classification says "this image is a dog." Detection says "there is a dog at pixels (112, 40, 280, 210), there is a cat at (400, 180, 560, 310), and nothing else in the frame." That one structural change — predicting a variable number of labelled boxes instead of one label per image — is what every autonomous system, every surveillance product, every document layout parser, and every factory vision line depends on.
+The local implementation is a NumPy geometry lab, not a current YOLO model or benchmark. A raw cell/anchor row has `(tx, ty, tw, th, objectness_logit, class_logits...)`. `decode` applies sigmoid to the center offsets, exponentiates bounded width/height logits, and uses the anchor and stride to return an absolute `(x1,y1,x2,y2)` box. `encode` performs the inverse for a box whose center is inside the selected half-open cell: `[cell*stride, (cell+1)*stride)`. A center exactly on the upper boundary belongs to the next cell.
 
-Detection is also where every engineering trade-off in vision shows up at once. You want boxes that are accurate (regression head), you want the right class for each box (classification head), you want the model to know when there is nothing to detect (objectness score), and you want exactly one prediction per real object (non-maximum suppression). Miss any of these and the pipeline either misses objects, reports hallucinated boxes, or predicts the same object fifteen times in slightly different positions.
-
-YOLO (You Only Look Once, Redmon et al. 2016) was the design that made all of this run in real time by doing it with a single forward pass of a conv net, and the same structural decisions are still the backbone of modern detectors (YOLOv8, YOLOv9, YOLO-NAS, RT-DETR). Learn the core and every variant becomes a rearrangement of the same parts.
-
-## The Concept
-
-### Detection as dense prediction
-
-A classifier outputs C numbers per image. A YOLO-style detector outputs `(S x S x (5 + C))` numbers per image, where S is the spatial grid size.
+`box_iou` validates finite positive-width boxes and returns a matrix with shape `(N,M)`. `nms` sorts scores descending with the original index as a tie-breaker, keeps the first box, and suppresses later boxes whose IoU exceeds the threshold. `postprocess` validates both thresholds before scanning candidates, including when the candidate set is empty. This helper is class-agnostic; class-aware NMS is a separate policy and is not silently implied.
 
 ```mermaid
 flowchart LR
-    IMG["Input 416x416 RGB"] --> BB["Backbone<br/>(ResNet, DarkNet, ...)"]
-    BB --> FM["Feature map<br/>(C_feat, 13, 13)"]
-    FM --> HEAD["Detection head<br/>(1x1 convs)"]
-    HEAD --> OUT["Output tensor<br/>(13, 13, B * (5 + C))"]
-    OUT --> DEC["Decode<br/>(grid + sigmoid + exp)"]
-    DEC --> NMS["Non-max suppression"]
-    NMS --> RESULT["Final boxes"]
-
-    style IMG fill:#dbeafe,stroke:#2563eb
-    style HEAD fill:#fef3c7,stroke:#d97706
-    style NMS fill:#fecaca,stroke:#dc2626
-    style RESULT fill:#dcfce7,stroke:#16a34a
+    A["raw grid (tx,ty,tw,th,obj,classes)"] --> B["decode anchors + stride"]
+    B --> C["confidence threshold"]
+    C --> D["box_iou / NMS"]
+    D --> E["xyxy, score, class"]
 ```
 
-Each of the `S * S` grid cells predicts `B` boxes. For each box:
-
-- 4 numbers describe geometry: `tx, ty, tw, th`.
-- 1 number is the objectness score: "is there an object centred in this cell?"
-- C numbers are class probabilities.
-
-Total per cell: `B * (5 + C)`. For VOC with `S=13, B=2, C=20`, that is 50 numbers per cell.
-
-### Why grids and anchors
-
-Plain regression would predict `(x, y, w, h)` for every object as an absolute coordinate. That is hard for a conv network because translating the image should not translate all predictions by the same amount — each object is spatially anchored. The grid answers this by assigning each ground-truth box to the grid cell its centre falls in; only that cell is responsible for that object.
-
-Anchors address a second problem. A 3x3 conv cannot easily regress a 500-pixel-wide box out of a 16-pixel receptive field feature cell. Instead, we pre-define `B` prior box shapes (anchors) per cell and predict small deltas from each anchor. The model learns to pick the right anchor and nudge it rather than regress from nothing.
-
-```
-Anchor box priors (example for 416x416 input):
-
-  small:   (30,  60)
-  medium:  (75,  170)
-  large:   (200, 380)
-
-At each grid cell, every anchor emits (tx, ty, tw, th, obj, c_1, ..., c_C).
-```
-
-Modern detectors often use FPN with different anchor sets per resolution — small anchors on shallow high-resolution maps, large anchors on deep low-resolution maps. Same idea, more scales.
-
-### Decoding predictions
-
-The raw `tx, ty, tw, th` are not box coordinates; they are regression targets to be transformed before plotting:
-
-```
-centre x  = (sigmoid(tx) + cell_x) * stride
-centre y  = (sigmoid(ty) + cell_y) * stride
-width     = anchor_w * exp(tw)
-height    = anchor_h * exp(th)
-```
-
-`sigmoid` keeps centre offsets inside the cell. `exp` lets the width scale freely from the anchor without a sign flip. `stride` scales the grid coordinates back to pixels. This decode step is the same in every YOLO version since v2.
-
-### IoU
-
-Detection's universal similarity metric between two boxes:
-
-```
-IoU(A, B) = area(A intersect B) / area(A union B)
-```
-
-IoU = 1 means identical; IoU = 0 means no overlap. IoU between the prediction and the ground-truth box is what decides whether a prediction counts as a true positive (typically IoU >= 0.5). IoU between two predictions is what NMS uses to deduplicate.
-
-### Non-maximum suppression
-
-A conv network trained on adjacent anchors will often predict overlapping boxes for the same object. NMS keeps the highest-confidence prediction and deletes any other prediction with IoU above a threshold.
-
-```
-NMS(boxes, scores, iou_threshold):
-    sort boxes by score descending
-    keep = []
-    while boxes not empty:
-        pick the top-scoring box, add to keep
-        remove every box with IoU > iou_threshold to the picked box
-    return keep
-```
-
-Typical threshold: 0.45 for object detection. Recent detectors replace standard NMS with `soft-NMS`, `DIoU-NMS`, or learn the suppression directly (RT-DETR) but the structural purpose is the same.
-
-### The loss
-
-YOLO loss is three losses added with weights:
-
-```
-L = lambda_coord * L_box(pred, target, where obj=1)
-  + lambda_obj   * L_obj(pred, 1,     where obj=1)
-  + lambda_noobj * L_obj(pred, 0,     where obj=0)
-  + lambda_cls   * L_cls(pred, target, where obj=1)
-```
-
-Only cells that contain an object contribute to the box-regression and classification losses. Cells without objects contribute only to the objectness loss (teaching the model to stay silent). `lambda_noobj` is usually small (~0.5) because the vast majority of cells are empty and would otherwise dominate the total loss.
-
-Modern variants swap MSE box loss for CIoU / DIoU (which optimise IoU directly), use focal loss for class imbalance, and balance objectness with quality focal loss. The three-component structure is unchanged.
-
-### Detection metrics
-
-Accuracy does not transfer to detection. Four numbers that do:
-
-- **Precision@IoU=0.5** — of the predictions counted as positives, how many are actually correct.
-- **Recall@IoU=0.5** — of the real objects, how many did we find.
-- **AP@0.5** — precision-recall curve area at IoU threshold 0.5; one number per class.
-- **mAP@0.5:0.95** — average of AP over IoU thresholds 0.5, 0.55, ..., 0.95. The COCO metric; strictest and most informative.
-
-Report all four. A detector that is strong on mAP@0.5 but weak on mAP@0.5:0.95 is localising roughly but not tightly; fix with better box-regression loss. A detector with high precision and low recall is too conservative; lower the confidence threshold or increase the objectness weight.
-
-
-
+`assign_targets` chooses the anchor with the largest width/height IoU, sets objectness to one, and writes a one-hot class target. `yolo_loss` expects prediction and target arrays shaped `(grid_h, grid_w, anchors, 5+C)` plus a boolean object mask. It averages each named component and combines them with nonnegative weights. An empty positive mask is valid; a malformed shape is not.
 
 ## Build It
 
-Reconstruct **Object Detection — YOLO from Scratch** by following `sigmoid` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+Run:
+
+```bash
+python3 main.py
+```
+
+The demo encodes `[18,20,50,68]` in cell `(1,1)` with stride `32` and anchor `(32,48)`, prints the round-trip error, assigns it to a `(4,4,3)` grid, computes the finite loss for zero logits, and postprocesses one raised raw cell. If two boxes select the same cell/anchor slot, `assign_targets` raises rather than silently combining or overwriting their class targets. The output is a local geometry audit; it does not establish detector recall or a production confidence threshold.
 
 ## Use It
 
-Call `sigmoid` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+```python
+import sys
+import numpy as np
+sys.path.insert(0, "code")
+import main as yolo
+
+anchors = [(16, 24), (32, 48)]
+box = np.array([18, 20, 50, 68], dtype=float)
+encoded = yolo.encode(box, 1, 1, 32, anchors[1])
+decoded = yolo.decode(encoded, 1, 1, 32, anchors[1])
+assert np.allclose(decoded, box)
+```
+
+Keep coordinate units explicit. `box_iou` and the encode/decode path use absolute pixels; anchors and stride must use the same units. Normalized `[0,1]` boxes require a different, explicit adapter.
 
 ## Ship It
 
-Hand off `outputs/prompt-detection-metric-reader.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [YOLOv1: You Only Look Once (Redmon et al., 2016)](https://arxiv.org/abs/1506.02640) — the founding paper; every YOLO since is a refinement of this structure
-- [YOLOv3 (Redmon & Farhadi, 2018)](https://arxiv.org/abs/1804.02767) — the paper that introduced multi-scale FPN-style heads; still the clearest diagram
-- [Ultralytics YOLOv8 docs](https://docs.ultralytics.com) — the current production reference; covers dataset formats, augmentations, training recipes
-- [The Illustrated Guide to Object Detection (Jonathan Hui)](https://jonathan-hui.medium.com/object-detection-series-24d03a12f904) — best plain-English tour of the full detector zoo; priceless for understanding how DETR, RetinaNet, FCOS, and YOLO relate
+`outputs/skill-anchor-designer.md` captures anchor widths/heights, stride, target-cell assignment, and the round-trip error. `outputs/prompt-detection-metric-reader.md` records IoU and NMS thresholds as policy inputs, then asks whether the output box, score, and class arrays agree in length. Neither artifact claims that one threshold is universal.
 
 ## Exercises
 
-This lab follows `sigmoid` and `box_iou` on a controlled fixture; write down the value before changing the input.
-
-1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using an 8x8 synthetic image. Follow `sigmoid`, `box_iou`, `nms`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **Explain the grid-and-anchor design that turns detection into a dense prediction problem and state what every number in the output tensor means**.
-2. **Change the controlled parameter.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Compute Intersection-over-Union between boxes and implement non-maximum suppression from scratch** says the other inputs should stay fixed.
-3. **Exercise the guard.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Build a minimal YOLO-style head on top of a pretrained backbone, including the classification, objectness, and box-regression losses** and record the exception text if the code rejects the case.
-4. **Prepare the artifact for reuse.** Open `outputs/prompt-detection-metric-reader.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **Read a detection metric row (precision@0.5, recall, mAP@0.5, mAP@0.5:0.95) and pick which knob to turn next**; note what the demo cannot establish.
+1. Compute IoU for `[0,0,10,10]` and `[5,0,15,10]`. Verify `1/3` with `box_iou` and explain why touching boxes have zero intersection.
+2. Encode/decode `[18,20,50,68]` for cell `(1,1)`, stride `32`, anchor `(32,48)`. Inspect the four encoded values and confirm the center offsets are logits, not pixel coordinates.
+3. Call `assign_targets` with two boxes in different cells and inspect `mask.sum()` and the one-hot class slice. Then try a class equal to `num_classes` and keep the `ValueError`.
+4. Create two overlapping boxes with equal scores. Run `nms` twice and verify the lower original index wins the tie. Explain why stable ordering matters when results are cached or compared in tests.
 
 ## Reference Solution
 
-A checkable result for **Object Detection — YOLO from Scratch** should contain:
-
-- the `python3 main.py` output for an 8x8 synthetic image, with `sigmoid`, `box_iou`, `nms` traced to the value or shape that supports **Explain the grid-and-anchor design that turns detection into a dense prediction problem and state what every number in the output tensor means**;
-- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Compute Intersection-over-Union between boxes and implement non-maximum suppression from scratch**;
-- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Build a minimal YOLO-style head on top of a pretrained backbone, including the classification, objectness, and box-regression losses**; and
-- an updated `outputs/prompt-detection-metric-reader.md` example with a concrete input, expected output field, and acceptance check tied to **Read a detection metric row (precision@0.5, recall, mAP@0.5, mAP@0.5:0.95) and pick which knob to turn next**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+The partial-overlap pair has IoU `50/150 = 1/3`, and the encode/decode fixture returns the original box to floating-point precision. A target assignment sets one object mask entry, objectness one, and exactly one class bit. NMS keeps the first index for an equal-score overlap. Zero raw logits produce finite BCE components because the stable expression avoids `log(sigmoid(0))` directly; invalid boxes, anchors, classes, and shapes are rejected before arithmetic.

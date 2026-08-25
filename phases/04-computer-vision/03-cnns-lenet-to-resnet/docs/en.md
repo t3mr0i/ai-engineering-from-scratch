@@ -1,194 +1,76 @@
-# CNNs — LeNet to ResNet
+# CNNs: LeNet to ResNet Shape Reasoning
 
-> Every major CNN of the last thirty years is the same conv–nonlinearity–downsample recipe with one new idea bolted on. Learn the ideas in order.
+> Architecture names are useful only when their tensor transitions and skip contracts are explicit.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 3 Lesson 11 (PyTorch), Phase 4 Lesson 01 (Image Fundamentals), Phase 4 Lesson 02 (Convolutions from Scratch)
-**Time:** ~75 minutes
+**Prerequisites:** Phase 04 Lesson 02 (Convolutions from Scratch), Phase 03 Lesson 05 (Regularization)
+**Time:** ~55 minutes
 
 ## Learning Objectives
 
-- Trace the architectural lineage LeNet-5 -> AlexNet -> VGG -> Inception -> ResNet and state the single new idea each family contributed
-- Implement LeNet-5, a VGG-style block, and a ResNet BasicBlock in PyTorch, each under 40 lines
-- Explain why residual connections turn a 1,000-layer network from untrainable into state-of-the-art
-- Read a modern backbone (ResNet-18, ResNet-50) and predict its output shape, receptive field, and parameter count before looking at the source
+- Trace the spatial and channel dimensions of a LeNet-5-style network on a `32x32` grayscale input.
+- Separate a convolution's cross-correlation, nonlinearity, pooling, flattening, and dense-head contracts.
+- Explain why a residual addition requires identical tensor shapes or a projection shortcut.
+- Use parameter-count formulas to compare small LeNet, VGG-like, and ResNet-like configurations.
+- Recognize this lesson's NumPy shape/value probes as architectural checks, not pretrained model implementations.
 
-## The Problem
+## Architecture as a shape contract
 
-In 2011, the best ImageNet classifier scored around 74% top-5 accuracy. In 2012 AlexNet scored 85%. In 2015 ResNet scored 96%. No new data. No new GPU generation. The gains came from architecture ideas. A working vision engineer has to know which idea came from which paper because every production backbone you ship in 2026 is a recombination of those same pieces — and because the ideas keep transferring: grouped convs went from CNNs to transformers, residual connections went from ResNet to every LLM in existence, batch normalisation lives in diffusion models.
+The code is intentionally framework-free. `conv2d_nchw`, `avg_pool2d`, `relu`, and `dense` are small NumPy primitives; `lenet_shape_trace` computes the classic sequence without allocating a trainable network. This keeps the important transitions visible when Torch is unavailable. It does not reproduce historical initialization, training accuracy, batch normalization, or a complete VGG/ResNet implementation.
 
-Studying these networks in order also immunises you against a common mistake: reaching for the biggest available model when a LeNet-sized network would solve the problem. MNIST does not need a ResNet. Knowing the scaling curve of each family tells you where to sit on it.
-
-## The Concept
-
-### The four ideas that changed vision
-
-```mermaid
-timeline
-    title Four ideas, four families
-    1998 : LeNet-5 : Conv + pool + FC for digits, trained on CPU, 60k params
-    2012 : AlexNet : Deeper + ReLU + dropout + two GPUs, won ImageNet by 10 points
-    2014 : VGG / Inception : 3x3 stacks (VGG), parallel filter sizes (Inception)
-    2015 : ResNet : Identity skip connections unlock 100+ layer training
-```
-
-Nothing else in classical vision mattered as much as these four jumps.
-
-### LeNet-5 (1998)
-
-Yann LeCun's digit recogniser. 60,000 parameters. Two conv-pool blocks, two fully connected layers, tanh activations. It defined the template every CNN inherits:
-
-```
-input (1, 32, 32)
-  conv 5x5 -> (6, 28, 28)
-  avg pool 2x2 -> (6, 14, 14)
-  conv 5x5 -> (16, 10, 10)
-  avg pool 2x2 -> (16, 5, 5)
-  flatten -> 400
-  dense -> 120
-  dense -> 84
-  dense -> 10
-```
-
-Everything the modern world calls a CNN — alternating convolutions and downsampling feeding a small classifier head — is LeNet with more layers, bigger channels, and better activations.
-
-### AlexNet (2012)
-
-Three changes that together broke ImageNet:
-
-1. **ReLU** instead of tanh. Gradients stop vanishing. Training speeds up by a factor of six.
-2. **Dropout** in the fully connected head. Regularisation becomes a layer, not a trick.
-3. **Depth and width**. Five conv layers, three dense layers, 60M parameters, trained on two GPUs with the model split across them.
-
-The paper's Figure 2 still shows the GPU split as two parallel streams. That parallelism was a hardware workaround, not an architectural insight — but the three ideas above are still in every model you use.
-
-### VGG (2014)
-
-VGG asked: what happens if you only use 3x3 convolutions and you go deep?
-
-```
-stack:   conv 3x3 -> conv 3x3 -> pool 2x2
-repeat:  16 or 19 conv layers
-```
-
-Two 3x3 convs see the same 5x5 input area as one 5x5 conv but with fewer parameters (2*9*C^2 = 18C^2 vs 25*C^2) and an extra ReLU in between. VGG turned this observation into an entire architecture. The simplicity — one block type, repeated — made it the reference point for everything that came after.
-
-Cost: 138M parameters, slow to train, expensive at inference.
-
-### Inception (2014, same year)
-
-Google's answer to "what kernel size should I use?" was: all of them, in parallel.
+For the default input `(N=1,C=1,H=32,W=32)`, a valid `5x5` convolution produces `28x28`, `avg_pool2d(kernel=2)` produces `14x14`, the second valid `5x5` convolution produces `10x10`, and the second pool produces `5x5`. With 16 channels, flattening therefore yields `16*5*5 = 400` features. The head maps `400 -> 120 -> 84 -> 10`.
 
 ```mermaid
 flowchart LR
-    IN["Input feature map"] --> A["1x1 conv"]
-    IN --> B["3x3 conv"]
-    IN --> C["5x5 conv"]
-    IN --> D["3x3 max pool"]
-    A --> CAT["Concatenate<br/>along channel axis"]
-    B --> CAT
-    C --> CAT
-    D --> CAT
-    CAT --> OUT["Next block"]
-
-    style IN fill:#dbeafe,stroke:#2563eb
-    style CAT fill:#fef3c7,stroke:#d97706
-    style OUT fill:#dcfce7,stroke:#16a34a
+    A["N,1,32,32"] --> B["conv5: N,6,28,28"]
+    B --> C["avg pool2: N,6,14,14"]
+    C --> D["conv5: N,16,10,10"]
+    D --> E["avg pool2: N,16,5,5"]
+    E --> F["flatten 400"]
+    F --> G["120 -> 84 -> classes"]
 ```
 
-Each branch specialises — 1x1 for channel mixing, 3x3 for local texture, 5x5 for larger patterns, pooling for shift-invariant features — and the concat lets the next layer pick whichever branch is useful. Inception v1 used 1x1 convolutions inside each branch as a bottleneck to keep parameter counts sane.
-
-### The degradation problem
-
-By 2015, VGG-19 worked and VGG-32 did not. Depth was supposed to help, but past ~20 layers both training and test loss got worse. That is not overfitting. That is the optimiser failing to find useful weights because gradients shrink multiplicatively through every layer.
-
-```
-Plain deep network:
-  y = f_L( f_{L-1}( ... f_1(x) ... ) )
-
-Gradient wrt early layer:
-  dL/dW_1 = dL/dy * df_L/df_{L-1} * ... * df_2/df_1 * df_1/dW_1
-
-Each multiplicative term has magnitude roughly (weight magnitude) * (activation gain).
-Stack 100 of them with gains < 1 and the gradient is effectively zero.
-```
-
-VGG worked at 19 layers because batch norm (published simultaneously) kept activations well-scaled. But even batch norm could not rescue depth beyond 30-ish layers.
-
-### ResNet (2015)
-
-He, Zhang, Ren, Sun proposed one change that fixed everything:
-
-```
-standard block:   y = F(x)
-residual block:   y = F(x) + x
-```
-
-The `+ x` means the layer can always choose to do nothing by driving `F(x)` to zero. A 1,000-layer ResNet is now at most as bad as a 1-layer network, because every extra block has a trivial escape hatch. With that guarantee, the optimiser is willing to make every block *slightly* useful — and slightly useful, stacked 100 times, is state-of-the-art.
-
-```mermaid
-flowchart LR
-    X["Input x"] --> F["F(x)<br/>conv + BN + ReLU<br/>conv + BN"]
-    X -.->|identity skip| PLUS(["+"])
-    F --> PLUS
-    PLUS --> RELU["ReLU"]
-    RELU --> OUT["y"]
-
-    style X fill:#dbeafe,stroke:#2563eb
-    style PLUS fill:#fef3c7,stroke:#d97706
-    style OUT fill:#dcfce7,stroke:#16a34a
-```
-
-Two variants of the block show up everywhere:
-
-- **BasicBlock** (ResNet-18, ResNet-34): two 3x3 convs, skip around both.
-- **Bottleneck** (ResNet-50, -101, -152): 1x1 down, 3x3 middle, 1x1 up, skip around the trio. Cheaper when channel counts are high.
-
-When the skip has to cross a downsample (stride=2), the identity path is replaced with a 1x1 stride=2 conv to match shapes.
-
-### Why residuals matter beyond vision
-
-The idea was not really about image classification. It was about turning deep networks from "cross-your-fingers and hope gradients survive" into a reliable, scalable engineering tool. Every transformer you will read about next phase has the exact same skip connection in every block. Without ResNet, there is no GPT.
-
-
-
+`residual_add(main, shortcut)` represents the addition after a residual branch. Both arrays must be finite, non-empty, and have the same complete `(N,C,H,W)` shape. If the branch changes channel count or stride, a real ResNet uses a projection; this local function rejects mismatched shapes rather than hiding that architectural decision. `model_parameter_counts` applies explicit kernel and bias formulas to small named configurations so a reviewer can check how a head change affects only the final terms.
 
 ## Build It
 
-Reconstruct **CNNs — LeNet to ResNet** by following `LeNet5` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+Run:
+
+```bash
+python3 main.py
+```
+
+The output lists every LeNet trace entry, local parameter counts for three small configurations, and an identity residual check. Read the trace in order and verify `400` before accepting the dense head. The code's convolution is cross-correlation, consistent with Lesson 02; the architecture names describe patterns, not a claim that the local arrays are drop-in checkpoints.
 
 ## Use It
 
-Call `LeNet5` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+```python
+import sys
+import numpy as np
+
+sys.path.insert(0, "code")
+import main as cnn
+
+x = np.ones((1, 1, 32, 32), dtype=np.float32)
+w = np.ones((6, 1, 5, 5), dtype=np.float32)
+feature = cnn.avg_pool2d(cnn.relu(cnn.conv2d_nchw(x, w)), 2)
+assert feature.shape == (1, 6, 14, 14)
+```
+
+When reviewing a residual block, compare the complete `(N,C,H,W)` tuple, not only height and width. A matching spatial size with different channels is still an invalid addition.
 
 ## Ship It
 
-Hand off `outputs/prompt-backbone-selector.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [Deep Residual Learning for Image Recognition (He et al., 2015)](https://arxiv.org/abs/1512.03385) — the ResNet paper; every figure is worth studying
-- [Very Deep Convolutional Networks (Simonyan & Zisserman, 2014)](https://arxiv.org/abs/1409.1556) — the VGG paper; still the best reference for "why 3x3"
-- [ImageNet Classification with Deep CNNs (Krizhevsky et al., 2012)](https://papers.nips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html) — AlexNet; the paper that ended the hand-crafted-feature era
-- [Going Deeper with Convolutions (Szegedy et al., 2014)](https://arxiv.org/abs/1409.4842) — Inception v1; the parallel-filter idea that still shows up in vision transformers
+`outputs/skill-residual-block-reviewer.md` is a shape gate: it records main/shortcut tuples and requires an explicit projection when they differ. `outputs/prompt-backbone-selector.md` records the intended input channels, downsampling points, head class count, and parameter-count calculation. These artifacts are useful before wiring a framework model or loading weights.
 
 ## Exercises
 
-Keep two runs side by side for **CNNs — LeNet to ResNet**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
-
-1. **Read the first result.** From `code/`, run `python3 main.py` using an 8x8 synthetic image. Follow `LeNet5`, `forward`, `VGGBlock`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **Trace the architectural lineage LeNet-5 -> AlexNet -> VGG -> Inception -> ResNet and state the single new idea each family contributed**.
-2. **Run a two-value comparison.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Implement LeNet-5, a VGG-style block, and a ResNet BasicBlock in PyTorch, each under 40 lines** says the other inputs should stay fixed.
-3. **Try an adversarial fixture.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Explain why residual connections turn a 1,000-layer network from untrainable into state-of-the-art** and record the exception text if the code rejects the case.
-4. **Write the operator note.** Open `outputs/prompt-backbone-selector.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **Read a modern backbone (ResNet-18, ResNet-50) and predict its output shape, receptive field, and parameter count before looking at the source**; note what the demo cannot establish.
+1. Run `lenet_shape_trace((2,1,32,32), num_classes=7)` and write down the two entries that change from the default trace. Explain why the flatten width does not depend on batch size or class count.
+2. Use an all-ones `(1,1,4,4)` input and a `3x3` all-ones kernel without padding. Calculate the upper-left output value, then compare it with the padded case.
+3. Try `residual_add(np.zeros((1,8,8,8)), np.zeros((1,16,8,8)))`. Record the error and specify the projection's required output shape if the shortcut starts with eight channels.
+4. Change `num_classes` from 10 to 7 in `model_parameter_counts`. Identify the exact head terms that change and explain why convolutional terms remain constant.
 
 ## Reference Solution
 
-A checkable result for **CNNs — LeNet to ResNet** should contain:
-
-- the `python3 main.py` output for an 8x8 synthetic image, with `LeNet5`, `forward`, `VGGBlock` traced to the value or shape that supports **Trace the architectural lineage LeNet-5 -> AlexNet -> VGG -> Inception -> ResNet and state the single new idea each family contributed**;
-- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Implement LeNet-5, a VGG-style block, and a ResNet BasicBlock in PyTorch, each under 40 lines**;
-- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Explain why residual connections turn a 1,000-layer network from untrainable into state-of-the-art**; and
-- an updated `outputs/prompt-backbone-selector.md` example with a concrete input, expected output field, and acceptance check tied to **Read a modern backbone (ResNet-18, ResNet-50) and predict its output shape, receptive field, and parameter count before looking at the source**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+The batch-two trace starts with `(2,1,32,32)` and ends with `(2,7)`; the intermediate `flatten` remains `(2,400)`. An unpadded all-ones `3x3` patch sums to nine, while a corner in the padded result sees zero-filled neighbors. The residual test must reject `(1,8,8,8)+(1,16,8,8)` until a projection produces 16 channels. Only the final `84*classes + classes` terms change when the class count changes.

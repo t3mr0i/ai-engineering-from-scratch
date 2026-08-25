@@ -1,128 +1,169 @@
+# Entry point for phases/04-computer-vision/09-image-generation-gans/docs/en.md.
+# Implements a deterministic scalar GAN so minimax, non-saturating, and separate updates are inspectable.
+# The toy generator maps one latent scalar to one sample; it is not an image model or a training benchmark.
+# Run from this directory with: python3 main.py
+
+from __future__ import annotations
+
+from numbers import Integral, Real
+
 import numpy as np
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.utils.data import DataLoader, TensorDataset
-from torch.nn.utils import spectral_norm
 
 
-class Generator(nn.Module):
-    def __init__(self, z_dim=64, img_channels=3, feat=32):
-        super().__init__()
-        self.net = nn.Sequential(
-            nn.ConvTranspose2d(z_dim, feat * 4, 4, 1, 0, bias=False),
-            nn.BatchNorm2d(feat * 4),
-            nn.ReLU(inplace=True),
-            nn.ConvTranspose2d(feat * 4, feat * 2, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(feat * 2),
-            nn.ReLU(inplace=True),
-            nn.ConvTranspose2d(feat * 2, feat, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(feat),
-            nn.ReLU(inplace=True),
-            nn.ConvTranspose2d(feat, img_channels, 4, 2, 1, bias=False),
-            nn.Tanh(),
-        )
-
-    def forward(self, z):
-        return self.net(z.view(z.size(0), -1, 1, 1))
+def _finite(value: np.ndarray | float, name: str) -> np.ndarray:
+    array = np.asarray(value)
+    if not np.issubdtype(array.dtype, np.number) or not np.isfinite(array).all():
+        raise ValueError(f"{name} must contain finite numeric values")
+    return array.astype(np.float64, copy=False)
 
 
-class Discriminator(nn.Module):
-    def __init__(self, img_channels=3, feat=32, use_sn=False):
-        super().__init__()
-        layers = []
-        def conv(in_c, out_c, bn):
-            c = nn.Conv2d(in_c, out_c, 4, 2, 1, bias=not bn)
-            if use_sn:
-                c = spectral_norm(c)
-            layers.append(c)
-            if bn and not use_sn:
-                layers.append(nn.BatchNorm2d(out_c))
-            layers.append(nn.LeakyReLU(0.2, inplace=True))
-
-        conv(img_channels, feat, bn=False)
-        conv(feat, feat * 2, bn=True)
-        conv(feat * 2, feat * 4, bn=True)
-        last = nn.Conv2d(feat * 4, 1, 4, 1, 0)
-        layers.append(spectral_norm(last) if use_sn else last)
-        self.net = nn.Sequential(*layers)
-
-    def forward(self, x):
-        return self.net(x).view(-1)
+def _positive_int(value: int, name: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, Integral) or int(value) <= 0:
+        raise ValueError(f"{name} must be a positive integer")
+    return int(value)
 
 
-def train_step(G, D, real, z, opt_g, opt_d, device):
-    real = real.to(device)
-
-    opt_d.zero_grad()
-    d_real = D(real)
-    d_fake = D(G(z).detach())
-    loss_d = (F.binary_cross_entropy_with_logits(d_real, torch.ones_like(d_real))
-              + F.binary_cross_entropy_with_logits(d_fake, torch.zeros_like(d_fake)))
-    loss_d.backward()
-    opt_d.step()
-
-    opt_g.zero_grad()
-    d_fake = D(G(z))
-    loss_g = F.binary_cross_entropy_with_logits(d_fake, torch.ones_like(d_fake))
-    loss_g.backward()
-    opt_g.step()
-
-    return loss_d.item(), loss_g.item()
+def _finite_scalar(value: float, name: str) -> float:
+    array = _finite(value, name)
+    if array.ndim != 0:
+        raise ValueError(f"{name} must be a finite scalar")
+    return float(array)
 
 
-def synthetic_circles(num=800, size=32, seed=0):
-    rng = np.random.default_rng(seed)
-    imgs = np.full((num, 3, size, size), -1.0, dtype=np.float32)
-    yy, xx = np.meshgrid(np.arange(size), np.arange(size), indexing="ij")
-    for i in range(num):
-        r = rng.uniform(6, 10)
-        cx, cy = rng.uniform(r, size - r, size=2)
-        mask = (xx - cx) ** 2 + (yy - cy) ** 2 < r ** 2
-        color = rng.uniform(-0.3, 1.0, size=3)
-        for c in range(3):
-            imgs[i, c][mask] = color[c]
-    return torch.from_numpy(imgs)
+def sigmoid(value: np.ndarray | float) -> np.ndarray:
+    scores = _finite(value, "logits")
+    result = np.empty_like(scores, dtype=np.float64)
+    positive = scores >= 0
+    result[positive] = 1.0 / (1.0 + np.exp(-scores[positive]))
+    exp_scores = np.exp(scores[~positive])
+    result[~positive] = exp_scores / (1.0 + exp_scores)
+    return result
 
 
-@torch.no_grad()
-def sample(G, n=8, z_dim=64, device="cpu"):
-    G.eval()
-    z = torch.randn(n, z_dim, device=device)
-    out = G(z)
-    G.train()
-    return ((out + 1) / 2).clamp(0, 1)
+def softplus(value: np.ndarray | float) -> np.ndarray:
+    scores = _finite(value, "value")
+    return np.maximum(scores, 0) + np.log1p(np.exp(-np.abs(scores)))
 
 
-def main():
-    torch.manual_seed(0)
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    z_dim = 64
+def binary_cross_entropy_with_logits(logits: np.ndarray, labels: np.ndarray) -> float:
+    scores = _finite(logits, "logits")
+    targets = _finite(labels, "labels")
+    if scores.shape != targets.shape or scores.size == 0:
+        raise ValueError("logits and labels must have the same non-empty shape")
+    if np.any((targets < 0) | (targets > 1)):
+        raise ValueError("labels must lie in [0,1]")
+    return float((softplus(scores) - scores * targets).mean())
 
-    data = synthetic_circles(num=400)
-    loader = DataLoader(TensorDataset(data), batch_size=32, shuffle=True)
 
-    G = Generator(z_dim=z_dim, img_channels=3, feat=32).to(device)
-    D = Discriminator(img_channels=3, feat=32, use_sn=True).to(device)
-    opt_g = torch.optim.Adam(G.parameters(), lr=2e-4, betas=(0.5, 0.999))
-    opt_d = torch.optim.Adam(D.parameters(), lr=2e-4, betas=(0.5, 0.999))
+def discriminator_loss(real_logits: np.ndarray, fake_logits: np.ndarray) -> float:
+    real, fake = _finite(real_logits, "real_logits"), _finite(fake_logits, "fake_logits")
+    if real.size == 0 or fake.size == 0:
+        raise ValueError("real and fake logit batches must be non-empty")
+    return binary_cross_entropy_with_logits(real, np.ones_like(real)) + binary_cross_entropy_with_logits(fake, np.zeros_like(fake))
 
-    print(f"G params: {sum(p.numel() for p in G.parameters()):,}")
-    print(f"D params: {sum(p.numel() for p in D.parameters()):,}")
 
-    for epoch in range(5):
-        ld_sum, lg_sum, n = 0.0, 0.0, 0
-        for (batch,) in loader:
-            z = torch.randn(batch.size(0), z_dim, device=device)
-            ld, lg = train_step(G, D, batch, z, opt_g, opt_d, device)
-            ld_sum += ld
-            lg_sum += lg
-            n += 1
-        print(f"epoch {epoch}  D {ld_sum/n:.3f}  G {lg_sum/n:.3f}")
+def generator_loss_non_saturating(fake_logits: np.ndarray) -> float:
+    scores = _finite(fake_logits, "fake_logits")
+    if scores.size == 0:
+        raise ValueError("fake_logits must be non-empty")
+    return float(softplus(-scores).mean())
 
-    samples = sample(G, n=8, z_dim=z_dim, device=device)
-    print(f"generated shape: {tuple(samples.shape)}  range [{samples.min():.2f}, {samples.max():.2f}]")
+
+def generator_loss_minimax(fake_logits: np.ndarray) -> float:
+    """The minimax generator objective, written as -log(1-D(G(z)))."""
+    scores = _finite(fake_logits, "fake_logits")
+    if scores.size == 0:
+        raise ValueError("fake_logits must be non-empty")
+    return float(softplus(scores).mean())
+
+
+def generator_samples(z: np.ndarray, weight: float, bias: float) -> np.ndarray:
+    latent = _finite(z, "z")
+    if latent.ndim != 1 or latent.size == 0:
+        raise ValueError("z must be a non-empty one-dimensional batch")
+    weight, bias = _finite_scalar(weight, "weight"), _finite_scalar(bias, "bias")
+    return weight * latent + bias
+
+
+def discriminator_logits(samples: np.ndarray, weight: float, bias: float) -> np.ndarray:
+    values = _finite(samples, "samples")
+    if values.ndim != 1 or values.size == 0:
+        raise ValueError("samples must be a non-empty one-dimensional batch")
+    weight, bias = _finite_scalar(weight, "weight"), _finite_scalar(bias, "bias")
+    return weight * values + bias
+
+
+def gan_step(
+    params: dict[str, float],
+    real: np.ndarray,
+    z: np.ndarray,
+    lr_g: float = 0.02,
+    lr_d: float = 0.05,
+) -> tuple[dict[str, float], dict[str, float]]:
+    """Update D on detached generator samples, then G with the non-saturating loss."""
+    if not isinstance(lr_g, Real) or not np.isfinite(lr_g) or lr_g <= 0:
+        raise ValueError("lr_g must be positive and finite")
+    if not isinstance(lr_d, Real) or not np.isfinite(lr_d) or lr_d <= 0:
+        raise ValueError("lr_d must be positive and finite")
+    required = ("g_weight", "g_bias", "d_weight", "d_bias")
+    if set(params) != set(required):
+        raise ValueError("params must contain exactly four finite GAN parameters")
+    try:
+        params = {key: _finite_scalar(params[key], key) for key in required}
+    except (TypeError, ValueError) as exc:
+        raise ValueError("params must contain exactly four finite GAN parameters") from exc
+    real_values, latent = _finite(real, "real"), _finite(z, "z")
+    if real_values.ndim != 1 or latent.ndim != 1 or real_values.size == 0 or latent.size == 0:
+        raise ValueError("real and z must be non-empty one-dimensional batches")
+
+    fake = generator_samples(latent, params["g_weight"], params["g_bias"])
+    real_logits = discriminator_logits(real_values, params["d_weight"], params["d_bias"])
+    fake_logits = discriminator_logits(fake, params["d_weight"], params["d_bias"])
+    loss_d = discriminator_loss(real_logits, fake_logits)
+    d_real_grad = sigmoid(real_logits) - 1.0
+    d_fake_grad = sigmoid(fake_logits)
+    d_weight_grad = float(np.mean(d_real_grad * real_values) + np.mean(d_fake_grad * fake))
+    d_bias_grad = float(np.mean(d_real_grad) + np.mean(d_fake_grad))
+    updated = dict(params)
+    updated["d_weight"] -= float(lr_d) * d_weight_grad
+    updated["d_bias"] -= float(lr_d) * d_bias_grad
+
+    fake = generator_samples(latent, params["g_weight"], params["g_bias"])
+    fake_logits_for_g = discriminator_logits(fake, updated["d_weight"], updated["d_bias"])
+    loss_g = generator_loss_non_saturating(fake_logits_for_g)
+    fake_logit_grad = sigmoid(fake_logits_for_g) - 1.0
+    g_weight_grad = float(np.mean(fake_logit_grad * updated["d_weight"] * latent))
+    g_bias_grad = float(np.mean(fake_logit_grad * updated["d_weight"]))
+    updated["g_weight"] -= float(lr_g) * g_weight_grad
+    updated["g_bias"] -= float(lr_g) * g_bias_grad
+    return updated, {"d_loss": loss_d, "g_loss": loss_g}
+
+
+def train_toy_gan(steps: int = 80, batch_size: int = 32, seed: int = 0) -> dict[str, object]:
+    steps, batch_size = _positive_int(steps, "steps"), _positive_int(batch_size, "batch_size")
+    if isinstance(seed, bool) or not isinstance(seed, Integral):
+        raise ValueError("seed must be an integer")
+    rng = np.random.default_rng(int(seed))
+    params = {"g_weight": 0.15, "g_bias": -0.5, "d_weight": 0.2, "d_bias": 0.0}
+    d_losses, g_losses, fake_means = [], [], []
+    for _ in range(steps):
+        real = rng.normal(2.0, 0.25, batch_size)
+        z = rng.normal(0.0, 1.0, batch_size)
+        params, losses = gan_step(params, real, z)
+        d_losses.append(losses["d_loss"])
+        g_losses.append(losses["g_loss"])
+        fake_means.append(float(generator_samples(z, params["g_weight"], params["g_bias"]).mean()))
+    return {"params": params, "d_losses": d_losses, "g_losses": g_losses, "fake_means": fake_means}
+
+
+def main() -> int:
+    result = train_toy_gan(steps=80, batch_size=32, seed=4)
+    print("toy GAN: scalar generator -> scalar discriminator")
+    print(f"steps={len(result['d_losses'])} final_D={result['d_losses'][-1]:.4f} final_G={result['g_losses'][-1]:.4f}")
+    print(f"parameters={result['params']} final_fake_batch_mean={result['fake_means'][-1]:.3f}")
+    print("updates: discriminator(real, detached fake) then generator(non-saturating)")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

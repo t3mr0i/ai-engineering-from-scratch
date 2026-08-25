@@ -169,13 +169,36 @@ def conv2d_im2col(
 
 
 def max_pool2d(x: np.ndarray, kernel: int = 2, stride: int | None = None, padding: int = 0) -> np.ndarray:
+    """Take spatial maxima without letting padded values win.
+
+    Floating-point inputs use ``-inf`` outside the image; integer inputs use
+    the dtype's minimum value.  Both are lower than every valid input value,
+    which preserves maxima for negative images at the border.
+    """
     value = _chw(x)
     kernel = _positive_int(kernel, "kernel")
     stride = kernel if stride is None else _positive_int(stride, "stride")
     padding = _nonnegative_int(padding, "padding")
     h_out = output_size(value.shape[1], kernel, padding, stride)
     w_out = output_size(value.shape[2], kernel, padding, stride)
-    padded = pad2d(value, padding)
+    if padding == 0:
+        padded = value
+    elif np.issubdtype(value.dtype, np.floating):
+        padded = np.pad(
+            value,
+            ((0, 0), (padding, padding), (padding, padding)),
+            mode="constant",
+            constant_values=-np.inf,
+        )
+    elif np.issubdtype(value.dtype, np.integer):
+        padded = np.pad(
+            value,
+            ((0, 0), (padding, padding), (padding, padding)),
+            mode="constant",
+            constant_values=np.iinfo(value.dtype).min,
+        )
+    else:
+        raise ValueError("max_pool2d requires floating-point or integer inputs when padding is used")
     out = np.empty((value.shape[0], h_out, w_out), dtype=value.dtype)
     for oy in range(h_out):
         for ox in range(w_out):
