@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What input and output shapes fit MNISTModel for a batch of 64 flattened images?",
+      "question": "What does this lesson's canonical command do when PyTorch is not installed?",
       "options": [
-        "Input [64,784] and output [64,10]",
-        "Input [784,64] and output [10,64]",
-        "Input [64,28,28] and output [64,1]",
-        "Input [10,784] and output [10,64]"
-      ],
-      "correct": 0,
-      "explanation": "The first Linear expects 784 features per image, and the final Linear emits ten class logits for each of the 64 rows."
-    },
-    {
-      "stage": "check",
-      "question": "What should be passed to nn.CrossEntropyLoss in this MNIST loop?",
-      "options": [
-        "Softmax probabilities with one-hot floating labels only",
-        "Raw logits with shape [batch,10] and integer class labels",
-        "Thresholded class indices as both inputs and targets",
-        "The model's hidden ReLU activations and image pixels"
+        "It installs a CPU wheel before running the example",
+        "It exits cleanly after printing that the optional tensor path was not run",
+        "It silently claims that a model reached a target accuracy",
+        "It waits for a GPU device to appear"
       ],
       "correct": 1,
-      "explanation": "PyTorch CrossEntropyLoss combines log-softmax with the negative log likelihood and expects class-index targets, so the model should return raw logits."
+      "explanation": "main.py is deliberately import-safe: the missing-backend branch reports the skipped optional path and returns without a network install or traceback."
     },
     {
       "stage": "check",
-      "question": "Which order matches train_one_epoch in the lesson?",
+      "question": "What shapes and dtypes does fixture() return for the local training example?",
       "options": [
-        "forward, optimizer.step, zero_grad, loss, backward",
-        "loss, zero_grad, optimizer.step, forward, backward",
-        "zero_grad, forward, loss, backward, optimizer.step",
-        "backward, forward, zero_grad, loss, optimizer.step"
+        "x=(2, 4) float32 and y=(2,) float32",
+        "x=(4, 2) float32 and y=(4,) int64 class IDs",
+        "x=(4, 2) int64 and y=(2, 4) float32 logits",
+        "x=(4,) float32 and y=(4, 2) one-hot vectors"
+      ],
+      "correct": 1,
+      "explanation": "fixture creates four rows with two features and four integer class labels; the shape mirrors the input/output contract used by the optional torch path."
+    },
+    {
+      "stage": "check",
+      "question": "Why does the optional training path pass integer class IDs to CrossEntropyLoss rather than one-hot vectors?",
+      "options": [
+        "The loss consumes one target index per row together with raw class logits",
+        "One-hot vectors cannot be stored in a tensor",
+        "CrossEntropyLoss first thresholds every target at zero",
+        "Integer targets make the model skip its final Linear layer"
+      ],
+      "correct": 0,
+      "explanation": "The model emits a two-column logit tensor and each target selects one column; applying softmax or one-hot conversion before the loss would change this contract."
+    },
+    {
+      "stage": "check",
+      "question": "Which sequence is the safe per-step order in train_demo when the optional backend is available?",
+      "options": [
+        "optimizer.step(), loss.backward(), optimizer.zero_grad(), forward",
+        "forward, optimizer.step(), loss.backward(), optimizer.zero_grad()",
+        "optimizer.zero_grad(), forward, loss, backward, optimizer.step()",
+        "loss, forward, optimizer.zero_grad(), optimizer.step(), backward"
       ],
       "correct": 2,
-      "explanation": "Gradients are cleared before the forward pass, computed from loss.backward(), and applied by optimizer.step()."
-    },
-    {
-      "stage": "check",
-      "question": "Why does evaluate call model.eval() and use torch.no_grad()?",
-      "options": [
-        "It makes the test labels trainable parameters",
-        "It forces every model output to be zero",
-        "It changes CrossEntropyLoss into MSELoss",
-        "Evaluation disables training-time layers such as Dropout and avoids building gradient graphs"
-      ],
-      "correct": 3,
-      "explanation": "eval() changes module behavior, while no_grad() saves memory and computation because no parameter update follows."
+      "explanation": "Clearing old gradients, computing the forward loss, backpropagating, and then stepping prevents gradients from earlier batches leaking into the update."
     },
     {
       "stage": "post",
-      "question": "In demo_autograd, y=x^2+3x and x=[1,2,3]. What gradient does z=sum(y) produce?",
+      "question": "If train_demo(steps=0) is requested, what should a caller expect?",
       "options": [
-        "[5,7,9]",
-        "[1,2,3]",
-        "[2,4,6]",
-        "[3,3,3]"
+        "An unbounded training loop",
+        "A one-step model fit despite the argument",
+        "A ValueError because the bounded demo needs a positive step count",
+        "A fabricated accuracy for an untrained model"
       ],
-      "correct": 0,
-      "explanation": "dy/dx=2x+3, giving [5,7,9]. Summing y supplies an upstream gradient of one to each element."
+      "correct": 2,
+      "explanation": "The public helper validates steps as a positive integer before importing or training with torch, so invalid budgets fail explicitly rather than producing a misleading result."
     },
     {
       "stage": "post",
-      "question": "What shape does x.unsqueeze(0) have when x was created with torch.randn(3,4)?",
+      "question": "What does device_name() report on a machine where torch cannot be imported?",
       "options": [
-        "[3,4,1]",
-        "[1,3,4]",
-        "[12]",
-        "[4,3]"
+        "cuda:0, because the helper assumes GPU support",
+        "unavailable, without probing or installing a backend",
+        "cpu, even when no torch module exists",
+        "the current working directory"
       ],
       "correct": 1,
-      "explanation": "unsqueeze(0) inserts a new leading dimension of size one, turning [3,4] into [1,3,4]."
+      "explanation": "device_name checks backend availability first and returns the explicit unavailable marker; it does not invent a device from the host environment."
     }
   ]
 }

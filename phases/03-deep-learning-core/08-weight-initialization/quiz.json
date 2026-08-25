@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What happens to four neurons initialized with identical zero weights and biases on the same input?",
+      "question": "What shape does xavier_init(4, 3, rng) return in this lesson?",
       "options": [
-        "They immediately learn four different features",
-        "They produce four independent random outputs",
-        "They produce identical outputs and receive identical gradients",
-        "They cannot perform a forward pass"
-      ],
-      "correct": 2,
-      "explanation": "Zero initialization preserves symmetry: every neuron starts with the same computation and subsequent updates remain the same."
-    },
-    {
-      "stage": "check",
-      "question": "For fan_in=fan_out=64, what variance does the Xavier formula 2/(fan_in+fan_out) specify?",
-      "options": [
-        "1/32",
-        "64",
-        "2/64",
-        "1/64"
-      ],
-      "correct": 3,
-      "explanation": "2/(64+64)=2/128=1/64."
-    },
-    {
-      "stage": "check",
-      "question": "For fan_in=100, what weight variance does Kaiming initialization specify?",
-      "options": [
-        "0.02",
-        "0.01",
-        "0.2",
-        "2.0"
+        "Three rows, each containing four weights",
+        "Four rows, each containing three biases",
+        "One vector containing seven values",
+        "A 4x4 square matrix"
       ],
       "correct": 0,
-      "explanation": "The code uses Var(w)=2/fan_in=2/100=0.02."
+      "explanation": "The implementation stores one row per output neuron, so fan_out=3 gives three rows and fan_in=4 gives four entries per row."
     },
     {
       "stage": "check",
-      "question": "What shape does zero_init(fan_in=2, fan_out=4) return?",
+      "question": "With fan_in=8 and unit input variance, what pre-activation variance does Kaiming's 2/fan_in rule target?",
       "options": [
-        "Two rows, each containing four zeros",
-        "Four rows, each containing two zeros",
-        "A single vector of two zeros",
-        "A four-by-four identity matrix"
-      ],
-      "correct": 1,
-      "explanation": "The function creates one weight row per output neuron, so its shape is [fan_out][fan_in], or 4 by 2."
-    },
-    {
-      "stage": "post",
-      "question": "Which initialization pairing follows the lesson's recommended variance assumptions?",
-      "options": [
-        "Kaiming for sigmoid, zero initialization for ReLU",
-        "Xavier for every activation, regardless of its shape",
-        "Xavier for sigmoid or tanh, Kaiming for ReLU",
-        "Unit-scale random weights for every 50-layer network"
-      ],
-      "correct": 2,
-      "explanation": "Xavier balances forward and backward variance for symmetric sigmoid/tanh activations; Kaiming accounts for the half-gating behavior of ReLU."
-    },
-    {
-      "stage": "post",
-      "question": "Why can random N(0,1) weights become unstable through 50 ReLU layers in the experiment?",
-      "options": [
-        "ReLU always maps every positive value to zero",
-        "Randomness makes all neurons exactly symmetric",
-        "N(0,1) is the same distribution as Kaiming for every fan-in",
-        "Their scale is not controlled for each layer's fan-in, so activations can grow or vanish"
+        "16",
+        "8",
+        "0.25",
+        "2"
       ],
       "correct": 3,
-      "explanation": "Repeated matrix products amplify or shrink variance when weights are too large or too small. Kaiming scales the standard deviation with fan-in to keep ReLU activations more stable."
+      "explanation": "Kaiming sets Var(w)=2/8. Multiplying by fan_in gives 8*(2/8)=2 before the ReLU."
+    },
+    {
+      "stage": "check",
+      "question": "What does symmetry_signature() reveal for zero_init(2, 4)?",
+      "options": [
+        "Four distinct rows with different biases",
+        "Four equal outputs and one unique weight row",
+        "No forward output because zero weights are invalid",
+        "Random outputs because sigmoid injects noise"
+      ],
+      "correct": 1,
+      "explanation": "All four zero rows and zero biases compute the same sigmoid value. The matrix has one unique row, so a gradient update cannot distinguish the neurons."
+    },
+    {
+      "stage": "check",
+      "question": "Why does forward_deep pass one random.Random instance through successive initializer calls?",
+      "options": [
+        "To make every layer use identical weights",
+        "To avoid validating fan-in and fan-out",
+        "To keep the experiment reproducible without changing global RNG state",
+        "To force all activations to have variance one"
+      ],
+      "correct": 2,
+      "explanation": "The local generator gives deterministic but different draws per layer and leaves the caller's module-level random stream untouched."
+    },
+    {
+      "stage": "post",
+      "question": "What does forward_deep(kaiming_init, relu, n_layers=6, width=8, n_samples=4) return?",
+      "options": [
+        "A six-value list of mean absolute activations",
+        "A single scalar weight variance",
+        "A 6x8 matrix of trainable parameters",
+        "Four class labels from a classifier"
+      ],
+      "correct": 0,
+      "explanation": "Each layer contributes one average magnitude, so the returned trace has exactly n_layers=6 values."
+    },
+    {
+      "stage": "post",
+      "question": "Which call violates the initializer contract before drawing any weights?",
+      "options": [
+        "kaiming_init(8, 4, random.Random(2))",
+        "xavier_init(4, 8, random.Random(2))",
+        "random_init(4, 8, scale=0.1, rng=random.Random(2))",
+        "random_init(4, 8, scale=float('nan'), rng=random.Random(2))"
+      ],
+      "correct": 3,
+      "explanation": "A scale must be positive and finite. The NaN scale is rejected with ValueError rather than passed to Gaussian sampling."
     }
   ]
 }

@@ -1,293 +1,188 @@
+# First-order optimizers written from the update equations in the lesson docs.
+# Each step validates parameter/gradient shapes and keeps state per optimizer.
+# AdamW applies decoupled weight decay after the Adam direction is computed.
+# The demo minimizes a one-dimensional quadratic and prints reproducible values.
+# See phases/03-deep-learning-core/06-optimizers/docs/en.md.
+
+from __future__ import annotations
+
 import math
-import random
+from typing import Sequence
+
+
+def _step_inputs(params: Sequence[float], grads: Sequence[float]) -> tuple[list[float], list[float]]:
+    try:
+        parameter_count, gradient_count = len(params), len(grads)
+    except TypeError as exc:
+        raise ValueError("params and grads must be sequences") from exc
+    if parameter_count == 0 or parameter_count != gradient_count:
+        raise ValueError("params and grads must be nonempty and equally long")
+    values, gradients = [float(value) for value in params], [float(value) for value in grads]
+    if not all(math.isfinite(value) for value in (*values, *gradients)):
+        raise ValueError("params and grads must be finite")
+    return values, gradients
+
+
+def _positive_finite(value: float, name: str) -> float:
+    try:
+        numeric = float(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{name} must be a positive finite number") from exc
+    if not math.isfinite(numeric) or numeric <= 0:
+        raise ValueError(f"{name} must be a positive finite number")
+    return numeric
+
+
+def _unit_interval(value: float, name: str) -> float:
+    try:
+        numeric = float(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{name} must be finite and in [0,1)") from exc
+    if not math.isfinite(numeric) or not 0 <= numeric < 1:
+        raise ValueError(f"{name} must be finite and in [0,1)")
+    return numeric
 
 
 class SGD:
-    def __init__(self, lr=0.01):
-        self.lr = lr
+    def __init__(self, lr: float = 0.01) -> None:
+        self.lr = _positive_finite(lr, "lr")
 
-    def step(self, params, grads):
-        for i in range(len(params)):
-            params[i] -= self.lr * grads[i]
+    def reset_state(self) -> None:
+        return None
+
+    def step(self, params: list[float], grads: Sequence[float]) -> None:
+        _, gradients = _step_inputs(params, grads)
+        for index, gradient in enumerate(gradients):
+            params[index] -= self.lr * gradient
 
 
 class SGDMomentum:
-    def __init__(self, lr=0.01, beta=0.9):
-        self.lr = lr
-        self.beta = beta
-        self.velocities = None
+    def __init__(self, lr: float = 0.01, beta: float = 0.9) -> None:
+        self.lr = _positive_finite(lr, "lr")
+        self.beta = _unit_interval(beta, "beta")
+        self.velocity: list[float] | None = None
 
-    def step(self, params, grads):
-        if self.velocities is None:
-            self.velocities = [0.0] * len(params)
-        for i in range(len(params)):
-            self.velocities[i] = self.beta * self.velocities[i] + grads[i]
-            params[i] -= self.lr * self.velocities[i]
+    def reset_state(self) -> None:
+        self.velocity = None
+
+    def step(self, params: list[float], grads: Sequence[float]) -> None:
+        _, gradients = _step_inputs(params, grads)
+        if self.velocity is None:
+            self.velocity = [0.0] * len(params)
+        if len(self.velocity) != len(params):
+            raise ValueError("parameter width changed; call reset_state first")
+        for index, gradient in enumerate(gradients):
+            self.velocity[index] = self.beta * self.velocity[index] + gradient
+            params[index] -= self.lr * self.velocity[index]
 
 
 class Adam:
-    def __init__(self, lr=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8):
-        self.lr = lr
-        self.beta1 = beta1
-        self.beta2 = beta2
-        self.epsilon = epsilon
-        self.m = None
-        self.v = None
+    def __init__(self, lr: float = 0.001, beta1: float = 0.9, beta2: float = 0.999, epsilon: float = 1e-8) -> None:
+        self.lr = _positive_finite(lr, "lr")
+        self.beta1 = _unit_interval(beta1, "beta1")
+        self.beta2 = _unit_interval(beta2, "beta2")
+        self.epsilon = _positive_finite(epsilon, "epsilon")
+        self.reset_state()
+
+    def reset_state(self) -> None:
+        self.m: list[float] | None = None
+        self.v: list[float] | None = None
         self.t = 0
 
-    def step(self, params, grads):
+    def step(self, params: list[float], grads: Sequence[float]) -> None:
+        directions = self._directions(params, grads)
+        for index, direction in enumerate(directions):
+            params[index] -= self.lr * direction
+
+    def _directions(self, params: list[float], grads: Sequence[float]) -> list[float]:
+        """Update moments and return Adam directions without changing params."""
+        _, gradients = _step_inputs(params, grads)
         if self.m is None:
-            self.m = [0.0] * len(params)
-            self.v = [0.0] * len(params)
-
+            self.m, self.v = [0.0] * len(params), [0.0] * len(params)
+        if self.v is None or len(self.m) != len(params):
+            raise ValueError("parameter width changed; call reset_state first")
         self.t += 1
+        directions = []
+        for index, gradient in enumerate(gradients):
+            self.m[index] = self.beta1 * self.m[index] + (1 - self.beta1) * gradient
+            self.v[index] = self.beta2 * self.v[index] + (1 - self.beta2) * gradient * gradient
+            m_hat = self.m[index] / (1 - self.beta1 ** self.t)
+            v_hat = self.v[index] / (1 - self.beta2 ** self.t)
+            directions.append(m_hat / (math.sqrt(v_hat) + self.epsilon))
+        return directions
 
-        for i in range(len(params)):
-            self.m[i] = self.beta1 * self.m[i] + (1 - self.beta1) * grads[i]
-            self.v[i] = self.beta2 * self.v[i] + (1 - self.beta2) * grads[i] ** 2
 
-            m_hat = self.m[i] / (1 - self.beta1 ** self.t)
-            v_hat = self.v[i] / (1 - self.beta2 ** self.t)
-
-            params[i] -= self.lr * m_hat / (math.sqrt(v_hat) + self.epsilon)
-
-
-class AdamW:
-    def __init__(self, lr=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8, weight_decay=0.01):
-        self.lr = lr
-        self.beta1 = beta1
-        self.beta2 = beta2
-        self.epsilon = epsilon
+class AdamW(Adam):
+    def __init__(self, lr: float = 0.001, beta1: float = 0.9, beta2: float = 0.999, epsilon: float = 1e-8, weight_decay: float = 0.01) -> None:
+        try:
+            weight_decay = float(weight_decay)
+        except (TypeError, ValueError) as exc:
+            raise ValueError("weight_decay must be finite and nonnegative") from exc
+        if not math.isfinite(weight_decay) or weight_decay < 0:
+            raise ValueError("weight_decay must be finite and nonnegative")
+        super().__init__(lr, beta1, beta2, epsilon)
         self.weight_decay = weight_decay
-        self.m = None
-        self.v = None
-        self.t = 0
 
-    def step(self, params, grads):
-        if self.m is None:
-            self.m = [0.0] * len(params)
-            self.v = [0.0] * len(params)
-
-        self.t += 1
-
-        for i in range(len(params)):
-            self.m[i] = self.beta1 * self.m[i] + (1 - self.beta1) * grads[i]
-            self.v[i] = self.beta2 * self.v[i] + (1 - self.beta2) * grads[i] ** 2
-
-            m_hat = self.m[i] / (1 - self.beta1 ** self.t)
-            v_hat = self.v[i] / (1 - self.beta2 ** self.t)
-
-            params[i] = params[i] * (1 - self.weight_decay * self.lr)
-            params[i] -= self.lr * m_hat / (math.sqrt(v_hat) + self.epsilon)
+    def step(self, params: list[float], grads: Sequence[float]) -> None:
+        old_params, _ = _step_inputs(params, grads)
+        directions = self._directions(params, grads)
+        for index, direction in enumerate(directions):
+            params[index] = old_params[index] - self.lr * direction - self.lr * self.weight_decay * old_params[index]
 
 
-def sigmoid(x):
-    x = max(-500, min(500, x))
-    return 1.0 / (1.0 + math.exp(-x))
+def sigmoid(x: float) -> float:
+    if x >= 0:
+        e = math.exp(-x)
+        return 1 / (1 + e)
+    e = math.exp(x)
+    return e / (1 + e)
 
 
-def make_circle_data(n=200, seed=42):
-    random.seed(seed)
-    data = []
-    for _ in range(n):
-        x = random.uniform(-2, 2)
-        y = random.uniform(-2, 2)
-        label = 1.0 if x * x + y * y < 1.5 else 0.0
-        data.append(([x, y], label))
-    return data
+def make_circle_data(n: int = 100, seed: int = 42) -> list[tuple[list[float], int]]:
+    import random
+    if n <= 0:
+        raise ValueError("n must be positive")
+    rng = random.Random(seed)
+    return [
+        ([x, y], int(x * x + y * y < 1.0))
+        for x, y in ((rng.uniform(-1.5, 1.5), rng.uniform(-1.5, 1.5)) for _ in range(n))
+    ]
 
 
 class OptimizerTestNetwork:
-    def __init__(self, optimizer, hidden_size=8):
-        random.seed(0)
-        self.hidden_size = hidden_size
+    """A two-parameter quadratic wrapper used by tests and the demo."""
+
+    def __init__(self, optimizer: SGD | SGDMomentum | Adam | AdamW) -> None:
         self.optimizer = optimizer
+        self.params = [10.0]
 
-        self.w1 = [[random.gauss(0, 0.5) for _ in range(2)] for _ in range(hidden_size)]
-        self.b1 = [0.0] * hidden_size
-        self.w2 = [random.gauss(0, 0.5) for _ in range(hidden_size)]
-        self.b2 = 0.0
-
-    def get_params(self):
-        params = []
-        for row in self.w1:
-            params.extend(row)
-        params.extend(self.b1)
-        params.extend(self.w2)
-        params.append(self.b2)
-        return params
-
-    def set_params(self, params):
-        idx = 0
-        for i in range(self.hidden_size):
-            for j in range(2):
-                self.w1[i][j] = params[idx]
-                idx += 1
-        for i in range(self.hidden_size):
-            self.b1[i] = params[idx]
-            idx += 1
-        for i in range(self.hidden_size):
-            self.w2[i] = params[idx]
-            idx += 1
-        self.b2 = params[idx]
-
-    def forward(self, x):
-        self.x = x
-        self.z1 = []
-        self.h = []
-        for i in range(self.hidden_size):
-            z = self.w1[i][0] * x[0] + self.w1[i][1] * x[1] + self.b1[i]
-            self.z1.append(z)
-            self.h.append(max(0.0, z))
-
-        self.z2 = sum(self.w2[i] * self.h[i] for i in range(self.hidden_size)) + self.b2
-        self.out = sigmoid(self.z2)
-        return self.out
-
-    def compute_grads(self, target):
-        eps = 1e-15
-        p = max(eps, min(1 - eps, self.out))
-        d_loss = -(target / p) + (1 - target) / (1 - p)
-        d_sigmoid = self.out * (1 - self.out)
-        d_out = d_loss * d_sigmoid
-
-        grads = [0.0] * (self.hidden_size * 2 + self.hidden_size + self.hidden_size + 1)
-        idx = 0
-        for i in range(self.hidden_size):
-            d_relu = 1.0 if self.z1[i] > 0 else 0.0
-            d_h = d_out * self.w2[i] * d_relu
-            grads[idx] = d_h * self.x[0]
-            grads[idx + 1] = d_h * self.x[1]
-            idx += 2
-
-        for i in range(self.hidden_size):
-            d_relu = 1.0 if self.z1[i] > 0 else 0.0
-            grads[idx] = d_out * self.w2[i] * d_relu
-            idx += 1
-
-        for i in range(self.hidden_size):
-            grads[idx] = d_out * self.h[i]
-            idx += 1
-
-        grads[idx] = d_out
-        return grads
-
-    def train(self, data, epochs=300):
-        losses = []
-        for epoch in range(epochs):
-            total_loss = 0.0
-            correct = 0
-            for x, y in data:
-                pred = self.forward(x)
-                grads = self.compute_grads(y)
-                params = self.get_params()
-                self.optimizer.step(params, grads)
-                self.set_params(params)
-
-                eps = 1e-15
-                p = max(eps, min(1 - eps, pred))
-                total_loss += -(y * math.log(p) + (1 - y) * math.log(1 - p))
-                if (pred >= 0.5) == (y >= 0.5):
-                    correct += 1
-            avg_loss = total_loss / len(data)
-            accuracy = correct / len(data) * 100
-            losses.append((avg_loss, accuracy))
-            if epoch % 75 == 0 or epoch == epochs - 1:
-                print(f"    Epoch {epoch:3d}: loss={avg_loss:.4f}, accuracy={accuracy:.1f}%")
-        return losses
+    def train(self, steps: int = 20) -> list[float]:
+        if steps <= 0:
+            raise ValueError("steps must be positive")
+        history = []
+        for _ in range(steps):
+            gradient = [2.0 * (self.params[0] - 3.0)]
+            self.optimizer.step(self.params, gradient)
+            history.append((self.params[0] - 3.0) ** 2)
+        return history
 
 
-def bias_correction_demo():
-    beta1 = 0.9
-    beta2 = 0.999
-    gradient = 1.0
+def bias_correction_demo() -> tuple[float, float]:
+    optimizer = Adam(lr=0.1)
+    params = [1.0]
+    optimizer.step(params, [1.0])
+    assert optimizer.m is not None and optimizer.v is not None
+    return optimizer.m[0], optimizer.v[0]
 
-    print("  Step | m_raw  | m_corrected | v_raw    | v_corrected")
-    print("  " + "-" * 55)
 
-    m = 0.0
-    v = 0.0
-    for t in range(1, 11):
-        m = beta1 * m + (1 - beta1) * gradient
-        v = beta2 * v + (1 - beta2) * gradient ** 2
-        m_hat = m / (1 - beta1 ** t)
-        v_hat = v / (1 - beta2 ** t)
-        print(f"  {t:4d} | {m:.4f} | {m_hat:.4f}      | {v:.6f} | {v_hat:.6f}")
+def main() -> None:
+    for optimizer in (SGD(0.1), SGDMomentum(0.1), Adam(0.1), AdamW(0.1, weight_decay=0.05)):
+        model = OptimizerTestNetwork(optimizer)
+        history = model.train(100)
+        print(f"{type(optimizer).__name__:12s}: x={model.params[0]:.6f}, loss={history[-1]:.6f}")
+    raw_m, raw_v = bias_correction_demo()
+    print(f"Adam first raw moments: m={raw_m:.4f}, v={raw_v:.4f}; bias-corrected values are 1.0 and 1.0")
 
 
 if __name__ == "__main__":
-    print("=" * 60)
-    print("STEP 1: SGD on a Simple Function")
-    print("=" * 60)
-    print("  Minimizing f(x) = (x - 3)^2, starting at x = 10")
-    x = [10.0]
-    sgd = SGD(lr=0.1)
-    for step in range(20):
-        grad = [2.0 * (x[0] - 3.0)]
-        sgd.step(x, grad)
-        loss = (x[0] - 3.0) ** 2
-        if step % 5 == 0 or step == 19:
-            print(f"    Step {step:2d}: x={x[0]:.6f}, loss={loss:.6f}")
-
-    print("\n" + "=" * 60)
-    print("STEP 2: Bias Correction in Adam")
-    print("=" * 60)
-    print("  Showing how raw moments are biased toward zero initially")
-    bias_correction_demo()
-
-    print("\n" + "=" * 60)
-    print("STEP 3: Optimizer Comparison on Circle Dataset")
-    print("=" * 60)
-    data = make_circle_data()
-
-    configs = [
-        ("SGD (lr=0.05)", SGD(lr=0.05)),
-        ("SGD+Momentum (lr=0.05, beta=0.9)", SGDMomentum(lr=0.05, beta=0.9)),
-        ("Adam (lr=0.001)", Adam(lr=0.001)),
-        ("AdamW (lr=0.001, wd=0.01)", AdamW(lr=0.001, weight_decay=0.01)),
-    ]
-
-    results = {}
-    for name, opt in configs:
-        print(f"\n--- {name} ---")
-        net = OptimizerTestNetwork(opt, hidden_size=8)
-        history = net.train(data, epochs=300)
-        results[name] = history
-
-    print("\n" + "=" * 60)
-    print("FINAL COMPARISON")
-    print("=" * 60)
-    for name, history in results.items():
-        final_loss, final_acc = history[-1]
-        first_90 = None
-        for epoch, (loss, acc) in enumerate(history):
-            if acc >= 85.0:
-                first_90 = epoch
-                break
-        reached = f"epoch {first_90}" if first_90 is not None else "never"
-        print(f"  {name:40s}: acc={final_acc:.1f}%, loss={final_loss:.4f}, reached 85%: {reached}")
-
-    print("\n" + "=" * 60)
-    print("STEP 4: Weight Decay Effect")
-    print("=" * 60)
-    random.seed(42)
-    large_weights = [random.uniform(-5, 5) for _ in range(10)]
-    weights_adam = list(large_weights)
-    weights_adamw = list(large_weights)
-
-    opt_adam = Adam(lr=0.001)
-    opt_adamw = AdamW(lr=0.001, weight_decay=0.1)
-
-    print(f"  Initial weight L2 norm: {math.sqrt(sum(w*w for w in large_weights)):.4f}")
-
-    for step in range(100):
-        grads = [random.gauss(0, 0.1) for _ in range(10)]
-        opt_adam.step(weights_adam, list(grads))
-        opt_adamw.step(weights_adamw, list(grads))
-
-    norm_adam = math.sqrt(sum(w * w for w in weights_adam))
-    norm_adamw = math.sqrt(sum(w * w for w in weights_adamw))
-    print(f"  After 100 steps:")
-    print(f"    Adam  weight L2 norm: {norm_adam:.4f}")
-    print(f"    AdamW weight L2 norm: {norm_adamw:.4f}")
-    print(f"    AdamW shrinks weights {norm_adam/max(0.001, norm_adamw):.1f}x more")
+    main()

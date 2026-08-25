@@ -1,345 +1,79 @@
 # Introduction to PyTorch
 
-> You built the engine from pistons and crankshafts. Now learn the one everyone actually drives.
+> The familiar module loop becomes a tensor program only after the shapes, dtype, device, and gradient boundaries are explicit.
 
-**Type:** Build
+**Type:** Reference
 **Languages:** Python
-**Prerequisites:** Lesson 03.10 (Build Your Own Mini Framework)
-**Time:** ~75 minutes
+**Prerequisites:** Lesson 03.10 Mini Framework
+**Time:** ~60 minutes
 
 ## Learning Objectives
 
-- Build and train neural networks using PyTorch's nn.Module, nn.Sequential, and autograd
-- Use PyTorch tensors, GPU acceleration, and the standard training loop (zero_grad, forward, loss, backward, step)
-- Convert your from-scratch mini framework components to their PyTorch equivalents
-- Profile and compare training speed between your pure-Python framework and PyTorch on the same task
+- Map `Linear`, `Sequential`, `MSELoss`/cross-entropy, and `SGD` concepts to PyTorch APIs.
+- Read tensor shape, dtype, device, and target-type contracts from a small model.
+- Explain the order `zero_grad → forward → loss → backward → step`.
+- Keep optional backend code import-safe when PyTorch is not installed.
+- Check a four-row classifier for finite loss and a measurable prediction result when the backend exists.
 
-## The Problem
+## Same loop, different storage
 
-You have a working mini framework. Linear layers, ReLU, dropout, batch norm, Adam, a DataLoader, a training loop. It trains a 4-layer network on a circle classification problem in pure Python.
-
-It is also 500x slower than PyTorch on the same problem.
-
-Your mini framework processes one sample at a time with nested Python loops. PyTorch dispatches the same operations to optimized C++/CUDA kernels that run on GPU. On a single NVIDIA A100, PyTorch trains a ResNet-50 (25.6M parameters) on ImageNet (1.28M images) in about 6 hours. Your framework would take roughly 3,000 hours on the same task -- if it didn't run out of memory first.
-
-Speed is not the only gap. Your framework has no GPU support. No automatic differentiation -- you hand-wrote backward() for every module. No serialization. No distributed training. No mixed precision. No way to debug gradient flow without print statements.
-
-PyTorch fills every one of these gaps. And it does so while keeping the exact same mental model you already built: Module, forward(), parameters(), backward(), optimizer.step(). The concepts transfer one-to-one. The syntax is nearly identical. The difference is that PyTorch wraps a decade of systems engineering behind the same interface you designed from scratch.
-
-## The Concept
-
-### Why PyTorch Won
-
-In 2015, TensorFlow required you to define a static computation graph before running anything. You built the graph, compiled it, then fed data through it. Debugging meant staring at graph visualizations. Changing the architecture meant rebuilding the graph from scratch.
-
-PyTorch launched in 2017 with a different philosophy: eager execution. You write Python. It runs immediately. `y = model(x)` actually computes y right now, not "add a node to a graph that will compute y later." This meant standard Python debugging tools worked. print() worked. pdb worked. if/else in your forward pass worked.
-
-By 2020, the market had spoken. PyTorch's share in ML research papers went from 7% (2017) to over 75% (2022). Meta, Google DeepMind, OpenAI, Anthropic, and Hugging Face all use PyTorch as their primary framework. TensorFlow 2.x adopted eager execution in response -- tacit admission that PyTorch's design was correct.
-
-The lesson: developer experience compounds. A framework that is 10% slower but 50% faster to debug wins every time.
-
-### Tensors
-
-A tensor is a multi-dimensional array with three critical properties: shape, dtype, and device.
+The mini-framework stores Python scalars in `Parameter` objects. PyTorch stores tensors and records operations for autograd. The conceptual loop is still:
 
 ```python
-import torch
-
-x = torch.zeros(3, 4)           # shape: (3, 4), dtype: float32, device: cpu
-x = torch.randn(2, 3, 224, 224) # batch of 2 RGB images, 224x224
-x = torch.tensor([1, 2, 3])     # from a Python list
+optimizer.zero_grad()
+logits = model(inputs)
+loss = criterion(logits, targets)
+loss.backward()
+optimizer.step()
 ```
 
-**Shape** is the dimensionality. A scalar is shape (), a vector is (n,), a matrix is (m, n), a batch of images is (batch, channels, height, width).
+For the local fixture, `inputs` has shape `(4, 2)` and `targets` has shape `(4,)` with integer class IDs. `build_model()` creates `Linear(2,4) → Tanh → Linear(4,2)`. `CrossEntropyLoss` expects raw class logits and `torch.long` targets; applying a separate softmax before it would change the intended contract.
 
-**Dtype** controls precision and memory.
-
-| dtype | Bits | Range | Use case |
-|-------|------|-------|----------|
-| float32 | 32 | ~7 decimal digits | Default training |
-| float16 | 16 | ~3.3 decimal digits | Mixed precision |
-| bfloat16 | 16 | Same range as float32, less precision | LLM training |
-| int8 | 8 | -128 to 127 | Quantized inference |
-
-**Device** determines where computation happens.
-
-```python
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-x = torch.randn(3, 4, device=device)
-x = x.to("cuda")
-x = x.cpu()
-```
-
-Every operation requires all tensors on the same device. This is the #1 PyTorch error beginners hit: `RuntimeError: Expected all tensors to be on the same device`. Fix it by moving everything to the same device before computation.
-
-**Reshaping** is constant-time -- it changes the metadata, not the data.
-
-```python
-x = torch.randn(2, 3, 4)
-x.view(2, 12)      # reshape to (2, 12) -- must be contiguous
-x.reshape(6, 4)    # reshape to (6, 4) -- works always
-x.permute(2, 0, 1) # reorder dimensions
-x.unsqueeze(0)     # add dimension: (1, 2, 3, 4)
-x.squeeze()        # remove size-1 dimensions
-```
-
-### Autograd
-
-Your mini framework required you to implement backward() for every module. PyTorch does not. It records every operation on tensors into a directed acyclic graph (the computational graph) and then traverses that graph in reverse to compute gradients automatically.
-
-```mermaid
-graph LR
-    x["x (leaf)"] --> mul["*"]
-    w["w (leaf, requires_grad)"] --> mul
-    mul --> add["+"]
-    b["b (leaf, requires_grad)"] --> add
-    add --> loss["loss"]
-    loss --> |".backward()"| add
-    add --> |"grad"| b
-    add --> |"grad"| mul
-    mul --> |"grad"| w
-```
-
-The key difference from your framework: PyTorch uses tape-based autodiff. Every operation appends to a "tape" during the forward pass. Calling `.backward()` replays the tape in reverse.
-
-```python
-x = torch.randn(3, requires_grad=True)
-y = x ** 2 + 3 * x
-z = y.sum()
-z.backward()
-print(x.grad)  # dz/dx = 2x + 3
-```
-
-Torch isn't available in-browser, but the tape it builds is just the chain
-rule -- fill in the derivative it computes for `z = sum(x**2 + 3*x)`:
-
-```python fillin
-x = [1.0, 2.0, 3.0]
-
-# Forward pass: what .backward() replays in reverse.
-y = [xi**2 + 3*xi for xi in x]
-z = sum(y)
-
-# Backward pass: dz/dx_i -- same rule autograd applies per element.
-grad = [{{blank:2}} * xi + {{blank:3}} for xi in x]
-
-expected = [5.0, 7.0, 9.0]
-if grad == expected:
-    print("PASS")
-else:
-    print("WRONG:", grad)
-```
-
-Three rules of autograd:
-
-1. Only leaf tensors with `requires_grad=True` accumulate gradients
-2. Gradients accumulate by default -- call `optimizer.zero_grad()` before each backward pass
-3. `torch.no_grad()` disables gradient tracking (use during evaluation)
-
-### nn.Module
-
-`nn.Module` is the base class for every neural network component in PyTorch. You already built this abstraction in Lesson 10. PyTorch's version adds automatic parameter registration, recursive module discovery, device management, and state dict serialization.
-
-```python
-import torch.nn as nn
-
-class MLP(nn.Module):
-    def __init__(self, input_dim, hidden_dim, output_dim):
-        super().__init__()
-        self.layer1 = nn.Linear(input_dim, hidden_dim)
-        self.relu = nn.ReLU()
-        self.layer2 = nn.Linear(hidden_dim, output_dim)
-
-    def forward(self, x):
-        x = self.layer1(x)
-        x = self.relu(x)
-        x = self.layer2(x)
-        return x
-```
-
-When you assign an `nn.Module` or `nn.Parameter` as an attribute in `__init__`, PyTorch automatically registers it. `model.parameters()` recursively collects every registered parameter. This is why you never have to manually gather weights like you did in the mini framework.
-
-Key building blocks:
-
-| Module | What it does | Parameters |
-|--------|-------------|------------|
-| nn.Linear(in, out) | Wx + b | in*out + out |
-| nn.Conv2d(in_ch, out_ch, k) | 2D convolution | in_ch*out_ch*k*k + out_ch |
-| nn.BatchNorm1d(features) | Normalize activations | 2 * features |
-| nn.Dropout(p) | Random zeroing | 0 |
-| nn.ReLU() | max(0, x) | 0 |
-| nn.GELU() | Gaussian error linear | 0 |
-| nn.Embedding(vocab, dim) | Lookup table | vocab * dim |
-| nn.LayerNorm(dim) | Per-sample normalization | 2 * dim |
-
-### Loss Functions and Optimizers
-
-PyTorch ships production-ready versions of everything you built.
-
-**Loss functions** (from `torch.nn`):
-
-| Loss | Task | Input |
-|------|------|-------|
-| nn.MSELoss() | Regression | Any shape |
-| nn.CrossEntropyLoss() | Multi-class classification | Logits (not softmax) |
-| nn.BCEWithLogitsLoss() | Binary classification | Logits (not sigmoid) |
-| nn.L1Loss() | Regression (robust) | Any shape |
-| nn.CTCLoss() | Sequence alignment | Log probabilities |
-
-Note: `CrossEntropyLoss` combines `LogSoftmax` + `NLLLoss` internally. Pass raw logits, not softmax outputs. This is a common mistake that produces wrong gradients silently.
-
-**Optimizers** (from `torch.optim`):
-
-| Optimizer | When to use | Typical LR |
-|-----------|-------------|-----------|
-| SGD(params, lr, momentum) | CNNs, well-tuned pipelines | 0.01--0.1 |
-| Adam(params, lr) | Default starting point | 1e-3 |
-| AdamW(params, lr, weight_decay) | Transformers, fine-tuning | 1e-4--1e-3 |
-| LBFGS(params) | Small-scale, second-order | 1.0 |
-
-### The Training Loop
-
-Every PyTorch training loop follows the same 5-step pattern. You already know this from Lesson 10.
+Every tensor participating in one operation must share a device. `device_name()` returns `"cpu"` or `"cuda"` only when PyTorch can be resolved; otherwise it returns `"unavailable"`. The lesson does not install packages, download weights, or pretend that a missing backend ran.
 
 ```mermaid
 sequenceDiagram
-    participant D as DataLoader
-    participant M as Model
-    participant L as Loss fn
-    participant O as Optimizer
-
-    loop Each Epoch
-        D->>M: batch = next(dataloader)
-        M->>L: predictions = model(batch)
-        L->>L: loss = criterion(predictions, targets)
-        L->>M: loss.backward()
-        O->>M: optimizer.step()
-        O->>O: optimizer.zero_grad()
-    end
+    participant D as data
+    participant M as model
+    participant L as loss
+    participant O as optimizer
+    O->>O: zero_grad()
+    D->>M: inputs (4,2)
+    M->>L: logits (4,2)
+    D->>L: targets (4,)
+    L->>M: backward()
+    M->>O: parameter gradients
+    O->>M: step()
 ```
-
-The canonical pattern:
-
-```python
-for epoch in range(num_epochs):
-    model.train()
-    for inputs, targets in train_loader:
-        inputs, targets = inputs.to(device), targets.to(device)
-        optimizer.zero_grad()
-        outputs = model(inputs)
-        loss = criterion(outputs, targets)
-        loss.backward()
-        optimizer.step()
-```
-
-Five lines inside the batch loop. Five lines that trained GPT-4, Stable Diffusion, and LLaMA. The architecture changes. The data changes. These five lines do not.
-
-### Dataset and DataLoader
-
-PyTorch's `Dataset` is an abstract class with two methods: `__len__` and `__getitem__`. `DataLoader` wraps it with batching, shuffling, and multi-process data loading.
-
-```python
-from torch.utils.data import Dataset, DataLoader
-
-class MNISTDataset(Dataset):
-    def __init__(self, images, labels):
-        self.images = images
-        self.labels = labels
-
-    def __len__(self):
-        return len(self.labels)
-
-    def __getitem__(self, idx):
-        return self.images[idx], self.labels[idx]
-
-loader = DataLoader(dataset, batch_size=64, shuffle=True, num_workers=4)
-```
-
-`num_workers=4` spawns 4 processes to load data in parallel while the GPU trains on the current batch. On disk-bound workloads (large images, audio), this alone can double training speed.
-
-### GPU Training
-
-Moving a model to GPU:
-
-```python
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = model.to(device)
-```
-
-This recursively moves every parameter and buffer to the GPU. Then move each batch during training:
-
-```python
-inputs, targets = inputs.to(device), targets.to(device)
-```
-
-**Mixed precision** halves memory usage and doubles throughput on modern GPUs (A100, H100, RTX 4090) by running forward/backward in float16 while keeping the master weights in float32:
-
-```python
-from torch.amp import autocast, GradScaler
-
-scaler = GradScaler()
-for inputs, targets in loader:
-    with autocast(device_type="cuda"):
-        outputs = model(inputs)
-        loss = criterion(outputs, targets)
-    scaler.scale(loss).backward()
-    scaler.step(optimizer)
-    scaler.update()
-    optimizer.zero_grad()
-```
-
-### Comparison: Mini Framework vs PyTorch vs JAX
-
-| Feature | Mini Framework (L10) | PyTorch | JAX |
-|---------|---------------------|---------|-----|
-| Autodiff | Manual backward() | Tape-based autograd | Functional transforms |
-| Execution | Eager (Python loops) | Eager (C++ kernels) | Traced + JIT compiled |
-| GPU support | No | Yes (CUDA, ROCm, MPS) | Yes (CUDA, TPU) |
-| Speed (MNIST MLP) | ~300s/epoch | ~0.5s/epoch | ~0.3s/epoch |
-| Module system | Custom Module class | nn.Module | Stateless functions (Flax/Equinox) |
-| Debugging | print() | print(), pdb, breakpoint() | Harder (JIT tracing breaks print) |
-| Ecosystem | None | Hugging Face, Lightning, timm | Flax, Optax, Orbax |
-| Learning curve | You built it | Moderate | Steep (functional paradigm) |
-| Production use | Toy problems | Meta, OpenAI, Anthropic, HF | Google DeepMind, Midjourney |
-
-
-
 
 ## Build It
 
-Reconstruct **Introduction to PyTorch** by following `download_mnist` on a graph with edges (0,1) and (1,2). Run `python3 main.py` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.
+From `code/`, run:
+
+```bash
+python3 main.py
+```
+
+If the optional package is available, the bounded demo trains the four-row fixture for 60 CPU-or-device steps and prints the selected device, input shape, accuracy, and final finite loss. If it is unavailable, the same command exits 0 with `PyTorch unavailable; optional tensor path was not executed.` No network or installation is attempted in either branch.
 
 ## Use It
 
-Call `download_mnist` from a small caller with a graph with edges (0,1) and (1,2). Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+1. Inspect `fixture()` and confirm `(4,2)` inputs and `(4,)` integer targets.
+2. Call `build_model()` and list the two linear layers' shapes when PyTorch is present.
+3. Run `train_demo(steps=5, device="cpu")`; check that the returned loss list is finite.
+4. Deliberately move only `x` to a different device in a scratch copy and identify the device mismatch before changing model code.
 
 ## Ship It
 
-Hand off `outputs/prompt-pytorch-debugger.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- Paszke et al., "PyTorch: An Imperative Style, High-Performance Deep Learning Library" (2019) -- the original paper explaining PyTorch's design tradeoffs
-- PyTorch Tutorials: "Learning PyTorch with Examples" (https://pytorch.org/tutorials/beginner/pytorch_with_examples.html) -- the official path from tensors to nn.Module
-- PyTorch Performance Tuning Guide (https://pytorch.org/tutorials/recipes/recipes/tuning_guide.html) -- mixed precision, DataLoader workers, pinned memory, and other production optimizations
-- Horace He, "Making Deep Learning Go Brrrr" (https://horace.io/brrr_intro.html) -- why GPU training is fast, with PyTorch-specific optimization strategies
+`outputs/skill-pytorch-patterns.md` is a guarded migration card. It records tensor contracts and the five-step update order, and asks callers to report whether the optional backend was actually available. `outputs/prompt-pytorch-debugger.md` turns shape/device/autograd checks into a short diagnostic intake.
 
 ## Exercises
 
-This lab follows `download_mnist` and `load_images` on a controlled fixture; write down the value before changing the input.
-
-1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using a graph with edges (0,1) and (1,2). Follow `download_mnist`, `load_images`, `load_labels`. Expect degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly; capture the first printed shape, metric, status, or summary field and state which part supports **Build and train neural networks using PyTorch's nn.Module, nn.Sequential, and autograd**.
-2. **Change the controlled parameter.** Repeat the command after changing only the edge list: use the same graph with an isolated node 3. Predict the direction of the change, then compare the two output values. Explain why **Use PyTorch tensors, GPU acceleration, and the standard training loop (zero_grad, forward, loss, backward, step)** says the other inputs should stay fixed.
-3. **Exercise the guard.** Feed the implementation a graph with no edges. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Convert your from-scratch mini framework components to their PyTorch equivalents** and record the exception text if the code rejects the case.
-4. **Prepare the artifact for reuse.** Open `outputs/prompt-pytorch-debugger.md` and add a worked example using a graph with edges (0,1) and (1,2). Include the input contract, one expected output field, and a named acceptance check for **Profile and compare training speed between your pure-Python framework and PyTorch on the same task**; note what the demo cannot establish.
+1. Write down the expected logits shape for a batch of five before running `build_model()(x)`.
+2. Remove `optimizer.zero_grad()` for two steps in a scratch copy and compare the second gradient with the clean loop.
+3. Add an assertion that a non-finite loss aborts before `backward()`; keep the fallback path import-safe.
+4. Run the canonical command in an environment without PyTorch and record the explicit fallback line rather than reporting a fabricated accuracy.
 
 ## Reference Solution
 
-A checkable result for **Introduction to PyTorch** should contain:
-
-- the `python3 main.py` output for a graph with edges (0,1) and (1,2), with `download_mnist`, `load_images`, `load_labels` traced to the value or shape that supports **Build and train neural networks using PyTorch's nn.Module, nn.Sequential, and autograd**;
-- a before/after comparison for the edge list, where the same graph with an isolated node 3 changes the observation in the direction predicted by **Use PyTorch tensors, GPU acceleration, and the standard training loop (zero_grad, forward, loss, backward, step)**;
-- a recorded result for a graph with no edges that matches the implementation’s validation or empty-result contract and explains the evidence for **Convert your from-scratch mini framework components to their PyTorch equivalents**; and
-- an updated `outputs/prompt-pytorch-debugger.md` example with a concrete input, expected output field, and acceptance check tied to **Profile and compare training speed between your pure-Python framework and PyTorch on the same task**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+The fixture has shape `(4,2)`/`(4,)`, the model returns `(4,2)` logits, and the update order clears old gradients before the new backward pass. A live backend returns a finite loss trace; an absent backend returns a clear, zero-exit availability message. The tests exercise both branches without downloading or installing dependencies.

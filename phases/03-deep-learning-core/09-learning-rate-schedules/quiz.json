@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What value does constant_schedule(step=50, lr=0.05) return?",
+      "question": "What does constant_schedule(7, lr=0.03) return?",
       "options": [
-        "0.05",
-        "0.01",
-        "0",
-        "0.5"
+        "0.03",
+        "0.0",
+        "0.03 / 7",
+        "It raises because step is not zero"
       ],
       "correct": 0,
-      "explanation": "The constant schedule ignores the step and returns its lr argument."
+      "explanation": "The constant schedule validates the non-negative step and returns the positive learning rate unchanged."
     },
     {
       "stage": "check",
-      "question": "What does step_decay_schedule(step=250, lr=0.1, step_size=100, gamma=0.1) return?",
+      "question": "For lr=0.1, step_size=4, and gamma=0.5, what is step_decay_schedule(8, ...)?",
       "options": [
-        "0.01",
-        "0.001",
-        "0.0001",
+        "0.05",
+        "0.0125",
+        "0.025",
         "0.1"
       ],
-      "correct": 1,
-      "explanation": "Integer division gives 250//100=2, so the schedule returns 0.1*(0.1^2)=0.001."
+      "correct": 2,
+      "explanation": "The bucket is 8 // 4 = 2, so the value is 0.1 * 0.5**2 = 0.025."
     },
     {
       "stage": "check",
-      "question": "What value does cosine_schedule return at step=total_steps?",
+      "question": "What are the two boundary values for cosine_schedule(step, lr=0.1, total_steps=10, lr_min=0.01)?",
       "options": [
-        "lr",
-        "0",
-        "lr_min",
-        "lr/2"
+        "0.01 at step 0 and 0.1 at step 10",
+        "0.1 at step 0 and 0.01 at step 10 or later",
+        "0.1 at both steps because cosine is periodic",
+        "0.0 at step 0 and 0.1 at step 10"
+      ],
+      "correct": 1,
+      "explanation": "Step zero is the cosine peak. At step 10 the implementation clamps to the requested floor, and later steps stay there."
+    },
+    {
+      "stage": "check",
+      "question": "With warmup_steps=3 and lr=0.1, what does warmup_cosine_schedule return at step 1 before decay begins?",
+      "options": [
+        "0.1 / 3",
+        "0.1 / 2",
+        "2 * 0.1 / 3",
+        "lr_min regardless of the warmup"
       ],
       "correct": 2,
-      "explanation": "The implementation explicitly returns lr_min when step is at least total_steps."
-    },
-    {
-      "stage": "check",
-      "question": "During warmup_cosine_schedule(step=25, lr=0.04, warmup_steps=100), what learning rate is used?",
-      "options": [
-        "0.04",
-        "0.02",
-        "0.0001",
-        "0.01"
-      ],
-      "correct": 3,
-      "explanation": "Before warmup ends, the schedule is linear: 0.04*(25/100)=0.01."
+      "explanation": "Warmup uses (step+1)/warmup_steps, so step 1 returns 2/3 of the peak: 2*0.1/3."
     },
     {
       "stage": "post",
-      "question": "For one_cycle_schedule with lr=0.05 and total_steps=1000, what is the learning rate at step 0?",
+      "question": "Which invariant does schedule_values(schedule, total_steps=20, ...) enforce after sampling?",
       "options": [
-        "0.002",
-        "0.05",
-        "0.000005",
-        "0.025"
-      ],
-      "correct": 0,
-      "explanation": "The first half starts at lr/25, so 0.05/25=0.002, then rises toward the peak learning rate."
-    },
-    {
-      "stage": "post",
-      "question": "A training run diverges with a high loss and NaNs almost immediately. Which schedule diagnosis is most plausible?",
-      "options": [
-        "The learning rate is too low and the model is merely stalling",
-        "The learning rate is too high; reduce it or warm it up more gradually",
-        "The model needs a larger test set before any update",
-        "A constant schedule guarantees that the loss will be finite"
+        "Every rate must be exactly the first rate",
+        "The trace must contain 20 finite, non-negative rates",
+        "The loss must already be below 0.1",
+        "The schedule must have a warmup segment"
       ],
       "correct": 1,
-      "explanation": "A step size that is too large can overshoot and make activations or gradients unstable. A lower starting rate or warmup limits the first updates."
+      "explanation": "It evaluates steps 0 through 19 and rejects a trace that is not finite or contains a negative learning rate."
+    },
+    {
+      "stage": "post",
+      "question": "Which call violates the warmup schedule's horizon contract?",
+      "options": [
+        "warmup_cosine_schedule(0, lr=0.1, total_steps=10, warmup_steps=0)",
+        "warmup_cosine_schedule(2, lr=0.1, total_steps=10, warmup_steps=3)",
+        "warmup_cosine_schedule(0, lr=0.1, total_steps=10, warmup_steps=10)",
+        "warmup_cosine_schedule(9, lr=0.1, total_steps=10, warmup_steps=3)"
+      ],
+      "correct": 2,
+      "explanation": "The ramp must be shorter than the total horizon. Equal warmup and total steps leaves no cosine segment, so the function raises ValueError."
     }
   ]
 }

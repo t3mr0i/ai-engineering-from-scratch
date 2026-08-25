@@ -1,9 +1,8 @@
-# Backpropagation in Julia. Derives the chain rule for a 2-layer MLP
-# step by step on paper, then trains it on XOR + circle classification.
-# All gradients computed manually — no autodiff library.
-# Stdlib only. Sources:
-#   https://en.wikipedia.org/wiki/Backpropagation
-#   https://docs.julialang.org/en/v1/manual/arrays/#Broadcasting
+# Backpropagation in Julia with a hand-derived one-hidden-layer MLP.
+# The scalar conventions and gradient check are explained in docs/en.md.
+# All gradients are computed manually with Julia stdlib arrays.
+# Source: https://en.wikipedia.org/wiki/Backpropagation
+# Source: https://docs.julialang.org/en/v1/manual/arrays/#Broadcasting
 
 using Random
 using Printf

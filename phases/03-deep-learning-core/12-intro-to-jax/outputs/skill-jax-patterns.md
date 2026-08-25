@@ -1,145 +1,54 @@
 ---
-name: skill-jax-patterns
-description: Functional programming patterns in JAX -- when and how to use grad, jit, vmap, and pmap
+name: skill-functional-parameter-patterns
+description: Standard-library patterns that make JAX-style data flow explicit
 version: 1.0.0
-phase: 3
+phase: 03
 lesson: 12
-tags: [jax, functional-programming, autodiff, compilation, vectorization]
+tags: [functional, gradients, batching, reproducibility]
 ---
 
-# JAX Functional Patterns
+## Explicit state
 
-JAX transforms pure functions. Every pattern below follows one rule: write a function that takes inputs and returns outputs, with no side effects. Then transform it.
-
-## The Four Transforms
-
-### grad -- Differentiate a function
+Represent a scalar model as data and return a new mapping from every update:
 
 ```python
-grads = jax.grad(loss_fn)(params, x, y)
-loss, grads = jax.value_and_grad(loss_fn)(params, x, y)
+params = {"w": (0.0, 0.0), "b": 0.0}
+gradients = {"w": (0.25, -0.5), "b": 0.1}
+next_params = update_params(params, gradients, learning_rate=0.1)
 ```
 
-Use when: you need gradients for optimization.
-Constraint: the function must return a scalar. For non-scalar outputs, use `jax.jacobian`.
+The old mapping remains unchanged. Validate finite values and matching widths before applying arithmetic.
 
-### jit -- Compile a function
+## Batch transformation
 
 ```python
-fast_fn = jax.jit(f)
+predict = shape_checked(lambda row: linear(params, row), width=2)
+predictions = vmap(predict, ((1.0, 2.0), (2.0, 3.0)))
 ```
 
-Use when: the function will be called more than once with same-shaped inputs.
-Constraint: no Python control flow that depends on traced values. Use `jax.lax.cond` for conditionals, `jax.lax.scan` for loops.
+`vmap` here is a small, executable map over a non-empty tuple. It illustrates the data-flow idea; it is not an implementation of an external array library.
 
-### vmap -- Vectorize a function
+## Finite-difference probe
 
 ```python
-batch_fn = jax.vmap(f, in_axes=(None, 0))
+derivative = finite_difference_gradient(lambda value: value**2, 3.0)
 ```
 
-Use when: you wrote a function for one example and need it to work on batches.
-`in_axes` specifies which argument axis to batch over. `None` means do not batch (broadcast).
+The centered estimate should be close to `6`. Keep `epsilon` positive and finite, and interpret the result as an approximation rather than automatic differentiation.
 
-### pmap -- Parallelize across devices
+## Reproducible randomness
 
 ```python
-parallel_fn = jax.pmap(f, axis_name='devices')
+first_seed, second_seed = split_seed(42)
+weights = random_vector(first_seed, size=2)
 ```
 
-Use when: you have multiple GPUs/TPUs and want data parallelism.
-Inside the function, `jax.lax.pmean(x, 'devices')` averages across devices.
+Passing seeds explicitly makes repeated fixture runs comparable. This lesson does not claim device-independent randomness or compilation semantics.
 
-## Composition Rules
+## Review checklist
 
-Transforms compose. The order matters:
-
-```python
-per_example_grads = jax.jit(jax.vmap(jax.grad(loss_fn), in_axes=(None, 0, 0)))
-```
-
-Reading right to left: take gradient of loss_fn, vectorize over examples, compile the result.
-
-Valid compositions:
-- `jit(grad(f))` -- compiled gradient computation
-- `jit(vmap(f))` -- compiled batched computation
-- `vmap(grad(f))` -- per-example gradients
-- `pmap(jit(f))` -- parallel compiled computation
-- `grad(jit(f))` -- gradient of compiled function (same as jit(grad(f)))
-
-## Parameter Management Pattern
-
-JAX parameters are pytrees (nested dicts of arrays):
-
-```python
-params = {
-    'layer1': {'w': jnp.zeros((784, 256)), 'b': jnp.zeros(256)},
-    'layer2': {'w': jnp.zeros((256, 10)),  'b': jnp.zeros(10)},
-}
-```
-
-Update all parameters at once:
-```python
-params = jax.tree.map(lambda p, g: p - lr * g, params, grads)
-```
-
-Count parameters:
-```python
-n_params = sum(p.size for p in jax.tree.leaves(params))
-```
-
-## PRNG Key Management
-
-JAX requires explicit random keys:
-
-```python
-key = jax.random.PRNGKey(0)
-key, subkey = jax.random.split(key)
-noise = jax.random.normal(subkey, shape)
-```
-
-For multiple random operations, split once:
-```python
-keys = jax.random.split(key, n)
-```
-
-Never reuse a key. Always split before using.
-
-## Common Mistakes
-
-1. **Mutating arrays inside jit**: JAX arrays are immutable. Use `x.at[i].set(v)` instead of `x[i] = v`.
-
-2. **Using Python print inside jit**: `print` runs during tracing, not execution. Use `jax.debug.print("{}", x)`.
-
-3. **Python if/for inside jit on traced values**: Use `jax.lax.cond`, `jax.lax.switch`, `jax.lax.scan`, `jax.lax.fori_loop`.
-
-4. **Forgetting `.block_until_ready()`**: JAX uses async dispatch. For benchmarking, call `.block_until_ready()` to wait for actual completion.
-
-5. **Reusing PRNG keys**: Two operations with the same key produce the same "random" values. Always split.
-
-6. **Global state in jitted functions**: Global variables are captured at trace time. Changes after tracing are invisible. Pass everything as arguments.
-
-## Decision Checklist
-
-1. Is the function called more than once? Add `@jax.jit`.
-2. Does it need gradients? Wrap with `jax.grad` or `jax.value_and_grad`.
-3. Does it process one example but you have a batch? Wrap with `jax.vmap`.
-4. Do you have multiple devices? Wrap with `jax.pmap`.
-5. Does it use randomness? Thread PRNG keys through explicitly.
-6. Does it have Python control flow on array values? Replace with `jax.lax` primitives.
-
-## When to Use JAX
-
-Use JAX when:
-- You need per-example gradients (differential privacy, Fisher information)
-- You are training on TPUs (JAX is the native framework)
-- You need higher-order derivatives (Hessians, Jacobians)
-- You want to compile the entire training step to a single kernel
-- Your team is at Google DeepMind or Anthropic
-
-Use PyTorch when:
-- You want the largest ecosystem (HuggingFace, torchvision, Lightning)
-- You prioritize debugging ease over raw speed
-- You are deploying to NVIDIA GPUs with TorchServe/Triton
-- You are hiring (more PyTorch developers exist)
-- You want to iterate fast on new architectures
+- Does every parameter update return new state?
+- Are batch rows non-empty, finite, and width-compatible?
+- Is the loss trace finite and lower at the end of the bounded fixture?
+- Are malformed steps, rates, widths, and epsilon values rejected early?
+- Is any external JAX execution described as an optional boundary rather than a local result?

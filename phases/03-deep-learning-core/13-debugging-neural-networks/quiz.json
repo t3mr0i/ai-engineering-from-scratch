@@ -1,78 +1,78 @@
 {
   "lesson": "13-debugging-neural-networks",
-  "title": "Debugging Neural Networks",
+  "title": "Debugging Neural Networks with Evidence",
   "questions": [
     {
       "stage": "pre",
-      "question": "A loss history with at least two values contains NaN. What status does NetworkDebugger.check_loss_health return?",
+      "question": "What does finite_stats((1, 2, 3)) provide before a model-specific interpretation?",
       "options": [
-        "NAN_OR_INF",
-        "HEALTHY",
-        "NOT_ENOUGH_DATA",
-        "OSCILLATING"
-      ],
-      "correct": 0,
-      "explanation": "The health check scans the recent losses first and returns NAN_OR_INF when any value is NaN or infinite."
-    },
-    {
-      "stage": "check",
-      "question": "An activation hook reports fraction_zero=0.75 for a ReLU layer. Which issue does check_activations report?",
-      "options": [
-        "EXPLODING_ACTIVATIONS",
-        "DEAD_NEURONS",
-        "VANISHING_GRADIENT",
-        "HEALTHY"
+        "A trained classifier and its test accuracy",
+        "Finite count, mean, standard deviation, minimum, and maximum",
+        "A replacement loss computed with softmax",
+        "A list of framework hooks attached to every layer"
       ],
       "correct": 1,
-      "explanation": "The debugger flags DEAD_NEURONS when more than half of recorded activations are exactly zero."
+      "explanation": "The helper summarizes a non-empty finite sequence; it deliberately reports evidence rather than pretending to train or inspect a framework model."
     },
     {
       "stage": "check",
-      "question": "A gradient hook reports abs_mean=1e-8. Which gradient diagnostic is triggered?",
+      "question": "What status does loss_health((1.0, float('nan'))) return?",
       "options": [
-        "EXPLODING_GRADIENT",
-        "GRADIENT_RATIO",
-        "VANISHING_GRADIENT",
-        "HEALTHY"
+        "HEALTHY",
+        "NOT_DECREASING",
+        "NAN_OR_INF",
+        "NOT_ENOUGH_DATA"
       ],
       "correct": 2,
-      "explanation": "The threshold for a per-layer vanishing-gradient warning is abs_mean < 1e-7, so 1e-8 is flagged."
+      "explanation": "The non-finite scan runs after the minimum-length check and labels any NaN or infinity as NAN_OR_INF."
     },
     {
       "stage": "check",
-      "question": "What does overfit_one_batch report as a pass condition?",
+      "question": "For activation_report('h', (0.0, 0.0, 0.0, 1.0)), which issue is reported?",
       "options": [
-        "The first loss is at most 0.1",
-        "The batch contains exactly 200 examples",
-        "The model never calls backward",
-        "The final loss is at most 0.1"
-      ],
-      "correct": 3,
-      "explanation": "After the requested optimization steps, the helper returns True only when final_loss <= 0.1. Failure to fit one small batch points to a loop or model bug."
-    },
-    {
-      "stage": "post",
-      "question": "How does gradient_check estimate a numerical derivative for one parameter?",
-      "options": [
-        "(loss_plus-loss_minus)/(2*eps) after perturbing the parameter by plus and minus eps",
-        "The parameter value divided by the batch size",
-        "The model accuracy after one optimizer step",
-        "The difference between two class labels"
+        "DEAD_NEURONS",
+        "EXPLODING_ACTIVATIONS",
+        "HEALTHY",
+        "VANISHING_GRADIENT"
       ],
       "correct": 0,
-      "explanation": "The centered finite difference compares the loss at parameter+eps and parameter-eps, then divides by 2eps."
+      "explanation": "Three of four entries are zero, so the zero fraction is 0.75 and exceeds the helper's 0.5 dead-neuron threshold."
+    },
+    {
+      "stage": "check",
+      "question": "Which condition makes gradient_report classify a layer as VANISHING_GRADIENT?",
+      "options": [
+        "The activation maximum is above 10",
+        "The gradient absolute mean is below 1e-7",
+        "The loss history has fewer than two values",
+        "The gradient absolute mean is above 100"
+      ],
+      "correct": 1,
+      "explanation": "The gradient helper compares the mean absolute magnitude with its explicit small threshold of 1e-7."
     },
     {
       "stage": "post",
-      "question": "A training loop omits optimizer.zero_grad() while calling loss.backward() each step. What symptom should you investigate first?",
+      "question": "What value should central_difference(lambda x: x*x, 3.0) approximate?",
       "options": [
-        "The model automatically switches to evaluation mode",
-        "Gradients accumulate across steps and can produce unstable updates",
-        "All activations become exactly zero before the first update",
-        "The test set is shuffled into the labels"
+        "3",
+        "6",
+        "9",
+        "12"
       ],
       "correct": 1,
-      "explanation": "PyTorch accumulates gradients by default. Clearing them before each backward pass keeps each update tied to the current batch."
+      "explanation": "The centered finite difference estimates the derivative of x²; at x=3, the analytic derivative 2x is 6."
+    },
+    {
+      "stage": "post",
+      "question": "What is the appropriate conclusion when torch_available() is false in the canonical demo?",
+      "options": [
+        "The diagnostic helpers cannot run at all",
+        "A model reached a default accuracy",
+        "The optional torch path was not executed, so report only the stdlib evidence",
+        "Install torch from inside main.py before continuing"
+      ],
+      "correct": 2,
+      "explanation": "The lesson's diagnostics are framework-independent. A missing optional backend is a boundary to report, not a reason to install packages or fabricate training evidence."
     }
   ]
 }

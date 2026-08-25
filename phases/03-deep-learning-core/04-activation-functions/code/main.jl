@@ -1,10 +1,8 @@
-# Activation functions in Julia. Sigmoid, tanh, ReLU, leaky ReLU,
-# GELU, Swish — each with hand-derived analytical gradients.
-# Plus dead-neuron detection on ReLU and a vanishing-gradient demo.
-# Trains a tiny 2-h-1 MLP with each activation on circle data.
-# Stdlib only. Sources:
-#   https://docs.julialang.org/en/v1/base/math/  (tanh, erf, sqrt)
-#   https://arxiv.org/abs/1606.08415  (GELU: Hendrycks & Gimpel)
+# Activation functions and local derivatives implemented with Julia stdlib.
+# The saturation, softmax, and dead-unit fixtures are explained in docs/en.md.
+# The tiny circle comparison is a local teaching experiment, not a benchmark.
+# Source: https://docs.julialang.org/en/v1/base/math/
+# Source: https://arxiv.org/abs/1606.08415
 
 using Random
 using Printf

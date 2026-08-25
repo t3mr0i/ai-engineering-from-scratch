@@ -1,603 +1,313 @@
+# A tiny list-based neural-network framework with explicit forward/backward contracts.
+# Modules own training/evaluation state; Parameter objects own data and accumulated gradients.
+# The XOR fixture exercises Linear, Tanh, Sigmoid, Sequential, MSELoss, SGD, and DataLoader.
+# See phases/03-deep-learning-core/10-mini-framework/docs/en.md.
+
+from __future__ import annotations
+
 import math
 import random
+from typing import Iterable, Iterator, Sequence
+
+
+def _positive_int(value: int, name: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+        raise ValueError(f"{name} must be a positive integer")
+    return value
+
+
+def _finite(value: float, name: str = "value") -> float:
+    try:
+        numeric = float(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{name} must be finite") from exc
+    if not math.isfinite(numeric):
+        raise ValueError(f"{name} must be finite")
+    return numeric
+
+
+def _vector(values: Sequence[float], expected: int | None = None, name: str = "vector") -> list[float]:
+    try:
+        result = [_finite(value, name) for value in values]
+    except TypeError as exc:
+        raise ValueError(f"{name} must be a sequence") from exc
+    if not result:
+        raise ValueError(f"{name} must be nonempty")
+    if expected is not None and len(result) != expected:
+        raise ValueError(f"{name} must have length {expected}")
+    return result
+
+
+class Parameter:
+    def __init__(self, data: float, grad: float = 0.0, name: str = "") -> None:
+        self.data = _finite(data, "parameter data")
+        self.grad = _finite(grad, "parameter gradient")
+        self.name = name
 
 
 class Module:
-    def __init__(self):
+    def __init__(self) -> None:
         self.training = True
 
-    def forward(self, x):
+    def forward(self, x: Sequence[float]) -> list[float]:
         raise NotImplementedError
 
-    def backward(self, grad):
+    def backward(self, grad: Sequence[float]) -> list[float]:
         raise NotImplementedError
 
-    def parameters(self):
+    def parameters(self) -> list[Parameter]:
         return []
 
-    def train(self):
+    def train(self) -> "Module":
         self.training = True
+        return self
 
-    def eval(self):
+    def eval(self) -> "Module":
         self.training = False
+        return self
 
 
 class Linear(Module):
-    def __init__(self, fan_in, fan_out):
+    def __init__(self, fan_in: int, fan_out: int, seed: int = 0) -> None:
         super().__init__()
-        std = math.sqrt(2.0 / fan_in)
-        self.weights = [[random.gauss(0, std) for _ in range(fan_in)] for _ in range(fan_out)]
-        self.biases = [0.0] * fan_out
-        self.weight_grads = [[0.0] * fan_in for _ in range(fan_out)]
-        self.bias_grads = [0.0] * fan_out
-        self.fan_in = fan_in
-        self.fan_out = fan_out
-        self.input = None
+        self.fan_in = _positive_int(fan_in, "fan_in")
+        self.fan_out = _positive_int(fan_out, "fan_out")
+        rng = random.Random(seed)
+        std = math.sqrt(2.0 / self.fan_in)
+        self.weights = [[Parameter(rng.gauss(0.0, std), name=f"weight[{i},{j}]") for j in range(self.fan_in)] for i in range(self.fan_out)]
+        self.biases = [Parameter(0.0, name=f"bias[{i}]") for i in range(self.fan_out)]
+        self._input: list[float] | None = None
 
-    def forward(self, x):
-        self.input = x
-        output = []
-        for i in range(self.fan_out):
-            val = self.biases[i]
-            for j in range(self.fan_in):
-                val += self.weights[i][j] * x[j]
-            output.append(val)
-        return output
+    def forward(self, x: Sequence[float]) -> list[float]:
+        values = _vector(x, self.fan_in, "Linear input")
+        self._input = values
+        return [
+            sum(self.weights[i][j].data * values[j] for j in range(self.fan_in)) + self.biases[i].data
+            for i in range(self.fan_out)
+        ]
 
-    def backward(self, grad):
+    def backward(self, grad: Sequence[float]) -> list[float]:
+        if self._input is None:
+            raise RuntimeError("Linear.backward requires a preceding forward")
+        upstream = _vector(grad, self.fan_out, "Linear gradient")
         input_grad = [0.0] * self.fan_in
-        for i in range(self.fan_out):
-            self.bias_grads[i] += grad[i]
-            for j in range(self.fan_in):
-                self.weight_grads[i][j] += grad[i] * self.input[j]
-                input_grad[j] += grad[i] * self.weights[i][j]
+        for i, value in enumerate(upstream):
+            self.biases[i].grad += value
+            for j, coordinate in enumerate(self._input):
+                self.weights[i][j].grad += value * coordinate
+                input_grad[j] += value * self.weights[i][j].data
         return input_grad
 
-    def parameters(self):
-        params = []
-        for i in range(self.fan_out):
-            for j in range(self.fan_in):
-                params.append((self.weights, i, j, self.weight_grads))
-            params.append((self.biases, i, None, self.bias_grads))
-        return params
+    def parameters(self) -> list[Parameter]:
+        return [parameter for row in self.weights for parameter in row] + list(self.biases)
 
 
 class ReLU(Module):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
-        self.mask = None
+        self._mask: list[float] | None = None
 
-    def forward(self, x):
-        self.mask = [1.0 if v > 0 else 0.0 for v in x]
-        return [max(0.0, v) for v in x]
+    def forward(self, x: Sequence[float]) -> list[float]:
+        values = _vector(x, name="ReLU input")
+        self._mask = [1.0 if value > 0.0 else 0.0 for value in values]
+        return [value if value > 0.0 else 0.0 for value in values]
 
-    def backward(self, grad):
-        return [g * m for g, m in zip(grad, self.mask)]
-
-
-class Sigmoid(Module):
-    def __init__(self):
-        super().__init__()
-        self.output = None
-
-    def forward(self, x):
-        self.output = []
-        for v in x:
-            v = max(-500, min(500, v))
-            self.output.append(1.0 / (1.0 + math.exp(-v)))
-        return self.output
-
-    def backward(self, grad):
-        return [g * o * (1 - o) for g, o in zip(grad, self.output)]
+    def backward(self, grad: Sequence[float]) -> list[float]:
+        if self._mask is None:
+            raise RuntimeError("ReLU.backward requires a preceding forward")
+        upstream = _vector(grad, len(self._mask), "ReLU gradient")
+        return [value * mask for value, mask in zip(upstream, self._mask)]
 
 
 class Tanh(Module):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
-        self.output = None
+        self._output: list[float] | None = None
 
-    def forward(self, x):
-        self.output = [math.tanh(v) for v in x]
-        return self.output
+    def forward(self, x: Sequence[float]) -> list[float]:
+        values = _vector(x, name="Tanh input")
+        self._output = [math.tanh(value) for value in values]
+        return list(self._output)
 
-    def backward(self, grad):
-        return [g * (1 - o * o) for g, o in zip(grad, self.output)]
+    def backward(self, grad: Sequence[float]) -> list[float]:
+        if self._output is None:
+            raise RuntimeError("Tanh.backward requires a preceding forward")
+        upstream = _vector(grad, len(self._output), "Tanh gradient")
+        return [value * (1.0 - output * output) for value, output in zip(upstream, self._output)]
+
+
+class Sigmoid(Module):
+    def __init__(self) -> None:
+        super().__init__()
+        self._output: list[float] | None = None
+
+    def forward(self, x: Sequence[float]) -> list[float]:
+        values = _vector(x, name="Sigmoid input")
+        output = []
+        for value in values:
+            e = math.exp(-value) if value >= 0.0 else math.exp(value)
+            output.append(1.0 / (1.0 + e) if value >= 0.0 else e / (1.0 + e))
+        self._output = output
+        return list(output)
+
+    def backward(self, grad: Sequence[float]) -> list[float]:
+        if self._output is None:
+            raise RuntimeError("Sigmoid.backward requires a preceding forward")
+        upstream = _vector(grad, len(self._output), "Sigmoid gradient")
+        return [value * output * (1.0 - output) for value, output in zip(upstream, self._output)]
 
 
 class Dropout(Module):
-    def __init__(self, p=0.5):
+    def __init__(self, p: float = 0.5, seed: int = 0) -> None:
         super().__init__()
+        p = _finite(p, "dropout probability")
+        if not 0.0 <= p < 1.0:
+            raise ValueError("dropout probability must be in [0,1)")
         self.p = p
-        self.mask = None
+        self._rng = random.Random(seed)
+        self._mask: list[float] | None = None
 
-    def forward(self, x):
-        if not self.training:
-            return x
-        self.mask = [0.0 if random.random() < self.p else 1.0 / (1 - self.p) for _ in x]
-        return [v * m for v, m in zip(x, self.mask)]
+    def forward(self, x: Sequence[float]) -> list[float]:
+        values = _vector(x, name="Dropout input")
+        if not self.training or self.p == 0.0:
+            self._mask = [1.0] * len(values)
+            return values
+        scale = 1.0 / (1.0 - self.p)
+        self._mask = [0.0 if self._rng.random() < self.p else scale for _ in values]
+        return [value * mask for value, mask in zip(values, self._mask)]
 
-    def backward(self, grad):
-        if self.mask is None:
-            return grad
-        return [g * m for g, m in zip(grad, self.mask)]
-
-
-class BatchNorm(Module):
-    def __init__(self, size, momentum=0.1, eps=1e-5):
-        super().__init__()
-        self.size = size
-        self.gamma = [1.0] * size
-        self.beta = [0.0] * size
-        self.gamma_grads = [0.0] * size
-        self.beta_grads = [0.0] * size
-        self.running_mean = [0.0] * size
-        self.running_var = [1.0] * size
-        self.momentum = momentum
-        self.eps = eps
-        self.x_norm = None
-        self.std_inv = None
-        self.batch_input = None
-
-    def forward_batch(self, batch):
-        batch_size = len(batch)
-        output_batch = []
-
-        if self.training:
-            mean = [0.0] * self.size
-            for sample in batch:
-                for j in range(self.size):
-                    mean[j] += sample[j]
-            mean = [m / batch_size for m in mean]
-
-            var = [0.0] * self.size
-            for sample in batch:
-                for j in range(self.size):
-                    var[j] += (sample[j] - mean[j]) ** 2
-            var = [v / batch_size for v in var]
-
-            self.std_inv = [1.0 / math.sqrt(v + self.eps) for v in var]
-
-            self.x_norm = []
-            self.batch_input = batch
-            for sample in batch:
-                normed = [(sample[j] - mean[j]) * self.std_inv[j] for j in range(self.size)]
-                self.x_norm.append(normed)
-                output = [self.gamma[j] * normed[j] + self.beta[j] for j in range(self.size)]
-                output_batch.append(output)
-
-            for j in range(self.size):
-                self.running_mean[j] = (1 - self.momentum) * self.running_mean[j] + self.momentum * mean[j]
-                self.running_var[j] = (1 - self.momentum) * self.running_var[j] + self.momentum * var[j]
-        else:
-            std_inv = [1.0 / math.sqrt(v + self.eps) for v in self.running_var]
-            for sample in batch:
-                normed = [(sample[j] - self.running_mean[j]) * std_inv[j] for j in range(self.size)]
-                output = [self.gamma[j] * normed[j] + self.beta[j] for j in range(self.size)]
-                output_batch.append(output)
-
-        return output_batch
-
-    def forward(self, x):
-        if self.training:
-            for j in range(self.size):
-                self.running_mean[j] = (1 - self.momentum) * self.running_mean[j] + self.momentum * x[j]
-
-            self.std_inv = [1.0 / math.sqrt(v + self.eps) for v in self.running_var]
-            self.x_norm = [(x[j] - self.running_mean[j]) * self.std_inv[j] for j in range(self.size)]
-            return [self.gamma[j] * self.x_norm[j] + self.beta[j] for j in range(self.size)]
-        else:
-            std_inv = [1.0 / math.sqrt(v + self.eps) for v in self.running_var]
-            normed = [(x[j] - self.running_mean[j]) * std_inv[j] for j in range(self.size)]
-            return [self.gamma[j] * normed[j] + self.beta[j] for j in range(self.size)]
-
-    def backward(self, grad):
-        if self.x_norm is None:
-            return grad
-        x_norm = self.x_norm if not isinstance(self.x_norm[0], list) else self.x_norm[0]
-        for j in range(self.size):
-            self.gamma_grads[j] += x_norm[j] * grad[j]
-            self.beta_grads[j] += grad[j]
-        return [grad[j] * self.gamma[j] * self.std_inv[j] for j in range(self.size)]
-
-    def parameters(self):
-        params = []
-        for j in range(self.size):
-            params.append((self.gamma, j, None, self.gamma_grads))
-            params.append((self.beta, j, None, self.beta_grads))
-        return params
+    def backward(self, grad: Sequence[float]) -> list[float]:
+        if self._mask is None:
+            raise RuntimeError("Dropout.backward requires a preceding forward")
+        upstream = _vector(grad, len(self._mask), "Dropout gradient")
+        return [value * mask for value, mask in zip(upstream, self._mask)]
 
 
 class Sequential(Module):
-    def __init__(self, *modules):
+    def __init__(self, *modules: Module) -> None:
         super().__init__()
+        if not modules:
+            raise ValueError("Sequential needs at least one module")
         self.modules = list(modules)
 
-    def forward(self, x):
+    def forward(self, x: Sequence[float]) -> list[float]:
+        current = list(x)
         for module in self.modules:
-            x = module.forward(x)
-        return x
+            current = module.forward(current)
+        return current
 
-    def backward(self, grad):
+    def backward(self, grad: Sequence[float]) -> list[float]:
+        current = list(grad)
         for module in reversed(self.modules):
-            grad = module.backward(grad)
-        return grad
+            current = module.backward(current)
+        return current
 
-    def parameters(self):
-        params = []
-        for module in self.modules:
-            params.extend(module.parameters())
-        return params
+    def parameters(self) -> list[Parameter]:
+        return [parameter for module in self.modules for parameter in module.parameters()]
 
-    def train(self):
+    def train(self) -> "Sequential":
         self.training = True
         for module in self.modules:
             module.train()
+        return self
 
-    def eval(self):
+    def eval(self) -> "Sequential":
         self.training = False
         for module in self.modules:
             module.eval()
-
-    def count_parameters(self):
-        return len(self.parameters())
+        return self
 
 
 class MSELoss:
-    def __call__(self, predicted, target):
-        self.predicted = predicted
-        self.target = target
-        n = len(predicted)
-        self.loss = sum((p - t) ** 2 for p, t in zip(predicted, target)) / n
-        return self.loss
+    def __init__(self) -> None:
+        self._predicted: list[float] | None = None
+        self._target: list[float] | None = None
 
-    def backward(self):
-        n = len(self.predicted)
-        return [2 * (p - t) / n for p, t in zip(self.predicted, self.target)]
+    def __call__(self, predicted: Sequence[float], target: Sequence[float]) -> float:
+        values = _vector(predicted, name="predicted")
+        targets = _vector(target, len(values), "target")
+        self._predicted, self._target = values, targets
+        return sum((value - goal) ** 2 for value, goal in zip(values, targets)) / len(values)
 
-
-class BCELoss:
-    def __call__(self, predicted, target):
-        self.predicted = predicted
-        self.target = target
-        eps = 1e-7
-        n = len(predicted)
-        self.loss = 0
-        for p, t in zip(predicted, target):
-            p = max(eps, min(1 - eps, p))
-            self.loss += -(t * math.log(p) + (1 - t) * math.log(1 - p))
-        self.loss /= n
-        return self.loss
-
-    def backward(self):
-        eps = 1e-7
-        n = len(self.predicted)
-        grads = []
-        for p, t in zip(self.predicted, self.target):
-            p = max(eps, min(1 - eps, p))
-            grads.append((-t / p + (1 - t) / (1 - p)) / n)
-        return grads
+    def backward(self) -> list[float]:
+        if self._predicted is None or self._target is None:
+            raise RuntimeError("MSELoss.backward requires a preceding loss call")
+        return [2.0 * (value - goal) / len(self._predicted) for value, goal in zip(self._predicted, self._target)]
 
 
 class SGD:
-    def __init__(self, parameters, lr=0.01):
-        self.params = parameters
-        self.lr = lr
+    def __init__(self, parameters: Iterable[Parameter], lr: float = 0.1) -> None:
+        self.params = list(parameters)
+        if not self.params:
+            raise ValueError("SGD needs at least one parameter")
+        self.lr = _finite(lr, "learning rate")
+        if self.lr <= 0.0:
+            raise ValueError("learning rate must be positive")
 
-    def step(self):
-        for container, i, j, grad_container in self.params:
-            if j is not None:
-                container[i][j] -= self.lr * grad_container[i][j]
-            else:
-                container[i] -= self.lr * grad_container[i]
+    def zero_grad(self) -> None:
+        for parameter in self.params:
+            parameter.grad = 0.0
 
-    def zero_grad(self):
-        for container, i, j, grad_container in self.params:
-            if j is not None:
-                grad_container[i][j] = 0.0
-            else:
-                grad_container[i] = 0.0
-
-
-class Adam:
-    def __init__(self, parameters, lr=0.001, beta1=0.9, beta2=0.999, eps=1e-8):
-        self.params = parameters
-        self.lr = lr
-        self.beta1 = beta1
-        self.beta2 = beta2
-        self.eps = eps
-        self.t = 0
-        self.m = [0.0] * len(parameters)
-        self.v = [0.0] * len(parameters)
-
-    def step(self):
-        self.t += 1
-        for idx, (container, i, j, grad_container) in enumerate(self.params):
-            if j is not None:
-                g = grad_container[i][j]
-            else:
-                g = grad_container[i]
-
-            self.m[idx] = self.beta1 * self.m[idx] + (1 - self.beta1) * g
-            self.v[idx] = self.beta2 * self.v[idx] + (1 - self.beta2) * g * g
-
-            m_hat = self.m[idx] / (1 - self.beta1 ** self.t)
-            v_hat = self.v[idx] / (1 - self.beta2 ** self.t)
-
-            update = self.lr * m_hat / (math.sqrt(v_hat) + self.eps)
-
-            if j is not None:
-                container[i][j] -= update
-            else:
-                container[i] -= update
-
-    def zero_grad(self):
-        for container, i, j, grad_container in self.params:
-            if j is not None:
-                grad_container[i][j] = 0.0
-            else:
-                grad_container[i] = 0.0
+    def step(self) -> None:
+        for parameter in self.params:
+            if not math.isfinite(parameter.grad):
+                raise ValueError("parameter gradients must be finite")
+            parameter.data -= self.lr * parameter.grad
 
 
 class DataLoader:
-    def __init__(self, data, batch_size=32, shuffle=True):
-        self.data = data
-        self.batch_size = batch_size
-        self.shuffle = shuffle
+    def __init__(self, data: Sequence[tuple[Sequence[float], int]], batch_size: int = 1, shuffle: bool = False, seed: int = 0) -> None:
+        if not data:
+            raise ValueError("DataLoader needs nonempty data")
+        self.data = [(tuple(_vector(x, name="sample")), int(y)) for x, y in data]
+        self.batch_size = _positive_int(batch_size, "batch_size")
+        self.shuffle = bool(shuffle)
+        self.seed = seed
+        self._epoch = 0
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[list[tuple[tuple[float, ...], int]]]:
         indices = list(range(len(self.data)))
         if self.shuffle:
-            random.shuffle(indices)
+            random.Random(self.seed + self._epoch).shuffle(indices)
+        self._epoch += 1
         for start in range(0, len(indices), self.batch_size):
-            batch_indices = indices[start:start + self.batch_size]
-            batch = [self.data[i] for i in batch_indices]
-            inputs = [item[0] for item in batch]
-            targets = [item[1] for item in batch]
-            yield inputs, targets
+            yield [self.data[index] for index in indices[start:start + self.batch_size]]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return (len(self.data) + self.batch_size - 1) // self.batch_size
 
 
-def make_circle_data(n=160, seed=42):
-    random.seed(seed)
-    data = []
-    for _ in range(n):
-        x = random.uniform(-2, 2)
-        y = random.uniform(-2, 2)
-        label = 1.0 if x * x + y * y < 1.5 else 0.0
-        data.append(([x, y], [label]))
-    return data
+def build_xor_model(seed: int = 0) -> Sequential:
+    return Sequential(Linear(2, 4, seed=seed), Tanh(), Linear(4, 1, seed=seed + 1), Sigmoid())
 
 
-def train_framework():
-    random.seed(42)
-
-    model = Sequential(
-        Linear(2, 16),
-        ReLU(),
-        Linear(16, 16),
-        ReLU(),
-        Linear(16, 8),
-        ReLU(),
-        Linear(8, 1),
-        Sigmoid(),
-    )
-
-    print(f"Model: 4 linear layers (2->16->16->8->1)")
-    print(f"Total parameters: {model.count_parameters()}")
-    print(f"Optimizer: Adam (lr=0.01)")
-    print(f"Loss: Binary Cross-Entropy")
-    print(f"Data: 160 samples (80/20 train/test split)")
-    print()
-
-    criterion = BCELoss()
-    optimizer = Adam(model.parameters(), lr=0.01)
-
-    data = make_circle_data(160)
-    split = int(len(data) * 0.8)
-    train_data = data[:split]
-    test_data = data[split:]
-
-    loader = DataLoader(train_data, batch_size=16, shuffle=True)
-
+def train_xor(epochs: int = 800, lr: float = 0.5, seed: int = 0) -> tuple[Sequential, list[float], list[int]]:
+    epochs = _positive_int(epochs, "epochs")
+    data = [((0.0, 0.0), (0.0,)), ((0.0, 1.0), (1.0,)), ((1.0, 0.0), (1.0,)), ((1.0, 1.0), (0.0,))]
+    model = build_xor_model(seed)
+    loss = MSELoss()
+    optimizer = SGD(model.parameters(), lr=lr)
+    history = []
     model.train()
-
-    for epoch in range(25):
-        total_loss = 0
-        total_correct = 0
-        total_samples = 0
-
-        for batch_inputs, batch_targets in loader:
-            for x, t in zip(batch_inputs, batch_targets):
-                pred = model.forward(x)
-                loss = criterion(pred, t)
-                total_loss += loss
-
-                optimizer.zero_grad()
-                grad = criterion.backward()
-                model.backward(grad)
-                optimizer.step()
-
-                predicted_class = 1.0 if pred[0] >= 0.5 else 0.0
-                if predicted_class == t[0]:
-                    total_correct += 1
-                total_samples += 1
-
-        avg_loss = total_loss / total_samples
-        accuracy = total_correct / total_samples * 100
-
-        if epoch % 5 == 0 or epoch == 24:
-            print(f"  Epoch {epoch:3d} | Loss: {avg_loss:.6f} | Train Accuracy: {accuracy:.1f}%")
-
+    for _ in range(epochs):
+        total = 0.0
+        for x, target in data:
+            prediction = model.forward(x)
+            total += loss(prediction, target)
+            optimizer.zero_grad()
+            model.backward(loss.backward())
+            optimizer.step()
+        history.append(total / len(data))
     model.eval()
-    correct = 0
-    for x, t in test_data:
-        pred = model.forward(x)
-        predicted_class = 1.0 if pred[0] >= 0.5 else 0.0
-        if predicted_class == t[0]:
-            correct += 1
-    test_accuracy = correct / len(test_data) * 100
-    print(f"\n  Test Accuracy: {test_accuracy:.1f}% ({correct}/{len(test_data)})")
-
-    return model, test_accuracy
+    predictions = [int(model.forward(x)[0] >= 0.5) for x, _ in data]
+    return model, history, predictions
 
 
-def train_with_sgd():
-    random.seed(42)
-
-    model = Sequential(
-        Linear(2, 16),
-        ReLU(),
-        Linear(16, 16),
-        ReLU(),
-        Linear(16, 8),
-        ReLU(),
-        Linear(8, 1),
-        Sigmoid(),
-    )
-
-    criterion = BCELoss()
-    optimizer = SGD(model.parameters(), lr=0.1)
-
-    data = make_circle_data(160)
-    split = int(len(data) * 0.8)
-    train_data = data[:split]
-    test_data = data[split:]
-    loader = DataLoader(train_data, batch_size=16, shuffle=True)
-
-    model.train()
-
-    for epoch in range(25):
-        total_loss = 0
-        total_samples = 0
-
-        for batch_inputs, batch_targets in loader:
-            for x, t in zip(batch_inputs, batch_targets):
-                pred = model.forward(x)
-                loss = criterion(pred, t)
-                total_loss += loss
-
-                optimizer.zero_grad()
-                grad = criterion.backward()
-                model.backward(grad)
-                optimizer.step()
-                total_samples += 1
-
-    model.eval()
-    correct = 0
-    for x, t in test_data:
-        pred = model.forward(x)
-        predicted_class = 1.0 if pred[0] >= 0.5 else 0.0
-        if predicted_class == t[0]:
-            correct += 1
-    return correct / len(test_data) * 100
-
-
-def train_with_dropout():
-    random.seed(42)
-
-    model = Sequential(
-        Linear(2, 16),
-        ReLU(),
-        Dropout(0.3),
-        Linear(16, 16),
-        ReLU(),
-        Dropout(0.3),
-        Linear(16, 8),
-        ReLU(),
-        Linear(8, 1),
-        Sigmoid(),
-    )
-
-    criterion = BCELoss()
-    optimizer = Adam(model.parameters(), lr=0.01)
-
-    data = make_circle_data(160)
-    split = int(len(data) * 0.8)
-    train_data = data[:split]
-    test_data = data[split:]
-    loader = DataLoader(train_data, batch_size=16, shuffle=True)
-
-    model.train()
-
-    for epoch in range(25):
-        for batch_inputs, batch_targets in loader:
-            for x, t in zip(batch_inputs, batch_targets):
-                pred = model.forward(x)
-                criterion(pred, t)
-                optimizer.zero_grad()
-                grad = criterion.backward()
-                model.backward(grad)
-                optimizer.step()
-
-    model.eval()
-    correct = 0
-    for x, t in test_data:
-        pred = model.forward(x)
-        predicted_class = 1.0 if pred[0] >= 0.5 else 0.0
-        if predicted_class == t[0]:
-            correct += 1
-    return correct / len(test_data) * 100
-
-
-def sample_predictions(model, data):
-    test_points = [
-        ([0.0, 0.0], "inside"),
-        ([0.5, 0.5], "inside"),
-        ([1.0, 0.0], "inside"),
-        ([-0.3, 0.3], "inside"),
-        ([1.5, 1.5], "outside"),
-        ([0.0, 1.8], "outside"),
-        ([-1.5, -1.0], "outside"),
-        ([2.0, 0.0], "outside"),
-    ]
-
-    print("\n  Sample Predictions:")
-    for point, expected in test_points:
-        pred = model.forward(point)
-        predicted_region = "inside" if pred[0] >= 0.5 else "outside"
-        status = "OK" if predicted_region == expected else "WRONG"
-        print(f"    ({point[0]:5.1f}, {point[1]:5.1f}) -> {pred[0]:.4f} ({predicted_region:7s}, expected {expected:7s}) {status}")
+def main() -> None:
+    model, history, predictions = train_xor(epochs=800, lr=0.5, seed=3)
+    loader = DataLoader([((0.0, 0.0), 0), ((1.0, 0.0), 1), ((0.0, 1.0), 1)], batch_size=2, shuffle=True, seed=11)
+    print(f"parameters={len(model.parameters())} batches={len(loader)} xor={predictions} loss={history[-1]:.6f}")
 
 
 if __name__ == "__main__":
-    print("=" * 70)
-    print("MINI FRAMEWORK -- Phase 3 Capstone")
-    print("=" * 70)
-    print()
-
-    print("-" * 70)
-    print("EXPERIMENT 1: Adam Optimizer (4-layer network)")
-    print("-" * 70)
-    model, adam_acc = train_framework()
-    sample_predictions(model, None)
-
-    print("\n" + "-" * 70)
-    print("EXPERIMENT 2: SGD Optimizer (same architecture)")
-    print("-" * 70)
-    sgd_acc = train_with_sgd()
-    print(f"  SGD Test Accuracy: {sgd_acc:.1f}%")
-
-    print("\n" + "-" * 70)
-    print("EXPERIMENT 3: With Dropout (p=0.3)")
-    print("-" * 70)
-    dropout_acc = train_with_dropout()
-    print(f"  Dropout Test Accuracy: {dropout_acc:.1f}%")
-
-    print("\n" + "=" * 70)
-    print("COMPARISON")
-    print("=" * 70)
-    print(f"  Adam (no dropout):     {adam_acc:.1f}%")
-    print(f"  SGD (no dropout):      {sgd_acc:.1f}%")
-    print(f"  Adam + Dropout(0.3):   {dropout_acc:.1f}%")
-
-    print("\n" + "=" * 70)
-    print("FRAMEWORK COMPONENTS")
-    print("=" * 70)
-    print(f"  Modules:    Linear, ReLU, Sigmoid, Tanh, Dropout, BatchNorm")
-    print(f"  Containers: Sequential")
-    print(f"  Losses:     MSELoss, BCELoss")
-    print(f"  Optimizers: SGD, Adam")
-    print(f"  Data:       DataLoader (batching + shuffle)")
-    print(f"  Total:      ~500 lines of pure Python")
+    main()

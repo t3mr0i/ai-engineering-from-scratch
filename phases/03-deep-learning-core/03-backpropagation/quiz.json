@@ -54,13 +54,13 @@
       "stage": "post",
       "question": "Why does Network.zero_grad() run before backpropagating a new training objective?",
       "options": [
-        "Value.backward accumulates gradients, so old contributions must be cleared",
+        "Leaf parameter gradients accumulate between objectives, so clear them before a fresh update",
         "It reinitializes all weights to zero before every example",
         "It changes sigmoid outputs into hard classes",
         "It makes the topological sort visit fewer nodes"
       ],
       "correct": 0,
-      "explanation": "Each Value stores gradients with +=. Without clearing them, the next backward pass would include gradients from earlier objectives."
+      "explanation": "Leaf Values accumulate parameter gradients, so Network.zero_grad clears them between objectives. Intermediate adjoints are reset automatically at the start of each backward pass."
     },
     {
       "stage": "post",

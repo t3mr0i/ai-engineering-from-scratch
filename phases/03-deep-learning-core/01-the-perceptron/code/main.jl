@@ -1,10 +1,8 @@
-# Perceptron + 1-hidden-layer MLP in Julia. Single-layer Rosenblatt
-# perceptron for AND/OR/NOT, then a hand-wired XOR network to show
-# why the perceptron fails on XOR, then a trained 2-2-1 sigmoid MLP
-# with manual backpropagation.
-# Stdlib only. Sources:
-#   https://en.wikipedia.org/wiki/Perceptron
-#   https://docs.julialang.org/en/v1/manual/types/#Composite-Types
+# Perceptron and a tiny sigmoid XOR network, implemented with Julia stdlib.
+# The update and gate fixtures are explained in docs/en.md for this lesson.
+# Inputs are finite vectors and targets are binary integers.
+# Sources: https://en.wikipedia.org/wiki/Perceptron
+# Source: https://docs.julialang.org/en/v1/manual/types/#Composite-Types
 
 using Random
 using Printf

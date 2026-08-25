@@ -1,64 +1,51 @@
-# Contract and executable-behavior tests for this lesson demo.
 from __future__ import annotations
 
-import ast
-import functools
 import importlib.util
-import os
 from pathlib import Path
 import subprocess
 import sys
 import unittest
 
+
 CODE = Path(__file__).resolve().parents[1]
-MAIN = CODE / "main.py"
-ALLOWED = set(sys.stdlib_module_names) | {"numpy", "torch", "h5py", "zstandard", "safetensors"}
+spec = importlib.util.spec_from_file_location("lesson02_main", CODE / "main.py")
+main = importlib.util.module_from_spec(spec)
+assert spec.loader is not None
+spec.loader.exec_module(main)
 
-def source_trees() -> list[ast.AST]:
-    return [ast.parse(path.read_text(encoding="utf-8")) for path in CODE.glob("*.py")]
 
-def external_roots() -> set[str]:
-    roots: set[str] = set()
-    for tree in source_trees():
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                roots.update(alias.name.split(".")[0] for alias in node.names)
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                roots.add(node.module.split(".")[0])
-    return {name for name in roots if not (CODE / f"{name}.py").exists() and not (CODE / name).is_dir()}
+class DenseNetworkTests(unittest.TestCase):
+    def test_layer_output_has_one_value_per_neuron(self):
+        layer = main.Layer(2, 3, weights=((1, 0), (0, 1), (1, 1)), biases=(0, 0, 0))
+        self.assertEqual(len(layer.forward((2, 3))), 3)
 
-@functools.lru_cache(maxsize=1)
-def run_demo() -> subprocess.CompletedProcess[str]:
-    missing = sorted(name for name in external_roots() if name in ALLOWED and importlib.util.find_spec(name) is None)
-    banned = sorted(external_roots() - ALLOWED)
-    if missing or banned:
-        raise unittest.SkipTest(f"demo dependencies unavailable or disallowed: {missing + banned}")
-    env = os.environ.copy()
-    for key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "HF_TOKEN", "HUGGINGFACE_TOKEN"):
-        env.pop(key, None)
-    return subprocess.run(
-        [sys.executable, MAIN.name], cwd=CODE, text=True, capture_output=True,
-        timeout=45, env=env, check=False,
-    )
+    def test_layer_rejects_wrong_input_width(self):
+        with self.assertRaises(ValueError):
+            main.Layer(2, 1).forward((1,))
+        with self.assertRaises(ValueError):
+            main.Layer(2.5, 2)
 
-class LessonDemoTests(unittest.TestCase):
-    def test_source_compiles(self) -> None:
-        compile(MAIN.read_text(encoding="utf-8"), str(MAIN), "exec")
+    def test_sigmoid_is_stable_at_large_logits(self):
+        self.assertAlmostEqual(main.sigmoid(1000), 1.0)
+        self.assertAlmostEqual(main.sigmoid(-1000), 0.0)
 
-    def test_demo_has_explicit_entrypoint(self) -> None:
-        source = MAIN.read_text(encoding="utf-8")
-        self.assertTrue("__main__" in source or "runpy.run_path" in source)
+    def test_hand_tuned_network_solves_xor(self):
+        self.assertEqual(main.xor_predictions(), [0, 1, 1, 0])
 
-    def test_demo_exits_successfully(self) -> None:
-        self.assertEqual(run_demo().returncode, 0, run_demo().stderr)
+    def test_parameter_count_includes_biases(self):
+        self.assertEqual(main.parameter_count((2, 3, 1)), 13)
+        with self.assertRaises(ValueError):
+            main.parameter_count((2.5, 3))
 
-    def test_demo_emits_bounded_output(self) -> None:
-        result = run_demo()
-        self.assertTrue((result.stdout + result.stderr).strip())
-        self.assertLess(len(result.stdout) + len(result.stderr), 1_000_000)
+    def test_network_rejects_disconnected_layers(self):
+        with self.assertRaises(ValueError):
+            main.Network((main.Layer(2, 3), main.Layer(2, 1)))
 
-    def test_demo_has_no_traceback(self) -> None:
-        self.assertNotIn("Traceback (most recent call last)", run_demo().stderr)
+    def test_canonical_demo_exits_cleanly(self):
+        result = subprocess.run([sys.executable, "main.py"], cwd=CODE, capture_output=True, text=True, check=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("parameters=", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

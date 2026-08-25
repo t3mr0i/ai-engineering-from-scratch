@@ -1,78 +1,78 @@
 {
   "lesson": "12-intro-to-jax",
-  "title": "Introduction to JAX",
+  "title": "Functional Transformations Without JAX",
   "questions": [
     {
       "stage": "pre",
-      "question": "What shape does init_params create for layer3's weight matrix?",
+      "question": "For params={\"w\": (2, -1), \"b\": 0.5} and x=(3, 4), what does linear(params, x) return?",
       "options": [
-        "(10,128)",
-        "(784,256)",
-        "(128,10)",
-        "(256,128)"
-      ],
-      "correct": 2,
-      "explanation": "The final affine map takes 128 hidden features to 10 logits, so its weight array has shape (128,10)."
-    },
-    {
-      "stage": "check",
-      "question": "If x has shape (32,784), what shape does forward return before loss_fn applies log_softmax?",
-      "options": [
-        "(784,32)",
-        "(32,784)",
-        "(10,32)",
-        "(32,10)"
-      ],
-      "correct": 3,
-      "explanation": "The dot products map 784 to 256, then 256 to 128, then 128 to 10 for each of the 32 rows."
-    },
-    {
-      "stage": "check",
-      "question": "In demo_grad, what does jax.grad(lambda x: x**3)(2.0) return?",
-      "options": [
-        "12",
-        "8",
-        "6",
-        "3"
+        "2.5",
+        "-2.5",
+        "6.5",
+        "4.5"
       ],
       "correct": 0,
-      "explanation": "The derivative of x^3 is 3x^2, so at x=2 it is 12."
+      "explanation": "The affine calculation is 2*3 + (-1)*4 + 0.5 = 2.5, with one weight consumed for each validated feature."
     },
     {
       "stage": "check",
-      "question": "In demo_vmap, what does in_axes=(None,0) mean for params and a batch of five vectors?",
+      "question": "What should finite_difference_gradient(lambda x: x*x, 3.0) approximate?",
       "options": [
-        "Map params over axis 0 and keep every input vector fixed",
-        "Reuse params for every row and map the function over axis 0 of the vectors",
-        "Map both arguments over their last axes",
-        "Drop the parameter dictionary before calling predict_single"
+        "3, because the function value is 9",
+        "6, because the derivative of x^2 is 2x",
+        "9, because the centered difference squares its input",
+        "12, because the second derivative is constant"
       ],
       "correct": 1,
-      "explanation": "None broadcasts the same parameter tree, while 0 supplies one row of batch_x per mapped call, producing five predictions."
+      "explanation": "The centered finite difference approximates the first derivative, and 2*3 equals 6. It does not return the function value or a second derivative."
+    },
+    {
+      "stage": "check",
+      "question": "What does vmap(lambda x: x*x, (1, 2, 3)) return in the local bridge?",
+      "options": [
+        "(1, 4, 9), one result per input value",
+        "9, the sum of the mapped values",
+        "((1,), (2,), (3,)), the original batch unchanged",
+        "A generator that runs only after a second call"
+      ],
+      "correct": 0,
+      "explanation": "The lesson's vmap analogue is an explicit non-empty map: it calls the pure function once per value and returns a tuple of results."
+    },
+    {
+      "stage": "check",
+      "question": "Why would shape_checked(lambda row: sum(row), 2)((1.0,)) raise ValueError?",
+      "options": [
+        "The wrapper requires every row to have exactly two finite features",
+        "sum is not allowed inside a transformed function",
+        "The wrapper accepts only integer rows",
+        "A one-row batch is always empty"
+      ],
+      "correct": 0,
+      "explanation": "shape_checked validates the declared width before invoking the wrapped callable; a one-feature row violates width 2."
     },
     {
       "stage": "post",
-      "question": "Why does train_step return updated params and opt_state instead of mutating a model object?",
+      "question": "After update_params(params, gradients, 0.1), what happens to the original params mapping?",
       "options": [
-        "JAX cannot represent arrays inside dictionaries",
-        "optax updates labels rather than parameters",
-        "The functional loop makes the full training state explicit for JAX transformations",
-        "Returning state prevents jax.grad from computing derivatives"
+        "It is mutated in place before the function returns",
+        "It is replaced by a global parameter store",
+        "It remains unchanged and a new mapping carries the update",
+        "It is discarded because tuples cannot be updated"
       ],
       "correct": 2,
-      "explanation": "The function receives state, computes gradients and updates, then returns new state. This explicit data flow fits jit and value_and_grad."
+      "explanation": "The functional update constructs fresh weight and bias values and returns a new dictionary, keeping the previous state available for comparison or rollback."
     },
     {
       "stage": "post",
-      "question": "Why does demo_jit call block_until_ready() when timing the compiled function?",
+      "question": "Which observation is expected from train_linear(steps=20) with its default fixture?",
       "options": [
-        "It converts JAX arrays into Python lists",
-        "It disables compilation for the next call",
-        "It splits the random key into two new keys",
-        "It waits for asynchronous device work to finish before reading the elapsed time"
+        "The loss is finite and falls from 9.0 to below 0.01",
+        "The function imports JAX and reports accelerator time",
+        "The loss stays exactly 9.0 because parameters are immutable",
+        "The target rows are downloaded before the first update"
       ],
-      "correct": 3,
-      "explanation": "JAX dispatch can be asynchronous. Blocking ensures the timed interval includes completion of the computation."
+      "correct": 0,
+      "explanation": "The explicit gradient updates fit y=2x+1 from zero parameters; immutability means state is returned, not that learning is disabled. The observed trace is a local fixture result."
     }
   ]
 }

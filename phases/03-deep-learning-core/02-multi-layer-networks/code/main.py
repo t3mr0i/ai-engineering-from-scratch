@@ -1,160 +1,152 @@
+# A small dense network built from Python lists and scalar sigmoid operations.
+# Layer and Network shape contracts are explained in the lesson's docs/en.md.
+# The hand-tuned 2-2-1 fixture exposes XOR without a framework shortcut.
+# The canonical command is a bounded, deterministic forward-pass demo.
+# Sources: Rosenblatt's perceptron model and the lesson's local derivation.
+
+from __future__ import annotations
+
 import math
 import random
+from typing import Iterable, Sequence
 
 
-def sigmoid(x):
-    x = max(-500.0, min(500.0, x))
-    return 1.0 / (1.0 + math.exp(-x))
+def _finite_vector(values: Sequence[float], expected: int, name: str) -> list[float]:
+    try:
+        size = len(values)
+    except TypeError as exc:
+        raise ValueError(f"{name} must be a sequence") from exc
+    if size != expected:
+        raise ValueError(f"{name} must contain {expected} values, got {size}")
+    result = [float(value) for value in values]
+    if not all(math.isfinite(value) for value in result):
+        raise ValueError(f"{name} must contain finite numbers")
+    return result
+
+
+def _positive_int(value: int, name: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+        raise ValueError(f"{name} must be a positive integer")
+    return value
+
+
+def sigmoid(x: float) -> float:
+    """Numerically safe logistic sigmoid for a scalar."""
+    if not math.isfinite(x):
+        raise ValueError("sigmoid input must be finite")
+    if x >= 0:
+        e = math.exp(-x)
+        return 1.0 / (1.0 + e)
+    e = math.exp(x)
+    return e / (1.0 + e)
 
 
 class Layer:
-    def __init__(self, n_inputs, n_neurons, weights=None, biases=None):
-        if weights is not None:
-            self.weights = weights
-        else:
-            self.weights = [
-                [random.uniform(-1, 1) for _ in range(n_inputs)]
-                for _ in range(n_neurons)
-            ]
-        if biases is not None:
-            self.biases = biases
-        else:
-            self.biases = [0.0] * n_neurons
+    """One fully connected sigmoid layer with shape checks."""
 
-    def forward(self, inputs):
-        self.last_input = inputs
-        self.last_output = []
-        for neuron_idx in range(len(self.weights)):
-            z = sum(
-                w * x for w, x in zip(self.weights[neuron_idx], inputs)
-            )
-            z += self.biases[neuron_idx]
-            self.last_output.append(sigmoid(z))
-        return self.last_output
+    def __init__(
+        self,
+        n_inputs: int,
+        n_neurons: int,
+        weights: Sequence[Sequence[float]] | None = None,
+        biases: Sequence[float] | None = None,
+        rng: random.Random | None = None,
+    ) -> None:
+        self.n_inputs = _positive_int(n_inputs, "n_inputs")
+        self.n_neurons = _positive_int(n_neurons, "n_neurons")
+        source = rng or random.Random()
+        if weights is None:
+            scale = math.sqrt(2.0 / self.n_inputs)
+            self.weights = [
+                [source.uniform(-scale, scale) for _ in range(self.n_inputs)]
+                for _ in range(self.n_neurons)
+            ]
+        else:
+            if len(weights) != self.n_neurons or any(len(row) != self.n_inputs for row in weights):
+                raise ValueError("weights must have shape (n_neurons, n_inputs)")
+            self.weights = [
+                _finite_vector(row, self.n_inputs, "weight row") for row in weights
+            ]
+        if biases is None:
+            self.biases = [0.0] * self.n_neurons
+        else:
+            self.biases = _finite_vector(biases, self.n_neurons, "biases")
+        self.last_input: list[float] | None = None
+        self.last_output: list[float] | None = None
+
+    def forward(self, inputs: Sequence[float]) -> list[float]:
+        values = _finite_vector(inputs, self.n_inputs, "inputs")
+        self.last_input = values
+        self.last_output = [
+            sigmoid(sum(weight * value for weight, value in zip(row, values)) + bias)
+            for row, bias in zip(self.weights, self.biases)
+        ]
+        return list(self.last_output)
 
 
 class Network:
-    def __init__(self, layers):
-        self.layers = layers
+    """Sequential composition of dense sigmoid layers."""
 
-    def forward(self, inputs):
-        current = inputs
+    def __init__(self, layers: Iterable[Layer]) -> None:
+        self.layers = list(layers)
+        if not self.layers:
+            raise ValueError("a network needs at least one layer")
+        for previous, current in zip(self.layers, self.layers[1:]):
+            if previous.n_neurons != current.n_inputs:
+                raise ValueError("adjacent layer dimensions do not match")
+
+    def forward(self, inputs: Sequence[float]) -> list[float]:
+        current = list(inputs)
         for layer in self.layers:
             current = layer.forward(current)
         return current
 
-    def count_parameters(self):
-        total = 0
-        for layer in self.layers:
-            for neuron_weights in layer.weights:
-                total += len(neuron_weights)
-            total += len(layer.biases)
-        return total
+    def count_parameters(self) -> int:
+        return sum(
+            layer.n_inputs * layer.n_neurons + layer.n_neurons
+            for layer in self.layers
+        )
+
+
+def xor_network() -> Network:
+    """Return the hand-tuned 2-2-1 sigmoid network used by the demo."""
+    hidden = Layer(
+        2,
+        2,
+        weights=((20.0, 20.0), (-20.0, -20.0)),
+        biases=(-10.0, 30.0),
+    )
+    output = Layer(2, 1, weights=((20.0, 20.0),), biases=(-30.0,))
+    return Network((hidden, output))
+
+
+def xor_predictions(network: Network | None = None) -> list[int]:
+    network = network or xor_network()
+    return [
+        int(network.forward(point)[0] >= 0.5)
+        for point in ((0.0, 0.0), (0.0, 1.0), (1.0, 0.0), (1.0, 1.0))
+    ]
+
+
+def parameter_count(sizes: Sequence[int]) -> int:
+    if len(sizes) < 2 or any(isinstance(size, bool) or not isinstance(size, int) or size <= 0 for size in sizes):
+        raise ValueError("sizes must contain at least two positive integers")
+    return sum(left * right + right for left, right in zip(sizes, sizes[1:]))
+
+
+def main() -> None:
+    network = xor_network()
+    points = ((0.0, 0.0), (0.0, 1.0), (1.0, 0.0), (1.0, 1.0))
+    print("2-2-1 sigmoid network for XOR")
+    for point in points:
+        probability = network.forward(point)[0]
+        print(
+            f"  {list(point)} -> probability={probability:.6f}, "
+            f"class={int(probability >= 0.5)}"
+        )
+    print(f"parameters={network.count_parameters()}")
+    print(f"784-256-128-10 parameters={parameter_count((784, 256, 128, 10))}")
 
 
 if __name__ == "__main__":
-    print("=" * 60)
-    print("DEMO 1: XOR with hand-tuned 2-2-1 network")
-    print("=" * 60)
-
-    hidden = Layer(
-        n_inputs=2,
-        n_neurons=2,
-        weights=[[20.0, 20.0], [-20.0, -20.0]],
-        biases=[-10.0, 30.0],
-    )
-
-    output = Layer(
-        n_inputs=2,
-        n_neurons=1,
-        weights=[[20.0, 20.0]],
-        biases=[-30.0],
-    )
-
-    xor_net = Network([hidden, output])
-
-    xor_data = [
-        ([0, 0], 0),
-        ([0, 1], 1),
-        ([1, 0], 1),
-        ([1, 1], 0),
-    ]
-
-    all_correct = True
-    for inputs, expected in xor_data:
-        result = xor_net.forward(inputs)
-        predicted = 1 if result[0] >= 0.5 else 0
-        status = "OK" if predicted == expected else "WRONG"
-        if predicted != expected:
-            all_correct = False
-        print(f"  {inputs} -> {result[0]:.6f} (rounded: {predicted}, expected: {expected}) {status}")
-
-    print(f"\nXOR solved: {all_correct}")
-    print(f"Parameters: {xor_net.count_parameters()}")
-
-    print()
-    print("=" * 60)
-    print("DEMO 2: Circle classification with 2-8-1 network")
-    print("=" * 60)
-
-    random.seed(42)
-
-    data = []
-    for _ in range(200):
-        x = random.uniform(-1, 1)
-        y = random.uniform(-1, 1)
-        label = 1 if (x * x + y * y) < 0.25 else 0
-        data.append(([x, y], label))
-
-    inside_count = sum(1 for _, label in data if label == 1)
-    outside_count = len(data) - inside_count
-    print(f"  Dataset: {len(data)} points ({inside_count} inside, {outside_count} outside)")
-
-    random.seed(7)
-    circle_net = Network([
-        Layer(n_inputs=2, n_neurons=8),
-        Layer(n_inputs=8, n_neurons=1),
-    ])
-
-    correct = 0
-    for inputs, expected in data:
-        result = circle_net.forward(inputs)
-        predicted = 1 if result[0] >= 0.5 else 0
-        if predicted == expected:
-            correct += 1
-
-    print(f"  Accuracy with random weights: {correct}/{len(data)} ({100 * correct / len(data):.1f}%)")
-    print(f"  Parameters: {circle_net.count_parameters()}")
-    print(f"  (Random weights give poor accuracy -- training needed)")
-
-    print()
-    print("=" * 60)
-    print("DEMO 3: Forward pass internals on XOR")
-    print("=" * 60)
-
-    for inputs, expected in xor_data:
-        xor_net.forward(inputs)
-        h = xor_net.layers[0].last_output
-        o = xor_net.layers[1].last_output
-        print(f"  Input: {inputs}")
-        print(f"    Hidden: [{h[0]:.6f}, {h[1]:.6f}]")
-        print(f"    Output: {o[0]:.6f} -> {'1' if o[0] >= 0.5 else '0'} (expected: {expected})")
-
-    print()
-    print("=" * 60)
-    print("DEMO 4: Parameter count for classic architectures")
-    print("=" * 60)
-
-    architectures = [
-        ("2-3-1 (this lesson)", [2, 3, 1]),
-        ("2-8-1 (circle)", [2, 8, 1]),
-        ("784-256-128-10 (MNIST)", [784, 256, 128, 10]),
-        ("784-512-256-128-10 (deep MNIST)", [784, 512, 256, 128, 10]),
-    ]
-
-    for name, sizes in architectures:
-        layers = []
-        for i in range(1, len(sizes)):
-            layers.append(Layer(n_inputs=sizes[i - 1], n_neurons=sizes[i]))
-        net = Network(layers)
-        print(f"  {name}: {net.count_parameters():,} parameters")
+    main()

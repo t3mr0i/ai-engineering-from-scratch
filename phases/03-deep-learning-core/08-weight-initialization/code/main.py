@@ -1,273 +1,175 @@
+# Weight initializers and a small variance-propagation experiment, stdlib only.
+# Xavier and Kaiming use local RNGs so experiments do not alter caller state.
+# The forward probe reports this lesson's finite, seeded fixture rather than a benchmark.
+# See phases/03-deep-learning-core/08-weight-initialization/docs/en.md.
+
+from __future__ import annotations
+
 import math
 import random
+from typing import Callable, Sequence
 
 
-def zero_init(fan_in, fan_out):
-    return [[0.0 for _ in range(fan_in)] for _ in range(fan_out)]
+Initializer = Callable[[int, int, random.Random | None], list[list[float]]]
 
 
-def random_init(fan_in, fan_out, scale=1.0):
-    return [[random.gauss(0, scale) for _ in range(fan_in)] for _ in range(fan_out)]
+def _positive_int(value: int, name: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+        raise ValueError(f"{name} must be a positive integer")
+    return value
 
 
-def xavier_init(fan_in, fan_out):
+def _finite_positive(value: float, name: str) -> float:
+    try:
+        numeric = float(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{name} must be positive and finite") from exc
+    if not math.isfinite(numeric) or numeric <= 0:
+        raise ValueError(f"{name} must be positive and finite")
+    return numeric
+
+
+def _source(rng: random.Random | None) -> random.Random:
+    return rng if rng is not None else random.Random(0)
+
+
+def _matrix(fan_in: int, fan_out: int, draw: Callable[[random.Random], float], rng: random.Random | None = None) -> list[list[float]]:
+    fan_in = _positive_int(fan_in, "fan_in")
+    fan_out = _positive_int(fan_out, "fan_out")
+    source = _source(rng)
+    return [[float(draw(source)) for _ in range(fan_in)] for _ in range(fan_out)]
+
+
+def zero_init(fan_in: int, fan_out: int, rng: random.Random | None = None) -> list[list[float]]:
+    """Return a fan_out by fan_in matrix of zeros."""
+    return _matrix(fan_in, fan_out, lambda _: 0.0, rng)
+
+
+def random_init(fan_in: int, fan_out: int, scale: float = 1.0, rng: random.Random | None = None) -> list[list[float]]:
+    scale = _finite_positive(scale, "scale")
+    return _matrix(fan_in, fan_out, lambda source: source.gauss(0.0, scale), rng)
+
+
+def xavier_init(fan_in: int, fan_out: int, rng: random.Random | None = None) -> list[list[float]]:
+    fan_in = _positive_int(fan_in, "fan_in")
+    fan_out = _positive_int(fan_out, "fan_out")
     std = math.sqrt(2.0 / (fan_in + fan_out))
-    return [[random.gauss(0, std) for _ in range(fan_in)] for _ in range(fan_out)]
+    return _matrix(fan_in, fan_out, lambda source: source.gauss(0.0, std), rng)
 
 
-def kaiming_init(fan_in, fan_out):
+def kaiming_init(fan_in: int, fan_out: int, rng: random.Random | None = None) -> list[list[float]]:
+    fan_in = _positive_int(fan_in, "fan_in")
+    _positive_int(fan_out, "fan_out")
     std = math.sqrt(2.0 / fan_in)
-    return [[random.gauss(0, std) for _ in range(fan_in)] for _ in range(fan_out)]
+    return _matrix(fan_in, fan_out, lambda source: source.gauss(0.0, std), rng)
 
 
-def sigmoid(x):
-    x = max(-500, min(500, x))
-    return 1.0 / (1.0 + math.exp(-x))
+def _finite_scalar(value: float, name: str = "value") -> float:
+    try:
+        numeric = float(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{name} must be finite") from exc
+    if not math.isfinite(numeric):
+        raise ValueError(f"{name} must be finite")
+    return numeric
 
 
-def tanh_act(x):
-    return math.tanh(x)
+def sigmoid(x: float) -> float:
+    x = _finite_scalar(x, "x")
+    if x >= 0.0:
+        e = math.exp(-x)
+        return 1.0 / (1.0 + e)
+    e = math.exp(x)
+    return e / (1.0 + e)
 
 
-def relu(x):
-    return max(0.0, x)
+def tanh_act(x: float) -> float:
+    return math.tanh(_finite_scalar(x, "x"))
 
 
-def forward_deep(init_fn, activation_fn, n_layers=50, width=64, n_samples=100):
-    random.seed(42)
-    layer_magnitudes = []
+def relu(x: float) -> float:
+    return max(0.0, _finite_scalar(x, "x"))
 
-    inputs = [[random.gauss(0, 1) for _ in range(width)] for _ in range(n_samples)]
 
-    for layer_idx in range(n_layers):
-        weights = init_fn(width, width)
-        biases = [0.0] * width
+def matrix_variance(weights: Sequence[Sequence[float]]) -> float:
+    """Population variance of a non-empty rectangular weight matrix."""
+    try:
+        rows = [list(row) for row in weights]
+    except TypeError as exc:
+        raise ValueError("weights must be a nonempty rectangular matrix") from exc
+    if not rows or not rows[0] or any(len(row) != len(rows[0]) for row in rows):
+        raise ValueError("weights must be a nonempty rectangular matrix")
+    values = [_finite_scalar(value, "weight") for row in rows for value in row]
+    mean = sum(values) / len(values)
+    return sum((value - mean) ** 2 for value in values) / len(values)
 
-        new_inputs = []
+
+def forward_deep(
+    init_fn: Initializer,
+    activation_fn: Callable[[float], float],
+    n_layers: int = 20,
+    width: int = 16,
+    n_samples: int = 32,
+    seed: int = 42,
+) -> list[float]:
+    """Return mean absolute activation per layer for one deterministic fixture."""
+    n_layers = _positive_int(n_layers, "n_layers")
+    width = _positive_int(width, "width")
+    n_samples = _positive_int(n_samples, "n_samples")
+    rng = random.Random(seed)
+    inputs = [[rng.gauss(0.0, 1.0) for _ in range(width)] for _ in range(n_samples)]
+    magnitudes: list[float] = []
+    for _ in range(n_layers):
+        weights = init_fn(width, width, rng)
+        next_inputs = []
         for sample in inputs:
-            output = []
-            for neuron_idx in range(width):
-                z = sum(weights[neuron_idx][j] * sample[j] for j in range(width)) + biases[neuron_idx]
-                output.append(activation_fn(z))
-            new_inputs.append(output)
-        inputs = new_inputs
-
-        magnitudes = []
-        for sample in inputs:
-            magnitudes.append(sum(abs(v) for v in sample) / width)
-        mean_mag = sum(magnitudes) / len(magnitudes)
-        layer_magnitudes.append(mean_mag)
-
-    return layer_magnitudes
+            next_inputs.append([
+                activation_fn(sum(weight * value for weight, value in zip(row, sample)))
+                for row in weights
+            ])
+        inputs = next_inputs
+        magnitudes.append(sum(abs(value) for sample in inputs for value in sample) / (n_samples * width))
+    return magnitudes
 
 
-def magnitude_report(name, magnitudes):
-    print(f"\n{name}:")
-    for i, mag in enumerate(magnitudes):
-        if i % 5 == 0 or i == len(magnitudes) - 1:
-            if mag > 1e6:
-                bar = "X" * 50 + " EXPLODED"
-            elif mag < 1e-6:
-                bar = "." + " VANISHED"
-            else:
-                bar_len = min(50, max(1, int(mag * 10)))
-                bar = "#" * bar_len
-            print(f"  Layer {i+1:3d}: {bar} ({mag:.6f})")
+def variance_report(fan_in: int = 16, trials: int = 256, seed: int = 7) -> dict[str, tuple[float, float]]:
+    fan_in = _positive_int(fan_in, "fan_in")
+    trials = _positive_int(trials, "trials")
+    rng = random.Random(seed)
+    configs = {
+        "random_scale_1": 1.0,
+        "xavier": math.sqrt(2.0 / (2 * fan_in)),
+        "kaiming": math.sqrt(2.0 / fan_in),
+    }
+    report: dict[str, tuple[float, float]] = {}
+    for name, std in configs.items():
+        outputs = []
+        for _ in range(trials):
+            inputs = [rng.gauss(0.0, 1.0) for _ in range(fan_in)]
+            weights = [rng.gauss(0.0, std) for _ in range(fan_in)]
+            outputs.append(sum(weight * value for weight, value in zip(weights, inputs)))
+        mean = sum(outputs) / len(outputs)
+        output_variance = sum((value - mean) ** 2 for value in outputs) / len(outputs)
+        report[name] = (std * std, output_variance)
+    return report
 
 
-def symmetry_demo():
+def symmetry_signature() -> dict[str, object]:
     weights = zero_init(2, 4)
-    biases = [0.0] * 4
-
-    inputs = [0.5, -0.3]
-    outputs = []
-    for neuron_idx in range(4):
-        z = sum(weights[neuron_idx][j] * inputs[j] for j in range(2)) + biases[neuron_idx]
-        outputs.append(sigmoid(z))
-
-    print("Symmetry Demo (4 neurons, zero init):")
-    for i, out in enumerate(outputs):
-        print(f"  Neuron {i}: output = {out:.6f}")
-    all_same = all(abs(outputs[i] - outputs[0]) < 1e-10 for i in range(len(outputs)))
-    print(f"  All identical: {all_same}")
-    print(f"  Effective parameters: 1 (not {len(weights) * len(weights[0])})")
+    outputs = [sigmoid(sum(weight * value for weight, value in zip(row, (0.5, -0.3)))) for row in weights]
+    return {"outputs": outputs, "all_equal": len(set(outputs)) == 1, "unique_rows": len({tuple(row) for row in weights})}
 
 
-def variance_analysis():
-    fan_in = 64
-    n_trials = 10000
-
-    configs = [
-        ("Random N(0,1)", 1.0),
-        ("Random N(0,0.01)", 0.01),
-        ("Xavier std", math.sqrt(2.0 / (fan_in + fan_in))),
-        ("Kaiming std", math.sqrt(2.0 / fan_in)),
-    ]
-
-    print("\nVariance Analysis (fan_in=64, single layer):")
-    print(f"  {'Strategy':<25} {'Weight Var':>12} {'Output Var':>12} {'Ratio':>10}")
-    print("  " + "-" * 60)
-
-    for name, std in configs:
-        random.seed(42)
-        output_vars = []
-        for _ in range(n_trials):
-            inputs = [random.gauss(0, 1) for _ in range(fan_in)]
-            weights = [random.gauss(0, std) for _ in range(fan_in)]
-            z = sum(w * x for w, x in zip(weights, inputs))
-            output_vars.append(z * z)
-
-        mean_output_var = sum(output_vars) / len(output_vars)
-        weight_var = std * std
-        ratio = mean_output_var
-        print(f"  {name:<25} {weight_var:>12.6f} {mean_output_var:>12.4f} {ratio:>10.4f}")
-
-
-def run_experiment():
-    configs = [
-        ("Zero + Sigmoid", lambda fi, fo: zero_init(fi, fo), sigmoid),
-        ("Random N(0,1) + ReLU", lambda fi, fo: random_init(fi, fo, 1.0), relu),
-        ("Random N(0,0.01) + ReLU", lambda fi, fo: random_init(fi, fo, 0.01), relu),
-        ("Xavier + Sigmoid", xavier_init, sigmoid),
-        ("Xavier + Tanh", xavier_init, tanh_act),
-        ("Kaiming + ReLU", kaiming_init, relu),
-    ]
-
-    print(f"\n{'Strategy':<30} {'L1':>10} {'L5':>10} {'L10':>10} {'L25':>10} {'L50':>10}")
-    print("-" * 80)
-
-    all_results = {}
-    for name, init_fn, act_fn in configs:
-        mags = forward_deep(init_fn, act_fn)
-        all_results[name] = mags
-        row = f"{name:<30}"
-        for idx in [0, 4, 9, 24, 49]:
-            val = mags[idx]
-            if val > 1e6:
-                row += f" {'EXPLODED':>10}"
-            elif val < 1e-6:
-                row += f" {'VANISHED':>10}"
-            else:
-                row += f" {val:>10.4f}"
-        print(row)
-
-    return all_results
-
-
-def training_comparison():
-    random.seed(42)
-    data = []
-    for _ in range(200):
-        x = random.uniform(-2, 2)
-        y = random.uniform(-2, 2)
-        label = 1.0 if x * x + y * y < 1.5 else 0.0
-        data.append(([x, y], label))
-
-    def train_with_init(init_name, init_scale, activation_fn, activation_deriv):
-        random.seed(0)
-        hidden_size = 8
-        lr = 0.1
-
-        if init_name == "xavier":
-            std_w1 = math.sqrt(2.0 / (2 + hidden_size))
-            std_w2 = math.sqrt(2.0 / (hidden_size + 1))
-        elif init_name == "kaiming":
-            std_w1 = math.sqrt(2.0 / 2)
-            std_w2 = math.sqrt(2.0 / hidden_size)
-        else:
-            std_w1 = init_scale
-            std_w2 = init_scale
-
-        w1 = [[random.gauss(0, std_w1) for _ in range(2)] for _ in range(hidden_size)]
-        b1 = [0.0] * hidden_size
-        w2 = [random.gauss(0, std_w2) for _ in range(hidden_size)]
-        b2 = 0.0
-
-        losses = []
-        for epoch in range(300):
-            total_loss = 0
-            correct = 0
-            for x, target in data:
-                z1 = []
-                h = []
-                for i in range(hidden_size):
-                    z = w1[i][0] * x[0] + w1[i][1] * x[1] + b1[i]
-                    z1.append(z)
-                    h.append(activation_fn(z))
-
-                z2 = sum(w2[i] * h[i] for i in range(hidden_size)) + b2
-                out = sigmoid(z2)
-
-                error = out - target
-                d_out = error * out * (1 - out)
-
-                for i in range(hidden_size):
-                    d_h = d_out * w2[i] * activation_deriv(z1[i])
-                    w2[i] -= lr * d_out * h[i]
-                    for j in range(2):
-                        w1[i][j] -= lr * d_h * x[j]
-                    b1[i] -= lr * d_h
-                b2 -= lr * d_out
-
-                total_loss += (out - target) ** 2
-                if (out >= 0.5) == (target >= 0.5):
-                    correct += 1
-
-            losses.append(total_loss / len(data))
-
-        return losses
-
-    def sigmoid_d(x):
-        s = sigmoid(x)
-        return s * (1 - s)
-
-    def relu_d(x):
-        return 1.0 if x > 0 else 0.0
-
-    configs = [
-        ("Random(0.01) + Sigmoid", "random", 0.01, sigmoid, sigmoid_d),
-        ("Random(1.0) + Sigmoid", "random", 1.0, sigmoid, sigmoid_d),
-        ("Xavier + Sigmoid", "xavier", 0, sigmoid, sigmoid_d),
-        ("Random(0.01) + ReLU", "random", 0.01, relu, relu_d),
-        ("Random(1.0) + ReLU", "random", 1.0, relu, relu_d),
-        ("Kaiming + ReLU", "kaiming", 0, relu, relu_d),
-    ]
-
-    print("\nTraining Comparison (300 epochs, circle dataset):")
-    print(f"  {'Config':<30} {'Start Loss':>12} {'End Loss':>12} {'Improvement':>12}")
-    print("  " + "-" * 66)
-
-    for name, init_name, scale, act_fn, act_d_fn in configs:
-        losses = train_with_init(init_name, scale, act_fn, act_d_fn)
-        start = losses[0]
-        end = losses[-1]
-        improvement = (1 - end / start) * 100 if start > 0 else 0
-        print(f"  {name:<30} {start:>12.6f} {end:>12.6f} {improvement:>11.1f}%")
+def main() -> None:
+    print(f"zero symmetry={symmetry_signature()}")
+    print("variance report (weight variance, observed pre-activation variance):")
+    for name, values in variance_report().items():
+        print(f"  {name}: ({values[0]:.4f}, {values[1]:.4f})")
+    configs = (("xavier+sigmoid", xavier_init, sigmoid), ("kaiming+relu", kaiming_init, relu))
+    for name, initializer, activation in configs:
+        magnitudes = forward_deep(initializer, activation)
+        print(f"{name}: layer1={magnitudes[0]:.4f}, layer10={magnitudes[9]:.4f}, layer20={magnitudes[-1]:.4f}")
 
 
 if __name__ == "__main__":
-    print("=" * 70)
-    print("STEP 1: Symmetry Problem -- Zero Init")
-    print("=" * 70)
-    symmetry_demo()
-
-    print("\n" + "=" * 70)
-    print("STEP 2: Variance Analysis")
-    print("=" * 70)
-    variance_analysis()
-
-    print("\n" + "=" * 70)
-    print("STEP 3: 50-Layer Forward Pass Experiment")
-    print("=" * 70)
-    all_results = run_experiment()
-
-    print("\n" + "=" * 70)
-    print("STEP 4: Layer-by-Layer Magnitude Reports")
-    print("=" * 70)
-    for name, mags in all_results.items():
-        magnitude_report(name, mags)
-
-    print("\n" + "=" * 70)
-    print("STEP 5: Training Comparison")
-    print("=" * 70)
-    training_comparison()
+    main()

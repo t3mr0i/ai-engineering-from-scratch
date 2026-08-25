@@ -1,347 +1,220 @@
+# Regularization primitives implemented from scratch with Python's standard library.
+# Dropout has explicit training/evaluation modes; normalization layers check shapes.
+# L2 returns lambda/2 * sum(w**2), whose gradient is lambda*w.
+# The final toy network is deliberately small so the train/eval distinction is visible.
+# See phases/03-deep-learning-core/07-regularization/docs/en.md.
+
+from __future__ import annotations
+
 import math
 import random
+from typing import Sequence
+
+
+def _vector(values: Sequence[float], expected: int | None = None, name: str = "values") -> list[float]:
+    try:
+        size = len(values)
+    except TypeError as exc:
+        raise ValueError(f"{name} must be a sequence") from exc
+    if expected is not None and size != expected:
+        raise ValueError(f"{name} must have length {expected}")
+    result = [float(value) for value in values]
+    if not all(math.isfinite(value) for value in result):
+        raise ValueError(f"{name} must be finite")
+    return result
 
 
 class Dropout:
-    def __init__(self, p=0.5):
+    def __init__(self, p: float = 0.5, seed: int | None = None) -> None:
+        if not math.isfinite(p) or not 0.0 <= p < 1.0:
+            raise ValueError("dropout p must be in [0,1)")
         self.p = p
         self.training = True
-        self.mask = None
+        self.mask: list[int] | None = None
+        self._last_training = False
+        self.rng = random.Random(seed)
 
-    def forward(self, x):
-        if not self.training:
-            return list(x)
-        self.mask = []
-        output = []
-        for val in x:
-            if random.random() < self.p:
-                self.mask.append(0)
-                output.append(0.0)
-            else:
-                self.mask.append(1)
-                output.append(val / (1 - self.p))
-        return output
+    def forward(self, x: Sequence[float], training: bool | None = None) -> list[float]:
+        values = _vector(x, name="dropout input")
+        use_training = self.training if training is None else training
+        self._last_training = bool(use_training and self.p > 0.0)
+        if not use_training or self.p == 0.0:
+            self.mask = [1] * len(values)
+            return values
+        self.mask = [0 if self.rng.random() < self.p else 1 for _ in values]
+        scale = 1.0 / (1.0 - self.p)
+        return [value * scale if keep else 0.0 for value, keep in zip(values, self.mask)]
 
-    def backward(self, grad_output):
-        grads = []
-        for g, m in zip(grad_output, self.mask):
-            if m == 0:
-                grads.append(0.0)
-            else:
-                grads.append(g / (1 - self.p))
-        return grads
-
-
-def l2_regularization(weights, lambda_reg):
-    penalty = 0.0
-    for w in weights:
-        penalty += w * w
-    return lambda_reg * 0.5 * penalty
+    def backward(self, grad_output: Sequence[float]) -> list[float]:
+        if self.mask is None:
+            raise RuntimeError("forward must run before backward")
+        gradients = _vector(grad_output, len(self.mask), "grad_output")
+        if not self._last_training:
+            return gradients
+        scale = 1.0 / (1.0 - self.p)
+        return [gradient * scale if keep else 0.0 for gradient, keep in zip(gradients, self.mask)]
 
 
-def l2_gradient(weights, lambda_reg):
-    return [lambda_reg * w for w in weights]
+def l2_regularization(weights: Sequence[float], lambda_reg: float) -> float:
+    values = _vector(weights, name="weights")
+    if lambda_reg < 0 or not math.isfinite(lambda_reg):
+        raise ValueError("lambda_reg must be finite and nonnegative")
+    return 0.5 * lambda_reg * sum(value * value for value in values)
+
+
+def l2_gradient(weights: Sequence[float], lambda_reg: float) -> list[float]:
+    values = _vector(weights, name="weights")
+    if lambda_reg < 0 or not math.isfinite(lambda_reg):
+        raise ValueError("lambda_reg must be finite and nonnegative")
+    return [lambda_reg * value for value in values]
 
 
 class BatchNorm:
-    def __init__(self, num_features, momentum=0.1, eps=1e-5):
+    def __init__(self, num_features: int, momentum: float = 0.1, eps: float = 1e-5) -> None:
+        if num_features <= 0 or not math.isfinite(float(momentum)) or not 0.0 <= momentum < 1.0 or not math.isfinite(float(eps)) or eps <= 0:
+            raise ValueError("invalid BatchNorm parameters")
+        self.num_features, self.momentum, self.eps = num_features, momentum, eps
         self.gamma = [1.0] * num_features
         self.beta = [0.0] * num_features
-        self.eps = eps
-        self.momentum = momentum
         self.running_mean = [0.0] * num_features
         self.running_var = [1.0] * num_features
         self.training = True
-        self.num_features = num_features
 
-    def forward(self, batch):
-        batch_size = len(batch)
-        if self.training:
-            mean = [0.0] * self.num_features
-            for sample in batch:
-                for j in range(self.num_features):
-                    mean[j] += sample[j]
-            mean = [m / batch_size for m in mean]
-
-            var = [0.0] * self.num_features
-            for sample in batch:
-                for j in range(self.num_features):
-                    var[j] += (sample[j] - mean[j]) ** 2
-            var = [v / batch_size for v in var]
-
-            for j in range(self.num_features):
-                self.running_mean[j] = (1 - self.momentum) * self.running_mean[j] + self.momentum * mean[j]
-                self.running_var[j] = (1 - self.momentum) * self.running_var[j] + self.momentum * var[j]
+    def forward(self, batch: Sequence[Sequence[float]], training: bool | None = None) -> list[list[float]]:
+        if not batch:
+            raise ValueError("BatchNorm needs a nonempty batch")
+        rows = [_vector(row, self.num_features, "batch row") for row in batch]
+        use_training = self.training if training is None else training
+        if use_training:
+            mean = [sum(row[j] for row in rows) / len(rows) for j in range(self.num_features)]
+            variance = [sum((row[j] - mean[j]) ** 2 for row in rows) / len(rows) for j in range(self.num_features)]
+            self.running_mean = [(1 - self.momentum) * old + self.momentum * new for old, new in zip(self.running_mean, mean)]
+            self.running_var = [(1 - self.momentum) * old + self.momentum * new for old, new in zip(self.running_var, variance)]
         else:
-            mean = list(self.running_mean)
-            var = list(self.running_var)
-
-        self.x_hat = []
-        output = []
-        for sample in batch:
-            normalized = []
-            out_sample = []
-            for j in range(self.num_features):
-                x_h = (sample[j] - mean[j]) / math.sqrt(var[j] + self.eps)
-                normalized.append(x_h)
-                out_sample.append(self.gamma[j] * x_h + self.beta[j])
-            self.x_hat.append(normalized)
-            output.append(out_sample)
-        return output
+            mean, variance = self.running_mean, self.running_var
+        return [[self.gamma[j] * (row[j] - mean[j]) / math.sqrt(variance[j] + self.eps) + self.beta[j] for j in range(self.num_features)] for row in rows]
 
 
 class LayerNorm:
-    def __init__(self, num_features, eps=1e-5):
-        self.gamma = [1.0] * num_features
-        self.beta = [0.0] * num_features
-        self.eps = eps
-        self.num_features = num_features
+    def __init__(self, num_features: int, eps: float = 1e-5) -> None:
+        if num_features <= 0 or not math.isfinite(float(eps)) or eps <= 0:
+            raise ValueError("invalid LayerNorm parameters")
+        self.num_features, self.eps = num_features, eps
+        self.gamma, self.beta = [1.0] * num_features, [0.0] * num_features
 
-    def forward(self, x):
-        mean = sum(x) / len(x)
-        var = sum((xi - mean) ** 2 for xi in x) / len(x)
-
-        self.x_hat = []
-        output = []
-        for j in range(self.num_features):
-            x_h = (x[j] - mean) / math.sqrt(var + self.eps)
-            self.x_hat.append(x_h)
-            output.append(self.gamma[j] * x_h + self.beta[j])
-        return output
+    def forward(self, x: Sequence[float]) -> list[float]:
+        values = _vector(x, self.num_features, "LayerNorm input")
+        mean = sum(values) / self.num_features
+        variance = sum((value - mean) ** 2 for value in values) / self.num_features
+        return [self.gamma[j] * (values[j] - mean) / math.sqrt(variance + self.eps) + self.beta[j] for j in range(self.num_features)]
 
 
 class RMSNorm:
-    def __init__(self, num_features, eps=1e-6):
+    def __init__(self, num_features: int, eps: float = 1e-6) -> None:
+        if num_features <= 0 or not math.isfinite(float(eps)) or eps <= 0:
+            raise ValueError("invalid RMSNorm parameters")
+        self.num_features, self.eps = num_features, eps
         self.gamma = [1.0] * num_features
-        self.eps = eps
-        self.num_features = num_features
 
-    def forward(self, x):
-        rms = math.sqrt(sum(xi * xi for xi in x) / len(x) + self.eps)
-        output = []
-        for j in range(self.num_features):
-            output.append(self.gamma[j] * x[j] / rms)
-        return output
+    def forward(self, x: Sequence[float]) -> list[float]:
+        values = _vector(x, self.num_features, "RMSNorm input")
+        rms = math.sqrt(sum(value * value for value in values) / self.num_features + self.eps)
+        return [self.gamma[j] * values[j] / rms for j in range(self.num_features)]
 
 
-def sigmoid(x):
-    x = max(-500, min(500, x))
-    return 1.0 / (1.0 + math.exp(-x))
+def sigmoid(x: float) -> float:
+    if x >= 0:
+        e = math.exp(-x)
+        return 1 / (1 + e)
+    e = math.exp(x)
+    return e / (1 + e)
 
 
-def make_circle_data(n=200, seed=42):
-    random.seed(seed)
-    data = []
-    for _ in range(n):
-        x = random.uniform(-2, 2)
-        y = random.uniform(-2, 2)
-        label = 1.0 if x * x + y * y < 1.5 else 0.0
-        data.append(([x, y], label))
-    return data
+def make_circle_data(n: int = 200, seed: int = 42) -> list[tuple[list[float], float]]:
+    if n <= 0:
+        raise ValueError("n must be positive")
+    rng = random.Random(seed)
+    return [
+        ([x, y], float(x * x + y * y < 1.5))
+        for x, y in ((rng.uniform(-2, 2), rng.uniform(-2, 2)) for _ in range(n))
+    ]
 
 
 class RegularizedNetwork:
-    def __init__(self, hidden_size=16, lr=0.05, dropout_p=0.0, weight_decay=0.0):
-        random.seed(0)
-        self.hidden_size = hidden_size
-        self.lr = lr
-        self.dropout_p = dropout_p
-        self.weight_decay = weight_decay
-        self.dropout = Dropout(p=dropout_p) if dropout_p > 0 else None
-
-        self.w1 = [[random.gauss(0, 0.5) for _ in range(2)] for _ in range(hidden_size)]
+    def __init__(self, hidden_size: int = 8, lr: float = 0.05, dropout_p: float = 0.0, weight_decay: float = 0.0, seed: int = 0) -> None:
+        if hidden_size <= 0 or not math.isfinite(float(lr)) or lr <= 0 or not math.isfinite(float(weight_decay)) or weight_decay < 0:
+            raise ValueError("invalid network hyperparameters")
+        self.hidden_size, self.lr, self.weight_decay = hidden_size, lr, weight_decay
+        rng = random.Random(seed)
+        self.dropout = Dropout(dropout_p, seed + 1)
+        self.w1 = [[rng.gauss(0, 0.5) for _ in range(2)] for _ in range(hidden_size)]
         self.b1 = [0.0] * hidden_size
-        self.w2 = [random.gauss(0, 0.5) for _ in range(hidden_size)]
+        self.w2 = [rng.gauss(0, 0.5) for _ in range(hidden_size)]
         self.b2 = 0.0
 
-    def forward(self, x, training=True):
-        self.x = x
-        self.z1 = []
-        self.h = []
-        for i in range(self.hidden_size):
-            z = self.w1[i][0] * x[0] + self.w1[i][1] * x[1] + self.b1[i]
-            self.z1.append(z)
-            self.h.append(max(0.0, z))
-
-        if self.dropout and training:
-            self.dropout.training = True
-            self.h = self.dropout.forward(self.h)
-        elif self.dropout:
-            self.dropout.training = False
-            self.h = self.dropout.forward(self.h)
-
-        self.z2 = sum(self.w2[i] * self.h[i] for i in range(self.hidden_size)) + self.b2
-        self.out = sigmoid(self.z2)
+    def forward(self, x: Sequence[float], training: bool = False) -> float:
+        self.x = _vector(x, 2, "network input")
+        self.z1 = [sum(w * value for w, value in zip(row, self.x)) + bias for row, bias in zip(self.w1, self.b1)]
+        self.h_raw = [max(0.0, z) for z in self.z1]
+        self.h = self.dropout.forward(self.h_raw, training=training)
+        self.out = sigmoid(sum(weight * value for weight, value in zip(self.w2, self.h)) + self.b2)
         return self.out
 
-    def backward(self, target):
-        eps = 1e-15
-        p = max(eps, min(1 - eps, self.out))
-        d_loss = -(target / p) + (1 - target) / (1 - p)
-        d_sigmoid = self.out * (1 - self.out)
-        d_out = d_loss * d_sigmoid
+    def evaluate(self, data: Sequence[tuple[Sequence[float], int]]) -> tuple[float, float]:
+        if not data:
+            raise ValueError("evaluation data must be nonempty")
+        losses, correct = 0.0, 0
+        for x, target in data:
+            if target not in (0, 1):
+                raise ValueError("targets must be 0 or 1")
+            prediction = self.forward(x, training=False)
+            losses += -(target * math.log(max(1e-15, prediction)) + (1 - target) * math.log(max(1e-15, 1 - prediction)))
+            correct += int((prediction >= 0.5) == bool(target))
+        return losses / len(data), 100.0 * correct / len(data)
 
-        d_h_dropout = [d_out * self.w2[i] for i in range(self.hidden_size)]
-        if self.dropout and self.dropout.mask is not None:
-            d_h_dropout = [g * m / (1 - self.dropout.p) if m else 0.0
-                           for g, m in zip(d_h_dropout, self.dropout.mask)]
-
-        for i in range(self.hidden_size):
-            d_relu = 1.0 if self.z1[i] > 0 else 0.0
-            d_h = d_h_dropout[i] * d_relu
-            self.w2[i] -= self.lr * (d_out * self.h[i] + self.weight_decay * self.w2[i])
-            for j in range(2):
-                self.w1[i][j] -= self.lr * (d_h * self.x[j] + self.weight_decay * self.w1[i][j])
-            self.b1[i] -= self.lr * d_h
-        self.b2 -= self.lr * d_out
-
-    def evaluate(self, data):
-        correct = 0
-        total_loss = 0.0
-        for x, y in data:
-            pred = self.forward(x, training=False)
-            eps = 1e-15
-            p = max(eps, min(1 - eps, pred))
-            total_loss += -(y * math.log(p) + (1 - y) * math.log(1 - p))
-            if (pred >= 0.5) == (y >= 0.5):
-                correct += 1
-        return total_loss / len(data), correct / len(data) * 100
-
-    def train_model(self, train_data, test_data, epochs=300):
-        history = []
-        for epoch in range(epochs):
-            total_loss = 0.0
-            correct = 0
-            for x, y in train_data:
-                pred = self.forward(x, training=True)
-                self.backward(y)
-                eps = 1e-15
-                p = max(eps, min(1 - eps, pred))
-                total_loss += -(y * math.log(p) + (1 - y) * math.log(1 - p))
-                if (pred >= 0.5) == (y >= 0.5):
-                    correct += 1
-            train_loss = total_loss / len(train_data)
-            train_acc = correct / len(train_data) * 100
-            test_loss, test_acc = self.evaluate(test_data)
-            history.append((train_loss, train_acc, test_loss, test_acc))
-            if epoch % 75 == 0 or epoch == epochs - 1:
-                gap = train_acc - test_acc
-                print(f"    Epoch {epoch:3d}: train_acc={train_acc:.1f}%, test_acc={test_acc:.1f}%, gap={gap:.1f}%")
+    def train_model(self, data: Sequence[tuple[Sequence[float], int]], epochs: int = 20) -> list[tuple[float, float]]:
+        if not data or epochs <= 0:
+            raise ValueError("training data must be nonempty and epochs positive")
+        history: list[tuple[float, float]] = []
+        for _ in range(epochs):
+            total_loss, correct = 0.0, 0
+            for x, target in data:
+                if target not in (0, 1):
+                    raise ValueError("targets must be 0 or 1")
+                prediction = self.forward(x, training=True)
+                total_loss += -(target * math.log(max(1e-15, prediction)) + (1 - target) * math.log(max(1e-15, 1 - prediction)))
+                correct += int((prediction >= 0.5) == bool(target))
+                d_out = prediction - target
+                d_hidden = self.dropout.backward([d_out * weight for weight in self.w2])
+                old_w2 = list(self.w2)
+                for index in range(self.hidden_size):
+                    d_relu = 1.0 if self.z1[index] > 0 else 0.0
+                    d_z1 = d_hidden[index] * d_relu
+                    self.w2[index] -= self.lr * (d_out * self.h[index] + self.weight_decay * self.w2[index])
+                    for feature in range(2):
+                        self.w1[index][feature] -= self.lr * (d_z1 * self.x[feature] + self.weight_decay * self.w1[index][feature])
+                    self.b1[index] -= self.lr * d_z1
+                self.b2 -= self.lr * d_out
+            history.append((total_loss / len(data), 100.0 * correct / len(data)))
         return history
 
 
+def main() -> None:
+    values = [1.0, 2.0, 3.0, 4.0]
+    drop = Dropout(0.5, seed=42)
+    train_values = drop.forward(values, training=True)
+    eval_values = drop.forward(values, training=False)
+    print(f"dropout train={train_values} eval={eval_values}")
+    weights = [3.0, -4.0]
+    print(f"l2 penalty={l2_regularization(weights, 0.1):.3f}, gradient={l2_gradient(weights, 0.1)}")
+    sample = [2.0, 4.0, 6.0, 8.0]
+    print(f"layer norm={LayerNorm(4).forward(sample)}")
+    print(f"rms norm={RMSNorm(4).forward(sample)}")
+    network = RegularizedNetwork(seed=7, dropout_p=0.2, weight_decay=0.01)
+    history = network.train_model(make_circle_data(20), epochs=5)
+    loss, accuracy = network.evaluate(make_circle_data(20))
+    print(f"regularized circle train_loss={history[-1][0]:.4f}, eval_loss={loss:.4f}, eval_accuracy={accuracy:.1f}%")
+
+
 if __name__ == "__main__":
-    print("=" * 60)
-    print("STEP 1: Dropout Demonstration")
-    print("=" * 60)
-    drop = Dropout(p=0.5)
-    test_input = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
-    random.seed(42)
-
-    drop.training = True
-    print(f"  Input:          {test_input}")
-    for trial in range(3):
-        output = drop.forward(test_input)
-        active = sum(1 for v in output if v > 0)
-        print(f"  Train pass {trial+1}:   {[f'{v:.1f}' for v in output]}  ({active}/{len(test_input)} active)")
-
-    drop.training = False
-    output = drop.forward(test_input)
-    print(f"  Eval pass:      {[f'{v:.1f}' for v in output]}")
-    print(f"  Train mean: ~{sum(test_input)/len(test_input):.1f} (scaled by 1/(1-p))")
-    print(f"  Eval mean:   {sum(output)/len(output):.1f} (no scaling needed)")
-
-    print("\n" + "=" * 60)
-    print("STEP 2: L2 Regularization")
-    print("=" * 60)
-    weights = [0.5, -1.2, 3.0, 0.1, -2.5]
-    lambda_val = 0.01
-    penalty = l2_regularization(weights, lambda_val)
-    grads = l2_gradient(weights, lambda_val)
-    print(f"  Weights: {weights}")
-    print(f"  Lambda:  {lambda_val}")
-    print(f"  L2 penalty: {penalty:.6f}")
-    print(f"  L2 grads:   {[f'{g:.4f}' for g in grads]}")
-    print(f"  Largest weight (3.0) gets largest gradient ({grads[2]:.4f})")
-
-    print("\n" + "=" * 60)
-    print("STEP 3: BatchNorm vs LayerNorm vs RMSNorm")
-    print("=" * 60)
-    random.seed(42)
-    batch = [[random.gauss(5, 2) for _ in range(4)] for _ in range(8)]
-    sample = batch[0]
-
-    bn = BatchNorm(4)
-    bn_out = bn.forward(batch)
-
-    ln = LayerNorm(4)
-    ln_out = ln.forward(sample)
-
-    rn = RMSNorm(4)
-    rn_out = rn.forward(sample)
-
-    print(f"  Raw sample: {[f'{v:.2f}' for v in sample]}")
-    print(f"  BatchNorm:  {[f'{v:.2f}' for v in bn_out[0]]}")
-    print(f"  LayerNorm:  {[f'{v:.2f}' for v in ln_out]}")
-    print(f"  RMSNorm:    {[f'{v:.2f}' for v in rn_out]}")
-
-    ln_mean = sum(ln_out) / len(ln_out)
-    ln_std = math.sqrt(sum((v - ln_mean) ** 2 for v in ln_out) / len(ln_out))
-    rn_mean = sum(rn_out) / len(rn_out)
-    rn_rms = math.sqrt(sum(v * v for v in rn_out) / len(rn_out))
-    print(f"\n  LayerNorm output: mean={ln_mean:.4f}, std={ln_std:.4f}")
-    print(f"  RMSNorm output:   mean={rn_mean:.4f}, rms={rn_rms:.4f}")
-    print(f"  LayerNorm centers to mean=0. RMSNorm normalizes scale only.")
-
-    print("\n" + "=" * 60)
-    print("STEP 4: BatchNorm Training vs Eval Mode")
-    print("=" * 60)
-    bn2 = BatchNorm(4)
-    bn2.training = True
-    for step in range(10):
-        batch = [[random.gauss(3 + step * 0.1, 1) for _ in range(4)] for _ in range(16)]
-        bn2.forward(batch)
-
-    print(f"  Running mean after 10 batches: {[f'{v:.3f}' for v in bn2.running_mean]}")
-    print(f"  Running var  after 10 batches: {[f'{v:.3f}' for v in bn2.running_var]}")
-
-    bn2.training = False
-    test_sample = [[5.0, 5.0, 5.0, 5.0]]
-    eval_out = bn2.forward(test_sample)
-    print(f"  Eval mode uses running stats, not batch stats")
-    print(f"  Input [5,5,5,5] -> {[f'{v:.3f}' for v in eval_out[0]]}")
-
-    print("\n" + "=" * 60)
-    print("STEP 5: Training With vs Without Regularization")
-    print("=" * 60)
-    all_data = make_circle_data(n=300, seed=42)
-    train_data = all_data[:150]
-    test_data = all_data[150:]
-
-    configs = [
-        ("No regularization", 0.0, 0.0),
-        ("Dropout p=0.3", 0.3, 0.0),
-        ("Weight decay 0.01", 0.0, 0.01),
-        ("Dropout + weight decay", 0.3, 0.01),
-    ]
-
-    results = {}
-    for name, drop_p, wd in configs:
-        print(f"\n--- {name} ---")
-        net = RegularizedNetwork(hidden_size=16, lr=0.05, dropout_p=drop_p, weight_decay=wd)
-        history = net.train_model(train_data, test_data, epochs=300)
-        results[name] = history
-
-    print("\n" + "=" * 60)
-    print("FINAL COMPARISON")
-    print("=" * 60)
-    print(f"  {'Config':30s} {'Train Acc':>10s} {'Test Acc':>10s} {'Gap':>8s}")
-    print("  " + "-" * 60)
-    for name, history in results.items():
-        train_loss, train_acc, test_loss, test_acc = history[-1]
-        gap = train_acc - test_acc
-        print(f"  {name:30s} {train_acc:>9.1f}% {test_acc:>9.1f}% {gap:>7.1f}%")
-
-    print("\n  Key insight: regularization reduces the train-test gap.")
-    print("  The model with dropout + weight decay generalizes best,")
-    print("  even if its training accuracy is lower.")
+    main()

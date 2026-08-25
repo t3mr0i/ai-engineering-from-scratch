@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How many parameters does Linear(2,3) expose in the mini-framework, including its three biases?",
+      "question": "What does a Parameter object keep separate?",
       "options": [
-        "6",
-        "5",
-        "9",
-        "12"
-      ],
-      "correct": 2,
-      "explanation": "The layer has 3*2=6 weights and 3 biases, for 9 parameters."
-    },
-    {
-      "stage": "check",
-      "question": "In Sequential.backward, in what order are the modules called?",
-      "options": [
-        "Forward order, from the first module to the final one",
-        "Alphabetical order by class name",
-        "Only the modules with trainable weights",
-        "Reverse order, from the final module back to the first"
-      ],
-      "correct": 3,
-      "explanation": "The chain rule sends the gradient backward through the composed modules, so the implementation iterates over reversed(self.modules)."
-    },
-    {
-      "stage": "check",
-      "question": "What happens when the mini-framework Dropout module is in eval mode?",
-      "options": [
-        "It returns activations unchanged",
-        "It drops every activation",
-        "It draws a new mask and doubles the survivors",
-        "It changes the batch size"
+        "Its scalar data and its accumulated gradient",
+        "Its training dataset and its validation labels",
+        "Its device name and its batch size",
+        "Its optimizer class and its activation function"
       ],
       "correct": 0,
-      "explanation": "Dropout applies its inverted random mask only while training; evaluation returns x directly."
+      "explanation": "The framework stores `data` for the forward computation and `grad` for the next optimizer update."
     },
     {
       "stage": "check",
-      "question": "What kind of input does the mini-framework BCELoss expect?",
+      "question": "How many scalar parameters are in Linear(2,4) followed by Linear(4,1)?",
       "options": [
-        "Unbounded class logits",
-        "Probabilities between zero and one",
-        "Integer feature indices only",
-        "Already-thresholded 0/1 predictions only"
+        "12",
+        "17",
+        "16",
+        "21"
       ],
       "correct": 1,
-      "explanation": "BCELoss clips predicted probabilities and applies logarithms. A sigmoid output should be supplied; raw logits need a different loss formulation."
+      "explanation": "The first layer has 8 weights plus 4 biases; the second has 4 weights plus 1 bias, for 17 total."
     },
     {
-      "stage": "post",
-      "question": "For 160 examples and batch_size=32, what does len(DataLoader(data,32)) return?",
+      "stage": "check",
+      "question": "What does Sequential.backward do after receiving an output gradient?",
       "options": [
-        "32",
-        "160",
-        "5",
-        "4"
+        "Runs every module forward again in the same order",
+        "Clears all parameters and returns no value",
+        "Calls child backward methods in reverse module order",
+        "Switches the model to evaluation mode"
       ],
       "correct": 2,
-      "explanation": "The loader reports ceil(160/32)=5 batches. Each iteration yields a list of inputs and a list of targets."
+      "explanation": "The chain rule reverses the forward composition: the last module receives the upstream gradient first."
+    },
+    {
+      "stage": "check",
+      "question": "What does a Dropout module in eval mode return for input [1,2,3]?",
+      "options": [
+        "A newly sampled binary mask",
+        "[0.5, 1.0, 1.5] for p=0.5",
+        "The unchanged vector [1,2,3]",
+        "An empty vector because gradients are disabled"
+      ],
+      "correct": 2,
+      "explanation": "The framework's evaluation path sets an all-ones mask and does not apply training-time random masking or scaling."
     },
     {
       "stage": "post",
-      "question": "Why does Sequential.eval() call eval() on every contained module?",
+      "question": "What batch sizes does DataLoader(data_of_5_rows, batch_size=2) yield?",
       "options": [
-        "Linear layers cannot compute outputs during training",
-        "It resets every parameter and gradient to zero",
-        "It changes the loss from BCE to MSE",
-        "Dropout and normalization must switch behavior consistently at inference"
+        "[2, 2, 1]",
+        "[2, 2, 2]",
+        "[1, 1, 1, 1, 1]",
+        "[5] only, because short batches are dropped"
       ],
-      "correct": 3,
-      "explanation": "The container propagates the mode so nested Dropout and BatchNorm use inference behavior while ordinary layers remain compatible."
+      "correct": 0,
+      "explanation": "The iterator yields slices of size two and keeps the final remainder, so five rows produce 2, 2, and 1."
+    },
+    {
+      "stage": "post",
+      "question": "Why must the XOR loop call SGD.zero_grad before model.backward?",
+      "options": [
+        "Otherwise modules cannot enter training mode",
+        "Gradients are accumulated on Parameters and would mix consecutive examples",
+        "Otherwise DataLoader reverses the batch order",
+        "It is required to compute the sigmoid forward value"
+      ],
+      "correct": 1,
+      "explanation": "Linear backward adds into each Parameter.grad. Clearing it at the start of an update keeps the gradient tied to the current loss."
     }
   ]
 }

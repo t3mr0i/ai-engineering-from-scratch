@@ -1,9 +1,8 @@
-# Loss functions in Julia. MSE, MAE, binary cross-entropy,
-# categorical cross-entropy + softmax, and focal loss for imbalanced
-# classification — each with its analytical gradient.
-# Stdlib only. Sources:
-#   https://arxiv.org/abs/1708.02002  (Focal loss: Lin et al.)
-#   https://docs.julialang.org/en/v1/base/math/
+# Loss functions and analytical gradients implemented with Julia stdlib.
+# Input domains and stable softmax conventions are documented in docs/en.md.
+# The examples are finite local fixtures rather than tuned benchmarks.
+# Source: https://arxiv.org/abs/1708.02002
+# Source: https://docs.julialang.org/en/v1/base/math/
 
 using Random
 using Statistics

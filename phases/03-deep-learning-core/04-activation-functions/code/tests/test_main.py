@@ -1,64 +1,62 @@
-# Contract and executable-behavior tests for this lesson demo.
 from __future__ import annotations
 
-import ast
-import functools
 import importlib.util
-import os
 from pathlib import Path
 import subprocess
 import sys
 import unittest
 
 CODE = Path(__file__).resolve().parents[1]
-MAIN = CODE / "main.py"
-ALLOWED = set(sys.stdlib_module_names) | {"numpy", "torch", "h5py", "zstandard", "safetensors"}
+spec = importlib.util.spec_from_file_location("lesson04_main", CODE / "main.py")
+main = importlib.util.module_from_spec(spec)
+assert spec.loader is not None
+spec.loader.exec_module(main)
 
-def source_trees() -> list[ast.AST]:
-    return [ast.parse(path.read_text(encoding="utf-8")) for path in CODE.glob("*.py")]
 
-def external_roots() -> set[str]:
-    roots: set[str] = set()
-    for tree in source_trees():
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                roots.update(alias.name.split(".")[0] for alias in node.names)
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                roots.add(node.module.split(".")[0])
-    return {name for name in roots if not (CODE / f"{name}.py").exists() and not (CODE / name).is_dir()}
+class ActivationTests(unittest.TestCase):
+    def test_sigmoid_and_tanh_derivatives_at_zero(self):
+        self.assertAlmostEqual(main.sigmoid_derivative(0.0), 0.25)
+        self.assertAlmostEqual(main.tanh_derivative(0.0), 1.0)
 
-@functools.lru_cache(maxsize=1)
-def run_demo() -> subprocess.CompletedProcess[str]:
-    missing = sorted(name for name in external_roots() if name in ALLOWED and importlib.util.find_spec(name) is None)
-    banned = sorted(external_roots() - ALLOWED)
-    if missing or banned:
-        raise unittest.SkipTest(f"demo dependencies unavailable or disallowed: {missing + banned}")
-    env = os.environ.copy()
-    for key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "HF_TOKEN", "HUGGINGFACE_TOKEN"):
-        env.pop(key, None)
-    return subprocess.run(
-        [sys.executable, MAIN.name], cwd=CODE, text=True, capture_output=True,
-        timeout=45, env=env, check=False,
-    )
+    def test_relu_has_zero_negative_branch(self):
+        self.assertEqual(main.relu(-2.0), 0.0)
+        self.assertEqual(main.relu_derivative(-2.0), 0.0)
+        self.assertEqual(main.relu_derivative(2.0), 1.0)
 
-class LessonDemoTests(unittest.TestCase):
-    def test_source_compiles(self) -> None:
-        compile(MAIN.read_text(encoding="utf-8"), str(MAIN), "exec")
+    def test_leaky_relu_preserves_negative_gradient(self):
+        self.assertAlmostEqual(main.leaky_relu(-2.0), -0.02)
+        self.assertAlmostEqual(main.leaky_relu_derivative(-2.0), 0.01)
 
-    def test_demo_has_explicit_entrypoint(self) -> None:
-        source = MAIN.read_text(encoding="utf-8")
-        self.assertTrue("__main__" in source or "runpy.run_path" in source)
+    def test_gelu_and_swish_are_finite(self):
+        for value in (-100.0, -2.0, 0.0, 2.0, 100.0):
+            self.assertTrue(all(map(__import__("math").isfinite, (main.gelu(value), main.gelu_derivative(value), main.swish(value), main.swish_derivative(value)))))
 
-    def test_demo_exits_successfully(self) -> None:
-        self.assertEqual(run_demo().returncode, 0, run_demo().stderr)
+    def test_softmax_is_stable_and_normalized(self):
+        probabilities = main.softmax((1000.0, 999.0, 998.0))
+        self.assertAlmostEqual(sum(probabilities), 1.0)
+        self.assertGreater(probabilities[0], probabilities[1])
 
-    def test_demo_emits_bounded_output(self) -> None:
-        result = run_demo()
-        self.assertTrue((result.stdout + result.stderr).strip())
-        self.assertLess(len(result.stdout) + len(result.stderr), 1_000_000)
+    def test_softmax_rejects_empty_or_nonfinite_logits(self):
+        with self.assertRaises(ValueError):
+            main.softmax(())
+        with self.assertRaises(ValueError):
+            main.softmax((float("nan"), 1.0))
 
-    def test_demo_has_no_traceback(self) -> None:
-        self.assertNotIn("Traceback (most recent call last)", run_demo().stderr)
+    def test_network_seed_and_shape_contract(self):
+        a = main.ActivationNetwork(main.relu, main.relu_derivative, seed=7)
+        b = main.ActivationNetwork(main.relu, main.relu_derivative, seed=7)
+        self.assertEqual(a.forward((0.2, -0.4)), b.forward((0.2, -0.4)))
+        with self.assertRaises(ValueError):
+            a.forward((0.2,))
+        with self.assertRaises(ValueError):
+            main.ActivationNetwork(main.relu, main.relu_derivative, lr=float("nan"))
+        with self.assertRaises(ValueError):
+            main.ActivationNetwork(main.relu, main.relu_derivative, lr=float("inf"))
+
+    def test_canonical_demo_exits_cleanly(self):
+        result = subprocess.run([sys.executable, "main.py"], cwd=CODE, capture_output=True, text=True, check=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,250 +1,108 @@
-# Debugging Neural Networks
+# Debugging Neural Networks with Evidence
 
-> Your network compiled. It ran. It produced a number. The number is wrong and nothing crashed. Welcome to the hardest kind of debugging -- the kind where there is no error message.
+> Turn a plausible-looking loss curve into a small, reproducible report about finiteness, activations, gradients, and derivatives.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 03 Lessons 01-10 (especially backpropagation, loss functions, optimizers)
-**Time:** ~90 minutes
+**Prerequisites:** Phase 03 Lessons 01-12, sequences, finite differences, and basic optimization
+**Time:** ~45 minutes
 
 ## Learning Objectives
 
-- Diagnose common neural network failures (NaN loss, flat loss curve, overfitting, oscillation) using systematic debugging strategies
-- Apply the "overfit one batch" technique to verify that your model architecture and training loop are correct
-- Inspect gradient magnitudes, activation distributions, and weight norms to identify vanishing/exploding gradient problems
-- Build a debugging checklist that covers data pipeline, model architecture, loss function, optimizer, and learning rate issues
+- Reject non-finite diagnostic inputs instead of hiding them inside summary statistics.
+- Classify a bounded loss history as insufficient, non-finite, non-decreasing, oscillating, or healthy.
+- Distinguish dead, exploding, and collapsed activation evidence using explicit local thresholds.
+- Report vanishing and exploding gradient magnitudes without conflating them with model accuracy.
+- Compare a centered finite-difference derivative with a known analytic result.
+- Produce a serializable report that a human or a downstream check can inspect.
 
-## The Problem
+## The debugging contract
 
-Traditional software crashes when it is broken. A null pointer throws an exception. A type mismatch fails at compile time. An off-by-one error produces a clearly wrong output.
+The implementation in `code/main.py` is intentionally independent of a deep-learning framework. It accepts small Python sequences and returns dictionaries/tuples with stable fields. The canonical run does not import or install PyTorch; `torch_available()` is only an environment probe. This makes a no-backend run useful for checking the diagnostic logic without claiming that a model trained.
 
-Neural networks do not give you that luxury.
+| Evidence | Function | Local rule |
+| --- | --- | --- |
+| loss sequence | `loss_health` | at least two finite values; 20 values compare first/last ten |
+| activation sequence | `activation_report` | zero fraction, mean/std, and magnitude threshold |
+| gradient sequence | `gradient_report` | absolute mean below `1e-7` or above `100` |
+| scalar function | `central_difference` | positive finite epsilon and two finite evaluations |
+| combined evidence | `diagnose` | non-empty loss/activation/gradient collections |
 
-A broken neural network runs to completion, prints a loss value, and outputs predictions. The loss might decrease. The predictions might look plausible. But the model is silently wrong -- learning shortcuts, memorizing noise, or converging to a useless local minimum. Google researchers estimated that 60-70% of ML debugging time is spent on "silent" bugs that produce no errors but degrade model quality.
-
-The difference between a working model and a broken one is often a single misplaced line: a missing `zero_grad()`, a transposed dimension, a learning rate off by 10x. the canonical "Recipe for Training Neural Networks" (2019) opens with this: "The most common neural net mistakes are bugs that don't crash."
-
-This lesson teaches you to find those bugs.
-
-## The Concept
-
-### The Debugging Mindset
-
-Forget print-and-pray debugging. Neural network debugging requires a systematic approach because the feedback loop is slow (minutes to hours per training run) and the symptoms are ambiguous (bad loss could mean 20 different things).
-
-The golden rule: **start simple, add complexity one piece at a time, and verify each piece independently.**
-
-```mermaid
-flowchart TD
-    A["Loss not decreasing"] --> B{"Check learning rate"}
-    B -->|"Too high"| C["Loss oscillates or explodes"]
-    B -->|"Too low"| D["Loss barely moves"]
-    B -->|"Reasonable"| E{"Check gradients"}
-    E -->|"All zeros"| F["Dead ReLUs or vanishing gradients"]
-    E -->|"NaN/Inf"| G["Exploding gradients"]
-    E -->|"Normal"| H{"Check data pipeline"}
-    H -->|"Labels shuffled"| I["Random-chance accuracy"]
-    H -->|"Preprocessing bug"| J["Model learns noise"]
-    H -->|"Data is fine"| K{"Check architecture"}
-    K -->|"Too small"| L["Underfitting"]
-    K -->|"Too deep"| M["Optimization difficulty"]
-```
-
-### Symptom 1: Loss Not Decreasing
-
-This is the most common complaint. The training loop runs, epochs tick by, and the loss stays flat or oscillates wildly.
-
-**Wrong learning rate.** Too high: loss oscillates or jumps to NaN. Too low: loss decreases so slowly it looks flat. For Adam, start at 1e-3. For SGD, start at 1e-1 or 1e-2. Always try 3 learning rates spanning 10x each (e.g., 1e-2, 1e-3, 1e-4) before concluding something else is wrong.
-
-**Dead ReLUs.** If a ReLU neuron receives a large negative input, it outputs 0 and its gradient is 0. It never activates again. If enough neurons die, the network cannot learn. Check: print the fraction of activations that are exactly 0 after each ReLU layer. If >50% are dead, switch to LeakyReLU or reduce the learning rate.
-
-**Vanishing gradients.** In deep networks with sigmoid or tanh activations, gradients shrink exponentially as they propagate backward. By the time they reach the first layer, they are ~0. The first layers stop learning. Fix: use ReLU/GELU, add residual connections, or use batch normalization.
-
-**Exploding gradients.** The opposite problem -- gradients grow exponentially. Common in RNNs and very deep networks. Loss jumps to NaN. Fix: gradient clipping (`torch.nn.utils.clip_grad_norm_`), lower learning rate, or add normalization.
-
-### Symptom 2: Loss Decreasing But Model is Bad
-
-The loss goes down. Training accuracy hits 99%. But test accuracy is 55%. Or the model produces nonsensical outputs on real data.
-
-**Overfitting.** The model memorizes training data instead of learning patterns. Gap between training and validation loss grows over time. Fix: more data, dropout, weight decay, early stopping, data augmentation.
-
-**Data leakage.** Test data leaked into training. Accuracy is suspiciously high. Common causes: shuffling before splitting, preprocessing with statistics from the full dataset, duplicate samples across splits. Fix: split first, preprocess second, check for duplicates.
-
-**Label errors.** 5-10% of labels in most real datasets are wrong (Northcutt et al., 2021 -- "Pervasive Label Errors in Test Sets"). The model learns the noise. Fix: use confident learning to find and fix mislabeled examples, or use loss truncation to ignore high-loss samples.
-
-### Symptom 3: NaN or Inf in Loss
-
-The loss value becomes `nan` or `inf`. Training is dead.
-
-**Learning rate too high.** Gradient updates overshoot so far that weights explode. Fix: reduce by 10x.
-
-**log(0) or log(negative).** Cross-entropy loss computes `log(p)`. If your model outputs exactly 0 or a negative probability, the log explodes. Fix: clamp predictions to `[eps, 1-eps]` where `eps=1e-7`.
-
-**Division by zero.** Batch normalization divides by standard deviation. A batch with constant values has std=0. Fix: add epsilon to the denominator (PyTorch does this by default, but custom implementations might not).
-
-**Numerical overflow.** Large activations fed into `exp()` produce Inf. Softmax is especially prone. Fix: subtract the max before exponentiating (the log-sum-exp trick).
-
-### Technique 1: Gradient Checking
-
-Compare your analytical gradients (from backprop) to numerical gradients (from finite differences). If they disagree, your backward pass has a bug.
-
-Numerical gradient for parameter `w`:
-
-```
-grad_numerical = (loss(w + eps) - loss(w - eps)) / (2 * eps)
-```
-
-Agreement metric (relative difference):
-
-```
-rel_diff = |grad_analytical - grad_numerical| / max(|grad_analytical|, |grad_numerical|, 1e-8)
-```
-
-If `rel_diff < 1e-5`: correct. If `rel_diff > 1e-3`: almost certainly a bug.
-
-```mermaid
-flowchart LR
-    A["Parameter w"] --> B["w + eps"]
-    A --> C["w - eps"]
-    B --> D["Forward pass"]
-    C --> E["Forward pass"]
-    D --> F["loss+"]
-    E --> G["loss-"]
-    F --> H["(loss+ - loss-) / 2eps"]
-    G --> H
-    H --> I["Compare to backprop gradient"]
-```
-
-### Technique 2: Activation Statistics
-
-Monitor the mean and standard deviation of activations after each layer during training. Healthy networks maintain activations with mean near 0 and std near 1 (after normalization) or at least bounded.
-
-| Health indicator | Mean | Std | Diagnosis |
-|-----------------|------|-----|-----------|
-| Healthy | ~0 | ~1 | Network is learning normally |
-| Saturated | >>0 or <<0 | ~0 | Activations stuck at extreme values |
-| Dead | 0 | 0 | Neurons are dead (all zeros) |
-| Exploding | >>10 | >>10 | Activations growing without bound |
-
-### Technique 3: Gradient Flow Visualization
-
-Plot the average gradient magnitude for each layer. In a healthy network, gradient magnitudes should be roughly similar across layers. If early layers have gradients 1000x smaller than later layers, you have vanishing gradients.
-
-```mermaid
-graph LR
-    subgraph "Healthy Gradient Flow"
-        L1["Layer 1<br/>grad: 0.05"] --- L2["Layer 2<br/>grad: 0.04"] --- L3["Layer 3<br/>grad: 0.06"] --- L4["Layer 4<br/>grad: 0.05"]
-    end
-```
-
-```mermaid
-graph LR
-    subgraph "Vanishing Gradient Flow"
-        V1["Layer 1<br/>grad: 0.0001"] --- V2["Layer 2<br/>grad: 0.003"] --- V3["Layer 3<br/>grad: 0.02"] --- V4["Layer 4<br/>grad: 0.08"]
-    end
-```
-
-### Technique 4: The Overfit-One-Batch Test
-
-The single most important debugging technique in deep learning.
-
-Take one small batch (8-32 samples). Train on it for 100+ iterations. The loss should go to nearly zero and training accuracy should hit 100%. If it does not, your model or training loop has a fundamental bug -- do not proceed to full training.
-
-This test catches:
-- Broken loss functions
-- Broken backward passes
-- Architecture too small to represent the data
-- Optimizer not connected to model parameters
-- Data and labels misaligned
-
-This takes 30 seconds to run and saves hours of debugging full training runs.
-
-### Technique 5: Learning Rate Finder
-
-Leslie Smith (2017) proposed sweeping the learning rate from very small (1e-7) to very large (10) over one epoch while recording the loss. Plot loss vs learning rate. The optimal learning rate is roughly 10x smaller than the rate where loss starts decreasing fastest.
-
-```mermaid
-graph TD
-    subgraph "LR Finder Plot"
-        direction LR
-        A["1e-7: loss=2.3"] --> B["1e-5: loss=2.3"]
-        B --> C["1e-3: loss=1.8"]
-        C --> D["1e-2: loss=0.9 -- steepest"]
-        D --> E["1e-1: loss=0.5"]
-        E --> F["1.0: loss=NaN -- too high"]
-    end
-```
-
-Best LR in this example: ~1e-3 (one order of magnitude before the steepest point).
-
-### Common PyTorch Bugs
-
-These are the bugs that waste the most collective hours in the PyTorch community:
-
-| Bug | Symptom | Fix |
-|-----|---------|-----|
-| Forgetting `optimizer.zero_grad()` | Gradients accumulate across batches, loss oscillates | Add `optimizer.zero_grad()` before `loss.backward()` |
-| Forgetting `model.eval()` at test time | Dropout and batch norm behave differently, test accuracy varies between runs | Add `model.eval()` and `torch.no_grad()` |
-| Wrong tensor shapes | Silent broadcasting produces wrong results, no error | Print shapes after every operation during debugging |
-| CPU/GPU mismatch | `RuntimeError: expected CUDA tensor` | Use `.to(device)` on model AND data |
-| Not detaching tensors | Computation graph grows forever, OOM | Use `.detach()` or `with torch.no_grad()` |
-| In-place operations breaking autograd | `RuntimeError: modified by in-place operation` | Replace `x += 1` with `x = x + 1` |
-| Data not normalized | Loss stuck at random-chance level | Normalize inputs to mean=0, std=1 |
-| Labels as wrong dtype | Cross-entropy expects `Long`, got `Float` | Cast labels: `labels.long()` |
-
-### The Master Debugging Table
-
-| Symptom | Likely cause | First thing to try |
-|---------|-------------|-------------------|
-| Loss stuck at -log(1/num_classes) | Model predicting uniform distribution | Check data pipeline, verify labels match inputs |
-| Loss NaN after a few steps | Learning rate too high | Reduce LR by 10x |
-| Loss NaN immediately | log(0) or division by zero | Add epsilon to log/division operations |
-| Loss oscillating wildly | LR too high or batch size too small | Reduce LR, increase batch size |
-| Loss decreasing then plateaus | LR too high for fine-tuning phase | Add LR schedule (cosine or step decay) |
-| Training acc high, test acc low | Overfitting | Add dropout, weight decay, more data |
-| Training acc = test acc = chance | Model not learning anything | Run overfit-one-batch test |
-| Training acc = test acc but both low | Underfitting | Bigger model, more layers, more features |
-| Gradients all zero | Dead ReLUs or detached computation graph | Switch to LeakyReLU, check `.requires_grad` |
-| Out of memory during training | Batch too large or graph not freed | Reduce batch size, use `torch.no_grad()` for eval |
-
-
-
+These are diagnostic labels for this fixture, not universal scientific cutoffs. A real project should choose thresholds from its model, dtype, and measurement scale.
 
 ## Build It
 
-Reconstruct **Debugging Neural Networks** by following `NetworkDebugger` on a 2x3 tensor with one finite value. Run `python3 main.py` and verify that the diagnostic names the shape/dtype/non-finite value or the profiling section that explains the cost.
+### 1. Check finiteness first
+
+`finite_stats((1,2,3))` returns count, mean, standard deviation, minimum, and maximum. It raises `ValueError` for an empty sequence or a non-finite value. If you need to preserve the fact that an input was bad, call `classify_values` first; it returns `NAN_OR_INF` rather than converting the value into a misleading mean.
+
+```python
+print(classify_values((1.0, float("inf"))))  # NAN_OR_INF
+print(finite_stats((1.0, 2.0, 3.0))["mean"])  # 2.0
+```
+
+### 2. Classify the loss trace
+
+`loss_health` returns `NOT_ENOUGH_DATA` for one point and `NAN_OR_INF` when any point is non-finite. With the default `window=10`, a trace of at least 20 points is `NOT_DECREASING` when the final ten-point mean is at least `0.99` of the first ten-point mean. Shorter traces are marked `HEALTHY` unless their recent differences alternate often enough to be `OSCILLATING`. The status says what to inspect next; it does not certify a model.
+
+### 3. Inspect activations and gradients
+
+`activation_report("hidden", values)` records the zero fraction and finite statistics. More than half zeros produces `DEAD_NEURONS`; a magnitude beyond `10` produces `EXPLODING_ACTIVATIONS`; standard deviation below `1e-6` produces `COLLAPSED_ACTIVATIONS`. Multiple issues can coexist. `gradient_report` uses the absolute mean: below `1e-7` is `VANISHING_GRADIENT`, above `100` is `EXPLODING_GRADIENT`.
+
+```mermaid
+flowchart TD
+  L[loss history] --> H[loss_health]
+  A[activation values] --> AR[activation_report]
+  G[gradient values] --> GR[gradient_report]
+  H --> R[serializable diagnose report]
+  AR --> R
+  GR --> R
+  R --> V[choose next experiment]
+```
+
+### 4. Check one derivative
+
+`central_difference(f, x, epsilon)` evaluates `f(x-epsilon)` and `f(x+epsilon)` and divides their difference by `2*epsilon`. For `f(x)=x²` at `x=3`, the result is approximately `6`. The function rejects a non-callable function, non-finite values, and a non-positive epsilon. It checks the diagnostic arithmetic; it does not replace framework autodiff.
+
+Run the bounded canonical demo:
+
+```bash
+python3 main.py
+```
+
+The local output reports `loss_status=HEALTHY`, healthy activation/gradient issue tuples for the fixture, `central_difference_d_x2_at_3` near `6`, and the boolean torch availability probe. No training accuracy is printed.
 
 ## Use It
 
-Call `NetworkDebugger` from a small caller with a 2x3 tensor with one finite value. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+Pass evidence by name so a report remains interpretable:
+
+```python
+report = diagnose(
+    losses=(1.0, 0.8, 0.6),
+    activations={"hidden": (0.0, 0.5, 1.0)},
+    gradients={"output": (0.1, 0.2)},
+)
+```
+
+The returned `loss_status`, `activation_reports`, and `gradient_reports` can be serialized after converting the tuples if a JSON consumer requires lists. Do not compare a gradient magnitude with an activation mean or call a `HEALTHY` diagnostic a proof of generalization. If the optional framework is present, add framework-specific hooks in a separate adapter and feed their finite summaries into these functions.
 
 ## Ship It
 
-Hand off `outputs/prompt-nn-debugger.md` with the command `python3 main.py`, the accepted input shape (a 2x3 tensor with one finite value), the expected observable result, and a failure note for malformed inputs.
+The reusable artifact is `outputs/prompt-nn-debugger.md`, which asks for the exact evidence needed before suggesting a fix. Ship a report with:
 
-## Further Reading
+1. the input shape/field and the first violated finite-value contract;
+2. the status plus the exact threshold that produced it;
+3. one bounded follow-up command and its expected field;
+4. an explicit note when the optional torch path was not executed.
 
-- Smith, "Cyclical Learning Rates for Training Neural Networks" (2017) -- the paper introducing the learning rate range test (LR finder)
-- Northcutt et al., "Pervasive Label Errors in Test Sets Destabilize Machine Learning Benchmarks" (2021) -- demonstrates that 3-6% of labels in ImageNet, CIFAR-10, and other major benchmarks are wrong
-- Zhang et al., "Understanding Deep Learning Requires Rethinking Generalization" (2017) -- the paper showing neural networks can memorize random labels, which is why the overfit-one-batch test works
-- PyTorch documentation on `torch.autograd.detect_anomaly` and `torch.autograd.set_detect_anomaly` for built-in NaN/Inf detection
+This handoff keeps a silent numerical failure distinguishable from an unavailable environment.
 
 ## Exercises
 
-Work from the smallest fixture that the Debugging Neural Networks demo already understands, then make one deliberate change and record what moved.
-
-1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using a 2x3 tensor with one finite value. Follow `NetworkDebugger`, `hook`, `record_loss`. Expect the diagnostic names the shape/dtype/non-finite value or the profiling section that explains the cost; capture the first printed shape, metric, status, or summary field and state which part supports **Diagnose common neural network failures (NaN loss, flat loss curve, overfitting, oscillation) using systematic debugging strategies**.
-2. **Perturb one field.** Repeat the command after changing only the injected NaN value: use the same tensor with one NaN. Predict the direction of the change, then compare the two output values. Explain why **Apply the "overfit one batch" technique to verify that your model architecture and training loop are correct** says the other inputs should stay fixed.
-3. **Check the failure boundary.** Feed the implementation a tensor with an incompatible shape. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Inspect gradient magnitudes, activation distributions, and weight norms to identify vanishing/exploding gradient problems** and record the exception text if the code rejects the case.
-4. **Make the result repeatable.** Open `outputs/prompt-nn-debugger.md` and add a worked example using a 2x3 tensor with one finite value. Include the input contract, one expected output field, and a named acceptance check for **Build a debugging checklist that covers data pipeline, model architecture, loss function, optimizer, and learning rate issues**; note what the demo cannot establish.
+1. Run `diagnose` on the canonical fixture, then replace one activation with `0.0` until `DEAD_NEURONS` appears. Record the zero fraction and explain why the threshold is local to this helper.
+2. Build a 20-value loss trace whose first ten values average `1.0` and last ten average `1.0`. Verify `NOT_DECREASING`, then lower the last ten mean below `0.99` and identify the changed status.
+3. Compare `central_difference(lambda x: x**3, 2.0, epsilon=1e-3)` with the analytic derivative `12`. Repeat with `epsilon=1e-6` and report both the approximation and why smaller is not automatically better.
 
 ## Reference Solution
 
-A checkable result for **Debugging Neural Networks** should contain:
-
-- the `python3 main.py` output for a 2x3 tensor with one finite value, with `NetworkDebugger`, `hook`, `record_loss` traced to the value or shape that supports **Diagnose common neural network failures (NaN loss, flat loss curve, overfitting, oscillation) using systematic debugging strategies**;
-- a before/after comparison for the injected NaN value, where the same tensor with one NaN changes the observation in the direction predicted by **Apply the "overfit one batch" technique to verify that your model architecture and training loop are correct**;
-- a recorded result for a tensor with an incompatible shape that matches the implementation’s validation or empty-result contract and explains the evidence for **Inspect gradient magnitudes, activation distributions, and weight norms to identify vanishing/exploding gradient problems**; and
-- an updated `outputs/prompt-nn-debugger.md` example with a concrete input, expected output field, and acceptance check tied to **Build a debugging checklist that covers data pipeline, model architecture, loss function, optimizer, and learning rate issues**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+Exercise 1 is accepted when the report contains `DEAD_NEURONS` and the recorded fraction is greater than `0.5`; no claim about a trained network is required. For Exercise 2, the first trace must return `NOT_DECREASING` because `last >= first*0.99`, while the lowered trace should no longer trigger that branch. For Exercise 3, both results should be close to `12` on this scalar fixture. The explanation should separate finite-difference truncation from floating-point cancellation and include the chosen epsilon.

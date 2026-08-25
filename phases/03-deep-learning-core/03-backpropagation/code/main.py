@@ -1,241 +1,201 @@
+# A scalar reverse-mode autodiff engine implemented with Python closures.
+# The chain-rule traversal and half-squared-error convention are in docs/en.md.
+# Leaf parameter gradients can accumulate between calls; intermediate adjoints are per-pass.
+# The canonical command trains a bounded 2-4-1 XOR fixture without a framework.
+# Source: https://en.wikipedia.org/wiki/Backpropagation
+
+from __future__ import annotations
+
 import math
 import random
+from typing import Iterable, Sequence
 
 
 class Value:
-    def __init__(self, data, children=(), op=''):
-        self.data = data
+    """A scalar with a recorded local derivative and a reverse pass."""
+
+    def __init__(self, data: float, children: Iterable["Value"] = (), op: str = "") -> None:
+        if not math.isfinite(float(data)):
+            raise ValueError("Value data must be finite")
+        self.data = float(data)
         self.grad = 0.0
         self._backward = lambda: None
-        self._children = set(children)
+        self._children = tuple(children)
         self._op = op
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Value(data={self.data:.4f}, grad={self.grad:.4f})"
 
-    def __add__(self, other):
-        other = other if isinstance(other, Value) else Value(other)
-        out = Value(self.data + other.data, (self, other), '+')
+    @staticmethod
+    def _coerce(other: float | "Value") -> "Value":
+        return other if isinstance(other, Value) else Value(other)
 
-        def _backward():
+    def __add__(self, other: float | "Value") -> "Value":
+        other = self._coerce(other)
+        out = Value(self.data + other.data, (self, other), "+")
+
+        def backward() -> None:
             self.grad += out.grad
             other.grad += out.grad
 
-        out._backward = _backward
+        out._backward = backward
         return out
 
-    def __radd__(self, other):
-        return self.__add__(other)
+    __radd__ = __add__
 
-    def __mul__(self, other):
-        other = other if isinstance(other, Value) else Value(other)
-        out = Value(self.data * other.data, (self, other), '*')
+    def __mul__(self, other: float | "Value") -> "Value":
+        other = self._coerce(other)
+        out = Value(self.data * other.data, (self, other), "*")
 
-        def _backward():
+        def backward() -> None:
             self.grad += other.data * out.grad
             other.grad += self.data * out.grad
 
-        out._backward = _backward
+        out._backward = backward
         return out
 
-    def __rmul__(self, other):
-        return self.__mul__(other)
+    __rmul__ = __mul__
 
-    def __neg__(self):
-        return self * -1
+    def __neg__(self) -> "Value":
+        return self * -1.0
 
-    def __sub__(self, other):
-        return self + (-other)
+    def __sub__(self, other: float | "Value") -> "Value":
+        return self + (-self._coerce(other))
 
-    def sigmoid(self):
-        x = max(-500, min(500, self.data))
-        s = 1.0 / (1.0 + math.exp(-x))
-        out = Value(s, (self,), 'sigmoid')
+    def __rsub__(self, other: float | "Value") -> "Value":
+        return self._coerce(other) + (-self)
 
-        def _backward():
-            self.grad += (s * (1 - s)) * out.grad
+    def sigmoid(self) -> "Value":
+        if self.data >= 0:
+            e = math.exp(-self.data)
+            value = 1.0 / (1.0 + e)
+        else:
+            e = math.exp(self.data)
+            value = e / (1.0 + e)
+        out = Value(value, (self,), "sigmoid")
 
-        out._backward = _backward
+        def backward() -> None:
+            self.grad += value * (1.0 - value) * out.grad
+
+        out._backward = backward
         return out
 
-    def backward(self):
-        topo = []
-        visited = set()
+    def backward(self) -> None:
+        order: list[Value] = []
+        visited: set[int] = set()
 
-        def build_topo(v):
-            if v not in visited:
-                visited.add(v)
-                for child in v._children:
-                    build_topo(child)
-                topo.append(v)
+        def visit(node: Value) -> None:
+            if id(node) in visited:
+                return
+            visited.add(id(node))
+            for child in node._children:
+                visit(child)
+            order.append(node)
 
-        build_topo(self)
-        self.grad = 1.0
-        for v in reversed(topo):
-            v._backward()
+        visit(self)
+        # Leaves represent parameters/inputs and retain their accumulated gradient.
+        # Every non-leaf adjoint is scratch space and must be recomputed for this pass.
+        for node in order:
+            if node._children:
+                node.grad = 0.0
+        self.grad += 1.0
+        for node in reversed(order):
+            node._backward()
 
 
-def mse_loss(predicted, target):
-    diff = predicted + Value(-target)
-    return diff * diff
+def mse_loss(predicted: Value | float, target: Value | float) -> Value:
+    """Return 1/2 (prediction-target)^2 so dL/dprediction is the error."""
+    difference = (Value(predicted) if not isinstance(predicted, Value) else predicted) - target
+    return difference * difference * 0.5
+
+
+def squared_error(predicted: Value | float, target: Value | float) -> Value:
+    return mse_loss(predicted, target)
 
 
 class Neuron:
-    def __init__(self, n_inputs):
-        scale = (2.0 / n_inputs) ** 0.5
-        self.weights = [Value(random.uniform(-scale, scale)) for _ in range(n_inputs)]
+    def __init__(self, n_inputs: int, rng: random.Random | None = None) -> None:
+        if n_inputs <= 0:
+            raise ValueError("n_inputs must be positive")
+        source = rng or random.Random()
+        scale = math.sqrt(2.0 / n_inputs)
+        self.weights = [Value(source.uniform(-scale, scale)) for _ in range(n_inputs)]
         self.bias = Value(0.0)
 
-    def __call__(self, x):
-        act = sum((wi * xi for wi, xi in zip(self.weights, x)), self.bias)
-        return act.sigmoid()
+    def __call__(self, inputs: Sequence[Value]) -> Value:
+        if len(inputs) != len(self.weights):
+            raise ValueError(f"expected {len(self.weights)} inputs, got {len(inputs)}")
+        activation = self.bias
+        for weight, value in zip(self.weights, inputs):
+            activation = activation + weight * value
+        return activation.sigmoid()
 
-    def parameters(self):
-        return self.weights + [self.bias]
+    def parameters(self) -> list[Value]:
+        return [*self.weights, self.bias]
 
 
 class Layer:
-    def __init__(self, n_inputs, n_outputs):
-        self.neurons = [Neuron(n_inputs) for _ in range(n_outputs)]
+    def __init__(self, n_inputs: int, n_outputs: int, rng: random.Random | None = None) -> None:
+        if n_outputs <= 0:
+            raise ValueError("n_outputs must be positive")
+        self.neurons = [Neuron(n_inputs, rng) for _ in range(n_outputs)]
 
-    def __call__(self, x):
-        out = [n(x) for n in self.neurons]
-        return out[0] if len(out) == 1 else out
+    def __call__(self, inputs: Sequence[Value]) -> Value | list[Value]:
+        outputs = [neuron(inputs) for neuron in self.neurons]
+        return outputs[0] if len(outputs) == 1 else outputs
 
-    def parameters(self):
-        params = []
-        for n in self.neurons:
-            params.extend(n.parameters())
-        return params
+    def parameters(self) -> list[Value]:
+        return [parameter for neuron in self.neurons for parameter in neuron.parameters()]
 
 
 class Network:
-    def __init__(self, sizes):
-        self.layers = []
-        for i in range(len(sizes) - 1):
-            self.layers.append(Layer(sizes[i], sizes[i + 1]))
+    def __init__(self, sizes: Sequence[int], seed: int = 42) -> None:
+        if len(sizes) < 2 or any(size <= 0 for size in sizes):
+            raise ValueError("sizes must contain at least two positive widths")
+        rng = random.Random(seed)
+        self.layers = [Layer(left, right, rng) for left, right in zip(sizes, sizes[1:])]
 
-    def __call__(self, x):
+    def __call__(self, inputs: Sequence[Value]) -> Value | list[Value]:
+        if len(inputs) != len(self.layers[0].neurons[0].weights):
+            raise ValueError("input width does not match network")
+        current: Value | list[Value] = list(inputs)
         for layer in self.layers:
-            x = layer(x)
-            if not isinstance(x, list):
-                x = [x]
-        return x[0] if len(x) == 1 else x
+            current = layer(current if isinstance(current, list) else [current])
+        return current
 
-    def parameters(self):
-        params = []
-        for layer in self.layers:
-            params.extend(layer.parameters())
-        return params
+    def parameters(self) -> list[Value]:
+        return [parameter for layer in self.layers for parameter in layer.parameters()]
 
-    def zero_grad(self):
-        for p in self.parameters():
-            p.grad = 0.0
+    def zero_grad(self) -> None:
+        for parameter in self.parameters():
+            parameter.grad = 0.0
 
 
-def train_xor():
-    print("=" * 50)
-    print("Training on XOR")
-    print("=" * 50)
-
-    random.seed(42)
-    net = Network([2, 4, 1])
-
-    xor_data = [
-        ([0.0, 0.0], 0.0),
-        ([0.0, 1.0], 1.0),
-        ([1.0, 0.0], 1.0),
-        ([1.0, 1.0], 0.0),
-    ]
-
-    learning_rate = 1.0
-
-    for epoch in range(400):
-        total_loss = Value(0.0)
-        for inputs, target in xor_data:
-            x = [Value(i) for i in inputs]
-            pred = net(x)
-            loss = mse_loss(pred, target)
-            total_loss = total_loss + loss
-
-        net.zero_grad()
-        total_loss.backward()
-
-        for p in net.parameters():
-            p.data -= learning_rate * p.grad
-
-        if epoch % 40 == 0:
-            print(f"Epoch {epoch:4d} | Loss: {total_loss.data:.6f}")
-
-    print("\nXOR Results:")
-    for inputs, target in xor_data:
-        x = [Value(i) for i in inputs]
-        pred = net(x)
-        predicted_class = 1 if pred.data > 0.5 else 0
-        print(f"  {inputs} -> {pred.data:.4f} (rounded: {predicted_class}, expected {int(target)})")
+def train_xor(epochs: int = 400, learning_rate: float = 1.0) -> Network:
+    if epochs <= 0 or learning_rate <= 0:
+        raise ValueError("epochs and learning_rate must be positive")
+    network = Network((2, 4, 1), seed=42)
+    data = (((0.0, 0.0), 0.0), ((0.0, 1.0), 1.0), ((1.0, 0.0), 1.0), ((1.0, 1.0), 0.0))
+    for _ in range(epochs):
+        total = Value(0.0)
+        for inputs, target in data:
+            prediction = network([Value(value) for value in inputs])
+            total = total + squared_error(prediction, target)
+        network.zero_grad()
+        total.backward()
+        for parameter in network.parameters():
+            parameter.data -= learning_rate * parameter.grad
+    return network
 
 
-def generate_circle_data(n=100):
-    data = []
-    for _ in range(n):
-        x1 = random.uniform(-1.5, 1.5)
-        x2 = random.uniform(-1.5, 1.5)
-        label = 1.0 if x1 * x1 + x2 * x2 < 1.0 else 0.0
-        data.append(([x1, x2], label))
-    return data
-
-
-def train_circle():
-    print("\n" + "=" * 50)
-    print("Training on Circle Classification")
-    print("=" * 50)
-
-    random.seed(7)
-    circle_data = generate_circle_data(40)
-
-    net = Network([2, 8, 1])
-    learning_rate = 0.5
-
-    for epoch in range(300):
-        random.shuffle(circle_data)
-        total_loss_val = 0.0
-        for inputs, target in circle_data:
-            x = [Value(i) for i in inputs]
-            pred = net(x)
-            loss = mse_loss(pred, target)
-            net.zero_grad()
-            loss.backward()
-            for p in net.parameters():
-                p.data -= learning_rate * p.grad
-            total_loss_val += loss.data
-
-        if epoch % 30 == 0:
-            correct = 0
-            for inputs, target in circle_data:
-                x = [Value(i) for i in inputs]
-                pred = net(x)
-                predicted_class = 1.0 if pred.data > 0.5 else 0.0
-                if predicted_class == target:
-                    correct += 1
-            accuracy = correct / len(circle_data) * 100
-            print(f"Epoch {epoch:4d} | Loss: {total_loss_val:.4f} | Accuracy: {accuracy:.1f}%")
-
-    print("\nSample Circle Results:")
-    test_points = [
-        ([0.0, 0.0], "inside"),
-        ([0.5, 0.5], "inside"),
-        ([1.2, 1.2], "outside"),
-        ([0.0, 1.2], "outside"),
-        ([-0.3, 0.3], "inside"),
-    ]
-    for point, expected_region in test_points:
-        x = [Value(i) for i in point]
-        pred = net(x)
-        predicted_class = "inside" if pred.data > 0.5 else "outside"
-        status = "OK" if predicted_class == expected_region else "WRONG"
-        print(f"  {point} -> {pred.data:.4f} ({predicted_class}, expected {expected_region}) {status}")
+def main() -> None:
+    network = train_xor()
+    print("reverse-mode autodiff XOR")
+    for inputs, target in (((0.0, 0.0), 0), ((0.0, 1.0), 1), ((1.0, 0.0), 1), ((1.0, 1.0), 0)):
+        prediction = network([Value(value) for value in inputs])
+        assert isinstance(prediction, Value)
+        print(f"  {list(inputs)} -> {prediction.data:.4f} (class={int(prediction.data >= 0.5)}, target={target})")
 
 
 if __name__ == "__main__":
-    train_xor()
-    train_circle()
+    main()

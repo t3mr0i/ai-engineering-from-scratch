@@ -48,7 +48,7 @@
         "2.5"
       ],
       "correct": 1,
-      "explanation": "The implementation first multiplies p by 1-weight_decay*lr=0.95, giving 2*0.95=1.9; the gradient update is zero."
+      "explanation": "The decoupled equation uses the pre-step value: p_new=p_old-lr*d_adam-lr*weight_decay*p_old. Here d_adam=0, so 2-0.1*0.5*2=1.9."
     },
     {
       "stage": "post",
@@ -60,7 +60,7 @@
         "Adam without weight decay"
       ],
       "correct": 2,
-      "explanation": "AdamW performs a direct multiplicative decay before applying the bias-corrected Adam update, unlike adding an L2 term to the gradient."
+      "explanation": "AdamW computes its bias-corrected Adam direction and combines it with `-lr*weight_decay*p_old`; the decay term uses the pre-step parameter and does not scale the adaptive update."
     },
     {
       "stage": "post",

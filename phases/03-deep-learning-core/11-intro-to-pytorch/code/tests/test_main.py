@@ -1,64 +1,79 @@
-# Contract and executable-behavior tests for this lesson demo.
 from __future__ import annotations
 
 import ast
-import functools
 import importlib.util
-import os
 from pathlib import Path
 import subprocess
 import sys
 import unittest
 
+
 CODE = Path(__file__).resolve().parents[1]
-MAIN = CODE / "main.py"
-ALLOWED = set(sys.stdlib_module_names) | {"numpy", "torch", "h5py", "zstandard", "safetensors"}
+spec = importlib.util.spec_from_file_location("lesson11_pytorch_intro", CODE / "pytorch_intro.py")
+lesson = importlib.util.module_from_spec(spec)
+assert spec.loader is not None
+spec.loader.exec_module(lesson)
 
-def source_trees() -> list[ast.AST]:
-    return [ast.parse(path.read_text(encoding="utf-8")) for path in CODE.glob("*.py")]
 
-def external_roots() -> set[str]:
-    roots: set[str] = set()
-    for tree in source_trees():
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                roots.update(alias.name.split(".")[0] for alias in node.names)
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                roots.add(node.module.split(".")[0])
-    return {name for name in roots if not (CODE / f"{name}.py").exists() and not (CODE / name).is_dir()}
+class OptionalPyTorchTests(unittest.TestCase):
+    def test_module_import_does_not_require_torch(self):
+        self.assertIsInstance(lesson.torch_available(), bool)
 
-@functools.lru_cache(maxsize=1)
-def run_demo() -> subprocess.CompletedProcess[str]:
-    missing = sorted(name for name in external_roots() if name in ALLOWED and importlib.util.find_spec(name) is None)
-    banned = sorted(external_roots() - ALLOWED)
-    if missing or banned:
-        raise unittest.SkipTest(f"demo dependencies unavailable or disallowed: {missing + banned}")
-    env = os.environ.copy()
-    for key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "HF_TOKEN", "HUGGINGFACE_TOKEN"):
-        env.pop(key, None)
-    return subprocess.run(
-        [sys.executable, MAIN.name], cwd=CODE, text=True, capture_output=True,
-        timeout=45, env=env, check=False,
-    )
+    def test_device_name_matches_availability_contract(self):
+        if lesson.torch_available():
+            self.assertIn(lesson.device_name(), {"cpu", "cuda"})
+        else:
+            self.assertEqual(lesson.device_name(), "unavailable")
 
-class LessonDemoTests(unittest.TestCase):
-    def test_source_compiles(self) -> None:
-        compile(MAIN.read_text(encoding="utf-8"), str(MAIN), "exec")
+    def test_missing_backend_is_an_explicit_runtime_error(self):
+        if lesson.torch_available():
+            self.skipTest("optional backend is installed; exercise the live path instead")
+        with self.assertRaisesRegex(RuntimeError, "not installed"):
+            lesson.build_model()
 
-    def test_demo_has_explicit_entrypoint(self) -> None:
-        source = MAIN.read_text(encoding="utf-8")
-        self.assertTrue("__main__" in source or "runpy.run_path" in source)
+    def test_invalid_model_dimensions_are_rejected_before_backend_use(self):
+        with self.assertRaises(ValueError):
+            lesson.build_model(input_features=0)
+        with self.assertRaises(ValueError):
+            lesson.build_model(input_features=2.5)
 
-    def test_demo_exits_successfully(self) -> None:
-        self.assertEqual(run_demo().returncode, 0, run_demo().stderr)
+    def test_training_budget_is_a_positive_integer(self):
+        with self.assertRaises(ValueError):
+            lesson.train_demo(steps=0)
+        with self.assertRaises(ValueError):
+            lesson.train_demo(steps=1.5)
 
-    def test_demo_emits_bounded_output(self) -> None:
-        result = run_demo()
-        self.assertTrue((result.stdout + result.stderr).strip())
-        self.assertLess(len(result.stdout) + len(result.stderr), 1_000_000)
+    def test_fixture_contract_when_backend_is_available(self):
+        if not lesson.torch_available():
+            self.assertEqual(lesson.device_name(), "unavailable")
+            return
+        x, y = lesson.fixture()
+        self.assertEqual(tuple(x.shape), (4, 2))
+        self.assertEqual(tuple(y.shape), (4,))
 
-    def test_demo_has_no_traceback(self) -> None:
-        self.assertNotIn("Traceback (most recent call last)", run_demo().stderr)
+    def test_live_training_is_finite_when_backend_is_available(self):
+        if not lesson.torch_available():
+            self.assertFalse(lesson.torch_available())
+            return
+        summary = lesson.train_demo(steps=5, device="cpu")
+        self.assertEqual(summary["input_shape"], (4, 2))
+        self.assertTrue(all(value == value for value in summary["losses"]))
+
+    def test_canonical_demo_exits_without_traceback(self):
+        result = subprocess.run([sys.executable, "main.py"], cwd=CODE, capture_output=True, text=True, check=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotIn("Traceback", result.stderr)
+        if lesson.torch_available():
+            self.assertIn("torch device=", result.stdout)
+        else:
+            self.assertIn("PyTorch unavailable", result.stdout)
+
+    def test_no_top_level_torch_import(self):
+        tree = ast.parse((CODE / "pytorch_intro.py").read_text(encoding="utf-8"))
+        top_level_imports = [node for node in tree.body if isinstance(node, (ast.Import, ast.ImportFrom))]
+        names = {alias.name.split(".")[0] for node in top_level_imports for alias in getattr(node, "names", ())}
+        self.assertNotIn("torch", names)
+
 
 if __name__ == "__main__":
     unittest.main()

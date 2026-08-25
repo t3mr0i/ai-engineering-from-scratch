@@ -1,240 +1,190 @@
+# Learning-rate schedules evaluated from explicit scalar formulas, stdlib only.
+# Each schedule validates step counts and keeps endpoint semantics visible.
+# train_quadratic is a deterministic fixture for comparing trajectories, not a benchmark.
+# See phases/03-deep-learning-core/09-learning-rate-schedules/docs/en.md.
+
+from __future__ import annotations
+
 import math
 import random
+from typing import Callable, Sequence
 
 
-def constant_schedule(step, lr=0.01, **kwargs):
-    return lr
+Schedule = Callable[..., float]
 
 
-def step_decay_schedule(step, lr=0.1, step_size=100, gamma=0.1, **kwargs):
-    return lr * (gamma ** (step // step_size))
+def _nonnegative_int(value: int, name: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise ValueError(f"{name} must be a non-negative integer")
+    return value
 
 
-def cosine_schedule(step, lr=0.01, total_steps=1000, lr_min=1e-5, **kwargs):
+def _positive_int(value: int, name: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+        raise ValueError(f"{name} must be a positive integer")
+    return value
+
+
+def _finite(value: float, name: str) -> float:
+    try:
+        number = float(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{name} must be finite") from exc
+    if not math.isfinite(number):
+        raise ValueError(f"{name} must be finite")
+    return number
+
+
+def _learning_rate(lr: float, name: str = "lr") -> float:
+    value = _finite(lr, name)
+    if value <= 0:
+        raise ValueError(f"{name} must be positive")
+    return value
+
+
+def _step(step: int) -> int:
+    return _nonnegative_int(step, "step")
+
+
+def _bounds(lr: float, lr_min: float) -> tuple[float, float]:
+    peak = _learning_rate(lr)
+    floor = _finite(lr_min, "lr_min")
+    if floor < 0 or floor > peak:
+        raise ValueError("lr_min must be finite, non-negative, and no larger than lr")
+    return peak, floor
+
+
+def constant_schedule(step: int, lr: float = 0.01, **_: object) -> float:
+    _step(step)
+    return _learning_rate(lr)
+
+
+def step_decay_schedule(step: int, lr: float = 0.1, step_size: int = 100, gamma: float = 0.1, **_: object) -> float:
+    step = _step(step)
+    lr = _learning_rate(lr)
+    step_size = _positive_int(step_size, "step_size")
+    gamma = _finite(gamma, "gamma")
+    if not 0.0 <= gamma <= 1.0:
+        raise ValueError("gamma must be in [0,1]")
+    return lr * gamma ** (step // step_size)
+
+
+def cosine_schedule(step: int, lr: float = 0.01, total_steps: int = 1000, lr_min: float = 1e-5, **_: object) -> float:
+    step = _step(step)
+    peak, floor = _bounds(lr, lr_min)
+    total_steps = _positive_int(total_steps, "total_steps")
     if step >= total_steps:
-        return lr_min
-    return lr_min + 0.5 * (lr - lr_min) * (1 + math.cos(math.pi * step / total_steps))
+        return floor
+    progress = step / total_steps
+    return floor + 0.5 * (peak - floor) * (1.0 + math.cos(math.pi * progress))
 
 
-def warmup_cosine_schedule(step, lr=0.01, total_steps=1000, warmup_steps=100, lr_min=1e-5, **kwargs):
-    if total_steps <= warmup_steps:
-        return lr * (step / max(warmup_steps, 1))
-    if step < warmup_steps:
-        return lr * step / warmup_steps
+def warmup_cosine_schedule(
+    step: int,
+    lr: float = 0.01,
+    total_steps: int = 1000,
+    warmup_steps: int = 100,
+    lr_min: float = 1e-5,
+    **_: object,
+) -> float:
+    step = _step(step)
+    peak, floor = _bounds(lr, lr_min)
+    total_steps = _positive_int(total_steps, "total_steps")
+    warmup_steps = _nonnegative_int(warmup_steps, "warmup_steps")
+    if warmup_steps >= total_steps:
+        raise ValueError("warmup_steps must be smaller than total_steps")
+    if warmup_steps and step < warmup_steps:
+        return peak * (step + 1) / warmup_steps
+    if step >= total_steps:
+        return floor
     progress = (step - warmup_steps) / (total_steps - warmup_steps)
-    return lr_min + 0.5 * (lr - lr_min) * (1 + math.cos(math.pi * progress))
+    return floor + 0.5 * (peak - floor) * (1.0 + math.cos(math.pi * progress))
 
 
-def one_cycle_schedule(step, lr=0.01, total_steps=1000, **kwargs):
-    mid = max(total_steps // 2, 1)
-    if step < mid:
-        return (lr / 25) + (lr - lr / 25) * step / mid
-    else:
-        progress = (step - mid) / max(total_steps - mid, 1)
-        return lr * (1 - progress) + (lr / 10000) * progress
+def one_cycle_schedule(
+    step: int,
+    lr: float = 0.01,
+    total_steps: int = 1000,
+    div_factor: float = 25.0,
+    final_div_factor: float = 10000.0,
+    **_: object,
+) -> float:
+    step = _step(step)
+    peak = _learning_rate(lr)
+    total_steps = _positive_int(total_steps, "total_steps")
+    if total_steps < 2:
+        raise ValueError("total_steps must be at least 2")
+    div_factor = _learning_rate(div_factor, "div_factor")
+    final_div_factor = _learning_rate(final_div_factor, "final_div_factor")
+    start = peak / div_factor
+    finish = peak / final_div_factor
+    if step >= total_steps:
+        return finish
+    half = max(1, total_steps // 2)
+    if step <= half:
+        progress = step / half
+        return start + 0.5 * (peak - start) * (1.0 - math.cos(math.pi * progress))
+    progress = (step - half) / max(1, total_steps - 1 - half)
+    return finish + 0.5 * (peak - finish) * (1.0 + math.cos(math.pi * progress))
 
 
-def visualize_schedule(name, schedule_fn, total_steps=500, **kwargs):
-    steps = list(range(0, total_steps, total_steps // 20))
-    if total_steps - 1 not in steps:
-        steps.append(total_steps - 1)
-
-    lrs = [schedule_fn(s, total_steps=total_steps, **kwargs) for s in steps]
-    max_lr = max(lrs) if max(lrs) > 0 else 1.0
-
-    print(f"\n{name}:")
-    for s, lr_val in zip(steps, lrs):
-        bar_len = int(lr_val / max_lr * 40)
-        bar = "#" * bar_len
-        print(f"  Step {s:4d}: lr={lr_val:.6f} {bar}")
+def schedule_values(schedule: Schedule, total_steps: int, **kwargs: object) -> list[float]:
+    total_steps = _positive_int(total_steps, "total_steps")
+    values = [float(schedule(step, total_steps=total_steps, **kwargs)) for step in range(total_steps)]
+    if not all(math.isfinite(value) and value >= 0.0 for value in values):
+        raise ValueError("schedule returned a non-finite or negative learning rate")
+    return values
 
 
-def sigmoid(x):
-    x = max(-500, min(500, x))
-    return 1.0 / (1.0 + math.exp(-x))
-
-
-def relu(x):
-    return max(0.0, x)
-
-
-def relu_deriv(x):
-    return 1.0 if x > 0 else 0.0
-
-
-def make_circle_data(n=200, seed=42):
-    random.seed(seed)
+def make_circle_data(n: int = 40, seed: int = 42) -> list[tuple[tuple[float, float], int]]:
+    n = _positive_int(n, "n")
+    rng = random.Random(seed)
     data = []
     for _ in range(n):
-        x = random.uniform(-2, 2)
-        y = random.uniform(-2, 2)
-        label = 1.0 if x * x + y * y < 1.5 else 0.0
-        data.append(([x, y], label))
+        x, y = rng.uniform(-2.0, 2.0), rng.uniform(-2.0, 2.0)
+        data.append(((x, y), int(x * x + y * y < 1.5)))
     return data
 
 
-def train_with_schedule(schedule_fn, schedule_name, data, epochs=300, base_lr=0.05, **kwargs):
-    random.seed(0)
-    hidden_size = 8
-    total_steps = epochs * len(data)
-
-    std = math.sqrt(2.0 / 2)
-    w1 = [[random.gauss(0, std) for _ in range(2)] for _ in range(hidden_size)]
-    b1 = [0.0] * hidden_size
-    w2 = [random.gauss(0, std) for _ in range(hidden_size)]
-    b2 = 0.0
-
-    step = 0
-    epoch_losses = []
-
-    for epoch in range(epochs):
-        total_loss = 0
-        correct = 0
-
-        for x, target in data:
-            lr = schedule_fn(step, lr=base_lr, total_steps=total_steps, **kwargs)
-
-            z1 = []
-            h = []
-            for i in range(hidden_size):
-                z = w1[i][0] * x[0] + w1[i][1] * x[1] + b1[i]
-                z1.append(z)
-                h.append(relu(z))
-
-            z2 = sum(w2[i] * h[i] for i in range(hidden_size)) + b2
-            out = sigmoid(z2)
-
-            error = out - target
-            d_out = error * out * (1 - out)
-
-            for i in range(hidden_size):
-                d_h = d_out * w2[i] * relu_deriv(z1[i])
-                w2[i] -= lr * d_out * h[i]
-                for j in range(2):
-                    w1[i][j] -= lr * d_h * x[j]
-                b1[i] -= lr * d_h
-            b2 -= lr * d_out
-
-            total_loss += (out - target) ** 2
-            if (out >= 0.5) == (target >= 0.5):
-                correct += 1
-            step += 1
-
-        avg_loss = total_loss / len(data)
-        epoch_losses.append(avg_loss)
-
-    return epoch_losses
+def train_quadratic(
+    schedule: Schedule,
+    steps: int = 40,
+    start: float = 5.0,
+    target: float = 1.5,
+    base_lr: float = 0.1,
+    **kwargs: object,
+) -> dict[str, object]:
+    steps = _positive_int(steps, "steps")
+    parameter = _finite(start, "start")
+    target = _finite(target, "target")
+    base_lr = _learning_rate(base_lr)
+    losses: list[float] = []
+    rates: list[float] = []
+    for step in range(steps):
+        rate = float(schedule(step, lr=base_lr, total_steps=steps, **kwargs))
+        if not math.isfinite(rate) or rate < 0.0:
+            raise ValueError("schedule must return a finite non-negative rate")
+        parameter -= rate * 2.0 * (parameter - target)
+        loss = (parameter - target) ** 2
+        losses.append(loss)
+        rates.append(rate)
+    return {"parameter": parameter, "losses": losses, "rates": rates}
 
 
-def compare_schedules(data):
-    configs = [
-        ("Constant", constant_schedule, {}),
-        ("Step Decay", step_decay_schedule, {"step_size": 15000, "gamma": 0.1}),
-        ("Cosine", cosine_schedule, {"lr_min": 1e-5}),
-        ("Warmup+Cosine", warmup_cosine_schedule, {"warmup_steps": 3000, "lr_min": 1e-5}),
-        ("1cycle", one_cycle_schedule, {}),
-    ]
-
-    print(f"\n{'Schedule':<20} {'Start Loss':>12} {'Mid Loss':>12} {'End Loss':>12} {'Best Loss':>12}")
-    print("-" * 70)
-
-    for name, schedule_fn, extra_kwargs in configs:
-        losses = train_with_schedule(schedule_fn, name, data, epochs=300, base_lr=0.05, **extra_kwargs)
-        mid_idx = len(losses) // 2
-        best = min(losses)
-        print(f"{name:<20} {losses[0]:>12.6f} {losses[mid_idx]:>12.6f} {losses[-1]:>12.6f} {best:>12.6f}")
-
-
-def lr_sensitivity(data):
-    learning_rates = [1.0, 0.1, 0.05, 0.01, 0.001, 0.0001]
-
-    print(f"\n{'LR':>10} {'Start Loss':>12} {'End Loss':>12} {'Status':>15}")
-    print("-" * 52)
-
-    for lr in learning_rates:
-        losses = train_with_schedule(constant_schedule, f"lr={lr}", data, epochs=100, base_lr=lr)
-        start = losses[0]
-        end = losses[-1]
-
-        if math.isnan(end) or end > 1.0:
-            status = "DIVERGED"
-        elif end > start * 0.9:
-            status = "BARELY MOVED"
-        elif end < 0.15:
-            status = "CONVERGED"
-        else:
-            status = "LEARNING"
-
-        end_str = f"{end:.6f}" if not math.isnan(end) else "NaN"
-        print(f"{lr:>10.4f} {start:>12.6f} {end_str:>12} {status:>15}")
-
-
-def warmup_impact(data):
-    warmup_fractions = [0.0, 0.01, 0.05, 0.10, 0.20]
-    total_steps = 300 * len(data)
-
-    print(f"\n{'Warmup %':>10} {'Warmup Steps':>14} {'End Loss':>12} {'Best Loss':>12}")
-    print("-" * 52)
-
-    for frac in warmup_fractions:
-        warmup_steps = int(total_steps * frac)
-        losses = train_with_schedule(
-            warmup_cosine_schedule, f"warmup={frac}", data,
-            epochs=300, base_lr=0.05,
-            warmup_steps=warmup_steps, lr_min=1e-5
-        )
-        best = min(losses)
-        print(f"{frac*100:>9.0f}% {warmup_steps:>14d} {losses[-1]:>12.6f} {best:>12.6f}")
-
-
-def schedule_trajectory(data):
-    total_steps = 100 * len(data)
-    schedules = [
-        ("Constant", constant_schedule, {"lr": 0.05}),
-        ("Cosine", cosine_schedule, {"lr": 0.05, "lr_min": 1e-5}),
-        ("Warmup+Cosine", warmup_cosine_schedule, {"lr": 0.05, "warmup_steps": int(total_steps * 0.05), "lr_min": 1e-5}),
-        ("1cycle", one_cycle_schedule, {"lr": 0.05}),
-    ]
-
-    print("\nLR at key training points:")
-    print(f"  {'Schedule':<20} {'Step 0':>10} {'Step T/4':>10} {'Step T/2':>10} {'Step 3T/4':>10} {'Step T':>10}")
-    print("  " + "-" * 60)
-
-    for name, fn, kw in schedules:
-        vals = []
-        for s in [0, total_steps // 4, total_steps // 2, 3 * total_steps // 4, total_steps - 1]:
-            vals.append(fn(s, total_steps=total_steps, **kw))
-        print(f"  {name:<20} {vals[0]:>10.6f} {vals[1]:>10.6f} {vals[2]:>10.6f} {vals[3]:>10.6f} {vals[4]:>10.6f}")
+def main() -> None:
+    total_steps = 12
+    schedules = (
+        ("constant", constant_schedule, {}),
+        ("step", step_decay_schedule, {"step_size": 4, "gamma": 0.5}),
+        ("cosine", cosine_schedule, {"lr_min": 0.01}),
+        ("warmup_cosine", warmup_cosine_schedule, {"warmup_steps": 3, "lr_min": 0.01}),
+        ("one_cycle", one_cycle_schedule, {}),
+    )
+    for name, schedule, kwargs in schedules:
+        values = schedule_values(schedule, total_steps, lr=0.1, **kwargs)
+        result = train_quadratic(schedule, steps=total_steps, base_lr=0.1, **kwargs)
+        print(f"{name:14s} step0={values[0]:.5f} final={values[-1]:.5f} loss={result['losses'][-1]:.6f}")
 
 
 if __name__ == "__main__":
-    print("=" * 70)
-    print("STEP 1: Schedule Shapes")
-    print("=" * 70)
-    visualize_schedule("Constant", constant_schedule, lr=0.05)
-    visualize_schedule("Step Decay", step_decay_schedule, lr=0.05, step_size=125, gamma=0.5)
-    visualize_schedule("Cosine Annealing", cosine_schedule, lr=0.05, lr_min=1e-5)
-    visualize_schedule("Warmup + Cosine", warmup_cosine_schedule, lr=0.05, warmup_steps=50, lr_min=1e-5)
-    visualize_schedule("1cycle", one_cycle_schedule, lr=0.05)
-
-    data = make_circle_data()
-
-    print("\n" + "=" * 70)
-    print("STEP 2: LR Sensitivity")
-    print("=" * 70)
-    lr_sensitivity(data)
-
-    print("\n" + "=" * 70)
-    print("STEP 3: Schedule Comparison")
-    print("=" * 70)
-    compare_schedules(data)
-
-    print("\n" + "=" * 70)
-    print("STEP 4: Warmup Impact")
-    print("=" * 70)
-    warmup_impact(data)
-
-    print("\n" + "=" * 70)
-    print("STEP 5: Schedule Trajectory")
-    print("=" * 70)
-    schedule_trajectory(data)
+    main()
