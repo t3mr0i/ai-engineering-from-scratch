@@ -62,6 +62,8 @@ class FeatureEngineeringTests(unittest.TestCase):
             features.correlation([1.0, 2.0], [1.0])
         with self.assertRaises(ValueError):
             features.mutual_information([1.0, 2.0], [0, 1], n_bins=0)
+        with self.assertRaises(ValueError):
+            features.mutual_information([], [], n_bins=2)
 
     def test_selection_and_tfidf_empty_or_ragged_inputs_are_explicit(self):
         with self.assertRaises(ValueError):
@@ -72,6 +74,9 @@ class FeatureEngineeringTests(unittest.TestCase):
             features.tfidf([])
         vectors, _ = features.tfidf(["", "word"])
         self.assertEqual(vectors[0], [0.0])
+        empty_vectors, empty_vocab = features.tfidf(["", ""])
+        self.assertEqual(empty_vectors, [[], []])
+        self.assertEqual(empty_vocab, {})
 
 
 if __name__ == "__main__":

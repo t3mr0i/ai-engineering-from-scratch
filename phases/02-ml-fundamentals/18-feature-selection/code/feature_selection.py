@@ -1,7 +1,45 @@
+# Feature-selection methods for phases/02-ml-fundamentals/18-feature-selection/docs/en.md.
+# Implements filters, RFE, L1 sparsity, and tree impurity importance from scratch.
+# Selection is fit on training rows; held-out rows are used only for evaluation.
+# NumPy is the only non-stdlib dependency for the canonical demo.
+
+"""Filter, wrapper, embedded, and tree-based feature selection from scratch."""
+
 import numpy as np
 
 
+def _matrix(X, name="X"):
+    array = np.asarray(X, dtype=float)
+    if array.ndim != 2 or array.shape[0] == 0 or array.shape[1] == 0:
+        raise ValueError(f"{name} must be a non-empty 2D array")
+    if not np.isfinite(array).all():
+        raise ValueError(f"{name} must contain only finite values")
+    return array
+
+
+def _classification_data(X, y):
+    features = _matrix(X)
+    labels = _binary_labels(y)
+    if len(labels) != len(features):
+        raise ValueError("y must be a non-empty vector matching X rows")
+    if len(np.unique(labels)) < 2:
+        raise ValueError("y must contain both binary classes 0 and 1")
+    return features, labels
+
+
+def _binary_labels(y):
+    labels = np.asarray(y)
+    if labels.ndim != 1 or labels.size == 0 or labels.dtype.kind not in "iuf":
+        raise ValueError("y must be a non-empty numeric vector with labels exactly 0 or 1")
+    numeric = labels.astype(float)
+    if not np.isfinite(numeric).all() or not np.isin(numeric, (0.0, 1.0)).all():
+        raise ValueError("y must contain only numeric labels 0 and 1")
+    return numeric.astype(int)
+
+
 def make_feature_selection_data(n_samples=500, seed=42):
+    if not isinstance(n_samples, (int, np.integer)) or n_samples < 2:
+        raise ValueError("n_samples must be an integer at least 2")
     rng = np.random.RandomState(seed)
 
     x1 = rng.randn(n_samples)
@@ -35,12 +73,20 @@ def make_feature_selection_data(n_samples=500, seed=42):
 
 
 def variance_threshold(X, threshold=0.01):
+    X = _matrix(X)
+    if not np.isfinite(threshold) or threshold < 0:
+        raise ValueError("threshold must be finite and non-negative")
     variances = np.var(X, axis=0)
     mask = variances > threshold
     return mask, variances
 
 
 def discretize(x, n_bins=10):
+    x = np.asarray(x, dtype=float)
+    if x.ndim != 1 or x.size == 0 or not np.isfinite(x).all():
+        raise ValueError("x must be a non-empty finite vector")
+    if not isinstance(n_bins, (int, np.integer)) or n_bins < 1:
+        raise ValueError("n_bins must be a positive integer")
     min_val, max_val = x.min(), x.max()
     if max_val == min_val:
         return np.zeros_like(x, dtype=int)
@@ -50,6 +96,9 @@ def discretize(x, n_bins=10):
 
 
 def mutual_information(X, y, n_bins=10):
+    X, y = _classification_data(X, y)
+    if not isinstance(n_bins, (int, np.integer)) or n_bins < 1:
+        raise ValueError("n_bins must be a positive integer")
     n_samples, n_features = X.shape
     mi_scores = np.zeros(n_features)
 
@@ -74,6 +123,9 @@ def mutual_information(X, y, n_bins=10):
 
 
 def simple_logistic_importance(X, y, lr=0.1, epochs=100):
+    X, y = _classification_data(X, y)
+    if not np.isfinite(lr) or lr <= 0 or not isinstance(epochs, (int, np.integer)) or epochs <= 0:
+        raise ValueError("lr must be positive and epochs must be a positive integer")
     n_samples, n_features = X.shape
     w = np.zeros(n_features)
     b = 0.0
@@ -89,6 +141,9 @@ def simple_logistic_importance(X, y, lr=0.1, epochs=100):
 
 
 def rfe(X, y, n_features_to_select=5, lr=0.1, epochs=100):
+    X, y = _classification_data(X, y)
+    if not isinstance(n_features_to_select, (int, np.integer)) or not 1 <= n_features_to_select <= X.shape[1]:
+        raise ValueError("n_features_to_select must be between 1 and the number of columns")
     n_total = X.shape[1]
     remaining = list(range(n_total))
     rankings = np.ones(n_total, dtype=int)
@@ -113,10 +168,16 @@ def rfe(X, y, n_features_to_select=5, lr=0.1, epochs=100):
 
 
 def soft_threshold(w, alpha):
+    w = np.asarray(w, dtype=float)
+    if w.ndim != 1 or not np.isfinite(w).all() or not np.isfinite(alpha) or alpha < 0:
+        raise ValueError("w must be finite 1D and alpha must be non-negative")
     return np.sign(w) * np.maximum(np.abs(w) - alpha, 0)
 
 
 def l1_feature_selection(X, y, alpha=0.1, lr=0.01, epochs=500):
+    X, y = _classification_data(X, y)
+    if not np.isfinite(alpha) or alpha < 0 or not np.isfinite(lr) or lr <= 0 or not isinstance(epochs, (int, np.integer)) or epochs <= 0:
+        raise ValueError("alpha must be non-negative; lr and epochs must be positive")
     n_samples, n_features = X.shape
     w = np.zeros(n_features)
     b = 0.0
@@ -138,14 +199,16 @@ def l1_feature_selection(X, y, alpha=0.1, lr=0.01, epochs=500):
 
 
 def gini_impurity(y):
-    if len(y) == 0:
-        return 0.0
+    y = _binary_labels(y)
     classes, counts = np.unique(y, return_counts=True)
     probs = counts / len(y)
     return 1.0 - np.sum(probs ** 2)
 
 
 def best_split(X, y, feature_idx):
+    X, y = _classification_data(X, y)
+    if not isinstance(feature_idx, (int, np.integer)) or not 0 <= feature_idx < X.shape[1]:
+        raise ValueError("feature_idx must identify a column in X")
     values = np.unique(X[:, feature_idx])
     if len(values) <= 1:
         return None, -1.0
@@ -198,6 +261,9 @@ def _build_tree_importance(X, y, feature_subset, max_depth, depth=0):
 
 
 def tree_importance(X, y, n_trees=50, max_depth=5, seed=42):
+    X, y = _classification_data(X, y)
+    if not isinstance(n_trees, (int, np.integer)) or n_trees < 1 or not isinstance(max_depth, (int, np.integer)) or max_depth < 1:
+        raise ValueError("n_trees and max_depth must be positive integers")
     rng = np.random.RandomState(seed)
     n_samples, n_features = X.shape
     importances = np.zeros(n_features)
@@ -221,6 +287,12 @@ def tree_importance(X, y, n_trees=50, max_depth=5, seed=42):
 
 
 def evaluate_accuracy(X, y, selected_mask, lr=0.1, epochs=200):
+    X, y = _classification_data(X, y)
+    selected_mask = np.asarray(selected_mask, dtype=bool)
+    if selected_mask.ndim != 1 or len(selected_mask) != X.shape[1] or not selected_mask.any():
+        raise ValueError("selected_mask must select at least one column")
+    if len(y) < 4:
+        raise ValueError("at least four rows are required for a train/test split")
     X_selected = X[:, selected_mask]
     n = len(y)
     split = int(0.8 * n)

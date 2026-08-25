@@ -17,13 +17,13 @@
 
 ## The local implementations
 
-`code/ensembles.py` is a NumPy implementation. `make_classification_data` returns labels `-1` and `1`; `make_regression_data` returns a nonlinear continuous target. `DecisionStump.fit` scans each feature’s unique thresholds under a weight vector. `AdaBoostScratch` stores one stump and alpha per round, while `SimpleRegressionTree` recursively chooses the largest variance reduction.
+`code/ensembles.py` is a NumPy implementation. `make_classification_data` returns labels `-1` and `1`; `make_regression_data` returns a nonlinear continuous target. `DecisionStump.fit` scans each feature’s unique thresholds under a weight vector. `AdaBoostScratch` stores one stump and alpha per round, while `SimpleRegressionTree` recursively chooses the largest variance reduction. Classifier fits reject `0/1` labels, non-finite or mismatched arrays, and non-positive estimator/depth parameters; prediction before fitting raises `RuntimeError`.
 
 ## Build It
 
 Run `python3 main.py` for a bounded 160-row AdaBoost fixture. The full source demos are available by running `python3 ensembles.py`, but the canonical path intentionally reports only a quick train/test comparison. For a hand check, a uniform weight vector sums to one before the stump fit; after a round, the AdaBoost weights are renormalized and `alpha = 0.5 * log((1-error)/error)`.
 
-`GradientBoostingScratch` starts at the mean target, fits each tree to `y - current_pred`, and adds `learning_rate * tree_prediction`. `BaggingClassifier` draws bootstrap rows with a seeded `RandomState(42)` and predicts by the sign of the average tree outputs. Stacking first creates out-of-fold base predictions, trains a small tanh meta-learner, and then refits base models on all training rows.
+`GradientBoostingScratch` starts at the mean target, fits each tree to `y - current_pred`, and adds `learning_rate * tree_prediction`. `BaggingClassifier` draws bootstrap rows with a seeded `RandomState(42)` and predicts by the sign of the average tree outputs. Stacking first creates out-of-fold base predictions, trains a small tanh meta-learner, and then refits base models on all training rows. Repeated `fit` calls reset the stored learners; `mse` also requires equal-length finite regression targets. A zero vote has the documented deterministic tie result `+1`, so classifier predictions stay in `{-1, 1}`.
 
 ## Use It
 

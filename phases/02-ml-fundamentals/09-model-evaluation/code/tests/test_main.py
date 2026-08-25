@@ -65,6 +65,8 @@ class EvaluationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             evaluation.kfold_split(2, k=5)
         with self.assertRaises(ValueError):
+            evaluation.train_val_test_split([[1], [2]], [0, 1], train_ratio=0.5, val_ratio=0.0)
+        with self.assertRaises(ValueError):
             evaluation.train_val_test_split([[1]], [1], train_ratio=0.9, val_ratio=0.5)
         with self.assertRaises(ValueError):
             evaluation.confusion_matrix([1, 0], [1])
@@ -72,6 +74,8 @@ class EvaluationTests(unittest.TestCase):
             evaluation.confusion_matrix([2], [1])
         with self.assertRaises(ValueError):
             evaluation.mse([1.0], [])
+        with self.assertRaises(ValueError):
+            evaluation.mae([1.0, 2.0], [1.0])
         with self.assertRaises(ValueError):
             evaluation.roc_curve([1, 1], [0.2, 0.3])
 

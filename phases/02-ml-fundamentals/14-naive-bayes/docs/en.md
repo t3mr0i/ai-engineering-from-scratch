@@ -17,17 +17,17 @@
 
 ## The local models
 
-`code/naive_bayes.py` uses NumPy only. `MultinomialNB.fit` adds `alpha` to every class/feature count, then stores log feature probabilities and class log priors. It rejects negative counts because a multinomial feature matrix represents event counts. `GaussianNB.fit` stores one mean and variance per class/feature and adds `var_smoothing` to avoid zero variance.
+`code/naive_bayes.py` uses NumPy only. `MultinomialNB.fit` adds `alpha` to every class/feature count, then stores log feature probabilities and class log priors. It requires finite, non-negative, non-empty 2-D counts and strictly positive `alpha`. `GaussianNB.fit` stores one mean and variance per class/feature and adds strictly positive `var_smoothing` to avoid zero variance. Both models validate feature width, finite numeric labels when labels are numeric, and reject prediction before fitting; probability methods reject non-finite normalization rather than returning NaNs.
 
 ## Build It
 
-Run `python3 main.py` for generated 200-feature text and four-feature continuous fixtures. The text fixture has two classes with different word-rate blocks; the continuous fixture has three Gaussian-like classes. `predict_log_proba` is an unnormalized class score, while `predict_proba` subtracts each row’s maximum before exponentiating and dividing, so each row sums to one.
+Run `python3 main.py` for generated 200-feature text and four-feature continuous fixtures. The text fixture has two classes with different word-rate blocks; the continuous fixture has three Gaussian-like classes and preserves the requested `n_samples`, distributing any remainder across the first classes. `predict_log_proba` is an unnormalized class score, while `predict_proba` subtracts each row’s maximum before exponentiating and dividing, so each row is finite and sums to one.
 
 For a hand check, fit `MultinomialNB` on `[[4, 0], [3, 0], [0, 4], [0, 3]]` with labels `[0, 0, 1, 1]`; the first feature favors class 0 and the second favors class 1. The `alpha=1` count offset ensures an unseen feature still has a finite log probability.
 
 ## Use It
 
-Use MultinomialNB for non-negative counts or frequencies and GaussianNB for real-valued measurements whose within-class distributions are reasonably summarized by means and variances. A probability row is normalized only for the supplied candidate classes; it is not automatically calibrated. Compare `score` with a held-out split from `train_test_split`, using the same seed when reproducing a report.
+Use MultinomialNB for non-negative counts or frequencies and GaussianNB for real-valued measurements whose within-class distributions are reasonably summarized by means and variances. A probability row is normalized only for the supplied candidate classes; it is not automatically calibrated. `train_test_split` requires a ratio that leaves both partitions non-empty, and `accuracy` requires equal-length one-dimensional vectors. Compare `score` with a held-out split using the same seed when reproducing a report.
 
 ## Ship It
 

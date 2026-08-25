@@ -67,6 +67,12 @@ class PipelineTests(unittest.TestCase):
             with self.assertRaises(RuntimeError):
                 transformer.transform(X)
         with self.assertRaises(RuntimeError):
+            pipeline.TransformerPipeline([('impute', pipeline.MedianImputer())]).transform(X)
+        with self.assertRaises(RuntimeError):
+            pipeline.ColumnTransformerScratch([('age', pipeline.MedianImputer(), ['age'])]).transform(
+                pipeline.make_mixed_data(2)
+            )
+        with self.assertRaises(RuntimeError):
             pipeline.LogisticRegressionSimple().predict(X)
         with self.assertRaises(RuntimeError):
             pipeline.DecisionTreeSimple().predict(X)
@@ -95,6 +101,12 @@ class PipelineTests(unittest.TestCase):
         malformed["city"] = malformed["city"][:-1]
         with self.assertRaises(ValueError):
             pipeline.train_test_split_dict(malformed)
+        malformed = dict(data)
+        malformed["age"] = malformed["age"][:, None]
+        with self.assertRaises(ValueError):
+            pipeline.train_test_split_dict(malformed)
+        with self.assertRaises(ValueError):
+            pipeline.LogisticRegressionSimple().fit(np.ones((2, 1)), np.array([0, 2]))
 
 
 if __name__ == "__main__":

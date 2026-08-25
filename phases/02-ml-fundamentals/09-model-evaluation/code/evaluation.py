@@ -5,6 +5,7 @@
 
 import random
 import math
+import numbers
 
 
 def _nonempty_pair(left, right, left_name="y_true", right_name="y_pred"):
@@ -33,7 +34,7 @@ def _binary_pair(y_true, y_pred=None, *, scores=False):
 
 def _finite_regression_pair(y_true, y_pred):
     y_true, y_pred = _nonempty_pair(y_true, y_pred)
-    if any(not isinstance(value, (int, float)) or not math.isfinite(value)
+    if any(not isinstance(value, numbers.Real) or isinstance(value, bool) or not math.isfinite(value)
            for value in y_true + y_pred):
         raise ValueError("regression values must be finite numbers")
     return y_true, y_pred
@@ -189,7 +190,7 @@ def roc_curve(y_true, y_scores):
     y_true, y_scores = _nonempty_pair(y_true, y_scores, "y_true", "y_scores")
     if 0 not in y_true or 1 not in y_true:
         raise ValueError("ROC requires at least one positive and one negative label")
-    if any(not isinstance(score, (int, float)) or not math.isfinite(score) for score in y_scores):
+    if any(not isinstance(score, numbers.Real) or isinstance(score, bool) or not math.isfinite(score) for score in y_scores):
         raise ValueError("ROC scores must be finite numbers")
     thresholds = [float("inf")] + sorted(set(y_scores), reverse=True)
     tpr_list = []

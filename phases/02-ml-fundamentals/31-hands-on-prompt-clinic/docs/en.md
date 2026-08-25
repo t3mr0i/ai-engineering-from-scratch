@@ -1,101 +1,99 @@
-# Hands-on Prompt Clinic
+# Hands-on ML Prompt Clinic
 
-> Prompt training becomes useful when people leave with reusable prompts, review habits, and a clear sense of what must be checked by a human.
+> A useful ML prompt names the target, data boundary, evaluation design, and acceptance test.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 11 Lesson 01 (Prompt Engineering), Phase 11 Lesson 03 (Structured Outputs)
+**Prerequisites:** Phase 02, Lessons 01–14
 **Time:** ~45 minutes
-**Capability:** Foundation - Personal AI Productivity and Applied Prompting
 
 ## Learning Objectives
 
-- Diagnose weak prompts by goal, audience, context, constraints, and evidence
-- Build a small prompt-clinic planner in Python
-- Convert vague requests into reusable prompt briefs
-- Choose review controls for AI outputs
-- Explain when prompting is awareness training, team practice, or a guided pilot
+- Turn a vague machine-learning request into a testable problem brief.
+- Detect exact risk phrases for leakage, missing splits, undefined metrics, and absent acceptance tests.
+- Map each signal to a concrete review control without relying on a modulo or list prefix.
+- Score impact and uncertainty as local triage inputs rather than model-quality certificates.
+- Produce a deterministic plan that a team can review and reuse.
 
-## The Problem
+## The clinic's input
 
-Many people know that better prompts create better outputs, but they still ask for vague summaries, accept confident mistakes, and repeat the same prompt work manually. A prompt clinic gives teams a shared way to improve prompts together.
+This lesson is a small offline planner, not a language model. A Scenario contains
+a name, a description, explicit signals, an impact from 1 through 5, and an
+uncertainty from 1 through 5. Signals are exact entries from the controlled list:
+vague target, missing audience, leakage risk, missing split, undefined metric,
+and no acceptance test. Unknown or duplicate entries are rejected.
 
-## The Concept
+signal_matches searches the description for complete normalized phrases and unions
+those matches with the declared signals. A sentence containing only the word
+metric does not activate undefined metric, and only the phrase leakage risk
+activates that signal. This keeps a short description from silently changing a
+review plan.
 
-A good prompt is a work contract. It states the goal, audience, context, constraints, source material, and output format. The clinic adds review discipline: every output needs a quality check that fits the risk of the task.
+## Domain mapping
 
-```mermaid
-flowchart LR
-    G[Goal] --> C[Context]
-    C --> R[Rules]
-    R --> O[Output format]
-    O --> V[Review]
-    V --> P[Prompt pack]
-```
+Each signal has a stable category and controls:
 
-### Signals to Look For
+- vague target or missing audience maps to problem framing and a problem brief;
+- leakage risk maps to data integrity, leakage check, and source check;
+- missing split or undefined metric maps to evaluation design and its named protocol;
+- no acceptance test maps to release review, acceptance test, and output rubric.
 
-- vague goal
-- missing audience
-- weak constraint
-- no example
-
-### Controls to Teach
-
-- prompt brief
-- iteration log
-- output rubric
-- source check
-
-### Target Roles
-
-- All roles
-- Corporate Functions
-- Project Management
-- Consulting
-
-
-## Use It
-
-Use the artifact in enablement sessions, brown bags, and team retros. The goal is not to memorize prompt formulas. The goal is to make good prompting repeatable and reviewable.
-
-## Reusable Artifact
-
-Prompt clinic review sheet.
-
-The template in `outputs/prompt-clinic-review-sheet.md` can be used to collect before and after prompts, review comments, and reusable prompt patterns.
-
-## Key Takeaways
-
-- Prompt quality depends on task framing, not magic wording.
-- Output review is part of the prompt workflow.
-- Teams should turn good prompts into maintained assets.
-- The best prompt clinic uses real work examples.
+recommend returns every distinct control and category required by the matched
+signals in the controlled order. Its category field is the first primary category
+for backward-compatible display, while categories preserves the full union. It
+never treats impact or uncertainty as a compliance result.
+score_scenario computes min(20, 2*impact + uncertainty + 2*matched_signals).
+priority_for labels 16–20 launch gate required, 11–15 guided pilot, 7–10 team
+practice, and 0–6 awareness only. build_plan sorts by descending score and then
+scenario name for a repeatable handoff.
 
 ## Build It
 
-Reconstruct **Hands-on Prompt Clinic** by following `Scenario` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
+From code/, run python3 main.py. The JSON plan contains support-ticket triage,
+weekly churn classifier, and reviewed demand baseline. The churn row includes
+leakage check, source check, split protocol, metric definition, and evaluation
+rubric; its score is capped at 20 and its priority is launch gate required.
+The reviewed baseline has no matched signal and receives the default controls.
+
+For a direct check, construct a Scenario named forecast with description
+future values create leakage risk and no acceptance test, explicit signals
+(leakage risk, no acceptance test), impact 4, and uncertainty 4. Its category is
+data integrity and its controls include both leakage check and acceptance test.
+
+## Use It
+
+Run the planner during an ML design review. Replace the fixture descriptions with
+the team's actual target, audience, source columns, chronological or grouped
+split, metric denominator, and acceptance thresholds. Treat the returned plan as
+a checklist for a human reviewer; it does not execute a data audit or validate a
+model.
 
 ## Ship It
 
-Hand off `outputs/prompt-clinic-review-sheet.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
+outputs/prompt-clinic-review-sheet.md is the reusable worksheet. A completed
+sheet should contain the problem brief, source and leakage notes, split protocol,
+metric definition, output rubric, acceptance test, and reviewer decision. Preserve
+the original request and the revised ML prompt so later changes remain traceable.
 
 ## Exercises
 
-Use `Scenario` as the trace: start from the text "red fox", keep the raw output, and tie each observation to a named objective.
-
-1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using the text "red fox". Follow `Scenario`, `Recommendation`, `normalize`. Expect the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text; capture the first printed shape, metric, status, or summary field and state which part supports **Diagnose weak prompts by goal, audience, context, constraints, and evidence**.
-2. **Vary one named input.** Repeat the command after changing only the input text: use the text "red fox runs". Predict the direction of the change, then compare the two output values. Explain why **Build a small prompt-clinic planner in Python** says the other inputs should stay fixed.
-3. **Probe the empty case.** Feed the implementation an empty string. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Convert vague requests into reusable prompt briefs** and record the exception text if the code rejects the case.
-4. **Package a usable handoff.** Open `outputs/prompt-clinic-review-sheet.md` and add a worked example using the text "red fox". Include the input contract, one expected output field, and a named acceptance check for **Choose review controls for AI outputs**; note what the demo cannot establish.
+1. Create a churn Scenario whose description contains only the word leakage.
+   Confirm that signal_matches returns no leakage risk until the complete phrase
+   appears or the explicit signal is declared.
+2. Add missing split and undefined metric to a scenario. List the category and
+   every distinct control returned by recommend.
+3. Vary impact from 2 to 5 while keeping signals fixed. Show that priority can
+   change, but the semantic control list does not.
+4. Build two scenarios with equal scores and verify build_plan uses the name as
+   its deterministic tie-breaker.
+5. Submit an unknown signal, impact 0, uncertainty 6, and a non-integer score.
+   Record the explicit validation errors and explain why they are safer than a
+   plausible-looking plan.
 
 ## Reference Solution
 
-A checkable result for **Hands-on Prompt Clinic** should contain:
-
-- the `python3 main.py` output for the text "red fox", with `Scenario`, `Recommendation`, `normalize` traced to the value or shape that supports **Diagnose weak prompts by goal, audience, context, constraints, and evidence**;
-- a before/after comparison for the input text, where the text "red fox runs" changes the observation in the direction predicted by **Build a small prompt-clinic planner in Python**;
-- a recorded result for an empty string that matches the implementation’s validation or empty-result contract and explains the evidence for **Convert vague requests into reusable prompt briefs**; and
-- an updated `outputs/prompt-clinic-review-sheet.md` example with a concrete input, expected output field, and acceptance check tied to **Choose review controls for AI outputs**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+A correct submission demonstrates phrase-boundary matching, the explicit signal
+to category/control mapping, score bounds, deterministic sorting, and a complete
+review sheet. It lists leakage, split, metric, and acceptance evidence for a
+realistic classifier or forecast request. It labels scores as triage only and
+does not claim that the planner measured model quality.

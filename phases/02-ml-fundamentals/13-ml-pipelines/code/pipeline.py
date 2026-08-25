@@ -28,7 +28,12 @@ def _numeric_matrix(X, name, *, allow_nan=False):
 def _data_dict(data):
     if not isinstance(data, dict) or not set(REQUIRED_COLUMNS).issubset(data):
         raise ValueError(f"data must contain {REQUIRED_COLUMNS}")
-    arrays = {key: np.asarray(value) for key, value in data.items()}
+    try:
+        arrays = {key: np.asarray(value) for key, value in data.items()}
+    except (TypeError, ValueError) as exc:
+        raise ValueError("data columns must be one-dimensional sequences") from exc
+    if any(value.ndim != 1 for value in arrays.values()):
+        raise ValueError("data columns must be one-dimensional sequences")
     lengths = {len(value) for value in arrays.values()}
     if not lengths or len(lengths) != 1 or not next(iter(lengths)):
         raise ValueError("all data columns must have one shared non-empty length")
@@ -80,7 +85,8 @@ def make_mixed_data(n_samples=500, seed=42):
 
 def train_test_split_dict(data, test_ratio=0.2, seed=42):
     data = _data_dict(data)
-    if not np.isfinite(test_ratio) or not 0 < test_ratio < 1:
+    if (not isinstance(test_ratio, (int, float, np.number)) or not np.isfinite(test_ratio)
+            or not 0 < test_ratio < 1):
         raise ValueError("test_ratio must be strictly between 0 and 1")
     rng = np.random.RandomState(seed)
     n = len(data["target"])
@@ -288,8 +294,9 @@ class LogisticRegressionSimple:
     def fit(self, X, y):
         X = _numeric_matrix(X, "X")
         y = np.asarray(y, dtype=float)
-        if y.ndim != 1 or len(y) != X.shape[0] or not np.isfinite(y).all():
-            raise ValueError("y must be finite and match X rows")
+        if (y.ndim != 1 or len(y) != X.shape[0] or not np.isfinite(y).all()
+                or not np.isin(y, (0, 1)).all()):
+            raise ValueError("y must be finite binary labels matching X rows")
         n_samples, n_features = X.shape
         self.weights = np.zeros(n_features)
         self.bias = 0.0
@@ -333,8 +340,9 @@ class DecisionTreeSimple:
     def fit(self, X, y):
         X = _numeric_matrix(X, "X")
         y = np.asarray(y, dtype=float)
-        if y.ndim != 1 or len(y) != X.shape[0] or not np.isfinite(y).all():
-            raise ValueError("y must be finite and match X rows")
+        if (y.ndim != 1 or len(y) != X.shape[0] or not np.isfinite(y).all()
+                or not np.isin(y, (0, 1)).all()):
+            raise ValueError("y must be finite binary labels matching X rows")
         self.root = self._build(X, y, 0)
         self.n_features = X.shape[1]
         return self
@@ -424,6 +432,11 @@ class FullPipeline:
     def __init__(self, model, numeric_cols, categorical_cols):
         if not numeric_cols or not categorical_cols:
             raise ValueError("numeric_cols and categorical_cols must not be empty")
+        if (len(set(numeric_cols)) != len(numeric_cols)
+                or len(set(categorical_cols)) != len(categorical_cols)
+                or set(numeric_cols) & set(categorical_cols)
+                or not set(numeric_cols + categorical_cols).issubset(REQUIRED_COLUMNS)):
+            raise ValueError("numeric and categorical columns must be known and disjoint")
         self.model = model
         self.numeric_cols = numeric_cols
         self.categorical_cols = categorical_cols

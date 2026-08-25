@@ -30,10 +30,16 @@ def _validate_spec(spec):
     kind, low, high = spec
     if kind not in {"int", "float", "log_float"}:
         raise ValueError(f"unknown parameter spec kind: {kind!r}")
-    if not isinstance(low, (int, float)) or not isinstance(high, (int, float)):
+    numeric_types = (int, float, np.integer, np.floating)
+    if (not isinstance(low, numeric_types) or isinstance(low, (bool, np.bool_))
+            or not isinstance(high, numeric_types) or isinstance(high, (bool, np.bool_))):
         raise ValueError("parameter bounds must be numeric")
     if not np.isfinite(low) or not np.isfinite(high) or low > high:
         raise ValueError("parameter bounds must be finite and ordered")
+    if kind == "int" and (
+            not isinstance(low, (int, np.integer)) or isinstance(low, (bool, np.bool_))
+            or not isinstance(high, (int, np.integer)) or isinstance(high, (bool, np.bool_))):
+        raise ValueError("int bounds must be integers")
     if kind == "log_float" and (low <= 0 or high <= 0):
         raise ValueError("log_float bounds must be strictly positive")
 
@@ -302,7 +308,8 @@ class SimpleBayesianOptimizer:
                 vec.append(spec.index(v) / max(1, len(spec) - 1))
             elif spec[0] == "log_float":
                 vec.append(
-                    (np.log(v) - np.log(spec[1])) / (np.log(spec[2]) - np.log(spec[1]))
+                    (np.log(v) - np.log(spec[1]))
+                    / max(1e-10, np.log(spec[2]) - np.log(spec[1]))
                 )
             else:
                 vec.append((v - spec[1]) / max(1e-10, spec[2] - spec[1]))
@@ -368,7 +375,7 @@ class SimpleBayesianOptimizer:
         return candidates[best_idx]
 
     def observe(self, params, score):
-        if set(params) != set(self.param_names):
+        if not isinstance(params, dict) or set(params) != set(self.param_names):
             raise ValueError("observed params must match param_space keys")
         for name in self.param_names:
             value = params[name]
@@ -376,8 +383,17 @@ class SimpleBayesianOptimizer:
             if isinstance(spec, list):
                 if value not in spec:
                     raise ValueError(f"parameter {name!r} is outside its discrete space")
-            elif not isinstance(value, (int, float)) or not np.isfinite(value):
-                raise ValueError(f"parameter {name!r} must be finite")
+            else:
+                kind, low, high = spec
+                numeric_types = (int, float, np.integer, np.floating)
+                if (not isinstance(value, numeric_types)
+                        or isinstance(value, (bool, np.bool_))
+                        or not np.isfinite(value)
+                        or not low <= value <= high):
+                    raise ValueError(f"parameter {name!r} is outside its numeric space")
+                if kind == "int" and (not isinstance(value, (int, np.integer))
+                                       or isinstance(value, (bool, np.bool_))):
+                    raise ValueError(f"parameter {name!r} must be an integer")
         if not isinstance(score, (int, float)) or not np.isfinite(score):
             raise ValueError("score must be a finite number")
         self.X_observed.append(self._params_to_vec(params))

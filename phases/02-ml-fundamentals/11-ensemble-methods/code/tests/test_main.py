@@ -98,6 +98,8 @@ class EnsembleTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             ensembles.AdaBoostScratch(n_estimators=2).fit(self.X, np.zeros(len(self.y)))
         with self.assertRaises(ValueError):
+            ensembles.AdaBoostScratch(n_estimators=2).fit(self.X, ["-1"] * len(self.y))
+        with self.assertRaises(ValueError):
             ensembles.DecisionStump().fit(self.X, self.y[:-1], np.ones(len(self.y)))
 
     def test_tie_policy_never_returns_zero(self):
@@ -106,6 +108,11 @@ class EnsembleTests(unittest.TestCase):
         bag = ensembles.BaggingClassifier(n_estimators=2, max_depth=1)
         bag.fit(self.X, self.y)
         self.assertTrue(set(bag.predict(self.X[:10])).issubset({-1.0, 1.0}))
+        empty_guard_tree = ensembles.SimpleRegressionTree().fit(self.X, np.arange(len(self.X), dtype=float))
+        with self.assertRaises(ValueError):
+            empty_guard_tree.predict(np.empty((0, self.X.shape[1])))
+        with self.assertRaises(ValueError):
+            ensembles.GradientBoostingScratch(n_estimators=1).mse(self.X, self.y[:-1])
 
 
 if __name__ == "__main__":

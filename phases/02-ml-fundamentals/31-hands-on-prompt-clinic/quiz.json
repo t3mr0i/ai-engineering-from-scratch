@@ -1,34 +1,34 @@
 {
   "lesson": "31-hands-on-prompt-clinic",
-  "title": "Hands-on Prompt Clinic",
+  "title": "Hands-on ML Prompt Clinic",
   "questions": [
     {
       "stage": "pre",
-      "question": "A request says only 'make this better', names no reader, but asks for three bullet points. Which two clinic signals are present?",
+      "question": "A churn request says only “predict churn” and names no audience. Which two clinic signals should be recorded?",
       "options": [
-        "Weak constraint and no example",
-        "A source check and a prompt brief",
-        "Vague goal and missing audience",
-        "A launch gate and a guided pilot"
+        "Leakage risk and missing split",
+        "Undefined metric and no acceptance test",
+        "Vague target and missing audience",
+        "No example and weak constraint"
       ],
       "correct": 2,
-      "explanation": "The goal is underspecified, and the intended reader is absent. The other signals require different prompt details."
+      "explanation": "The target is not operationally defined and the user of the result is absent; those are the two controlled signals."
     },
     {
       "stage": "check",
-      "question": "What does normalize('A  concise-plan') return in the clinic artifact?",
+      "question": "What does normalize(\"A  time-series plan\") return?",
       "options": [
-        "A  concise-plan",
-        "a_concise_plan",
-        "concise-plan A",
-        "a concise plan"
+        "A  time-series plan",
+        "a_time_series_plan",
+        "time-series plan a",
+        "a time series plan"
       ],
       "correct": 3,
-      "explanation": "normalize lowercases, replaces hyphens with spaces, and collapses whitespace."
+      "explanation": "normalize lowercases, replaces hyphens with spaces, and collapses runs of whitespace."
     },
     {
       "stage": "check",
-      "question": "A scenario has impact=4, uncertainty=3, and matches two clinic signals. What score does score_scenario compute?",
+      "question": "A Scenario has impact=4, uncertainty=3, and exactly two matched signals. What score does score_scenario return?",
       "options": [
         "15",
         "11",
@@ -36,11 +36,11 @@
         "20"
       ],
       "correct": 0,
-      "explanation": "The base is 4*2+3=11, and two matches add 2 each, giving 15."
+      "explanation": "The score is min(20, 2*4 + 3 + 2*2) = 15."
     },
     {
       "stage": "check",
-      "question": "For that score of 15, which priority does priority_for return?",
+      "question": "Which priority does priority_for(15) return?",
       "options": [
         "launch gate required",
         "guided pilot",
@@ -48,31 +48,31 @@
         "awareness only"
       ],
       "correct": 1,
-      "explanation": "Scores from 11 through 15 are labeled guided pilot by the artifact."
+      "explanation": "Scores from 11 through 15 are labeled guided pilot; the label is triage guidance, not a quality certificate."
     },
     {
       "stage": "post",
-      "question": "A prompt clinic brief for a client summary should make which change first?",
+      "question": "A prompt proposes a churn model but does not name its source columns, chronological split, metric denominator, or release threshold. What should the clinic add first?",
       "options": [
-        "Ask for a longer answer without naming the reader",
-        "Remove examples so the model can be more creative",
-        "State the goal, audience, source context, constraints, and desired format",
-        "Skip review because a prompt brief guarantees accuracy"
+        "A longer instruction with no data boundary",
+        "A random split and a generic accuracy claim",
+        "A problem brief plus leakage, split, metric, and acceptance controls",
+        "A launch decision based only on the model's confidence"
       ],
       "correct": 2,
-      "explanation": "A reusable brief makes the task and acceptance conditions explicit; it gives the later output rubric and source check something concrete to assess."
+      "explanation": "Those controls turn an underspecified request into reviewable ML contracts without pretending that the planner ran the experiment."
     },
     {
       "stage": "post",
-      "question": "A scenario matches all four signals and has impact=4 and uncertainty=4. What priority should the artifact assign?",
+      "question": "A Scenario declares all six signals with impact=4 and uncertainty=4. Which result follows?",
       "options": [
-        "guided pilot",
-        "team practice",
-        "awareness only",
-        "launch gate required"
+        "guided pilot with only a problem brief",
+        "team practice with no controls",
+        "awareness only because scores are not metrics",
+        "launch gate required with the union of the mapped controls"
       ],
       "correct": 3,
-      "explanation": "The score is min(20, 4*2+4+4*2)=20, and scores of 16 or more require a launch gate."
+      "explanation": "The score is capped at 20, which maps to launch gate required; recommend includes each distinct control mapped to the six signals."
     }
   ]
 }

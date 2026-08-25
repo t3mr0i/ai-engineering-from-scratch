@@ -4,6 +4,7 @@
 # Run the canonical entry point with: python3 main.py
 
 import math
+import numbers
 import random
 
 
@@ -11,7 +12,7 @@ def _numeric_vector(values, name, *, minimum_length=1):
     values = list(values)
     if len(values) < minimum_length:
         raise ValueError(f"{name} must contain at least {minimum_length} value(s)")
-    if any(not isinstance(value, (int, float)) or not math.isfinite(value) for value in values):
+    if any(not isinstance(value, numbers.Real) or isinstance(value, bool) or not math.isfinite(value) for value in values):
         raise ValueError(f"{name} must contain finite numeric values")
     return values
 
@@ -63,7 +64,7 @@ def log_transform(values):
 
 def bin_values(values, n_bins=5):
     values = _numeric_vector(values, "values")
-    if not isinstance(n_bins, int) or isinstance(n_bins, bool) or n_bins <= 0:
+    if not isinstance(n_bins, numbers.Integral) or isinstance(n_bins, bool) or n_bins <= 0:
         raise ValueError("n_bins must be a positive integer")
     min_val = min(values)
     max_val = max(values)
@@ -80,7 +81,7 @@ def bin_values(values, n_bins=5):
 
 def polynomial_features(row, degree=2):
     row = _numeric_vector(row, "row")
-    if not isinstance(degree, int) or isinstance(degree, bool) or degree < 0:
+    if not isinstance(degree, numbers.Integral) or isinstance(degree, bool) or degree < 0:
         raise ValueError("degree must be a non-negative integer")
     n = len(row)
     result = list(row)
@@ -126,7 +127,7 @@ def target_encode(feature_values, target_values, smoothing=10):
         raise ValueError("feature_values must not be empty")
     if len(feature_values) != len(target_values):
         raise ValueError("feature_values and target_values must have equal lengths")
-    if not isinstance(smoothing, (int, float)) or not math.isfinite(smoothing) or smoothing < 0:
+    if not isinstance(smoothing, numbers.Real) or isinstance(smoothing, bool) or not math.isfinite(smoothing) or smoothing < 0:
         raise ValueError("smoothing must be a finite non-negative number")
     global_mean = sum(target_values) / len(target_values)
 
@@ -267,7 +268,7 @@ def mutual_information(feature, target, n_bins=10):
         raise ValueError("target must not be empty")
     if len(feature) != len(target):
         raise ValueError("feature and target must have equal lengths")
-    if not isinstance(n_bins, int) or isinstance(n_bins, bool) or n_bins <= 0:
+    if not isinstance(n_bins, numbers.Integral) or isinstance(n_bins, bool) or n_bins <= 0:
         raise ValueError("n_bins must be a positive integer")
     feat_min = min(feature)
     feat_max = max(feature)
@@ -303,7 +304,7 @@ def mutual_information(feature, target, n_bins=10):
 
 def variance_threshold(features, threshold=0.01):
     features = _matrix(features, "features")
-    if not isinstance(threshold, (int, float)) or not math.isfinite(threshold) or threshold < 0:
+    if not isinstance(threshold, numbers.Real) or isinstance(threshold, bool) or not math.isfinite(threshold) or threshold < 0:
         raise ValueError("threshold must be a finite non-negative number")
     n_features = len(features[0])
     n_samples = len(features)
@@ -321,7 +322,7 @@ def variance_threshold(features, threshold=0.01):
 
 def remove_correlated(features, threshold=0.9):
     features = _matrix(features, "features")
-    if not isinstance(threshold, (int, float)) or not math.isfinite(threshold) or not 0 <= threshold <= 1:
+    if not isinstance(threshold, numbers.Real) or isinstance(threshold, bool) or not math.isfinite(threshold) or not 0 <= threshold <= 1:
         raise ValueError("threshold must be a finite number between 0 and 1")
     n_features = len(features[0])
     n_samples = len(features)

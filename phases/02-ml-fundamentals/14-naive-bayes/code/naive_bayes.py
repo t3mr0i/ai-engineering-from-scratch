@@ -25,6 +25,8 @@ def _xy(X, y, *, nonnegative=False):
     y = np.asarray(y)
     if y.ndim != 1 or len(y) != X.shape[0] or len(y) == 0:
         raise ValueError("y must be a non-empty vector matching X rows")
+    if np.issubdtype(y.dtype, np.number) and not np.isfinite(y).all():
+        raise ValueError("numeric labels must be finite")
     return X, y
 
 
@@ -66,9 +68,14 @@ class MultinomialNB:
 
     def predict_proba(self, X):
         log_proba = self.predict_log_proba(X)
+        if not np.isfinite(log_proba).all():
+            raise ValueError("log probabilities are not finite for this input")
         log_proba -= log_proba.max(axis=1, keepdims=True)
         proba = np.exp(log_proba)
-        proba /= proba.sum(axis=1, keepdims=True)
+        normalizer = proba.sum(axis=1, keepdims=True)
+        if not np.isfinite(normalizer).all() or np.any(normalizer <= 0):
+            raise ValueError("probability normalization is not finite")
+        proba /= normalizer
         return proba
 
     def predict(self, X):
@@ -134,9 +141,14 @@ class GaussianNB:
 
     def predict_proba(self, X):
         log_proba = self._log_likelihood(X)
+        if not np.isfinite(log_proba).all():
+            raise ValueError("log probabilities are not finite for this input")
         log_proba -= log_proba.max(axis=1, keepdims=True)
         proba = np.exp(log_proba)
-        proba /= proba.sum(axis=1, keepdims=True)
+        normalizer = proba.sum(axis=1, keepdims=True)
+        if not np.isfinite(normalizer).all() or np.any(normalizer <= 0):
+            raise ValueError("probability normalization is not finite")
+        proba /= normalizer
         return proba
 
     def score(self, X, y):
@@ -211,6 +223,8 @@ def train_test_split(X, y, test_ratio=0.2, seed=42):
     n = len(y)
     idx = rng.permutation(n)
     split = int(n * (1 - test_ratio))
+    if split <= 0 or split >= n:
+        raise ValueError("test_ratio must produce non-empty train and test partitions")
     train_idx, test_idx = idx[:split], idx[split:]
     return X[train_idx], X[test_idx], y[train_idx], y[test_idx]
 
@@ -218,7 +232,8 @@ def train_test_split(X, y, test_ratio=0.2, seed=42):
 def accuracy(y_true, y_pred):
     y_true = np.asarray(y_true)
     y_pred = np.asarray(y_pred)
-    if y_true.ndim != 1 or len(y_true) == 0 or len(y_true) != len(y_pred):
+    if (y_true.ndim != 1 or y_pred.ndim != 1 or len(y_true) == 0
+            or len(y_true) != len(y_pred)):
         raise ValueError("accuracy inputs must be non-empty vectors of equal length")
     return np.mean(y_true == y_pred)
 

@@ -1,64 +1,80 @@
-# Contract and executable-behavior tests for this lesson demo.
-from __future__ import annotations
-
-import ast
-import functools
-import importlib.util
-import os
-from pathlib import Path
-import subprocess
 import sys
 import unittest
+from pathlib import Path
 
-CODE = Path(__file__).resolve().parents[1]
-MAIN = CODE / "main.py"
-ALLOWED = set(sys.stdlib_module_names) | {"numpy", "torch", "h5py", "zstandard", "safetensors"}
+import numpy as np
 
-def source_trees() -> list[ast.AST]:
-    return [ast.parse(path.read_text(encoding="utf-8")) for path in CODE.glob("*.py")]
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import feature_selection as fs
 
-def external_roots() -> set[str]:
-    roots: set[str] = set()
-    for tree in source_trees():
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                roots.update(alias.name.split(".")[0] for alias in node.names)
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                roots.add(node.module.split(".")[0])
-    return {name for name in roots if not (CODE / f"{name}.py").exists() and not (CODE / name).is_dir()}
 
-@functools.lru_cache(maxsize=1)
-def run_demo() -> subprocess.CompletedProcess[str]:
-    missing = sorted(name for name in external_roots() if name in ALLOWED and importlib.util.find_spec(name) is None)
-    banned = sorted(external_roots() - ALLOWED)
-    if missing or banned:
-        raise unittest.SkipTest(f"demo dependencies unavailable or disallowed: {missing + banned}")
-    env = os.environ.copy()
-    for key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "HF_TOKEN", "HUGGINGFACE_TOKEN"):
-        env.pop(key, None)
-    return subprocess.run(
-        [sys.executable, MAIN.name], cwd=CODE, text=True, capture_output=True,
-        timeout=45, env=env, check=False,
-    )
+class FeatureSelectionContracts(unittest.TestCase):
+    def setUp(self):
+        self.X = np.array([[0., 0., 1.], [0., 1., 1.], [1., 0., 2.], [1., 1., 2.], [2., 1., 3.], [2., 0., 3.]])
+        self.y = np.array([0, 1, 1, 0, 1, 0])
 
-class LessonDemoTests(unittest.TestCase):
-    def test_source_compiles(self) -> None:
-        compile(MAIN.read_text(encoding="utf-8"), str(MAIN), "exec")
+    def test_fixture_shape_and_variance_filter(self):
+        X, y, names = fs.make_feature_selection_data(32, seed=4)
+        self.assertEqual((X.shape, y.shape, len(names)), ((32, 20), (32,), 20))
+        mask, variances = fs.variance_threshold(self.X, threshold=0.1)
+        np.testing.assert_array_equal(mask, [True, True, True])
+        self.assertTrue(np.all(variances >= 0))
 
-    def test_demo_has_explicit_entrypoint(self) -> None:
-        source = MAIN.read_text(encoding="utf-8")
-        self.assertTrue("__main__" in source or "runpy.run_path" in source)
+    def test_discretize_and_mutual_information_are_finite(self):
+        bins = fs.discretize(np.array([0., 1., 2., 3.]), n_bins=2)
+        np.testing.assert_array_equal(bins, [0, 0, 1, 1])
+        scores = fs.mutual_information(self.X, self.y, n_bins=3)
+        self.assertEqual(scores.shape, (3,))
+        self.assertTrue(np.isfinite(scores).all())
+        with self.assertRaises(ValueError):
+            fs.discretize([1., 2.], n_bins=0)
 
-    def test_demo_exits_successfully(self) -> None:
-        self.assertEqual(run_demo().returncode, 0, run_demo().stderr)
+    def test_logistic_and_rfe_select_requested_width(self):
+        weights, bias = fs.simple_logistic_importance(self.X, self.y, epochs=20)
+        self.assertEqual(weights.shape, (3,))
+        self.assertTrue(np.isfinite(bias))
+        mask, ranks = fs.rfe(self.X, self.y, n_features_to_select=2, epochs=10)
+        self.assertEqual(int(mask.sum()), 2)
+        self.assertEqual(ranks.shape, (3,))
 
-    def test_demo_emits_bounded_output(self) -> None:
-        result = run_demo()
-        self.assertTrue((result.stdout + result.stderr).strip())
-        self.assertLess(len(result.stdout) + len(result.stderr), 1_000_000)
+    def test_l1_and_tree_importance_are_deterministic(self):
+        first_mask, first_w = fs.l1_feature_selection(self.X, self.y, alpha=.01, epochs=30)
+        second_mask, second_w = fs.l1_feature_selection(self.X, self.y, alpha=.01, epochs=30)
+        np.testing.assert_array_equal(first_mask, second_mask)
+        np.testing.assert_allclose(first_w, second_w)
+        imp = fs.tree_importance(self.X, self.y, n_trees=4, max_depth=2, seed=9)
+        np.testing.assert_allclose(imp.sum(), 1.0)
 
-    def test_demo_has_no_traceback(self) -> None:
-        self.assertNotIn("Traceback (most recent call last)", run_demo().stderr)
+    def test_tree_split_and_accuracy_have_explicit_boundaries(self):
+        threshold, gain = fs.best_split(self.X, self.y, 0)
+        self.assertIsNotNone(threshold)
+        self.assertGreaterEqual(gain, 0)
+        accuracy = fs.evaluate_accuracy(self.X, self.y, np.array([True, False, True]))
+        self.assertTrue(0 <= accuracy <= 1)
+        with self.assertRaises(ValueError):
+            fs.evaluate_accuracy(self.X, self.y, [False, False, False])
+        with self.assertRaises(ValueError):
+            fs.best_split(self.X, self.y, 3)
+
+    def test_invalid_data_and_parameters_fail_before_numpy_errors(self):
+        with self.assertRaises(ValueError):
+            fs.variance_threshold([[1.]], threshold=-1)
+        with self.assertRaises(ValueError):
+            fs.mutual_information(self.X[:-1], self.y)
+        with self.assertRaises(ValueError):
+            fs.rfe(self.X, self.y, n_features_to_select=0)
+        with self.assertRaises(ValueError):
+            fs.l1_feature_selection(self.X, self.y, lr=0)
+        with self.assertRaises(ValueError):
+            fs.make_feature_selection_data(1)
+        for method in (fs.simple_logistic_importance, fs.rfe, fs.l1_feature_selection):
+            with self.assertRaises(ValueError):
+                method(self.X, np.array([0, 2, 0, 1, 0, 1]), epochs=2)
+            with self.assertRaises(ValueError):
+                method(self.X, np.array(["0", "1", "0", "1", "0", "1"]), epochs=2)
+        with self.assertRaises(ValueError):
+            fs.gini_impurity([0, 2, 1])
+
 
 if __name__ == "__main__":
     unittest.main()

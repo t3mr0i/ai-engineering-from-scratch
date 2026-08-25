@@ -1,90 +1,109 @@
 # Recommender Systems from Scratch
 
-> A recommender is a ranking system under missing feedback, exposure bias, and cold-start constraints—not merely a similarity formula.
+> A recommender ranks uncertain, selectively observed feedback; an empty cell is not automatically a dislike.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Vectors, Matrices and Operations, Model Evaluation, Handling Imbalanced Data
-**Time:** ~105 minutes
+**Prerequisites:** Phase 02, Lessons 01–14
+**Time:** ~90 minutes
 
 ## Learning Objectives
 
-- Distinguish explicit ratings, implicit feedback, exposure, and unobserved preference.
-- Build popularity, neighborhood, and matrix-factorization recommenders from raw operations.
-- Evaluate ranked lists with Precision@K, Recall@K, and NDCG@K using a leakage-safe split.
-- Handle new users, new items, sparse histories, and popularity bias with explicit fallbacks.
-- Design an offline-to-online validation plan that includes diversity, safety, and business constraints.
+- Distinguish an observed implicit interaction from an explicit rating or an unobserved item.
+- Compute popularity and cosine-neighborhood scores from a non-negative user-item matrix.
+- Fit the lesson's deterministic matrix-factorization baseline and mask consumed items.
+- Evaluate leave-one-out rankings with Precision@K, Recall@K, and NDCG@K.
+- Describe cold-start, exposure bias, and temporal leakage boundaries around an offline score.
 
-## The Real Problem
+## The local interaction contract
 
-A user-item matrix is mostly empty. An empty cell rarely means dislike; it may mean the user never saw the item. Recommenders therefore learn from selective feedback produced by an earlier interface, ranking policy, inventory, and user behavior. Treating every missing value as a negative creates a biased training target.
+The canonical matrix is non-empty, finite, and non-negative. A positive entry is
+an observed interaction; zero means that this fixture has no observed interaction,
+not that the user rejected the item. The demo matrix has six users and eight items.
+The final positive entry in each eligible user row is held out by leave_one_out.
+Users with fewer than two positive entries are not placed in the held-out map.
 
-**Explicit feedback** includes ratings or direct preferences. **Implicit feedback** includes clicks, views, saves, purchases, and watch time. Implicit signals are abundant but ambiguous. A click can mean curiosity; no click can mean no exposure.
+popularity_scores counts positive rows per item. It is a useful cold-start
+fallback because it needs no user history, but it also reflects the exposure
+policy that produced the interactions. cosine_user_similarity binarizes rows,
+computes pairwise cosine similarity, and sets the diagonal to zero. The
+neighborhood scorer requires a positive minimum overlap, weights neighbor
+histories, and masks items already consumed by the requested user.
 
-## Baseline First
+## Matrix factorization
 
-A popularity recommender ranks items by aggregate interaction. It ignores personalization, but it is cheap, robust for new users, and a difficult baseline to beat honestly. Segment-aware popularity can respect locale, time window, availability, or age restrictions without pretending to know an individual preference.
+factorize initializes user and item vectors with a seeded NumPy generator. It
+requires at least one observed interaction; factorizing an all-zero matrix is
+rejected instead of returning arbitrary latent scores. For
+each observed cell it predicts the dot product, computes target minus prediction,
+and applies a stochastic gradient update with optional non-negative regularization.
+It is a small educational implicit-feedback baseline, not a claim that zeros are
+negative samples. FactorModel.scores returns one score per item for a valid user.
+Fitting again constructs fresh vectors, so the same seed and input reproduce the
+same result.
 
-Every personalized method needs a fallback. When the user has no history or the candidate item has no interactions, use a documented rule such as eligible recent popularity, editorial curation, or a short onboarding preference—not a random score hidden inside the model.
+recommend accepts popularity, neighbors, or factors. It checks the user and K,
+then returns at most K unconsumed item indices. If a user has no history, every
+method uses the same deterministic popularity fallback; no personal factors are
+invented. If a user has history but no useful neighbor evidence,
+neighborhood_scores also falls back to popularity. Recommended IDs must be unique;
+precision, recall, and NDCG reject duplicate ranked IDs rather than double-counting
+one item.
 
-## Build It: neighborhood methods
+## Ranked evaluation
 
-User-based collaborative filtering finds users with similar interaction vectors and aggregates their preferences. Item-based filtering finds items co-preferred by similar users. Cosine similarity is easy to inspect, but shared zeros and tiny histories can produce misleading neighbors. Require overlap, shrink similarity toward zero when evidence is thin, and exclude already consumed items.
-
-## Build It: matrix factorization
-
-Matrix factorization represents each user and item with a short latent vector. Their dot product predicts affinity. Stochastic gradient descent updates only the user and item involved in an observed interaction, with regularization limiting runaway factors.
-
-For implicit data, sampled negatives are not confirmed dislikes. The sampling policy becomes part of the model definition. Pairwise objectives such as Bayesian Personalized Ranking optimize the ordering between an observed item and a sampled unobserved item; see [BPR: Bayesian Personalized Ranking from Implicit Feedback](https://arxiv.org/abs/1205.2618).
-
-## Evaluate the Ranking
-
-Randomly splitting interaction rows can leak later behavior into earlier recommendations. Prefer leave-last-out or time-based splits per user. Fit popularity, similarities, factors, and candidate-generation statistics using training history only.
-
-- **Precision@K** asks what share of the recommended list is relevant.
-- **Recall@K** asks what share of the held-out relevant items appears in the list.
-- **NDCG@K** rewards placing relevant items earlier and supports graded relevance.
-
-Offline relevance is not the whole product. Track catalog coverage, diversity, novelty, creator or supplier concentration, unsafe content, latency, and the effect on different user groups. Online evaluation should guard against feedback loops: a ranking changes exposure, which changes the next training data.
-
-## Use It
-
-The canonical program uses a small NumPy matrix so every score and exclusion can be inspected. It compares popularity, user-neighborhood scoring, and deterministic matrix factorization on a leave-one-out task. The result is a production-shaped interface: candidate scores, consumed-item masking, top-K ranking, fallback, and ranked metrics.
-
-Run:
-
-```bash
-python3 main.py
-```
-
-## Failure Modes
-
-- **Cold start:** new users or items have no collaborative evidence.
-- **Popularity feedback loop:** already exposed items collect more signals and dominate future exposure.
-- **Temporal leakage:** future interactions influence earlier rankings.
-- **Filter bubble:** repeated similarity reduces discovery and catalog coverage.
-- **Metric mismatch:** click optimization may harm long-term satisfaction or safety.
+Precision@K divides relevant items in the first K positions by K. Recall@K
+divides retrieved relevant items by the held-out relevant set. NDCG discounts a
+relevant hit at rank 2 less than one at rank 1. These metrics require a stated
+split and candidate policy. They do not measure diversity, safety, latency, or
+catalog coverage.
 
 ## Build It
 
-Reconstruct **Recommender Systems from Scratch** by following `popularity_scores` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+From code/, run python3 main.py. It prints leave-one-out Recall@3 and NDCG@3
+for popularity, neighbors, and factors, followed by a popularity top-three
+cold-start list. Reproduce the smallest ranking calculation with a three-row
+matrix such as [[1,1,0,0], [1,0,1,0], [0,1,1,1]]:
+popularity_scores returns [2,2,2,1]. Calling recommend for user 0 never returns
+items 0 or 1 because those cells were already consumed.
+
+## Use It
+
+Fit popularity counts, similarities, and factors only on training interactions.
+For a time-aware product, use the latest interaction as the held-out target per
+user and freeze candidate eligibility at the forecast timestamp. Compare a
+personalized method with the popularity baseline and add catalog coverage,
+diversity, safety, and latency before an online decision.
 
 ## Ship It
 
-Hand off `outputs/recommender-evaluation-card.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
+outputs/recommender-evaluation-card.md is the handoff artifact. Fill in the
+interaction definition, exposure assumptions, split timestamp, candidate set,
+consumed-item mask, K, metrics, and cold-start fallback. The card must identify
+which statistics were fit on training history and must not present an offline
+ranking metric as a causal product outcome.
 
 ## Exercises
 
-1. Add a new user with no history. Compare the documented fallback with zero-filled collaborative scores and explain which behavior is safer.
-2. Change the split from leave-one-out to a random interaction split. Identify at least one statistic that can leak and predict the metric direction.
-3. Add a reranking constraint that limits two items from the same category in the top five. Measure the relevance and diversity tradeoff.
+1. On the three-row matrix above, calculate the item counts and the cosine
+   diagonal. Confirm that the diagonal is zero before neighborhood scoring.
+2. Run leave_one_out on the six-user demo matrix. List one held-out item and
+   show that it is absent from the corresponding training row.
+3. Compare popularity and neighbors for a user with no positive row in a copy of
+   the matrix. Explain why the popularity fallback has no personalized evidence.
+4. Fit factorize twice with seed=3 and once with seed=4. Compare vector equality,
+   then report why a different seed is not a model-quality verdict.
+5. Compute Recall@3 and NDCG@3 for one relevant item at rank 1 versus rank 3.
+   Pass [1,1] to each ranking metric and record the duplicate-ID ValueError.
+6. Give one user an all-zero history in a matrix with two observed items. Compare
+   popularity, neighbors, and factors; all three must return the same fallback,
+   with no consumed-item violation. Factorize an all-zero matrix and record its
+   explicit ValueError.
 
 ## Reference Solution
 
-The canonical [main.py](../code/main.py) treats missing cells as unknown, masks consumed items, and compares methods on held-out interactions. A complete solution fits every statistic on training history only, reports at least one ranked metric and one catalog or safety measure, and specifies a deterministic fallback for users or items without collaborative evidence.
-
-## Further Reading
-
-- [Matrix Factorization Techniques for Recommender Systems](https://doi.org/10.1109/MC.2009.263)
-- [BPR: Bayesian Personalized Ranking from Implicit Feedback](https://arxiv.org/abs/1205.2618)
-- [Recommender Systems Handbook](https://link.springer.com/book/10.1007/978-1-4899-7637-6)
+A correct submission shows popularity counts [2,2,2,1] for the small fixture,
+masks consumed items, holds out only eligible users, and reproduces factor
+vectors for a fixed seed. It reports the three ranking metrics with their
+denominators and states the training-only split. The evaluation card includes
+non-relevance product checks and a deterministic cold-start fallback.

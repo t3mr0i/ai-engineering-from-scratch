@@ -17,13 +17,13 @@
 
 ## The local experiment
 
-`code/bias_variance.py` uses NumPy and no plotting package. `generate_data` samples `x` uniformly in `(-3, 3)`, adds Gaussian noise with default standard deviation `0.5`, and `bias_variance_decomposition` evaluates predictions on 100 points in `[-2.5, 2.5]`. It uses a seeded sequence of bootstrap training sets, so the same arguments reproduce the same table.
+`code/bias_variance.py` uses NumPy and no plotting package. `generate_data` samples `x` uniformly in `(-3, 3)`, adds Gaussian noise with default standard deviation `0.5`, and `bias_variance_decomposition` evaluates predictions on 100 points in `[-2.5, 2.5]`. Positive sample/bootstrap/test counts and a finite non-negative noise standard deviation are required. It uses a seeded sequence of bootstrap training sets, so the same arguments reproduce the same table.
 
 ## Build It
 
 Run `python3 main.py`. The compact entry point compares polynomial degrees 1, 3, and 8 over 24 bootstrap fits and prints `bias_sq`, `variance`, and `total_error` for each degree. For a hand check, fitting `y = 2x + 1` at `x = [-1, 0, 1]` with degree 1 gives two weights and predictions equal to the observations. `fit_polynomial(..., lam=10)` leaves the intercept unpenalized but shrinks the other coefficients relative to the unregularized fit.
 
-The decomposition is empirical: `bias_sq` is the mean squared gap between the mean prediction and `true_function`, `variance` is the mean variance across bootstrap predictions, and `noise` is `0.5² = 0.25`. Their sum is a diagnostic comparison to `total_error`; finite bootstrap size and numerical solves mean the values need not match to the last digit.
+`bias_sq` is the mean squared gap between the mean prediction and `true_function`, and `variance` is the mean variance across bootstrap predictions. `reducible_error` is the empirical squared error against the noiseless function. `total_error` is the expected noisy test error defined by `bias_sq + variance + noise`, where the default `noise` is analytically `0.5² = 0.25`; the identity is exact for the reported terms. The bootstrap estimate of `reducible_error` remains finite-sample data.
 
 ## Use It
 
@@ -31,7 +31,7 @@ Use `find_optimal(results)` only to choose the lowest local `total_error` among 
 
 ## Ship It
 
-`outputs/prompt-model-diagnostics.md` turns the table into a review checklist: record degrees, bootstrap count, noise setting, and the three terms, then label the conclusion as a local diagnostic rather than a production guarantee. The shipped artifact is the experiment definition, not a chart or a claim about every polynomial model.
+`outputs/prompt-model-diagnostics.md` turns the table into a review checklist: record degrees, bootstrap count, noise setting, `bias_sq`, `variance`, `reducible_error`, and `total_error`, then label the conclusion as a local diagnostic rather than a production guarantee. The shipped artifact is the experiment definition, not a chart or a claim about every polynomial model.
 
 ## Exercises
 
@@ -42,4 +42,4 @@ Use `find_optimal(results)` only to choose the lowest local `total_error` among 
 
 ## Reference Solution
 
-A complete solution contains two identical demo runs, a hand-verified degree-1 fit, coefficient-norm evidence for ridge shrinkage, and a table labelled with `n_bootstrap`, `n_train`, `n_test`, and `noise_std`. The diagnosis cites train/test measurements and does not call the lowest degree or one fixture’s optimum universal.
+A complete solution contains two identical demo runs, a hand-verified degree-1 fit, coefficient-norm evidence for ridge shrinkage, and a table labelled with `n_bootstrap`, `n_train`, `n_test`, `noise_std`, and all four error terms. It verifies `total_error == bias_sq + variance + noise` and does not call the lowest degree or one fixture’s optimum universal.

@@ -1,64 +1,76 @@
-# Contract and executable-behavior tests for this lesson demo.
-from __future__ import annotations
-
-import ast
-import functools
-import importlib.util
-import os
-from pathlib import Path
-import subprocess
 import sys
 import unittest
+from pathlib import Path
 
-CODE = Path(__file__).resolve().parents[1]
-MAIN = CODE / "main.py"
-ALLOWED = set(sys.stdlib_module_names) | {"numpy", "torch", "h5py", "zstandard", "safetensors"}
+import numpy as np
 
-def source_trees() -> list[ast.AST]:
-    return [ast.parse(path.read_text(encoding="utf-8")) for path in CODE.glob("*.py")]
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import time_series as ts
 
-def external_roots() -> set[str]:
-    roots: set[str] = set()
-    for tree in source_trees():
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                roots.update(alias.name.split(".")[0] for alias in node.names)
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                roots.add(node.module.split(".")[0])
-    return {name for name in roots if not (CODE / f"{name}.py").exists() and not (CODE / name).is_dir()}
 
-@functools.lru_cache(maxsize=1)
-def run_demo() -> subprocess.CompletedProcess[str]:
-    missing = sorted(name for name in external_roots() if name in ALLOWED and importlib.util.find_spec(name) is None)
-    banned = sorted(external_roots() - ALLOWED)
-    if missing or banned:
-        raise unittest.SkipTest(f"demo dependencies unavailable or disallowed: {missing + banned}")
-    env = os.environ.copy()
-    for key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "HF_TOKEN", "HUGGINGFACE_TOKEN"):
-        env.pop(key, None)
-    return subprocess.run(
-        [sys.executable, MAIN.name], cwd=CODE, text=True, capture_output=True,
-        timeout=45, env=env, check=False,
-    )
+class TimeSeriesContracts(unittest.TestCase):
+    def test_generators_are_reproducible_and_sized(self):
+        first = ts.make_synthetic_series(24, seed=7)
+        np.testing.assert_array_equal(first, ts.make_synthetic_series(24, seed=7))
+        self.assertEqual(ts.make_seasonal_series(18, period=6).shape, (18,))
 
-class LessonDemoTests(unittest.TestCase):
-    def test_source_compiles(self) -> None:
-        compile(MAIN.read_text(encoding="utf-8"), str(MAIN), "exec")
+    def test_difference_order_and_boundaries(self):
+        np.testing.assert_array_equal(ts.difference([1, 3, 6], 1), [2, 3])
+        np.testing.assert_array_equal(ts.difference([1, 3, 6], 0), [1, 3, 6])
+        with self.assertRaises(ValueError):
+            ts.difference([1, 2], 2)
+        with self.assertRaises(ValueError):
+            ts.difference([1, 2], -1)
 
-    def test_demo_has_explicit_entrypoint(self) -> None:
-        source = MAIN.read_text(encoding="utf-8")
-        self.assertTrue("__main__" in source or "runpy.run_path" in source)
+    def test_lag_features_have_past_only_alignment(self):
+        X, y = ts.make_lag_features([10, 12, 14, 13], 2)
+        np.testing.assert_array_equal(X, [[12, 10], [14, 12]])
+        np.testing.assert_array_equal(y, [14, 13])
+        with self.assertRaises(ValueError):
+            ts.make_lag_features([1, 2], 2)
 
-    def test_demo_exits_successfully(self) -> None:
-        self.assertEqual(run_demo().returncode, 0, run_demo().stderr)
+    def test_walk_forward_folds_are_ordered_and_nonempty(self):
+        folds = list(ts.walk_forward_split(12, n_splits=3, min_train=3))
+        self.assertEqual(len(folds), 3)
+        for train, test in folds:
+            self.assertGreater(train.stop, train.start)
+            self.assertGreater(test.stop, test.start)
+            self.assertEqual(train.stop, test.start)
+        with self.assertRaises(ValueError):
+            list(ts.walk_forward_split(4, n_splits=4, min_train=2))
 
-    def test_demo_emits_bounded_output(self) -> None:
-        result = run_demo()
-        self.assertTrue((result.stdout + result.stderr).strip())
-        self.assertLess(len(result.stdout) + len(result.stderr), 1_000_000)
+    def test_simple_ar_requires_fit_and_resets_on_refit(self):
+        model = ts.SimpleAR(2)
+        with self.assertRaises(RuntimeError):
+            model.predict([[1, 2]])
+        X, y = ts.make_lag_features([1, 2, 3, 4, 5], 2)
+        model.fit(X, y)
+        first = model.predict(X)
+        model.fit(X, y)
+        np.testing.assert_allclose(first, model.predict(X))
+        self.assertEqual(model.forecast([3, 4], 2).shape, (2,))
+        with self.assertRaises(ValueError):
+            model.forecast([1], 1)
 
-    def test_demo_has_no_traceback(self) -> None:
-        self.assertNotIn("Traceback (most recent call last)", run_demo().stderr)
+    def test_metrics_validate_pairs_and_mape_zero_case(self):
+        self.assertAlmostEqual(ts.mse([1, 2], [1, 4]), 2.0)
+        self.assertAlmostEqual(ts.mae([1, 2], [1, 4]), 1.0)
+        self.assertAlmostEqual(ts.mape([0, 2], [99, 1]), 50.0)
+        self.assertAlmostEqual(ts.mape([2, 4], [1, 2]), 50.0)
+        with self.assertRaises(ValueError):
+            ts.mae([1], [1, 2])
+        with self.assertRaises(ValueError):
+            ts.mape([0, 0], [0, 0])
+
+    def test_diagnostics_reject_invalid_inputs(self):
+        mean, std, _ = ts.check_stationarity([1, 2, 3], window=2)
+        self.assertEqual((len(mean), len(std)), (3, 3))
+        self.assertEqual(len(ts.autocorrelation([1, 2, 3], 2)), 3)
+        with self.assertRaises(ValueError):
+            ts.autocorrelation([1, 2, 3], 3)
+        with self.assertRaises(ValueError):
+            ts.make_synthetic_series(0)
+
 
 if __name__ == "__main__":
     unittest.main()

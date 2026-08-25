@@ -21,13 +21,13 @@
 
 ## Build It
 
-Start with `train_val_test_split(X, y, seed=7)`. The returned order is `X_train, y_train, X_val, y_val, X_test, y_test`; with ten rows and ratios `0.6`/`0.2`, the groups contain 6, 2, and 2 rows. `kfold_split(11, k=4)` distributes every index to validation exactly once, with the final fold receiving the remainder. `stratified_kfold_split` does the same while assigning each class round-robin.
+Start with `train_val_test_split(X, y, seed=7)`. The returned order is `X_train, y_train, X_val, y_val, X_test, y_test`; with ten rows and ratios `0.6`/`0.2`, the groups contain 6, 2, and 2 rows. `kfold_split(11, k=4)` distributes every index to validation exactly once, with the final fold receiving the remainder. `stratified_kfold_split` distributes each class across folds, assigning any per-class remainder to the currently smallest validation fold so total fold sizes stay balanced.
 
-For classification, `confusion_matrix` returns `(tp, tn, fp, fn)`. On truth `[1, 1, 0, 0]` and prediction `[1, 0, 0, 0]`, that tuple is `(1, 2, 0, 1)`, so precision is `1.0`, recall `0.5`, and F1 is `2/3`. `roc_curve` sorts scores descending; `auc_roc([0, 1], [0.1, 0.9])` is `1.0`.
+For classification, `confusion_matrix` returns `(tp, tn, fp, fn)`. On truth `[1, 1, 0, 0]` and prediction `[1, 0, 0, 0]`, that tuple is `(1, 2, 0, 1)`, so precision is `1.0`, recall `0.5`, and F1 is `2/3`. `roc_curve` starts with an all-negative threshold and then scans scores descending; `auc_roc([0, 1], [0.1, 0.9])` is `1.0`. Binary metrics reject mismatched lengths or labels outside `{0, 1}`. Regression metrics reject empty, mismatched, or non-finite inputs.
 
 ## Use It
 
-Call `cross_validate` with a factory, not one already-fitted model, so every fold starts with fresh weights. Use `stratified=True` for class labels when fold prevalence matters. Select models using validation or fold scores, then fit once and call the test metrics exactly once. For regression, compare the learned model with `r_squared`'s mean-target baseline; a negative R-squared means the model is worse than that baseline.
+Call `cross_validate` with a factory, not one already-fitted model, so every fold starts with fresh weights. `kfold_split` and `stratified_kfold_split` require `2 <= k <= n`; validation rows are assigned once and fold sizes differ by at most one. Split ratios must produce three non-empty partitions. Use `stratified=True` for class labels when fold prevalence matters. Select models using validation or fold scores, then fit once and call the test metrics exactly once. For regression, compare the learned model with `r_squared`'s mean-target baseline; a negative R-squared means the model is worse than that baseline.
 
 ## Ship It
 

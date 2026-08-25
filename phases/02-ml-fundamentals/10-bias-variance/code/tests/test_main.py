@@ -54,6 +54,14 @@ class BiasVarianceTests(unittest.TestCase):
         result = {1: {"total_error": 2.0}, 2: {"total_error": 1.0}}
         self.assertEqual(bias_variance.find_optimal(result), 2)
 
+    def test_invalid_experiment_inputs_are_explicit(self):
+        with self.assertRaises(ValueError):
+            bias_variance.generate_data(0)
+        with self.assertRaises(ValueError):
+            bias_variance.bias_variance_decomposition([1], n_bootstrap=0)
+        with self.assertRaises(ValueError):
+            bias_variance.find_optimal({})
+
 
 if __name__ == "__main__":
     unittest.main()

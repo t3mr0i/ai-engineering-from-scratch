@@ -1,10 +1,7 @@
-"""Hands-on Prompt Clinic course artifact.
-
-Lesson docs: phases/11-llm-engineering/31-hands-on-prompt-clinic/docs/en.md
-Source basis: LHIND AI Self-Assessment capability and training catalog.
-Implements the reusable classroom artifact without external dependencies.
-Run with: python3 main.py
-"""
+# Prompt-clinic planner for phases/02-ml-fundamentals/31-hands-on-prompt-clinic/docs/en.md.
+# Turns an ML request into explicit framing, leakage, split, metric, and acceptance checks.
+# The artifact is deterministic and uses only the Python standard library.
+# Run from this directory with: python3 main.py
 
 from __future__ import annotations
 
@@ -13,11 +10,38 @@ from dataclasses import dataclass
 from typing import Iterable
 
 
-TITLE = "Hands-on Prompt Clinic"
-CAPABILITY = "Foundation - Personal AI Productivity and Applied Prompting"
-SIGNALS = ["vague goal", "missing audience", "weak constraint", "no example"]
-CONTROLS = ["prompt brief", "iteration log", "output rubric", "source check"]
-CATEGORIES = ["framing", "context", "format", "review"]
+TITLE = "Hands-on ML Prompt Clinic"
+SIGNALS = (
+    "vague target",
+    "missing audience",
+    "leakage risk",
+    "missing split",
+    "undefined metric",
+    "no acceptance test",
+)
+SIGNAL_CATEGORIES = {
+    "vague target": "problem framing",
+    "missing audience": "problem framing",
+    "leakage risk": "data integrity",
+    "missing split": "evaluation design",
+    "undefined metric": "evaluation design",
+    "no acceptance test": "release review",
+}
+SIGNAL_CONTROLS = {
+    "vague target": ("problem brief",),
+    "missing audience": ("problem brief",),
+    "leakage risk": ("leakage check", "source check"),
+    "missing split": ("split protocol",),
+    "undefined metric": ("metric definition", "evaluation rubric"),
+    "no acceptance test": ("acceptance test", "output rubric"),
+}
+DEFAULT_CONTROLS = ("problem brief", "metric definition", "split protocol", "acceptance test")
+
+
+def normalize(text: str) -> str:
+    if not isinstance(text, str):
+        raise TypeError("text must be a string")
+    return " ".join(text.lower().replace("-", " ").split())
 
 
 @dataclass(frozen=True)
@@ -28,6 +52,18 @@ class Scenario:
     impact: int = 3
     uncertainty: int = 3
 
+    def __post_init__(self) -> None:
+        if not isinstance(self.name, str) or not self.name.strip():
+            raise ValueError("name must be non-empty text")
+        if not isinstance(self.description, str):
+            raise TypeError("description must be text")
+        known = tuple(self.signals)
+        if len(set(known)) != len(known) or any(signal not in SIGNALS for signal in known):
+            raise ValueError(f"signals must be unique values from {list(SIGNALS)}")
+        for field, value in (("impact", self.impact), ("uncertainty", self.uncertainty)):
+            if not isinstance(value, int) or not 1 <= value <= 5:
+                raise ValueError(f"{field} must be an integer from 1 through 5")
+
 
 @dataclass(frozen=True)
 class Recommendation:
@@ -36,31 +72,30 @@ class Recommendation:
     priority: str
     controls: tuple[str, ...]
     rationale: str
+    categories: tuple[str, ...] = ()
 
 
-def normalize(text: str) -> str:
-    return " ".join(text.lower().replace("-", " ").split())
+def _contains_phrase(text: str, phrase: str) -> bool:
+    haystack = f" {normalize(text)} "
+    needle = f" {normalize(phrase)} "
+    return needle in haystack
 
 
 def signal_matches(scenario: Scenario) -> list[str]:
-    haystack_words = normalize(" ".join((scenario.name, scenario.description, " ".join(scenario.signals)))).split()
-    matches = []
-    for signal in SIGNALS:
-        words = normalize(signal).split()
-        if all(word in haystack_words for word in words[:2]):
-            matches.append(signal)
-        elif any(word in haystack_words for word in words):
-            matches.append(signal)
-    return matches
+    if not isinstance(scenario, Scenario):
+        raise TypeError("scenario must be a Scenario")
+    detected = [signal for signal in SIGNALS if _contains_phrase(scenario.description, signal)]
+    return [signal for signal in SIGNALS if signal in detected or signal in scenario.signals]
 
 
 def score_scenario(scenario: Scenario) -> int:
     matches = signal_matches(scenario)
-    base = scenario.impact * 2 + scenario.uncertainty
-    return min(20, base + len(matches) * 2)
+    return min(20, scenario.impact * 2 + scenario.uncertainty + len(matches) * 2)
 
 
 def priority_for(score: int) -> str:
+    if not isinstance(score, int) or not 0 <= score <= 20:
+        raise ValueError("score must be an integer from 0 through 20")
     if score >= 16:
         return "launch gate required"
     if score >= 11:
@@ -71,21 +106,36 @@ def priority_for(score: int) -> str:
 
 
 def choose_category(scenario: Scenario) -> str:
+    return choose_categories(scenario)[0]
+
+
+def choose_categories(scenario: Scenario) -> tuple[str, ...]:
     matches = signal_matches(scenario)
-    if not matches:
-        return CATEGORIES[0]
-    return CATEGORIES[(len(matches) + scenario.impact + scenario.uncertainty) % len(CATEGORIES)]
+    categories: list[str] = []
+    for signal in matches:
+        category = SIGNAL_CATEGORIES[signal]
+        if category not in categories:
+            categories.append(category)
+    return tuple(categories or ["problem framing"])
 
 
 def recommend(scenario: Scenario) -> Recommendation:
     matches = signal_matches(scenario)
+    controls: list[str] = []
+    for signal in matches:
+        for control in SIGNAL_CONTROLS[signal]:
+            if control not in controls:
+                controls.append(control)
+    if not controls:
+        controls.extend(DEFAULT_CONTROLS)
     score = score_scenario(scenario)
-    selected_controls = tuple(CONTROLS[: max(2, min(len(CONTROLS), 1 + len(matches)))])
+    matched = ", ".join(matches) if matches else "none"
     rationale = (
-        f"Matched {len(matches)} signal(s): {', '.join(matches) if matches else 'none'}. "
-        f"Impact={scenario.impact}, uncertainty={scenario.uncertainty}."
+        f"Matched signals: {matched}. Controls cover the stated ML risk; "
+        f"impact={scenario.impact}, uncertainty={scenario.uncertainty}."
     )
-    return Recommendation(choose_category(scenario), score, priority_for(score), selected_controls, rationale)
+    categories = choose_categories(scenario)
+    return Recommendation(categories[0], score, priority_for(score), tuple(controls), rationale, categories)
 
 
 def build_plan(scenarios: Iterable[Scenario]) -> list[dict]:
@@ -95,24 +145,43 @@ def build_plan(scenarios: Iterable[Scenario]) -> list[dict]:
         rows.append({
             "scenario": scenario.name,
             "category": rec.category,
+            "categories": list(rec.categories),
             "score": rec.score,
             "priority": rec.priority,
             "controls": list(rec.controls),
             "rationale": rec.rationale,
         })
-    return sorted(rows, key=lambda row: row["score"], reverse=True)
+    return sorted(rows, key=lambda row: (-row["score"], row["scenario"]))
 
 
 def demo_scenarios() -> list[Scenario]:
     return [
-        Scenario("client summary", "Prompt has vague goal and missing audience.", ("vague goal", "missing audience"), 4, 3),
-        Scenario("meeting notes", "Prompt uses weak constraint and no example for the desired output.", ("weak constraint", "no example"), 3, 3),
-        Scenario("team rewrite", "Low-risk practice prompt with one vague goal.", ("vague goal",), 2, 2),
+        Scenario(
+            "support-ticket triage",
+            "Predict an escalation label for a support queue; the target and audience are vague, and no acceptance test is written.",
+            ("vague target", "missing audience", "no acceptance test"),
+            3,
+            3,
+        ),
+        Scenario(
+            "weekly churn classifier",
+            "Predict next-month churn from account activity; a post-outcome field creates leakage risk and the time split and metric are missing.",
+            ("leakage risk", "missing split", "undefined metric"),
+            5,
+            4,
+        ),
+        Scenario(
+            "reviewed demand baseline",
+            "Forecast next week's demand with a chronological split, MAE, and a held-out acceptance test.",
+            (),
+            2,
+            2,
+        ),
     ]
 
 
 def main() -> None:
-    print(json.dumps({"title": TITLE, "capability": CAPABILITY, "plan": build_plan(demo_scenarios())}, indent=2))
+    print(json.dumps({"title": TITLE, "plan": build_plan(demo_scenarios())}, indent=2))
 
 
 if __name__ == "__main__":

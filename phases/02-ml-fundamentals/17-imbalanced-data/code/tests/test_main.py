@@ -1,64 +1,83 @@
-# Contract and executable-behavior tests for this lesson demo.
-from __future__ import annotations
-
-import ast
-import functools
-import importlib.util
-import os
-from pathlib import Path
-import subprocess
 import sys
 import unittest
+from pathlib import Path
 
-CODE = Path(__file__).resolve().parents[1]
-MAIN = CODE / "main.py"
-ALLOWED = set(sys.stdlib_module_names) | {"numpy", "torch", "h5py", "zstandard", "safetensors"}
+import numpy as np
 
-def source_trees() -> list[ast.AST]:
-    return [ast.parse(path.read_text(encoding="utf-8")) for path in CODE.glob("*.py")]
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import imbalanced as im
 
-def external_roots() -> set[str]:
-    roots: set[str] = set()
-    for tree in source_trees():
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                roots.update(alias.name.split(".")[0] for alias in node.names)
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                roots.add(node.module.split(".")[0])
-    return {name for name in roots if not (CODE / f"{name}.py").exists() and not (CODE / name).is_dir()}
 
-@functools.lru_cache(maxsize=1)
-def run_demo() -> subprocess.CompletedProcess[str]:
-    missing = sorted(name for name in external_roots() if name in ALLOWED and importlib.util.find_spec(name) is None)
-    banned = sorted(external_roots() - ALLOWED)
-    if missing or banned:
-        raise unittest.SkipTest(f"demo dependencies unavailable or disallowed: {missing + banned}")
-    env = os.environ.copy()
-    for key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "HF_TOKEN", "HUGGINGFACE_TOKEN"):
-        env.pop(key, None)
-    return subprocess.run(
-        [sys.executable, MAIN.name], cwd=CODE, text=True, capture_output=True,
-        timeout=45, env=env, check=False,
-    )
+class ImbalanceContracts(unittest.TestCase):
+    def setUp(self):
+        self.X = np.array([[0.0], [0.2], [1.0], [1.2], [1.4], [1.6]])
+        self.y = np.array([0, 0, 0, 1, 1, 1])
 
-class LessonDemoTests(unittest.TestCase):
-    def test_source_compiles(self) -> None:
-        compile(MAIN.read_text(encoding="utf-8"), str(MAIN), "exec")
+    def test_fixture_is_reproducible_and_binary(self):
+        X1, y1 = im.make_imbalanced_data(20, 4, seed=2)
+        X2, y2 = im.make_imbalanced_data(20, 4, seed=2)
+        np.testing.assert_array_equal(X1, X2)
+        np.testing.assert_array_equal(y1, y2)
+        self.assertEqual(set(y1), {0, 1})
 
-    def test_demo_has_explicit_entrypoint(self) -> None:
-        source = MAIN.read_text(encoding="utf-8")
-        self.assertTrue("__main__" in source or "runpy.run_path" in source)
+    def test_neighbors_preserve_original_indices(self):
+        self.assertEqual(set(im.find_k_neighbors(self.X, 5, 2)), {3, 4})
+        with self.assertRaises(ValueError):
+            im.find_k_neighbors(self.X, 0, 6)
 
-    def test_demo_exits_successfully(self) -> None:
-        self.assertEqual(run_demo().returncode, 0, run_demo().stderr)
+    def test_smote_interpolates_and_validates(self):
+        synthetic = im.smote(self.X[3:], k=2, n_synthetic=12, seed=1)
+        self.assertEqual(synthetic.shape, (12, 1))
+        self.assertTrue(np.all(synthetic >= self.X[3:].min()))
+        self.assertTrue(np.all(synthetic <= self.X[3:].max()))
+        with self.assertRaises(ValueError):
+            im.smote(self.X[3:], k=0)
+        with self.assertRaises(ValueError):
+            im.smote([[1.0]], n_synthetic=1)
 
-    def test_demo_emits_bounded_output(self) -> None:
-        result = run_demo()
-        self.assertTrue((result.stdout + result.stderr).strip())
-        self.assertLess(len(result.stdout) + len(result.stderr), 1_000_000)
+    def test_resampling_balances_classes(self):
+        X_over, y_over = im.random_oversample(self.X, np.array([0, 0, 0, 0, 1, 1]))
+        X_under, y_under = im.random_undersample(self.X, np.array([0, 0, 0, 0, 1, 1]))
+        self.assertEqual(np.bincount(y_over).tolist(), [4, 4])
+        self.assertEqual(np.bincount(y_under).tolist(), [2, 2])
+        self.assertEqual(len(X_over), len(y_over))
+        with self.assertRaises(ValueError):
+            im.random_oversample(self.X[:3], np.zeros(3, dtype=int))
+        with self.assertRaises(ValueError):
+            im.random_undersample(self.X[:3], np.zeros(3, dtype=int))
 
-    def test_demo_has_no_traceback(self) -> None:
-        self.assertNotIn("Traceback (most recent call last)", run_demo().stderr)
+    def test_weighted_logistic_and_class_weights(self):
+        weights = im.compute_class_weights(self.y)
+        self.assertAlmostEqual(weights[self.y == 0].mean(), 1.0)
+        w, b = im.logistic_regression_weighted(self.X, self.y, weights, epochs=10)
+        self.assertEqual(w.shape, (1,))
+        self.assertTrue(np.isfinite(b))
+        with self.assertRaises(ValueError):
+            im.logistic_regression_weighted(self.X, self.y, np.ones(2))
+        with self.assertRaises(ValueError):
+            im.logistic_regression_weighted(self.X, self.y, np.zeros(len(self.y)))
+
+    def test_metrics_and_threshold_are_binary_and_finite(self):
+        metrics = im.compute_metrics(self.y, np.array([0, 0, 1, 1, 1, 1]))
+        self.assertAlmostEqual(metrics["recall"], 1.0)
+        threshold, score = im.find_optimal_threshold(self.y, np.array([.1, .2, .3, .8, .9, .95]))
+        self.assertTrue(0.05 <= threshold <= 0.95)
+        self.assertTrue(0 <= score <= 1)
+        with self.assertRaises(ValueError):
+            im.compute_metrics([0, 1], [0])
+        with self.assertRaises(ValueError):
+            im.find_optimal_threshold(self.y, np.ones(len(self.y)), metric="accuracy")
+
+    def test_probability_loss_rejects_bad_inputs(self):
+        loss = im.class_weighted_loss(self.y, np.full(len(self.y), .5), np.ones(len(self.y)))
+        self.assertAlmostEqual(loss, np.log(2), places=6)
+        with self.assertRaises(ValueError):
+            im.class_weighted_loss(self.y, np.full(len(self.y), 1.2), np.ones(len(self.y)))
+        with self.assertRaises(ValueError):
+            im.class_weighted_loss(self.y, np.full(len(self.y), .5), np.zeros(len(self.y)))
+        with self.assertRaises(ValueError):
+            im.compute_class_weights([1, 1, 1])
+
 
 if __name__ == "__main__":
     unittest.main()

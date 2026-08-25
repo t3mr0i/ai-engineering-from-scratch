@@ -80,6 +80,12 @@ class TuningTests(unittest.TestCase):
         model.fit(self.X_train, self.y_train)
         self.assertEqual(len(model.trees), 2)
 
+    def test_bayesian_observations_stay_inside_the_declared_space(self):
+        optimizer = tuning.SimpleBayesianOptimizer({"x": ("log_float", 1.0, 1.0)}, n_initial=1)
+        optimizer.observe({"x": 1.0}, 0.0)
+        with self.assertRaises(ValueError):
+            optimizer.observe({"x": 2.0}, 0.0)
+
 
 if __name__ == "__main__":
     unittest.main()

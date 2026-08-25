@@ -23,7 +23,7 @@
 
 Run `python3 main.py` for a four-configuration grid (`n_estimators` 4/8, learning rate 0.05/0.15, depth 2). The output includes `evaluated: 4`, the selected dictionary, and the validation MSE. `grid_search` returns `(best_params, best_score, history)`, and each history item stores a copied parameter dictionary.
 
-`sample_param` accepts a list, `("int", low, high)`, `("float", low, high)`, or `("log_float", low, high)`. `random_search` converts integer-like model fields back to `int` before fitting. `SimpleBayesianOptimizer` takes `n_initial` random suggestions, stores parameter vectors and scores, then evaluates expected improvement over 500 random candidates. It is an educational surrogate, not a claim of optimal Bayesian inference.
+`sample_param` accepts a non-empty list, `("int", low, high)`, `("float", low, high)`, or `("log_float", low, high)`; unknown kinds, reversed bounds, and non-positive log bounds raise `ValueError`. `GBMForTuning` requires positive estimator/depth/learning-rate values and a subsample in `(0, 1]`, resets its trees on every fit, and rejects prediction before fitting. `random_search` converts integer-like model fields back to `int` before fitting. `SimpleBayesianOptimizer` validates a non-empty space, positive `n_initial`, finite observations inside the declared space, and positive optimization budgets. It takes `n_initial` random suggestions, stores parameter vectors and scores, then evaluates expected improvement over 500 random candidates. It is an educational surrogate, not a claim of optimal Bayesian inference.
 
 ## Use It
 

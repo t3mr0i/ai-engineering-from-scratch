@@ -59,6 +59,8 @@ class NaiveBayesTests(unittest.TestCase):
                 naive_bayes.GaussianNB(var_smoothing=value)
 
     def test_fit_and_predict_shapes_and_fitted_guards(self):
+        with self.assertRaises(RuntimeError):
+            naive_bayes.MultinomialNB().predict(np.zeros((1, 2)))
         model = naive_bayes.GaussianNB()
         with self.assertRaises(RuntimeError):
             model.predict(np.zeros((1, 2)))
@@ -67,6 +69,8 @@ class NaiveBayesTests(unittest.TestCase):
         model.fit(np.zeros((2, 2)), np.array([0, 1]))
         with self.assertRaises(ValueError):
             model.predict(np.zeros((1, 3)))
+        with self.assertRaises(ValueError):
+            model.fit(np.zeros((2, 2)), np.array([0.0, np.nan]))
 
     def test_continuous_fixture_preserves_requested_sample_count(self):
         X, y = naive_bayes.make_continuous_data(91, seed=4)
@@ -78,6 +82,8 @@ class NaiveBayesTests(unittest.TestCase):
         X, y = naive_bayes.make_continuous_data(9, seed=2)
         with self.assertRaises(ValueError):
             naive_bayes.train_test_split(X, y, test_ratio=1)
+        with self.assertRaises(ValueError):
+            naive_bayes.train_test_split(X[:1], y[:1], test_ratio=0.2)
         with self.assertRaises(ValueError):
             naive_bayes.accuracy([1, 0], [1])
 

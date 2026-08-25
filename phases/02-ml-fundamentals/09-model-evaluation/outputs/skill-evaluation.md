@@ -7,3 +7,5 @@
 5. Keep the test set untouched until the final selected model is fitted.
 
 The local acceptance fixture has 120 classification rows with a 60/20/20 split. It is a reproducibility check for this lesson’s implementations, not a production performance claim.
+
+The split contract rejects ratios that would create an empty partition. Binary metrics require equal non-empty vectors with labels `0` or `1`; regression metrics require equal non-empty finite vectors.

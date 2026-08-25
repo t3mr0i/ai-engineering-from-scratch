@@ -12,15 +12,34 @@ from typing import Iterable
 import numpy as np
 
 
+def _interactions(values):
+    matrix = np.asarray(values, dtype=float)
+    if matrix.ndim != 2 or matrix.shape[0] == 0 or matrix.shape[1] == 0:
+        raise ValueError("interactions must be a non-empty 2D user-item matrix")
+    if not np.isfinite(matrix).all() or np.any(matrix < 0):
+        raise ValueError("interactions must be finite and non-negative")
+    return matrix
+
+
+def _ranking_inputs(recommended, relevant, k):
+    if not isinstance(k, (int, np.integer)) or k < 1:
+        raise ValueError("k must be a positive integer")
+    ranked = list(recommended)
+    relevant_set = set(relevant)
+    if len(set(ranked)) != len(ranked):
+        raise ValueError("recommended item IDs must be unique and preserve rank")
+    if any(not isinstance(item, (int, np.integer)) or item < 0 for item in ranked + list(relevant_set)):
+        raise ValueError("item identifiers must be non-negative integers")
+    return ranked[:k], relevant_set
+
+
 def popularity_scores(interactions: np.ndarray) -> np.ndarray:
-    matrix = np.asarray(interactions, dtype=float)
-    if matrix.ndim != 2:
-        raise ValueError("interactions must be a user-item matrix")
+    matrix = _interactions(interactions)
     return (matrix > 0).sum(axis=0).astype(float)
 
 
 def cosine_user_similarity(interactions: np.ndarray) -> np.ndarray:
-    binary = (np.asarray(interactions, dtype=float) > 0).astype(float)
+    binary = (_interactions(interactions) > 0).astype(float)
     norms = np.linalg.norm(binary, axis=1)
     denominator = np.outer(norms, norms)
     similarities = np.divide(binary @ binary.T, denominator, out=np.zeros_like(denominator), where=denominator > 0)
@@ -29,9 +48,11 @@ def cosine_user_similarity(interactions: np.ndarray) -> np.ndarray:
 
 
 def neighborhood_scores(interactions: np.ndarray, user_index: int, *, min_overlap: int = 1) -> np.ndarray:
-    matrix = (np.asarray(interactions, dtype=float) > 0).astype(float)
-    if not 0 <= user_index < matrix.shape[0]:
+    matrix = (_interactions(interactions) > 0).astype(float)
+    if not isinstance(user_index, (int, np.integer)) or not 0 <= user_index < matrix.shape[0]:
         raise IndexError("user_index out of range")
+    if not isinstance(min_overlap, (int, np.integer)) or min_overlap < 1:
+        raise ValueError("min_overlap must be a positive integer")
     similarity = cosine_user_similarity(matrix)[user_index]
     overlap = matrix @ matrix[user_index]
     similarity = np.where(overlap >= min_overlap, similarity, 0.0)
@@ -43,27 +64,30 @@ def neighborhood_scores(interactions: np.ndarray, user_index: int, *, min_overla
 
 
 def top_k(scores: Iterable[float] | np.ndarray, k: int) -> list[int]:
-    if k <= 0:
-        return []
     array = np.asarray(scores, dtype=float)
+    if array.ndim != 1 or array.size == 0 or np.isnan(array).any():
+        raise ValueError("scores must be a non-empty one-dimensional array")
+    if not isinstance(k, (int, np.integer)) or not 1 <= k <= len(array):
+        raise ValueError("k must be between 1 and the number of scores")
     finite = np.flatnonzero(np.isfinite(array))
     ordered = finite[np.argsort(-array[finite], kind="stable")]
     return ordered[:k].tolist()
 
 
 def precision_at_k(recommended: Iterable[int], relevant: set[int], k: int) -> float:
-    ranked = list(recommended)[:k]
-    return 0.0 if k <= 0 else len(set(ranked) & relevant) / k
+    ranked, relevant = _ranking_inputs(recommended, relevant, k)
+    return len(set(ranked) & relevant) / k
 
 
 def recall_at_k(recommended: Iterable[int], relevant: set[int], k: int) -> float:
+    ranked, relevant = _ranking_inputs(recommended, relevant, k)
     if not relevant:
         return 0.0
-    return len(set(list(recommended)[:k]) & relevant) / len(relevant)
+    return len(set(ranked) & relevant) / len(relevant)
 
 
 def ndcg_at_k(recommended: Iterable[int], relevant: set[int], k: int) -> float:
-    ranked = list(recommended)[:k]
+    ranked, relevant = _ranking_inputs(recommended, relevant, k)
     gain = sum(1.0 / np.log2(index + 2) for index, item in enumerate(ranked) if item in relevant)
     ideal = sum(1.0 / np.log2(index + 2) for index in range(min(k, len(relevant))))
     return float(gain / ideal) if ideal else 0.0
@@ -75,6 +99,8 @@ class FactorModel:
     items: np.ndarray
 
     def scores(self, user_index: int) -> np.ndarray:
+        if not isinstance(user_index, (int, np.integer)) or not 0 <= user_index < self.users.shape[0]:
+            raise IndexError("user_index out of range")
         return self.users[user_index] @ self.items.T
 
 
@@ -87,13 +113,17 @@ def factorize(
     regularization: float = 0.02,
     seed: int = 7,
 ) -> FactorModel:
-    matrix = np.asarray(interactions, dtype=float)
-    if factors <= 0 or epochs <= 0:
-        raise ValueError("factors and epochs must be positive")
+    matrix = _interactions(interactions)
+    if not isinstance(factors, (int, np.integer)) or factors <= 0 or not isinstance(epochs, (int, np.integer)) or epochs <= 0:
+        raise ValueError("factors and epochs must be positive integers")
+    if not np.isfinite(learning_rate) or learning_rate <= 0 or not np.isfinite(regularization) or regularization < 0:
+        raise ValueError("learning_rate must be positive and regularization non-negative")
     rng = np.random.default_rng(seed)
     users = rng.normal(0.0, 0.1, size=(matrix.shape[0], factors))
     items = rng.normal(0.0, 0.1, size=(matrix.shape[1], factors))
     observed = np.argwhere(matrix > 0)
+    if len(observed) == 0:
+        raise ValueError("factorize requires at least one observed interaction")
     for _ in range(epochs):
         for user_index, item_index in observed[rng.permutation(len(observed))]:
             target = matrix[user_index, item_index]
@@ -106,7 +136,7 @@ def factorize(
 
 
 def leave_one_out(interactions: np.ndarray) -> tuple[np.ndarray, dict[int, set[int]]]:
-    matrix = (np.asarray(interactions, dtype=float) > 0).astype(float)
+    matrix = (_interactions(interactions) > 0).astype(float)
     train = matrix.copy()
     held_out: dict[int, set[int]] = {}
     for user_index, row in enumerate(matrix):
@@ -119,7 +149,16 @@ def leave_one_out(interactions: np.ndarray) -> tuple[np.ndarray, dict[int, set[i
 
 
 def recommend(interactions: np.ndarray, user_index: int, *, method: str, k: int = 3) -> list[int]:
-    matrix = np.asarray(interactions, dtype=float)
+    matrix = _interactions(interactions)
+    if not isinstance(user_index, (int, np.integer)) or not 0 <= user_index < matrix.shape[0]:
+        raise IndexError("user_index out of range")
+    if not isinstance(k, (int, np.integer)) or not 1 <= k <= matrix.shape[1]:
+        raise ValueError("k must be between 1 and the number of items")
+    if method not in {"popularity", "neighbors", "factors"}:
+        raise ValueError(f"unknown method: {method}")
+    if not np.any(matrix[user_index] > 0):
+        scores = popularity_scores(matrix)
+        return top_k(scores, k)
     if method == "popularity":
         scores = popularity_scores(matrix)
         scores[matrix[user_index] > 0] = -np.inf
@@ -128,8 +167,6 @@ def recommend(interactions: np.ndarray, user_index: int, *, method: str, k: int 
     elif method == "factors":
         scores = factorize(matrix).scores(user_index)
         scores[matrix[user_index] > 0] = -np.inf
-    else:
-        raise ValueError(f"unknown method: {method}")
     return top_k(scores, k)
 
 

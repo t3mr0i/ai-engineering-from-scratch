@@ -1,7 +1,38 @@
+# Anomaly detectors for phases/02-ml-fundamentals/16-anomaly-detection/docs/en.md.
+# Implements z-score, IQR, and seeded isolation-forest scoring from scratch.
+# Scores are screening signals, not calibrated probabilities or automatic labels.
+# NumPy is the only non-stdlib dependency for the canonical demo.
+
+"""From-scratch point and multivariate anomaly detectors for the lesson."""
+
 import numpy as np
 
 
+def _matrix(X, name="X"):
+    array = np.asarray(X, dtype=float)
+    if array.ndim != 2 or array.shape[0] == 0 or array.shape[1] == 0:
+        raise ValueError(f"{name} must be a non-empty 2D array")
+    if not np.isfinite(array).all():
+        raise ValueError(f"{name} must contain only finite values")
+    return array
+
+
+def _binary_pair(y_true, y_pred):
+    actual = np.asarray(y_true)
+    predicted = np.asarray(y_pred)
+    if actual.ndim != 1 or predicted.ndim != 1 or actual.size == 0:
+        raise ValueError("labels must be non-empty one-dimensional arrays")
+    if actual.shape != predicted.shape:
+        raise ValueError("label arrays must have the same length")
+    if not set(np.unique(actual)).issubset({0, 1}) or not set(np.unique(predicted)).issubset({0, 1}):
+        raise ValueError("labels must contain only 0 and 1")
+    return actual.astype(int), predicted.astype(int)
+
+
 def zscore_detect(X, threshold=3.0):
+    X = _matrix(X)
+    if not np.isfinite(threshold) or threshold < 0:
+        raise ValueError("threshold must be finite and non-negative")
     mean = X.mean(axis=0)
     std = X.std(axis=0)
     std[std == 0] = 1.0
@@ -12,6 +43,9 @@ def zscore_detect(X, threshold=3.0):
 
 
 def iqr_detect(X, factor=1.5):
+    X = _matrix(X)
+    if not np.isfinite(factor) or factor < 0:
+        raise ValueError("factor must be finite and non-negative")
     q1 = np.percentile(X, 25, axis=0)
     q3 = np.percentile(X, 75, axis=0)
     iqr = q3 - q1
@@ -26,6 +60,8 @@ def iqr_detect(X, factor=1.5):
 
 
 def _c_factor(n):
+    if not isinstance(n, (int, np.integer)) or n < 1:
+        raise ValueError("n must be a positive integer")
     if n <= 1:
         return 0.0
     if n == 2:
@@ -36,16 +72,26 @@ def _c_factor(n):
 
 class IsolationTree:
     def __init__(self, max_depth=10, rng=None):
+        if not isinstance(max_depth, (int, np.integer)) or max_depth < 1:
+            raise ValueError("max_depth must be a positive integer")
         self.max_depth = max_depth
         self.rng = rng if rng is not None else np.random.RandomState()
         self.is_leaf = False
         self.size = 0
         self.feature = None
+        self.feature_count = None
         self.threshold = None
         self.left = None
         self.right = None
 
     def fit(self, X, depth=0):
+        X = _matrix(X)
+        if self.feature_count is None:
+            self.feature_count = X.shape[1]
+        elif X.shape[1] != self.feature_count:
+            raise ValueError("X has a different number of features from this tree")
+        if not isinstance(depth, (int, np.integer)) or depth < 0:
+            raise ValueError("depth must be a non-negative integer")
         n, p = X.shape
 
         if depth >= self.max_depth or n <= 1:
@@ -78,6 +124,13 @@ class IsolationTree:
         return self
 
     def path_length(self, x, depth=0):
+        x = np.asarray(x, dtype=float)
+        if x.ndim != 1 or x.size == 0 or not np.isfinite(x).all():
+            raise ValueError("x must be a finite one-dimensional vector")
+        if self.feature_count is not None and x.size != self.feature_count:
+            raise ValueError("x has a different number of features from this tree")
+        if not self.is_leaf and self.feature is None:
+            raise RuntimeError("fit must be called before path_length")
         if self.is_leaf:
             return depth + _c_factor(self.size)
 
@@ -89,6 +142,10 @@ class IsolationTree:
 
 class IsolationForest:
     def __init__(self, n_estimators=100, max_samples=256, seed=42):
+        if not isinstance(n_estimators, (int, np.integer)) or n_estimators < 1:
+            raise ValueError("n_estimators must be a positive integer")
+        if not isinstance(max_samples, (int, np.integer)) or max_samples < 2:
+            raise ValueError("max_samples must be an integer at least 2")
         self.n_estimators = n_estimators
         self.max_samples = max_samples
         self.seed = seed
@@ -96,6 +153,7 @@ class IsolationForest:
         self.n_train = 0
 
     def fit(self, X):
+        X = _matrix(X)
         self.n_train = X.shape[0]
         rng = np.random.RandomState(self.seed)
         self.trees = []
@@ -113,6 +171,11 @@ class IsolationForest:
         return self
 
     def anomaly_score(self, X):
+        X = _matrix(X)
+        if not self.trees or self.n_train == 0:
+            raise RuntimeError("fit must be called before anomaly_score")
+        if X.shape[1] != self.trees[0].feature_count:
+            raise ValueError("X has a different number of features from the training data")
         n = X.shape[0]
         avg_path = np.zeros(n)
 
@@ -128,11 +191,16 @@ class IsolationForest:
         return scores
 
     def predict(self, X, threshold=0.5):
+        if not np.isfinite(threshold) or not 0 <= threshold <= 1:
+            raise ValueError("threshold must be between 0 and 1")
         scores = self.anomaly_score(X)
         return scores > threshold, scores
 
 
 def make_anomaly_data(n_normal=500, n_anomaly=25, n_features=2, seed=42):
+    for name, value in (("n_normal", n_normal), ("n_anomaly", n_anomaly), ("n_features", n_features)):
+        if not isinstance(value, (int, np.integer)) or value <= 0:
+            raise ValueError(f"{name} must be a positive integer")
     rng = np.random.RandomState(seed)
 
     center = rng.uniform(-2, 2, n_features)
@@ -163,6 +231,9 @@ def make_anomaly_data(n_normal=500, n_anomaly=25, n_features=2, seed=42):
 
 
 def make_multimodal_data(n_per_cluster=200, n_anomaly=20, seed=42):
+    for name, value in (("n_per_cluster", n_per_cluster), ("n_anomaly", n_anomaly)):
+        if not isinstance(value, (int, np.integer)) or value <= 0:
+            raise ValueError(f"{name} must be a positive integer")
     rng = np.random.RandomState(seed)
 
     c1 = rng.multivariate_normal([0, 0], [[0.3, 0], [0, 0.3]], n_per_cluster)
@@ -179,6 +250,7 @@ def make_multimodal_data(n_per_cluster=200, n_anomaly=20, seed=42):
 
 
 def precision_recall(y_true, y_pred):
+    y_true, y_pred = _binary_pair(y_true, y_pred)
     tp = np.sum((y_true == 1) & (y_pred == 1))
     fp = np.sum((y_true == 0) & (y_pred == 1))
     fn = np.sum((y_true == 1) & (y_pred == 0))
@@ -191,6 +263,16 @@ def precision_recall(y_true, y_pred):
 
 
 def precision_at_k(y_true, scores, k):
+    y_true = np.asarray(y_true)
+    scores = np.asarray(scores, dtype=float)
+    if y_true.ndim != 1 or scores.ndim != 1 or y_true.size == 0 or y_true.shape != scores.shape:
+        raise ValueError("y_true and scores must be non-empty one-dimensional arrays of equal length")
+    if not set(np.unique(y_true)).issubset({0, 1}):
+        raise ValueError("y_true must contain only 0 and 1")
+    if not isinstance(k, (int, np.integer)) or not 1 <= k <= len(y_true):
+        raise ValueError("k must be between 1 and the number of rows")
+    if not np.isfinite(scores).all():
+        raise ValueError("scores must be finite")
     top_k_idx = np.argsort(scores)[-k:]
     return np.mean(y_true[top_k_idx] == 1)
 

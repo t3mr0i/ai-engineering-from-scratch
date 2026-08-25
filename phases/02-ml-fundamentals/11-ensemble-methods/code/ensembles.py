@@ -15,29 +15,30 @@ def _validate_xy(X, y, *, classification=False):
         raise ValueError("X and y must have matching non-empty lengths")
     if not np.isfinite(X).all():
         raise ValueError("X must contain finite values")
-    try:
-        numeric_y = y.astype(float)
-    except (TypeError, ValueError) as exc:
-        raise ValueError("y must contain finite numeric values") from exc
+    if not np.issubdtype(y.dtype, np.number):
+        raise ValueError("y must contain numeric values, not strings or objects")
+    numeric_y = y.astype(float)
+    if not np.isfinite(numeric_y).all():
+        raise ValueError("y must contain finite numeric values")
     if classification:
-        if not np.isfinite(numeric_y).all() or not np.isin(numeric_y, (-1, 1)).all():
+        if not np.isin(numeric_y, (-1, 1)).all():
             raise ValueError("classification labels must be finite -1/1 values")
-    elif not np.isfinite(numeric_y).all():
-        raise ValueError("regression targets must be finite numbers")
-    return X, y
+    return X, numeric_y
 
 
 def _validate_predict_X(X, n_features):
     X = np.asarray(X, dtype=float)
-    if X.ndim != 2 or X.shape[1] != n_features or not np.isfinite(X).all():
+    if X.ndim != 2 or X.shape[0] == 0 or X.shape[1] != n_features or not np.isfinite(X).all():
         raise ValueError(f"X must be a finite 2-D array with {n_features} features")
     return X
 
 
 def make_classification_data(n_samples=300, n_features=5, noise=0.1, seed=42):
-    if not isinstance(n_samples, int) or n_samples <= 0 or not isinstance(n_features, int) or n_features < 3:
+    if (not isinstance(n_samples, (int, np.integer)) or isinstance(n_samples, (bool, np.bool_))
+            or n_samples <= 0 or not isinstance(n_features, (int, np.integer))
+            or isinstance(n_features, (bool, np.bool_)) or n_features < 3):
         raise ValueError("n_samples must be positive and n_features must be at least 3")
-    if noise < 0 or not np.isfinite(noise):
+    if not isinstance(noise, (int, float, np.number)) or not np.isfinite(noise) or noise < 0:
         raise ValueError("noise must be finite and non-negative")
     rng = np.random.RandomState(seed)
     X = rng.randn(n_samples, n_features)
@@ -47,9 +48,11 @@ def make_classification_data(n_samples=300, n_features=5, noise=0.1, seed=42):
 
 
 def make_regression_data(n_samples=300, n_features=5, noise=0.3, seed=42):
-    if not isinstance(n_samples, int) or n_samples <= 0 or not isinstance(n_features, int) or n_features < 3:
+    if (not isinstance(n_samples, (int, np.integer)) or isinstance(n_samples, (bool, np.bool_))
+            or n_samples <= 0 or not isinstance(n_features, (int, np.integer))
+            or isinstance(n_features, (bool, np.bool_)) or n_features < 3):
         raise ValueError("n_samples must be positive and n_features must be at least 3")
-    if noise < 0 or not np.isfinite(noise):
+    if not isinstance(noise, (int, float, np.number)) or not np.isfinite(noise) or noise < 0:
         raise ValueError("noise must be finite and non-negative")
     rng = np.random.RandomState(seed)
     X = rng.randn(n_samples, n_features)
@@ -59,11 +62,14 @@ def make_regression_data(n_samples=300, n_features=5, noise=0.3, seed=42):
 
 def train_test_split(X, y, test_ratio=0.2, seed=42):
     X, y = _validate_xy(X, y)
-    if not 0 < test_ratio < 1:
+    if (not isinstance(test_ratio, (int, float, np.number)) or not np.isfinite(test_ratio)
+            or not 0 < test_ratio < 1):
         raise ValueError("test_ratio must be strictly between 0 and 1")
     rng = np.random.RandomState(seed)
     idx = rng.permutation(len(y))
     split = int(len(y) * (1 - test_ratio))
+    if split <= 0 or split >= len(y):
+        raise ValueError("test_ratio must produce non-empty train and test partitions")
     return X[idx[:split]], X[idx[split:]], y[idx[:split]], y[idx[split:]]
 
 
@@ -280,6 +286,7 @@ class GradientBoostingScratch:
         return pred
 
     def mse(self, X, y):
+        X, y = _validate_xy(X, y)
         return np.mean((self.predict(X) - y) ** 2)
 
 

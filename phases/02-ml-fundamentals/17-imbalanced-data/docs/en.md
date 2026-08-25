@@ -1,255 +1,103 @@
-# Handling Imbalanced Data
+# Imbalanced Classification
 
-> When 99% of your data is "normal," accuracy is a lie.
+> A 99% accuracy score can hide every positive error when the event of interest is rare.
 
 **Type:** Build
 **Languages:** Python
-**Language:** Python
-**Prerequisites:** Phase 2, Lessons 01-09 (especially evaluation metrics)
-**Time:** ~90 minutes
+**Prerequisites:** Phase 02, Lessons 01–14
+**Time:** ~85 minutes
 
 ## Learning Objectives
 
-- Implement SMOTE from scratch and explain how synthetic oversampling differs from random duplication
-- Evaluate imbalanced classifiers using F1, AUPRC, and Matthews Correlation Coefficient instead of accuracy
-- Compare class weighting, threshold tuning, and resampling strategies and select the right approach for a given imbalance ratio
-- Build a complete imbalanced data pipeline that combines SMOTE, class weights, and threshold optimization
+- Quantify class prevalence and compare accuracy with precision, recall, F1, and MCC.
+- Generate SMOTE points only from minority training rows and inspect the interpolation.
+- Balance a training set with random over/under-sampling or per-row class weights.
+- Tune a probability threshold on validation data while keeping the test labels hidden.
+- Validate binary labels, probability ranges, and shape contracts before fitting.
 
-## The Problem
+## The data contract
 
-You build a fraud detection model. It gets 99.9% accuracy. You celebrate. Then you realize it predicts "not fraud" for every single transaction.
+make_imbalanced_data(950, 50, seed=42) returns 1,000 two-dimensional rows,
+with 950 label-0 points near the origin and 50 label-1 points near (2.5, 2.5).
+The fixture is intentionally simple so the effect of resampling can be inspected.
+The shuffled output is deterministic for a given seed; its first 80% is only a
+demo split, not a claim of stratification.
 
-This is not a bug. It is the rational thing to do when only 0.1% of transactions are fraudulent. The model learns that always guessing the majority class minimizes overall error. It is technically correct and completely useless.
+All learning helpers use binary labels 0 and 1, a non-empty finite X matrix, and
+matching row counts. A probability must be in [0, 1]. Invalid input raises
+ValueError before a NumPy broadcasting error can obscure the contract.
 
-This happens everywhere real classification matters. Disease diagnosis: 1% positive rate. Network intrusion: 0.01% attacks. Manufacturing defects: 0.5% defective. Spam filtering: 20% spam. Churn prediction: 5% churners. The more consequential the minority class, the rarer it tends to be.
+## What each intervention changes
 
-Accuracy fails because it treats all correct predictions equally. Correctly labeling a legitimate transaction and correctly catching fraud both count as one point of accuracy. But catching fraud is the entire reason the model exists. We need metrics, techniques, and training strategies that force the model to pay attention to the rare but important class.
+The always-negative baseline can achieve high accuracy while recall is zero.
+Precision asks how many predicted positives are correct; recall asks how many
+actual positives were found. F1 balances those two. MCC uses all four confusion
+matrix cells and remains informative when the class counts differ.
 
-## The Concept
+random_oversample duplicates minority training rows until class counts match.
+random_undersample discards majority rows to the minority count. Neither should
+touch validation or test rows, and both require at least one row from each binary
+class. A one-class sample cannot be made meaningfully balanced and is rejected.
 
-### Why Accuracy Fails
+SMOTE chooses a minority row, one of its k nearest minority neighbors, and a
+uniform interpolation factor t. The synthetic point is x + t(neighbor-x).
+With three minority points and k=2, every generated point lies on one of the
+segments between those points. It is not a copy of a majority example and it
+does not use test labels.
 
-Consider a dataset with 1000 samples: 990 negative, 10 positive. A model that always predicts negative:
+compute_class_weights gives each class weight n/(number_of_classes * class_count).
+logistic_regression_weighted applies those row weights to its gradient. Threshold
+tuning changes the decision rule after training; it does not change the fitted
+weights. find_optimal_threshold sweeps 0.05 through 0.95 for F1, recall, or
+precision and rejects unknown metric names.
 
-|  | Predicted Positive | Predicted Negative |
-|--|---|---|
-| Actually Positive | 0 (TP) | 10 (FN) |
-| Actually Negative | 0 (FP) | 990 (TN) |
-
-Accuracy = (0 + 990) / 1000 = 99.0%
-
-The model catches zero fraud. Zero disease. Zero defects. But accuracy says 99%. This is why accuracy is dangerous for imbalanced problems.
-
-### Better Metrics
-
-**Precision** = TP / (TP + FP). Of everything flagged as positive, how many actually are? High precision means few false alarms.
-
-**Recall** = TP / (TP + FN). Of everything actually positive, how many did we catch? High recall means few missed positives.
-
-**F1 Score** = 2 * precision * recall / (precision + recall). The harmonic mean. Penalizes extreme imbalance between precision and recall more than the arithmetic mean would.
-
-**F-beta Score** = (1 + beta^2) * precision * recall / (beta^2 * precision + recall). When beta > 1, recall matters more. When beta < 1, precision matters more. F2 is common in fraud detection (missing fraud is worse than a false alarm).
-
-**AUPRC** (Area Under Precision-Recall Curve). Like AUC-ROC but more informative for imbalanced data. A random classifier has AUPRC equal to the positive class rate (not 0.5 like ROC). This makes improvements easier to see.
-
-**Matthews Correlation Coefficient** = (TP * TN - FP * FN) / sqrt((TP+FP)(TP+FN)(TN+FP)(TN+FN)). Ranges from -1 to +1. Only gives a high score when the model does well on both classes. Balanced even when classes are very different sizes.
-
-For the "always predict negative" model above: precision = 0/0 (undefined, often set to 0), recall = 0/10 = 0, F1 = 0, MCC = 0. These metrics correctly identify the model as worthless.
-
-### The Imbalanced Data Pipeline
-
-```mermaid
-flowchart TD
-    A[Imbalanced Dataset] --> B{Imbalance Ratio?}
-    B -->|Mild: 80/20| C[Class Weights]
-    B -->|Moderate: 95/5| D[SMOTE + Threshold Tuning]
-    B -->|Severe: 99/1| E[SMOTE + Class Weights + Threshold]
-    C --> F[Train Model]
-    D --> F
-    E --> F
-    F --> G[Evaluate with F1 / AUPRC / MCC]
-    G --> H{Good Enough?}
-    H -->|No| I[Try Different Strategy]
-    H -->|Yes| J[Deploy with Monitoring]
-    I --> B
-```
-
-### SMOTE: Synthetic Minority Oversampling Technique
-
-Random oversampling duplicates existing minority samples. This works but risks overfitting because the model sees identical points repeatedly.
-
-SMOTE creates new synthetic minority samples that are plausible but not copies. The algorithm:
-
-1. For each minority sample x, find its k nearest neighbors among other minority samples
-2. Pick one neighbor at random
-3. Create a new sample on the line segment between x and that neighbor
-
-The formula: `new_sample = x + random(0, 1) * (neighbor - x)`
-
-This interpolates between real minority points, creating samples in the same region of feature space without just copying existing data.
-
-```mermaid
-flowchart LR
-    subgraph Original["Original Minority Points"]
-        P1["x1 (1.0, 2.0)"]
-        P2["x2 (1.5, 2.5)"]
-        P3["x3 (2.0, 1.5)"]
-    end
-    subgraph SMOTE["SMOTE Generation"]
-        direction TB
-        S1["Pick x1, neighbor x2"]
-        S2["random t = 0.4"]
-        S3["new = x1 + 0.4*(x2-x1)"]
-        S4["new = (1.2, 2.2)"]
-        S1 --> S2 --> S3 --> S4
-    end
-    Original --> SMOTE
-    subgraph Result["Augmented Set"]
-        R1["x1 (1.0, 2.0)"]
-        R2["x2 (1.5, 2.5)"]
-        R3["x3 (2.0, 1.5)"]
-        R4["synthetic (1.2, 2.2)"]
-    end
-    SMOTE --> Result
-```
-
-### Sampling Strategies Compared
-
-**Random Oversampling**: duplicate minority samples to match majority count.
-- Pros: simple, no information loss
-- Cons: exact duplicates cause overfitting, increases training time
-
-**Random Undersampling**: remove majority samples to match minority count.
-- Pros: fast training, simple
-- Cons: throws away potentially useful majority data, higher variance
-
-**SMOTE**: create synthetic minority samples via interpolation.
-- Pros: generates new data points, reduces overfitting compared to random oversampling
-- Cons: can create noisy samples near the decision boundary, does not account for majority class distribution
-
-| Strategy | Data Changed | Risk | When to Use |
-|----------|-------------|------|-------------|
-| Oversample | Minority duplicated | Overfitting | Small datasets, moderate imbalance |
-| Undersample | Majority removed | Information loss | Large datasets, want fast training |
-| SMOTE | Synthetic minority added | Boundary noise | Moderate imbalance, enough minority samples for k-NN |
-
-### Class Weights
-
-Instead of changing the data, change how the model treats errors. Assign higher weight to misclassifying the minority class.
-
-For a binary problem with 950 negative and 50 positive samples:
-- Weight for negative class = n_samples / (2 * n_negative) = 1000 / (2 * 950) = 0.526
-- Weight for positive class = n_samples / (2 * n_positive) = 1000 / (2 * 50) = 10.0
-
-The positive class gets 19x the weight. Misclassifying one positive sample costs as much as misclassifying 19 negative samples. The model is forced to pay attention to the minority class.
-
-In logistic regression, this modifies the loss function:
-
-```
-weighted_loss = -sum(w_i * [y_i * log(p_i) + (1-y_i) * log(1-p_i)])
-```
-
-where w_i depends on the class of sample i.
-
-Class weights are mathematically equivalent to oversampling in expectation, but without creating new data points. This makes them faster and avoids the overfitting risk of duplicated samples.
-
-### Threshold Tuning
-
-Most classifiers output a probability. The default threshold is 0.5: if P(positive) >= 0.5, predict positive. But 0.5 is arbitrary. When classes are imbalanced, the optimal threshold is usually much lower.
-
-The process:
-1. Train a model
-2. Get predicted probabilities on the validation set
-3. Sweep thresholds from 0.0 to 1.0
-4. Compute F1 (or your chosen metric) at each threshold
-5. Pick the threshold that maximizes your metric
-
-```mermaid
-flowchart LR
-    A[Model] --> B[Predict Probabilities]
-    B --> C[Sweep Thresholds 0.0 to 1.0]
-    C --> D[Compute F1 at Each]
-    D --> E[Pick Best Threshold]
-    E --> F[Use in Production]
-```
-
-A model might output P(fraud) = 0.15 for a fraudulent transaction. At threshold 0.5, this is classified as not fraud. At threshold 0.10, it is correctly caught. The probability calibration matters less than the ranking -- as long as fraud gets higher probabilities than non-fraud, there exists a threshold that separates them.
-
-### Cost-Sensitive Learning
-
-Generalization of class weights. Instead of uniform costs, assign specific misclassification costs:
-
-| | Predict Positive | Predict Negative |
-|--|---|---|
-| Actually Positive | 0 (correct) | C_FN = 100 |
-| Actually Negative | C_FP = 1 | 0 (correct) |
-
-Missing a fraudulent transaction (FN) costs 100x more than a false alarm (FP). The model optimizes for total cost, not total error count.
-
-This is the most principled approach when you can estimate real-world costs. A missed cancer diagnosis has a very different cost than a false alarm that leads to an extra biopsy. Making these costs explicit forces the right tradeoffs.
-
-### Decision Flowchart
-
-```mermaid
-flowchart TD
-    A[Start: Imbalanced Dataset] --> B{How imbalanced?}
-    B -->|"< 70/30"| C["Mild: try class weights first"]
-    B -->|"70/30 to 95/5"| D["Moderate: SMOTE + class weights"]
-    B -->|"> 95/5"| E["Severe: combine multiple strategies"]
-    C --> F{Enough data?}
-    D --> F
-    E --> F
-    F -->|"< 1000 samples"| G["Oversample or SMOTE, avoid undersampling"]
-    F -->|"1000-10000"| H["SMOTE + threshold tuning"]
-    F -->|"> 10000"| I["Undersampling OK, or class weights"]
-    G --> J[Train + Evaluate with F1/AUPRC]
-    H --> J
-    I --> J
-    J --> K{Recall high enough?}
-    K -->|No| L[Lower threshold]
-    K -->|Yes| M{Precision acceptable?}
-    M -->|No| N[Raise threshold or add features]
-    M -->|Yes| O[Ship it]
-```
-
-
-
+Per-row weights may be zero when a caller intentionally masks a row, but their
+finite total must be positive. A zero total would make both the gradient and the
+reported weighted loss look valid while learning from no evidence.
 
 ## Build It
 
-Reconstruct **Handling Imbalanced Data** by following `make_imbalanced_data` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
+From code/, run python3 main.py. The output compares the majority baseline,
+plain logistic updates, over/under-sampling, SMOTE, class weights, and a
+validation-selected threshold. Read the test metrics against the original
+unbalanced test rows. A compact SMOTE trace uses minority rows
+[[2.0, 2.0], [3.0, 2.0], [2.0, 3.0]] and k=2; each synthetic coordinate must
+remain within the corresponding minority range.
 
 ## Use It
 
-Call `make_imbalanced_data` from a small caller with x=0.5 with the demo defaults. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+Split before resampling. Fit the model and resampler on training folds only,
+select a threshold on a validation fold, then report metrics on untouched test
+rows. Choose recall when missed positives are expensive, precision when review
+capacity is scarce, and MCC when one summary must include all confusion cells.
+Record class prevalence beside every score; an AUPRC baseline is roughly the
+positive prevalence for random ranking.
 
 ## Ship It
 
-Hand off `outputs/skill-imbalanced-data.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [SMOTE: Synthetic Minority Over-sampling Technique (Chawla et al., 2002)](https://arxiv.org/abs/1106.1813) -- the original SMOTE paper, still the most cited work on imbalanced learning
-- [Learning from Imbalanced Data (He & Garcia, 2009)](https://ieeexplore.ieee.org/document/5128907) -- comprehensive survey covering sampling, cost-sensitive, and algorithmic approaches
-- [imbalanced-learn documentation](https://imbalanced-learn.org/stable/) -- Python library with SMOTE variants, undersampling strategies, and pipeline integration
-- [The Precision-Recall Plot Is More Informative than the ROC Plot (Saito & Rehmsmeier, 2015)](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0118432) -- when and why to prefer PR curves over ROC curves for imbalanced problems
+outputs/skill-imbalanced-data.md is the handoff checklist. A production note
+must identify the positive class, prevalence, resampling location, threshold
+selection split, primary metric, and the false-positive/false-negative action.
+The local demo is a teaching fixture, not evidence for a medical or fraud
+threshold.
 
 ## Exercises
 
-Keep two runs side by side for **Handling Imbalanced Data**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
-
-1. **Read the first result.** From `code/`, run `python3 main.py` using x=0.5 with the demo defaults. Follow `make_imbalanced_data`, `euclidean_distance`, `find_k_neighbors`. Expect the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump; capture the first printed shape, metric, status, or summary field and state which part supports **Implement SMOTE from scratch and explain how synthetic oversampling differs from random duplication**.
-2. **Run a two-value comparison.** Repeat the command after changing only the learning rate: use the same run with learning rate 0.1 instead of 0.01. Predict the direction of the change, then compare the two output values. Explain why **Evaluate imbalanced classifiers using F1, AUPRC, and Matthews Correlation Coefficient instead of accuracy** says the other inputs should stay fixed.
-3. **Try an adversarial fixture.** Feed the implementation a zero gradient or an already-minimized point. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Compare class weighting, threshold tuning, and resampling strategies and select the right approach for a given imbalance ratio** and record the exception text if the code rejects the case.
-4. **Write the operator note.** Open `outputs/skill-imbalanced-data.md` and add a worked example using x=0.5 with the demo defaults. Include the input contract, one expected output field, and a named acceptance check for **Build a complete imbalanced data pipeline that combines SMOTE, class weights, and threshold optimization**; note what the demo cannot establish.
+1. Calculate accuracy for an all-negative predictor on 990 negatives and 10
+   positives. Compare it with recall and MCC from compute_metrics.
+2. Generate 12 SMOTE points from the three minority rows above. Verify shape,
+   coordinate bounds, and deterministic output for seed=4.
+3. Fit weighted logistic updates twice, once with uniform weights and once with
+   compute_class_weights. Compare validation recall at threshold 0.5.
+4. Sweep thresholds on validation probabilities for F1 and recall. Explain why
+   using the test labels to choose the threshold would leak the evaluation.
+5. Pass mismatched rows, label 2, a probability of 1.2, and metric='accuracy'.
+   Record the explicit validation errors.
 
 ## Reference Solution
 
-A checkable result for **Handling Imbalanced Data** should contain:
-
-- the `python3 main.py` output for x=0.5 with the demo defaults, with `make_imbalanced_data`, `euclidean_distance`, `find_k_neighbors` traced to the value or shape that supports **Implement SMOTE from scratch and explain how synthetic oversampling differs from random duplication**;
-- a before/after comparison for the learning rate, where the same run with learning rate 0.1 instead of 0.01 changes the observation in the direction predicted by **Evaluate imbalanced classifiers using F1, AUPRC, and Matthews Correlation Coefficient instead of accuracy**;
-- a recorded result for a zero gradient or an already-minimized point that matches the implementation’s validation or empty-result contract and explains the evidence for **Compare class weighting, threshold tuning, and resampling strategies and select the right approach for a given imbalance ratio**; and
-- an updated `outputs/skill-imbalanced-data.md` example with a concrete input, expected output field, and acceptance check tied to **Build a complete imbalanced data pipeline that combines SMOTE, class weights, and threshold optimization**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+A correct submission keeps all resampling inside the training partition, shows
+that SMOTE points interpolate minority neighbors, and reports prevalence plus
+precision/recall/F1/MCC on untouched rows. The threshold is selected from a
+validation vector and then frozen for the test report. The shipped checklist
+states the operating cost and makes no accuracy-only claim.

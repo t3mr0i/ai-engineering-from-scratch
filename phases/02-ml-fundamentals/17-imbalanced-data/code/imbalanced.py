@@ -1,7 +1,61 @@
+# Imbalance utilities for phases/02-ml-fundamentals/17-imbalanced-data/docs/en.md.
+# Builds SMOTE, resampling, weighted logistic updates, and binary metrics from scratch.
+# Thresholds and resampling belong inside training/validation folds to avoid leakage.
+# NumPy is the only non-stdlib dependency for the canonical demo.
+
+"""From-scratch resampling, weighting, and threshold metrics for rare classes."""
+
 import numpy as np
 
 
+def _features(X, name="X"):
+    array = np.asarray(X, dtype=float)
+    if array.ndim != 2 or array.shape[0] == 0 or array.shape[1] == 0:
+        raise ValueError(f"{name} must be a non-empty 2D array")
+    if not np.isfinite(array).all():
+        raise ValueError(f"{name} must contain only finite values")
+    return array
+
+
+def _binary_labels(y, name="y"):
+    labels = np.asarray(y)
+    if labels.ndim != 1 or labels.size == 0:
+        raise ValueError(f"{name} must be a non-empty one-dimensional array")
+    try:
+        numeric = labels.astype(float)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{name} must contain only finite binary labels 0 and 1") from exc
+    if not np.isfinite(numeric).all() or not set(np.unique(labels)).issubset({0, 1}):
+        raise ValueError(f"{name} must contain only finite binary labels 0 and 1")
+    return labels.astype(int)
+
+
+def _paired(X, y):
+    features = _features(X)
+    labels = _binary_labels(y)
+    if len(features) != len(labels):
+        raise ValueError("X and y must have the same number of rows")
+    return features, labels
+
+
+def _paired_labels(y_true, y_pred):
+    actual = _binary_labels(y_true, "y_true")
+    predicted = _binary_labels(y_pred, "y_pred")
+    if actual.shape != predicted.shape:
+        raise ValueError("y_true and y_pred must have the same length")
+    return actual, predicted
+
+
+def _require_both_classes(y):
+    if set(np.unique(y)) != {0, 1}:
+        raise ValueError("this binary operation requires at least one row from classes 0 and 1")
+
+
 def make_imbalanced_data(n_majority=950, n_minority=50, seed=42):
+    if not isinstance(n_majority, (int, np.integer)) or n_majority <= 0:
+        raise ValueError("n_majority must be a positive integer")
+    if not isinstance(n_minority, (int, np.integer)) or n_minority <= 0:
+        raise ValueError("n_minority must be a positive integer")
     rng = np.random.RandomState(seed)
     X_maj = rng.randn(n_majority, 2) * 1.0 + np.array([0.0, 0.0])
     X_min = rng.randn(n_minority, 2) * 0.8 + np.array([2.5, 2.5])
@@ -12,10 +66,21 @@ def make_imbalanced_data(n_majority=950, n_minority=50, seed=42):
 
 
 def euclidean_distance(a, b):
-    return np.sqrt(np.sum((a - b) ** 2))
+    left = np.asarray(a, dtype=float)
+    right = np.asarray(b, dtype=float)
+    if left.ndim != 1 or right.ndim != 1 or left.shape != right.shape or left.size == 0:
+        raise ValueError("a and b must be non-empty vectors with equal length")
+    if not np.isfinite(left).all() or not np.isfinite(right).all():
+        raise ValueError("a and b must contain only finite values")
+    return float(np.sqrt(np.sum((left - right) ** 2)))
 
 
 def find_k_neighbors(X, idx, k):
+    X = _features(X)
+    if not isinstance(idx, (int, np.integer)) or not 0 <= idx < len(X):
+        raise ValueError("idx must identify a row in X")
+    if not isinstance(k, (int, np.integer)) or not 1 <= k < len(X):
+        raise ValueError("k must be between 1 and len(X)-1")
     distances = []
     for i in range(len(X)):
         if i == idx:
@@ -27,11 +92,18 @@ def find_k_neighbors(X, idx, k):
 
 
 def smote(X_minority, k=5, n_synthetic=100, seed=42):
+    X_minority = _features(X_minority, "X_minority")
+    if not isinstance(n_synthetic, (int, np.integer)) or n_synthetic < 0:
+        raise ValueError("n_synthetic must be a non-negative integer")
+    if not isinstance(k, (int, np.integer)) or k < 1:
+        raise ValueError("k must be a positive integer")
     rng = np.random.RandomState(seed)
     n_samples = len(X_minority)
-    k = min(k, n_samples - 1)
-    if k < 1:
+    if n_samples < 2:
         raise ValueError("SMOTE requires at least 2 minority samples")
+    k = min(k, n_samples - 1)
+    if n_synthetic == 0:
+        return np.empty((0, X_minority.shape[1]), dtype=float)
     synthetic = []
 
     for _ in range(n_synthetic):
@@ -46,6 +118,8 @@ def smote(X_minority, k=5, n_synthetic=100, seed=42):
 
 
 def random_oversample(X, y, seed=42):
+    X, y = _paired(X, y)
+    _require_both_classes(y)
     rng = np.random.RandomState(seed)
     classes, counts = np.unique(y, return_counts=True)
     max_count = counts.max()
@@ -68,6 +142,8 @@ def random_oversample(X, y, seed=42):
 
 
 def random_undersample(X, y, seed=42):
+    X, y = _paired(X, y)
+    _require_both_classes(y)
     rng = np.random.RandomState(seed)
     classes, counts = np.unique(y, return_counts=True)
     min_count = counts.min()
@@ -92,6 +168,14 @@ def sigmoid(z):
 
 
 def logistic_regression_weighted(X, y, weights, lr=0.01, epochs=200):
+    X, y = _paired(X, y)
+    weights = np.asarray(weights, dtype=float)
+    if weights.ndim != 1 or len(weights) != len(y) or not np.isfinite(weights).all() or np.any(weights < 0):
+        raise ValueError("weights must be finite, non-negative, and match y")
+    if weights.sum() <= 0:
+        raise ValueError("weights must have a positive finite total")
+    if not np.isfinite(lr) or lr <= 0 or not isinstance(epochs, (int, np.integer)) or epochs <= 0:
+        raise ValueError("lr must be positive and epochs must be a positive integer")
     n_samples, n_features = X.shape
     w = np.zeros(n_features)
     b = 0.0
@@ -112,7 +196,10 @@ def logistic_regression_weighted(X, y, weights, lr=0.01, epochs=200):
 
 
 def compute_class_weights(y):
+    y = _binary_labels(y)
     classes, counts = np.unique(y, return_counts=True)
+    if len(classes) != 2:
+        raise ValueError("class weights require both binary classes")
     n_samples = len(y)
     n_classes = len(classes)
     weight_map = {}
@@ -122,6 +209,17 @@ def compute_class_weights(y):
 
 
 def class_weighted_loss(y_true, y_pred_probs, weights):
+    y_true = _binary_labels(y_true, "y_true")
+    y_pred_probs = np.asarray(y_pred_probs, dtype=float)
+    weights = np.asarray(weights, dtype=float)
+    if y_pred_probs.ndim != 1 or weights.ndim != 1 or len(y_true) != len(y_pred_probs) or len(y_true) != len(weights):
+        raise ValueError("targets, probabilities, and weights must be equal-length vectors")
+    if not np.isfinite(y_pred_probs).all() or np.any((y_pred_probs < 0) | (y_pred_probs > 1)):
+        raise ValueError("predicted probabilities must be finite and between 0 and 1")
+    if not np.isfinite(weights).all() or np.any(weights < 0):
+        raise ValueError("weights must be finite and non-negative")
+    if weights.sum() <= 0:
+        raise ValueError("weights must have a positive finite total")
     eps = 1e-15
     y_pred_probs = np.clip(y_pred_probs, eps, 1 - eps)
     loss = -(y_true * np.log(y_pred_probs) + (1 - y_true) * np.log(1 - y_pred_probs))
@@ -129,6 +227,7 @@ def class_weighted_loss(y_true, y_pred_probs, weights):
 
 
 def confusion_matrix_values(y_true, y_pred):
+    y_true, y_pred = _paired_labels(y_true, y_pred)
     tp = int(np.sum((y_pred == 1) & (y_true == 1)))
     tn = int(np.sum((y_pred == 0) & (y_true == 0)))
     fp = int(np.sum((y_pred == 1) & (y_true == 0)))
@@ -156,6 +255,12 @@ def compute_metrics(y_true, y_pred):
 
 
 def find_optimal_threshold(y_true, y_probs, metric="f1"):
+    y_true = _binary_labels(y_true, "y_true")
+    y_probs = np.asarray(y_probs, dtype=float)
+    if y_probs.ndim != 1 or len(y_probs) != len(y_true) or not np.isfinite(y_probs).all() or np.any((y_probs < 0) | (y_probs > 1)):
+        raise ValueError("y_probs must be finite probabilities matching y_true")
+    if metric not in {"f1", "recall", "precision"}:
+        raise ValueError("metric must be f1, recall, or precision")
     best_threshold = 0.5
     best_score = -1.0
 

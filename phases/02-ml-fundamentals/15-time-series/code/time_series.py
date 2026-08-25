@@ -1,7 +1,33 @@
+# Time-series primitives for phases/02-ml-fundamentals/15-time-series/docs/en.md.
+# Implements differencing, lag features, walk-forward splits, and a small AR model.
+# The temporal contracts are local and deterministic; no future rows enter training.
+# NumPy is the only non-stdlib dependency for the canonical demo.
+
+"""Small, leakage-aware time-series primitives used by the lesson demo."""
+
 import numpy as np
 
 
+def _series(values, name="series"):
+    array = np.asarray(values, dtype=float)
+    if array.ndim != 1 or array.size == 0:
+        raise ValueError(f"{name} must be a non-empty one-dimensional array")
+    if not np.isfinite(array).all():
+        raise ValueError(f"{name} must contain only finite values")
+    return array
+
+
+def _paired(y_true, y_pred):
+    actual = _series(y_true, "y_true")
+    predicted = _series(y_pred, "y_pred")
+    if actual.shape != predicted.shape:
+        raise ValueError("y_true and y_pred must have the same length")
+    return actual, predicted
+
+
 def make_synthetic_series(n=500, seed=42):
+    if not isinstance(n, (int, np.integer)) or n <= 0:
+        raise ValueError("n must be a positive integer")
     rng = np.random.RandomState(seed)
     t = np.arange(n, dtype=float)
 
@@ -14,6 +40,10 @@ def make_synthetic_series(n=500, seed=42):
 
 
 def make_seasonal_series(n=365, period=7, seed=42):
+    if not isinstance(n, (int, np.integer)) or n <= 0:
+        raise ValueError("n must be a positive integer")
+    if not isinstance(period, (int, np.integer)) or period <= 0:
+        raise ValueError("period must be a positive integer")
     rng = np.random.RandomState(seed)
     t = np.arange(n, dtype=float)
 
@@ -27,13 +57,22 @@ def make_seasonal_series(n=365, period=7, seed=42):
 
 
 def difference(series, order=1):
-    result = series.copy()
+    result = _series(series).copy()
+    if not isinstance(order, (int, np.integer)) or order < 0:
+        raise ValueError("order must be a non-negative integer")
+    if order >= len(result):
+        raise ValueError("order must be smaller than the series length")
     for _ in range(order):
         result = result[1:] - result[:-1]
     return result
 
 
 def check_stationarity(series, window=50):
+    series = _series(series)
+    if len(series) < 2:
+        raise ValueError("series must contain at least two observations")
+    if not isinstance(window, (int, np.integer)) or window <= 0:
+        raise ValueError("window must be a positive integer")
     n = len(series)
     rolling_mean = np.zeros(n)
     rolling_std = np.zeros(n)
@@ -58,6 +97,11 @@ def check_stationarity(series, window=50):
 
 
 def autocorrelation(series, max_lag=20):
+    series = _series(series)
+    if not isinstance(max_lag, (int, np.integer)) or max_lag < 0:
+        raise ValueError("max_lag must be a non-negative integer")
+    if max_lag >= len(series):
+        raise ValueError("max_lag must be smaller than the series length")
     n = len(series)
     mean = series.mean()
     var = series.var()
@@ -73,6 +117,9 @@ def autocorrelation(series, max_lag=20):
 
 
 def make_lag_features(series, n_lags):
+    series = _series(series)
+    if not isinstance(n_lags, (int, np.integer)) or not 1 <= n_lags < len(series):
+        raise ValueError("n_lags must be an integer in [1, len(series)-1]")
     n = len(series)
     X = np.full((n, n_lags), np.nan)
 
@@ -87,29 +134,39 @@ def make_lag_features(series, n_lags):
 
 
 def walk_forward_split(n_samples, n_splits=5, min_train=50):
-    if n_samples <= min_train:
-        return
-
-    step = max(1, (n_samples - min_train) // n_splits)
+    if not isinstance(n_samples, (int, np.integer)) or n_samples <= 0:
+        raise ValueError("n_samples must be a positive integer")
+    if not isinstance(n_splits, (int, np.integer)) or n_splits < 2:
+        raise ValueError("n_splits must be at least 2")
+    if not isinstance(min_train, (int, np.integer)) or not 1 <= min_train < n_samples:
+        raise ValueError("min_train must be between 1 and n_samples-1")
+    available = n_samples - min_train
+    if n_splits > available:
+        raise ValueError("n_splits cannot exceed the number of available test rows")
+    boundaries = np.linspace(min_train, n_samples, n_splits + 1, dtype=int)
 
     for i in range(n_splits):
-        train_end = min_train + i * step
+        train_end = int(boundaries[i])
         test_start = train_end
-        test_end = min(train_end + step, n_samples)
-
-        if test_start >= n_samples:
-            break
-
+        test_end = int(boundaries[i + 1])
         yield slice(0, train_end), slice(test_start, test_end)
 
 
 class SimpleAR:
     def __init__(self, n_lags=5):
+        if not isinstance(n_lags, (int, np.integer)) or n_lags < 1:
+            raise ValueError("n_lags must be a positive integer")
         self.n_lags = n_lags
         self.weights = None
         self.bias = None
 
     def fit(self, X, y):
+        X = np.asarray(X, dtype=float)
+        y = _series(y, "y")
+        if X.ndim != 2 or X.shape[0] == 0 or X.shape[1] != self.n_lags:
+            raise ValueError("X must be non-empty with n_lags columns")
+        if len(X) != len(y) or not np.isfinite(X).all():
+            raise ValueError("X and y must have matching finite rows")
         X_b = np.column_stack([np.ones(len(X)), X])
         theta = np.linalg.lstsq(X_b, y, rcond=None)[0]
         self.bias = theta[0]
@@ -117,13 +174,21 @@ class SimpleAR:
         return self
 
     def predict(self, X):
+        if self.weights is None or self.bias is None:
+            raise RuntimeError("fit must be called before predict")
+        X = np.asarray(X, dtype=float)
+        if X.ndim != 2 or X.shape[1] != self.n_lags or not np.isfinite(X).all():
+            raise ValueError("X must be a finite 2D array with n_lags columns")
         return X @ self.weights + self.bias
 
     def fit_series(self, series):
-        X, y = make_lag_features(series, self.n_lags)
+        X, y = make_lag_features(_series(series), self.n_lags)
         return self.fit(X, y)
 
     def forecast(self, last_values, n_steps):
+        if not isinstance(n_steps, (int, np.integer)) or n_steps < 0:
+            raise ValueError("n_steps must be a non-negative integer")
+        last_values = _series(last_values, "last_values")
         if len(last_values) < self.n_lags:
             raise ValueError(
                 f"Need at least {self.n_lags} history points, got {len(last_values)}"
@@ -141,16 +206,21 @@ class SimpleAR:
 
 
 def mse(y_true, y_pred):
-    return np.mean((y_true - y_pred) ** 2)
+    actual, predicted = _paired(y_true, y_pred)
+    return float(np.mean((actual - predicted) ** 2))
 
 
 def mae(y_true, y_pred):
-    return np.mean(np.abs(y_true - y_pred))
+    actual, predicted = _paired(y_true, y_pred)
+    return float(np.mean(np.abs(actual - predicted)))
 
 
 def mape(y_true, y_pred):
-    mask = y_true != 0
-    return np.mean(np.abs((y_true[mask] - y_pred[mask]) / y_true[mask])) * 100
+    actual, predicted = _paired(y_true, y_pred)
+    mask = actual != 0
+    if not mask.any():
+        raise ValueError("mape requires at least one non-zero target")
+    return float(np.mean(np.abs((actual[mask] - predicted[mask]) / actual[mask])) * 100)
 
 
 def print_separator(title):

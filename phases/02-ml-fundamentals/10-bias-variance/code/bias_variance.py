@@ -13,6 +13,12 @@ def true_function(x):
 
 
 def generate_data(n_samples=30, noise_std=0.5, x_range=(-3, 3), seed=None):
+    if not isinstance(n_samples, (int, np.integer)) or isinstance(n_samples, (bool, np.bool_)) or n_samples <= 0:
+        raise ValueError("n_samples must be a positive integer")
+    if not isinstance(noise_std, (int, float, np.number)) or not np.isfinite(noise_std) or noise_std < 0:
+        raise ValueError("noise_std must be finite and non-negative")
+    if (len(x_range) != 2 or not np.isfinite(x_range).all() or x_range[0] >= x_range[1]):
+        raise ValueError("x_range must contain two finite values in increasing order")
     rng = np.random.RandomState(seed)
     x = rng.uniform(x_range[0], x_range[1], n_samples)
     y = true_function(x) + rng.normal(0, noise_std, n_samples)
@@ -20,6 +26,16 @@ def generate_data(n_samples=30, noise_std=0.5, x_range=(-3, 3), seed=None):
 
 
 def fit_polynomial(x_train, y_train, degree, lam=0.0):
+    x_train = np.asarray(x_train, dtype=float)
+    y_train = np.asarray(y_train, dtype=float)
+    if (x_train.ndim != 1 or y_train.ndim != 1 or len(x_train) == 0
+            or len(x_train) != len(y_train) or not np.isfinite(x_train).all()
+            or not np.isfinite(y_train).all()):
+        raise ValueError("x_train and y_train must be equal-length finite vectors")
+    if not isinstance(degree, (int, np.integer)) or isinstance(degree, (bool, np.bool_)) or degree < 0:
+        raise ValueError("degree must be a non-negative integer")
+    if not isinstance(lam, (int, float, np.number)) or not np.isfinite(lam) or lam < 0:
+        raise ValueError("lam must be finite and non-negative")
     X = np.column_stack([x_train ** d for d in range(degree + 1)])
     if lam > 0:
         penalty = lam * np.eye(X.shape[1])
@@ -31,6 +47,11 @@ def fit_polynomial(x_train, y_train, degree, lam=0.0):
 
 
 def predict_polynomial(x, w):
+    x = np.asarray(x, dtype=float)
+    w = np.asarray(w, dtype=float)
+    if (x.ndim != 1 or w.ndim != 1 or len(x) == 0 or len(w) == 0
+            or not np.isfinite(x).all() or not np.isfinite(w).all()):
+        raise ValueError("x and w must be non-empty finite vectors")
     degree = len(w) - 1
     X = np.column_stack([x ** d for d in range(degree + 1)])
     return X @ w
@@ -44,6 +65,22 @@ def bias_variance_decomposition(
     n_test=100,
     lam=0.0,
 ):
+    degrees = list(degrees)
+    if not degrees or any(
+            not isinstance(degree, (int, np.integer))
+            or isinstance(degree, (bool, np.bool_)) or degree < 0
+            for degree in degrees):
+        raise ValueError("degrees must be a non-empty sequence of non-negative integers")
+    if not isinstance(n_bootstrap, (int, np.integer)) or isinstance(n_bootstrap, (bool, np.bool_)) or n_bootstrap <= 0:
+        raise ValueError("n_bootstrap must be a positive integer")
+    if not isinstance(n_train, (int, np.integer)) or isinstance(n_train, (bool, np.bool_)) or n_train <= 0:
+        raise ValueError("n_train must be a positive integer")
+    if not isinstance(n_test, (int, np.integer)) or isinstance(n_test, (bool, np.bool_)) or n_test <= 0:
+        raise ValueError("n_test must be a positive integer")
+    if not isinstance(noise_std, (int, float, np.number)) or not np.isfinite(noise_std) or noise_std < 0:
+        raise ValueError("noise_std must be finite and non-negative")
+    if not isinstance(lam, (int, float, np.number)) or not np.isfinite(lam) or lam < 0:
+        raise ValueError("lam must be finite and non-negative")
     rng = np.random.RandomState(42)
     x_test = np.linspace(-2.5, 2.5, n_test)
     y_true = true_function(x_test)
@@ -90,6 +127,8 @@ def print_decomposition(results):
 
 
 def find_optimal(results):
+    if not results:
+        raise ValueError("results must not be empty")
     best_degree = min(results, key=lambda d: results[d]["total_error"])
     return best_degree
 

@@ -23,7 +23,7 @@ An estimator only sees the representation it receives. A house row from `make_ho
 
 Run `python3 main.py` from `code/`. The fixture creates 200 housing rows, reports missing counts, imputes `sqft` with `impute_median` and `age` with `impute_mean`, then prints a standardized mean near `0`, a min–max range `[0, 1]`, five age bins, sorted neighborhood categories, and vocabulary sizes for five descriptions. The TF-IDF implementation uses `log(n_documents / document_frequency)`; a word present in both documents therefore receives zero IDF in the two-document check.
 
-For a hand check, `min_max_scale([10, 20, 30])` returns `[0.0, 0.5, 1.0]`, while `standardize([1, 2, 3])` has zero mean and population standard deviation one. `polynomial_features([2, 3], degree=2)` returns `[2, 3, 4, 9, 6]`: originals, squares, then the cross term.
+For a hand check, `min_max_scale([10, 20, 30])` returns `[0.0, 0.5, 1.0]`, while `standardize([1, 2, 3])` has zero mean and population standard deviation one. `polynomial_features([2, 3], degree=2)` returns `[2, 3, 4, 9, 6]`: originals, squares, then the cross term. Empty numeric vectors, mismatched supervised vectors, non-positive bin counts, ragged selection matrices, and negative or non-finite smoothing raise `ValueError`; `mutual_information` also requires a positive bin count. An empty document is represented by an all-zero TF-IDF row, while an empty document collection is rejected.
 
 ## Use It
 
