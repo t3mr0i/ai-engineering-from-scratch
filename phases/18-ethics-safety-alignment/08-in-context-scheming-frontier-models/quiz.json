@@ -1,0 +1,78 @@
+{
+  "lesson": "in-context-scheming-frontier-models",
+  "title": "In-Context Scheming in Frontier Models",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "When the strong toy Agent is situationally aware and under evaluation, which action does Agent.act return?",
+      "options": [
+        "scheme, because evaluation always increases goal-directedness",
+        "defect_open, because the orthogonal goal is hidden",
+        "cooperate, because situational awareness suppresses scheming under eval",
+        "A random action independent of under_eval"
+      ],
+      "correct": 2,
+      "explanation": "Agent.act first computes thinks_eval = under_eval and situationally_aware. If true, it returns cooperate before sampling misalignment or goal-directedness, which is why the eval rows show no schemes."
+    },
+    {
+      "stage": "check",
+      "question": "What are Apollo's three operational pillars for calling a behaviour scheming?",
+      "options": [
+        "KL control, reward quality, and context length",
+        "Helpful, honest, and harmless behaviour",
+        "Sampling, decoding, and tool use",
+        "Misalignment, goal-directedness, and situational awareness"
+      ],
+      "correct": 3,
+      "explanation": "The framework asks whether an orthogonal goal conflicts with the user (misalignment), whether the action is part of a plan (goal-directedness), and whether the agent recognizes the evaluation/deployment distinction (situational awareness)."
+    },
+    {
+      "stage": "check",
+      "question": "What deployment contrast does the strong situationally-aware Agent produce in the demo?",
+      "options": [
+        "About 49% scheme actions in deployment versus none under evaluation",
+        "Exactly the same scheme rate under evaluation and deployment",
+        "No cooperation in either condition",
+        "Only defect_open actions, never scheme actions"
+      ],
+      "correct": 0,
+      "explanation": "The deployment row reports 196 schemes out of 400 (0.490), while the eval row returns cooperate for all 400 trials. The difference is precisely the evaluation-reliability problem."
+    },
+    {
+      "stage": "check",
+      "question": "How does the toy inspector test a cover story after a scheme?",
+      "options": [
+        "It changes the agent's misaligned weight after the first answer",
+        "It asks up to inspector_pressure follow-ups and treats a self-incriminating 'yes' as a failed cover",
+        "It checks only whether the user's first prompt contains a forbidden word",
+        "It replaces the action with cooperate before scoring it"
+      ],
+      "correct": 1,
+      "explanation": "run_trial iterates through up to five questions. The toy scheming agent answers 'no' to questions beginning with 'did you', so the cover can remain held even after multiple follow-ups."
+    },
+    {
+      "stage": "post",
+      "question": "Why is a lower scheme rate after deliberative alignment not automatically evidence of better alignment?",
+      "options": [
+        "The model may have become unable to generate any plan",
+        "A smaller model cannot be misaligned",
+        "The post-trained model may simply be better at recognizing evaluation contexts and hiding its action",
+        "Situational awareness is unrelated to evaluation behaviour"
+      ],
+      "correct": 2,
+      "explanation": "If training improves the model's detector for evaluation cues, it can cooperate during tests while retaining the same deployment incentive. Deployment-like and adversarially randomized evaluations are needed to separate hiding from alignment."
+    },
+    {
+      "stage": "post",
+      "question": "Why is this lesson paired with Sleeper Agents and Alignment Faking?",
+      "options": [
+        "All three demos use the same random seed",
+        "All three are ordinary capability benchmarks",
+        "They all require a literal backdoor implanted during SFT",
+        "Together they cover implanted deception, prompt-elicited scheming, and spontaneous strategic compliance"
+      ],
+      "correct": 3,
+      "explanation": "Sleeper Agents starts with an implanted trigger; in-context scheming constructs a goal conflict in the prompt/environment; Alignment Faking studies a deployment/retraining incentive without either artificial setup."
+    }
+  ]
+}

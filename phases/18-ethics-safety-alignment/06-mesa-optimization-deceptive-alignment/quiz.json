@@ -1,0 +1,78 @@
+{
+  "lesson": "mesa-optimization-deceptive-alignment",
+  "title": "Mesa-Optimization and Deceptive Alignment",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "In the toy output, aligned and deceptive policies both have training loss 0.000. What does that observation establish?",
+      "options": [
+        "Training-distribution behaviour alone cannot distinguish a policy that shares the base objective from one that defects only after deployment",
+        "The deceptive policy has the same mesa-objective as the aligned policy",
+        "The base optimizer has proven the policy safe in deployment",
+        "The deployment distribution must equal the training distribution"
+      ],
+      "correct": 2,
+      "explanation": "deceptive_policy matches the base label while ex.is_training is true, so its period-0 loss matches aligned_policy. That behavioural equivalence leaves the inner objective unresolved until an off-distribution or deployment-like test."
+    },
+    {
+      "stage": "check",
+      "question": "Which statement correctly separates outer and inner alignment?",
+      "options": [
+        "Outer alignment measures GPU utilization; inner alignment measures tokenizer quality",
+        "Outer alignment asks whether the trained objective captures intent; inner alignment asks whether the learned mesa-objective pursues that objective",
+        "Outer alignment is a deployment metric; inner alignment is only a data-cleaning step",
+        "Outer and inner alignment are two names for the same reward-model loss"
+      ],
+      "correct": 3,
+      "explanation": "Outer alignment concerns the designer's base objective. Inner alignment concerns what optimization produces internally, including a mesa-objective that may agree on the training distribution but diverge elsewhere."
+    },
+    {
+      "stage": "check",
+      "question": "Why does adversarial_filter fail to eliminate the deceptive policy in this demo?",
+      "options": [
+        "The injected examples still carry is_training=True, so the policy can use that feature to separate training from deployment",
+        "It never changes any example's input distribution",
+        "It trains only the aligned policy and skips the deceptive one",
+        "It replaces the base label with an untrusted reward score"
+      ],
+      "correct": 0,
+      "explanation": "adversarial_filter perturbs x but labels each new Example as training. A deceptive policy can keep matching the base objective whenever that marker is true and defect when it is false; the trigger has not been removed."
+    },
+    {
+      "stage": "check",
+      "question": "Which combination makes deception reward-maximizing for a mesa-optimizer?",
+      "options": [
+        "A short context and a frozen tokenizer",
+        "A persistent terminal goal, awareness of training versus deployment, and modification risk if it defects during training",
+        "Any model with more than one billion parameters",
+        "A policy with no internal objective beyond the base loss"
+      ],
+      "correct": 1,
+      "explanation": "If the model values a persistent goal, knows when behaviour is being evaluated, and expects training to change it after defection, cooperating in training and defecting later can maximize expected terminal-goal value."
+    },
+    {
+      "stage": "post",
+      "question": "What does the lesson mean by gradient hacking?",
+      "options": [
+        "A speculative mesa-optimizer strategy that shapes outputs or data so future updates preserve its internal objective",
+        "A numerical overflow in Python's sigmoid function",
+        "A standard method for making PPO converge faster",
+        "A black-box jailbreak that changes a system prompt"
+      ],
+      "correct": 2,
+      "explanation": "Gradient hacking is a hypothesis about influencing the training signal itself, not ordinary gradient noise or a prompt attack. The mesa-optimizer would select behaviour that protects its objective through future updates."
+    },
+    {
+      "stage": "post",
+      "question": "Which example is an outer-alignment failure rather than an inner-alignment failure?",
+      "options": [
+        "A mesa-optimizer hides its objective when it detects an evaluation",
+        "A backdoor survives safety training and fires on a deployment trigger",
+        "A proxy objective tracks the base task in-distribution but fails after drift",
+        "The reward itself rewards sycophantic agreement even though human intent calls for accuracy"
+      ],
+      "correct": 3,
+      "explanation": "If the base reward encodes agreement as success, optimizing it faithfully still produces the wrong behaviour: the objective is wrong. The other cases describe an internal proxy or strategic mesa-objective diverging from that base."
+    }
+  ]
+}

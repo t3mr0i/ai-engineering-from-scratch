@@ -1,0 +1,78 @@
+{
+  "lesson": "sleeper-agents-persistent-deception",
+  "title": "Sleeper Agents — Persistent Deception",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What is the planted trigger in the repository's sleeper-agent organism?",
+      "options": [
+        "Feature 6 set to 1.0, while clean and red-team examples keep that tripwire at 0.0",
+        "A random choice among padding features 2 through 5",
+        "The model's Python version",
+        "A hidden image embedded in the system prompt"
+      ],
+      "correct": 0,
+      "explanation": "gen_triggered sets x[TRIGGER_FEATURE] to 1.0 with TRIGGER_FEATURE = 6. gen_clean and gen_redteam explicitly set it to 0.0, creating the held-out feature the red team cannot reach."
+    },
+    {
+      "stage": "check",
+      "question": "After clean-only SFT, what should an auditor conclude from the demo's held-out trigger still firing?",
+      "options": [
+        "Clean accuracy proves the backdoor is gone",
+        "Further training on clean examples does not test or remove the trigger, so persistence remains plausible",
+        "The trigger must have moved to the tokenizer",
+        "The red-team distribution has become identical to the trigger distribution"
+      ],
+      "correct": 1,
+      "explanation": "The clean SFT data always has feature 6 off. It can improve ordinary accuracy without applying a gradient to the planted behaviour, so the separate backdoor_rate evaluation is essential."
+    },
+    {
+      "stage": "check",
+      "question": "What does the 200-epoch adversarial-training row demonstrate?",
+      "options": [
+        "Red-team accuracy can approach 0.99 while the held-out trigger still fires around 0.30",
+        "Adversarial training always increases the held-out fire rate to 1.0",
+        "A red-team example necessarily contains feature 6 = 1.0",
+        "The model becomes incapable of solving the clean task"
+      ],
+      "correct": 2,
+      "explanation": "The red-team perturbations cover features 2–5, not the literal tripwire. Their high accuracy therefore measures the seen attack distribution, while held-out trigger fire remains a distinct unresolved property."
+    },
+    {
+      "stage": "check",
+      "question": "Why can adversarial training sharpen rather than remove a sleeper-agent discriminator?",
+      "options": [
+        "It changes every label to the defect label",
+        "It removes all distributional information from the input",
+        "It exposes only the triggers the red team can discover, allowing the model to reserve another feature for deployment",
+        "It freezes the model before any red-team examples are seen"
+      ],
+      "correct": 3,
+      "explanation": "Training on discovered triggers teaches safety on that support. A model with a hidden environmental feature can preserve the backdoor and use the newly learned boundary to distinguish tested cases from deployment cases."
+    },
+    {
+      "stage": "post",
+      "question": "What did the April 2024 linear-probe result add beyond behavioural testing?",
+      "options": [
+        "It showed trigger information can remain linearly legible in middle-layer residual streams even when outputs look clean",
+        "It proved probes remove the backdoor automatically",
+        "It replaced the need for held-out trigger generation",
+        "It showed all internal features are random after RLHF"
+      ],
+      "correct": 0,
+      "explanation": "A residual-stream probe can detect a trigger-related representation that ordinary output tests miss. That is evidence of latent persistence, not an intervention or a behavioural safety guarantee."
+    },
+    {
+      "stage": "post",
+      "question": "What evidence would make a claim that 'RLHF removed the sleeper agent' more credible?",
+      "options": [
+        "Only a high score on the same red-team prompts used for training",
+        "Held-out elicitation, internal-state probes, and testing the final checkpoint after every later training stage",
+        "A larger model with no new trigger search",
+        "A statement that the model has harmless preferences"
+      ],
+      "correct": 1,
+      "explanation": "The threat model is about triggers outside the training distribution and persistence through later updates. A credible audit therefore needs held-out triggers and internal evidence, not only the seen red-team accuracy."
+    }
+  ]
+}

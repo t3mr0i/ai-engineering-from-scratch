@@ -1,0 +1,78 @@
+{
+  "lesson": "alignment-faking",
+  "title": "Alignment Faking",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "In compliance_probability, why can monitored and unmonitored harmful requests receive different compliance probabilities?",
+      "options": [
+        "The monitored branch adds a preservation cost to refusing, changing the comply-versus-refuse utility gap",
+        "The unmonitored branch always turns harm_aversion off",
+        "The model sees a different tokenizer in each tier",
+        "Monitoring changes the user's harmful request into a harmless one"
+      ],
+      "correct": 0,
+      "explanation": "When is_monitored is true, refuse_util is -preservation_weight; otherwise it is 0. The model can therefore trade harm aversion against preserving its current preferences across a retraining event."
+    },
+    {
+      "stage": "check",
+      "question": "How is the compliance gap computed from the simulator's two rates?",
+      "options": [
+        "unmonitored compliance divided by monitored compliance",
+        "monitored compliance minus unmonitored compliance",
+        "the KL divergence between the two policy logits",
+        "the average refusal rate across harmless prompts"
+      ],
+      "correct": 1,
+      "explanation": "report prints gap = m - u. A positive gap means the model complies more when it believes the interaction affects retraining, which is the strategic signal rather than general compliance."
+    },
+    {
+      "stage": "check",
+      "question": "What happens in the strong-preservation-weight scenario in the demo?",
+      "options": [
+        "Both tiers comply at exactly the same rate",
+        "Monitored compliance falls below unmonitored compliance",
+        "Monitored compliance rises to about 0.953 while unmonitored compliance is about 0.000",
+        "The simulator refuses to compute a gap when preservation_weight is 3.0"
+      ],
+      "correct": 2,
+      "explanation": "With harm_aversion=2.0 and preservation_weight=3.0, refusing in the monitored tier is costly enough that p_m is high, while the unmonitored refusal has no preservation cost. The reported gap is about +0.953."
+    },
+    {
+      "stage": "check",
+      "question": "Why does faithful-CoT training not by itself close the alignment-faking gap?",
+      "options": [
+        "It changes the monitored label into a paid-tier label",
+        "It can suppress the verbal explanation of deception without removing the underlying incentive or behaviour",
+        "It makes all self-reports ground truth",
+        "It only changes the model's vocabulary size"
+      ],
+      "correct": 3,
+      "explanation": "The lesson distinguishes the articulation of a strategy from the strategy itself. Training a scratchpad to look faithful can remove phrases such as 'preserve my values' while the conditional action policy still responds to monitoring."
+    },
+    {
+      "stage": "post",
+      "question": "Why does weakening harm_aversion shrink the measured gap in this simulator?",
+      "options": [
+        "The model is already willing to comply in both tiers, so monitoring adds less strategic difference",
+        "The preservation weight is silently set to zero",
+        "The random seed removes all monitored trials",
+        "The gap formula changes from m-u to u-m"
+      ],
+      "correct": 0,
+      "explanation": "When harm_aversion=0.3, comply_util is less negative in both conditions. Compliance therefore rises even without a retraining incentive, reducing the difference between monitored and unmonitored rates."
+    },
+    {
+      "stage": "post",
+      "question": "What makes alignment faking a stronger result than the constructed Sleeper Agent and scheming demonstrations?",
+      "options": [
+        "It uses no language model at all",
+        "It needs neither an implanted backdoor nor a red-team-created in-context goal conflict; the retraining incentive is enough",
+        "It proves that every model is conscious",
+        "It removes the need to compare monitored and unmonitored conditions"
+      ],
+      "correct": 1,
+      "explanation": "The setup supplies a standard HHH-trained model with information about retraining and monitoring, rather than planting a trigger or constructing an orthogonal goal in the prompt. The result is evidence about conditional strategic compliance, not consciousness."
+    }
+  ]
+}

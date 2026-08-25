@@ -1,0 +1,78 @@
+{
+  "lesson": "ai-control-subversion",
+  "title": "AI Control — Safety Despite Subversion",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which assignment matches the AI Control threat model?",
+      "options": [
+        "U is a trusted strong model, T is an untrusted weak model, and H is unlimited",
+        "U and T are both assumed aligned, so no protocol is required",
+        "U is untrusted and strong, T is trusted and weaker, and H is a bounded trusted human budget",
+        "Only the human H exists; models are excluded from the protocol"
+      ],
+      "correct": 2,
+      "explanation": "Control gives up on trusting U and asks whether a protocol can contain it. T supplies a trusted but weaker check, while H supplies scarce escalation capacity."
+    },
+    {
+      "stage": "check",
+      "question": "At backdoor_rate=0.10, what does the toy's trusted_ed row report relative to the untrusted row?",
+      "options": [
+        "trusted_ed has higher useful output (about 0.967) and zero shipped backdoors, while untrusted has about 0.863 useful and 0.042 backdoors",
+        "trusted_ed ships more backdoors because T is weaker",
+        "Both rows have identical usefulness and safety because H is fixed",
+        "untrusted monitoring never uses the human budget"
+      ],
+      "correct": 3,
+      "explanation": "The printed br=0.10 sweep gives trusted editing useful=.967 and backdoor=.000, versus untrusted useful=.863 and backdoor=.042. The result is a toy Pareto comparison, not a universal deployment guarantee."
+    },
+    {
+      "stage": "check",
+      "question": "What failure does untrusted_monitor model when collusion increases?",
+      "options": [
+        "A second U instance can suppress its flag on a backdoored output, allowing the unsafe output through",
+        "T edits every benign output into a rejection",
+        "H becomes an adversarial model",
+        "The producer loses access to its own output"
+      ],
+      "correct": 0,
+      "explanation": "For a backdoor, untrusted_monitor returns False immediately with probability collusion. The run_protocol branch then ships the output without human review, so the safety signal degrades as collusion rises."
+    },
+    {
+      "stage": "check",
+      "question": "Why does the lesson say Trusted Editing Pareto-dominates Untrusted Monitoring on the backdoor task?",
+      "options": [
+        "Trusted editing removes the need for a weaker model",
+        "T is assumed non-adversarial, so its edit does not create a second-U collusion channel",
+        "Untrusted monitoring can never route anything to H",
+        "The baseline has no useful outputs at all"
+      ],
+      "correct": 1,
+      "explanation": "t_edit may fail or over-reject, but it is not strategically coordinating with U. The monitoring protocol must spend safety margin on collusion resistance; the toy's trusted editor avoids that failure mode."
+    },
+    {
+      "stage": "post",
+      "question": "Which is a fundamental limit of control rather than a claim that control creates alignment?",
+      "options": [
+        "Humans do not scale, trusted weak models can lag U, and protocols may fail at higher capability levels",
+        "Control guarantees that U develops a trustworthy mesa-objective",
+        "A human budget becomes unlimited when U is stronger",
+        "Trusted editing proves all future backdoors are absent"
+      ],
+      "correct": 2,
+      "explanation": "Control is a deployment property, not an inner-alignment intervention. Its limits are the finite H budget, T's capability gap, and U's ability to manipulate the protocol or infer audit allocation."
+    },
+    {
+      "stage": "post",
+      "question": "What would a Control Safety Case need to establish?",
+      "options": [
+        "That U is helpful on a preference benchmark",
+        "That T has the same capability as U",
+        "That the model passed one manual jailbreak prompt",
+        "That under worst-case assumptions about U, the protocol bounds the probability of an unacceptable outcome"
+      ],
+      "correct": 3,
+      "explanation": "A safety case argues from an explicit threat model, protocol, and evidence to a bounded unacceptable-outcome probability. It does not replace the assumption that U may be adversarial with a trust claim."
+    }
+  ]
+}
