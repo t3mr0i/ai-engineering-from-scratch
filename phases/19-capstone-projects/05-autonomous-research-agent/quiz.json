@@ -1,0 +1,78 @@
+{
+  "lesson": "05-autonomous-research-agent",
+  "title": "Autonomous Research Agent",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "A node has novelty 0.6, quality 0.8, and $5 remaining in the budget. What score does Node.score(5) return?",
+      "options": [
+        "0.69: 0.6×0.4 + 0.8×0.5 + 0.5×0.1",
+        "0.85: novelty and quality are averaged before adding budget",
+        "0.64: the budget term is ignored below $10",
+        "0.53: quality is multiplied by the remaining dollars"
+      ],
+      "correct": 0,
+      "explanation": "score uses min(1, remaining_budget/10), so $5 contributes 0.05; the weighted sum is 0.24 + 0.40 + 0.05 = 0.69."
+    },
+    {
+      "stage": "check",
+      "question": "What does expand(node, next_id) add for one parent node?",
+      "options": [
+        "Four children: one for each sparsity value and one learning rate",
+        "Five children: sparsity_top 4, 8, 16 and learning rates 3e-4, 1e-3",
+        "Eight children: every sparsity/learning-rate pair is crossed",
+        "Two children: one exploitation branch and one exploration branch"
+      ],
+      "correct": 1,
+      "explanation": "The implementation makes three children while varying sparsity and two while varying learning rate; it does not form a Cartesian product."
+    },
+    {
+      "stage": "check",
+      "question": "What does verify(node) return when run_experiment has set node.failure to \"oom_killed_by_cgroup\"?",
+      "options": [
+        "True, because a failed run has no loss to compare",
+        "True, but with quality reset to zero",
+        "False, because any recorded failure rejects the node before the loss check",
+        "False only when the loss is also greater than 4.0"
+      ],
+      "correct": 2,
+      "explanation": "verify first checks node.failure and immediately returns False. The loss-divergence branch is reached only for otherwise failure-free nodes."
+    },
+    {
+      "stage": "check",
+      "question": "Which limits are installed by the default Tree used by tree_search?",
+      "options": [
+        "A $24 budget and at most 30 nodes",
+        "A $10 budget and at most 50 nodes",
+        "A $50 budget and at most 20 nodes",
+        "A $30 budget and at most 24 nodes"
+      ],
+      "correct": 3,
+      "explanation": "Tree declares budget=30.0 and max_nodes=24. The search stops when either the frontier empties, the budget is spent, or the node count reaches that cap."
+    },
+    {
+      "stage": "post",
+      "question": "With the demo seed 7, what summary does the research run print before choosing its best branch?",
+      "options": [
+        "26 nodes explored, $5.57 spent, and 0 failed nodes",
+        "24 nodes explored, $30.00 spent, and 5 failed nodes",
+        "26 nodes explored, $24.00 spent, and 2 failed nodes",
+        "5 nodes explored, $5.57 spent, and 0 failed nodes"
+      ],
+      "correct": 0,
+      "explanation": "The seeded scaffold prints 26 explored nodes, a $5.57 cumulative spend out of $30, and no failed nodes for this run."
+    },
+    {
+      "stage": "post",
+      "question": "How does best_branch choose the branch it reports?",
+      "options": [
+        "It returns every node in heap order, including failed experiments",
+        "It selects the highest-quality successful node and follows parent IDs back to the root",
+        "It selects the lowest-loss child only if it is a direct child of the root",
+        "It sorts hypotheses alphabetically and takes the first path"
+      ],
+      "correct": 1,
+      "explanation": "best_branch filters for nodes with results and no failure, chooses max quality, then walks parent links until the root and reverses that chain."
+    }
+  ]
+}

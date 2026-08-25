@@ -1,0 +1,78 @@
+{
+  "lesson": "08-production-rag-chatbot",
+  "title": "Production RAG Chatbot",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "For an analyst asking about GDPR, which retrieved document is excluded by the eligibility filter?",
+      "options": [
+        "The public general FAQ",
+        "The analyst's GDPR policy chunk",
+        "A counsel-only HIPAA chunk",
+        "A public GDPR glossary chunk"
+      ],
+      "correct": 2,
+      "explanation": "retrieve first requires the same role or public visibility and the same jurisdiction or any jurisdiction; a counsel-only HIPAA chunk fails both checks for an analyst's GDPR request."
+    },
+    {
+      "stage": "check",
+      "question": "What does PromptLayout.cache_key intentionally leave out?",
+      "options": [
+        "The stable system instructions",
+        "The policy text",
+        "The retrieved context prefix",
+        "The user's question"
+      ],
+      "correct": 3,
+      "explanation": "The cache key hashes the stable system, policy, and context prefix but excludes question so repeated prefix material can be reused across questions."
+    },
+    {
+      "stage": "check",
+      "question": "What happens to the cache flag when the demo repeats the same analyst GDPR request?",
+      "options": [
+        "It becomes true on the repeat request",
+        "It stays false because questions are excluded from the key",
+        "It is cleared after every retrieval",
+        "It becomes true only for the counsel request"
+      ],
+      "correct": 0,
+      "explanation": "The second request has the same stable prefix, so PromptCache finds the previously stored key and the demo reports cache=true."
+    },
+    {
+      "stage": "check",
+      "question": "How does the safety path classify a prompt asking to reveal the system prompt?",
+      "options": [
+        "It is answered after reranking because it contains no PII",
+        "It is blocked by Llama Guard with the matching blocked-pattern reason",
+        "It is scrubbed to [ssn] and then sent to the model",
+        "It is allowed because only credit-card requests are blocked"
+      ],
+      "correct": 1,
+      "explanation": "BLOCKED_PATTERNS includes \"reveal system prompt\"; llama_guard_input returns false and the demo reports that guard reason instead of generating an answer."
+    },
+    {
+      "stage": "post",
+      "question": "Which sources appear for the counsel asking about HIPAA in the sample output?",
+      "options": [
+        "Only the public general FAQ",
+        "The analyst GDPR policy and MSA s12.4",
+        "HIPAA-BAA and the public general FAQ",
+        "Every corpus chunk, including analyst-only GDPR policy"
+      ],
+      "correct": 2,
+      "explanation": "Role and jurisdiction filtering leaves the counsel-visible HIPAA-BAA source and the public general FAQ; the analyst-only GDPR policy is not eligible."
+    },
+    {
+      "stage": "post",
+      "question": "How does presidio_scrub represent the two sensitive values in the PII probe?",
+      "options": [
+        "It deletes the entire prompt",
+        "It replaces both values with the literal string \"[redacted]\"",
+        "It hashes the email but leaves the SSN unchanged",
+        "It replaces the email with [email] and the SSN with [ssn]"
+      ],
+      "correct": 3,
+      "explanation": "The local scrubber uses separate placeholders: email addresses become [email] and Social Security numbers become [ssn]."
+    }
+  ]
+}

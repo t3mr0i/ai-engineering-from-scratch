@@ -1,0 +1,78 @@
+{
+  "lesson": "06-devops-troubleshooting-agent",
+  "title": "DevOps Troubleshooting Agent",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "For the sample checkout-api rollout, which score does root_cause assign to the bad-rollout hypothesis?",
+      "options": [
+        "0.735, using the recent revision, two telemetry citations, specificity 0.82, and path length 0",
+        "0.500, because all hypotheses receive the same starting score",
+        "0.090, because only the DNS hypothesis has a numeric score",
+        "0.140, because the Prometheus error rate is 0.14"
+      ],
+      "correct": 2,
+      "explanation": "The sample scoring function combines recency, specificity, capped citation count, and path weight; the printed bad-rollout score is 0.735."
+    },
+    {
+      "stage": "check",
+      "question": "Which hypothesis is ranked first for Deployment/checkout-api in the sample graph?",
+      "options": [
+        "DNS flap in kube-system/coredns",
+        "node-level pressure on ip-10-2-3-4",
+        "a stale Service selector on checkout-api",
+        "bad rollout: image checkout-api:v2.41 fails /healthz"
+      ],
+      "correct": 3,
+      "explanation": "The recently deployed v2.41 image is linked to both Prometheus and Loki evidence, so its bad-rollout hypothesis outranks the less specific node and DNS alternatives."
+    },
+    {
+      "stage": "check",
+      "question": "What happens when the agent calls argocd_rollback without an approver?",
+      "options": [
+        "The event is recorded but blocked with \"blocked: no slack approval\"",
+        "The rollback executes because argocd_rollback is a read-only tool",
+        "The call is silently omitted from the audit log",
+        "The agent retries until an approver appears"
+      ],
+      "correct": 0,
+      "explanation": "argocd_rollback is in destructive_tools. Without approver, call leaves executed false and returns the explicit no-Slack-approval block result."
+    },
+    {
+      "stage": "check",
+      "question": "What result follows the second rollback call when the demo passes approver=\"alice@sre\"?",
+      "options": [
+        "blocked: unknown tool",
+        "executed by alice@sre, with approved and executed set true",
+        "ok (read-only), with approved still false",
+        "blocked: no slack approval, because the first call was denied"
+      ],
+      "correct": 1,
+      "explanation": "A supplied approver satisfies the destructive-tool gate; the event records alice@sre and both approved and executed become true."
+    },
+    {
+      "stage": "check",
+      "question": "What does the audit log retain about a denied destructive command?",
+      "options": [
+        "Only successful read-only calls are retained",
+        "The command is executed but marked approved=false",
+        "The considered command is retained with executed=false and its block result",
+        "The command is discarded unless an approver later authorizes it"
+      ],
+      "correct": 2,
+      "explanation": "Agent.call creates and appends an AuditEvent before returning, so even a denied call remains traceable with considered=true, executed=false, and its result."
+    },
+    {
+      "stage": "post",
+      "question": "Why can the agent query Prometheus before proposing a rollback?",
+      "options": [
+        "promql is treated as destructive but has a built-in approval",
+        "all tools are allowed until the first hypothesis is ranked",
+        "the graph bypasses tool policy for telemetry reads",
+        "promql is in read_only_tools, while rollback tools are kept in destructive_tools"
+      ],
+      "correct": 3,
+      "explanation": "The tool policy explicitly executes promql, logql, and related telemetry reads without approval, while argocd_rollback requires a human approver."
+    }
+  ]
+}

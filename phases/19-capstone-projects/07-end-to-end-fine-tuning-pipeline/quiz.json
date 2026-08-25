@@ -1,0 +1,78 @@
+{
+  "lesson": "07-end-to-end-fine-tuning-pipeline",
+  "title": "End-to-End Fine-Tuning Pipeline",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which artifact order does the demo pipeline use after data preparation?",
+      "options": [
+        "data → contamination → SFT → DPO → quantize → serve → eval → model card",
+        "data → DPO → SFT → serve → quantize → eval → model card",
+        "data → quantize → contamination → SFT → DPO → eval → serve → model card",
+        "data → SFT → model card → contamination → DPO → quantize → serve → eval"
+      ],
+      "correct": 0,
+      "explanation": "The orchestrator registers stages in the reproducibility order data, contamination, SFT, DPO, quantization, serving, evaluation, and finally the model card."
+    },
+    {
+      "stage": "check",
+      "question": "What does stage_contamination check in the local fixture?",
+      "options": [
+        "Only MMLU-Pro, allowing overlap in the other evaluations",
+        "MMLU-Pro, MT-Bench-v2, and RewardBench-2, with zero overlap required for clean",
+        "Only duplicate rows inside the SFT checkpoint",
+        "The serving p99 latency and GPTQ file size"
+      ],
+      "correct": 1,
+      "explanation": "stage_contamination creates one MinHash-style result for each of the three named benchmarks and marks the report clean only when all overlap_examples values are zero."
+    },
+    {
+      "stage": "check",
+      "question": "Which beta value is recorded in the DPO checkpoint artifact?",
+      "options": [
+        "0.15, matching the TRL version",
+        "0.50, the default preference weight",
+        "0.08, with one DPO epoch",
+        "0.94, inherited from dataset deduplication"
+      ],
+      "correct": 2,
+      "explanation": "stage_dpo stores epochs=1 and beta=0.08 in the dpo_checkpoint payload; the deduplication ratio belongs to the earlier dataset artifact."
+    },
+    {
+      "stage": "check",
+      "question": "Which quantized size is reported for GPTQ INT4?",
+      "options": [
+        "5.1 GB",
+        "4.8 GB",
+        "6.2 GB",
+        "4.6 GB"
+      ],
+      "correct": 3,
+      "explanation": "stage_quantize writes gptq_int4_gb=4.6, awq_int4_gb=4.8, and gguf_q4_km_gb=5.1 to the quants artifact."
+    },
+    {
+      "stage": "post",
+      "question": "What acceptance threshold is stored for the served EAGLE-3 endpoint?",
+      "options": [
+        "0.74",
+        "0.987",
+        "0.41",
+        "0.28"
+      ],
+      "correct": 0,
+      "explanation": "stage_serve records eagle_acceptance=0.74; 0.987 is the separate Llama Guard evaluation pass rate and 0.28 is dollars per million tokens."
+    },
+    {
+      "stage": "post",
+      "question": "Which evidence belongs in the model-card artifact produced by this scaffold?",
+      "options": [
+        "Only the final endpoint URL, with no training provenance",
+        "Training-data provenance/hash, evaluation deltas, safety result, and a reproducible command",
+        "A list of GPU hostnames and the user's prompt history",
+        "The raw 300,000 examples embedded directly in the card"
+      ],
+      "correct": 1,
+      "explanation": "stage_model_card records the MOF2026 source, training hash, evaluation and safety fields, and a reproducibility command rather than embedding raw data."
+    }
+  ]
+}

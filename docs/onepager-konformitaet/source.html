@@ -1,0 +1,602 @@
+<title>Trainingcamp im LHIND-Betrieb</title>
+<style>
+  @font-face { font-family: "LHG Head"; src: url("__HEAD_MEDIUM__") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+  @font-face { font-family: "LHG Head"; src: url("__HEAD_BOLD__") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+  @font-face { font-family: "LHG Text"; src: url("__TEXT_REGULAR__") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: "LHG Text"; src: url("__TEXT_BOLD__") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+
+  :root {
+    --core-blue: #05164d;
+    --blue-500: #2d5fe4;
+    --blue-600: #243f9b;
+    --blue-100: #e5f1ff;
+    --slate-700: #52617c;
+    --grey-100: #f9f8f8;
+    --grey-200: #f1f0ef;
+    --grey-300: #e3e1de;
+    --grey-400: #cfccc8;
+    --warm-grey: #7a7673;
+    --sand: #857461;
+    --sand-soft: #f0e7d6;
+    --success: #1b8a5a;
+    --warning: #e2974b;
+
+    --bg: var(--grey-100);
+    --surface: #ffffff;
+    --sunken: var(--grey-200);
+    --ink: var(--core-blue);
+    --ink-2: #14366b;
+    --muted: var(--warm-grey);
+    --rule: var(--grey-300);
+    --rule-strong: var(--grey-400);
+    --accent: var(--blue-500);
+    --accent-soft: #dce7f6;
+    --open: var(--sand);
+    --open-soft: var(--sand-soft);
+    --ok: var(--success);
+    --shadow: 0 1px 2px rgba(5, 22, 77, 0.07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0a1230;
+      --surface: #101a3f;
+      --sunken: #16224b;
+      --ink: #eef2fb;
+      --ink-2: #c3d2ef;
+      --muted: #97a3c0;
+      --rule: #26325c;
+      --rule-strong: #3a4776;
+      --accent: #8fb3ff;
+      --accent-soft: #1c2a5c;
+      --open: #d8bd92;
+      --open-soft: #2e2718;
+      --ok: #5cc596;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0a1230;
+    --surface: #101a3f;
+    --sunken: #16224b;
+    --ink: #eef2fb;
+    --ink-2: #c3d2ef;
+    --muted: #97a3c0;
+    --rule: #26325c;
+    --rule-strong: #3a4776;
+    --accent: #8fb3ff;
+    --accent-soft: #1c2a5c;
+    --open: #d8bd92;
+    --open-soft: #2e2718;
+    --ok: #5cc596;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "LHG Text", "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0 24px 96px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page { max-width: 940px; margin: 0 auto; }
+
+  h1, h2, h3 {
+    font-family: "LHG Head", "LHG Text", -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 500;
+    color: var(--ink);
+    text-wrap: balance;
+    margin: 0;
+  }
+  h1 { font-size: 2.5rem; line-height: 1.12; letter-spacing: -0.015em; }
+  h2 { font-size: 1.375rem; line-height: 1.25; }
+  h3 { font-size: 1.0625rem; line-height: 1.3; }
+  p { margin: 0; max-width: 68ch; }
+  a { color: var(--accent); }
+
+  header.masthead {
+    display: flex; flex-direction: column; gap: 18px;
+    padding: 72px 0 32px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .masthead .kicker {
+    font-family: "LHG Head", sans-serif;
+    font-size: 0.8125rem; letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--muted); margin: 0;
+  }
+  .masthead .lede { font-size: 1.1875rem; line-height: 1.55; color: var(--ink-2); max-width: 62ch; }
+  .masthead .meta {
+    display: flex; flex-wrap: wrap; gap: 8px 28px;
+    font-size: 0.8125rem; color: var(--muted); padding-top: 6px;
+  }
+
+  section { display: flex; flex-direction: column; gap: 18px; padding: 44px 0 0; }
+  section > .body { display: flex; flex-direction: column; gap: 14px; }
+  .sec-head { display: flex; flex-direction: column; gap: 6px; }
+  .sec-head .num {
+    font-family: "LHG Head", sans-serif; font-size: 0.75rem; letter-spacing: 0.12em;
+    color: var(--accent); font-weight: 700;
+  }
+
+  .facts {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 1px; background: var(--rule);
+    border: 1px solid var(--rule); border-radius: 2px; overflow: hidden;
+  }
+  .fact { background: var(--surface); padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; }
+  .fact dt { font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  .fact dd {
+    margin: 0; font-family: "LHG Head", sans-serif; font-size: 1.0625rem;
+    color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.3;
+  }
+  .fact dd small { display: block; font-family: "LHG Text", sans-serif; font-size: 0.8125rem; color: var(--muted); font-weight: 400; margin-top: 2px; }
+
+  figure { margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .figframe {
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 2px;
+    padding: 22px; overflow-x: auto; box-shadow: var(--shadow);
+  }
+  .figframe svg { display: block; max-width: 100%; height: auto; min-width: 640px; color: var(--ink); }
+  figcaption { font-size: 0.875rem; color: var(--muted); max-width: 68ch; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 0.9375rem; }
+  .tablewrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 2px; background: var(--surface); }
+  th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  thead th {
+    font-family: "LHG Head", sans-serif; font-weight: 500; font-size: 0.75rem;
+    letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted);
+    background: var(--sunken); border-bottom: 1px solid var(--rule-strong);
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td strong { font-weight: 700; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--rule); border-left: 3px solid var(--accent);
+    border-radius: 2px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px;
+    box-shadow: var(--shadow);
+  }
+  .card.open { border-left-color: var(--open); }
+  .card p { font-size: 0.9375rem; color: var(--ink-2); }
+  .card .fix { font-size: 0.875rem; color: var(--muted); }
+
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; max-width: 68ch; }
+  ul.plain li::marker { color: var(--accent); }
+
+  code {
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.86em; background: var(--sunken); border: 1px solid var(--rule);
+    border-radius: 2px; padding: 1px 5px; color: var(--ink-2);
+  }
+
+  .ask {
+    margin-top: 20px; background: var(--surface); border: 1px solid var(--rule-strong);
+    border-top: 3px solid var(--ink); border-radius: 2px; padding: 26px 28px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .ask ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 10px; max-width: 68ch; }
+  .ask ol li::marker { font-family: "LHG Head", sans-serif; color: var(--accent); font-weight: 700; }
+
+  footer.colophon {
+    margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--rule);
+    font-size: 0.8125rem; color: var(--muted); display: flex; flex-direction: column; gap: 6px;
+  }
+
+  @media (max-width: 640px) {
+    body { padding: 0 18px 64px; }
+    h1 { font-size: 1.9rem; }
+    header.masthead { padding-top: 48px; }
+  }
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <p class="kicker">Betriebs- und Konformitätsbild</p>
+    <h1>Das Trainingcamp läuft auf unserer eigenen Infrastruktur</h1>
+    <p class="lede">
+      Die Lernplattform wird als Container im LHIND-eigenen OpenShift-Cluster betrieben, ist nur
+      über das interne Netz erreichbar und speichert keinerlei personenbezogene Lerndaten auf dem
+      Server. Sprachmodell-Aufrufe verlassen den Browser ausschließlich über unser internes
+      Gateway, der zugehörige Schlüssel liegt serverseitig. Offen sind drei Punkte, die weiter
+      unten benannt und mit einem konkreten Vorschlag hinterlegt sind.
+    </p>
+    <div class="meta">
+      <span>Anwendung: <strong>ase-site-gated</strong></span>
+      <span>Cluster: <strong>ocp03</strong></span>
+      <span>Namespace: <strong>trainingcamp-prod</strong></span>
+      <span>Stand: 25. August 2026</span>
+    </div>
+  </header>
+
+  <section>
+    <div class="sec-head">
+      <span class="num">01</span>
+      <h2>Wo es läuft</h2>
+    </div>
+    <dl class="facts">
+      <div class="fact">
+        <dt>Hosting</dt>
+        <dd>OpenShift ocp03<small>LHIND-eigener Cluster, kein Public-Cloud-Anteil</small></dd>
+      </div>
+      <div class="fact">
+        <dt>Erreichbarkeit</dt>
+        <dd>Nur intern<small>trainingcamp.lhind.app.lufthansa.com über internen Reverse Proxy</small></dd>
+      </div>
+      <div class="fact">
+        <dt>Laufzeit-Abhängigkeiten</dt>
+        <dd>0 npm-Pakete<small>Der Server nutzt ausschließlich Node-Bordmittel</small></dd>
+      </div>
+      <div class="fact">
+        <dt>Basis-Image</dt>
+        <dd>Red Hat UBI 9<small>Node.js 22, keine Pulls von docker.io</small></dd>
+      </div>
+      <div class="fact">
+        <dt>Serverseitige Lerndaten</dt>
+        <dd>Keine<small>Fortschritt liegt im localStorage des Browsers</small></dd>
+      </div>
+      <div class="fact">
+        <dt>Sprachmodelle</dt>
+        <dd>gateway.lhind.ai<small>Nur die freigegebene GPT-5.4-Familie</small></dd>
+      </div>
+    </dl>
+    <div class="body">
+      <p>
+        Die frühere Azure-Variante ist vollständig abgebaut. Weder der App Service noch sein Plan
+        existieren noch, und der zugehörige CI-Job wurde entfernt. Was heute produktiv läuft, ist
+        ein einzelner Container in unserem eigenen Rechenzentrum, dessen sämtliche Manifeste
+        im Repository unter <code>openshift/</code> versioniert sind.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="num">02</span>
+      <h2>Systemdesign</h2>
+    </div>
+    <figure>
+      <div class="figframe">
+        <svg viewBox="0 0 940 430" role="img" aria-label="Systemdesign: Browser, interner Reverse Proxy, OpenShift-Route, Pod und internes Sprachmodell-Gateway liegen innerhalb des LHIND-Netzes; die öffentlichen CDNs für Icons, Schriften und Pyodide liegen außerhalb.">
+          <defs>
+            <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"></path>
+            </marker>
+            <marker id="ar-open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" style="fill: var(--open)"></path>
+            </marker>
+          </defs>
+
+          <rect x="8" y="34" width="924" height="278" rx="3" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="6 5" opacity="0.42"></rect>
+          <text x="20" y="26" font-size="12" fill="currentColor" opacity="0.65" font-weight="700" letter-spacing="0.08em">LHIND-NETZ</text>
+
+          <rect x="24" y="118" width="176" height="120" rx="3" style="fill: var(--surface)" stroke="currentColor" stroke-width="1.2" opacity="0.95"></rect>
+          <text x="112" y="142" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Browser der Lernenden</text>
+          <text x="112" y="166" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">Lerninhalte, statisch</text>
+          <text x="112" y="187" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">Pyodide, WebAssembly</text>
+          <text x="112" y="208" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">localStorage, Fortschritt</text>
+          <text x="112" y="229" font-size="11" text-anchor="middle" style="fill: var(--ok)" font-weight="700">Python läuft lokal</text>
+
+          <rect x="238" y="146" width="128" height="64" rx="3" style="fill: var(--surface)" stroke="currentColor" stroke-width="1.2"></rect>
+          <text x="302" y="172" font-size="12.5" text-anchor="middle" fill="currentColor" font-weight="700">Reverse Proxy</text>
+          <text x="302" y="191" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">intern, VPN</text>
+
+          <rect x="404" y="62" width="286" height="230" rx="3" fill="none" style="stroke: var(--accent)" stroke-width="1.4"></rect>
+          <text x="416" y="82" font-size="11.5" style="fill: var(--accent)" font-weight="700" letter-spacing="0.05em">OPENSHIFT ocp03 · trainingcamp-prod</text>
+
+          <rect x="420" y="96" width="124" height="52" rx="3" style="fill: var(--surface)" stroke="currentColor" stroke-width="1.2"></rect>
+          <text x="482" y="117" font-size="12" text-anchor="middle" fill="currentColor" font-weight="700">Route</text>
+          <text x="482" y="134" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">TLS am Edge</text>
+
+          <rect x="556" y="96" width="118" height="52" rx="3" style="fill: var(--surface)" stroke="currentColor" stroke-width="1.2"></rect>
+          <text x="615" y="117" font-size="12" text-anchor="middle" fill="currentColor" font-weight="700">Secret</text>
+          <text x="615" y="134" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">Gateway-Schlüssel</text>
+
+          <rect x="420" y="192" width="254" height="80" rx="3" style="fill: var(--sunken)" stroke="currentColor" stroke-width="1.4"></rect>
+          <text x="547" y="216" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Pod · Node.js 22 auf UBI 9</text>
+          <text x="547" y="236" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">Auslieferung, Gateway-Proxy</text>
+          <text x="547" y="256" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">keine npm-Abhängigkeiten</text>
+
+          <rect x="726" y="192" width="188" height="60" rx="3" style="fill: var(--surface)" stroke="currentColor" stroke-width="1.2"></rect>
+          <text x="820" y="216" font-size="12.5" text-anchor="middle" fill="currentColor" font-weight="700">gateway.lhind.ai</text>
+          <text x="820" y="234" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">internes Sprachmodell-Gateway</text>
+
+          <rect x="726" y="96" width="188" height="52" rx="3" style="fill: var(--surface)" stroke="currentColor" stroke-width="1.2"></rect>
+          <text x="820" y="117" font-size="12.5" text-anchor="middle" fill="currentColor" font-weight="700">git02, GitLab</text>
+          <text x="820" y="134" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">Quellcode, Bauplan</text>
+
+          <line x1="200" y1="178" x2="232" y2="178" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"></line>
+          <text x="216" y="170" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">HTTPS</text>
+
+          <line x1="366" y1="178" x2="414" y2="140" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"></line>
+          <text x="392" y="176" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">Host-Rewrite</text>
+
+          <line x1="482" y1="148" x2="482" y2="186" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"></line>
+          <text x="500" y="172" font-size="10" text-anchor="start" fill="currentColor" opacity="0.75">Port 8080</text>
+
+          <line x1="615" y1="148" x2="615" y2="186" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"></line>
+          <text x="628" y="172" font-size="10" text-anchor="start" fill="currentColor" opacity="0.75">Umgebung</text>
+
+          <line x1="674" y1="222" x2="720" y2="222" style="stroke: var(--accent)" stroke-width="1.8" marker-end="url(#ar)"></line>
+          <text x="697" y="214" font-size="10" text-anchor="middle" style="fill: var(--accent)" font-weight="700">Prompt</text>
+
+          <line x1="820" y1="148" x2="820" y2="170" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 3"></line>
+          <line x1="820" y1="170" x2="694" y2="170" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 3"></line>
+          <line x1="694" y1="170" x2="694" y2="188" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#ar)"></line>
+          <text x="756" y="164" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">Build im Cluster</text>
+
+          <rect x="24" y="336" width="342" height="66" rx="3" style="fill: var(--open-soft); stroke: var(--open)"  stroke-width="1.4" stroke-dasharray="6 4"></rect>
+          <text x="195" y="360" font-size="12.5" text-anchor="middle" style="fill: var(--open)" font-weight="700">Öffentliche CDNs</text>
+          <text x="195" y="379" font-size="11" text-anchor="middle" style="fill: var(--open)">unpkg · jsDelivr · Google Fonts</text>
+          <text x="195" y="395" font-size="10.5" text-anchor="middle" style="fill: var(--open)" opacity="0.9">Icons, Schriften, Pyodide-Laufzeit</text>
+
+          <line x1="112" y1="238" x2="112" y2="330" style="stroke: var(--open)" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ar-open)"></line>
+          <text x="126" y="284" font-size="10.5" text-anchor="start" style="fill: var(--open)" font-weight="700">verlässt das interne Netz</text>
+        </svg>
+      </div>
+      <figcaption>
+        Alles, was Inhalte oder Prompts berührt, bleibt innerhalb der gestrichelten Grenze. Der
+        einzige Pfad nach außen ist der Abruf von Icons, Schriften und der Pyodide-Laufzeit durch
+        den Browser, siehe Abschnitt 05.
+      </figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="num">03</span>
+      <h2>Ablauf eines Sprachmodell-Aufrufs</h2>
+    </div>
+    <figure>
+      <div class="figframe">
+        <svg viewBox="0 0 940 372" role="img" aria-label="Ablauf: Der Browser sendet den Prompt ohne Schlüssel an den eigenen Server, dieser prüft das Ratenlimit, setzt den Gateway-Schlüssel aus dem Secret ein, ruft das interne Gateway auf und reicht die Antwort zurück, ohne etwas zu speichern.">
+          <defs>
+            <marker id="s-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"></path>
+            </marker>
+          </defs>
+
+          <rect x="18" y="16" width="176" height="44" rx="3" style="fill: var(--sunken)" stroke="currentColor" stroke-width="1.2"></rect>
+          <text x="106" y="43" font-size="12.5" text-anchor="middle" fill="currentColor" font-weight="700">Browser</text>
+          <rect x="270" y="16" width="176" height="44" rx="3" style="fill: var(--sunken)" stroke="currentColor" stroke-width="1.2"></rect>
+          <text x="358" y="43" font-size="12.5" text-anchor="middle" fill="currentColor" font-weight="700">Reverse Proxy</text>
+          <rect x="522" y="16" width="176" height="44" rx="3" style="fill: var(--sunken)" stroke="currentColor" stroke-width="1.2"></rect>
+          <text x="610" y="43" font-size="12.5" text-anchor="middle" fill="currentColor" font-weight="700">Pod im Cluster</text>
+          <rect x="774" y="16" width="148" height="44" rx="3" style="fill: var(--sunken)" stroke="currentColor" stroke-width="1.2"></rect>
+          <text x="848" y="43" font-size="12.5" text-anchor="middle" fill="currentColor" font-weight="700">Gateway</text>
+
+          <line x1="106" y1="60" x2="106" y2="352" stroke="currentColor" stroke-width="1" stroke-dasharray="3 4" opacity="0.4"></line>
+          <line x1="358" y1="60" x2="358" y2="352" stroke="currentColor" stroke-width="1" stroke-dasharray="3 4" opacity="0.4"></line>
+          <line x1="610" y1="60" x2="610" y2="352" stroke="currentColor" stroke-width="1" stroke-dasharray="3 4" opacity="0.4"></line>
+          <line x1="848" y1="60" x2="848" y2="352" stroke="currentColor" stroke-width="1" stroke-dasharray="3 4" opacity="0.4"></line>
+
+          <text x="106" y="102" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">Prompt, kein Schlüssel</text>
+          <line x1="106" y1="112" x2="352" y2="112" stroke="currentColor" stroke-width="1.5" marker-end="url(#s-ar)"></line>
+          <text x="232" y="128" font-size="11" text-anchor="middle" fill="currentColor">1 · POST /api/llm/chat/completions</text>
+
+          <line x1="358" y1="160" x2="604" y2="160" stroke="currentColor" stroke-width="1.5" marker-end="url(#s-ar)"></line>
+          <text x="484" y="176" font-size="11" text-anchor="middle" fill="currentColor">2 · weitergereicht, X-Forwarded-For</text>
+
+          <path d="M 610 200 L 690 200 L 690 224 L 616 224" fill="none" style="stroke: var(--accent)" stroke-width="1.5" marker-end="url(#s-ar)"></path>
+          <text x="700" y="205" font-size="11" text-anchor="start" style="fill: var(--accent)">3 · Ratenlimit 20 je Minute, Body bis 1 MB</text>
+          <text x="700" y="222" font-size="10.5" text-anchor="start" style="fill: var(--accent)" opacity="0.85">Schlüssel aus dem Secret eingesetzt</text>
+
+          <line x1="610" y1="262" x2="842" y2="262" style="stroke: var(--accent)" stroke-width="1.8" marker-end="url(#s-ar)"></line>
+          <text x="726" y="254" font-size="11" text-anchor="middle" style="fill: var(--accent)">4 · Authorization: Bearer</text>
+
+          <line x1="848" y1="300" x2="616" y2="300" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#s-ar)"></line>
+          <text x="732" y="292" font-size="11" text-anchor="middle" fill="currentColor">5 · Antwort von azure/gpt-5.4-mini</text>
+
+          <line x1="610" y1="338" x2="112" y2="338" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#s-ar)"></line>
+          <text x="361" y="330" font-size="11" text-anchor="middle" fill="currentColor">6 · unverändert zurück, nichts protokolliert, nichts gespeichert</text>
+        </svg>
+      </div>
+      <figcaption>
+        Der Gateway-Schlüssel existiert nur im Pod. Ein <code>Authorization</code>-Header, den der
+        Browser mitschickt, wird verworfen und durch den Schlüssel aus dem Secret ersetzt. Der
+        Server hält weder Prompt noch Antwort, es gibt für diesen Pfad keine Protokollierung von
+        Inhalten.
+      </figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="num">04</span>
+      <h2>Welche Daten wohin gehen</h2>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Datenart</th>
+            <th scope="col">Ort</th>
+            <th scope="col">Verlässt LHIND</th>
+            <th scope="col">Speicherung</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Lernfortschritt, Quizantworten, Notizen</strong></td>
+            <td>Browser, localStorage</td>
+            <td>Nein</td>
+            <td>Nur auf dem Gerät der lernenden Person</td>
+          </tr>
+          <tr>
+            <td><strong>Im Notebook geschriebener Python-Code</strong></td>
+            <td>Browser, Pyodide in WebAssembly</td>
+            <td>Nein</td>
+            <td>Wird nicht übertragen, keine serverseitige Ausführung</td>
+          </tr>
+          <tr>
+            <td><strong>Prompts und Modellantworten</strong></td>
+            <td>Pod, dann gateway.lhind.ai</td>
+            <td>Erst hinter dem Gateway</td>
+            <td>Im Pod keine, danach nach den Regeln des Gateways</td>
+          </tr>
+          <tr>
+            <td><strong>IP-Adresse aus dem Weiterleitungs-Header</strong></td>
+            <td>Pod, im Arbeitsspeicher</td>
+            <td>Nein</td>
+            <td>Zähler für das Ratenlimit, verfällt nach 60 Sekunden</td>
+          </tr>
+          <tr>
+            <td><strong>Kennung und Gruppen der Redaktion</strong></td>
+            <td>Header vom Reverse Proxy</td>
+            <td>Nein</td>
+            <td>Nur für die Rollenprüfung im Kurations-Bereich</td>
+          </tr>
+          <tr>
+            <td><strong>Kuratierte Kursentwürfe</strong></td>
+            <td>Persistentes Volume, dann git02</td>
+            <td>Nein</td>
+            <td>Im Cluster, Veröffentlichung als Merge Request</td>
+          </tr>
+          <tr>
+            <td><strong>Nutzungsstatistik</strong></td>
+            <td>Nirgends</td>
+            <td>Nein</td>
+            <td>Es ist kein Tracker aktiv, die Einbindung ist leer</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="body">
+      <p>
+        Bemerkenswert an dieser Tabelle ist vor allem, was fehlt: Es gibt keine Nutzerdatenbank,
+        keine Sitzungs-Historie und keinen Analyse-Dienst. Wer die Plattform verlässt, hinterlässt
+        auf dem Server nichts, was sich einer Person zuordnen ließe.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="num">05</span>
+      <h2>Was noch offen ist</h2>
+    </div>
+    <div class="body">
+      <p>
+        Drei Punkte halten der Prüfung heute noch nicht vollständig stand. Sie sind bekannt,
+        eingegrenzt und jeweils mit einem Vorschlag hinterlegt.
+      </p>
+    </div>
+    <div class="cards">
+      <div class="card open">
+        <h3>Der Browser lädt von öffentlichen CDNs</h3>
+        <p>
+          Icons kommen von unpkg, die Schriften von Google Fonts, die Pyodide-Laufzeit und die
+          Diagrammbibliothek von jsDelivr. Damit erfahren drei externe Anbieter IP-Adresse und
+          Browserkennung unserer Lernenden. Lerninhalte oder Prompts sind davon nicht betroffen.
+        </p>
+        <p class="fix">
+          Vorschlag: alle drei Abhängigkeiten mit ins Image legen und im Build mit ausliefern. Das
+          betrifft die Seitenkopfzeilen und den Pyodide-Ladepfad, es ändert nichts an der
+          Architektur und macht die Anwendung zugleich offlinefähig.
+        </p>
+      </div>
+      <div class="card open">
+        <h3>Die Anwendung authentifiziert selbst nicht</h3>
+        <p>
+          Der Passcode-Schutz ist im Betrieb bewusst abgeschaltet, weil die Route ausschließlich
+          über den internen, VPN-beschränkten Reverse Proxy erreichbar ist. Der Schutz liegt damit
+          vollständig auf der Netzebene, die Anwendung selbst unterscheidet keine Personen.
+        </p>
+        <p class="fix">
+          Vorschlag: so belassen, solange die Netzbeschränkung gilt. Der Passcode-Mechanismus ist
+          weiterhin verdrahtet und über eine einzelne Umgebungsvariable wieder aktivierbar. Für
+          echte Nutzeranmeldung wäre der Reverse Proxy die richtige Stelle.
+        </p>
+      </div>
+      <div class="card open">
+        <h3>Die Genauigkeit des Ratenlimits ist unbestätigt</h3>
+        <p>
+          Das Limit von zwanzig Anfragen pro Minute greift nachweislich, es zählt aber nach der
+          IP-Adresse aus dem Weiterleitungs-Header. Ob der vorgelagerte Reverse Proxy eine
+          konsistente Client-Adresse durchreicht, wurde bisher nur intern geprüft.
+        </p>
+        <p class="fix">
+          Vorschlag: einmal über den öffentlichen Namen gegenmessen. Im ungünstigen Fall greift das
+          Limit gröber als gedacht, das Budget des Gateways bleibt trotzdem geschützt.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="num">06</span>
+      <h2>Lieferkette und Betrieb</h2>
+    </div>
+    <div class="body">
+      <ul class="plain">
+        <li>
+          Der Quellcode liegt vollständig auf <code>git02.lhind.app.lufthansa.com</code>, das Image
+          wird im Cluster selbst gebaut. Es gibt keine externe Build-Pipeline und keine fremde
+          Registry im Pfad.
+        </li>
+        <li>
+          Das Basis-Image ist Red Hats UBI 9 mit Node.js 22. Pulls von docker.io wären durch die
+          Registry-Richtlinie des Clusters ohnehin abgelehnt worden.
+        </li>
+        <li>
+          Zur Laufzeit hat der Server keine einzige npm-Abhängigkeit. Die gesamte Serverlogik sind
+          gut zweitausend Zeilen gegen die Node-Standardbibliothek, entsprechend klein ist die
+          Angriffsfläche und der Pflegeaufwand.
+        </li>
+        <li>
+          Der Container läuft nicht als Root, unter einem eigenen Dienstkonto, wie es die
+          Kyverno-Richtlinie des Clusters verlangt, und innerhalb der Namespace-Quote von
+          250 Millicores und 2 Gigabyte.
+        </li>
+        <li>
+          Alle Geheimnisse liegen in einem OpenShift-Secret und werden erst zur Laufzeit in die
+          Umgebung gereicht. Im Repository steht nur eine Beispieldatei ohne Werte.
+        </li>
+        <li>
+          TLS terminiert an der Route, HTTP wird auf HTTPS umgeleitet, das Zertifikat stammt aus
+          dem bestehenden Wildcard des Clusters. Es war weder ein neuer DNS-Eintrag noch ein neues
+          Zertifikat nötig.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="num">07</span>
+      <h2>Was wir jetzt brauchen</h2>
+    </div>
+    <div class="ask">
+      <ol>
+        <li>
+          <strong>Freigabe des laufenden Betriebs</strong> auf ocp03 in der beschriebenen Form,
+          also intern erreichbar, ohne serverseitige Lerndaten und mit dem internen Gateway als
+          einzigem Sprachmodell-Pfad.
+        </li>
+        <li>
+          <strong>Zustimmung, die drei CDN-Abhängigkeiten abzulösen</strong> und mit ins Image zu
+          nehmen. Der Aufwand liegt bei etwa einem Personentag, danach lädt der Browser
+          ausschließlich aus unserem eigenen Netz.
+        </li>
+        <li>
+          <strong>Eine Entscheidung zur Anmeldung.</strong> Bleibt es beim Schutz über das Netz,
+          oder soll der Reverse Proxy eine Anmeldung gegen unser Verzeichnis erzwingen? Die
+          Anwendung ist auf beides vorbereitet.
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <footer class="colophon">
+    <p>
+      Alle Angaben sind gegen den Stand des Repositories geprüft: <code>openshift/deployment.yaml</code>,
+      <code>openshift/route.yaml</code>, <code>openshift/Dockerfile</code>, <code>server/server.js</code>,
+      <code>server/admin-auth.js</code>, <code>site/progress.js</code> und die Seitenkopfzeilen unter <code>site/</code>.
+    </p>
+    <p>Erstellt am 25. August 2026 für die technische Freigabe.</p>
+  </footer>
+
+</div>

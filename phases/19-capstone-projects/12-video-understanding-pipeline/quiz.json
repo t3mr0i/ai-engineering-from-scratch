@@ -1,78 +1,78 @@
 {
   "lesson": "12-video-understanding-pipeline",
-  "title": "Capstone 12 — Video Understanding Pipeline (Scene, QA, Search)",
+  "title": "Video Understanding Pipeline",
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is a scene-level index still needed even when a long-context VLM can read a 2-hour video natively?",
+      "question": "Which embedding streams does multi_vector_search combine for a video query?",
       "options": [
-        "Long-context VLMs cannot stream output",
-        "Vector indexes do not support video files",
-        "Ingesting 100 hours of video into a queryable corpus needs scene-level retrieval, even when individual videos can be read whole",
-        "Scene cuts are the only thing a VLM understands"
+        "Caption, frame, and transcript embeddings",
+        "Only one pooled frame embedding",
+        "Audio waveform, optical flow, and OCR pixels",
+        "Caption embeddings and the final answer text only"
       ],
       "correct": 2,
-      "explanation": "“Ingesting 100 hours of video into a queryable corpus needs scene-level retrieval, even when individual videos can be read whole” matches the lesson’s treatment of Capstone 12 — Video Understanding Pipeline (Scene, QA, Search); the alternatives conflict with its definitions or workflow."
+      "explanation": "Each Scene carries caption_emb, frame_emb, and transcript_emb; the search ranks all three streams before fusing them."
     },
     {
       "stage": "check",
-      "question": "Which three vector types does each scene get in the multi-vector index?",
+      "question": "What reciprocal-rank contribution does a result at zero-based rank r receive in the video fusion?",
       "options": [
-        "Caption embedding, keyframe embedding, and transcript embedding",
-        "Audio waveform, mel-spectrogram, and MFCCs",
-        "Hash, gzip, and CRC",
-        "Pose, depth, and optical flow"
-      ],
-      "correct": 0,
-      "explanation": "“Caption embedding, keyframe embedding, and transcript embedding” matches the lesson’s treatment of Capstone 12 — Video Understanding Pipeline (Scene, QA, Search); the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "How are results from the three retrieval streams merged at query time?",
-      "options": [
-        "By picking the caption hit only",
-        "By averaging cosine similarities",
-        "Via reciprocal rank fusion across the three ranked lists",
-        "By taking the union without scoring"
-      ],
-      "correct": 2,
-      "explanation": "“Via reciprocal rank fusion across the three ranked lists” matches the lesson’s treatment of Capstone 12 — Video Understanding Pipeline (Scene, QA, Search); the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What does the temporal grounding step refine inside the top scene?",
-      "options": [
-        "The transcript word timestamps from Whisper",
-        "The number of vectors stored in Qdrant",
-        "The (start, end) timestamp window that contains the answer",
-        "The keyframe embedding dimensionality"
-      ],
-      "correct": 2,
-      "explanation": "“The (start, end) timestamp window that contains the answer” matches the lesson’s treatment of Capstone 12 — Video Understanding Pipeline (Scene, QA, Search); the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "Which question class is reported separately because it is a known hallucination hotspot?",
-      "options": [
-        "Descriptive questions about scenery",
-        "Speaker identification questions",
-        "Translation questions",
-        "Counting and action-type questions, where VLMs miscount or mis-order events"
+        "1/(r+1), with no constant",
+        "1/(60+r+1)",
+        "(r+1)/60",
+        "1/(60+r)"
       ],
       "correct": 3,
-      "explanation": "“Counting and action-type questions, where VLMs miscount or mis-order events” matches the lesson’s treatment of Capstone 12 — Video Understanding Pipeline (Scene, QA, Search); the alternatives conflict with its definitions or workflow."
+      "explanation": "The fusion uses the same RRF form as the code: 1/(60 + rank + 1), so the top zero-based rank contributes 1/61."
+    },
+    {
+      "stage": "check",
+      "question": "What does ground_window return when a scene has no matching query token?",
+      "options": [
+        "The full scene interval",
+        "An empty interval",
+        "Exactly a five-percent window around the midpoint",
+        "The first ten seconds of the video"
+      ],
+      "correct": 0,
+      "explanation": "Without a token match, ground_window cannot narrow the scene and returns its complete start-to-end interval."
+    },
+    {
+      "stage": "check",
+      "question": "What grounded interval does the sample query about plating report for vid_001?",
+      "options": [
+        "02:50–03:30, the untrimmed scene",
+        "03:04–03:30, the matching token window",
+        "02:50–03:04, the prefix before the token",
+        "03:30–04:10, the next scene"
+      ],
+      "correct": 1,
+      "explanation": "The top plating scene spans 02:50–03:30; ground_window narrows it to 03:04–03:30 around the matching token."
     },
     {
       "stage": "post",
-      "question": "Which grounding metric does the rubric measure on a held-out set?",
+      "question": "What effect does the descriptive flag have on the local retrieval ranking?",
       "options": [
-        "Temporal-grounding intersection-over-union (IoU)",
-        "Acceptance rate",
-        "Perplexity",
-        "MRR@10"
+        "It replaces the three embedding scores with caption-only search",
+        "It doubles the transcript score for descriptive queries",
+        "It is printed as metadata but does not change retrieval",
+        "It forces every result to use a full-scene timestamp"
       ],
-      "correct": 0,
-      "explanation": "“Temporal-grounding intersection-over-union (IoU)” matches the lesson’s treatment of Capstone 12 — Video Understanding Pipeline (Scene, QA, Search); the alternatives conflict with its definitions or workflow."
+      "correct": 2,
+      "explanation": "The demo reports whether a query is descriptive, but the flag is not passed into the scoring or RRF ranking path."
+    },
+    {
+      "stage": "post",
+      "question": "What result shape does each demo query request from multi_vector_search?",
+      "options": [
+        "One result with no timestamp citation",
+        "Ten results and the full video transcript",
+        "All scenes sorted independently by each embedding stream",
+        "The top three results, each retaining a video ID and time interval"
+      ],
+      "correct": 3,
+      "explanation": "The demo calls search with k=3 and prints each retained scene's video identifier and timestamp interval for citation."
     }
   ]
 }

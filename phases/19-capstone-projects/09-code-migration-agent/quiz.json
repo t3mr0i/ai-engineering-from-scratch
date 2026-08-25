@@ -1,78 +1,78 @@
 {
   "lesson": "09-code-migration-agent",
-  "title": "Capstone 09 — Code Migration Agent (Repo-Level Language / Runtime Upgrade)",
+  "title": "Code Migration Agent",
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does the pipeline combine a deterministic substrate with an agent layer rather than using just one?",
+      "question": "What does the migration workflow do before it spends a turn on the agent loop?",
       "options": [
-        "OpenRewrite or libcst handles 70-80% of mechanical rewrites safely and cheaply, leaving the agent for the ambiguous long tail",
-        "Agents alone are faster than recipes",
-        "Deterministic recipes are slower than LLMs",
-        "Determinism is needed only for the build system"
+        "It runs the deterministic migration recipes first",
+        "It opens a pull request and lets CI choose a recipe",
+        "It classifies failures before compiling the source repository",
+        "It skips recipes whenever the repository has tests"
       ],
       "correct": 0,
-      "explanation": "“OpenRewrite or libcst handles 70-80% of mechanical rewrites safely and cheaply, leaving the agent for the ambiguous long tail” matches the lesson’s treatment of Capstone 09 — Code Migration Agent (Repo-Level Language / Runtime Upgrade); the alternatives conflict with its definitions or workflow."
+      "explanation": "run_recipes is the first migration attempt; the agent loop is reserved for work that the deterministic recipes did not finish."
     },
     {
       "stage": "check",
-      "question": "What signal does the pipeline use as ground truth for a successful migration?",
+      "question": "Which hard limits are configured for one migration task?",
       "options": [
-        "Agent self-grading on a rubric",
-        "Reviewer approval on the PR",
-        "Diff size below a hard limit",
-        "Green CI in the sandbox without a coverage regression beyond a small threshold"
-      ],
-      "correct": 3,
-      "explanation": "“Green CI in the sandbox without a coverage regression beyond a small threshold” matches the lesson’s treatment of Capstone 09 — Code Migration Agent (Repo-Level Language / Runtime Upgrade); the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Which budget caps does the agent loop enforce per repo?",
-      "options": [
-        "Unlimited time and cost; abort only on errors",
-        "No turn limit, $100 ceiling",
-        "1 hour wall-clock and 100 turns",
-        "30 minutes wall-clock, $8 cost, and 20 agent turns"
-      ],
-      "correct": 3,
-      "explanation": "“30 minutes wall-clock, $8 cost, and 20 agent turns” matches the lesson’s treatment of Capstone 09 — Code Migration Agent (Repo-Level Language / Runtime Upgrade); the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What gate fires when coverage drops more than about 2% after migration?",
-      "options": [
-        "The reviewer is bypassed",
-        "The repo gets filed under a coverage_regression failure class instead of opening a clean PR",
-        "The deterministic substrate replays its recipes",
-        "The agent automatically force-pushes a fix"
+        "30 turns, $8, and 50 minutes",
+        "20 turns, $8, and 30 minutes",
+        "20 turns, $20, and 30 minutes",
+        "50 turns, $20, and 8 minutes"
       ],
       "correct": 1,
-      "explanation": "“The repo gets filed under a coverage_regression failure class instead of opening a clean PR” matches the lesson’s treatment of Capstone 09 — Code Migration Agent (Repo-Level Language / Runtime Upgrade); the alternatives conflict with its definitions or workflow."
+      "explanation": "The constants are BUDGET_MIN=30, BUDGET_USD=8, and BUDGET_TURNS=20; they bound the agent's per-task work."
+    },
+    {
+      "stage": "check",
+      "question": "When does the coverage regression gate reject a migrated repository?",
+      "options": [
+        "Whenever coverage fails to increase",
+        "Whenever any test is flaky",
+        "When final coverage is more than 2 percentage points below the baseline",
+        "Only when the deterministic recipe did not run"
+      ],
+      "correct": 2,
+      "explanation": "The gate compares final coverage with the baseline and rejects if the delta is less than -2; a flat or positive delta is not a regression by this rule."
+    },
+    {
+      "stage": "check",
+      "question": "Which labels are part of the failure taxonomy used by classify_failure?",
+      "options": [
+        "network_timeout, prompt_injection, token_limit, and merge_conflict",
+        "lint_only, compile_only, review_only, and deploy_only",
+        "dependency, API, UI, and documentation",
+        "dep_upgrade_required, build_tool_drift, custom_annotation, test_flake, syntax_edge_case, budget_exhausted, and coverage_regression"
+      ],
+      "correct": 3,
+      "explanation": "FAILURE_CLASSES contains those seven operational labels, allowing the report to distinguish budget and coverage failures from source/build problems."
     },
     {
       "stage": "post",
-      "question": "Why is the failure taxonomy treated as a deliverable rather than a side artifact?",
+      "question": "What does the seeded 50-repository synthesis report for passed migrations?",
       "options": [
-        "It replaces the test suite",
-        "It groups failed repos by class so future recipe authors can target the top failure modes",
-        "It is required by GitHub branch protection",
-        "It satisfies a compliance checklist"
+        "30 passed and 20 failed",
+        "20 passed and 30 failed",
+        "45 passed and 5 failed",
+        "13 passed and 7 failed"
       ],
-      "correct": 1,
-      "explanation": "“It groups failed repos by class so future recipe authors can target the top failure modes” matches the lesson’s treatment of Capstone 09 — Code Migration Agent (Repo-Level Language / Runtime Upgrade); the alternatives conflict with its definitions or workflow."
+      "correct": 0,
+      "explanation": "The demo prints passed=30 and failed=20 for 50 repositories, a 60% pass rate before its failure taxonomy summary."
     },
     {
       "stage": "post",
-      "question": "Which public benchmark does the capstone target for Java 8 to 17 migration?",
+      "question": "What weight does classify_failure assign to dep_upgrade_required?",
       "options": [
-        "MigrationBench from Amazon",
-        "SWE-bench Pro",
-        "MMLU-Pro",
-        "ViDoRe v3"
+        "0.18",
+        "0.30",
+        "0.20",
+        "0.15"
       ],
-      "correct": 0,
-      "explanation": "“MigrationBench from Amazon” matches the lesson’s treatment of Capstone 09 — Code Migration Agent (Repo-Level Language / Runtime Upgrade); the alternatives conflict with its definitions or workflow."
+      "correct": 1,
+      "explanation": "The classifier's weighted rules give dep_upgrade_required 0.30; build_tool_drift is 0.20, custom_annotation 0.18, and test_flake 0.15."
     }
   ]
 }

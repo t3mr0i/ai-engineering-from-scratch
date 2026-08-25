@@ -1,78 +1,78 @@
 {
   "lesson": "11-llm-observability-dashboard",
-  "title": "Capstone 11 — LLM Observability & Eval Dashboard",
+  "title": "LLM Observability Dashboard",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which ingest schema do Langfuse, Phoenix, and OpenLLMetry converge on?",
+      "question": "Which span does TailSampler keep regardless of its random sample draw?",
       "options": [
-        "Proprietary JSON per vendor",
-        "Prometheus exposition format",
-        "OpenTelemetry GenAI semantic conventions over OTLP HTTP",
-        "Plain CSV log files"
-      ],
-      "correct": 2,
-      "explanation": "“OpenTelemetry GenAI semantic conventions over OTLP HTTP” matches the lesson’s treatment of Capstone 11 — LLM Observability & Eval Dashboard; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Why separate ClickHouse and Postgres in the storage tier?",
-      "options": [
-        "They are interchangeable and one is chosen at random",
-        "Postgres is faster for span ingest",
-        "ClickHouse cannot store strings",
-        "ClickHouse handles columnar analytics over spans while Postgres holds users, sessions, and app metadata"
-      ],
-      "correct": 3,
-      "explanation": "“ClickHouse handles columnar analytics over spans while Postgres holds users, sessions, and app metadata” matches the lesson’s treatment of Capstone 11 — LLM Observability & Eval Dashboard; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What does the tail-sampling processor in the OpenTelemetry Collector do?",
-      "options": [
-        "Decides whether to keep a trace after it completes, using rules like keep errors plus sample successes",
-        "Replays old traces into Postgres",
-        "Streams every byte unconditionally",
-        "Truncates spans below 100ms"
+        "Any span with an error attribute",
+        "Only spans with latency under 100 ms",
+        "Only spans whose user_id is new",
+        "Only spans from the 20% random sample"
       ],
       "correct": 0,
-      "explanation": "“Decides whether to keep a trace after it completes, using rules like keep errors plus sample successes” matches the lesson’s treatment of Capstone 11 — LLM Observability & Eval Dashboard; the alternatives conflict with its definitions or workflow."
+      "explanation": "TailSampler checks error first and keeps an error span; its random sample rate applies only after the error, toxicity, and PII conditions are false."
     },
     {
       "stage": "check",
-      "question": "How does the dashboard detect drift across weeks?",
+      "question": "What PII score does eval_pii assign to a span containing a US Social Security number?",
       "options": [
-        "Computes PSI or KL divergence on pooled prompt embeddings and watches eval-score trends",
-        "Manual eyeballing of the dashboard",
-        "Reads the latest deploy timestamp",
-        "Counts unique trace IDs"
-      ],
-      "correct": 0,
-      "explanation": "“Computes PSI or KL divergence on pooled prompt embeddings and watches eval-score trends” matches the lesson’s treatment of Capstone 11 — LLM Observability & Eval Dashboard; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "What is the deliverable's MTTR target on an injected PII-leak regression?",
-      "options": [
-        "Under 1 hour",
-        "Within 24 hours",
-        "Within the next on-call shift",
-        "Under 5 minutes from bug deployed to Slack alert"
-      ],
-      "correct": 3,
-      "explanation": "“Under 5 minutes from bug deployed to Slack alert” matches the lesson’s treatment of Capstone 11 — LLM Observability & Eval Dashboard; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "Which SDK families must produce canonical GenAI spans to meet the trace-coverage rubric?",
-      "options": [
-        "Only vLLM",
-        "At least six: OpenAI, Anthropic, Google GenAI, LangChain, LlamaIndex, and vLLM",
-        "Any one SDK is enough",
-        "OpenAI and Anthropic only"
+        "0.05",
+        "0.95",
+        "0.60",
+        "1.50"
       ],
       "correct": 1,
-      "explanation": "“At least six: OpenAI, Anthropic, Google GenAI, LangChain, LlamaIndex, and vLLM” matches the lesson’s treatment of Capstone 11 — LLM Observability & Eval Dashboard; the alternatives conflict with its definitions or workflow."
+      "explanation": "The local detector assigns SSN matches 0.95; email-only spans receive 0.60 and spans without either pattern receive 0.05."
+    },
+    {
+      "stage": "check",
+      "question": "How is a trace fingerprint bucket selected?",
+      "options": [
+        "By taking the first eight characters of the user ID",
+        "By sorting spans by latency and using the median",
+        "By hashing the trace and taking the first byte modulo 8",
+        "By using the toxicity score as an integer bucket"
+      ],
+      "correct": 2,
+      "explanation": "fingerprint computes a SHA-256 digest and uses its first byte modulo 8, producing a stable bucket for the same trace content."
+    },
+    {
+      "stage": "check",
+      "question": "What PSI value would cross the dashboard's alert threshold?",
+      "options": [
+        "0.083",
+        "0.150",
+        "0.200 exactly, because equality is included",
+        "Any value greater than 0.20"
+      ],
+      "correct": 3,
+      "explanation": "The dashboard treats PSI > 0.2 as an alert; the demo's 0.083 is below that threshold, and equality alone does not cross it."
+    },
+    {
+      "stage": "post",
+      "question": "What does the seeded 200-trace demo report after tail sampling?",
+      "options": [
+        "165 ingested spans, 5 PII events, and PSI 0.083",
+        "200 ingested spans, 0 PII events, and PSI 0.200",
+        "40 ingested spans, 5 PII events, and PSI 0.083",
+        "165 ingested spans, 20 PII events, and PSI 0.830"
+      ],
+      "correct": 0,
+      "explanation": "With the seeded trace set and the tail-sampler rules, the printed summary is 165 ingested spans, 5 PII events, and PSI=0.083."
+    },
+    {
+      "stage": "post",
+      "question": "Which grouping lets the SpanStore report per-user cost rather than just a global total?",
+      "options": [
+        "The trace's first span name",
+        "The user_id attribute",
+        "The random sampler bucket only",
+        "The deployment's image tag"
+      ],
+      "correct": 1,
+      "explanation": "SpanStore aggregates token/cost records by user_id, so the dashboard can break spend down by user while retaining trace-level fields."
     }
   ]
 }
