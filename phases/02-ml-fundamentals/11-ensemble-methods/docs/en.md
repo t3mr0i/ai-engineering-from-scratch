@@ -1,226 +1,45 @@
 # Ensemble Methods
 
-> A group of weak learners, combined correctly, becomes a strong learner. This is not a metaphor. It is a theorem.
+> Combine intentionally different mistakes: boosting changes the data emphasis, bagging averages resampled trees, and stacking learns a second-stage vote.
 
 **Type:** Build
 **Languages:** Python
-**Language:** Python
-**Prerequisites:** Phase 2, Lesson 10 (Bias-Variance Tradeoff)
-**Time:** ~120 minutes
+**Prerequisites:** Phase 02 Lessons 02–10 (trees, regression, and bias/variance)
+**Time:** ~95 minutes
 
 ## Learning Objectives
 
-- Implement AdaBoost and gradient boosting from scratch and explain how boosting sequentially reduces bias
-- Build a bagging ensemble and demonstrate how averaging decorrelated models reduces variance without increasing bias
-- Compare bagging, boosting, and stacking in terms of what error component each method targets
-- Evaluate ensemble diversity and explain why majority voting accuracy improves with more independent weak learners
+- Train a signed `DecisionStump` and use its weighted error to compute an AdaBoost coefficient.
+- Explain why AdaBoost updates difficult examples instead of averaging independent fits.
+- Build `SimpleRegressionTree` and `GradientBoostingScratch` for residual regression.
+- Use `BaggingClassifier` to average bootstrap trees and distinguish variance reduction from bias reduction.
+- Fit `StackingClassifier` with out-of-fold meta-features and inspect its final signed predictions.
 
-## The Problem
+## The local implementations
 
-A single decision tree is fast to train and easy to interpret, but it overfits. A single linear model underfits on complex boundaries. You could spend days engineering the perfect model architecture. Or you could combine a bunch of imperfect models and get something better than any of them individually.
-
-Ensemble methods do exactly this. They are the most reliable technique for winning Kaggle competitions on tabular data, they power most production ML systems, and they illustrate the bias-variance tradeoff in action. Bagging reduces variance. Boosting reduces bias. Stacking learns which models to trust on which inputs.
-
-## The Concept
-
-### Why Ensembles Work
-
-Suppose you have N independent classifiers, each with accuracy p > 0.5. The majority vote has accuracy:
-
-```
-P(majority correct) = sum over k > N/2 of C(N,k) * p^k * (1-p)^(N-k)
-```
-
-For 21 classifiers each with 60% accuracy, majority vote accuracy is about 74%. With 101 classifiers, it rises to 84%. The errors cancel out when the models make different mistakes.
-
-The key requirement is **diversity**. If all models make the same errors, combining them helps nothing. Ensembles work because they produce diverse models through:
-
-- Different training subsets (bagging)
-- Different feature subsets (random forests)
-- Sequential error correction (boosting)
-- Different model families (stacking)
-
-### Bagging (Bootstrap Aggregating)
-
-Bagging creates diversity by training each model on a different bootstrap sample of the training data.
-
-```mermaid
-flowchart TD
-    D[Training Data] --> B1[Bootstrap Sample 1]
-    D --> B2[Bootstrap Sample 2]
-    D --> B3[Bootstrap Sample 3]
-    D --> BN[Bootstrap Sample N]
-
-    B1 --> M1[Model 1]
-    B2 --> M2[Model 2]
-    B3 --> M3[Model 3]
-    BN --> MN[Model N]
-
-    M1 --> V[Average or Majority Vote]
-    M2 --> V
-    M3 --> V
-    MN --> V
-
-    V --> P[Final Prediction]
-```
-
-A bootstrap sample is drawn with replacement from the original data, same size as the original. About 63.2% of unique samples appear in each bootstrap. The remaining 36.8% (out-of-bag samples) provide a free validation set.
-
-Bagging reduces variance without increasing bias much. Each individual tree overfits to its bootstrap sample, but the overfitting is different for each tree, so averaging cancels out the noise.
-
-**Random Forests** are bagging with an extra twist: at each split, only a random subset of features is considered. This forces even more diversity among trees. The typical number of candidate features is `sqrt(n_features)` for classification and `n_features / 3` for regression.
-
-### Boosting (Sequential Error Correction)
-
-Boosting trains models sequentially. Each new model focuses on the examples that previous models got wrong.
-
-```mermaid
-flowchart LR
-    D[Data with weights] --> M1[Model 1]
-    M1 --> E1[Find errors]
-    E1 --> W1[Increase weights on errors]
-    W1 --> M2[Model 2]
-    M2 --> E2[Find errors]
-    E2 --> W2[Increase weights on errors]
-    W2 --> M3[Model 3]
-    M3 --> F[Weighted sum of all models]
-```
-
-Boosting reduces bias. Each new model corrects the systematic errors of the ensemble so far. The final prediction is a weighted sum of all models, where better models get higher weights.
-
-The tradeoff: boosting can overfit if you run too many rounds, because it keeps fitting harder examples, some of which may be noise.
-
-### AdaBoost
-
-AdaBoost (Adaptive Boosting) was the first practical boosting algorithm. It works with any base learner, typically decision stumps (depth-1 trees).
-
-The algorithm:
-
-```
-1. Initialize sample weights: w_i = 1/N for all i
-
-2. For t = 1 to T:
-   a. Train weak learner h_t on weighted data
-   b. Compute weighted error:
-      err_t = sum(w_i * I(h_t(x_i) != y_i)) / sum(w_i)
-   c. Compute model weight:
-      alpha_t = 0.5 * ln((1 - err_t) / err_t)
-   d. Update sample weights:
-      w_i = w_i * exp(-alpha_t * y_i * h_t(x_i))
-   e. Normalize weights to sum to 1
-
-3. Final prediction: H(x) = sign(sum(alpha_t * h_t(x)))
-```
-
-Models with lower error get higher alpha. Misclassified samples get higher weights so the next model focuses on them.
-
-### Gradient Boosting
-
-Gradient boosting generalizes boosting to arbitrary loss functions. Instead of reweighting samples, it fits each new model to the residuals (negative gradient of the loss) of the current ensemble.
-
-```
-1. Initialize: F_0(x) = argmin_c sum(L(y_i, c))
-
-2. For t = 1 to T:
-   a. Compute pseudo-residuals:
-      r_i = -dL(y_i, F_{t-1}(x_i)) / dF_{t-1}(x_i)
-   b. Fit a tree h_t to the residuals r_i
-   c. Find optimal step size:
-      gamma_t = argmin_gamma sum(L(y_i, F_{t-1}(x_i) + gamma * h_t(x_i)))
-   d. Update:
-      F_t(x) = F_{t-1}(x) + learning_rate * gamma_t * h_t(x)
-
-3. Final prediction: F_T(x)
-```
-
-For squared error loss, the pseudo-residuals are just the actual residuals: `r_i = y_i - F_{t-1}(x_i)`. Each tree literally fits the errors of the previous ensemble.
-
-The learning rate (shrinkage) controls how much each tree contributes. Smaller learning rates require more trees but generalize better. Typical values: 0.01 to 0.3.
-
-### XGBoost: Why It Dominates Tabular Data
-
-XGBoost (eXtreme Gradient Boosting) is gradient boosting with engineering optimizations that make it fast, accurate, and resistant to overfitting:
-
-- **Regularized objective:** L1 and L2 penalties on leaf weights prevent individual trees from being too confident
-- **Second-order approximation:** Uses both first and second derivatives of the loss, giving better split decisions
-- **Sparsity-aware splits:** Handles missing values natively by learning the best direction for missing data at each split
-- **Column subsampling:** Like random forests, samples features at each split for diversity
-- **Weighted quantile sketch:** Efficiently finds split points for continuous features on distributed data
-- **Cache-aware block structure:** Memory layout optimized for CPU cache lines
-
-For tabular data, XGBoost (and its successor LightGBM) consistently outperforms neural networks. This is not changing anytime soon. If your data fits in a table with rows and columns, start with gradient boosting.
-
-### Stacking (Meta-Learning)
-
-Stacking uses the predictions of multiple base models as features for a meta-learner.
-
-```mermaid
-flowchart TD
-    D[Training Data] --> M1[Model 1: Random Forest]
-    D --> M2[Model 2: SVM]
-    D --> M3[Model 3: Logistic Regression]
-
-    M1 --> P1[Predictions 1]
-    M2 --> P2[Predictions 2]
-    M3 --> P3[Predictions 3]
-
-    P1 --> META[Meta-Learner]
-    P2 --> META
-    P3 --> META
-
-    META --> F[Final Prediction]
-```
-
-The meta-learner learns which base model to trust for which inputs. If the random forest is better at certain regions and the SVM at others, the meta-learner will learn to route accordingly.
-
-To avoid data leakage, base model predictions must be generated via cross-validation on the training set. You never train base models and generate meta-features on the same data.
-
-### Voting
-
-The simplest ensemble. Just combine predictions directly.
-
-- **Hard voting:** Majority vote on class labels.
-- **Soft voting:** Average predicted probabilities, pick the class with highest average probability. Usually better because it uses confidence information.
-
-
-
+`code/ensembles.py` is a NumPy implementation. `make_classification_data` returns labels `-1` and `1`; `make_regression_data` returns a nonlinear continuous target. `DecisionStump.fit` scans each feature’s unique thresholds under a weight vector. `AdaBoostScratch` stores one stump and alpha per round, while `SimpleRegressionTree` recursively chooses the largest variance reduction.
 
 ## Build It
 
-Reconstruct **Ensemble Methods** by following `make_classification_data` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
+Run `python3 main.py` for a bounded 160-row AdaBoost fixture. The full source demos are available by running `python3 ensembles.py`, but the canonical path intentionally reports only a quick train/test comparison. For a hand check, a uniform weight vector sums to one before the stump fit; after a round, the AdaBoost weights are renormalized and `alpha = 0.5 * log((1-error)/error)`.
+
+`GradientBoostingScratch` starts at the mean target, fits each tree to `y - current_pred`, and adds `learning_rate * tree_prediction`. `BaggingClassifier` draws bootstrap rows with a seeded `RandomState(42)` and predicts by the sign of the average tree outputs. Stacking first creates out-of-fold base predictions, trains a small tanh meta-learner, and then refits base models on all training rows.
 
 ## Use It
 
-Call `make_classification_data` from a small caller with the text "red fox". Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+Keep the label convention consistent: the stump and AdaBoost code compare predictions to `-1/1`, not `0/1`. Compare a single tree’s MSE or signed accuracy with its ensemble counterpart on the same split. The toy fixture demonstrates algorithm mechanics; it does not establish a deployment benchmark or a universal ranking between bagging and boosting.
 
 ## Ship It
 
-Hand off `outputs/prompt-ensemble-selector.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [Schapire & Freund: Boosting: Foundations and Algorithms](https://mitpress.mit.edu/9780262526036/) -- the book by AdaBoost's creators
-- [Friedman: Greedy Function Approximation: A Gradient Boosting Machine (2001)](https://statweb.stanford.edu/~jhf/ftp/trebst.pdf) -- the original gradient boosting paper
-- [Chen & Guestrin: XGBoost (2016)](https://arxiv.org/abs/1603.02754) -- the XGBoost paper
-- [Wolpert: Stacked Generalization (1992)](https://www.sciencedirect.com/science/article/abs/pii/S0893608005800231) -- the original stacking paper
-- [scikit-learn Ensemble Methods](https://scikit-learn.org/stable/modules/ensemble.html) -- practical reference
+`outputs/prompt-ensemble-selector.md` chooses an ensemble from the observed error pattern, while `outputs/skill-ensemble-builder.md` records the fit/predict contract. Both artifacts name the seed, label convention, number of estimators, and metric. They deliberately point to the scratch classes rather than to a hidden estimator dependency.
 
 ## Exercises
 
-Use `make_classification_data` as the trace: start from the text "red fox", keep the raw output, and tie each observation to a named objective.
-
-1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using the text "red fox". Follow `make_classification_data`, `make_regression_data`, `train_test_split`. Expect the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text; capture the first printed shape, metric, status, or summary field and state which part supports **Implement AdaBoost and gradient boosting from scratch and explain how boosting sequentially reduces bias**.
-2. **Vary one named input.** Repeat the command after changing only the input text: use the text "red fox runs". Predict the direction of the change, then compare the two output values. Explain why **Build a bagging ensemble and demonstrate how averaging decorrelated models reduces variance without increasing bias** says the other inputs should stay fixed.
-3. **Probe the empty case.** Feed the implementation an empty string. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Compare bagging, boosting, and stacking in terms of what error component each method targets** and record the exception text if the code rejects the case.
-4. **Package a usable handoff.** Open `outputs/prompt-ensemble-selector.md` and add a worked example using the text "red fox". Include the input contract, one expected output field, and a named acceptance check for **Evaluate ensemble diversity and explain why majority voting accuracy improves with more independent weak learners**; note what the demo cannot establish.
+1. Fit one `DecisionStump` and a five-round `AdaBoostScratch` on the same split. Record weighted stump error, the final alpha, and signed test accuracy.
+2. Fit a depth-2 `SimpleRegressionTree` and a 12-tree gradient booster on `make_regression_data(80, n_features=3, seed=4)`. Compare training MSE against the mean-target baseline.
+3. Set `n_estimators=4` in `BaggingClassifier` and verify that four trees are stored. Explain why the bootstrap rows need not be unique.
+4. Build two small tree wrappers and pass them to `StackingClassifier(n_folds=4)`. Check that the meta-feature matrix has one column per base model and predictions remain in `{-1, 1}`.
 
 ## Reference Solution
 
-A checkable result for **Ensemble Methods** should contain:
-
-- the `python3 main.py` output for the text "red fox", with `make_classification_data`, `make_regression_data`, `train_test_split` traced to the value or shape that supports **Implement AdaBoost and gradient boosting from scratch and explain how boosting sequentially reduces bias**;
-- a before/after comparison for the input text, where the text "red fox runs" changes the observation in the direction predicted by **Build a bagging ensemble and demonstrate how averaging decorrelated models reduces variance without increasing bias**;
-- a recorded result for an empty string that matches the implementation’s validation or empty-result contract and explains the evidence for **Compare bagging, boosting, and stacking in terms of what error component each method targets**; and
-- an updated `outputs/prompt-ensemble-selector.md` example with a concrete input, expected output field, and acceptance check tied to **Evaluate ensemble diversity and explain why majority voting accuracy improves with more independent weak learners**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+The solution records the exact fixture seed and split, confirms one alpha per stump, shows lower training MSE than the mean baseline for the booster, and verifies four stored bagging trees. For stacking it identifies out-of-fold predictions as the training input for the meta-learner. No comparison to an external library is required or implied.

@@ -1,269 +1,45 @@
 # Naive Bayes
 
-> The "naive" assumption is wrong, and it works anyway. That's the beauty of it.
+> A strong conditional-independence assumption can be a useful bias when the evidence is sparse and high-dimensional.
 
 **Type:** Build
 **Languages:** Python
-**Language:** Python
-**Prerequisites:** Phase 2, Lessons 01-07 (classification, Bayes' theorem)
+**Prerequisites:** Phase 02 Lessons 01–08 (probability, classification, and feature encoding)
 **Time:** ~75 minutes
 
 ## Learning Objectives
 
-- Implement Multinomial Naive Bayes from scratch with Laplace smoothing for text classification
-- Explain why the naive independence assumption is mathematically wrong but produces correct class rankings in practice
-- Compare Multinomial, Bernoulli, and Gaussian Naive Bayes variants and select the right one for a given feature type
-- Evaluate Naive Bayes against logistic regression on high-dimensional sparse data and explain the bias-variance tradeoff at work
-
-## The Problem
-
-You need to classify text. Emails into spam or not-spam. Customer reviews into positive or negative. Support tickets into categories. You have thousands of features (one per word) and limited training data.
-
-Most classifiers choke here. Logistic regression needs enough samples to estimate thousands of weights reliably. Decision trees split on one word at a time and overfit wildly. KNN in 10,000 dimensions is meaningless because every point is equally far from every other point.
-
-Naive Bayes handles this. It makes a mathematically wrong assumption (that every feature is independent of every other feature given the class), and it still outperforms "smarter" models on text classification, especially with small training sets. It trains in a single pass through the data. It scales to millions of features. It produces probability estimates (though often poorly calibrated due to the independence assumption).
-
-Understanding why a wrong assumption leads to good predictions teaches you something fundamental about machine learning: the best model is not the most correct one, it is the one with the best bias-variance tradeoff for your data.
-
-## The Concept
-
-### Bayes' Theorem (Quick Review)
-
-Bayes' theorem flips conditional probabilities:
-
-```
-P(class | features) = P(features | class) * P(class) / P(features)
-```
-
-We want `P(class | features)` -- the probability that a document belongs to a class given the words in it. We can compute this from:
-- `P(features | class)` -- the likelihood of seeing these words in documents of this class
-- `P(class)` -- the prior probability of the class (how common is spam in general?)
-- `P(features)` -- the evidence, same for all classes, so we can ignore it when comparing
-
-The class with the highest `P(class | features)` wins.
-
-### The Naive Independence Assumption
-
-Computing `P(features | class)` exactly requires estimating the joint probability of all features together. With a vocabulary of 10,000 words, you would need to estimate a distribution over 2^10,000 possible combinations. Impossible.
-
-The naive assumption: every feature is conditionally independent given the class.
-
-```
-P(w1, w2, ..., wn | class) = P(w1 | class) * P(w2 | class) * ... * P(wn | class)
-```
-
-Instead of one impossible joint distribution, you estimate n simple per-feature distributions. Each one needs only a count.
-
-This assumption is obviously wrong. The words "machine" and "learning" are not independent in any document. But the classifier does not need correct probability estimates. It needs correct rankings -- which class has the highest probability. The independence assumption introduces systematic errors, but those errors affect all classes similarly, so the ranking stays correct.
-
-### Why It Still Works
-
-Three reasons:
-
-1. **Ranking over calibration.** Classification only needs the top-ranked class to be correct. Even if P(spam) = 0.99999 when the true probability is 0.7, the classifier still picks spam correctly. We do not need correct probabilities. We need the correct winner.
-
-2. **High bias, low variance.** The independence assumption is a strong prior. It constrains the model heavily, which prevents overfitting. With limited training data, a model that is slightly wrong but stable beats a model that is theoretically right but wildly unstable. This is the bias-variance tradeoff in action.
-
-3. **Feature redundancy cancels out.** Correlated features provide redundant evidence. The classifier double-counts this evidence, but it double-counts it for the correct class too. If "machine" and "learning" always appear together, both provide evidence for the "tech" class. NB counts them twice, but it counts them twice for the right class.
-
-A fourth, practical reason: Naive Bayes is extremely fast. Training is a single pass through the data counting frequencies. Prediction is a matrix multiplication. You can train on a million documents in seconds. This speed means you can iterate faster, try more feature sets, and run more experiments than with slower models.
-
-### The Math Step by Step
-
-Let us trace through a concrete example. Suppose we have two classes: spam and not-spam. Our vocabulary has three words: "free", "money", "meeting".
-
-Training data:
-- Spam emails mention "free" 80 times, "money" 60 times, "meeting" 10 times (150 total words)
-- Not-spam emails mention "free" 5 times, "money" 10 times, "meeting" 100 times (115 total words)
-- 40% of emails are spam, 60% are not-spam
-
-With Laplace smoothing (alpha=1):
-
-```
-P(free | spam)    = (80 + 1) / (150 + 3) = 81/153 = 0.529
-P(money | spam)   = (60 + 1) / (150 + 3) = 61/153 = 0.399
-P(meeting | spam) = (10 + 1) / (150 + 3) = 11/153 = 0.072
-
-P(free | not-spam)    = (5 + 1) / (115 + 3) = 6/118 = 0.051
-P(money | not-spam)   = (10 + 1) / (115 + 3) = 11/118 = 0.093
-P(meeting | not-spam) = (100 + 1) / (115 + 3) = 101/118 = 0.856
-```
-
-New email contains: "free" (2 times), "money" (1 time), "meeting" (0 times).
-
-```
-log P(spam | email) = log(0.4) + 2*log(0.529) + 1*log(0.399) + 0*log(0.072)
-                    = -0.916 + 2*(-0.637) + (-0.919) + 0
-                    = -3.109
-
-log P(not-spam | email) = log(0.6) + 2*log(0.051) + 1*log(0.093) + 0*log(0.856)
-                        = -0.511 + 2*(-2.976) + (-2.375) + 0
-                        = -8.838
-```
-
-Spam wins by a large margin. The word "free" appearing twice is strong evidence for spam. Note that "meeting" not appearing contributes zero to both log sums (0 * log(P)) -- in Multinomial NB, absent words have no effect. It is Bernoulli NB that explicitly models word absence.
-
-### Three Variants
-
-Naive Bayes comes in three flavors. Each models `P(feature | class)` differently.
-
-#### Multinomial Naive Bayes
-
-Models each feature as a count. Best for text data where features are word frequencies or TF-IDF values.
-
-```
-P(word_i | class) = (count of word_i in class + alpha) / (total words in class + alpha * vocab_size)
-```
-
-The `alpha` is Laplace smoothing (explained below). This variant is the workhorse for text classification.
-
-#### Gaussian Naive Bayes
-
-Models each feature as a normal distribution. Best for continuous features.
-
-```
-P(x_i | class) = (1 / sqrt(2 * pi * var)) * exp(-(x_i - mean)^2 / (2 * var))
-```
-
-Each class gets its own mean and variance per feature. This works well when features genuinely follow a bell curve within each class.
-
-#### Bernoulli Naive Bayes
-
-Models each feature as binary (present or absent). Best for short text or binary feature vectors.
-
-```
-P(word_i | class) = (docs in class containing word_i + alpha) / (total docs in class + 2 * alpha)
-```
-
-Unlike Multinomial, Bernoulli explicitly penalizes the absence of a word. If "free" typically appears in spam but is absent from this email, Bernoulli counts that as evidence against spam.
-
-### When to Use Each Variant
-
-| Variant | Feature Type | Best For | Example |
-|---------|-------------|----------|---------|
-| Multinomial | Counts or frequencies | Text classification, bag-of-words | Email spam, topic classification |
-| Gaussian | Continuous values | Tabular data with normal-ish features | Iris classification, sensor data |
-| Bernoulli | Binary (0/1) | Short text, binary feature vectors | SMS spam, presence/absence features |
-
-### Laplace Smoothing
-
-What happens when a word appears in the test data but never appeared in the training data for a particular class?
-
-Without smoothing: `P(word | class) = 0/N = 0`. One zero multiplied through the entire product makes `P(class | features) = 0`, regardless of all other evidence. A single unseen word destroys the entire prediction, no matter how much other evidence supports it.
-
-Laplace smoothing adds a small count `alpha` (usually 1) to every feature count:
-
-```
-P(word_i | class) = (count(word_i, class) + alpha) / (total_words_in_class + alpha * vocab_size)
-```
-
-With alpha=1, every word gets at least a tiny probability. The word "discombobulate" appearing in a test email no longer kills the spam probability. The smoothing has a Bayesian interpretation: it is equivalent to placing a uniform Dirichlet prior on the word distributions.
-
-Higher alpha means stronger smoothing (more uniform distributions). Lower alpha means the model trusts the data more. Alpha is a hyperparameter you tune.
-
-The effect of alpha:
-
-| Alpha | Effect | When to use |
-|-------|--------|-------------|
-| 0.001 | Almost no smoothing, trust the data | Very large training set, no unseen features expected |
-| 0.1 | Light smoothing | Large training set |
-| 1.0 | Standard Laplace smoothing | Default starting point |
-| 10.0 | Heavy smoothing, flattens distributions | Very small training set, many unseen features expected |
-
-### Log-Space Computation
-
-Multiplying hundreds of probabilities (each less than 1) causes floating-point underflow. The product becomes zero in floating point even though the true value is a very small positive number.
-
-The solution: work in log space. Instead of multiplying probabilities, add their logarithms:
-
-```
-log P(class | x1, x2, ..., xn) = log P(class) + sum_i log P(xi | class)
-```
-
-This turns the prediction into a dot product:
-
-```
-log_scores = X @ log_feature_probs.T + log_class_priors
-prediction = argmax(log_scores)
-```
-
-Matrix multiplication. That is why Naive Bayes prediction is so fast -- it is the same operation as a single-layer linear model.
-
-### Naive Bayes vs Logistic Regression
-
-Both are linear classifiers for text. The difference is in what they model.
-
-| Aspect | Naive Bayes | Logistic Regression |
-|--------|------------|-------------------|
-| Type | Generative (models P(X\|Y)) | Discriminative (models P(Y\|X)) |
-| Training | Count frequencies | Optimize loss function |
-| Small data | Better (strong prior helps) | Worse (not enough to estimate weights) |
-| Large data | Worse (wrong assumption hurts) | Better (flexible boundary) |
-| Features | Assumes independence | Handles correlations |
-| Speed | Single pass, very fast | Iterative optimization |
-| Calibration | Poor probabilities | Better probabilities |
-
-Rule of thumb: start with Naive Bayes. If you have enough data and NB plateaus, switch to logistic regression.
-
-### Classification Pipeline
-
-```mermaid
-flowchart LR
-    A[Raw Text] --> B[Tokenize]
-    B --> C[Build Vocabulary]
-    C --> D[Count Word Frequencies]
-    D --> E[Apply Smoothing]
-    E --> F[Compute Log Probabilities]
-    F --> G[Predict: argmax P class given words]
-
-    style A fill:#f9f,stroke:#333
-    style G fill:#9f9,stroke:#333
-```
-
-In practice, we work in log space to avoid floating-point underflow. Instead of multiplying many small probabilities, we add their logarithms:
-
-```
-log P(class | features) = log P(class) + sum_i log P(feature_i | class)
-```
-
-
-
+- Fit `MultinomialNB` from non-negative count features with additive smoothing.
+- Explain why class rankings can be useful even when the independence assumption miscalibrates probabilities.
+- Fit `GaussianNB` from per-class means, variances, and priors for continuous features.
+- Use log-probabilities for stable prediction and normalize them when probabilities are requested.
+- Match a Naive Bayes variant to count-like text features versus continuous measurements.
+
+## The local models
+
+`code/naive_bayes.py` uses NumPy only. `MultinomialNB.fit` adds `alpha` to every class/feature count, then stores log feature probabilities and class log priors. It rejects negative counts because a multinomial feature matrix represents event counts. `GaussianNB.fit` stores one mean and variance per class/feature and adds `var_smoothing` to avoid zero variance.
 
 ## Build It
 
-Reconstruct **Naive Bayes** by following `MultinomialNB` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+Run `python3 main.py` for generated 200-feature text and four-feature continuous fixtures. The text fixture has two classes with different word-rate blocks; the continuous fixture has three Gaussian-like classes. `predict_log_proba` is an unnormalized class score, while `predict_proba` subtracts each row’s maximum before exponentiating and dividing, so each row sums to one.
+
+For a hand check, fit `MultinomialNB` on `[[4, 0], [3, 0], [0, 4], [0, 3]]` with labels `[0, 0, 1, 1]`; the first feature favors class 0 and the second favors class 1. The `alpha=1` count offset ensures an unseen feature still has a finite log probability.
 
 ## Use It
 
-Call `MultinomialNB` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+Use MultinomialNB for non-negative counts or frequencies and GaussianNB for real-valued measurements whose within-class distributions are reasonably summarized by means and variances. A probability row is normalized only for the supplied candidate classes; it is not automatically calibrated. Compare `score` with a held-out split from `train_test_split`, using the same seed when reproducing a report.
 
 ## Ship It
 
-Hand off `outputs/skill-naive-bayes-chooser.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [scikit-learn Naive Bayes docs](https://scikit-learn.org/stable/modules/naive_bayes.html) -- all three variants with mathematical details
-- [McCallum and Nigam, A Comparison of Event Models for Naive Bayes Text Classification (1998)](https://www.cs.cmu.edu/~knigam/papers/multinomial-aaaiws98.pdf) -- the classic comparison of Multinomial vs Bernoulli for text
-- [Rennie et al., Tackling the Poor Assumptions of Naive Bayes Text Classifiers (2003)](https://people.csail.mit.edu/jrennie/papers/icml03-nb.pdf) -- improvements to NB for text
-- [Ng and Jordan, On Discriminative vs. Generative Classifiers (2001)](https://ai.stanford.edu/~ang/papers/nips01-discriminativegenerative.pdf) -- proves NB converges faster than LR with less data
+`outputs/skill-naive-bayes-chooser.md` is the handoff artifact. It asks the operator to record feature domain, `alpha`/`var_smoothing`, class priors, split seed, and probability-sum checks. It makes no claim that the generated fixtures represent a real corpus.
 
 ## Exercises
 
-Work from the smallest fixture that the Naive Bayes demo already understands, then make one deliberate change and record what moved.
-
-1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using an 8x8 synthetic image. Follow `MultinomialNB`, `fit`, `predict_log_proba`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **Implement Multinomial Naive Bayes from scratch with Laplace smoothing for text classification**.
-2. **Perturb one field.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Explain why the naive independence assumption is mathematically wrong but produces correct class rankings in practice** says the other inputs should stay fixed.
-3. **Check the failure boundary.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Compare Multinomial, Bernoulli, and Gaussian Naive Bayes variants and select the right one for a given feature type** and record the exception text if the code rejects the case.
-4. **Make the result repeatable.** Open `outputs/skill-naive-bayes-chooser.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **Evaluate Naive Bayes against logistic regression on high-dimensional sparse data and explain the bias-variance tradeoff at work**; note what the demo cannot establish.
+1. Fit the two-feature count fixture above and inspect `feature_log_prob_`. Explain where additive smoothing appears in the numerator and denominator.
+2. Train on `make_text_data(80, n_features=20, seed=3)` and assert that five `predict_proba` rows each sum to one.
+3. Train `GaussianNB` on `make_continuous_data(90, seed=4)`. Record the shape of `means_` and `vars_` and check finite normalized probabilities.
+4. Pass a negative count to `MultinomialNB.fit`. Capture the `ValueError` and explain why silently shifting counts would change the feature semantics.
 
 ## Reference Solution
 
-A checkable result for **Naive Bayes** should contain:
-
-- the `python3 main.py` output for an 8x8 synthetic image, with `MultinomialNB`, `fit`, `predict_log_proba` traced to the value or shape that supports **Implement Multinomial Naive Bayes from scratch with Laplace smoothing for text classification**;
-- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Explain why the naive independence assumption is mathematically wrong but produces correct class rankings in practice**;
-- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Compare Multinomial, Bernoulli, and Gaussian Naive Bayes variants and select the right one for a given feature type**; and
-- an updated `outputs/skill-naive-bayes-chooser.md` example with a concrete input, expected output field, and acceptance check tied to **Evaluate Naive Bayes against logistic regression on high-dimensional sparse data and explain the bias-variance tradeoff at work**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+A correct solution includes the smoothed count calculation, finite normalized probability rows, the Gaussian parameter shapes, and the explicit negative-count error. It identifies the model variant from the feature domain and reports accuracy only for the stated generated split.

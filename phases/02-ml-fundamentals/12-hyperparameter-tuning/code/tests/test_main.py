@@ -1,64 +1,58 @@
-# Contract and executable-behavior tests for this lesson demo.
-from __future__ import annotations
+"""Behavioral tests for grid, random, and scratch Bayesian search."""
 
-import ast
-import functools
-import importlib.util
-import os
 from pathlib import Path
-import subprocess
 import sys
 import unittest
+import numpy as np
 
-CODE = Path(__file__).resolve().parents[1]
-MAIN = CODE / "main.py"
-ALLOWED = set(sys.stdlib_module_names) | {"numpy", "torch", "h5py", "zstandard", "safetensors"}
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import tuning
 
-def source_trees() -> list[ast.AST]:
-    return [ast.parse(path.read_text(encoding="utf-8")) for path in CODE.glob("*.py")]
 
-def external_roots() -> set[str]:
-    roots: set[str] = set()
-    for tree in source_trees():
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                roots.update(alias.name.split(".")[0] for alias in node.names)
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                roots.add(node.module.split(".")[0])
-    return {name for name in roots if not (CODE / f"{name}.py").exists() and not (CODE / name).is_dir()}
+class TuningTests(unittest.TestCase):
+    def setUp(self):
+        self.X_train, self.y_train, self.X_val, self.y_val, _, _ = tuning.make_data(70, seed=3)
 
-@functools.lru_cache(maxsize=1)
-def run_demo() -> subprocess.CompletedProcess[str]:
-    missing = sorted(name for name in external_roots() if name in ALLOWED and importlib.util.find_spec(name) is None)
-    banned = sorted(external_roots() - ALLOWED)
-    if missing or banned:
-        raise unittest.SkipTest(f"demo dependencies unavailable or disallowed: {missing + banned}")
-    env = os.environ.copy()
-    for key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "HF_TOKEN", "HUGGINGFACE_TOKEN"):
-        env.pop(key, None)
-    return subprocess.run(
-        [sys.executable, MAIN.name], cwd=CODE, text=True, capture_output=True,
-        timeout=45, env=env, check=False,
-    )
+    def test_grid_evaluates_cartesian_product(self):
+        params = {"n_estimators": [2, 4], "learning_rate": [0.05, 0.1], "max_depth": [1]}
+        best, score, history = tuning.grid_search(params, self.X_train, self.y_train, self.X_val, self.y_val)
+        self.assertEqual(len(history), 4)
+        self.assertIn(best["n_estimators"], params["n_estimators"])
+        self.assertTrue(np.isfinite(score))
 
-class LessonDemoTests(unittest.TestCase):
-    def test_source_compiles(self) -> None:
-        compile(MAIN.read_text(encoding="utf-8"), str(MAIN), "exec")
+    def test_sample_param_respects_discrete_and_numeric_specs(self):
+        rng = np.random.RandomState(1)
+        self.assertIn(tuning.sample_param([2, 5, 9], rng), [2, 5, 9])
+        self.assertGreaterEqual(tuning.sample_param(("int", 2, 4), rng), 2)
+        self.assertLessEqual(tuning.sample_param(("int", 2, 4), rng), 4)
+        value = tuning.sample_param(("log_float", 0.01, 0.1), rng)
+        self.assertTrue(0.01 <= value <= 0.1)
 
-    def test_demo_has_explicit_entrypoint(self) -> None:
-        source = MAIN.read_text(encoding="utf-8")
-        self.assertTrue("__main__" in source or "runpy.run_path" in source)
+    def test_random_search_respects_iteration_budget(self):
+        spec = {"n_estimators": ("int", 2, 4), "learning_rate": ("float", 0.05, 0.1), "max_depth": [1]}
+        best, score, history = tuning.random_search(spec, self.X_train, self.y_train, self.X_val, self.y_val, n_iter=5, seed=4)
+        self.assertEqual(len(history), 5)
+        self.assertEqual(set(best), set(spec))
+        self.assertTrue(np.isfinite(score))
 
-    def test_demo_exits_successfully(self) -> None:
-        self.assertEqual(run_demo().returncode, 0, run_demo().stderr)
+    def test_convergence_curve_is_monotonic_best_so_far(self):
+        curve = tuning.convergence_curve([({}, -4.0), ({}, -2.0), ({}, -3.0)])
+        self.assertEqual(curve, [-4.0, -2.0, -2.0])
 
-    def test_demo_emits_bounded_output(self) -> None:
-        result = run_demo()
-        self.assertTrue((result.stdout + result.stderr).strip())
-        self.assertLess(len(result.stdout) + len(result.stderr), 1_000_000)
+    def test_bayesian_optimizer_observes_every_trial(self):
+        space = {"x": ("float", -1.0, 1.0)}
+        optimizer = tuning.SimpleBayesianOptimizer(space, n_initial=2, seed=5)
+        best, score, history = optimizer.optimize(lambda p: -(p["x"] ** 2), n_iter=6)
+        self.assertEqual(len(history), 6)
+        self.assertEqual(len(optimizer.X_observed), 6)
+        self.assertAlmostEqual(score, max(item[1] for item in history))
+        self.assertIn("x", best)
 
-    def test_demo_has_no_traceback(self) -> None:
-        self.assertNotIn("Traceback (most recent call last)", run_demo().stderr)
+    def test_objective_is_negative_mse(self):
+        model = tuning.GBMForTuning(n_estimators=2, max_depth=1)
+        model.fit(self.X_train, self.y_train)
+        self.assertAlmostEqual(tuning.neg_mse(model, self.X_val, self.y_val), -np.mean((model.predict(self.X_val) - self.y_val) ** 2))
+
 
 if __name__ == "__main__":
     unittest.main()
