@@ -53,3 +53,17 @@ test("all four learning surfaces load the shared visualization layer", async () 
     assert.match(html, /learning-visuals\.js/);
   }
 });
+
+test("visualization integrations preserve state, focus, and reduced motion", async () => {
+  const [visualSource, catalog, assessment, lesson] = await Promise.all([
+    readFile(new URL("learning-visuals.js", import.meta.url), "utf8"),
+    readFile(new URL("catalog.html", import.meta.url), "utf8"),
+    readFile(new URL("assessment.html", import.meta.url), "utf8"),
+    readFile(new URL("lesson.html", import.meta.url), "utf8")
+  ]);
+  assert.match(visualSource, /setAttribute\("aria-current", "step"\)/);
+  assert.match(visualSource, /dataset\.phaseId/);
+  assert.match(catalog, /phaseButtons\[buttonIndex\]\.focus\(\)/);
+  assert.match(assessment, /complete && window\.LearningVisuals/);
+  assert.match(lesson, /prefers-reduced-motion: reduce/);
+});

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <script src="/gate-guard.js"></script>
-  <script src="/admin-entry.js" defer></script>
+  <script src="/admin-entry.js?v=20260825b" defer></script>
   <script>
     /* D1 — resolve an explicit stored dark-mode choice before first paint,
        same mechanism as lesson.html/llm-primer. Only an explicit stored
@@ -39,7 +39,7 @@
   <link rel="preload" href="lrn/assets/fonts/LHGHeadWEB-Light.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="lrn/assets/fonts/LHGTextWEB-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="style.css?v=20260824a">
-  <link rel="stylesheet" href="learning-visuals.css?v=20260825g">
+  <link rel="stylesheet" href="learning-visuals.css?v=20260825h">
   <style>
     .catalog-page {
       padding: 100px 0 80px;
@@ -247,6 +247,11 @@
       border-bottom: none;
     }
 
+    .catalog-table th:last-child,
+    .catalog-table td:last-child {
+      white-space: nowrap;
+    }
+
     .catalog-table tr:hover td {
       background: var(--bg-surface-hover);
     }
@@ -282,8 +287,8 @@
     }
 
     .catalog-phase-label {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
+      font-family: var(--font-body);
+      font-size: var(--fs-body-sm);
       color: var(--accent);
     }
 
@@ -384,7 +389,7 @@
       <span id="langIcon" class="theme-icon">EN</span>
     </a>
   </header>
-  <script src="i18n.js?v=20260825b"></script>
+  <script src="i18n.js?v=20260825c"></script>
   <script src="lang.js"></script>
   <script>
     /* D1 — dark-mode toggle button. Wires the button in the header above
@@ -485,7 +490,7 @@
   <script src="lrn/data.js?v=20260824b"></script>
   <script src="lrn/curriculum-map.js?v=20260824b"></script>
   <script src="progress.js?v=20260724a"></script>
-  <script src="learning-visuals.js?v=20260825g"></script>
+  <script src="learning-visuals.js?v=20260825h"></script>
   <script src="search.js?v=20260813a" defer></script>
   <script src="cmdpalette.js?v=20260813a" defer></script>
   <script>
@@ -572,7 +577,7 @@
 
           var opt = document.createElement('option');
           opt.value = String(p.id);
-          opt.textContent = String(p.id).padStart(2, '0') + ' - ' + p.name;
+          opt.textContent = p.name;
           phaseSelect.appendChild(opt);
           allRows = allRows.concat(phaseRows);
         }
@@ -692,6 +697,13 @@
               onSelect: function (phaseId) {
                 phaseSelect.value = String(phaseId) === phaseSelect.value ? '' : String(phaseId);
                 render();
+                var phaseButtons = phaseVisualEl.querySelectorAll('[data-phase-id]');
+                for (var buttonIndex = 0; buttonIndex < phaseButtons.length; buttonIndex += 1) {
+                  if (phaseButtons[buttonIndex].dataset.phaseId === String(phaseId)) {
+                    phaseButtons[buttonIndex].focus();
+                    break;
+                  }
+                }
               }
             });
           }
@@ -709,7 +721,7 @@
           for (var i = 0; i < rows.length; i++) {
             var r = rows[i];
             html += '<tr>';
-            html += '<td><span class="catalog-phase-label">' + String(r.phase).padStart(2, '0') + '</span></td>';
+            html += '<td><span class="catalog-phase-label">' + escapeHtml(r.phaseName) + '</span></td>';
             if (r.url) {
               html += '<td><a href="' + r.url + '" target="_blank" rel="noopener">' + escapeHtml(r.name) + '</a></td>';
             } else {

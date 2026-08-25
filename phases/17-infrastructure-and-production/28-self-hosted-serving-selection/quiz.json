@@ -1,0 +1,78 @@
+{
+  "lesson": "28-self-hosted-serving-selection",
+  "title": "Self-Hosted Serving Selection — llama.cpp, Ollama, TGI, vLLM, SGLang",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What engine does pick_engine choose for CPU hardware at single_user scale?",
+      "options": [
+        "vLLM with CUDA",
+        "TRT-LLM",
+        "Ollama (llama.cpp under the hood)",
+        "SGLang on a GPU"
+      ],
+      "correct": 2,
+      "explanation": "CPU first selects llama.cpp, then the single_user branch wraps it as Ollama for one-command developer UX."
+    },
+    {
+      "stage": "check",
+      "question": "For AMD production serving of ordinary chat, which engine does the decision tree select?",
+      "options": [
+        "TRT-LLM, because it is hardware-agnostic",
+        "TGI, because it is the only maintained option",
+        "Ollama, because production always uses the dev wrapper",
+        "vLLM, because the AMD branch uses ROCm and the workload is not prefix-heavy"
+      ],
+      "correct": 3,
+      "explanation": "The AMD branch starts with vLLM; only agentic or prefix-heavy workloads switch to SGLang. TRT-LLM is NVIDIA-locked in the lesson."
+    },
+    {
+      "stage": "check",
+      "question": "What does the tree choose for NVIDIA Hopper production with an agentic multi-turn workload?",
+      "options": [
+        "SGLang",
+        "Ollama",
+        "llama.cpp",
+        "TRT-LLM"
+      ],
+      "correct": 0,
+      "explanation": "The Hopper branch checks for agentic or prefix-heavy workload first and selects SGLang, the prefix/agent specialist."
+    },
+    {
+      "stage": "check",
+      "question": "What primary engine does NVIDIA Blackwell enterprise serving receive in the supplied MoE scenario?",
+      "options": [
+        "llama.cpp, because enterprise means CPU",
+        "TRT-LLM, with the enterprise stack adding production-stack, disaggregation, and routing guidance",
+        "Ollama, because it is faster than all GPU engines",
+        "TGI, because it is in active feature development"
+      ],
+      "correct": 1,
+      "explanation": "The Blackwell branch selects TRT-LLM and the enterprise scale branch adds the Phase 17 production stack, disaggregated serving, and cache-aware router."
+    },
+    {
+      "stage": "post",
+      "question": "What maintenance status does the lesson assign to TGI?",
+      "options": [
+        "It is the new default after a February 2026 feature release",
+        "It was discontinued in 2020",
+        "It entered maintenance mode on December 11, 2025",
+        "It has no release or maintenance policy"
+      ],
+      "correct": 2,
+      "explanation": "The docs date TGI's maintenance mode to December 11, 2025, which biases new projects toward vLLM or SGLang."
+    },
+    {
+      "stage": "post",
+      "question": "What stack does the enterprise branch append to its engine recommendation?",
+      "options": [
+        "Only a local prompt cache",
+        "A browser WebGPU runtime and mobile NPU",
+        "A batch API and a semantic embedding model",
+        "Production stack plus disaggregated serving plus a cache-aware router"
+      ],
+      "correct": 3,
+      "explanation": "For scale=enterprise, pick_engine adds the exact Phase 17 composition: production-stack, disaggregated serving, and cache-aware routing."
+    }
+  ]
+}

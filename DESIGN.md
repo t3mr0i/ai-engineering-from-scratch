@@ -273,6 +273,11 @@ Basic / Advanced / Expert levels as if their intervals were numeric.
 - **Motion:** visualization values update without animating layout properties.
   Honor `prefers-reduced-motion` for any future explanatory motion.
 
+**The Source-of-Truth Visuals Rule.** Every structural or quantitative view is
+derived from authored headings, curriculum maps, filters, or published scoring
+logic. Never invent illustrative progress and never turn unknown data into a
+zero value.
+
 ### Navigation
 - **Style:** fixed `nav-edge` header, wordmark left, pill-shaped icon buttons
   right (badges, language/theme toggle). Hairline bottom border, translucent

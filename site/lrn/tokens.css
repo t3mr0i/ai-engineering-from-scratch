@@ -293,8 +293,8 @@
   --shadow-whisper: 0 1px 2px rgba(5, 22, 77, 0.07);
 }
 
-/* Role-aware bridge from the learning catalog into Curriculum Admin. The
-   entry is created by admin-entry.js and remains absent for learners. */
+/* Bridge from the learning catalog into Curriculum Admin. The entry stays
+   visible; the admin page and API enforce curriculum roles server-side. */
 .nav-admin-entry {
   min-height: 36px;
   display: inline-flex;

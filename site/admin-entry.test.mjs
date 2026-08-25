@@ -70,3 +70,27 @@ test("admin entry is the final top-right navigation action", async () => {
   assert.equal(entry.hidden, false);
   assert.equal(entry.dataset.adminReady, "true");
 });
+
+test("admin entry stays visible when the role service is unavailable", async () => {
+  const nav = {
+    children: [],
+    querySelector() {
+      return null;
+    },
+    append(child) {
+      this.children.push(child);
+    },
+  };
+  const documentRef = {
+    querySelector(selector) {
+      return selector === ".nav-edge" ? nav : null;
+    },
+    createElement: makeElement,
+    createElementNS(_namespace, tagName) {
+      return makeElement(tagName);
+    },
+  };
+
+  assert.equal(await mount(documentRef, async () => ({ ok: false })), false);
+  assert.equal(nav.children.at(-1).hidden, false);
+});

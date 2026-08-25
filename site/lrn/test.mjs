@@ -325,6 +325,40 @@ test("the learner catalog exposes the Academy paths with current browser data", 
     "Academy stages must link onward into supporting LRN course details");
 });
 
+test("clickable catalog cards use the shared interactive-card contract", () => {
+  const lrn = readFileSync("site/lrn/lrn.js", "utf8");
+  const css = readFileSync("site/lrn/lrn.css", "utf8");
+  const tokens = readFileSync("site/lrn/tokens.css", "utf8");
+
+  assert.match(lrn, /link\.className = "interactive-card academy-card"/,
+    "Academy cards must opt into the shared card interaction contract");
+  assert.match(lrn, /card\.className = "interactive-card course-card"/,
+    "Course cards must opt into the shared card interaction contract");
+  assert.match(lrn, /interactive-card__icon academy-card__icon/,
+    "Academy cards must use the shared icon slot");
+  assert.match(lrn, /interactive-card__icon course-card__tile/,
+    "Course cards must use the shared icon slot");
+  assert.match(lrn, /interactive-card__action academy-card__chevron/,
+    "Academy cards must use the shared action slot");
+  assert.match(lrn, /interactive-card__action course-card__open/,
+    "Course cards must use the shared action slot");
+
+  assert.match(css,
+    /\.interactive-card:hover,\s*\.interactive-card:focus-visible\s*\{[^}]*text-decoration:\s*none;/s,
+    "Shared cards must suppress the global text-link underline in every interactive state");
+  assert.match(css, /translateY\(var\(--card-hover-lift\)\)/,
+    "Shared cards must consume the central hover-lift token");
+  for (const token of [
+    "--card-hover-lift",
+    "--card-hover-border",
+    "--card-hover-shadow",
+    "--card-hover-wash-strong",
+    "--card-hover-wash-soft",
+  ]) {
+    assert.ok(tokens.includes(token), `tokens.css must define ${token}`);
+  }
+});
+
 test("AI-06, AI-07, and AI-08 extend their existing Courses with source-specific units", () => {
   const expectedUnitCounts = { "LRN-02": 4, "LRN-40": 4, "LRN-16": 4, "LRN-25": 4 };
   for (const [courseId, count] of Object.entries(expectedUnitCounts)) {

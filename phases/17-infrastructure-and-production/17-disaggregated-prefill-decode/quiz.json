@@ -1,0 +1,78 @@
+{
+  "lesson": "17-disaggregated-prefill-decode",
+  "title": "Disaggregated Prefill/Decode — NVIDIA Dynamo and llm-d",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which expression supplies prefill time in ms_colocated and ms_disaggregated?",
+      "options": [
+        "output × DECODE_TOK_PER_MS_DECODE_GPU",
+        "KV_BYTES_PER_TOKEN_70B_FP8 / prompt",
+        "prompt / PREFILL_TOK_PER_MS",
+        "prompt × NIXL_TCP_GB_S"
+      ],
+      "correct": 2,
+      "explanation": "Both functions compute prefill_ms as prompt / PREFILL_TOK_PER_MS, using the 40 tokens/ms constant."
+    },
+    {
+      "stage": "check",
+      "question": "For 4,096 prompt tokens, how large is the RDMA KV transfer in this toy model?",
+      "options": [
+        "51.2 KB",
+        "5.12 GB",
+        "512 GB",
+        "0.512 GB of KV data (about 5.12 ms at 100 GB/s)"
+      ],
+      "correct": 3,
+      "explanation": "4,096 × 125,000 bytes = 512,000,000 bytes = 0.512 GB; at 100 GB/s the transfer takes about 5.12 ms."
+    },
+    {
+      "stage": "check",
+      "question": "Which decode rate is used for the memory-optimized disaggregated GPU pool?",
+      "options": [
+        "0.18 tokens/ms",
+        "40 tokens/ms",
+        "0.10 tokens/ms",
+        "100 GB/s"
+      ],
+      "correct": 0,
+      "explanation": "DECODE_TOK_PER_MS_DECODE_GPU is 0.18; colocated decode uses the slower 0.10 tokens/ms constant."
+    },
+    {
+      "stage": "check",
+      "question": "Why is TCP transfer slower than the NIXL RDMA path in ms_disaggregated?",
+      "options": [
+        "TCP skips the KV transfer entirely",
+        "NIXL_TCP_GB_S is 10 versus NIXL_RDMA_GB_S of 100",
+        "RDMA adds a second prefill pass",
+        "TCP uses a larger decode GPU"
+      ],
+      "correct": 1,
+      "explanation": "The transfer time divides the same KV bytes by the transport bandwidth; TCP's 10 GB/s constant is one tenth of RDMA's 100 GB/s."
+    },
+    {
+      "stage": "post",
+      "question": "When does disaggregation become more attractive in the sweep?",
+      "options": [
+        "Only for zero output tokens",
+        "Only when TCP is slower than RDMA",
+        "At longer prompts, when faster decode can outweigh KV-transfer overhead",
+        "When prompt length is removed from prefill"
+      ],
+      "correct": 2,
+      "explanation": "The crossover is about the decode-pool speed advantage outweighing the KV transfer tax; the sweep reports that behavior at longer prompts."
+    },
+    {
+      "stage": "post",
+      "question": "What KV size per prompt token does the 70B FP8 fixture use?",
+      "options": [
+        "16 bytes",
+        "1,250 bytes",
+        "1,000,000 bytes",
+        "125,000 bytes"
+      ],
+      "correct": 3,
+      "explanation": "The constant KV_BYTES_PER_TOKEN_70B_FP8 is 125,000 bytes; multiplying it by prompt gives the transferred KV payload."
+    }
+  ]
+}

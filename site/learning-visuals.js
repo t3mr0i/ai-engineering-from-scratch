@@ -42,7 +42,7 @@
 
   function lessonSections(article) {
     if (!article || !article.querySelectorAll) return [];
-    var ignored = /^(learning objectives|lernziele|further reading|weiterführende literatur|references|referenzen|quiz)$/i;
+    var ignored = /^(learning objectives|lernziele|further reading|weiterführende literatur|references|referenzen|quiz|exercises?|übungen|reference solution|referenzlösung)$/i;
     var headings = Array.prototype.slice.call(article.querySelectorAll("h2[id]"))
       .filter(function (heading) {
         return !heading.closest("[data-learning-visual]") && !ignored.test(cleanLabel(heading.textContent));
@@ -199,6 +199,7 @@
       item.dataset.state = unit.state || "open";
       var link = document.createElement("a");
       link.href = unit.href || "#";
+      if (unit.state === "current") link.setAttribute("aria-current", "step");
       var marker = document.createElement("span");
       marker.className = "course-route__marker";
       marker.setAttribute("aria-hidden", "true");
@@ -218,7 +219,14 @@
       var fill = document.createElement("span");
       fill.style.width = Math.max(0, Math.min(100, Number(unit.percent) || 0)) + "%";
       track.appendChild(fill);
-      copy.append(title, meta, track);
+      var state = document.createElement("span");
+      state.className = "learning-visual__sr-only";
+      state.textContent = unit.state === "complete"
+        ? text("viz_state_complete", "Complete")
+        : unit.state === "current"
+          ? text("viz_state_current", "Current unit")
+          : text("viz_state_open", "Not started");
+      copy.append(title, meta, track, state);
       link.append(marker, copy);
       item.appendChild(link);
       list.appendChild(item);
@@ -250,7 +258,8 @@
       var button = document.createElement("button");
       button.type = "button";
       button.className = "phase-chart__button";
-      button.title = String(phase.id).padStart(2, "0") + " · " + phase.name;
+      button.dataset.phaseId = String(phase.id);
+      button.title = phase.name;
       button.setAttribute("aria-label", text("viz_phase_label", "Phase {phase}: {visible} of {total} lessons", {
         phase: phase.name, visible: phase.visible, total: phase.total
       }));
@@ -269,7 +278,7 @@
       plot.append(totalBar, visibleBar);
       var label = document.createElement("span");
       label.className = "phase-chart__label";
-      label.textContent = String(phase.id).padStart(2, "0");
+      label.textContent = phase.name;
       button.append(value, plot, label);
       if (typeof opts.onSelect === "function") {
         button.addEventListener("click", function () { opts.onSelect(phase.id); });

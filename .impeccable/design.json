@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-24T00:00:00Z",
+  "generatedAt": "2026-08-25T06:45:00Z",
   "title": "Design System: LHIND AI Learning Catalog",
   "extensions": {
     "colorMeta": {
@@ -45,7 +45,9 @@
       { "name": "dur-base", "value": "240ms", "purpose": "Default state-change duration." },
       { "name": "dur-slow", "value": "420ms", "purpose": "Panels, modals, larger transitions." }
     ],
-    "breakpoints": []
+    "breakpoints": [
+      { "name": "learning-route-stack", "value": "760px" }
+    ]
   },
   "components": [
     {
@@ -101,8 +103,16 @@
       "kind": "nav",
       "refersTo": "nav-edge",
       "description": "Fixed top header: wordmark left, pill icon buttons right, hairline bottom border.",
-      "html": "<header class=\"ds-nav\"><span class=\"ds-nav__wordmark\">LHIND</span><nav class=\"ds-nav__actions\"><button class=\"ds-nav__icon-btn\" aria-label=\"Badges\">🎖</button></nav></header>",
-      "css": ".ds-nav { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; background: rgba(249, 248, 248, 0.9); border-bottom: 1px solid #e3e1de; } .ds-nav__wordmark { font-family: \"Lufthansa Head\", \"Helvetica Neue\", Arial, sans-serif; font-weight: 500; color: #05164d; } .ds-nav__icon-btn { border: none; background: transparent; border-radius: 6px; padding: 8px; cursor: pointer; color: #05164d; } .ds-nav__icon-btn:hover { background: #f1f0ef; }"
+      "html": "<header class=\"ds-nav\"><span class=\"ds-nav__wordmark\">LHIND</span><nav class=\"ds-nav__actions\"><button class=\"ds-nav__icon-btn\" aria-label=\"Badges\"><svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"8\" r=\"5\"/><path d=\"m8.5 12-1 8 4.5-2 4.5 2-1-8\"/></svg></button></nav></header>",
+      "css": ".ds-nav { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; background: rgba(249, 248, 248, 0.9); border-bottom: 1px solid #e3e1de; } .ds-nav__wordmark { font-family: \"Lufthansa Head\", \"Helvetica Neue\", Arial, sans-serif; font-weight: 500; color: #05164d; } .ds-nav__icon-btn { border: none; background: transparent; border-radius: 8px; padding: 8px; cursor: pointer; color: #05164d; } .ds-nav__icon-btn:hover { background: #f1f0ef; } .ds-nav__icon-btn:focus-visible { outline: 2px solid #2d5fe4; outline-offset: 3px; }"
+    },
+    {
+      "name": "Learning Route",
+      "kind": "custom",
+      "refersTo": "learning-route",
+      "description": "Semantic learning sequence with a calm connector line; stacks vertically below 760px.",
+      "html": "<nav class=\"ds-learning-route\" aria-label=\"Lesson route\"><ol><li><a href=\"#problem\" aria-current=\"location\"><span>01</span><strong>The problem</strong></a></li><li><a href=\"#concept\"><span>02</span><strong>The concept</strong></a></li><li><a href=\"#build\"><span>03</span><strong>Build it</strong></a></li></ol></nav>",
+      "css": ".ds-learning-route ol { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; } .ds-learning-route ol::before { content: \"\"; position: absolute; top: 17px; right: 8%; left: 8%; height: 1px; background: #e3e1de; } .ds-learning-route a { position: relative; display: grid; gap: 10px; color: #52617c; text-decoration: none; } .ds-learning-route a > span { z-index: 1; display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid #cfccc8; border-radius: 999px; background: #ffffff; } .ds-learning-route a[aria-current] > span { border-color: #05164d; background: #05164d; color: #ffffff; } .ds-learning-route a:focus-visible { outline: 2px solid #2d5fe4; outline-offset: 3px; } @media (max-width: 760px) { .ds-learning-route ol { grid-template-columns: 1fr; gap: 8px; } .ds-learning-route ol::before { top: 17px; right: auto; bottom: 17px; left: 17px; width: 1px; height: auto; } .ds-learning-route a { grid-template-columns: auto 1fr; align-items: center; } }"
     }
   ],
   "narrative": {
@@ -118,7 +128,8 @@
     "rules": [
       { "name": "The One Blue Rule", "body": "Core Blue is the only color that reads as \"this is the brand.\" Blue 500 is reserved for interaction, not decoration. Teal, purple, and sand exist solely as badge-tier tints and must never leak into buttons, nav, or links.", "section": "colors" },
       { "name": "The No-Terminal Rule", "body": "Buttons and nav never use the mono font, uppercase text, or wide tracking — that was the pre-rebrand terminal skin. Any rule still doing this in style.css is dead code to remove, not a variant to keep.", "section": "typography" },
-      { "name": "The Ambient-Not-Structural Rule", "body": "Shadows communicate gentle lift on hover/focus; they never simulate a hard light source. One hard-offset rule (box-shadow: 6px 6px 0 var(--ink)) survives in style.css from the pre-rebrand terminal design and should be deleted, not designed around.", "section": "elevation" }
+      { "name": "The Ambient-Not-Structural Rule", "body": "Shadows communicate gentle lift on hover/focus; they never simulate a hard light source. One hard-offset rule (box-shadow: 6px 6px 0 var(--ink)) survives in style.css from the pre-rebrand terminal design and should be deleted, not designed around.", "section": "elevation" },
+      { "name": "The Source-of-Truth Visuals Rule", "body": "Every structural or quantitative view is derived from authored headings, curriculum maps, filters, or published scoring logic. Never invent illustrative progress and never turn unknown data into a zero value.", "section": "components" }
     ],
     "dos": [
       "Do treat site/lrn/tokens.css as the single source of truth for every color, spacing, radius, shadow, and motion value.",

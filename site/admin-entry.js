@@ -36,7 +36,6 @@
     const entry = documentRef.createElement("a");
     entry.className = "nav-admin-entry";
     entry.href = "/admin.html";
-    entry.hidden = true;
     entry.setAttribute("aria-label", "Curriculum verwalten");
     entry.setAttribute("title", "Curriculum verwalten");
     entry.append(makeIcon(documentRef));
@@ -66,7 +65,6 @@
       if (!response.ok) return false;
       const payload = await response.json();
       if (!hasAdminAccess(payload)) return false;
-      entry.hidden = false;
       entry.dataset.adminReady = "true";
       return true;
     } catch (_) {

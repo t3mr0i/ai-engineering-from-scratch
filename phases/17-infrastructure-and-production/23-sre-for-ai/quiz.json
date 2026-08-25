@@ -1,0 +1,78 @@
+{
+  "lesson": "23-sre-for-ai",
+  "title": "SRE for AI — Multi-Agent Incident Response, Runbooks, Predictive Detection",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What root cause does log_agent return for an incident containing the word checkout?",
+      "options": [
+        "A network partition in eu-west-1",
+        "A tokenizer version mismatch",
+        "vLLM OOM from KV cache spike on /api/llm",
+        "An expired TLS certificate"
+      ],
+      "correct": 2,
+      "explanation": "log_agent's checkout branch returns the vLLM KV-cache OOM hypothesis with 142 errors/min and pod-gpu-3 evidence."
+    },
+    {
+      "stage": "check",
+      "question": "What metric evidence does metric_agent attach to every incident in this toy?",
+      "options": [
+        "CPU stayed below 10% for one minute",
+        "A provider returned HTTP 404",
+        "The tokenizer emitted no tokens",
+        "GPU memory reached 98% four minutes before the error spike"
+      ],
+      "correct": 3,
+      "explanation": "metric_agent reports DCGM_FI_DEV_FB_USED >= 97% for 240 seconds and correlation 0.93 with the error onset."
+    },
+    {
+      "stage": "check",
+      "question": "When does supervisor set adversarial_agreement to true?",
+      "options": [
+        "When at least two hypotheses share the same grouped root-cause key",
+        "When one agent has confidence above 0.80",
+        "When all evidence lists are empty",
+        "When the incident string contains checkout"
+      ],
+      "correct": 0,
+      "explanation": "The supervisor groups hypotheses by a shortened root-cause key and sets adversarial_agreement = len(top_agents) >= 2."
+    },
+    {
+      "stage": "check",
+      "question": "What narrow action does supervisor propose for the KV-cache incident?",
+      "options": [
+        "Replace the entire cluster topology",
+        "Restart the pod and lower --gpu-memory-utilization",
+        "Rotate every tenant's IAM role",
+        "Delete the runbook repository"
+      ],
+      "correct": 1,
+      "explanation": "The fixed proposed_action is restart pod + lower --gpu-memory-utilization; broad topology or IAM changes are deliberately outside the automatic action."
+    },
+    {
+      "stage": "post",
+      "question": "What safety gate is returned when the top root-cause group has only one supporting agent?",
+      "options": [
+        "safe action auto-approved",
+        "retry the incident forever",
+        "human approval required",
+        "incident silently closed"
+      ],
+      "correct": 2,
+      "explanation": "supervisor returns human approval required whenever adversarial_agreement is false, even if the top confidence is high."
+    },
+    {
+      "stage": "post",
+      "question": "Which class of action does the demo explicitly reserve for a human commander?",
+      "options": [
+        "Reading a runbook match",
+        "Computing an aggregated confidence",
+        "Logging the incident ID",
+        "Broad topology, code, or IAM changes"
+      ],
+      "correct": 3,
+      "explanation": "The final note limits automated response to narrow safe actions and escalates topology, code, and IAM changes."
+    }
+  ]
+}

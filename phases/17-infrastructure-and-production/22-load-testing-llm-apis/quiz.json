@@ -1,0 +1,78 @@
+{
+  "lesson": "22-load-testing-llm-apis",
+  "title": "Load Testing LLM APIs — Why k6 and Locust Lie",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What prompt distribution does make_uniform_workload create?",
+      "options": [
+        "Gaussian prompt lengths with 80 random prefixes",
+        "A mixture of 50–8,000-token prompts",
+        "500 requests with a 2,000-token prompt and one shared prefix",
+        "One unique prefix for every request"
+      ],
+      "correct": 2,
+      "explanation": "The uniform fixture returns Request(2000, \"single_prefix\") for every one of its n requests."
+    },
+    {
+      "stage": "check",
+      "question": "What TTFT does simulate assign to the first request for a previously unseen prefix?",
+      "options": [
+        "80 ms",
+        "800 ms",
+        "15 ms",
+        "0 ms"
+      ],
+      "correct": 3,
+      "explanation": "A prefix miss uses PREFIX_CACHE_MISS_TTFT_MS=800; later hits use the 80 ms constant."
+    },
+    {
+      "stage": "check",
+      "question": "How does make_realistic_workload choose its prefix IDs?",
+      "options": [
+        "It chooses from prefix_0 through prefix_79",
+        "It always uses single_prefix",
+        "It hashes each prompt into a unique ID",
+        "It uses only the concurrency value"
+      ],
+      "correct": 0,
+      "explanation": "The realistic fixture builds 80 prefixes and chooses rng.choice(prefixes), while prompt length comes from a clipped Gaussian."
+    },
+    {
+      "stage": "check",
+      "question": "What happens to repeated requests after their prefix is inserted into cache?",
+      "options": [
+        "They are rejected as duplicates",
+        "They receive the 80 ms cache-hit TTFT",
+        "They are counted as 800 ms misses forever",
+        "They change the prefix hash to a new value"
+      ],
+      "correct": 1,
+      "explanation": "simulate adds an unseen prefix to cache and then assigns PREFIX_CACHE_HIT_TTFT_MS=80 to subsequent requests carrying it."
+    },
+    {
+      "stage": "post",
+      "question": "Which percentile does the simulator read at index int(0.99 * len(samples)) - 1?",
+      "options": [
+        "P50",
+        "P90",
+        "P99",
+        "The arithmetic mean"
+      ],
+      "correct": 2,
+      "explanation": "After sorting ttft_samples, that index is the reported P99; it is intentionally distinct from the mean and median fields."
+    },
+    {
+      "stage": "post",
+      "question": "Why can the uniform benchmark make an endpoint look faster than realistic traffic?",
+      "options": [
+        "It disables all TTFT measurement",
+        "It uses more unique prefixes and fewer cache hits",
+        "It sends no requests at concurrency 200",
+        "One shared prefix creates many cache hits and hides prefix diversity"
+      ],
+      "correct": 3,
+      "explanation": "The uniform fixture's single_prefix quickly becomes a hit for nearly every request, whereas realistic traffic pays misses for many distinct prefixes."
+    }
+  ]
+}

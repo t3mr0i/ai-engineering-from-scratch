@@ -1,0 +1,78 @@
+{
+  "lesson": "20-shadow-canary-progressive",
+  "title": "Shadow Traffic, Canary Rollout, and Progressive Deployment for LLMs",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What is the defining user-impact property of shadow traffic?",
+      "options": [
+        "The candidate receives all traffic at 100% immediately",
+        "The baseline is deleted before comparison",
+        "The candidate receives duplicated requests but its output is never returned to the user",
+        "Shadow mode bypasses cost and latency measurement"
+      ],
+      "correct": 2,
+      "explanation": "Shadow mode compares candidate samples while the baseline remains the serving response, so candidate output has zero user exposure."
+    },
+    {
+      "stage": "check",
+      "question": "Which cost value breaches the canary cost gate when BASELINE cost_per_req is $0.02?",
+      "options": [
+        "$0.021",
+        "$0.023",
+        "$0.024",
+        "$0.030"
+      ],
+      "correct": 3,
+      "explanation": "The gate is 1.2 × $0.02 = $0.024; a value above that, such as $0.030, breaches. Equality is not a breach because check_gates uses >."
+    },
+    {
+      "stage": "check",
+      "question": "What is the first traffic stage in STAGES?",
+      "options": [
+        "1%",
+        "10%",
+        "25%",
+        "50%"
+      ],
+      "correct": 0,
+      "explanation": "The progressive sequence is [0.01, 0.10, 0.25, 0.50, 0.75, 1.00], so the first canary stage is 1%."
+    },
+    {
+      "stage": "check",
+      "question": "What should happen to a cost_mult=1.25 rollout once the cost gate is exceeded?",
+      "options": [
+        "It is promoted because cost is not an LLM gate",
+        "It halts at the first breached stage and prints a rollback",
+        "It silently changes the baseline cost",
+        "It retries the same stage until the noise disappears"
+      ],
+      "correct": 1,
+      "explanation": "GATES allows only 1.2× cost; a 25% regression breaches, so rollout returns after printing HALT and the rollback action."
+    },
+    {
+      "stage": "post",
+      "question": "What does PolicyEngine.rollback() do to the pinned digest and rollout percentage?",
+      "options": [
+        "Pins the candidate and sets rollout to 100%",
+        "Keeps the candidate at the current percentage",
+        "Repins the stored baseline and sets rolloutPct to 0",
+        "Deletes both digests so no model can serve"
+      ],
+      "correct": 2,
+      "explanation": "rollback optionally updates baselineDigest, sets pinnedDigest to that baseline, and resets rolloutPct=0 for an O(1) policy flip."
+    },
+    {
+      "stage": "post",
+      "question": "When does shadowEvaluate set alert=true?",
+      "options": [
+        "For any empty sample list",
+        "When one baseline cost is exactly zero",
+        "Only when candidate output text differs",
+        "When mean cost delta exceeds 30% or mean latency delta exceeds 50%"
+      ],
+      "correct": 3,
+      "explanation": "The policy builds reasons for meanCost > 30 or meanLat > 50; alert is true when at least one reason exists."
+    }
+  ]
+}

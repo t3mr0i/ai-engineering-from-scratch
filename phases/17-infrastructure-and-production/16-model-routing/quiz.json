@@ -1,0 +1,78 @@
+{
+  "lesson": "16-model-routing",
+  "title": "Model Routing as a Cost-Reduction Primitive",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What happens when RouteSignals.hardSetSimilarity reaches the router's default 0.88 threshold?",
+      "options": [
+        "The request is rejected as too difficult",
+        "The cheapest model is always selected",
+        "The request is pinned to the frontier model",
+        "The threshold is ignored until after a random retry"
+      ],
+      "correct": 2,
+      "explanation": "The hard-set similarity short circuit selects frontier before normal candidate scoring."
+    },
+    {
+      "stage": "check",
+      "question": "With outputTokens omitted, what output length does ModelRouter.estCost assume?",
+      "options": [
+        "50 tokens",
+        "100 tokens",
+        "150 tokens",
+        "200 tokens"
+      ],
+      "correct": 3,
+      "explanation": "The method signature defaults outputTokens to 200 when callers provide only the prompt length."
+    },
+    {
+      "stage": "check",
+      "question": "Which filters are applied before the weighted model score is calculated?",
+      "options": [
+        "Required capabilities, context-window fit, and policy minQuality",
+        "Only the model's display name",
+        "Only output length and random seed",
+        "Provider error rate and GPU temperature"
+      ],
+      "correct": 0,
+      "explanation": "candidates keeps models that cover every required capability, fit promptTokens in contextWindow, and meet policy.minQuality."
+    },
+    {
+      "stage": "check",
+      "question": "What toy quality score does the cheap route receive for a hard Query?",
+      "options": [
+        "0.99",
+        "0.75",
+        "0.92",
+        "1.00"
+      ],
+      "correct": 1,
+      "explanation": "quality returns the difficulty map {simple: 0.99, medium: 0.92, hard: 0.75} for the cheap route."
+    },
+    {
+      "stage": "post",
+      "question": "What does the CASCADE simulator do before deciding whether to escalate?",
+      "options": [
+        "It calls the frontier model first and discards its answer",
+        "It sends every query to both models concurrently",
+        "It pays for the cheap model first, then escalates when confidence is insufficient",
+        "It routes all simple queries to the frontier model"
+      ],
+      "correct": 2,
+      "explanation": "CASCADE always adds the cheap cost; simple queries or some medium queries stop there, while the rest pay an additional frontier call."
+    },
+    {
+      "stage": "post",
+      "question": "Which catalog model is the only candidate that can satisfy a required vision capability?",
+      "options": [
+        "haiku-class",
+        "sonnet-class",
+        "The router throws before inspecting capabilities",
+        "frontier"
+      ],
+      "correct": 3,
+      "explanation": "The catalog gives vision only to frontier; haiku and sonnet have no vision capability in the local table."
+    }
+  ]
+}

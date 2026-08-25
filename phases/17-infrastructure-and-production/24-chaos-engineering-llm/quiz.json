@@ -1,0 +1,78 @@
+{
+  "lesson": "24-chaos-engineering-llm",
+  "title": "Chaos Engineering for LLM Production",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What daily error budget does ERROR_BUDGET_PER_DAY=0.001 represent?",
+      "options": [
+        "0.001%, or 99.999% availability",
+        "1.0%, or 99% availability",
+        "0.1%, or a 99.9% SLO",
+        "10%, or a 90% SLO"
+      ],
+      "correct": 2,
+      "explanation": "0.001 as a fraction is 0.1%, leaving a 99.9% success target; main prints the SLO error budget as 0.10%/day."
+    },
+    {
+      "stage": "check",
+      "question": "Why is provider 429 fallback aborted by the safety plane?",
+      "options": [
+        "Its error rate is below the expected baseline",
+        "It has no blast radius at all",
+        "It runs for zero minutes",
+        "Its 30× burn rate combines with a 30% blast radius"
+      ],
+      "correct": 3,
+      "explanation": "0.015 / 0.0005 = 30×, and both burn_rate > 2.0 and blast_radius_pct > 0.2 are true, so paused_by_safety_plane is true."
+    },
+    {
+      "stage": "check",
+      "question": "Why does the pod-kill experiment complete despite a 4× burn rate?",
+      "options": [
+        "Its blast radius is only 5%, below the 20% safety threshold",
+        "The burn rate is calculated as zero",
+        "Pod kills are excluded from the experiment list",
+        "The error budget is disabled for five-minute tests"
+      ],
+      "correct": 0,
+      "explanation": "The pod kill has 0.002/0.0005 = 4×, but the pause condition requires both high burn and blast radius above 0.2; 0.05 fails the second test."
+    },
+    {
+      "stage": "check",
+      "question": "What exact conjunction triggers paused_by_safety_plane?",
+      "options": [
+        "burn_rate > 2.0 or blast radius > 0.2",
+        "burn_rate > 2.0 and blast radius > 0.2",
+        "duration > 5 and error rate < baseline",
+        "Any experiment involving a provider"
+      ],
+      "correct": 1,
+      "explanation": "run_experiment sets paused only when both the burn-rate and blast-radius comparisons are true."
+    },
+    {
+      "stage": "post",
+      "question": "What happens to malformed prompt tokenizer stall in the supplied experiment list?",
+      "options": [
+        "It is always promoted to production",
+        "It is skipped before burn rate is calculated",
+        "It completes because its 10% blast radius is below the 20% cutoff",
+        "It is aborted because every error rate above 1% is forbidden"
+      ],
+      "correct": 2,
+      "explanation": "Its 4% rate is 80× expected, but the blast radius is 10%; the conjunction is false, so the local status is COMPLETED."
+    },
+    {
+      "stage": "post",
+      "question": "Which status string is returned for an experiment stopped by the guard?",
+      "options": [
+        "COMPLETED",
+        "PAUSED",
+        "ABORTED (burn-rate guard)",
+        "ROLLED_BACK (provider)"
+      ],
+      "correct": 3,
+      "explanation": "run_experiment maps paused_by_safety_plane to ABORTED (burn-rate guard); non-paused experiments return COMPLETED."
+    }
+  ]
+}

@@ -374,8 +374,12 @@ window.SITE_I18N = {
   viz_assessment_desc: { en: "See the share of role targets met in each capability group.", de: "Sieh, wie viele Rollenziele du in jeder Kompetenzgruppe erfüllst." },
   viz_assessment_met: { en: "Role targets met", de: "Erfüllte Rollenziele" },
   viz_assessment_met_count: { en: "{met} / {total} targets", de: "{met} / {total} Ziele" },
+  viz_assessment_pending: { en: "Complete all required ratings to see your capability profile.", de: "Bewerte alle erforderlichen Kompetenzen, um dein Kompetenzprofil zu sehen." },
   viz_assessment_other: { en: "Other", de: "Weitere" },
   viz_capability_label: { en: "{name}: {met} of {total} role targets met", de: "{name}: {met} von {total} Rollenzielen erfüllt" },
+  viz_state_complete: { en: "Complete", de: "Abgeschlossen" },
+  viz_state_current: { en: "Current unit", de: "Aktuelle Einheit" },
+  viz_state_open: { en: "Not started", de: "Nicht begonnen" },
 
   // index.html footer — added alongside the new footer so about.html and
   // assessment.html become reachable (see nav gap in the plan's §6).

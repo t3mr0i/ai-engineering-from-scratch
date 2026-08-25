@@ -1,0 +1,78 @@
+{
+  "lesson": "26-compliance-frameworks",
+  "title": "Compliance — SOC 2, HIPAA, GDPR, PCI-DSS, EU AI Act, ISO 42001",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which mapping does CONTROL_MAP provide for access logging?",
+      "options": [
+        "Only PCI DSS Requirement 8",
+        "Only EU AI Act Article 43",
+        "ISO 27001 A.5.15-5.18, GDPR Art. 32, HIPAA 164.312(a), and SOC 2 CC6",
+        "No framework because logging is operational, not a control"
+      ],
+      "correct": 2,
+      "explanation": "The access logging entry spans those four frameworks, illustrating why a shared control can reduce audit duplication."
+    },
+    {
+      "stage": "check",
+      "question": "What framework list does PROFILE_MAP return for an EU B2B SaaS customer?",
+      "options": [
+        "HIPAA, PCI-DSS, and Colorado AI Act only",
+        "SOC 2 Type I and FERPA only",
+        "ISO 42001 and CCPA only",
+        "GDPR, SOC 2 Type II, ISO 27001, and EU AI Act"
+      ],
+      "correct": 3,
+      "explanation": "The key (EU, B2B SaaS) maps to exactly those four entries in the local profile table."
+    },
+    {
+      "stage": "check",
+      "question": "When does the lesson place EU AI Act Annex III high-risk enforcement?",
+      "options": [
+        "2 December 2027",
+        "1 August 2024",
+        "2 February 2025",
+        "2 August 2028"
+      ],
+      "correct": 0,
+      "explanation": "The docs distinguish the Act's in-force date from Annex III enforcement on 2 December 2027; Annex I follows on 2 August 2028."
+    },
+    {
+      "stage": "check",
+      "question": "Which fine ceilings does the lesson assign to high-risk obligations versus prohibited practices?",
+      "options": [
+        "€1M/1% versus €5M/2%",
+        "€15M/3% versus €35M/7%",
+        "€35M/7% versus €15M/3%",
+        "A single €30.5M ceiling for both"
+      ],
+      "correct": 1,
+      "explanation": "The docs give up to €15M or 3% for high-risk obligations and up to €35M or 7% for prohibited practices."
+    },
+    {
+      "stage": "post",
+      "question": "Where should PII redaction occur to prevent an external model from seeing raw data?",
+      "options": [
+        "After the provider has stored the prompt",
+        "Only in a report after the response is returned",
+        "At the inference layer before the LLM call",
+        "Only during an annual audit"
+      ],
+      "correct": 2,
+      "explanation": "The lesson calls entity recognition and consistent tokenization before the LLM call the defensible standard; post-processing cannot undo exposure."
+    },
+    {
+      "stage": "post",
+      "question": "What operational window does the lesson associate with a SOC 2 Type II audit?",
+      "options": [
+        "One day of configuration evidence",
+        "Only a penetration test",
+        "No operating period is needed",
+        "Roughly 6–12 months of operated controls"
+      ],
+      "correct": 3,
+      "explanation": "The reference notes describe a SOC 2 Type II window of about 6–12 months, unlike a point-in-time Type I report."
+    }
+  ]
+}

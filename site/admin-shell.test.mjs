@@ -24,7 +24,7 @@ test("every catalog navigation surface loads the role-aware admin entry", () => 
   ];
 
   for (const surface of surfaces) {
-    assert.match(read(surface), /<script src="\/admin-entry\.js" defer><\/script>/, surface);
+    assert.match(read(surface), /<script src="\/admin-entry\.js\?v=20260825b" defer><\/script>/, surface);
   }
 });
 

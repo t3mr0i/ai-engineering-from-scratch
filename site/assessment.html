@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <script src="/gate-guard.js"></script>
-  <script src="/admin-entry.js" defer></script>
+  <script src="/admin-entry.js?v=20260825b" defer></script>
   <script>
     /* D1 — resolve an explicit stored dark-mode choice before first paint,
        same mechanism as lesson.html/llm-primer. Only an explicit stored
@@ -28,7 +28,7 @@
   <meta name="description" content="Rate yourself across 19 AI-literacy capabilities, get your AI-Literacy score, and a personalized learning path built from the curriculum.">
   <meta name="robots" content="noindex">
   <link rel="stylesheet" href="style.css?v=20260824a">
-  <link rel="stylesheet" href="learning-visuals.css?v=20260825g">
+  <link rel="stylesheet" href="learning-visuals.css?v=20260825h">
   <style>
     .assess-page { padding: 100px 0 80px; min-height: 100vh; }
     .assess-header { margin-bottom: 32px; }
@@ -148,7 +148,7 @@
       <span id="langIcon" class="theme-icon">EN</span>
     </a>
   </header>
-  <script src="i18n.js?v=20260825b"></script>
+  <script src="i18n.js?v=20260825c"></script>
   <script src="lang.js"></script>
   <script>
     /* D1 — dark-mode toggle button. Wires the button in the header above
@@ -235,7 +235,7 @@
 
   <script src="data.js?v=20260525a"></script>
   <script src="capabilities.js?v=20260525a"></script>
-  <script src="learning-visuals.js?v=20260825g"></script>
+  <script src="learning-visuals.js?v=20260825h"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <script>
@@ -399,9 +399,11 @@
           ? i18nText('assess_score_sub_complete', { met: metCount, total: required.length, role: state.role })
           : i18nText('assess_score_sub_incomplete', { total: required.length, rated: ratedRequired.length });
 
-        if (window.LearningVisuals) {
+        var profileHost = document.getElementById('capabilityProfileVisual');
+        profileHost.textContent = '';
+        if (complete && window.LearningVisuals) {
           window.LearningVisuals.renderCapabilityProfile(
-            document.getElementById('capabilityProfileVisual'),
+            profileHost,
             required.map(function (entry) {
               return { cluster: entry.cap.cluster, current: entry.current, target: entry.target };
             }),
@@ -410,6 +412,11 @@
               description: i18nText('viz_assessment_desc')
             }
           );
+        } else if (!complete) {
+          var profilePending = document.createElement('p');
+          profilePending.className = 'capability-profile__empty';
+          profilePending.textContent = i18nText('viz_assessment_pending');
+          profileHost.appendChild(profilePending);
         }
 
         // Path: gaps only, ordered by cluster, then lessons-available, then gap size.
@@ -448,8 +455,7 @@
             var chips = x.cap.phases.map(function (pid) {
               var p = phaseById[pid];
               if (!p) return '';
-              return '<a class="lesson-chip" href="index.html">' +
-                String(pid).padStart(2, '0') + ' · ' + p.name + '</a>';
+              return '<a class="lesson-chip" href="index.html">' + p.name + '</a>';
             }).join('');
             body = '<div class="path-lessons">' + chips + '</div>';
           } else {

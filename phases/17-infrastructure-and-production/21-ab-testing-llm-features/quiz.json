@@ -1,0 +1,78 @@
+{
+  "lesson": "21-ab-testing-llm-features",
+  "title": "A/B Testing LLM Features — GrowthBook, Statsig, and the Vibes Problem",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which expression is the treatment effect used by z_statistic?",
+      "options": [
+        "p_a minus p_b",
+        "p_a plus p_b",
+        "p_b minus p_a",
+        "The pooled success count divided by n_total"
+      ],
+      "correct": 2,
+      "explanation": "z_statistic returns (p_b - p_a) / se, so a positive result means the observed B rate exceeds A."
+    },
+    {
+      "stage": "check",
+      "question": "Which fixed-sample assumptions are hard-coded in the demo for the default calculation?",
+      "options": [
+        "alpha=0.50 and power=0.99",
+        "alpha=0.10 and power=0.50",
+        "alpha=0.01 and power=0.95",
+        "alpha=0.05 and power=0.80"
+      ],
+      "correct": 3,
+      "explanation": "fixed_sample_size has alpha=0.05 and power=0.80 defaults, represented by z_alpha=1.96 and z_beta=0.84."
+    },
+    {
+      "stage": "check",
+      "question": "When is the sequential boundary first eligible to stop the simulation?",
+      "options": [
+        "Only after both n_a and n_b exceed 100",
+        "After the first request in either group",
+        "Only when max_n is reached",
+        "As soon as p_a equals p_b"
+      ],
+      "correct": 0,
+      "explanation": "The loop checks that both n_a and n_b exceed 100 before calculating z and the always-valid threshold."
+    },
+    {
+      "stage": "check",
+      "question": "How does the sequential threshold grow with the accumulated sample?",
+      "options": [
+        "It is fixed at 1.96 forever",
+        "It uses sqrt(2 log(1/0.05) + log(n_total))",
+        "It decreases linearly with n_total",
+        "It equals the observed lift percentage"
+      ],
+      "correct": 1,
+      "explanation": "simulate computes the illustrative always-valid boundary from 2*log(1/0.05) plus log(n_total), then takes the square root."
+    },
+    {
+      "stage": "post",
+      "question": "Why does main multiply the traditional sample size by 1.4 for the LLM-adjusted value?",
+      "options": [
+        "To remove all Type-I error control",
+        "To convert tokens into dollars",
+        "To buffer for LLM non-determinism",
+        "To force every test to stop at 100 observations"
+      ],
+      "correct": 2,
+      "explanation": "The demo applies adjusted = int(required * 1.4), explicitly labeling the factor a buffer for non-deterministic model outcomes."
+    },
+    {
+      "stage": "post",
+      "question": "What do n_a and n_b mean when simulate stops sequentially?",
+      "options": [
+        "The planned full-horizon sample sizes",
+        "The number of variants in the catalog",
+        "The pooled count before random assignment",
+        "The observations accumulated up to the stop point"
+      ],
+      "correct": 3,
+      "explanation": "The returned counts are incremented inside the loop and can be below max_n when the z-boundary fires, especially for the strong-signal case."
+    }
+  ]
+}

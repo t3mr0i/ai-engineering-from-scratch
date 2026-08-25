@@ -1,0 +1,78 @@
+{
+  "lesson": "27-finops-llms",
+  "title": "FinOps for LLMs — Unit Economics and Multi-Tenant Attribution",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which three attribution dimensions does the lesson recommend instrumenting on day one?",
+      "options": [
+        "Region, GPU type, and kernel version",
+        "Prompt length, batch size, and cache TTL",
+        "user_id, task_id plus route, and tenant_id",
+        "Temperature, top-p, and stop sequence"
+      ],
+      "correct": 2,
+      "explanation": "The lesson's unit-economics view tags per user, per task/route, and per tenant so spend can be tied to people, product surfaces, and contracts."
+    },
+    {
+      "stage": "check",
+      "question": "Which four token layers does the lesson say a single billing bucket can hide?",
+      "options": [
+        "Input, output, latency, and retries",
+        "CPU, GPU, RAM, and disk",
+        "Prompt, response, HTTP, and cache",
+        "Prompt, tool, memory, and response"
+      ],
+      "correct": 3,
+      "explanation": "The four layers are prompt, tool, memory, and response; separating them exposes prompt bloat and tool or memory amplification."
+    },
+    {
+      "stage": "check",
+      "question": "What daily spend cap does TenantPolicy give tenant_A_normal?",
+      "options": [
+        "$200, from $100 contracted spend × 2.0",
+        "$100, with no multiplier",
+        "$50, from its rate limit",
+        "$400, from a z-score rule"
+      ],
+      "correct": 0,
+      "explanation": "tenant_A_normal has contracted_daily_usd=100 and spend_cap_multiplier=2.0, so the cap check compares spend with $200."
+    },
+    {
+      "stage": "check",
+      "question": "When can the FinOps simulator activate the kill switch?",
+      "options": [
+        "On the first request of every day",
+        "After at least five history points when spend z-score exceeds 4",
+        "Whenever a tenant uses more than 40 requests per minute",
+        "Only when daily spend is exactly zero"
+      ],
+      "correct": 1,
+      "explanation": "simulate_day requires len(daily_history) >= 5, computes z, and pauses when z > policy.kill_z_score, which defaults to 4.0."
+    },
+    {
+      "stage": "post",
+      "question": "Which tenant is configured with traffic_mult=25.0 in TENANTS?",
+      "options": [
+        "tenant_A_normal",
+        "tenant_B_growing",
+        "tenant_C_abusive",
+        "None; traffic is always uniform"
+      ],
+      "correct": 2,
+      "explanation": "tenant_C_abusive is the tuple with a $20 contract, 40 requests/minute, and traffic multiplier 25.0."
+    },
+    {
+      "stage": "post",
+      "question": "Which product metric does the lesson prefer over a raw $/M-token number?",
+      "options": [
+        "GPU temperature per hour",
+        "Number of provider regions",
+        "Average prompt characters only",
+        "Cost per resolved query or generated artifact"
+      ],
+      "correct": 3,
+      "explanation": "A unit such as cost per resolved support query ties token spend to product value; $/M tokens alone cannot show whether a task succeeded."
+    }
+  ]
+}

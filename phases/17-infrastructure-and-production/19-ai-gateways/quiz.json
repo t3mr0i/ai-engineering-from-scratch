@@ -1,0 +1,78 @@
+{
+  "lesson": "19-ai-gateways",
+  "title": "AI Gateways — LiteLLM, Portkey, Kong AI Gateway, Bifrost",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which gateway profile has the smallest fixed overhead in the Python comparator?",
+      "options": [
+        "LiteLLM at 10 ms",
+        "Portkey at 30 ms",
+        "Cloudflare at 2 ms",
+        "Kong at 5 ms"
+      ],
+      "correct": 2,
+      "explanation": "GATEWAY_OVERHEAD assigns Cloudflare 2 ms, less than Kong 5, LiteLLM 10, and Portkey 30."
+    },
+    {
+      "stage": "check",
+      "question": "What does AuthService.authenticate return for a presented key whose digest matches no tenant?",
+      "options": [
+        "The first tenant in the map",
+        "A new free tenant",
+        "A 429 response directly",
+        "undefined"
+      ],
+      "correct": 3,
+      "explanation": "The service walks all known hashes with timingSafeEqual and returns the matching tenant; if none matches, match remains undefined."
+    },
+    {
+      "stage": "check",
+      "question": "What state does TokenBucketLimiter maintain per tenant?",
+      "options": [
+        "Tokens, capacity, refill rate, and last timestamp",
+        "Only the tenant's model name",
+        "A global retry counter shared by all tenants",
+        "The full prompt history"
+      ],
+      "correct": 0,
+      "explanation": "Each Bucket stores tokens, capacity, refillPerSec, and lastNs; allow refills from elapsed time before consuming the request cost."
+    },
+    {
+      "stage": "check",
+      "question": "When does callWithRetry stop retrying a provider error?",
+      "options": [
+        "Only after a successful response from another provider",
+        "When the error is non-retryable or maxAttempts has been reached",
+        "Whenever the first attempt returns 429",
+        "After exactly ten attempts regardless of configuration"
+      ],
+      "correct": 1,
+      "explanation": "The retry loop breaks for a non-retryable error or attempt === cfg.maxAttempts; otherwise it sleeps with exponential backoff and tries again."
+    },
+    {
+      "stage": "post",
+      "question": "How does callWithFallback count fallbackHits?",
+      "options": [
+        "It increments once for every provider in the chain",
+        "It increments only when all providers fail",
+        "It increments when the loop reaches a provider at index greater than zero",
+        "It uses the gateway overhead as the count"
+      ],
+      "correct": 2,
+      "explanation": "The loop executes if i > 0 then fallbackHits++, so reaching the second or later provider counts a fallback attempt."
+    },
+    {
+      "stage": "post",
+      "question": "With independent OpenAI and Anthropic error rates of 3% and 2%, what success rate does two-provider fallback approximate?",
+      "options": [
+        "95.00%",
+        "97.00%",
+        "98.00%",
+        "99.94%"
+      ],
+      "correct": 3,
+      "explanation": "Both providers fail with probability 0.03 × 0.02 = 0.0006, so the complement is 0.9994, or 99.94%."
+    }
+  ]
+}

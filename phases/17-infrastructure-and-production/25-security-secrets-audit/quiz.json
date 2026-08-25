@@ -1,0 +1,78 @@
+{
+  "lesson": "25-security-secrets-audit",
+  "title": "Security — Secrets, API Key Rotation, Audit Logs, Guardrails",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What happens when Scrubber.scrub sees the same sensitive value twice?",
+      "options": [
+        "It assigns a new placeholder each time",
+        "It removes the value without a placeholder",
+        "It reuses the stable placeholder stored in tokens",
+        "It raises a duplicate-value exception"
+      ],
+      "correct": 2,
+      "explanation": "_token_for first checks self.tokens, so repeated SSNs, emails, or phones receive the same kind-specific placeholder."
+    },
+    {
+      "stage": "check",
+      "question": "Which entity types do the local regular expressions scrub?",
+      "options": [
+        "Only URLs and IP addresses",
+        "Only credit-card numbers",
+        "Only model names and tenant IDs",
+        "SSNs, email addresses, and phone numbers"
+      ],
+      "correct": 3,
+      "explanation": "main.py applies SSN, EMAIL, and PHONE patterns in sequence; other PII categories are outside this toy scrubber."
+    },
+    {
+      "stage": "check",
+      "question": "Which privacy-preserving field does the audit example store instead of the raw prompt?",
+      "options": [
+        "A short hash of the scrubbed prompt",
+        "The unredacted prompt text",
+        "The user's API key",
+        "The model's hidden KV cache"
+      ],
+      "correct": 0,
+      "explanation": "AuditEntry uses prompt_hash=hash_short(scrubbed), and audit_log_call serializes prompt_hash rather than the raw prompt."
+    },
+    {
+      "stage": "check",
+      "question": "How long is the hexadecimal digest returned by hash_short?",
+      "options": [
+        "6 characters",
+        "12 characters",
+        "32 characters",
+        "64 characters"
+      ],
+      "correct": 1,
+      "explanation": "hash_short takes the SHA-256 hexadecimal string and slices the first 12 characters."
+    },
+    {
+      "stage": "post",
+      "question": "What placeholder does a first-seen SSN receive from a fresh Scrubber?",
+      "options": [
+        "[EMAIL_001]",
+        "[PHONE_001]",
+        "[SSN_001]",
+        "[PII_000]"
+      ],
+      "correct": 2,
+      "explanation": "The SSN pattern calls _token_for(\"SSN\", value); the counter starts at zero and formats the first token as [SSN_001]."
+    },
+    {
+      "stage": "post",
+      "question": "Which field is included in each JSON audit record for policy/guardrail outcomes?",
+      "options": [
+        "raw_prompt",
+        "private_key",
+        "kv_cache_bytes",
+        "guardrail_trips"
+      ],
+      "correct": 3,
+      "explanation": "audit_log_call serializes guardrail_trips along with timestamp, tenant, hashes, token counts, cost, model, and user."
+    }
+  ]
+}
