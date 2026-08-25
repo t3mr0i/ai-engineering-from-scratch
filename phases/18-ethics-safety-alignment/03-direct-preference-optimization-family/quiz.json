@@ -1,78 +1,78 @@
 {
-  "lesson": "03-direct-preference-optimization-family",
+  "lesson": "direct-preference-optimization-family",
   "title": "The Direct Preference Optimization Family",
   "questions": [
     {
       "stage": "pre",
-      "question": "Why can DPO skip training an explicit reward model?",
+      "question": "Why can DPO train directly on a preference pair without fitting a separate reward model?",
       "options": [
-        "DPO trains its own reward model implicitly in a second optimization loop",
-        "The closed-form RLHF optimum lets you express reward as a log-ratio of policies, which substitutes into the Bradley-Terry loss",
-        "Preference data does not require a scalar reward",
-        "Bradley-Terry preferences happen to be invariant to the reward function"
-      ],
-      "correct": 1,
-      "explanation": "“The closed-form RLHF optimum lets you express reward as a log-ratio of policies, which substitutes into the Bradley-Terry loss” matches the lesson’s treatment of The Direct Preference Optimization Family; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What failure mode does IPO (Azar et al., 2024) primarily address in DPO?",
-      "options": [
-        "Requirement of paired data",
-        "Reliance on a reference policy",
-        "Length bias of the chosen response",
-        "Unbounded implicit reward gap from tiny preference probabilities"
-      ],
-      "correct": 3,
-      "explanation": "“Unbounded implicit reward gap from tiny preference probabilities” matches the lesson’s treatment of The Direct Preference Optimization Family; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "When would you reach for KTO over DPO?",
-      "options": [
-        "When you must guarantee zero implicit-reward drift",
-        "When you have unpaired single labels (desirable / undesirable) and want to use loss-aversion utilities",
-        "When you have only paired data with strong margins",
-        "When you want to remove the KL penalty entirely"
-      ],
-      "correct": 1,
-      "explanation": "“When you have unpaired single labels (desirable / undesirable) and want to use loss-aversion utilities” matches the lesson’s treatment of The Direct Preference Optimization Family; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Which property is unique to SimPO compared to DPO?",
-      "options": [
-        "It removes the reference policy and normalizes log-likelihood by sequence length",
-        "It drops the Bradley-Terry log-sigmoid for an identity mapping",
-        "It uses an odds-ratio loss with NLL",
-        "It keeps the reference policy and adds a margin"
+        "The KL-regularized RLHF optimum expresses reward as a beta-scaled policy/reference log-ratio, which can be inserted into the Bradley–Terry loss",
+        "DPO discards the preference signal and copies the reference model",
+        "Pairwise preferences contain no information about rewards",
+        "DPO replaces the policy with a fixed classifier"
       ],
       "correct": 0,
-      "explanation": "“It removes the reference policy and normalizes log-likelihood by sequence length” matches the lesson’s treatment of The Direct Preference Optimization Family; the alternatives conflict with its definitions or workflow."
+      "explanation": "The closed-form KL-RL optimum gives r(x,y) = beta log(pi(y|x)/pi_ref(y|x)) plus a prompt constant. Substituting that difference into the preference likelihood yields the DPO objective."
     },
     {
-      "stage": "post",
-      "question": "What is the 'Degraded Chosen Response' problem in DPO that BPO targets?",
+      "stage": "check",
+      "question": "In the toy code, what distinguishes IPO's update from DPO's update?",
       "options": [
-        "The chosen response is missing from the reference policy's support",
-        "The chosen response is sampled with low probability at inference",
-        "DPO can drive the chosen response's absolute log-prob down as long as the rejected log-prob falls faster",
-        "The chosen response becomes longer than the rejected"
+        "IPO uses no preference pairs at all",
+        "IPO drives the log-ratio difference toward a finite target 1/(2 beta) instead of the DPO sigmoid margin alone",
+        "IPO removes the policy and trains only the reference",
+        "IPO ranks actions by token count rather than preference"
+      ],
+      "correct": 1,
+      "explanation": "train_dpo sets target = 1/(2*beta) for variant=\"ipo\" and penalizes the squared deviation from that target. This bounds the implicit reward gap that a tiny DPO preference probability could otherwise inflate."
+    },
+    {
+      "stage": "check",
+      "question": "When is KTO the appropriate member of this family for the data shape?",
+      "options": [
+        "When every example has a paired winner and loser of equal length",
+        "When a reference-free loss is mandatory and no labels exist",
+        "When examples carry unpaired desirable/undesirable labels and loss aversion should weight undesirable outcomes",
+        "When the only available signal is a model's tokenizer"
       ],
       "correct": 2,
-      "explanation": "“DPO can drive the chosen response's absolute log-prob down as long as the rejected log-prob falls faster” matches the lesson’s treatment of The Direct Preference Optimization Family; the alternatives conflict with its definitions or workflow."
+      "explanation": "train_kto consumes (action, desirable) labels rather than (winner, loser) pairs. Its undesirable branch uses a larger loss-aversion factor, matching KTO's prospect-theoretic motivation."
+    },
+    {
+      "stage": "check",
+      "question": "What is SimPO's defining structural change relative to DPO?",
+      "options": [
+        "It adds a second reference policy and removes the margin",
+        "It uses only negative labels and no chosen response",
+        "It keeps DPO's reference log-ratio but changes the target to a scalar reward head",
+        "It removes the reference policy and uses length-normalized policy log-probabilities with a margin"
+      ],
+      "correct": 3,
+      "explanation": "train_simpo computes beta*(log pi_w/length - log pi_l/length) - gamma directly from the policy. The demo's one-action lengths are all 1, but the length normalization is the intended production distinction."
     },
     {
       "stage": "post",
-      "question": "Rafailov et al. (NeurIPS 2024) on scaling laws for direct alignment algorithms show:",
+      "question": "What does the BPO branch add to the DPO gradient in this repository?",
       "options": [
-        "DAAs exhibit the same Gao et al. peak-and-collapse over-optimization shape on gold reward",
-        "DAAs eliminate Goodhart by design",
-        "Over-optimization disappears when paired data exceeds 100k examples",
-        "DPO over-optimizes but IPO and SimPO do not"
+        "An anchor penalty that pushes the chosen log-probability toward or above the reference value",
+        "A tokenizer reinitialization after every pair",
+        "A reward-model ensemble over six policies",
+        "A rule that always lowers the chosen response probability"
       ],
       "correct": 0,
-      "explanation": "“DAAs exhibit the same Gao et al. peak-and-collapse over-optimization shape on gold reward” matches the lesson’s treatment of The Direct Preference Optimization Family; the alternatives conflict with its definitions or workflow."
+      "explanation": "The BPO code computes anchor_pen = -(log_pi_w - log_ref_w) and adds a term involving grad_logprob(w). That directly counters degraded chosen responses instead of allowing the chosen log-prob to fall while the rejected one falls faster."
+    },
+    {
+      "stage": "post",
+      "question": "What do the DPO-family scaling results imply about using a direct alignment loss?",
+      "options": [
+        "Removing an explicit RM removes all Goodhart pressure",
+        "Direct alignment algorithms can still over-optimize, so held-out gold or capability evaluation remains necessary",
+        "Only IPO can over-optimize; DPO, SimPO, and KTO cannot",
+        "A sufficiently large paired dataset makes the gold reward monotonic by theorem"
+      ],
+      "correct": 1,
+      "explanation": "The optimization target is still a proxy derived from preferences. The lesson's scaling result preserves the peak-and-collapse pattern, so a DPO run needs a held-out target rather than only its training loss or win rate."
     }
   ]
 }

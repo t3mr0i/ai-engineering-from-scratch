@@ -21,7 +21,7 @@
         "Its error rate is below the expected baseline",
         "It has no blast radius at all",
         "It runs for zero minutes",
-        "Its 30× burn rate combines with a 30% blast radius"
+        "30× burn + 30% blast"
       ],
       "correct": 3,
       "explanation": "0.015 / 0.0005 = 30×, and both burn_rate > 2.0 and blast_radius_pct > 0.2 are true, so paused_by_safety_plane is true."
@@ -30,7 +30,7 @@
       "stage": "check",
       "question": "Why does the pod-kill experiment complete despite a 4× burn rate?",
       "options": [
-        "Its blast radius is only 5%, below the 20% safety threshold",
+        "Blast radius 5%",
         "The burn rate is calculated as zero",
         "Pod kills are excluded from the experiment list",
         "The error budget is disabled for five-minute tests"
@@ -56,7 +56,7 @@
       "options": [
         "It is always promoted to production",
         "It is skipped before burn rate is calculated",
-        "It completes because its 10% blast radius is below the 20% cutoff",
+        "10% blast => completes",
         "It is aborted because every error rate above 1% is forbidden"
       ],
       "correct": 2,
@@ -68,8 +68,8 @@
       "options": [
         "COMPLETED",
         "PAUSED",
-        "ABORTED (burn-rate guard)",
-        "ROLLED_BACK (provider)"
+        "ROLLED_BACK (provider)",
+        "ABORTED (burn-rate guard)"
       ],
       "correct": 3,
       "explanation": "run_experiment maps paused_by_safety_plane to ABORTED (burn-rate guard); non-paused experiments return COMPLETED."

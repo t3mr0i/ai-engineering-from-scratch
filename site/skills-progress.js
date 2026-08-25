@@ -327,7 +327,7 @@
 
     function courseEvidence(course, stage, item) {
       var li = element("li", "skill-course");
-      var link = element("a", "skill-course__link");
+      var link = element("a", "interactive-surface skill-course__link");
       link.href = "lrn/course.html?id=" + encodeURIComponent(course.id);
       link.setAttribute("aria-label", i18n(
         "skills_progress_open_course",

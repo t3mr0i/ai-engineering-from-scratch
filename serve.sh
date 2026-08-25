@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# Lokaler Server für die Site — Webroot ist site/, exakt wie Azure.
+# Lokaler Server für die Site und ihre APIs.
 #
 # Solange dieses Skript läuft, ist die App erreichbar.
 # Mit Ctrl+C beenden -> App geht offline.
@@ -7,17 +7,17 @@
 #   ./serve.sh           # Standard-Port 4173
 #   ./serve.sh 8080      # eigener Port
 #
-# Webroot ist site/ — identisch zum Azure-Deploy (gitlab-ci deployt ./site).
+# Webroot ist site/ — identisch zum OpenShift-Container.
 # Lokal erreichbare URLs entsprechen damit 1:1 den Live-URLs (/, /catalog.html, …).
 # Vorab läuft build.js (data.js/sitemap/llms.txt) und phases/ wird nach
 # site/phases/ gestaged, genau wie in der CI, damit Lesson-Content lädt.
 
 set -e
 
-PORT="${1:-4173}"
-ROOT="$(cd "$(dirname "$0")" && pwd)"
+LOCAL_SERVER_PORT="${1:-4173}"
+REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
 
-cd "$ROOT"
+cd "$REPO_ROOT"
 
 # Build + Lesson-Content-Staging — same file selection as
 # openshift/Dockerfile's build stage (the .gitlab-ci.yml deploy_azure job
@@ -46,15 +46,8 @@ rsync -a --prune-empty-dirs \
   --exclude='*' \
   phases/ site/phases/
 
-# This local server can't run the Azure Function (/api/content) — lesson.html
-# falls back to fetching straight from site/phases/ on localhost (see the
-# IS_LOCAL_DEV check in lesson.html, same precedent as gate-guard.js). The
-# deployed site does NOT ship site/phases/ — see .github/workflows/azure-
-# static-web-apps.yml, which stages this same selection into
-# api/content/_data/ instead so the gated function can serve it.
-# Staged here too (same selection) only so `func start`/SWA-CLI-based local
-# testing of api/content itself has real files to read; the plain
-# python3 http.server below never touches this directory.
+# Keep the managed-function fixture current for optional Azure Functions tests.
+# The local Node server itself reads the staged files from site/phases/ above.
 mkdir -p api/content/_data
 rsync -a --prune-empty-dirs \
   --include='*/' \
@@ -66,20 +59,28 @@ rsync -a --prune-empty-dirs \
   --exclude='*' \
   phases/ api/content/_data/phases/
 
-URL="http://localhost:${PORT}/"
+LOCAL_SERVER_URL="http://localhost:${LOCAL_SERVER_PORT}/"
 
 echo "──────────────────────────────────────────────"
 echo "  LHIND AI Lernkatalog läuft"
 echo ""
-echo "  $URL"
+echo "  $LOCAL_SERVER_URL"
 echo ""
-echo "  Webroot: $ROOT/site  (wie Azure)"
+echo "  Webroot: $REPO_ROOT/site"
+echo "  Admin:   lokaler Publisher-Modus aktiv"
 echo "  Beenden:  Ctrl+C  (danach offline)"
 echo "──────────────────────────────────────────────"
 
 # Browser automatisch öffnen (nur macOS; still ignorieren falls nicht vorhanden).
-command -v open >/dev/null 2>&1 && open "$URL" || true
+if [ "${LOCAL_SERVER_NO_OPEN:-}" != "1" ] && command -v open >/dev/null 2>&1; then
+  open "$LOCAL_SERVER_URL" || true
+fi
 
-# Vordergrund-Server aus site/. Hält das Skript am Leben; Ctrl+C stoppt beides.
-cd site
-exec python3 -m http.server "$PORT" --bind 127.0.0.1
+# Der Node-Server liefert Site und /api/admin/* aus einem Prozess. Der explizite
+# Dev-Modus vergibt lokal Publisher-Rechte; 127.0.0.1 verhindert LAN-Zugriff.
+PORT="$LOCAL_SERVER_PORT" \
+WEB_ROOT="$REPO_ROOT/site" \
+BIND_HOST="127.0.0.1" \
+GATE_DISABLED="true" \
+ADMIN_DEV_MODE=true \
+exec node "$REPO_ROOT/server/server.js"

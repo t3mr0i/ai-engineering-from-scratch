@@ -4,7 +4,7 @@
    medium display headlines, sentence case with periods, hairline 1px
    borders in warm grey, pills on chips, soft blue-tinted shadows.
    Marke bleibt LHIND (kein Lufthansa-Crane/Wordmark). */
-@import url("tokens.css?v=20260825b");
+@import url("tokens.css?v=20260825d");
 
 /* ── D4 fix on top of tokens.css (imported above) ─────────────────────────
    --shadow-focus (tokens.css) is rgba(45,95,228,0.30) in every theme.
@@ -151,10 +151,24 @@ a {
   text-decoration: none;
 }
 
-a:hover {
+:where(a:not([class]), .text-link):hover {
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.18em;
+}
+
+/* Composite UI links are surfaces, not prose. Their interaction language is
+   focus, fill, border and motion; a text underline across all descendants is
+   never an appropriate affordance. */
+.interactive-surface,
+.interactive-surface:hover,
+.interactive-surface:focus-visible {
+  text-decoration: none;
+}
+
+.interactive-surface:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
 }
 
 ::selection {
@@ -1650,6 +1664,48 @@ i[class^="ph "] {
 }
 
 .academy-path-list {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.academy-path-group {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.academy-path-group + .academy-path-group {
+  padding-block-start: var(--space-5);
+  border-block-start: 1px solid var(--border-subtle);
+}
+
+.academy-path-group__heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.academy-path-group__heading h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-family: var(--font-head);
+  font-size: var(--fs-h4);
+  font-weight: var(--weight-medium);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-heading);
+  text-wrap: balance;
+}
+
+.academy-path-group__heading p {
+  max-width: 42rem;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-caption);
+  line-height: var(--lh-normal);
+  text-wrap: pretty;
+}
+
+.academy-path-group__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
   gap: var(--space-4);
@@ -3258,6 +3314,12 @@ i[class^="ph "] {
 
   .academy-paths__actions {
     width: 100%;
+  }
+
+  .academy-path-group__heading {
+    align-items: start;
+    flex-direction: column;
+    gap: var(--space-2);
   }
 
   .academy-paths__toggle {

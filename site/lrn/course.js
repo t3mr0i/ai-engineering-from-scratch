@@ -583,7 +583,7 @@
     var stats = courseProgress(courseItem);
     var state = stats.percent === 100 ? "completed" : stats.visitedLessons > 0 ? "visited" : "open";
     var link = document.createElement("a");
-    link.className = "activity-link academy-course-link";
+    link.className = "interactive-surface activity-link academy-course-link";
     link.href = courseDetailHref(courseItem.id);
     link.title = courseItem.id + " · " + courseItem.title;
     var dot = document.createElement("span");
@@ -834,7 +834,7 @@
   function activityLink(lesson, courseId, subcourse) {
     var progress = lessonProgress(lesson.path);
     var a = document.createElement("a");
-    a.className = "activity-link";
+    a.className = "interactive-surface activity-link";
     a.href = lessonHref(lesson.path, courseId);
     a.title = lesson.path;
 

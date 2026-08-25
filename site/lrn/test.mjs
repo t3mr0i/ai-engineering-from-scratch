@@ -259,6 +259,57 @@ test("Academy learning paths cover every imported AI course exactly once", () =>
     "Academy path ids must be unique");
 });
 
+test("Academy paths separate shared foundations from explicit profile recommendations", () => {
+  const profileIds = new Set(data.profiles.map((profile) => profile.id));
+  const categories = new Set(["foundation", "role", "technical"]);
+
+  for (const path of data.academyPaths) {
+    assert.ok(categories.has(path.category),
+      `Academy path ${path.id} has invalid category ${path.category}`);
+    assert.ok(path.recommendationRanks && typeof path.recommendationRanks === "object" && !Array.isArray(path.recommendationRanks),
+      `Academy path ${path.id} needs recommendationRanks`);
+
+    const recommendations = Object.entries(path.recommendationRanks);
+    if (path.category === "foundation") {
+      assert.equal(recommendations.length, 0,
+        `Foundation ${path.id} must be shared rather than role-ranked`);
+      assert.ok(Number.isInteger(path.foundationRank) && path.foundationRank > 0,
+        `Foundation ${path.id} needs a positive foundationRank`);
+    } else {
+      assert.ok(recommendations.length > 0,
+        `Academy path ${path.id} needs at least one explicit profile recommendation`);
+    }
+
+    for (const [profileId, rank] of recommendations) {
+      assert.ok(profileIds.has(profileId),
+        `Academy path ${path.id} recommends unknown profile ${profileId}`);
+      assert.ok(Number.isInteger(rank) && rank > 0,
+        `Academy path ${path.id} has invalid rank ${rank} for ${profileId}`);
+    }
+  }
+});
+
+test("Academy recommendations stay focused to three ordered trainings per profile", () => {
+  const expected = {
+    bsc: ["AI-04", "AI-07", "AI-10"],
+    pvs: ["AI-04", "AI-07", "AI-10"],
+    tc: ["AI-01", "AI-02", "AI-03"],
+    am: ["AI-02", "AI-01"],
+    pma: ["AI-04", "AI-07", "AI-08"],
+    corp: ["AI-08", "AI-07"],
+    lead: ["AI-08", "AI-07", "AI-10"],
+  };
+
+  for (const [profileId, academyCourses] of Object.entries(expected)) {
+    const actual = data.academyPaths
+      .filter((path) => Number.isInteger(path.recommendationRanks[profileId]))
+      .sort((a, b) => a.recommendationRanks[profileId] - b.recommendationRanks[profileId])
+      .slice(0, 3)
+      .map((path) => path.academyCourse);
+    assert.deepEqual([...actual], academyCourses, `unexpected recommendations for ${profileId}`);
+  }
+});
+
 test("every Academy learning path is an ordered, resolvable Course journey", () => {
   const courseIds = new Set(data.courses.map((course) => course.id));
   const trackCodes = new Set(data.tracks.map((track) => track.code));
@@ -303,10 +354,18 @@ test("the learner catalog exposes the Academy paths with current browser data", 
     "catalog needs a learner-visible Academy path container");
   assert.match(html, /id="myLearningPathContent"/,
     "catalog needs a persistent learner-path summary and next-step surface");
-  assert.match(html, /lrn\/data\.js\?v=20260824c/,
+  assert.match(html, /lrn\/data\.js\?v=20260825a/,
     "catalog must cache-bust the browser data that contains Academy paths");
   assert.match(lrn, /function renderAcademyPaths\(context\)/,
     "catalog needs to render Academy paths from LrnData");
+  assert.match(lrn, /function academyPathGroup\(kind, titleText, introText, paths, context\)/,
+    "catalog needs grouped Academy sections instead of a flat card list");
+  assert.match(lrn, /ACADEMY_RECOMMEND_CAP = 3/,
+    "catalog recommendations must stay focused to three trainings");
+  assert.match(lrn, /saved && saved\.profileId === profileId/,
+    "switching profiles must not retain an unrelated saved Academy path");
+  assert.doesNotMatch(lrn, /relevantTrackCodes/,
+    "Academy recommendations must not be inferred from broad LP track membership");
   assert.match(lrn, /progressApi\.saveLearningPath/,
     "catalog must save the learner's selected Academy path locally");
   assert.match(lrn, /function academyPathProgress\(path\)/,
@@ -325,14 +384,16 @@ test("the learner catalog exposes the Academy paths with current browser data", 
     "Academy stages must link onward into supporting LRN course details");
 });
 
-test("clickable catalog cards use the shared interactive-card contract", () => {
+test("composite learning links use the shared interactive-surface contract", () => {
   const lrn = readFileSync("site/lrn/lrn.js", "utf8");
+  const course = readFileSync("site/lrn/course.js", "utf8");
+  const skills = readFileSync("site/skills-progress.js", "utf8");
   const css = readFileSync("site/lrn/lrn.css", "utf8");
   const tokens = readFileSync("site/lrn/tokens.css", "utf8");
 
-  assert.match(lrn, /link\.className = "interactive-card academy-card"/,
+  assert.match(lrn, /link\.className = "interactive-surface interactive-card academy-card"/,
     "Academy cards must opt into the shared card interaction contract");
-  assert.match(lrn, /card\.className = "interactive-card course-card"/,
+  assert.match(lrn, /card\.className = "interactive-surface interactive-card course-card"/,
     "Course cards must opt into the shared card interaction contract");
   assert.match(lrn, /interactive-card__icon academy-card__icon/,
     "Academy cards must use the shared icon slot");
@@ -342,10 +403,18 @@ test("clickable catalog cards use the shared interactive-card contract", () => {
     "Academy cards must use the shared action slot");
   assert.match(lrn, /interactive-card__action course-card__open/,
     "Course cards must use the shared action slot");
+  assert.match(course, /link\.className = "interactive-surface activity-link academy-course-link"/,
+    "Academy course rows must opt into the shared surface contract");
+  assert.match(course, /a\.className = "interactive-surface activity-link"/,
+    "Activity rows must opt into the shared surface contract");
+  assert.match(skills, /element\("a", "interactive-surface skill-course__link"\)/,
+    "Capability course rows must opt into the shared surface contract");
 
   assert.match(css,
-    /\.interactive-card:hover,\s*\.interactive-card:focus-visible\s*\{[^}]*text-decoration:\s*none;/s,
-    "Shared cards must suppress the global text-link underline in every interactive state");
+    /\.interactive-surface:hover,\s*\.interactive-surface:focus-visible\s*\{[^}]*text-decoration:\s*none;/s,
+    "Composite surfaces must suppress text decoration in every interactive state");
+  assert.match(css, /:where\(a:not\(\[class\]\), \.text-link\):hover/,
+    "Underline affordance must be opt-in for text links instead of applying to every anchor");
   assert.match(css, /translateY\(var\(--card-hover-lift\)\)/,
     "Shared cards must consume the central hover-lift token");
   for (const token of [

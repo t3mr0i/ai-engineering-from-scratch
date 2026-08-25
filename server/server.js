@@ -36,6 +36,7 @@ const {
 const { createAdminApi } = require('./admin-api');
 
 const PORT = process.env.PORT || 8080;
+const BIND_HOST = process.env.BIND_HOST || undefined;
 const WEB_ROOT = path.resolve(process.env.WEB_ROOT || path.join(__dirname, '..', 'site'));
 const SITE_PASSCODE = process.env.SITE_PASSCODE;
 const GATE_SECRET = process.env.GATE_SECRET;
@@ -303,8 +304,8 @@ const server = http.createServer((req, res) => {
   sendFile(res, abs);
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, BIND_HOST, () => {
   const ok = SITE_PASSCODE && GATE_SECRET;
-  console.log(`gated server on :${PORT}  root=${WEB_ROOT}  configured=${Boolean(ok)}  gateDisabled=${GATE_DISABLED}`);
+  console.log(`gated server on ${BIND_HOST || '0.0.0.0'}:${PORT}  root=${WEB_ROOT}  configured=${Boolean(ok)}  gateDisabled=${GATE_DISABLED}`);
   if (!GATE_DISABLED && !ok) console.warn('WARNING: SITE_PASSCODE / GATE_SECRET not set — gate will 500 on submit.');
 });

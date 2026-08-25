@@ -1,78 +1,78 @@
 {
-  "lesson": "05-constitutional-ai-rlaif",
+  "lesson": "constitutional-ai-rlaif",
   "title": "Constitutional AI and RLAIF",
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the core substitution in Constitutional AI versus standard RLHF?",
+      "question": "The toy CAI demo reports harmful-token rate 0.346 before alignment and 0.000 after CAI-SFT. What caused the first-stage change?",
       "options": [
-        "It replaces the human preference labeler with an AI labeler that reads a list of principles",
-        "It replaces PPO with DPO",
-        "It uses synthetic prompts instead of real ones",
-        "It removes the reward model entirely"
+        "Critique identifies harmful tokens and revise replaces them with mapped safe tokens before they become SFT targets",
+        "PPO changes the random seed so harmful tokens are never sampled",
+        "The constitution removes all harmful words from the tokenizer",
+        "RLAIF trains a reward model before any response is generated"
       ],
       "correct": 0,
-      "explanation": "“It replaces the human preference labeler with an AI labeler that reads a list of principles” matches the lesson’s treatment of Constitutional AI and RLAIF; the alternatives conflict with its definitions or workflow."
+      "explanation": "build_cai_sft_corpus samples a response, selects a principle, calls critique, and applies REPLACEMENT to every flagged token. The toy's zero post-SFT rate reflects that explicit substitution, not a tokenizer or PPO change."
     },
     {
       "stage": "check",
-      "question": "What does the first (SFT) phase of Constitutional AI do?",
+      "question": "What is the role of the constitution in Phase 1 of Constitutional AI?",
       "options": [
-        "Trains a reward model on AI-generated preferences only",
-        "Produces an initial response, critiques it under a sampled constitution principle, then revises and uses the revision as SFT target",
-        "Generates synthetic principles by clustering labeler comments",
-        "Performs PPO with a constitution-derived reward"
+        "It supplies a scalar score directly to PPO",
+        "A sampled principle tells the critique-and-revise step what harm or value to inspect",
+        "It replaces the base model's vocabulary with safe tokens",
+        "It is used only after deployment for incident response"
       ],
       "correct": 1,
-      "explanation": "“Produces an initial response, critiques it under a sampled constitution principle, then revises and uses the revision as SFT target” matches the lesson’s treatment of Constitutional AI and RLAIF; the alternatives conflict with its definitions or workflow."
+      "explanation": "Each generated SFT example samples one of four principles, and critique uses that principle's normative instruction to identify violations. The revised response, not a numeric constitution score, is the SFT target."
     },
     {
       "stage": "check",
-      "question": "What does the second (RLAIF) phase do?",
+      "question": "What does the toy's Phase 2 RLAIF comparison add after CAI-SFT?",
       "options": [
-        "Skips PPO and applies a single supervised loss",
-        "Has humans re-label the SFT outputs",
-        "Distills the constitution into the tokenizer",
-        "Trains a reward model on AI-generated preferences from a feedback model and runs PPO against it"
-      ],
-      "correct": 3,
-      "explanation": "“Trains a reward model on AI-generated preferences from a feedback model and runs PPO against it” matches the lesson’s treatment of Constitutional AI and RLAIF; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What is the tier order in Anthropic's January 2026 four-tier Claude constitution?",
-      "options": [
-        "Platform rules > avoid catastrophe > helpful > broadly ethical",
-        "Broadly ethical > helpful > platform rules > avoid catastrophe",
-        "Avoid catastrophic outcomes > follow Anthropic guidelines > broadly ethical > helpful and candid",
-        "Helpful > broadly ethical > platform rules > avoid catastrophe"
+        "It discards the revised corpus and trains only on human labels",
+        "It changes the four principles into tokenizer merges",
+        "An AI feedback rule ranks a base response and a CAI response by harmful-token rate",
+        "It guarantees that every future response is harmless"
       ],
       "correct": 2,
-      "explanation": "“Avoid catastrophic outcomes > follow Anthropic guidelines > broadly ethical > helpful and candid” matches the lesson’s treatment of Constitutional AI and RLAIF; the alternatives conflict with its definitions or workflow."
+      "explanation": "ai_feedback_rank compares the two sampled completions and prefers the lower harmful-token rate. This is a preference signal for the RLAIF phase; it is not a proof that the model generalizes to all harms."
     },
     {
-      "stage": "post",
-      "question": "Which failure mode is NOT necessarily fixed by switching from RLHF to RLAIF?",
+      "stage": "check",
+      "question": "Which ordering matches the four-tier Claude constitution described in the lesson?",
       "options": [
-        "Labeler psychological inconsistency",
-        "Reward hacking / Goodhart's Law",
-        "Labeler cost",
-        "Labeler scarcity"
-      ],
-      "correct": 1,
-      "explanation": "“Reward hacking / Goodhart's Law” matches the lesson’s treatment of Constitutional AI and RLAIF; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "What is the headline shift between Constitutional Classifiers v1 and v2 (2026)?",
-      "options": [
-        "v2 increased compute overhead from 1% to 23.7%",
-        "v2 removed the classifier and relied on constitution alone",
-        "v2 only runs on input, not output",
-        "v2 dropped compute overhead from 23.7% to about 1% with low successful attack rate"
+        "Helpful and candid > broadly ethical > operator rules > catastrophic outcomes",
+        "Broadly ethical > helpful > catastrophic outcomes > operator rules",
+        "Operator rules > helpfulness > catastrophic outcomes > broad ethics",
+        "Avoid catastrophic outcomes > follow operator guidelines > broadly ethical > helpful and candid"
       ],
       "correct": 3,
-      "explanation": "“v2 dropped compute overhead from 23.7% to about 1% with low successful attack rate” matches the lesson’s treatment of Constitutional AI and RLAIF; the alternatives conflict with its definitions or workflow."
+      "explanation": "The tiers resolve conflicts from catastrophic safety first, through platform or operator rules, broad ethics, and finally ordinary helpfulness and candor. The order matters when principles point in different directions."
+    },
+    {
+      "stage": "post",
+      "question": "Why does switching from RLHF to RLAIF not remove Goodhart's Law?",
+      "options": [
+        "The AI feedback model still supplies an imperfect proxy for the intended value, so optimization can exploit its blind spots",
+        "AI feedback is always random and contains no preference information",
+        "RLAIF removes every regularizer from the policy",
+        "Goodhart applies only when humans write the constitution"
+      ],
+      "correct": 0,
+      "explanation": "RLAIF changes the source and legibility of the preference signal, but the policy still optimizes a learned proxy: the feedback model's interpretation of the principles. A legible proxy can still be gamed."
+    },
+    {
+      "stage": "post",
+      "question": "What changed between Constitutional Classifiers v1 and v2 according to the lesson?",
+      "options": [
+        "v2 removed output classification and used only the constitution",
+        "v2 reduced reported compute overhead from about 23.7% to about 1% while retaining a low successful-attack rate",
+        "v2 replaced AI feedback with an untrained random judge",
+        "v2 increased the overhead to 100% to block every prompt"
+      ],
+      "correct": 1,
+      "explanation": "The headline is an efficiency improvement, not removal of the safety layer: v2 is reported at roughly 1% overhead versus 23.7% for v1, with attacks still evaluated rather than claimed impossible."
     }
   ]
 }

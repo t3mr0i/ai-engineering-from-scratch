@@ -30,7 +30,7 @@
       "stage": "check",
       "question": "What state does TokenBucketLimiter maintain per tenant?",
       "options": [
-        "Tokens, capacity, refill, last time"
+        "Tokens, capacity, refill, last time",
         "Only the tenant's model name",
         "A global retry counter shared by all tenants",
         "The full prompt history"
@@ -43,7 +43,7 @@
       "question": "When does callWithRetry stop retrying a provider error?",
       "options": [
         "Only after a successful response from another provider",
-        "Non-retryable or max attempts"
+        "Non-retryable or max attempts",
         "Whenever the first attempt returns 429",
         "After exactly ten attempts regardless of configuration"
       ],
@@ -56,7 +56,7 @@
       "options": [
         "It increments once for every provider in the chain",
         "It increments only when all providers fail",
-        "Each provider after the first"
+        "Each provider after the first",
         "It uses the gateway overhead as the count"
       ],
       "correct": 2,

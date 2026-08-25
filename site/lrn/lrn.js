@@ -14,7 +14,6 @@
   }
   var profileById = indexBy(data.profiles, "id");
   var courseById = indexBy(data.courses, "id");
-  var trackByCode = indexBy(data.tracks || [], "code");
   var state = loadState();
 
   // Die Tiefenachse (Acquire/Deepen/Create) ersetzt die frueheren L1-L4-
@@ -51,6 +50,7 @@
   // `var RECOMMEND_CAP = 11` (declared further down) was still hoisted-undefined,
   // so `shown < undefined` was always false and every course got demoted → 0 shown.
   var RECOMMEND_CAP = 11;
+  var ACADEMY_RECOMMEND_CAP = 3;
 
   // Visual theme per course family — derived from the primary interest. It
   // only drives the tile tint; course-formats.js owns the icon and label.
@@ -299,26 +299,32 @@
   function computeAcademyContext(computed) {
     var activeLevel = computed && computed.level && computed.level.focusLevels[0] || "Acquire";
     var profileId = computed && computed.profile && computed.profile.id || state.profileId;
-    var relevantTrackCodes = Object.keys(trackByCode).filter(function (code) {
-      var track = trackByCode[code];
-      return (track.profileIds || []).indexOf(profileId) !== -1;
-    });
     var allPaths = data.academyPaths || [];
-    var recommendedPaths = allPaths.filter(function (path) {
-      var roleMatch = (path.trackCodes || []).some(function (code) {
-        return relevantTrackCodes.indexOf(code) !== -1;
-      });
-      var levelMatch = (path.stages || []).some(function (stage) { return stage.label === activeLevel; });
-      return roleMatch && levelMatch;
+    var levelPaths = allPaths.filter(function (path) {
+      return academyPathSupportsLevel(path, activeLevel);
     });
-    var visiblePaths = state.academyAll ? allPaths : recommendedPaths;
+    var recommendedPaths = levelPaths.filter(function (path) {
+      return path.category !== "foundation" && academyRecommendationRank(path, profileId) !== null;
+    }).sort(function (a, b) {
+      var rankDelta = academyRecommendationRank(a, profileId) - academyRecommendationRank(b, profileId);
+      return rankDelta || a.academyCourse.localeCompare(b.academyCourse);
+    });
+    var primaryRecommendations = recommendedPaths.slice(0, ACADEMY_RECOMMEND_CAP);
+    var foundationPaths = allPaths.filter(function (path) {
+      return path.category === "foundation" && (state.academyAll || academyPathSupportsLevel(path, activeLevel));
+    }).sort(function (a, b) {
+      return Number(a.foundationRank || 999) - Number(b.foundationRank || 999);
+    });
+    var visiblePaths = state.academyAll
+      ? allPaths
+      : uniqueAcademyPaths(primaryRecommendations.concat(foundationPaths));
     var saved = progressApi && progressApi.getLearningPath ? progressApi.getLearningPath() : null;
-    var activePath = saved && allPaths.find(function (path) {
+    var activePath = saved && saved.profileId === profileId && allPaths.find(function (path) {
       return path.academyCourse === saved.academyCourse;
     });
 
-    if (!activePath && recommendedPaths.length) {
-      activePath = recommendedPaths[0];
+    if (!activePath && visiblePaths.length) {
+      activePath = foundationPaths[0] || primaryRecommendations[0];
       saveAcademyPath(activePath, profileId, activeLevel, "recommendation");
     }
 
@@ -326,9 +332,29 @@
       activeLevel: activeLevel,
       profileId: profileId,
       recommendedPaths: recommendedPaths,
+      primaryRecommendations: primaryRecommendations,
+      foundationPaths: foundationPaths,
       visiblePaths: visiblePaths,
       activePath: activePath
     };
+  }
+
+  function academyPathSupportsLevel(path, activeLevel) {
+    return (path.stages || []).some(function (stage) { return stage.label === activeLevel; });
+  }
+
+  function academyRecommendationRank(path, profileId) {
+    var rank = path.recommendationRanks && path.recommendationRanks[profileId];
+    return Number.isFinite(Number(rank)) && Number(rank) > 0 ? Number(rank) : null;
+  }
+
+  function uniqueAcademyPaths(paths) {
+    var seen = {};
+    return (paths || []).filter(function (path) {
+      if (!path || seen[path.id]) return false;
+      seen[path.id] = true;
+      return true;
+    });
   }
 
   function saveAcademyPath(path, profileId, activeLevel, source) {
@@ -440,7 +466,7 @@
       lucideIcon("arrow-right")
     );
     var change = document.createElement("a");
-    change.className = "my-learning-path__change";
+    change.className = "text-link my-learning-path__change";
     change.href = "#academyPathsTitle";
     change.textContent = i18n("my_path_choose_another", "Choose another path");
     next.append(nextIcon, nextLabel, nextTitle, nextDetail, action, change);
@@ -507,59 +533,133 @@
 
     var activeLevel = context.activeLevel;
     var visiblePaths = context.visiblePaths;
+    var visibleIds = {};
+    visiblePaths.forEach(function (path) { visibleIds[path.id] = true; });
 
     if (els.academyPathCount) {
-      els.academyPathCount.textContent = i18n("academy_paths_count", "{count} matching trainings")
+      els.academyPathCount.textContent = i18n(
+        state.academyAll ? "academy_paths_count_all" : "academy_paths_count_relevant",
+        state.academyAll ? "{count} trainings in total" : "{count} selected trainings"
+      )
         .replace("{count}", String(visiblePaths.length));
     }
     if (els.academyAllToggle) {
       els.academyAllToggle.setAttribute("aria-pressed", String(state.academyAll));
       els.academyAllToggle.textContent = state.academyAll
-        ? i18n("academy_paths_show_relevant", "Show role recommendations")
+        ? i18n("academy_paths_show_relevant", "Show my selection")
         : i18n("academy_paths_show_all", "Show all AI trainings");
     }
 
-    replaceChildren(els.academyPathList, visiblePaths.map(function (path) {
-      var link = document.createElement("a");
-      link.className = "interactive-card academy-card";
-      link.dataset.pathId = path.id;
-      var isActive = context.activePath && context.activePath.academyCourse === path.academyCourse;
-      link.dataset.selected = String(Boolean(isActive));
-      link.href = academyPathHref(path.academyCourse);
-      link.setAttribute("aria-label", (isActive ? i18n("my_path_selected_prefix", "Your path: ") : "") + i18n("academy_path_open", "Open {title}").replace("{title}", path.title));
-      link.addEventListener("click", function () {
-        saveAcademyPath(path, context.profileId, activeLevel, "choice");
-      });
+    var profile = profileById[context.profileId];
+    var groups = [
+      academyPathGroup(
+        "recommended",
+        i18n("academy_group_recommended_title", "Recommended for {role}").replace("{role}", profile ? profile.label : "your role"),
+        i18n("academy_group_recommended_intro", "The strongest matches for your selected profile and level."),
+        context.primaryRecommendations.filter(function (path) { return visibleIds[path.id]; }),
+        context
+      ),
+      academyPathGroup(
+        "foundation",
+        i18n("academy_group_foundation_title", "Foundations for everyone"),
+        i18n("academy_group_foundation_intro", "Shared knowledge and everyday tools before you specialize."),
+        context.foundationPaths.filter(function (path) { return visibleIds[path.id]; }),
+        context
+      )
+    ];
 
-      var icon = document.createElement("span");
-      icon.className = "interactive-card__icon academy-card__icon";
-      icon.setAttribute("aria-hidden", "true");
-      icon.appendChild(lucideIcon(academyPathIcon(path)));
+    if (state.academyAll) {
+      var featuredIds = {};
+      context.primaryRecommendations.concat(context.foundationPaths).forEach(function (path) { featuredIds[path.id] = true; });
+      groups.push(
+        academyPathGroup(
+          "role",
+          i18n("academy_group_role_title", "Role-based trainings"),
+          i18n("academy_group_role_intro", "Trainings for consulting, decision, leadership, and sales responsibilities."),
+          visiblePaths.filter(function (path) { return path.category === "role" && !featuredIds[path.id]; }),
+          context
+        ),
+        academyPathGroup(
+          "technical",
+          i18n("academy_group_technical_title", "Technical specializations"),
+          i18n("academy_group_technical_intro", "Advanced paths for engineering, architecture, agents, and infrastructure."),
+          visiblePaths.filter(function (path) { return path.category === "technical" && !featuredIds[path.id]; }),
+          context
+        )
+      );
+    }
 
-      var code = document.createElement("span");
-      code.className = "academy-card__code";
-      code.textContent = path.academyCourse + (isActive ? " · " + i18n("my_path_short", "Your path") : "");
+    replaceChildren(els.academyPathList, groups.filter(Boolean));
+  }
 
-      var identity = document.createElement("span");
-      identity.className = "academy-card__identity";
-      var title = document.createElement("strong");
-      title.textContent = path.title;
-      var format = document.createElement("span");
-      format.textContent = path.format;
-      identity.append(title, format);
+  function academyPathGroup(kind, titleText, introText, paths, context) {
+    if (!paths.length) return null;
+    var section = document.createElement("section");
+    section.className = "academy-path-group";
+    section.dataset.kind = kind;
+    var headingId = "academyPathGroup-" + kind;
+    section.setAttribute("aria-labelledby", headingId);
 
-      var selectedStage = (path.stages || []).find(function (stage) { return stage.label === activeLevel; }) || path.stages[0];
-      var stageBadge = document.createElement("span");
-      stageBadge.className = "academy-card__level";
-      stageBadge.textContent = selectedStage ? i18n("lrn_depth_" + selectedStage.label.toLowerCase(), selectedStage.label) : activeLevel;
+    var heading = document.createElement("div");
+    heading.className = "academy-path-group__heading";
+    var title = document.createElement("h3");
+    title.id = headingId;
+    title.textContent = titleText;
+    var intro = document.createElement("p");
+    intro.textContent = introText;
+    heading.append(title, intro);
 
-      var chevron = document.createElement("span");
-      chevron.className = "interactive-card__action academy-card__chevron";
-      chevron.setAttribute("aria-hidden", "true");
-      chevron.appendChild(lucideIcon("arrow-right"));
-      link.append(icon, code, identity, stageBadge, chevron);
-      return link;
-    }));
+    var grid = document.createElement("div");
+    grid.className = "academy-path-group__grid";
+    paths.forEach(function (path) {
+      grid.appendChild(academyPathCard(path, context));
+    });
+    section.append(heading, grid);
+    return section;
+  }
+
+  function academyPathCard(path, context) {
+    var activeLevel = context.activeLevel;
+    var link = document.createElement("a");
+    link.className = "interactive-surface interactive-card academy-card";
+    link.dataset.pathId = path.id;
+    link.dataset.category = path.category;
+    var isActive = context.activePath && context.activePath.academyCourse === path.academyCourse;
+    link.dataset.selected = String(Boolean(isActive));
+    link.href = academyPathHref(path.academyCourse);
+    link.setAttribute("aria-label", (isActive ? i18n("my_path_selected_prefix", "Your path: ") : "") + i18n("academy_path_open", "Open {title}").replace("{title}", path.title));
+    link.addEventListener("click", function () {
+      saveAcademyPath(path, context.profileId, activeLevel, "choice");
+    });
+
+    var icon = document.createElement("span");
+    icon.className = "interactive-card__icon academy-card__icon";
+    icon.setAttribute("aria-hidden", "true");
+    icon.appendChild(lucideIcon(academyPathIcon(path)));
+
+    var code = document.createElement("span");
+    code.className = "academy-card__code";
+    code.textContent = path.academyCourse + (isActive ? " · " + i18n("my_path_short", "Your path") : "");
+
+    var identity = document.createElement("span");
+    identity.className = "academy-card__identity";
+    var title = document.createElement("strong");
+    title.textContent = path.title;
+    var format = document.createElement("span");
+    format.textContent = path.format;
+    identity.append(title, format);
+
+    var selectedStage = (path.stages || []).find(function (stage) { return stage.label === activeLevel; }) || path.stages[0];
+    var stageBadge = document.createElement("span");
+    stageBadge.className = "academy-card__level";
+    stageBadge.textContent = selectedStage ? i18n("lrn_depth_" + selectedStage.label.toLowerCase(), selectedStage.label) : activeLevel;
+
+    var chevron = document.createElement("span");
+    chevron.className = "interactive-card__action academy-card__chevron";
+    chevron.setAttribute("aria-hidden", "true");
+    chevron.appendChild(lucideIcon("arrow-right"));
+    link.append(icon, code, identity, stageBadge, chevron);
+    return link;
   }
 
   function academyPathIcon(path) {
@@ -729,7 +829,7 @@
 
   function courseCard(course, entry, index) {
     var card = document.createElement("a");
-    card.className = "interactive-card course-card";
+    card.className = "interactive-surface interactive-card course-card";
     card.href = courseHref(course.id);
     // Stagger only when the set changed (index >= 0): 45ms/card, capped at 8 steps
     // so a 19-card grid still settles in ~360ms.

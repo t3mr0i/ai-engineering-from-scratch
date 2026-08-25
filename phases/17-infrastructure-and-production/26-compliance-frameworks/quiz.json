@@ -8,7 +8,7 @@
       "options": [
         "Only PCI DSS Requirement 8",
         "Only EU AI Act Article 43",
-        "ISO 27001 A.5.15-5.18, GDPR Art. 32, HIPAA 164.312(a), and SOC 2 CC6",
+        "Access logging maps to ISO, GDPR, HIPAA, SOC 2",
         "No framework because logging is operational, not a control"
       ],
       "correct": 2,
@@ -21,7 +21,7 @@
         "HIPAA, PCI-DSS, and Colorado AI Act only",
         "SOC 2 Type I and FERPA only",
         "ISO 42001 and CCPA only",
-        "GDPR, SOC 2 Type II, ISO 27001, and EU AI Act"
+        "GDPR + SOC2 + ISO27001 + EU AI Act"
       ],
       "correct": 3,
       "explanation": "The key (EU, B2B SaaS) maps to exactly those four entries in the local profile table."
@@ -69,7 +69,7 @@
         "One day of configuration evidence",
         "Only a penetration test",
         "No operating period is needed",
-        "Roughly 6–12 months of operated controls"
+        "6–12 months of operated controls"
       ],
       "correct": 3,
       "explanation": "The reference notes describe a SOC 2 Type II window of about 6–12 months, unlike a point-in-time Type I report."

@@ -67,7 +67,7 @@
       "question": "Why is DUTY_CYCLE a misleading default signal for this LLM workload?",
       "options": [
         "It cannot observe any Kubernetes object",
-        "Backlog is the useful signal"
+        "Backlog is the useful signal",
         "It always adds 16 replicas at once",
         "It measures queue depth twice and drops every request"
       ],

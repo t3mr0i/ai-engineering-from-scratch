@@ -54,7 +54,7 @@
       "stage": "post",
       "question": "Why does ROUND_ROBIN underperform on a repeated-prefix workload?",
       "options": [
-        "Round-robin ignores prefix location"
+        "Round-robin ignores prefix location",
         "It always routes all traffic to eu-west-1",
         "It disables the request queue",
         "It adds 800 ms of RTT to every request"
@@ -67,7 +67,7 @@
       "question": "What is the key distinction between Bedrock CRI or a GKE multi-cluster gateway and the router in this lesson?",
       "options": [
         "Commercial offerings expose KV prefix hashes to every client",
-        "Availability, not KV-aware routing"
+        "Availability, not KV-aware routing",
         "The local router cannot account for RTT",
         "The local router is only a billing API"
       ],

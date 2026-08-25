@@ -8,7 +8,7 @@
       "options": [
         "A network partition in eu-west-1",
         "A tokenizer version mismatch",
-        "vLLM OOM from KV cache spike on /api/llm",
+        "vLLM KV-cache OOM",
         "An expired TLS certificate"
       ],
       "correct": 2,
@@ -21,7 +21,7 @@
         "CPU stayed below 10% for one minute",
         "A provider returned HTTP 404",
         "The tokenizer emitted no tokens",
-        "GPU memory reached 98% four minutes before the error spike"
+        "98% GPU memory, 4 minutes before errors"
       ],
       "correct": 3,
       "explanation": "metric_agent reports DCGM_FI_DEV_FB_USED >= 97% for 240 seconds and correlation 0.93 with the error onset."
@@ -30,7 +30,7 @@
       "stage": "check",
       "question": "When does supervisor set adversarial_agreement to true?",
       "options": [
-        "When at least two hypotheses share the same grouped root-cause key",
+        "Two hypotheses share a group",
         "When one agent has confidence above 0.80",
         "When all evidence lists are empty",
         "When the incident string contains checkout"
@@ -43,7 +43,7 @@
       "question": "What narrow action does supervisor propose for the KV-cache incident?",
       "options": [
         "Replace the entire cluster topology",
-        "Restart the pod and lower --gpu-memory-utilization",
+        "Restart pod; lower GPU memory util",
         "Rotate every tenant's IAM role",
         "Delete the runbook repository"
       ],
@@ -69,7 +69,7 @@
         "Reading a runbook match",
         "Computing an aggregated confidence",
         "Logging the incident ID",
-        "Broad topology, code, or IAM changes"
+        "Broad topology/code/IAM changes"
       ],
       "correct": 3,
       "explanation": "The final note limits automated response to narrow safe actions and escalates topology, code, and IAM changes."

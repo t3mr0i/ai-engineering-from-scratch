@@ -67,7 +67,7 @@
       "question": "What design change does the lesson associate with a rise from roughly 7% to 74% cache hits?",
       "options": [
         "Increasing every question to 2,000 tokens",
-        "Move dynamic text after stable prefix"
+        "Move dynamic text after stable prefix",
         "Disabling the radix tree and using FCFS",
         "Reducing the cache budget to one block"
       ],

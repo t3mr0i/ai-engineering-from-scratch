@@ -52,15 +52,15 @@
     },
     {
       "stage": "post",
-      "question": "When does disaggregation become more attractive in the sweep?",
+      "question": "With output tokens held fixed, what does increasing prompt length do to disaggregated serving?",
       "options": [
-        "Only for zero output tokens",
-        "Only when TCP is slower than RDMA",
-        "Longer prompts favor disaggregation"
-        "When prompt length is removed from prefill"
+        "It removes prefill work from both paths",
+        "It makes RDMA bandwidth irrelevant",
+        "It increases KV transfer time, weakening the disaggregated advantage",
+        "It makes decode throughput independent of output length"
       ],
       "correct": 2,
-      "explanation": "The crossover is about the decode-pool speed advantage outweighing the KV transfer tax; the sweep reports that behavior at longer prompts."
+      "explanation": "With output fixed, prompt tokens add KV_BYTES_PER_TOKEN_70B_FP8 to the transfer term in ms_disaggregated, while the decode-time difference stays fixed; the extra transfer therefore weakens the advantage."
     },
     {
       "stage": "post",

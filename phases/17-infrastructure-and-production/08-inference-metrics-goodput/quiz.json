@@ -45,7 +45,7 @@
         "7.07 ms because it starts at token 2",
         "500 ms because TTFT is the only input",
         "0 ms because decode is excluded",
-        "e2e / 100 = 12 ms",
+        "e2e / 100 = 12 ms"
       ],
       "correct": 3,
       "explanation": "LLMPerf's local method returns e2e_ms/output_tokens = (500 + 700)/100 = 12.00 ms, including TTFT."
@@ -67,7 +67,7 @@
       "question": "Why does the lesson emphasize P50, P90, and P99 rather than only a mean?",
       "options": [
         "Percentiles remove the need to define TTFT",
-        "Tails disappear in the mean"
+        "Tails disappear in the mean",
         "The mean cannot be calculated for a list of traces",
         "P99 is always lower than P50 in this simulator"
       ],

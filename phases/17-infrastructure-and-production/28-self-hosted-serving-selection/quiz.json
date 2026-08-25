@@ -21,7 +21,7 @@
         "TRT-LLM, because it is hardware-agnostic",
         "TGI, because it is the only maintained option",
         "Ollama, because production always uses the dev wrapper",
-        "vLLM, because the AMD branch uses ROCm and the workload is not prefix-heavy"
+        "vLLM (ROCm)"
       ],
       "correct": 3,
       "explanation": "The AMD branch starts with vLLM; only agentic or prefix-heavy workloads switch to SGLang. TRT-LLM is NVIDIA-locked in the lesson."
@@ -43,7 +43,7 @@
       "question": "What primary engine does NVIDIA Blackwell enterprise serving receive in the supplied MoE scenario?",
       "options": [
         "llama.cpp, because enterprise means CPU",
-        "TRT-LLM, with the enterprise stack adding production-stack, disaggregation, and routing guidance",
+        "TRT-LLM + enterprise stack",
         "Ollama, because it is faster than all GPU engines",
         "TGI, because it is in active feature development"
       ],
@@ -69,7 +69,7 @@
         "Only a local prompt cache",
         "A browser WebGPU runtime and mobile NPU",
         "A batch API and a semantic embedding model",
-        "Production stack plus disaggregated serving plus a cache-aware router"
+        "Production stack + disaggregation + cache-aware routing"
       ],
       "correct": 3,
       "explanation": "For scale=enterprise, pick_engine adds the exact Phase 17 composition: production-stack, disaggregated serving, and cache-aware routing."

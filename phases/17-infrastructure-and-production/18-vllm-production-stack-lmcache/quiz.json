@@ -8,11 +8,11 @@
       "options": [
         "prompt_tokens × 16 blocks",
         "output_tokens / 900 blocks",
-        "ceil((prompt_tokens + 16 - 1) / 16)",
+        "(prompt_tokens + 16 - 1) // 16",
         "It stores one block for every engine"
       ],
       "correct": 2,
-      "explanation": "The local conversion is ceil((prompt_tokens + KV_BLOCK_TOKENS - 1) / KV_BLOCK_TOKENS), with 16 tokens per block."
+      "explanation": "The code uses integer ceiling division: (prompt_tokens + KV_BLOCK_TOKENS - 1) // KV_BLOCK_TOKENS, equivalent to ceil(prompt_tokens / 16)."
     },
     {
       "stage": "check",

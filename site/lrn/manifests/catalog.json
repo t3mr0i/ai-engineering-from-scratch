@@ -3172,6 +3172,11 @@
       "audience": "Developers, business analysts, and knowledge workers with little or no Copilot experience.",
       "prerequisites": "Basic digital skills and access to GitHub Copilot; no advanced AI knowledge required.",
       "summary": "Learn Copilot interaction patterns, supply useful context, apply suggestions to real work, and verify code, privacy, and quality before accepting results.",
+      "category": "technical",
+      "recommendationRanks": {
+        "tc": 1,
+        "am": 2
+      },
       "trackCodes": [
         "LP03"
       ],
@@ -3208,6 +3213,11 @@
       "audience": "Technical consultants, software developers, and requirement engineers with delivery experience.",
       "prerequisites": "Software development, Git, automated tests, terminal use, and a modern IDE; coding-assistant experience is helpful.",
       "summary": "Use coding agents, engineer prompts and context, design RAG and agent workflows, and verify generated code with explicit security and delivery controls.",
+      "category": "technical",
+      "recommendationRanks": {
+        "tc": 2,
+        "am": 1
+      },
       "trackCodes": [
         "LP03"
       ],
@@ -3246,6 +3256,10 @@
       "audience": "Architects, developers, data specialists, consultants, and project leads designing or evaluating AI systems.",
       "prerequisites": "A basic understanding of software architecture or data processing; prior AI or ML exposure is helpful.",
       "summary": "Move from isolated models to governed compound AI systems across data, semantic, model, agentic, application, and LLMOps layers.",
+      "category": "technical",
+      "recommendationRanks": {
+        "tc": 3
+      },
       "trackCodes": [
         "LP03"
       ],
@@ -3284,6 +3298,13 @@
       "audience": "Consultants, business analysts, product owners, product managers, solution managers, and developers.",
       "prerequisites": "Familiarity with consulting or project work is helpful; no deep AI or coding knowledge required.",
       "summary": "Derive requirements from interviews and documents, structure and prioritize them, and validate every result through traceable human quality gates.",
+      "category": "role",
+      "recommendationRanks": {
+        "bsc": 1,
+        "pvs": 1,
+        "pma": 1,
+        "tc": 4
+      },
       "trackCodes": [
         "LP02",
         "LP03"
@@ -3322,6 +3343,9 @@
       "audience": "All LHIND employees, from first-time users to technical power users.",
       "prerequisites": "Module 1 has no prerequisite. Hands-on participation needs the approved tools; Module 3 expects prior file-based agent experience.",
       "summary": "Progress from the LHIND tool landscape through a six-move hands-on workflow to persistent context, reusable skills, and an agent-harness prototype.",
+      "category": "foundation",
+      "foundationRank": 2,
+      "recommendationRanks": {},
       "trackCodes": [
         "LP01",
         "LP03",
@@ -3362,6 +3386,14 @@
       "audience": "Sales, key-account, project, and leadership roles that prepare or make decisions.",
       "prerequisites": "Basic statistics and confident spreadsheet use; programming is not required.",
       "summary": "Combine AI-supported evidence with clustering, forecasting, Monte Carlo simulation, optimization, ethical review, and accountable human decisions.",
+      "category": "role",
+      "recommendationRanks": {
+        "bsc": 2,
+        "pvs": 2,
+        "pma": 2,
+        "corp": 2,
+        "lead": 2
+      },
       "trackCodes": [
         "LP02",
         "LP04",
@@ -3401,6 +3433,13 @@
       "audience": "Leaders, senior consultants, project owners, and decision-makers responsible for AI-enabled change.",
       "prerequisites": "No technical implementation knowledge required; leadership or decision responsibility is helpful.",
       "summary": "Understand AI as a transformation driver, evaluate capability and risk, redesign roles and culture, and commit to an accountable operating roadmap.",
+      "category": "role",
+      "recommendationRanks": {
+        "lead": 1,
+        "corp": 1,
+        "pma": 3,
+        "bsc": 4
+      },
       "trackCodes": [
         "LP04"
       ],
@@ -3438,6 +3477,9 @@
       "audience": "All employees at beginner level.",
       "prerequisites": "No technical prerequisite; complete the AI foundation unit before the Copilot transfer session.",
       "summary": "Build a shared AI foundation, apply M365 Copilot to everyday work, define personal use cases, and reflect on questions and best practices with peers.",
+      "category": "foundation",
+      "foundationRank": 1,
+      "recommendationRanks": {},
       "trackCodes": [
         "LP01",
         "LP05"
@@ -3469,6 +3511,13 @@
       "audience": "Portfolio managers, pre-sales specialists, business development managers, and sales colleagues in consulting and services.",
       "prerequisites": "Understand the relevant portfolio and sales cycle and have initial experience with generative AI tools.",
       "summary": "Research markets and accounts, translate customer pain points into portfolio-aligned use cases, and create evidence-grounded sales materials efficiently.",
+      "category": "role",
+      "recommendationRanks": {
+        "bsc": 3,
+        "pvs": 3,
+        "pma": 4,
+        "lead": 3
+      },
       "trackCodes": [
         "LP02",
         "LP04"
@@ -3508,6 +3557,10 @@
       "audience": "Experienced backend and full-stack developers moving into AI engineering.",
       "prerequisites": "Strong software engineering, at least three years of project work, prior AI exposure, and practical Python experience.",
       "summary": "Build LLM applications and agents, apply LangGraph-style control patterns, integrate tools through MCP, and take the system through evaluation and production.",
+      "category": "technical",
+      "recommendationRanks": {
+        "tc": 5
+      },
       "trackCodes": [
         "LP03"
       ],

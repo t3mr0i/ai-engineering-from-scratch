@@ -19,7 +19,7 @@
       "question": "With parallel_penalty=True, what happens when a parallel-wave request misses L2?",
       "options": [
         "It is counted as an L1 semantic hit",
-        "Parallel misses write but do not cache"
+        "Parallel misses write but do not cache",
         "It always reads at CACHED_INPUT",
         "It disables the 1-hour TTL"
       ],

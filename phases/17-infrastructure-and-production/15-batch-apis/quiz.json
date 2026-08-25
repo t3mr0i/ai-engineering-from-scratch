@@ -30,7 +30,7 @@
       "stage": "check",
       "question": "How does cost_sync_cache treat the first shared prefix?",
       "options": [
-        "One write, then cached reads"
+        "One write, then cached reads",
         "It charges CACHED_INPUT for every document including the first",
         "It removes the prefix from every request",
         "It applies BATCH_DISCOUNT before calculating any input cost"
@@ -43,7 +43,7 @@
       "question": "What lifecycle does closeBatch implement for a queued batch?",
       "options": [
         "It rejects all deferred promises and leaves status queued",
-        "queued → in_progress → completed"
+        "queued → in_progress → completed",
         "It marks completed before processing and never waits",
         "It processes only the first job and marks failed"
       ],

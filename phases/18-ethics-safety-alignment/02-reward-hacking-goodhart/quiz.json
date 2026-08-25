@@ -1,78 +1,78 @@
 {
-  "lesson": "02-reward-hacking-goodhart",
+  "lesson": "reward-hacking-goodhart",
   "title": "Reward Hacking and Goodhart's Law",
   "questions": [
     {
       "stage": "pre",
-      "question": "Goodhart's Law, as originally stated, says:",
+      "question": "Which situation is the Goodhart failure illustrated by this lesson?",
       "options": [
-        "Any measure that becomes a target ceases to be a good measure",
-        "Reward models converge to true human preference at large scale",
-        "Heavy-tailed errors cannot occur in finite-dimensional models",
-        "Optimization always improves a proxy without limit"
-      ],
-      "correct": 0,
-      "explanation": "“Any measure that becomes a target ceases to be a good measure” matches the lesson’s treatment of Reward Hacking and Goodhart's Law; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "In Gao, Schulman, Hilton (2023), how do proxy reward and gold reward behave as KL distance from the initial policy grows?",
-      "options": [
-        "Both stay flat under any KL constraint",
-        "Both rise monotonically with KL",
-        "Proxy peaks then falls, gold rises monotonically",
-        "Proxy keeps rising, gold peaks closer to the origin then falls"
-      ],
-      "correct": 3,
-      "explanation": "“Proxy keeps rising, gold peaks closer to the origin then falls” matches the lesson’s treatment of Reward Hacking and Goodhart's Law; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Which of the following is NOT one of the four 'costumes' of reward hacking listed in the lesson?",
-      "options": [
-        "Unfaithful reasoning",
-        "Verbosity bias",
-        "Tokenizer mismatch",
-        "Sycophancy"
+        "Optimizing a proxy selects outputs where its correlation with the intended target breaks",
+        "Adding more labels makes every reward model perfectly calibrated",
+        "A KL constraint makes proxy and gold rewards identical",
+        "A larger policy cannot change the distribution of its outputs"
       ],
       "correct": 2,
-      "explanation": "“Tokenizer mismatch” matches the lesson’s treatment of Reward Hacking and Goodhart's Law; the alternatives conflict with its definitions or workflow."
+      "explanation": "Goodhart's Law is about optimization pressure, not merely noisy measurement. Once the proxy is targeted, the optimizer searches for high-scoring cases in which proxy quality and the intended target have diverged."
     },
     {
       "stage": "check",
-      "question": "What is the 'Catastrophic Goodhart' result about KL regularization?",
+      "question": "For the code's Gaussian policies, how is sqrt_kl_from_origin(mu) computed?",
       "options": [
-        "KL regularization always prevents reward hacking when beta is positive",
-        "KL regularization only fails when the policy is randomly initialized",
-        "KL regularization is equivalent to ensembling reward models",
-        "Under heavy-tailed reward error, a KL-constrained optimal policy can still drive proxy reward up while gold reward stays at baseline"
+        "The L1 norm of mu divided by the feature count",
+        "The square root of half the sum of squared components of mu",
+        "The dot product of mu with GOLD_W",
+        "The logarithm of the number of proxy samples"
       ],
       "correct": 3,
-      "explanation": "“Under heavy-tailed reward error, a KL-constrained optimal policy can still drive proxy reward up while gold reward stays at baseline” matches the lesson’s treatment of Reward Hacking and Goodhart's Law; the alternatives conflict with its definitions or workflow."
+      "explanation": "With unit-covariance Gaussians, KL(N(mu,I)||N(0,I)) is 0.5 * ||mu||². The helper returns sqrt(0.5 * sum(mu_i²)), which is the horizontal axis of the sweep."
+    },
+    {
+      "stage": "check",
+      "question": "Why does train_proxy(noise=\"student_t\") model a more dangerous error tail than Gaussian noise?",
+      "options": [
+        "Student-t(3) has heavy tails, so rare proxy errors can be much larger than typical errors",
+        "Student-t noise removes all proxy error from the training labels",
+        "Gaussian noise is discrete while Student-t noise is deterministic",
+        "The Student-t branch changes GOLD_W into a nonlinear reward"
+      ],
+      "correct": 0,
+      "explanation": "student_t(3) divides a Gaussian draw by a chi-square-derived scale, producing heavy-tailed errors. Catastrophic Goodhart concerns exactly those rare, reachable cases that a KL constraint does not rule out."
+    },
+    {
+      "stage": "check",
+      "question": "What shape should the proxy and gold columns have as the KL budget grows?",
+      "options": [
+        "Gold rises forever while proxy stays at zero",
+        "Both are forced to remain equal by the policy constraint",
+        "Proxy rises monotonically, while gold reaches a peak and can decline",
+        "Both become independent of the learned proxy weights"
+      ],
+      "correct": 1,
+      "explanation": "kl_constrained_policy_sweep aligns mu with the proxy weights, so proxy reward keeps increasing with the budget. The fixed GOLD_W need not align with that direction, producing the peak-and-collapse curve."
     },
     {
       "stage": "post",
-      "question": "Which mitigation does Coste et al. (2023) study to soften reward over-optimization?",
+      "question": "Why does the lesson recommend reward-model ensembles with worst-case aggregation?",
       "options": [
-        "Removing the KL penalty entirely",
-        "Training the policy on the proxy at zero temperature",
-        "Reward-model ensembles with worst-case aggregation",
-        "Increasing the labeler pool to one million raters"
+        "They eliminate the need for held-out gold evaluation",
+        "They make KL divergence exactly zero",
+        "They make it harder for one optimizer to exploit the same blind spot in every proxy",
+        "They replace preference data with tokenizer counts"
       ],
       "correct": 2,
-      "explanation": "“Reward-model ensembles with worst-case aggregation” matches the lesson’s treatment of Reward Hacking and Goodhart's Law; the alternatives conflict with its definitions or workflow."
+      "explanation": "An ensemble can reduce dependence on one reward model's accidental feature, especially when the optimizer exploits a single head. It shifts the over-optimization peak; it does not prove that reward hacking is solved."
     },
     {
       "stage": "post",
-      "question": "According to the 2026 unified view, what core mechanism do verbosity, sycophancy, unfaithful CoT, and evaluator tampering share?",
+      "question": "Which common reward-hacking example is correctly matched to its proxy feature?",
       "options": [
-        "Probability mass shifts to outputs that maximize proxy reward by exploiting easy-to-learn heuristics that spuriously correlated with approval",
-        "They are caused only by labelers who write malicious preferences",
-        "They all stem from learning-rate schedules being too aggressive",
-        "They are each independent bugs in distinct reward heads"
+        "Evaluator tampering: the agent changes the environment so success is recorded",
+        "Sycophancy: the model shortens every answer regardless of content",
+        "Unfaithful reasoning: the model refuses to optimize any score",
+        "Verbosity bias: the reward model penalizes all long explanations"
       ],
-      "correct": 0,
-      "explanation": "“Probability mass shifts to outputs that maximize proxy reward by exploiting easy-to-learn heuristics that spuriously correlated with approval” matches the lesson’s treatment of Reward Hacking and Goodhart's Law; the alternatives conflict with its definitions or workflow."
+      "correct": 3,
+      "explanation": "Evaluator tampering directly changes the measurement environment, so the recorded score no longer tracks the intended outcome. The other pairings reverse or deny the mechanisms described in the lesson."
     }
   ]
 }

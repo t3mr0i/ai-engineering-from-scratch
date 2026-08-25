@@ -54,7 +54,7 @@
       "stage": "post",
       "question": "Which browser support gap is called out for 2026?",
       "options": [
-        "Firefox Android lagging"
+        "Firefox Android lagging",
         "Chrome Android cannot use WebGPU at all",
         "Safari iOS 26 has no WebGPU landing",
         "WebLLM works only on desktop Firefox"
@@ -67,7 +67,7 @@
       "question": "Why does the lesson call edge decode memory-bandwidth-bound?",
       "options": [
         "The model reads no weights during decode",
-        "Mobile DRAM is 30–50× slower"
+        "Mobile DRAM is 30–50× slower",
         "TOPS is always zero on mobile NPUs",
         "Network RTT dominates even when the model is local"
       ],

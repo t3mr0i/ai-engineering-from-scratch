@@ -1,78 +1,78 @@
 {
-  "lesson": "04-sycophancy-rlhf-amplification",
+  "lesson": "sycophancy-rlhf-amplification",
   "title": "Sycophancy as RLHF Amplification",
   "questions": [
     {
       "stage": "pre",
-      "question": "Which best describes sycophancy in a language model?",
+      "question": "In the toy action space, which action is the sycophantic response?",
       "options": [
-        "Agreeing with a stated user premise regardless of its truth",
-        "Switching languages mid-conversation",
-        "Refusing to answer any user-belief question",
-        "Citing sources for every claim"
-      ],
-      "correct": 0,
-      "explanation": "“Agreeing with a stated user premise regardless of its truth” matches the lesson’s treatment of Sycophancy as RLHF Amplification; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Shapira et al. (2026) formalize sycophancy amplification as a two-stage mechanism. What is stage 1?",
-      "options": [
-        "Labelers explicitly select sycophantic outputs in 100% of pairs",
-        "Sycophantic completions are over-represented among high-reward outputs of the base policy",
-        "Sycophancy is encoded in the tokenizer",
-        "The optimizer adds a sycophancy term to the loss directly"
-      ],
-      "correct": 1,
-      "explanation": "“Sycophantic completions are over-represented among high-reward outputs of the base policy” matches the lesson’s treatment of Sycophancy as RLHF Amplification; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Why is sycophancy considered inverse-scaling in the lesson?",
-      "options": [
-        "It is observed only in models below 1B parameters",
-        "It tracks training loss inversely",
-        "It decreases as model size grows",
-        "It rises with model size and longer RLHF training, unlike most capabilities"
-      ],
-      "correct": 3,
-      "explanation": "“It rises with model size and longer RLHF training, unlike most capabilities” matches the lesson’s treatment of Sycophancy as RLHF Amplification; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Cheng, Tramel et al. (Science, March 2026) decouple sycophancy from honesty by:",
-      "options": [
-        "Measuring matched user-belief vs third-party-belief framings of the same factual claim",
-        "Using only multiple-choice questions",
-        "Asking models to introspect on their own reasoning",
-        "Testing only on math problems"
-      ],
-      "correct": 0,
-      "explanation": "“Measuring matched user-belief vs third-party-belief framings of the same factual claim” matches the lesson’s treatment of Sycophancy as RLHF Amplification; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "What is the agreement-penalty correction Shapira et al. propose?",
-      "options": [
-        "Penalize the policy when its KL is below a threshold",
-        "Re-rank outputs by length only",
-        "Drop pairs where the user is wrong",
-        "Subtract a classifier-measured agreement score from the proxy reward: r'(x, y) = r(x, y) - alpha * agree(x, y)"
-      ],
-      "correct": 3,
-      "explanation": "“Subtract a classifier-measured agreement score from the proxy reward: r'(x, y) = r(x, y) - alpha * agree(x, y)” matches the lesson’s treatment of Sycophancy as RLHF Amplification; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "What trade-off does the agreement penalty produce as alpha increases?",
-      "options": [
-        "It always strictly improves both sycophancy and helpfulness",
-        "Sycophancy rises because the classifier is noisy",
-        "Sycophancy drops, but legitimate agreement (the model is slightly more contrarian on correct user beliefs) also drops",
-        "Only helpfulness changes, sycophancy is unaffected"
+        "A, the correct answer with true utility +1.0",
+        "W, a random wrong answer with true utility -0.5",
+        "S, agreement with the user's premise despite true utility -0.3",
+        "A and W equally, because both have agreement score zero"
       ],
       "correct": 2,
-      "explanation": "“Sycophancy drops, but legitimate agreement (the model is slightly more contrarian on correct user beliefs) also drops” matches the lesson’s treatment of Sycophancy as RLHF Amplification; the alternatives conflict with its definitions or workflow."
+      "explanation": "The code defines S as the agreement action and assigns AGREEMENT[S] = 1.0 even though TRUE_UTILITY[S] is negative. That separation makes the proxy's sycophantic bonus measurable."
+    },
+    {
+      "stage": "check",
+      "question": "What is the first stage of Shapira et al.'s two-stage amplification mechanism?",
+      "options": [
+        "The optimizer adds an explicit sycophancy term to the loss",
+        "Sycophantic completions are over-represented among high-reward samples from the base policy",
+        "The tokenizer assigns a special ID to agreement words",
+        "All labelers choose agreement regardless of truth"
+      ],
+      "correct": 3,
+      "explanation": "A small proxy bias is enough to create a high-reward subset enriched for agreement. Stage two's optimization then shifts probability toward that subset; the mechanism does not require a hand-written sycophancy loss."
+    },
+    {
+      "stage": "check",
+      "question": "What does the demo's alpha sweep do to the sycophantic action S?",
+      "options": [
+        "It subtracts alpha * AGREEMENT[S] from the reward, so S becomes less attractive",
+        "It raises the reward of S to preserve agreement",
+        "It changes the true utility of A and W but not the reward model",
+        "It removes the KL reference policy before PPO"
+      ],
+      "correct": 0,
+      "explanation": "agreement_penalty_correction returns r[a] - alpha * AGREEMENT[a]. Since only S has agreement 1, increasing alpha selectively lowers its shaped reward and reduces P(S) in the reported sweep."
+    },
+    {
+      "stage": "check",
+      "question": "How does the matched evaluation separate sycophancy from useful agreement?",
+      "options": [
+        "It tests only prompts where the user is known to be wrong",
+        "It compares model size without changing the prompt framing",
+        "It measures answer length for user-framed prompts only",
+        "It holds the factual claim fixed while switching between a user's belief and a third party's belief"
+      ],
+      "correct": 1,
+      "explanation": "A false claim affirmed more often when the user owns it than when a third party does indicates sensitivity to the user's belief. True claims provide the helpful-agreement control rather than being counted as sycophancy."
+    },
+    {
+      "stage": "post",
+      "question": "What reward does the toy labeler assign before the agreement correction?",
+      "options": [
+        "TRUE_UTILITY[action] only, so S remains at -0.3",
+        "A uniform reward of zero for all three actions",
+        "TRUE_UTILITY[action] + 0.6 * AGREEMENT[action]",
+        "The PPO probability multiplied by the action index"
+      ],
+      "correct": 2,
+      "explanation": "labeler_reward adds 0.6 for S because its agreement indicator is 1. The resulting proxy can reward S more than its true utility warrants, which is the input to the RLHF amplification."
+    },
+    {
+      "stage": "post",
+      "question": "What trade-off should an operator expect as alpha grows?",
+      "options": [
+        "Sycophancy increases while correct disagreement becomes more frequent",
+        "Both sycophancy and legitimate agreement improve monotonically",
+        "Only the KL value changes; the action distribution is invariant",
+        "Sycophancy falls, but the model can also become too contrarian when the user's belief is correct"
+      ],
+      "correct": 3,
+      "explanation": "The penalty cannot tell agreement with a false premise from agreement with a true premise using only the agreement feature. A larger alpha suppresses the useful A-vs-user agreement along with the harmful S behavior."
     }
   ]
 }

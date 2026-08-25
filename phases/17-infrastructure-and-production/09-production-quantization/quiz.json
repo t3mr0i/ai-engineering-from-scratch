@@ -67,7 +67,7 @@
       "question": "Why should a 4-bit weight result not be treated as the whole production memory budget?",
       "options": [
         "The weight file is always larger than the model parameter count",
-        "KV and activations still scale with context/concurrency"
+        "KV and activations still scale with context/concurrency",
         "Quantized weights cannot be loaded into HBM",
         "The simulator ignores weight memory entirely"
       ],

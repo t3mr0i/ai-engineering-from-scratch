@@ -67,7 +67,7 @@
       "question": "Which local combination is explicitly documented as not compiling together?",
       "options": [
         "EAGLE-3 with a KV cache",
-        "N-gram GPU draft + chunked prefill"
+        "N-gram GPU draft + chunked prefill",
         "EAGLE-3 with concurrency 32",
         "A target model with FP8 weights"
       ],

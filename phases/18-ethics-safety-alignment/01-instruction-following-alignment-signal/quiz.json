@@ -1,78 +1,78 @@
 {
-  "lesson": "01-instruction-following-alignment-signal",
+  "lesson": "instruction-following-alignment-signal",
   "title": "Instruction-Following as Alignment Signal",
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does a raw pre-trained language model often respond to 'write a Python function that reverses a list' with another prompt instead of code?",
+      "question": "In the toy pipeline, what does stage1_sft learn from the 200 demonstrations?",
       "options": [
-        "Its vocabulary lacks Python tokens",
-        "It cannot represent function signatures without fine-tuning",
-        "Its temperature defaults to zero",
-        "It is trained to complete web-style text, where prompts continue with more prompts"
-      ],
-      "correct": 3,
-      "explanation": "“It is trained to complete web-style text, where prompts continue with more prompts” matches the lesson’s treatment of Instruction-Following as Alignment Signal; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "Which loss does the InstructGPT reward model use over pairwise preference labels?",
-      "options": [
-        "Mean squared error on labeler scores",
-        "Bradley-Terry: -log sigmoid(r(x, y_w) - r(x, y_l))",
-        "Hinge loss with a fixed margin",
-        "Cross-entropy between predicted and true reward"
-      ],
-      "correct": 1,
-      "explanation": "“Bradley-Terry: -log sigmoid(r(x, y_w) - r(x, y_l))” matches the lesson’s treatment of Instruction-Following as Alignment Signal; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What is the KL penalty in stage 3 of InstructGPT primarily protecting against?",
-      "options": [
-        "Catastrophic forgetting of tokenizer statistics",
-        "Numerical instability in PPO gradient updates",
-        "Overflowing context windows during sampling",
-        "The optimizer finding adversarial high-reward strings that exploit the reward model"
-      ],
-      "correct": 3,
-      "explanation": "“The optimizer finding adversarial high-reward strings that exploit the reward model” matches the lesson’s treatment of Instruction-Following as Alignment Signal; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "check",
-      "question": "What problem does PPO-ptx mix into the RL objective to mitigate?",
-      "options": [
-        "The reward model drifting during PPO",
-        "The KL term becoming negative",
-        "The alignment tax: regression on benchmarks RLHF did not target",
-        "Tokenizer mismatch between SFT and RM"
-      ],
-      "correct": 2,
-      "explanation": "“The alignment tax: regression on benchmarks RLHF did not target” matches the lesson’s treatment of Instruction-Following as Alignment Signal; the alternatives conflict with its definitions or workflow."
-    },
-    {
-      "stage": "post",
-      "question": "A 1.3B InstructGPT was preferred over the 175B base GPT-3 about 70% of the time. What does this say about alignment and capability?",
-      "options": [
-        "Alignment is a different axis from capability, and the base model sets the capability floor",
-        "Preference rates above 50% prove the proxy reward equals human values",
-        "Capability and alignment are the same axis at scale",
-        "Bigger base models always lose to small aligned models"
+        "A categorical policy whose action frequencies follow the labeler's softmax utilities",
+        "A scalar reward for every possible prompt",
+        "A KL coefficient chosen by PPO",
+        "A tokenizer that adds Python syntax"
       ],
       "correct": 0,
-      "explanation": "“Alignment is a different axis from capability, and the base model sets the capability floor” matches the lesson’s treatment of Instruction-Following as Alignment Signal; the alternatives conflict with its definitions or workflow."
+      "explanation": "stage1_sft samples actions from softmax([0.0, 1.0, -0.3]) and uses their empirical log frequencies as policy logits. It is imitation of responses, not reward learning or tokenizer training."
+    },
+    {
+      "stage": "check",
+      "question": "Which loss does the InstructGPT reward model use for a preferred action y_w and rejected action y_l?",
+      "options": [
+        "Mean squared error between two policy logits",
+        "-log sigmoid(r(x, y_w) - r(x, y_l))",
+        "Cross-entropy over the three action names",
+        "A hinge loss that ignores preference strength"
+      ],
+      "correct": 1,
+      "explanation": "The reward model is fit with the Bradley–Terry pairwise likelihood. Its gradient raises the winner's scalar score and lowers the loser's score according to the current score gap."
+    },
+    {
+      "stage": "check",
+      "question": "In stage3_ppo, what does the beta term subtract from a sampled action's reward?",
+      "options": [
+        "The action's supervised cross-entropy",
+        "The reward-model mean across all actions",
+        "beta times log(pi(a) / pi_sft(a))",
+        "The number of tokens in the action string"
+      ],
+      "correct": 2,
+      "explanation": "The demo shapes each sample as r(a) - beta * (log pi(a) - log pi_sft(a)). This keeps the learned policy near SFT; removing beta leaves the proxy reward unanchored."
+    },
+    {
+      "stage": "check",
+      "question": "What does PPO-ptx add to the RLHF objective in the lesson?",
+      "options": [
+        "A second reward model trained on rejected answers",
+        "A hard cap on the policy vocabulary",
+        "A larger KL penalty on every sampled action",
+        "Pre-training gradients that protect capabilities absent from the preference objective"
+      ],
+      "correct": 3,
+      "explanation": "The alignment tax is regression on benchmarks such as SQuAD or DROP that RLHF did not reward. PPO-ptx adds a pre-training log-likelihood term so those capabilities are rehearsed."
     },
     {
       "stage": "post",
-      "question": "Which of the following is the reward model in InstructGPT initialized from?",
+      "question": "The demo reports final KL 0.340 with beta=0.10 and 0.354 with beta=0.00. What does this comparison illustrate?",
       "options": [
-        "A random scalar regressor with no pretraining",
-        "A separate encoder-only transformer",
-        "The base pre-trained model with the LM head intact",
-        "The SFT model with the LM head replaced by a scalar head"
+        "The KL anchor limits drift, although it does not make the policy identical to SFT",
+        "A zero beta guarantees lower reward and lower KL",
+        "The reward model becomes supervised when beta is positive",
+        "PPO-ptx is the only source of the KL value"
       ],
-      "correct": 3,
-      "explanation": "“The SFT model with the LM head replaced by a scalar head” matches the lesson’s treatment of Instruction-Following as Alignment Signal; the alternatives conflict with its definitions or workflow."
+      "correct": 0,
+      "explanation": "Both runs optimize the same reward model, but beta=0 removes the log-ratio penalty and permits slightly more movement from the SFT probabilities. The KL number measures that policy drift, not model accuracy."
+    },
+    {
+      "stage": "post",
+      "question": "How is the reward model initialized in the InstructGPT reference pipeline?",
+      "options": [
+        "From a randomly initialized scalar regressor",
+        "From the SFT model with its language-model head replaced by a scalar head",
+        "From the raw base model while retaining its LM head",
+        "From a separate tokenizer-only encoder"
+      ],
+      "correct": 1,
+      "explanation": "The RM reuses the SFT representation and swaps the token-prediction head for a scalar reward head. This gives it instruction-tuned features while learning pairwise preference scores."
     }
   ]
 }

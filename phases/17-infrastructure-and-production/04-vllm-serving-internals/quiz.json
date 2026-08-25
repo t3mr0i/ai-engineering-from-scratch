@@ -67,7 +67,7 @@
       "question": "What is the intended effect of CONTINUOUS + CHUNKED in the demo's final comparison?",
       "options": [
         "More padding and a higher P99 ITL",
-        "Lets decode run between prefill slices"
+        "Lets decode run between prefill slices",
         "Serial execution with no admission or release",
         "A larger prompt cache but no scheduling change"
       ],

@@ -56,6 +56,13 @@ test("development identity is explicit and receives publisher capabilities", () 
   assert.equal(actor.isDevelopment, true);
 });
 
+test("local launcher uses the API-capable admin server", () => {
+  const launcher = fs.readFileSync(path.join(ROOT, "serve.sh"), "utf8");
+  assert.match(launcher, /ADMIN_DEV_MODE=true/);
+  assert.match(launcher, /server\/server\.js/);
+  assert.doesNotMatch(launcher, /python3 -m http\.server/);
+});
+
 test("canonical curriculum loads with the expected inventory", () => {
   const snapshot = loadBaseCurriculum(SITE);
   const stats = curriculumStats(snapshot);

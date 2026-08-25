@@ -67,7 +67,7 @@
       "question": "Why does live migration transfer input tokens rather than a full KV cache?",
       "options": [
         "Input tokens are larger than KV tensors",
-        "Transfer KB tokens; recompute GB KV"
+        "Transfer KB tokens; recompute GB KV",
         "KV caches contain no model information",
         "The engine only supports images as migration data"
       ],

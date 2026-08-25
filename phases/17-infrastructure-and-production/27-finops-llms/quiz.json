@@ -8,7 +8,7 @@
       "options": [
         "Region, GPU type, and kernel version",
         "Prompt length, batch size, and cache TTL",
-        "user_id, task_id plus route, and tenant_id",
+        "user, task/route, tenant",
         "Temperature, top-p, and stop sequence"
       ],
       "correct": 2,
@@ -43,7 +43,7 @@
       "question": "When can the FinOps simulator activate the kill switch?",
       "options": [
         "On the first request of every day",
-        "After at least five history points when spend z-score exceeds 4",
+        "After 5 history points, z > 4",
         "Whenever a tenant uses more than 40 requests per minute",
         "Only when daily spend is exactly zero"
       ],
@@ -69,7 +69,7 @@
         "GPU temperature per hour",
         "Number of provider regions",
         "Average prompt characters only",
-        "Cost per resolved query or generated artifact"
+        "Cost per resolved query/artifact"
       ],
       "correct": 3,
       "explanation": "A unit such as cost per resolved support query ties token spend to product value; $/M tokens alone cannot show whether a task succeeded."

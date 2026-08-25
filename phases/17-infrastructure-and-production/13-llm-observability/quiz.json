@@ -67,7 +67,7 @@
       "question": "What does traceLLMCall emit when mockLLMCall is forced to fail?",
       "options": [
         "An OK span with no response ID",
-        "ERROR + rate_limit_exceeded"
+        "ERROR + rate_limit_exceeded",
         "No span because errors are not observable",
         "A successful response with finishReason length"
       ],
