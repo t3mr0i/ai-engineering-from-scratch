@@ -6,13 +6,13 @@
       "stage": "pre",
       "question": "Why store the tokenized corpus in a resizable, chunked HDF5 dataset rather than JSONL?",
       "options": [
-        "HDF5 has a smaller logo",
-        "JSONL is deprecated",
-        "HDF5 offers chunked, integer-only, memory-mapped reads with O(1) random access; JSONL forces the parser onto every hot-path read",
-        "A JSONL reader can seek to any record without scanning earlier lines"
+        "JSONL records are already fixed-size integer arrays, so seeking never scans text.",
+        "HDF5 removes the need to track token counts or shard offsets.",
+        "HDF5 stores integer tokens in chunks and supports addressable dataset slices; h5py serves those slices through its page cache into NumPy without reparsing JSONL.",
+        "HDF5 guarantees that every sampled window is one physical disk read."
       ],
       "correct": 2,
-      "explanation": "The dataloader wants a flat token stream with addressable slices; HDF5 supplies that natively."
+      "explanation": "MmapTokenStore is a class name, not an operating-system mmap claim: it opens each shard with h5py.File(..., 'r', swmr=True) and copies dataset slices into NumPy. The benefit here is chunked integer storage plus addressable, page-cache-backed reads; chunk boundaries still affect I/O."
     },
     {
       "stage": "check",
@@ -52,15 +52,15 @@
     },
     {
       "stage": "post",
-      "question": "Which side opens a completed HDF5 shard with swmr=True in this lesson?",
+      "question": "Which SWMR open modes are used when a shard moves from writing to reading?",
       "options": [
-        "MmapTokenStore opens each shard read-only with swmr=True; the writer creates the file and enables its SWMR mode while writing.",
-        "Only the writer opens the completed file with swmr=True; readers use ordinary text mode.",
-        "Both sides reopen the same file for writing so they can share the HDF5 resize lock.",
-        "Neither side uses SWMR; the flag belongs to the JSONL source adapter."
+        "The reader uses ordinary text mode and the writer reopens the completed file for appending.",
+        "Both writer and reader open the completed shard with h5py.File(..., 'w') so they share the resize lock.",
+        "The writer creates with h5py.File(..., 'w', libver='latest') and sets swmr_mode=True; MmapTokenStore later opens the finished shard read-only with swmr=True.",
+        "SWMR is only a JSONL setting; HDF5 ignores the flag."
       ],
       "correct": 2,
-      "explanation": "MmapTokenStore calls h5py.File(entry.path, 'r', swmr=True) for concurrent readers. HDF5ShardWriter creates the file, writes chunks and attributes, and closes it before the reader opens the shard."
+      "explanation": "HDF5ShardWriter creates the resizable dataset with h5py.File(..., 'w', libver='latest') and enables self._file.swmr_mode while writing. After the writer closes the shard, MmapTokenStore opens it with h5py.File(entry.path, 'r', swmr=True)."
     },
     {
       "stage": "post",

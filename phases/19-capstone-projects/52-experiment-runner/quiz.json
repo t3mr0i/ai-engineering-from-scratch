@@ -64,15 +64,15 @@
     },
     {
       "stage": "post",
-      "question": "What guarantee does forwarding spec.seed into config['__seed'] give the evaluator?",
+      "question": "What does forwarding spec.seed as config['__seed'] establish for the bundled experiment fixture?",
       "options": [
-        "Determinism, so a re run with the same seed produces identical metrics and the evaluator can detect real changes from random noise",
-        "Faster wall time",
-        "Lower memory consumption",
-        "A free significance test"
+        "The child receives the same seed on each paired run, so its controlled RNGs can be aligned; this is not a universal guarantee of deterministic metrics.",
+        "It forces deterministic kernels and hardware scheduling even when the child ignores the seed.",
+        "It replaces the wall-clock timeout with a seed-based stop condition.",
+        "It lets the evaluator skip pairing because one seed is enough."
       ],
       "correct": 0,
-      "explanation": "The seed pins random initialisation in the experiment. Two runs with the same seed produce identical metrics, which is what lets the evaluator distinguish a real regression from a different draw."
+      "explanation": "ExperimentRunner copies spec.config, sets merged_config['__seed'] = spec.seed, and the bundled sparsity experiment uses that value for its controlled random draws. Other unseeded sources, parallelism, hardware, or nondeterministic kernels can still change metrics."
     }
   ]
 }

@@ -18,13 +18,13 @@
       "stage": "check",
       "question": "Why does the lesson use mean pooling with an attention-mask weighting instead of a plain mean across the sequence axis?",
       "options": [
-        "Plain mean is mathematically undefined for transformers.",
-        "Mean pool requires masking by convention even when there are no pads.",
-        "Padding positions contribute irrelevant hidden states that would pull the pooled vector toward zero.",
-        "Plain mean ignores the batch dimension."
+        "A plain mean cannot reduce a tensor with a batch dimension.",
+        "Masking is required even when every sequence has the same length and no padding.",
+        "A plain mean includes hidden states for padding positions, so shorter examples are diluted by non-content states.",
+        "The mask changes the classifier from two logits to one."
       ],
       "correct": 2,
-      "explanation": "Padding tokens carry no signal but the body still produces hidden states for them. Without masking, padded positions corrupt the pooled representation, especially on short sequences in a batch padded to the longest example."
+      "explanation": "mean_pool multiplies hidden states by the broadcast attention mask and divides by the count of real tokens. Padding hidden states are not assumed to be zero; including them adds non-content vectors and gives short examples the wrong weighting."
     },
     {
       "stage": "check",
