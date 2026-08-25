@@ -4,7 +4,7 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For hinge loss max(0, 1-yf(x)), what is the loss when y=1 and f(x)=0.5?",
+      "question": "For hinge loss max(0, 1 - y f(x)), what is the loss when y=1 and f(x)=0.5?",
       "options": [
         "0.5",
         "1.5",
@@ -12,67 +12,67 @@
         "-0.5"
       ],
       "correct": 0,
-      "explanation": "The margin is y f(x)=0.5, so the hinge loss is max(0,1-0.5)=0.5."
+      "explanation": "The signed margin is 0.5, so max(0, 1 - 0.5) equals 0.5."
     },
     {
       "stage": "check",
-      "question": "Which training examples are support vectors in a soft-margin linear SVM?",
+      "question": "Which labels does the local LinearSVM contract accept?",
       "options": [
-        "Only examples far beyond the correct margin",
-        "Examples on or inside the margin that affect the boundary",
-        "Every example with a missing feature",
-        "Only the examples in the test set"
-      ],
-      "correct": 1,
-      "explanation": "Points on the margin or violating it contribute to the objective and determine the fitted boundary."
-    },
-    {
-      "stage": "check",
-      "question": "What is the usual effect of increasing C in a soft-margin SVM?",
-      "options": [
-        "All training points are discarded",
-        "The kernel is automatically changed to RBF",
-        "Misclassification is penalized more, often producing a narrower margin",
-        "The margin is forced to zero regardless of the data"
-      ],
-      "correct": 2,
-      "explanation": "A larger C emphasizes training errors, allowing less violation at the cost of a less-regularized boundary."
-    },
-    {
-      "stage": "check",
-      "question": "What does an RBF kernel provide in the SVM formulation?",
-      "options": [
-        "A guarantee that every feature is standardized",
-        "A replacement for the hinge loss with cross-entropy",
-        "A method that removes all support vectors",
-        "A way to model nonlinear boundaries through pairwise similarities"
+        "Only 0 and 1",
+        "Any integer class IDs",
+        "The strings positive and negative",
+        "-1 and 1"
       ],
       "correct": 3,
-      "explanation": "The kernel computes inner products in an implicit feature space, allowing nonlinear decision boundaries without constructing that space explicitly."
+      "explanation": "The primal update multiplies the feature gradient by y, and the implementation validates that each label is -1 or 1."
     },
     {
-      "stage": "post",
-      "question": "Two classes are linearly separable. Which boundary does the hard-margin SVM prefer?",
+      "stage": "check",
+      "question": "What happens to a correctly classified training row whose signed margin is 1.4?",
       "options": [
-        "The separating boundary with the largest margin to the nearest points",
-        "The boundary that passes through the most training points",
-        "The boundary with the largest intercept",
-        "A random boundary followed by nearest-neighbor voting"
+        "Its hinge-loss contribution is zero",
+        "It is forced to become a support vector",
+        "Its label is changed to 0",
+        "Its RBF similarity is computed instead"
       ],
       "correct": 0,
-      "explanation": "Maximizing the minimum distance to either class gives the maximum-margin separator."
+      "explanation": "Hinge loss is max(0, 1 - margin), so a margin above one contributes zero loss for that row."
+    },
+    {
+      "stage": "check",
+      "question": "What does increasing lambda_param do in the local primal objective?",
+      "options": [
+        "Adds a stronger 0.5*lambda_param*||w||² penalty",
+        "Replaces hinge loss with cross-entropy",
+        "Removes the bias from every score",
+        "Automatically changes the model to an RBF kernel"
+      ],
+      "correct": 0,
+      "explanation": "lambda_param controls the explicit L2 term in svm_objective; it does not select a kernel or alter the label encoding."
     },
     {
       "stage": "post",
-      "question": "Your labels include a few unavoidable errors. Which SVM choice is most sensible?",
+      "question": "What is rbf_kernel([0,0], [0,0]) with the local default gamma=0.5?",
       "options": [
-        "Use a hard margin so every noisy point controls the boundary",
-        "Use a soft margin and tune C rather than demanding perfect separation",
-        "Remove the hinge loss and fit class means",
-        "Set every feature weight to one before training"
+        "0.5",
+        "1.0",
+        "exp(-0.5)",
+        "It is undefined for identical vectors"
       ],
       "correct": 1,
-      "explanation": "A soft margin permits selected violations, preventing a noisy label from forcing an extreme boundary."
+      "explanation": "The squared distance is zero, so exp(-0.5*0) is exactly 1."
+    },
+    {
+      "stage": "post",
+      "question": "For the four-row fixture X=[[-2],[-1],[1],[2]] and y=[-1,-1,1,1], which result is a useful acceptance check after fitting?",
+      "options": [
+        "Labels outside {-1,1} are silently converted",
+        "The model reports a positive margin width and separates most or all rows",
+        "The kernel matrix must have one row per class",
+        "The bias is always exactly zero"
+      ],
+      "correct": 1,
+      "explanation": "A fitted separator should have a nonzero weight and positive 2/||w|| margin; the exact coefficients depend on the learning settings."
     }
   ]
 }

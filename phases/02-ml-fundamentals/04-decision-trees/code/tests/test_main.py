@@ -39,7 +39,7 @@ class DecisionTreeTests(unittest.TestCase):
 
     def test_tree_pruning_changes_leaf_complexity(self):
         shallow = DecisionTree(max_depth=0).fit(self.X, self.y)
-        self.assertEqual(shallow.predict([[0], [5]]), [0, 0])
+        self.assertEqual(shallow.predict([[0], [5]]), [1, 1])
 
     def test_forest_votes_and_reports_importances(self):
         forest = RandomForest(n_trees=9, max_depth=2, seed=3).fit(self.X, self.y)

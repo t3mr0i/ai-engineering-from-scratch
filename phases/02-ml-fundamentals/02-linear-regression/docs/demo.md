@@ -1,30 +1,21 @@
 # Guided demo: Linear Regression
 
-> **Time:** 10–15 minutes · **Question:** What observable evidence shows that you can derive the gradient descent update rules for mean squared error and implement linear regression from scratch?
+This short path checks the values that matter in the local Python implementation.
 
-## Before you run
+## Run
 
-Write one predicted invariant for the baseline. Tie it to this objective: **Derive the gradient descent update rules for mean squared error and implement linear regression from scratch.** Do not inspect the output first.
+From the lesson code directory:
 
-## Run the baseline
+    python3 main.py
 
-From the repository root:
+The seeded command prints the gradient fit, the scalar normal-equation fit, the R-squared value, and the standardized means used by Ridge. It exits with status 0 without network access.
 
-```bash
-julia phases/02-ml-fundamentals/02-linear-regression/code/main.jl
-```
+## Probe
 
-The command must print a bounded result and exit with status 0. Locate the part of the output that provides evidence for **Derive the gradient descent update rules for mean squared error and implement linear regression from scratch**. Record the exact input, the relevant output, and the invariant in one sentence.
+Use X=[0,1,2,3] and y=[7,10,13,16]. Fit LinearRegression for 800 epochs and LinearRegressionNormal once. The expected normal-equation result is w=3 and b=7. The gradient model should approach those values and its cost_history should decrease.
 
-## Change one variable
-
-Change the smallest input or configuration value that helps you investigate **Compare gradient descent and the normal equation in terms of computational complexity and when to use each**. Keep every other value fixed. Run the same command again and capture a before/after pair; a screenshot without the values is not sufficient evidence.
-
-## Probe a failure
-
-Choose an edge case or violated precondition related to **Build a multiple linear regression model with feature standardization and interpret the learned weights**. Predict whether the program should reject it, degrade gracefully, or return a different valid result. Run the probe and explain any mismatch between prediction and observation. Restore the source afterward.
+Then call standardize on [[1,10],[2,20],[3,30]]. The expected means are [2,20]; the transformed columns have mean zero. A zero-variance column is represented by zeros, so no division-by-zero exception is expected.
 
 ## Exit ticket
 
-In three sentences, state (1) the mechanism you observed, (2) the controlled change and its effect, and (3) the acceptance check that demonstrates you can **explain how Ridge regression (L2 regularization) prevents overfitting by penalizing large weights**. If the evidence is ambiguous, name the next measurement rather than claiming success.
-
+Record the two fitted parameter pairs, the first and last cost values, and the scaling means. State which observation is a local fixture and which contract is a reusable input check.
