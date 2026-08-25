@@ -46,6 +46,14 @@ class DecisionTreeTests(unittest.TestCase):
         self.assertGreaterEqual(accuracy(self.y, forest.predict(self.X)), 0.8)
         self.assertAlmostEqual(sum(forest.feature_importances()), 1.0)
 
+    def test_forest_seed_controls_bootstrap_and_feature_sampling(self):
+        X = [[x, (x * 7) % 5, (x * 11) % 3] for x in range(12)]
+        y = [int(x + row[1] > 5) for x, row in enumerate(X)]
+        first = RandomForest(n_trees=7, max_depth=3, max_features=1, seed=11).fit(X, y)
+        second = RandomForest(n_trees=7, max_depth=3, max_features=1, seed=11).fit(X, y)
+        self.assertEqual([tree.tree for tree in first.trees], [tree.tree for tree in second.trees])
+        self.assertEqual(first.predict(X), second.predict(X))
+
     def test_regression_tree_returns_numeric_leaf_means(self):
         model = DecisionTree(max_depth=1, task="regression").fit(self.X, [0, 0, 0, 10, 10, 10])
         prediction = model.predict([[0], [5]])

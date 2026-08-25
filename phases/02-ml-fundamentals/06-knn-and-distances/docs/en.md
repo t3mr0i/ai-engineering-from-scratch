@@ -38,9 +38,9 @@ outputs/prompt-distance-metric-advisor.md records feature units, metric, k, scal
 ## Exercises
 
 1. Verify the L1/L2 values above and compare cosine distance for [1,0] and [2,0] (zero distance because the direction matches).
-2. Fit the three-row classification fixture with k=3, then change the query from 0.5 to 9.5; explain the label change from the neighbor ordering.
+2. Fit the three-row classification fixture with k=1, then query 0.5 and 9.5; explain why the nearest row changes from a near label to far. For an exact distance tie, use the lower original training index as the deterministic tie-break.
 3. Standardize [[1,10],[2,10],[3,10]] and explain why the constant second column becomes zero.
 
 ## Reference Solution
 
-The distance calculations are 7 and 5, cosine distance is zero for positive multiples, and the three-row KNN returns near for query 0.5. The constant feature has mean 10 and zero scale, so its transformed values are zero. A complete handoff includes units and scaling statistics and avoids claiming that this reference implementation proves KD-tree speed.
+The distance calculations are 7 and 5, cosine distance is zero for positive multiples, and k=1 returns near for query 0.5 but far for query 9.5. KDTree and predict_with_neighbors preserve original training indices, including indices 1 and 2 for query 11 on [[0],[10],[20]]. The constant feature has mean 10 and zero scale, so its transformed values are zero. A complete handoff includes units and scaling statistics and avoids claiming that this reference implementation proves KD-tree speed.

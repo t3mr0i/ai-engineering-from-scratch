@@ -1,3 +1,4 @@
+import math
 import sys
 import unittest
 from pathlib import Path
@@ -46,6 +47,13 @@ class ClusteringTests(unittest.TestCase):
         self.assertAlmostEqual(sum(weights), 1.0, places=5)
         self.assertTrue(all(abs(sum(row) - 1) < 1e-6 for row in responsibilities))
 
+    def test_gmm_normalizes_responsibilities_in_high_dimension(self):
+        data = [[0.0] * 1000, [1.0] * 1000]
+        _, _, _, responsibilities = gmm(data, 2, max_iterations=10, seed=5)
+        for row in responsibilities:
+            self.assertTrue(all(value >= 0 and math.isfinite(value) for value in row))
+            self.assertAlmostEqual(sum(row), 1.0, places=12)
+
     def test_agglomerative_history_has_one_merge_per_reduction(self):
         labels, history = agglomerative_clustering(self.data[:6], n_clusters=2, linkage="average")
         self.assertEqual(len(labels), 6)
@@ -54,6 +62,8 @@ class ClusteringTests(unittest.TestCase):
     def test_moons_fixture_has_expected_size(self):
         data, labels = make_moons(20, noise=0, seed=1)
         self.assertEqual((len(data), len(labels)), (20, 20))
+        odd_data, odd_labels = make_moons(21, noise=0, seed=1)
+        self.assertEqual((len(odd_data), len(odd_labels)), (21, 21))
 
     def test_parameter_contracts_are_explicit(self):
         with self.assertRaises(ValueError):

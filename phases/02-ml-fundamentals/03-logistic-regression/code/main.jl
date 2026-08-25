@@ -1,9 +1,8 @@
-# Logistic regression in Julia. Sigmoid + binary cross-entropy gradient
-# descent for two classes, plus multi-class softmax regression. Reports
-# confusion-matrix metrics. Stdlib only. Sources:
-#   https://docs.julialang.org/en/v1/manual/mathematical-operations/
-#   https://docs.julialang.org/en/v1/stdlib/Random/
-#   https://docs.julialang.org/en/v1/stdlib/Statistics/
+# Lesson: phases/02-ml-fundamentals/03-logistic-regression/docs/en.md
+# Logistic regression in Julia: sigmoid/BCE, metrics, and softmax regression.
+# Stdlib-only parallel implementation; labels follow the documented integer contract.
+# Sources: Julia mathematical-operations and Random standard-library documentation.
+# https://docs.julialang.org/en/v1/stdlib/Random/
 
 using Random
 using Statistics

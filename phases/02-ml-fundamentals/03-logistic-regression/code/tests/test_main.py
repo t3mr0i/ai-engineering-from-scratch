@@ -54,9 +54,17 @@ class LogisticRegressionTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             LogisticRegression(1).fit([[0]], [2])
         with self.assertRaises(ValueError):
+            LogisticRegression(1).fit([[0]], [0.5])
+        with self.assertRaises(ValueError):
+            LogisticRegression(1).fit([[0]], ["0"])
+        with self.assertRaises(ValueError):
             LogisticRegression(1).predict([0], threshold=1.2)
         with self.assertRaises(ValueError):
             ClassificationMetrics([], [])
+        with self.assertRaises(ValueError):
+            ClassificationMetrics([2], [2])
+        with self.assertRaises(ValueError):
+            SoftmaxRegression(1, 2).fit([[0]], [1.9])
 
 
 if __name__ == "__main__":

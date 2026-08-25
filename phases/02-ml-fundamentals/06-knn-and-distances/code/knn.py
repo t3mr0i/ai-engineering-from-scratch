@@ -92,8 +92,8 @@ class KNN:
         query = list(map(float, row))
         if len(query) != len(self.X_train[0]):
             raise ValueError("query width does not match training rows")
-        distances = [(self.distance_fn(query, train_row), label) for train_row, label in zip(self.X_train, self.y_train)]
-        distances.sort(key=lambda pair: pair[0])
+        distances = [(self.distance_fn(query, train_row), index, self.y_train[index]) for index, train_row in enumerate(self.X_train)]
+        distances.sort(key=lambda pair: (pair[0], pair[1]))
         return distances[: self.k]
 
     def _classify(self, neighbors):
@@ -112,12 +112,14 @@ class KNN:
         predictions = []
         for row in X:
             neighbors = self._neighbors(row)
-            predictions.append(self._classify(neighbors) if self.task == "classification" else self._regress(neighbors))
+            pairs = [(distance, label) for distance, _, label in neighbors]
+            predictions.append(self._classify(pairs) if self.task == "classification" else self._regress(pairs))
         return predictions
 
     def predict_with_neighbors(self, x):
-        neighbors = [(distance, index, label) for index, (distance, label) in enumerate(self._neighbors(x))]
-        prediction = self._classify([(distance, label) for distance, _, label in neighbors]) if self.task == "classification" else self._regress([(distance, label) for distance, _, label in neighbors])
+        neighbors = self._neighbors(x)
+        pairs = [(distance, label) for distance, _, label in neighbors]
+        prediction = self._classify(pairs) if self.task == "classification" else self._regress(pairs)
         return prediction, neighbors
 
 

@@ -130,16 +130,20 @@ def gmm(data, k, max_iterations=100, seed=42):
     weights = [1 / k] * k
     responsibilities = [[1 / k] * k for _ in rows]
 
-    def density(row, mean, variance):
-        coefficient = (2 * math.pi * variance) ** (-dimension / 2)
-        exponent = -sum((value - center) ** 2 for value, center in zip(row, mean)) / (2 * variance)
-        return coefficient * math.exp(max(-500, exponent))
+    def log_density(row, mean, variance):
+        squared_distance = sum((value - center) ** 2 for value, center in zip(row, mean))
+        return -0.5 * dimension * math.log(2 * math.pi * variance) - squared_distance / (2 * variance)
+
+    def normalized_responsibilities(row):
+        log_probabilities = [math.log(weights[j]) + log_density(row, means[j], variances[j]) for j in range(k)]
+        maximum = max(log_probabilities)
+        shifted = [math.exp(value - maximum) for value in log_probabilities]
+        total = sum(shifted)
+        return [value / total for value in shifted]
 
     for _ in range(max_iterations):
         for i, row in enumerate(rows):
-            probabilities = [weights[j] * density(row, means[j], variances[j]) for j in range(k)]
-            total = sum(probabilities) or 1e-300
-            responsibilities[i] = [value / total for value in probabilities]
+            responsibilities[i] = normalized_responsibilities(row)
         old = [list(mean) for mean in means]
         for j in range(k):
             mass = sum(resp[j] for resp in responsibilities)
@@ -205,11 +209,12 @@ def make_moons(n_samples=100, noise=0.1, seed=42):
     if n_samples < 2 or noise < 0:
         raise ValueError("n_samples and noise are invalid")
     rng = random.Random(seed)
-    half = n_samples // 2
+    first_count = n_samples // 2
+    second_count = n_samples - first_count
     data, labels = [], []
-    for label, offset in ((0, (0, 0)), (1, (1, -0.5))):
-        for i in range(half):
-            angle = math.pi * i / max(half - 1, 1)
+    for label, offset, count in ((0, (0, 0), first_count), (1, (1, -0.5), second_count)):
+        for i in range(count):
+            angle = math.pi * i / max(count - 1, 1)
             sign = 1 if label == 0 else -1
             data.append([offset[0] + math.cos(angle) + rng.gauss(0, noise), offset[1] + sign * math.sin(angle) + rng.gauss(0, noise)])
             labels.append(label)

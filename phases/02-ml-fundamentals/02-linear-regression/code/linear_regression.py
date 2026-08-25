@@ -106,6 +106,8 @@ class LinearRegressionNormal:
         features, targets = _xy(X, y)
         mean = sum(targets) / len(targets)
         total = sum((value - mean) ** 2 for value in targets)
+        if total == 0:
+            raise ValueError("R-squared is undefined for a constant target")
         residual = sum((value - prediction) ** 2 for value, prediction in zip(targets, self.predict(features)))
         return 1 - residual / total
 
@@ -152,6 +154,8 @@ class MultipleLinearRegression:
         rows, targets = _matrix_xy(X, y)
         mean = sum(targets) / len(targets)
         total = sum((value - mean) ** 2 for value in targets)
+        if total == 0:
+            raise ValueError("R-squared is undefined for a constant target")
         residual = sum((value - prediction) ** 2 for value, prediction in zip(targets, self.predict(rows)))
         return 1 - residual / total
 

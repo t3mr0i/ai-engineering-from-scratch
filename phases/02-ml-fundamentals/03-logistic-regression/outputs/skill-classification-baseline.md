@@ -18,4 +18,4 @@ Use SoftmaxRegression when labels are integers from 0 through n_classes-1. Confi
 
 ## Guardrails
 
-Reject labels outside 0/1 for the binary class, wrong feature widths, thresholds outside [0,1], empty data, and ragged rows. Extreme logits are clipped before exponentiation and probabilities are clamped before logarithms. The local scores are fixture evidence, not a guarantee for a new population.
+Reject anything other than integer labels 0/1 for the binary class, including fractional values and strings; also reject wrong feature widths, thresholds outside [0,1], empty data, and ragged rows. Extreme logits are clipped before exponentiation and probabilities are clamped before logarithms. The local scores are fixture evidence, not a guarantee for a new population.

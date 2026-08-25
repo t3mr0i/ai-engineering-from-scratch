@@ -1,9 +1,8 @@
-# Support vector machines in Julia. Linear SVM trained by stochastic
-# sub-gradient descent on hinge loss with L2 regularization (soft margin),
-# plus polynomial and RBF kernel functions. Stdlib only. Sources:
-#   https://docs.julialang.org/en/v1/manual/control-flow/
-#   https://docs.julialang.org/en/v1/stdlib/Random/
-#   https://docs.julialang.org/en/v1/manual/arrays/
+# Lesson: phases/02-ml-fundamentals/05-support-vector-machines/docs/en.md
+# Support vector machines in Julia: hinge loss, soft margin, and kernels.
+# Stdlib-only parallel implementation using labels -1 and 1.
+# Sources: Julia control-flow, Random, and array documentation.
+# https://docs.julialang.org/en/v1/stdlib/Random/
 
 using Random
 using Printf

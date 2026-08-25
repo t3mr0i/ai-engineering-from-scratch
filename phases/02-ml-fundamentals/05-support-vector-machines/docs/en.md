@@ -29,7 +29,7 @@ A four-row separator is X=[[-2],[-1],[1],[2]], y=[-1,-1,1,1]. Fit it for 200 epo
 
 ## Use It
 
-Use a soft margin when labels can be noisy; tune lambda_param against held-out data. A small lambda permits a wider, less-regularized fit, while a larger lambda shrinks weights more strongly. dot, kernels, and LinearSVM reject empty or mismatched vectors instead of truncating them with zip.
+Use a soft margin when labels can be noisy; tune lambda_param against held-out data. A smaller lambda weakens weight shrinkage and can produce a larger norm, hence a narrower geometric margin, while a larger lambda favors a smaller norm and a wider margin at the cost of more possible hinge violations. dot, kernels, and LinearSVM reject empty or mismatched vectors instead of truncating them with zip.
 
 ## Ship It
 
@@ -43,4 +43,4 @@ outputs/skill-svm-kernel-chooser.md records the label encoding, lambda, kernel p
 
 ## Reference Solution
 
-The first hinge loss is zero and the second is 0.5. The RBF self-similarity is one and the farther vector has a smaller positive similarity. The linear fixture reaches at least 75% accuracy in the tests, reports a positive margin width, and rejects labels outside {-1,1}.
+The first hinge loss is zero and the second is 0.5. The RBF self-similarity is one and the farther vector has a smaller positive similarity. The linear fixture classifies at least three of its four rows in the tests, reports a positive margin width, and rejects labels outside {-1,1}; unfitted scoring methods raise RuntimeError.

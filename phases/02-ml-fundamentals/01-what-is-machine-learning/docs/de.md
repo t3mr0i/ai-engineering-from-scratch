@@ -68,4 +68,4 @@ Eine belastbare Antwort benennt zuerst die konkrete Entscheidung und trennt Info
 
 - [Google Machine Learning Crash Course](https://developers.google.com/machine-learning/crash-course)
 - [An Introduction to Statistical Learning](https://www.statlearning.com/)
-- [scikit-learn User Guide](https://scikit-learn.org/stable/user_guide.html)
+- [NumPy reference](https://numpy.org/doc/stable/reference/)

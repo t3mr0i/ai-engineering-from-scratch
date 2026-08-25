@@ -78,7 +78,7 @@ def majority_vote(labels):
 
 class DecisionTree:
     def __init__(self, max_depth=None, min_samples_split=2, min_samples_leaf=1,
-                 criterion="gini", max_features=None, task="classification"):
+                 criterion="gini", max_features=None, task="classification", rng=None):
         if max_depth is not None and max_depth < 0:
             raise ValueError("max_depth must be non-negative or None")
         if min_samples_split < 2 or min_samples_leaf < 1:
@@ -93,6 +93,7 @@ class DecisionTree:
         self.criterion = criterion
         self.max_features = max_features
         self.task = task
+        self.rng = rng if rng is not None else random.Random()
         self.tree = None
         self.feature_importances_ = None
         self.n_features = 0
@@ -120,7 +121,7 @@ class DecisionTree:
             count = min(self.n_features, self.max_features)
         else:
             raise ValueError("max_features must be None, 'sqrt', or a positive integer")
-        return random.sample(range(self.n_features), count)
+        return self.rng.sample(range(self.n_features), count)
 
     def _build(self, X, y, depth):
         if len(set(y)) == 1 or (self.max_depth is not None and depth >= self.max_depth) or len(y) < self.min_samples_split:
@@ -187,7 +188,16 @@ class RandomForest:
         self.trees = []
         for _ in range(self.n_trees):
             indices = [rng.randrange(len(rows)) for _ in rows]
-            tree = DecisionTree(self.max_depth, self.min_samples_split, 1, self.criterion, self.max_features, self.task)
+            tree_rng = random.Random(rng.randrange(2**63))
+            tree = DecisionTree(
+                self.max_depth,
+                self.min_samples_split,
+                1,
+                self.criterion,
+                self.max_features,
+                self.task,
+                rng=tree_rng,
+            )
             tree.fit([rows[i] for i in indices], [labels[i] for i in indices])
             self.trees.append(tree)
         return self

@@ -19,7 +19,7 @@
 
 kmeans(data,k) samples k initial rows, assigns each row to the nearest centroid, recomputes means, and stops when centroids move less than 1e-8 or max_iterations is reached. compute_inertia sums squared point-to-centroid distances. silhouette_score compares a point's average within-cluster distance with the nearest other cluster, returning a value in approximately [-1,1].
 
-dbscan grows a cluster from rows with at least min_samples neighbors inside eps; rows never reached remain -1 noise. gmm uses spherical variances and EM, returning hard assignments, means, weights, and a responsibility matrix. agglomerative_clustering returns labels plus merge history for single, complete, average, or Ward linkage. All functions reject empty or ragged data and invalid parameter ranges.
+dbscan grows a cluster from rows with at least min_samples neighbors inside eps; rows never reached remain -1 noise. gmm uses spherical variances and EM, returning hard assignments, means, weights, and a responsibility matrix. Its E-step uses log densities with a max-shift before exponentiation, so a high-dimensional row still receives finite normalized responsibilities. agglomerative_clustering returns labels plus merge history for single, complete, average, or Ward linkage. All functions reject empty or ragged data and invalid parameter ranges.
 
 ## Build It
 
@@ -39,7 +39,7 @@ outputs/skill-clustering-guide.md records the algorithm, seed, parameters, centr
 
 1. Fit two clusters to the blob fixture and verify that inertia is below 1 and silhouette is above 0.8.
 2. Run dbscan(data, eps=0.3, min_samples=2) and count the two non-noise labels. Explain what would happen if eps were much smaller.
-3. Run gmm(data, 2) and check both sum(weights)==1 and sum(responsibilities[0])==1 within floating-point tolerance.
+3. Run gmm(data, 2) and check both sum(weights)==1 and sum(responsibilities[0])==1 within floating-point tolerance. Repeat with two 1000-dimensional rows and check that every responsibility is finite.
 
 ## Reference Solution
 

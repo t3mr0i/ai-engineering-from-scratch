@@ -23,13 +23,13 @@ ClassificationMetrics stores TP, TN, FP, and FN and derives accuracy, precision,
 
 ## Build It
 
-Run python3 main.py from code/. It creates 120 points near (2,2) with label 0 and 60 points near (5,5) with label 1, fits 800 epochs, and prints the initial/final BCE, accuracy, and metric dictionary. It then prints softmax probabilities for [3,0]; their sum is one. Exact accuracy is a property of the seeded local fixture, not a general guarantee.
+Run python3 main.py from code/. It creates 60 points near (2,2) with label 0 and 60 points near (5,5) with label 1, for 120 rows total. It fits 800 epochs and prints the initial/final BCE, accuracy, and metric dictionary. It then prints softmax probabilities for [3,0]; their sum is one. Exact accuracy is a property of the seeded local fixture, not a general guarantee.
 
 A small hand fixture is X=[[0],[1],[2],[3]], y=[0,0,1,1]. After fitting, call predict on each row and compare the predictions with the labels.
 
 ## Use It
 
-Lowering threshold marks more rows positive, which can increase recall and false positives; it does not alter the sigmoid weights. Choose the threshold on a validation set using the operational cost of FN versus FP. A positive label must be encoded as 1, a negative label as 0; any other label is rejected.
+Lowering threshold marks more rows positive, which can increase recall and false positives; it does not alter the sigmoid weights. Choose the threshold on a validation set using the operational cost of FN versus FP. A positive label must be the integer 1 and a negative label the integer 0; fractional values, strings, booleans, and other integers are rejected rather than silently converted.
 
 ## Ship It
 

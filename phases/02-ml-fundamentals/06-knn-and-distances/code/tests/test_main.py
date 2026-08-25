@@ -28,6 +28,8 @@ class KNNTests(unittest.TestCase):
     def test_classification_majority_and_weighted_vote(self):
         model = KNN(k=3).fit([[0], [1], [10]], ["near", "near", "far"])
         self.assertEqual(model.predict([[0.5]]), ["near"])
+        nearest = KNN(k=1).fit([[0], [1], [10]], ["near", "near", "far"])
+        self.assertEqual(nearest.predict([[0.5], [9.5]]), ["near", "far"])
         weighted = KNN(k=2, weighted=True).fit([[0], [10]], ["near", "far"])
         self.assertEqual(weighted.predict([[0.1]]), ["near"])
 
@@ -46,6 +48,13 @@ class KNNTests(unittest.TestCase):
         tree = KDTree([[0, 0], [5, 5], [1, 0]])
         result = tree.query([0.2, 0], k=2)
         self.assertEqual([row[1] for row in result], [0, 2])
+
+    def test_predict_with_neighbors_preserves_training_indices(self):
+        model = KNN(k=2, weighted=True).fit([[0], [10], [20]], ["zero", "ten", "twenty"])
+        prediction, neighbors = model.predict_with_neighbors([11])
+        self.assertEqual(prediction, "ten")
+        self.assertEqual([item[1] for item in neighbors], [1, 2])
+        self.assertEqual([item[2] for item in neighbors], ["ten", "twenty"])
 
     def test_invalid_shapes_and_k_are_rejected(self):
         with self.assertRaises(ValueError):

@@ -1,9 +1,8 @@
-# Linear regression in Julia. Closed-form normal equation and batch
-# gradient descent, plus multiple linear regression and a ridge penalty.
-# Stdlib only. Sources:
-#   https://docs.julialang.org/en/v1/manual/types/
-#   https://docs.julialang.org/en/v1/stdlib/Statistics/
-#   https://docs.julialang.org/en/v1/stdlib/Random/
+# Lesson: phases/02-ml-fundamentals/02-linear-regression/docs/en.md
+# Linear regression in Julia: normal equation, gradient descent, and Ridge.
+# Stdlib-only parallel implementation; reported values use the local fixture.
+# Sources: Julia Statistics and Random standard-library documentation.
+# https://docs.julialang.org/en/v1/stdlib/Statistics/
 
 using Random
 using Statistics

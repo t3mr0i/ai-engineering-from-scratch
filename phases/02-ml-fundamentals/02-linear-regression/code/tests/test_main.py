@@ -34,6 +34,12 @@ class LinearRegressionTests(unittest.TestCase):
         model = LinearRegressionNormal().fit(self.X, self.y)
         self.assertAlmostEqual(model.r_squared(self.X, self.y), 1.0)
 
+    def test_all_r_squared_variants_reject_constant_targets(self):
+        with self.assertRaises(ValueError):
+            LinearRegressionNormal().fit([0, 1], [4, 4]).r_squared([0, 1], [4, 4])
+        with self.assertRaises(ValueError):
+            MultipleLinearRegression(1).fit([[0], [1]], [4, 4], epochs=10).r_squared([[0], [1]], [4, 4])
+
     def test_standardize_returns_zero_means_and_unit_scales(self):
         scaled, means, stds = standardize([[1, 10], [2, 20], [3, 30]])
         self.assertEqual(means, [2, 20])

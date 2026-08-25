@@ -51,6 +51,22 @@ class SVMTests(unittest.TestCase):
         indices = model.find_support_vectors(X, y, tol=10)
         self.assertTrue(all(0 <= index < len(X) for index in indices))
 
+    def test_fitted_methods_have_explicit_contracts(self):
+        model = LinearSVM()
+        with self.assertRaises(RuntimeError):
+            model.decision_function([[0]])
+        with self.assertRaises(RuntimeError):
+            model.margin_width()
+        with self.assertRaises(RuntimeError):
+            model.find_support_vectors([[0]], [1])
+        model.fit([[-1], [1]], [-1, 1])
+        with self.assertRaises(ValueError):
+            model.decision_function([[]])
+        with self.assertRaises(ValueError):
+            model.find_support_vectors([[-1], [1]], [0, 1])
+        with self.assertRaises(ValueError):
+            model.find_support_vectors([[-1]], [-1], tol=-1)
+
     def test_invalid_vectors_and_labels_are_rejected(self):
         with self.assertRaises(ValueError):
             dot([1], [1, 2])

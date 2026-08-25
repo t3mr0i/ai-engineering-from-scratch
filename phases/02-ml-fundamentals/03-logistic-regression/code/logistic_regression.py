@@ -13,12 +13,14 @@ import random
 
 def _matrix_xy(X, y):
     rows = [list(map(float, row)) for row in X]
-    labels = [int(value) for value in y]
+    labels = list(y)
     if not rows or len(rows) != len(labels) or not rows[0]:
         raise ValueError("X and y must be non-empty and have matching lengths")
     width = len(rows[0])
     if any(len(row) != width for row in rows):
         raise ValueError("all feature rows must have the same width")
+    if any(type(value) is not int for value in labels):
+        raise ValueError("labels must be integer values; no coercion is performed")
     return rows, labels
 
 
@@ -93,6 +95,8 @@ class ClassificationMetrics:
         predicted = list(y_pred)
         if not actual or len(actual) != len(predicted):
             raise ValueError("y_true and y_pred must be non-empty and equal length")
+        if any(type(value) is not int or value not in (0, 1) for value in actual + predicted):
+            raise ValueError("classification metrics require binary integer labels 0 or 1")
         self.tp = sum(t == 1 and p == 1 for t, p in zip(actual, predicted))
         self.tn = sum(t == 0 and p == 0 for t, p in zip(actual, predicted))
         self.fp = sum(t == 0 and p == 1 for t, p in zip(actual, predicted))

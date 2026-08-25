@@ -91,10 +91,21 @@ class LinearSVM:
         self.b = 0.0
         self.loss_history = []
 
+    def _check_fitted(self):
+        if self.w is None:
+            raise RuntimeError("fit must be called before using the fitted SVM")
+
+    def _rows(self, X):
+        self._check_fitted()
+        rows = [list(map(float, row)) for row in X]
+        if not rows or not rows[0] or any(len(row) != len(self.w) for row in rows):
+            raise ValueError("X must be non-empty and match the fitted feature width")
+        return rows
+
     def fit(self, X, y):
-        if not X or len(X) != len(y) or any(label not in (-1, 1) for label in y):
+        if not X or len(X) != len(y) or any(type(label) is not int or label not in (-1, 1) for label in y):
             raise ValueError("X and y must be non-empty with -1/1 labels")
-        if any(len(row) != len(X[0]) for row in X):
+        if not X[0] or any(len(row) != len(X[0]) for row in X):
             raise ValueError("all feature rows must have equal width")
         n_features = len(X[0])
         n_samples = len(X)
@@ -128,23 +139,29 @@ class LinearSVM:
         return self
 
     def predict(self, X):
-        if self.w is None:
-            raise RuntimeError("fit must be called before predict")
-        return [1 if dot(self.w, x) + self.b >= 0 else -1 for x in X]
+        return [1 if value >= 0 else -1 for value in self.decision_function(X)]
 
     def decision_function(self, X):
-        return [dot(self.w, x) + self.b for x in X]
+        rows = self._rows(X)
+        return [dot(self.w, row) + self.b for row in rows]
 
     def margin_width(self):
+        self._check_fitted()
         w_norm = vec_norm(self.w)
         if w_norm == 0:
             return 0.0
         return 2.0 / w_norm
 
     def find_support_vectors(self, X, y, tol=0.1):
+        rows = self._rows(X)
+        labels = list(y)
+        if len(rows) != len(labels) or any(type(label) is not int or label not in (-1, 1) for label in labels):
+            raise ValueError("X and y must be non-empty and use -1/1 labels")
+        if not math.isfinite(tol) or tol < 0:
+            raise ValueError("tol must be a finite non-negative number")
         svs = []
-        for i in range(len(X)):
-            margin = y[i] * (dot(self.w, X[i]) + self.b)
+        for i, (row, label) in enumerate(zip(rows, labels)):
+            margin = label * (dot(self.w, row) + self.b)
             if abs(margin - 1.0) < tol:
                 svs.append(i)
         return svs
@@ -323,8 +340,8 @@ def demo_c_parameter():
               f"{margin:>8.4f}  {n_sv:>6d}")
 
     print()
-    print("  Small C (large lambda): wide margin, more errors, better generalization.")
-    print("  Large C (small lambda): narrow margin, fewer errors, risk of overfitting.")
+    print("  Large lambda favors a smaller weight norm and wider geometric margin, with more slack.")
+    print("  Small lambda permits a larger norm and narrower margin, with fewer slack penalties.")
     print()
 
 
@@ -587,7 +604,7 @@ def print_summary():
     print("  1. SVMs find the maximum margin hyperplane between classes.")
     print("  2. Only support vectors determine the boundary.")
     print("  3. Hinge loss produces sparse models (zero loss outside margin).")
-    print("  4. The C parameter trades off margin width vs classification errors.")
+    print("  4. lambda_param trades off weight shrinkage against margin violations.")
     print("  5. The kernel trick enables nonlinear boundaries via dot products.")
     print("  6. RBF kernel maps to infinite dimensions using local similarity.")
     print("  7. Linear SVMs train in O(n*d) per epoch using gradient descent.")
