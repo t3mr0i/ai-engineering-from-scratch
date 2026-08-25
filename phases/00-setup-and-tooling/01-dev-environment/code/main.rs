@@ -1,12 +1,8 @@
-// Lesson: Dev Environment (phase 00 / lesson 01)
-// Topic: verify that the four-layer toolchain (system, package managers, runtimes, libs)
-// is reachable from a Rust binary. Spawns each tool with `--version`, captures stdout,
-// reports PASS/FAIL plus the parsed version string. Stdlib only.
-// Refs:
-//   https://doc.rust-lang.org/std/process/struct.Command.html
-//   https://doc.rust-lang.org/std/process/struct.Output.html
-//   https://doc.rust-lang.org/book/ch12-00-an-io-project.html
-// Build: rustc --edition 2021 code/main.rs -o /tmp/lesson_dev_env && /tmp/lesson_dev_env
+// Lesson: Dev Environment (phase 00 / lesson 01); see docs/en.md.
+// Probe the four toolchain layers by spawning version commands from Rust.
+// Required checks fail the run; optional tools are reported as skips.
+// Stdlib only; the canonical build is rustc --edition 2021 code/main.rs.
+// Reference: https://doc.rust-lang.org/std/process/struct.Command.html
 
 use std::process::{Command, ExitCode};
 

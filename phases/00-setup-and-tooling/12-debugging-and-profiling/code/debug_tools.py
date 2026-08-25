@@ -1,3 +1,9 @@
+# Lesson implementation for phases/00-setup-and-tooling/12-debugging-and-profiling/docs/en.md.
+# Keeps timing, allocation, logging, and optional tensor diagnostics in one toolkit.
+# The no-PyTorch path uses only the standard library and exits successfully.
+# Tensor/model demonstrations run only when the allowlisted PyTorch package imports.
+# Run with: python3 main.py.
+
 import sys
 import time
 import tracemalloc
@@ -125,12 +131,19 @@ def demo_timing():
         _ = a @ b
 
 
+def demo_stdlib_timing():
+    print("\n--- 2. Standard-library timing ---")
+    with Timer("stdlib list construction"):
+        values = [index * index for index in range(10_000)]
+    print(f"  Built {len(values)} values; last={values[-1]}")
+
+
 def demo_memory_tracking():
     print("\n--- 3. Memory Tracking (tracemalloc) ---")
     tracemalloc.start()
 
-    data = [torch.randn(100, 100) for _ in range(100)]
-    more_data = torch.randn(1000, 1000)
+    data = [bytearray(10_000) for _ in range(100)]
+    more_data = bytearray(100_000)
 
     snapshot = tracemalloc.take_snapshot()
     top_stats = snapshot.statistics("lineno")
@@ -283,10 +296,12 @@ def main():
     if not HAS_TORCH:
         print("\nPyTorch not installed. Install with:")
         print("  uv pip install torch")
-        print("\nRunning non-PyTorch demos only...\n")
+        print("\nRunning standard-library demos only...\n")
+        demo_stdlib_timing()
         demo_memory_tracking()
         demo_logging()
-        return 1
+        print("\nStandard-library diagnostics complete. PyTorch demos skipped.")
+        return 0
 
     demo_print_debugging()
     demo_timing()

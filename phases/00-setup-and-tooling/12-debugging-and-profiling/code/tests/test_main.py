@@ -1,10 +1,8 @@
-# Contract and executable-behavior tests for this lesson demo.
+# Behavioral tests for both the stdlib fallback and optional tensor tooling.
 from __future__ import annotations
 
-import ast
-import functools
-import importlib.util
-import os
+import contextlib
+import io
 from pathlib import Path
 import subprocess
 import sys
@@ -12,53 +10,58 @@ import unittest
 
 CODE = Path(__file__).resolve().parents[1]
 MAIN = CODE / "main.py"
-ALLOWED = set(sys.stdlib_module_names) | {"numpy", "torch", "h5py", "zstandard", "safetensors"}
+sys.path.insert(0, str(CODE))
 
-def source_trees() -> list[ast.AST]:
-    return [ast.parse(path.read_text(encoding="utf-8")) for path in CODE.glob("*.py")]
+import debug_tools  # noqa: E402
 
-def external_roots() -> set[str]:
-    roots: set[str] = set()
-    for tree in source_trees():
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                roots.update(alias.name.split(".")[0] for alias in node.names)
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                roots.add(node.module.split(".")[0])
-    return {name for name in roots if not (CODE / f"{name}.py").exists() and not (CODE / name).is_dir()}
 
-@functools.lru_cache(maxsize=1)
-def run_demo() -> subprocess.CompletedProcess[str]:
-    missing = sorted(name for name in external_roots() if name in ALLOWED and importlib.util.find_spec(name) is None)
-    banned = sorted(external_roots() - ALLOWED)
-    if missing or banned:
-        raise unittest.SkipTest(f"demo dependencies unavailable or disallowed: {missing + banned}")
-    env = os.environ.copy()
-    for key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "HF_TOKEN", "HUGGINGFACE_TOKEN"):
-        env.pop(key, None)
-    return subprocess.run(
-        [sys.executable, MAIN.name], cwd=CODE, text=True, capture_output=True,
-        timeout=45, env=env, check=False,
-    )
+class DebugToolTests(unittest.TestCase):
+    def test_timer_records_a_nonnegative_duration(self) -> None:
+        with debug_tools.Timer("unit") as timer:
+            sum(range(1000))
+        self.assertGreaterEqual(timer.elapsed, 0.0)
 
-class LessonDemoTests(unittest.TestCase):
-    def test_source_compiles(self) -> None:
-        compile(MAIN.read_text(encoding="utf-8"), str(MAIN), "exec")
+    def test_stdlib_timing_demo_runs_without_torch(self) -> None:
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            debug_tools.demo_stdlib_timing()
+        self.assertIn("Built 10000 values", output.getvalue())
 
-    def test_demo_has_explicit_entrypoint(self) -> None:
+    def test_memory_tracking_demo_uses_stdlib_allocations(self) -> None:
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            debug_tools.demo_memory_tracking()
+        self.assertIn("Top 5 memory allocations", output.getvalue())
+        self.assertNotIn("Traceback", output.getvalue())
+
+    def test_logging_demo_emits_the_lesson_events(self) -> None:
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            debug_tools.demo_logging()
+        self.assertIn("Structured Logging", output.getvalue())
+
+    def test_no_torch_subprocess_path_exits_zero(self) -> None:
+        result = subprocess.run(
+            [sys.executable, "-S", MAIN.name],
+            cwd=CODE,
+            text=True,
+            capture_output=True,
+            check=False,
+            timeout=10,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("standard-library demos only", result.stdout)
+        self.assertIn("diagnostics complete", result.stdout)
+        self.assertNotIn("Traceback", result.stderr)
+
+    def test_source_compiles_and_has_main_entrypoint(self) -> None:
+        compile((CODE / "debug_tools.py").read_text(encoding="utf-8"), "debug_tools.py", "exec")
         source = MAIN.read_text(encoding="utf-8")
-        self.assertTrue("__main__" in source or "runpy.run_path" in source)
+        self.assertIn("runpy.run_path", source)
 
-    def test_demo_exits_successfully(self) -> None:
-        self.assertEqual(run_demo().returncode, 0, run_demo().stderr)
+    def test_optional_torch_flag_is_boolean(self) -> None:
+        self.assertIsInstance(debug_tools.HAS_TORCH, bool)
 
-    def test_demo_emits_bounded_output(self) -> None:
-        result = run_demo()
-        self.assertTrue((result.stdout + result.stderr).strip())
-        self.assertLess(len(result.stdout) + len(result.stderr), 1_000_000)
-
-    def test_demo_has_no_traceback(self) -> None:
-        self.assertNotIn("Traceback (most recent call last)", run_demo().stderr)
 
 if __name__ == "__main__":
     unittest.main()

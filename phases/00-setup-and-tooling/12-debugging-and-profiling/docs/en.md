@@ -14,10 +14,11 @@
 - Trace layer input/output shapes with `check_shapes` and forward hooks.
 - Detect NaN losses and non-finite gradients with `detect_nan`, then inspect devices and gradient norms.
 - Distinguish CPU/Python diagnostics from CUDA memory observations and state the PyTorch precondition for each.
+- Run the bounded standard-library timing, allocation, and logging fallback when PyTorch is absent.
 
 ## The toolkit
 
-The canonical entrypoint is `code/main.py`, which delegates to `debug_tools.py`. With PyTorch installed it runs ten small demonstrations: tensor summaries, two matrix timings, `tracemalloc`, shape hooks through a three-layer MLP, normal and simulated NaN loss, device checks, gradient health, optional CUDA memory, logging, and a conditional `breakpoint()` pattern. Without PyTorch it prints the missing-dependency message, enters the fallback branch, and currently reaches `demo_memory_tracking`, whose `torch.randn(...)` call raises `NameError`; the test harness skips the PyTorch-dependent execution tests. Treat this as a documented dependency/code-path limitation, not a successful CPU fallback.
+The canonical entrypoint is `code/main.py`, which delegates to `debug_tools.py`. With PyTorch installed it runs ten demonstrations: tensor summaries, two matrix timings, `tracemalloc`, shape hooks through a three-layer MLP, normal and simulated NaN loss, device checks, gradient health, optional CUDA memory, logging, and a conditional `breakpoint()` pattern. Without PyTorch it runs a standard-library timer, `tracemalloc` over byte arrays, and structured logging, then exits 0 while clearly reporting that tensor demonstrations were skipped.
 
 ```mermaid
 flowchart TD
@@ -43,7 +44,7 @@ cd phases/00-setup-and-tooling/12-debugging-and-profiling
 python3 code/main.py
 ```
 
-On a machine with PyTorch, `demo_print_debugging` first reports shape `(32, 784)` and then `(32, 128)`; the injected tensor reports `has_nan=True`. `demo_shape_checking` traces `784 -> 256 -> 64 -> 10` for a `(4, 784)` input. `demo_nan_detection` reports a finite normal loss and then detects the simulated NaN at step 99. CUDA memory output appears only when `torch.cuda.is_available()` is true. Timings and allocation counts are measurements of the current machine, not fixed acceptance numbers.
+With PyTorch, `demo_print_debugging` first reports shape `(32, 784)` and then `(32, 128)`; the injected tensor reports `has_nan=True`. `demo_shape_checking` traces `784 -> 256 -> 64 -> 10` for a `(4, 784)` input. `demo_nan_detection` reports a finite normal loss and then detects the simulated NaN at step 99. CUDA memory output appears only when `torch.cuda.is_available()` is true. Without PyTorch, the standard-library path reports 10,000 constructed values, allocation statistics, and logging events. Timings and allocation counts are measurements of the current machine, not fixed acceptance numbers.
 
 ## Use It
 
@@ -65,14 +66,14 @@ For a model, `check_shapes` installs hooks and removes them after the forward pa
 
 ## Exercises
 
-1. Run the entrypoint and record whether the PyTorch branch or the fallback branch ran. If PyTorch is installed, capture the shape and `has_nan` fields from the finite and injected-NaN summaries.
+1. Run the entrypoint and record whether the PyTorch branch or the standard-library branch ran. If PyTorch is installed, capture the shape and `has_nan` fields from the finite and injected-NaN summaries; otherwise capture the fallback timer and allocation headings.
 2. Use a `(2, 3)` tensor with one NaN and compare `debug_print` output with an all-finite tensor. Explain why `has_nan` changes while shape and dtype do not.
 3. Build an `nn.Linear(4, 2)` and pass a `(2, 3)` input to reproduce a shape error. Then pass `(2, 4)` and use `check_shapes` to record the layer transition.
 4. Run the artifact prompt against a simulated NaN loss and require a verification command plus a statement of what `tracemalloc` and CUDA memory do not measure.
 
 ## Reference Solution
 
-The canonical report must expose the finite/NaN distinction and the MLP shape path when PyTorch is available. A shape failure is accepted only when the incompatible input and the layer's expected feature count are recorded. A useful profile reports a named timer and allocation snapshot, but does not compare wall-clock values across machines as if they were invariant. When PyTorch is absent, record the missing-dependency message, the observed fallback/`NameError` path, and the skipped tensor-specific evidence; do not call the run successful.
+The canonical report must expose the finite/NaN distinction and the MLP shape path when PyTorch is available. A shape failure is accepted only when the incompatible input and the layer's expected feature count are recorded. A useful profile reports a named timer and allocation snapshot, but does not compare wall-clock values across machines as if they were invariant. When PyTorch is absent, record the missing-dependency message, the standard-library timer/allocation/logging evidence, and the explicitly skipped tensor-specific evidence; the process should still exit 0.
 
 Run the lesson tests from `code/`:
 

@@ -1,64 +1,93 @@
-# Contract and executable-behavior tests for this lesson demo.
+# Behavioral tests for the offline data utility described in docs/en.md.
 from __future__ import annotations
 
-import ast
-import functools
-import importlib.util
-import os
+import json
 from pathlib import Path
 import subprocess
 import sys
+import tempfile
 import unittest
 
 CODE = Path(__file__).resolve().parents[1]
 MAIN = CODE / "main.py"
-ALLOWED = set(sys.stdlib_module_names) | {"numpy", "torch", "h5py", "zstandard", "safetensors"}
+sys.path.insert(0, str(CODE))
 
-def source_trees() -> list[ast.AST]:
-    return [ast.parse(path.read_text(encoding="utf-8")) for path in CODE.glob("*.py")]
+from data_utils import (  # noqa: E402
+    cache_summary,
+    convert_format,
+    fingerprint,
+    load_and_inspect,
+    load_from_csv,
+    load_from_jsonl,
+    make_splits,
+    stream_dataset,
+)
 
-def external_roots() -> set[str]:
-    roots: set[str] = set()
-    for tree in source_trees():
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                roots.update(alias.name.split(".")[0] for alias in node.names)
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                roots.add(node.module.split(".")[0])
-    return {name for name in roots if not (CODE / f"{name}.py").exists() and not (CODE / name).is_dir()}
 
-@functools.lru_cache(maxsize=1)
-def run_demo() -> subprocess.CompletedProcess[str]:
-    missing = sorted(name for name in external_roots() if name in ALLOWED and importlib.util.find_spec(name) is None)
-    banned = sorted(external_roots() - ALLOWED)
-    if missing or banned:
-        raise unittest.SkipTest(f"demo dependencies unavailable or disallowed: {missing + banned}")
-    env = os.environ.copy()
-    for key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "HF_TOKEN", "HUGGINGFACE_TOKEN"):
-        env.pop(key, None)
-    return subprocess.run(
-        [sys.executable, MAIN.name], cwd=CODE, text=True, capture_output=True,
-        timeout=45, env=env, check=False,
-    )
+class DataUtilityTests(unittest.TestCase):
+    def test_fixture_load_has_schema_and_rows(self) -> None:
+        rows = load_and_inspect()
+        self.assertEqual(len(rows), 12)
+        self.assertEqual(set(rows[0]), {"id", "text", "label"})
+        self.assertEqual(rows[0]["label"], 1)
 
-class LessonDemoTests(unittest.TestCase):
-    def test_source_compiles(self) -> None:
-        compile(MAIN.read_text(encoding="utf-8"), str(MAIN), "exec")
+    def test_stream_is_bounded_and_preserves_order(self) -> None:
+        rows = stream_dataset(max_rows=3)
+        self.assertEqual(len(rows), 3)
+        self.assertEqual([row["id"] for row in rows], [0, 1, 2])
 
-    def test_demo_has_explicit_entrypoint(self) -> None:
-        source = MAIN.read_text(encoding="utf-8")
-        self.assertTrue("__main__" in source or "runpy.run_path" in source)
+    def test_csv_and_jsonl_round_trip(self) -> None:
+        rows = load_and_inspect()[:4]
+        with tempfile.TemporaryDirectory() as directory:
+            paths = convert_format(rows, directory, "sample")
+            self.assertEqual(load_from_csv(paths["csv"]), rows)
+            self.assertEqual(load_from_jsonl(paths["jsonl"]), rows)
 
-    def test_demo_exits_successfully(self) -> None:
-        self.assertEqual(run_demo().returncode, 0, run_demo().stderr)
+    def test_splits_are_deterministic_disjoint_and_complete(self) -> None:
+        rows = load_and_inspect()
+        first = make_splits(rows, seed=42)
+        second = make_splits(rows, seed=42)
+        self.assertEqual(first, second)
+        self.assertEqual({len(part) for part in first.values()}, {9, 1, 2})
+        ids = [row["id"] for part in first.values() for row in part]
+        self.assertEqual(len(ids), len(set(ids)))
+        self.assertEqual(set(ids), set(range(12)))
 
-    def test_demo_emits_bounded_output(self) -> None:
-        result = run_demo()
-        self.assertTrue((result.stdout + result.stderr).strip())
-        self.assertLess(len(result.stdout) + len(result.stderr), 1_000_000)
+    def test_fingerprint_changes_when_a_sampled_row_changes(self) -> None:
+        rows = load_and_inspect()
+        original = fingerprint(rows, num_rows=4)
+        rows[0]["text"] = "changed fixture row"
+        changed = fingerprint(rows, num_rows=4)
+        self.assertNotEqual(original, changed)
 
-    def test_demo_has_no_traceback(self) -> None:
-        self.assertNotIn("Traceback (most recent call last)", run_demo().stderr)
+    def test_cache_summary_counts_exported_files(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            convert_format(load_and_inspect()[:2], directory, "cache")
+            summary = cache_summary(directory)
+            self.assertEqual(summary["files"], 2)
+            self.assertGreater(summary["bytes"], 0)
+
+    def test_invalid_inputs_are_rejected(self) -> None:
+        rows = load_and_inspect()
+        with self.assertRaises(ValueError):
+            make_splits(rows, train_ratio=0.9, val_ratio=0.2)
+        with self.assertRaises(ValueError):
+            stream_dataset(max_rows=-1)
+
+    def test_canonical_demo_is_offline_and_successful(self) -> None:
+        result = subprocess.run(
+            [sys.executable, MAIN.name],
+            cwd=CODE,
+            text=True,
+            capture_output=True,
+            check=False,
+            timeout=10,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("All offline data checks passed.", result.stdout)
+        self.assertNotIn("Traceback", result.stderr)
+        self.assertNotIn("huggingface", result.stdout.lower())
+
 
 if __name__ == "__main__":
     unittest.main()

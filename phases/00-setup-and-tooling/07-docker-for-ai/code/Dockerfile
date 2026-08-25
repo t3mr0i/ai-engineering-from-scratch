@@ -1,43 +1,28 @@
+# Build configuration for phases/00-setup-and-tooling/07-docker-for-ai/docs/en.md.
+# Uses a pinned CUDA base and only allowlisted Python packages for the local image.
+# The lesson's Python audit is static; building still requires Docker, a registry, and host drivers.
+# The image contains a short self-terminating Python command rather than a hidden service.
+
 FROM nvidia/cuda:12.4.1-devel-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3.12 \
-    python3.12-venv \
-    python3.12-dev \
+    python3 \
+    python3-venv \
     python3-pip \
-    git \
-    curl \
-    build-essential \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.12 1
-
-RUN python -m pip install --no-cache-dir --upgrade pip setuptools wheel
-
-RUN python -m pip install --no-cache-dir \
-    torch==2.3.1 \
-    torchvision==0.18.1 \
-    torchaudio==2.3.1 \
-    --index-url https://download.pytorch.org/whl/cu124
-
-RUN python -m pip install --no-cache-dir \
+RUN python3 -m pip install --no-cache-dir \
     numpy \
-    pandas \
-    scikit-learn \
-    matplotlib \
-    jupyter \
-    transformers \
-    datasets \
-    accelerate \
-    safetensors
+    safetensors \
+    torch==2.3.1 \
+    --index-url https://download.pytorch.org/whl/cu124
 
 WORKDIR /workspace
 
 VOLUME ["/workspace", "/models"]
 
-EXPOSE 8888
-
-CMD ["python"]
+CMD ["python3", "-c", "print('AI dev container ready')"]

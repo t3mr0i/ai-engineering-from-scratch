@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Where should a local Anthropic API key come from when the lesson starts?",
+      "question": "Where should a live API key come from when the lesson starts?",
       "options": [
         "A string literal committed next to the prompt",
-        "The model's response text",
+        "The local response fixture",
         "An environment variable such as ANTHROPIC_API_KEY",
         "The URL of the Python interpreter"
       ],
       "correct": 2,
-      "explanation": "Environment variables keep credentials out of source and version control. A local .env file is convenient only when it is excluded by .gitignore."
+      "explanation": "The live path reads ANTHROPIC_API_KEY from the environment. The deterministic fixture needs no key and never makes a network request."
     },
     {
       "stage": "check",
-      "question": "What should the SDK and raw HTTP versions of the Anthropic call have in common when debugging a difference?",
+      "question": "What does build_request() return before any network code runs?",
       "options": [
-        "Only the Python function name",
-        "A random prompt so that both calls exercise different inputs",
-        "The same error message, even if one request uses another model",
-        "The model, prompt, limit, key, and endpoint"
-      ],
-      "correct": 3,
-      "explanation": "Keeping request inputs and headers equivalent lets you compare client behavior rather than two different requests. The raw call makes the JSON body and response status visible."
-    },
-    {
-      "stage": "check",
-      "question": "Which header carries an Anthropic API key in the raw HTTP example?",
-      "options": [
-        "x-api-key",
-        "Content-Type",
-        "Accept-Language",
-        "User-Agent"
-      ],
-      "correct": 0,
-      "explanation": "Anthropic's raw API example authenticates with x-api-key. Content-Type describes the JSON body; it does not authenticate the caller."
-    },
-    {
-      "stage": "check",
-      "question": "What does an HTTP 401 response usually mean in this lesson's API troubleshooting?",
-      "options": [
-        "The service has accepted the request and is streaming tokens",
-        "The credential is missing or invalid",
-        "The prompt contains too few words",
-        "The client has exceeded the rate limit"
+        "A provider SDK client object",
+        "A JSON-shaped mapping with model, max_tokens, and one user message",
+        "A response containing final token counts",
+        "A shell command that installs an API package"
       ],
       "correct": 1,
-      "explanation": "A 401 points to authentication, such as a missing environment variable, revoked key, or incorrect header. A rate limit is normally reported as 429."
+      "explanation": "The stdlib builder validates its prompt/model/limit and returns the request mapping. It does not create a client or send anything."
     },
     {
-      "stage": "post",
-      "question": "A valid key worked once, then the service returns HTTP 429. What should the caller do?",
+      "stage": "check",
+      "question": "Which header carries the key in call_raw_http()?",
       "options": [
-        "Print the key in the next bug report",
-        "Change x-api-key to Content-Type",
-        "Wait, then retry with bounded backoff",
-        "Retry in a tight loop until the server accepts it"
-      ],
-      "correct": 2,
-      "explanation": "429 means too many requests, not necessarily a bad credential. Backoff reduces pressure and a bounded retry policy keeps a demo from hanging forever."
-    },
-    {
-      "stage": "post",
-      "question": "A teammate reports an API failure. Which diagnostic record is safe and useful to request?",
-      "options": [
-        "The complete API key and a screenshot of the .env file",
-        "Only the word failed",
-        "A new prompt chosen after the error with no record of the original request",
-        "Status, endpoint, model, redacted body, and failing path"
+        "Content-Type",
+        "Accept-Language",
+        "User-Agent",
+        "x-api-key"
       ],
       "correct": 3,
-      "explanation": "Status and request metadata identify authentication, payload, and rate-limit problems without exposing the secret. Comparing SDK and raw paths becomes meaningful when the same request is recorded."
+      "explanation": "build_headers places the secret in x-api-key and separately labels the JSON body with Content-Type. The default demo never builds live headers."
+    },
+    {
+      "stage": "check",
+      "question": "What happens when the canonical Python command runs without ANTHROPIC_LIVE=1?",
+      "options": [
+        "It uses the fixed response fixture and exits 0 without opening a connection",
+        "It retries a provider until a response arrives",
+        "It raises because every request needs a key",
+        "It silently changes the request model to a current provider ID"
+      ],
+      "correct": 0,
+      "explanation": "The default branch prints mode MOCK, emits the fixed content/usage envelope, and returns success. Live behavior requires an explicit environment opt-in."
+    },
+    {
+      "stage": "post",
+      "question": "What two conditions are required before the Python main program calls raw HTTP?",
+      "options": [
+        "A tracked .env file and a nonempty prompt",
+        "A provider SDK import and a GPU",
+        "ANTHROPIC_LIVE=1 and a nonempty ANTHROPIC_API_KEY",
+        "A JSON response and a rate-limit error"
+      ],
+      "correct": 2,
+      "explanation": "The program checks the explicit live flag first and then requires the environment key. Otherwise it stays on the local fixture path."
+    },
+    {
+      "stage": "post",
+      "question": "A teammate reports a live API failure. Which diagnostic record is safe and useful?",
+      "options": [
+        "The complete API key and a copy of the .env file",
+        "Only the word failed",
+        "A new prompt chosen after the error with no original request",
+        "Status, endpoint, model label, redacted body, and failing path"
+      ],
+      "correct": 3,
+      "explanation": "Status and request metadata identify authentication, payload, and rate-limit problems without exposing the secret. The local fixture must not be presented as provider evidence."
     }
   ]
 }

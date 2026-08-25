@@ -9,67 +9,70 @@
 
 ## Learning Objectives
 
-- Load and inspect the `cornell-movie-review-data/rotten_tomatoes` training split with `load_and_inspect`.
-- Stream a bounded number of rows with `stream_dataset` instead of materializing the whole split.
-- Convert a Dataset to CSV, JSON, and Parquet and compare the files created by `convert_format`.
-- Create train/validation/test subsets with `make_splits` and a fixed seed, then verify their row counts.
-- Record a dataset fingerprint and cache summary without treating either as a semantic data-quality audit.
+- Load and inspect the checked-in `mini_reviews.jsonl` fixture with `load_and_inspect`.
+- Stream a bounded number of rows with `stream_dataset` without reading the rest of the file.
+- Convert validated records to CSV and JSONL, then load both formats back.
+- Create disjoint train/validation/test subsets with a fixed seed and record their membership.
+- Compute a content fingerprint and an output-directory summary without treating either as a data-quality audit.
 
 ## What the utility actually does
 
-`code/data_utils.py` is an integration utility around the Hugging Face `datasets` and `huggingface_hub` APIs. It is not a local synthetic-data demo: the canonical path contacts the Hub, writes `/tmp/data_utils_demo`, downloads `config.json` for `sentence-transformers/all-MiniLM-L6-v2`, and inspects the local cache. The repository's dependency allowlist is intentionally stdlib-first and does not include these two external packages; the standard test harness may therefore skip this lesson. Do not install extra dependencies merely to make a local check green.
+`code/data_utils.py` is a complete offline utility around a 12-row JSONL fixture in `code/fixtures/mini_reviews.jsonl`. It uses only Python's standard library: `json`, `csv`, `random`, `hashlib`, and `pathlib`. This stays stdlib-first for didactic clarity and makes every output reproducible without a Hub account or network.
 
 ```mermaid
 flowchart LR
-    H[Hub dataset] --> L[load_and_inspect]
-    H --> S[stream_dataset]
-    L --> F[CSV / JSON / Parquet]
-    L --> P[make_splits seed=42]
-    L --> D[fingerprint first rows]
-    C[Local cache] --> Q[cache_summary]
+    J[mini_reviews.jsonl] --> I[load_and_inspect]
+    J --> S[stream_dataset]
+    I --> F[CSV + JSONL exports]
+    F --> R[reload and validate]
+    R --> P[seeded train/val/test splits]
+    R --> H[content fingerprint]
+    F --> C[output summary]
 ```
+
+Rows have the concrete schema `id`, `text`, and binary `label`. The loader rejects missing columns, malformed JSON, non-integer IDs/labels, and labels outside 0/1. The fingerprint is a compact change detector, not proof that labels or sampling are semantically correct.
 
 ## Build It
 
-When the two external APIs are already available and network access is intentional, run:
+From the lesson directory, run the offline pipeline:
 
 ```bash
 cd phases/00-setup-and-tooling/09-data-management
 python3 code/main.py
 ```
 
-The sequence is explicit in `data_utils.py`: load the Rotten Tomatoes `train` split; stream three rows; select the first 500 rows; write three files under `/tmp/data_utils_demo`; split those 500 rows with `train_ratio=0.8`, `val_ratio=0.1`, and `seed=42`; reload the Parquet file; download the model config; fingerprint the first 100 rows; and report cache size. The split should be approximately 400/50/50 for 500 rows; record the actual counts because rounding belongs to the library.
-
-If the imports are unavailable, the program prints an installation message and exits before any dataset operation. If the Hub or network is unavailable, preserve the actual error instead of inventing rows or file sizes. This failure is an integration precondition, not evidence that the split logic is wrong.
+The canonical run loads 12 rows, previews IDs 0–2, writes `mini_reviews_sample.csv` and `mini_reviews_sample.jsonl` below `/tmp/phase00-data-management`, reloads JSONL, and makes seeded splits with `seed=42`. With this 12-row fixture and the defaults (`train_ratio=0.75`, `val_ratio=0.125`), the counts are train 9, validation 1, and test 2. The fingerprint is the first 16 hexadecimal characters of a SHA-256 digest; record the printed value rather than treating it as a universal identifier.
 
 ## Use It
 
-The helper contracts are usable independently once the external APIs are present:
+Inspect or stream the fixture directly:
 
-- `load_and_inspect(name, config=None, split="train")` prints row count, column names, features, and the first row.
-- `stream_dataset(name, config=None, max_rows=5)` returns at most `max_rows` dictionaries.
-- `convert_format(ds, output_dir, name)` writes `.csv`, `.json`, and `.parquet` and returns their paths.
-- `make_splits(ds, train_ratio, val_ratio, seed)` rejects ratios whose sum leaves no test data and returns three Dataset objects.
-- `fingerprint(ds, num_rows=100)` hashes a JSON serialization of the first `min(num_rows, len(ds))` rows and returns the first 16 hexadecimal characters.
+```python
+from data_utils import load_and_inspect, stream_dataset
 
-The code uses the default Hugging Face cache path `~/.cache/huggingface/datasets`. A fingerprint detects a changed sampled representation; it does not prove that labels are correct or that two datasets are statistically equivalent.
+rows = load_and_inspect()
+preview = stream_dataset(max_rows=3)
+print([row["id"] for row in preview])  # [0, 1, 2]
+```
+
+`convert_format(rows, output_dir, name)` writes one CSV with a header and one JSON object per JSONL line. `load_from_csv` and `load_from_jsonl` normalize the stored `id` and `label` types. `make_splits(rows, seed=42)` shuffles indices with `random.Random(seed)` and returns disjoint lists; it does not stratify labels or guarantee statistical balance. `cache_summary(path)` counts direct output files and bytes, not a global package cache.
 
 ## Ship It
 
-[`outputs/prompt-data-helper.md`](../outputs/prompt-data-helper.md) is the reusable artifact. When adapting it, retain the dataset ID, config, split, intended row budget, and authentication/network preconditions. Ask for a real Hub lookup before recommending an ID; the prompt's examples are suggestions, not outputs generated by this lesson.
+[`outputs/prompt-data-helper.md`](../outputs/prompt-data-helper.md) is the reusable artifact. Fill it with the fixture/source path, schema, row budget, format, seed, split counts, fingerprint, and output directory. If you replace the fixture with real data, document its provenance separately; this lesson does not fetch or verify an external dataset.
 
 ## Exercises
 
-1. Run the canonical command only if the external packages and network are available. Record whether the first failure is import, Hub access, or a later conversion step.
-2. For the 500-row sample, verify the actual train/validation/test counts and rerun `make_splits` with seed 42. Compare the selected row identities, not just the counts.
-3. Inspect the three files under `/tmp/data_utils_demo`. Compare their byte sizes and reload the Parquet file with `load_from_parquet`; quote the returned column names.
-4. Compute a fingerprint twice with `num_rows=100`, then change one sampled row in a disposable Dataset and compute it again. Add the observed hashes and the limitation of this check to the artifact.
+1. Run `main.py`, record the three preview IDs, the two export paths, and the printed split counts. Check that the output directory contains exactly the CSV and JSONL exports.
+2. Change one row in a temporary JSONL copy and run `load_and_inspect`. Observe the validation output and compare fingerprints before and after the change.
+3. Reload both export formats and compare the row dictionaries, including integer `id` and `label` values. Explain why CSV needs explicit type coercion while JSONL preserves numeric syntax.
+4. Run `make_splits` twice with seed 42 and once with seed 7. Record membership, prove the three ID sets are disjoint and complete, and note that this toy splitter is not stratified.
 
 ## Reference Solution
 
-A successful integration run reports the named dataset and `train` split, streams exactly three rows, writes all three formats, and produces actual split counts and a 16-character fingerprint. The acceptance record includes the seed and paths, but does not claim a fixed byte ratio or a clean cache without observing them. In an environment lacking the external APIs, the correct solution is a documented skip with the printed precondition; no fabricated data or dependency installation is required.
+A correct run reports the 12-row schema, streams exactly three records, round-trips the CSV and JSONL records, and produces deterministic 9/1/2 splits for seed 42. The fingerprint changes when a sampled row changes, while the output summary reports the two generated files and their bytes. The artifact records local evidence and limitations rather than inventing a Hub revision, Parquet output, cache guarantee, or model-quality claim.
 
-Run the lesson tests from `code/` when their dependency policy permits it:
+Run the lesson tests from `code/`:
 
 ```bash
 python3 -m unittest discover tests -v

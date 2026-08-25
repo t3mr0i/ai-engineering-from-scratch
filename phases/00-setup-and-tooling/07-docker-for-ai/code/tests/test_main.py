@@ -1,10 +1,7 @@
-# Contract and executable-behavior tests for this lesson demo.
+# Behavioral tests for the static Docker/Compose audit described in docs/en.md.
 from __future__ import annotations
 
-import ast
-import functools
-import importlib.util
-import os
+import json
 from pathlib import Path
 import subprocess
 import sys
@@ -12,53 +9,69 @@ import unittest
 
 CODE = Path(__file__).resolve().parents[1]
 MAIN = CODE / "main.py"
-ALLOWED = set(sys.stdlib_module_names) | {"numpy", "torch", "h5py", "zstandard", "safetensors"}
 
-def source_trees() -> list[ast.AST]:
-    return [ast.parse(path.read_text(encoding="utf-8")) for path in CODE.glob("*.py")]
+sys.path.insert(0, str(CODE))
+from main import inspect_container_config  # noqa: E402
 
-def external_roots() -> set[str]:
-    roots: set[str] = set()
-    for tree in source_trees():
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                roots.update(alias.name.split(".")[0] for alias in node.names)
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                roots.add(node.module.split(".")[0])
-    return {name for name in roots if not (CODE / f"{name}.py").exists() and not (CODE / name).is_dir()}
 
-@functools.lru_cache(maxsize=1)
-def run_demo() -> subprocess.CompletedProcess[str]:
-    missing = sorted(name for name in external_roots() if name in ALLOWED and importlib.util.find_spec(name) is None)
-    banned = sorted(external_roots() - ALLOWED)
-    if missing or banned:
-        raise unittest.SkipTest(f"demo dependencies unavailable or disallowed: {missing + banned}")
-    env = os.environ.copy()
-    for key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "HF_TOKEN", "HUGGINGFACE_TOKEN"):
-        env.pop(key, None)
-    return subprocess.run(
-        [sys.executable, MAIN.name], cwd=CODE, text=True, capture_output=True,
-        timeout=45, env=env, check=False,
-    )
+class ContainerAuditTests(unittest.TestCase):
+    def test_checked_in_summary_matches_the_configuration(self) -> None:
+        self.assertEqual(
+            inspect_container_config(),
+            {
+                "base_image": "nvidia/cuda:12.4.1-devel-ubuntu22.04",
+                "base_is_pinned": True,
+                "workdir": "/workspace",
+                "exposed_ports": [],
+                "gpu_reservation": True,
+                "persistent_volume": True,
+            },
+        )
 
-class LessonDemoTests(unittest.TestCase):
-    def test_source_compiles(self) -> None:
-        compile(MAIN.read_text(encoding="utf-8"), str(MAIN), "exec")
+    def test_dockerfile_contains_only_allowlisted_python_packages(self) -> None:
+        dockerfile = (CODE / "Dockerfile").read_text(encoding="utf-8")
+        for package in ("numpy", "safetensors", "torch==2.3.1"):
+            self.assertIn(package, dockerfile)
+        for forbidden in ("pandas", "scikit-learn", "matplotlib", "jupyter", "transformers", "datasets", "accelerate", "torchvision", "torchaudio"):
+            self.assertNotIn(forbidden, dockerfile)
 
-    def test_demo_has_explicit_entrypoint(self) -> None:
+    def test_compose_requests_gpu_and_named_model_cache(self) -> None:
+        compose = (CODE / "docker-compose.yml").read_text(encoding="utf-8")
+        self.assertIn("capabilities: [gpu]", compose)
+        self.assertIn("model_cache:", compose)
+        self.assertNotIn("qdrant", compose)
+        self.assertNotIn("jupyter", compose)
+
+    def test_compose_has_no_unadvertised_ports(self) -> None:
+        compose = (CODE / "docker-compose.yml").read_text(encoding="utf-8")
+        self.assertNotIn("ports:", compose)
+        self.assertNotIn("EXPOSE", (CODE / "Dockerfile").read_text(encoding="utf-8"))
+
+    def test_source_compiles_and_has_entrypoint(self) -> None:
         source = MAIN.read_text(encoding="utf-8")
-        self.assertTrue("__main__" in source or "runpy.run_path" in source)
+        compile(source, str(MAIN), "exec")
+        self.assertIn("__main__", source)
 
-    def test_demo_exits_successfully(self) -> None:
-        self.assertEqual(run_demo().returncode, 0, run_demo().stderr)
+    def test_demo_emits_expected_json_and_exits_zero(self) -> None:
+        result = subprocess.run(
+            [sys.executable, MAIN.name],
+            cwd=CODE,
+            text=True,
+            capture_output=True,
+            check=False,
+            timeout=10,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        summary = json.loads(result.stdout)
+        self.assertTrue(summary["gpu_reservation"])
+        self.assertTrue(summary["persistent_volume"])
+        self.assertEqual(summary["exposed_ports"], [])
 
-    def test_demo_emits_bounded_output(self) -> None:
-        result = run_demo()
-        self.assertTrue((result.stdout + result.stderr).strip())
-        self.assertLess(len(result.stdout) + len(result.stderr), 1_000_000)
+    def test_demo_output_is_bounded_and_static(self) -> None:
+        result = subprocess.run([sys.executable, MAIN.name], cwd=CODE, text=True, capture_output=True, check=False)
+        self.assertLess(len(result.stdout) + len(result.stderr), 50_000)
+        self.assertNotIn("Traceback", result.stderr)
 
-    def test_demo_has_no_traceback(self) -> None:
-        self.assertNotIn("Traceback (most recent call last)", run_demo().stderr)
 
 if __name__ == "__main__":
     unittest.main()

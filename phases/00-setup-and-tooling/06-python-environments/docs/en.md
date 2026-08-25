@@ -48,7 +48,7 @@ The two reports should differ in `executable`, `prefix`, `isolated`, and usually
 
 ## Use It
 
-`code/env_setup.sh` is a separate provisioning script. It requires Python 3.11+, prefers `uv` when present, otherwise uses `python3 -m venv`, activates `.venv` at the repository root, installs `numpy matplotlib jupyter scikit-learn pandas`, and verifies imports. It optionally reports PyTorch and CUDA. Run it only in a disposable clone or when you explicitly intend to create that root `.venv`; this lesson does not run it during normal tests.
+`code/env_setup.sh` is a separate provisioning script. It requires Python 3.11+, prefers `uv` when present, otherwise uses `python3 -m venv`, activates `.venv` at the repository root, installs only the allowlisted NumPy baseline, and verifies that import. It optionally reports PyTorch and CUDA without installing them. Run it only in a disposable clone or when you explicitly intend to create that root `.venv`; this lesson does not run it during normal tests.
 
 The script does not write `pyproject.toml` or a lockfile. A reproducible project can add those files separately, but the observable contract in this lesson is interpreter isolation and package verification.
 
@@ -59,7 +59,7 @@ The script does not write `pyproject.toml` or a lockfile. A reproducible project
 ## Exercises
 
 1. Capture reports from the system interpreter and `/tmp/phase00-python-env/bin/python`. Explain `isolated` using the two prefix values, not by guessing from the prompt.
-2. Read `env_setup.sh` and list its two environment-creation branches and its five core package names. Identify the step that verifies a package rather than installing it.
+2. Read `env_setup.sh` and list its two environment-creation branches and its one core package (`numpy`). Identify the step that verifies a package rather than installing it.
 3. Run `python3 code/main.py` from a directory outside the repository and confirm that changing the current directory does not change the interpreter metadata.
 4. Add the two reports and an acceptance rule to the artifact: a command is accepted only when the expected interpreter path and `isolated` value are visible. Do not claim a lockfile or CUDA setup was tested.
 

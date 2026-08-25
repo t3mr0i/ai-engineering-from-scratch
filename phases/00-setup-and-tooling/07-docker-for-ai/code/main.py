@@ -27,7 +27,7 @@ def inspect_container_config(code_dir: Path = CODE_DIR) -> dict[str, object]:
         "workdir": re.search(r"^WORKDIR\s+(\S+)", dockerfile, re.MULTILINE).group(1),
         "exposed_ports": exposed,
         "gpu_reservation": "capabilities: [gpu]" in compose,
-        "persistent_volume": "qdrant_data:" in compose,
+        "persistent_volume": "model_cache:" in compose,
     }
 
 

@@ -50,7 +50,7 @@ Run the companion probes when you want a language-specific view:
 python3 phases/00-setup-and-tooling/01-dev-environment/code/verify.py
 ```
 
-`verify.py` checks imports such as NumPy, Matplotlib, Jupyter, and PyTorch in addition to command presence, and treats its GPU section as optional. `verify.ts` uses `execFileSync` to probe Node.js, Git, Python, Cargo, and Deno; its required set is Node.js 20+, Git, and Python 3.10+. These files are comparison tools, not the Rust lesson entrypoint, so their results can differ without indicating a contradiction.
+`verify.py` is a stdlib-only comparison probe: it checks Python, Git, Node.js, and Cargo presence, reports optional `uv`/`pnpm`/Julia tools, and treats its PyTorch/CUDA section as optional. `verify.ts` uses `execFileSync` to probe Node.js, Git, Python, Cargo, and Deno; its required set is Node.js 20+, Git, and Python 3.10+. These files are comparison tools, not the Rust lesson entrypoint, so their results can differ without indicating a contradiction.
 
 ## Ship It
 

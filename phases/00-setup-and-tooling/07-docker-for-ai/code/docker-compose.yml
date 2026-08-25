@@ -1,3 +1,8 @@
+# Compose configuration for phases/00-setup-and-tooling/07-docker-for-ai/docs/en.md.
+# Requests GPU capability and keeps model data in a named volume.
+# No notebook, vector database, or long-running service is implied by this fixture.
+# Run `docker compose config` to validate syntax before any build or runtime check.
+
 services:
   ai-dev:
     build:
@@ -12,21 +17,11 @@ services:
               capabilities: [gpu]
     volumes:
       - ../../../:/workspace
-      - ~/models:/models
+      - model_cache:/models
       - ~/datasets:/data
-    ports:
-      - "8888:8888"
     stdin_open: true
     tty: true
-    command: jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root
-
-  qdrant:
-    image: qdrant/qdrant:v1.12.5
-    ports:
-      - "6333:6333"
-      - "6334:6334"
-    volumes:
-      - qdrant_data:/qdrant/storage
+    command: ["python3", "-c", "print('AI dev container ready')"]
 
 volumes:
-  qdrant_data:
+  model_cache:

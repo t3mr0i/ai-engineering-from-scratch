@@ -1,0 +1,12 @@
+{"id":0,"text":"A warm, precise introduction to the topic.","label":1}
+{"id":1,"text":"The pacing drags, but the examples are useful.","label":1}
+{"id":2,"text":"The explanation loses its thread halfway through.","label":0}
+{"id":3,"text":"Clear structure and a memorable closing example.","label":1}
+{"id":4,"text":"Too many repeated points obscure the main idea.","label":0}
+{"id":5,"text":"A compact demo makes the trade-off easy to see.","label":1}
+{"id":6,"text":"The instructions omit the input needed to reproduce it.","label":0}
+{"id":7,"text":"Helpful warnings make this a reliable starting point.","label":1}
+{"id":8,"text":"The result is noisy and never explains the failure.","label":0}
+{"id":9,"text":"A careful comparison supports the final recommendation.","label":1}
+{"id":10,"text":"The sample output contradicts the stated contract.","label":0}
+{"id":11,"text":"Short exercises connect the code to a real handoff.","label":1}

@@ -1,18 +1,17 @@
 # Docker for AI — reusable artifact
 
-Use this card to apply the lesson outcome outside the walkthrough. Its primary goal is to build a GPU-enabled Docker image with CUDA, PyTorch, and AI libraries from a Dockerfile.
+Use this card to apply the lesson outcome outside the walkthrough. Its primary goal is to inspect a pinned CUDA image, GPU reservation, and model-data mounts while keeping the Python layer allowlisted.
 
 ## Executable interface
 
 - **Implementation:** [main.py](../code/main.py)
 - **Canonical command (from the lesson directory):** `python3 code/main.py`
-- **Controlled variation:** Mount host directories as volumes to persist models, datasets, and code across container rebuilds.
-- **Evidence to retain:** the input, output, and invariant needed to configure the NVIDIA Container Toolkit to expose GPUs inside containers.
+- **Controlled variation:** Change a temporary Dockerfile or Compose copy, then compare the static JSON before any build.
+- **Evidence to retain:** the JSON summary, Compose syntax output, image build result, and host GPU/runtime result as separate records.
 
 ## Reuse checklist
 
-- Record the exact command and inputs so another person can reproduce the baseline.
-- Change one variable at a time and preserve the before/after evidence.
-- Treat the artifact as accepted only when you can orchestrate multi-service AI applications (inference server + vector database) using Docker Compose.
-- Run the lesson tests after adapting the implementation to a new project.
-
+- Record the exact configuration paths and mount purpose.
+- Keep `/workspace`, datasets, and the named `model_cache` volume distinct.
+- Treat the Python audit as configuration evidence, not proof that Docker, CUDA drivers, or a runtime service works.
+- Run the lesson tests after adapting the configuration to a new project.

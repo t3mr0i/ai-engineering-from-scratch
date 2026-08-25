@@ -1,190 +1,178 @@
-import sys
-import json
+# Lesson implementation for phases/00-setup-and-tooling/09-data-management/docs/en.md.
+# Uses a checked-in JSONL fixture and Python's standard library for every operation.
+# Builds CSV/JSONL exports, deterministic splits, fingerprints, and an output summary.
+# No Hub, network, or optional package is required; stdlib-first is intentional.
+# Run with: python3 main.py.
+
+from __future__ import annotations
+
+import csv
 import hashlib
+import json
+import random
+import tempfile
+from collections.abc import Iterable, Mapping
 from pathlib import Path
 
-try:
-    from datasets import load_dataset, Dataset
-except ImportError:
-    print("Install the datasets library: pip install datasets")
-    sys.exit(1)
 
-try:
-    from huggingface_hub import hf_hub_download
-except ImportError:
-    print("Install huggingface_hub: pip install huggingface_hub")
-    sys.exit(1)
+Row = dict[str, object]
+DATA_PATH = Path(__file__).with_name("fixtures") / "mini_reviews.jsonl"
+OUTPUT_DIR = Path(tempfile.gettempdir()) / "phase00-data-management"
+REQUIRED_COLUMNS = ("id", "text", "label")
 
 
-CACHE_DIR = Path.home() / ".cache" / "huggingface" / "datasets"
+def _coerce_row(value: object, line_number: int) -> Row:
+    if not isinstance(value, dict):
+        raise ValueError(f"line {line_number}: expected a JSON object")
+    missing = [column for column in REQUIRED_COLUMNS if column not in value]
+    if missing:
+        raise ValueError(f"line {line_number}: missing {', '.join(missing)}")
+    try:
+        row = {
+            "id": int(value["id"]),
+            "text": str(value["text"]),
+            "label": int(value["label"]),
+        }
+    except (TypeError, ValueError) as error:
+        raise ValueError(f"line {line_number}: id and label must be integers") from error
+    if row["label"] not in (0, 1):
+        raise ValueError(f"line {line_number}: label must be 0 or 1")
+    return row
 
 
-def load_and_inspect(dataset_name: str, config: str = None, split: str = "train"):
-    kwargs = {"path": dataset_name}
-    if config:
-        kwargs["name"] = config
-    if split:
-        kwargs["split"] = split
-
-    ds = load_dataset(**kwargs)
-    print(f"Dataset: {dataset_name}")
-    print(f"  Split: {split}")
-    print(f"  Rows: {len(ds)}")
-    print(f"  Columns: {ds.column_names}")
-    print(f"  Features: {ds.features}")
-    print(f"  First row: {ds[0]}")
-    return ds
-
-
-def stream_dataset(dataset_name: str, config: str = None, max_rows: int = 5):
-    kwargs = {"path": dataset_name, "split": "train", "streaming": True}
-    if config:
-        kwargs["name"] = config
-
-    ds = load_dataset(**kwargs)
-    rows = []
-    for i, example in enumerate(ds):
-        rows.append(example)
-        if i >= max_rows - 1:
-            break
-
-    print(f"Streamed {len(rows)} rows from {dataset_name}")
+def _read_jsonl(path: str | Path) -> list[Row]:
+    rows: list[Row] = []
+    with Path(path).open(encoding="utf-8") as handle:
+        for line_number, line in enumerate(handle, start=1):
+            if not line.strip():
+                continue
+            try:
+                value = json.loads(line)
+            except json.JSONDecodeError as error:
+                raise ValueError(f"line {line_number}: invalid JSON") from error
+            rows.append(_coerce_row(value, line_number))
+    if not rows:
+        raise ValueError(f"dataset is empty: {path}")
     return rows
 
 
-def convert_format(ds, output_dir: str, name: str):
+def load_and_inspect(dataset_path: str | Path = DATA_PATH, split: str = "all") -> list[Row]:
+    rows = _read_jsonl(dataset_path)
+    print(f"Dataset: {Path(dataset_path).name}")
+    print(f"  Split: {split}")
+    print(f"  Rows: {len(rows)}")
+    print(f"  Columns: {list(REQUIRED_COLUMNS)}")
+    print(f"  First row: {rows[0]}")
+    return rows
+
+
+def stream_dataset(dataset_path: str | Path = DATA_PATH, max_rows: int = 5) -> list[Row]:
+    if max_rows < 0:
+        raise ValueError("max_rows must not be negative")
+    rows: list[Row] = []
+    with Path(dataset_path).open(encoding="utf-8") as handle:
+        for line_number, line in enumerate(handle, start=1):
+            if not line.strip():
+                continue
+            rows.append(_coerce_row(json.loads(line), line_number))
+            if len(rows) == max_rows:
+                break
+    print(f"Streamed {len(rows)} rows from {Path(dataset_path).name}")
+    return rows
+
+
+def convert_format(rows: Iterable[Mapping[str, object]], output_dir: str | Path, name: str) -> dict[str, Path]:
+    records = [dict(row) for row in rows]
+    if not records:
+        raise ValueError("cannot export an empty dataset")
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
-
     csv_path = output_path / f"{name}.csv"
-    json_path = output_path / f"{name}.json"
-    parquet_path = output_path / f"{name}.parquet"
-
-    ds.to_csv(str(csv_path))
-    ds.to_json(str(json_path))
-    ds.to_parquet(str(parquet_path))
-
-    csv_size = csv_path.stat().st_size
-    json_size = json_path.stat().st_size
-    parquet_size = parquet_path.stat().st_size
-
-    print(f"Format comparison for {name}:")
-    print(f"  CSV:     {csv_size:>10,} bytes")
-    print(f"  JSON:    {json_size:>10,} bytes")
-    print(f"  Parquet: {parquet_size:>10,} bytes")
-    print(f"  Parquet is {csv_size / parquet_size:.1f}x smaller than CSV")
-
-    return {"csv": csv_path, "json": json_path, "parquet": parquet_path}
+    jsonl_path = output_path / f"{name}.jsonl"
+    with csv_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(REQUIRED_COLUMNS))
+        writer.writeheader()
+        writer.writerows(records)
+    with jsonl_path.open("w", encoding="utf-8") as handle:
+        for row in records:
+            handle.write(json.dumps(row, sort_keys=True) + "\n")
+    print(f"Wrote {len(records)} rows:")
+    print(f"  CSV:   {csv_path} ({csv_path.stat().st_size} bytes)")
+    print(f"  JSONL: {jsonl_path} ({jsonl_path.stat().st_size} bytes)")
+    return {"csv": csv_path, "jsonl": jsonl_path}
 
 
-def make_splits(ds, train_ratio: float = 0.8, val_ratio: float = 0.1, seed: int = 42):
-    test_ratio = 1.0 - train_ratio - val_ratio
-    assert test_ratio > 0, "train_ratio + val_ratio must be less than 1.0"
-
-    test_size = val_ratio + test_ratio
-    split1 = ds.train_test_split(test_size=test_size, seed=seed)
-    train_ds = split1["train"]
-
-    val_fraction = val_ratio / test_size
-    split2 = split1["test"].train_test_split(test_size=(1.0 - val_fraction), seed=seed)
-    val_ds = split2["train"]
-    test_ds = split2["test"]
-
-    total = len(train_ds) + len(val_ds) + len(test_ds)
-    print(f"Splits (seed={seed}):")
-    print(f"  Train: {len(train_ds):>6} ({len(train_ds)/total:.1%})")
-    print(f"  Val:   {len(val_ds):>6} ({len(val_ds)/total:.1%})")
-    print(f"  Test:  {len(test_ds):>6} ({len(test_ds)/total:.1%})")
-
-    return {"train": train_ds, "val": val_ds, "test": test_ds}
+def load_from_csv(path: str | Path) -> list[Row]:
+    with Path(path).open(encoding="utf-8", newline="") as handle:
+        rows = [_coerce_row(row, index) for index, row in enumerate(csv.DictReader(handle), start=2)]
+    if not rows:
+        raise ValueError(f"dataset is empty: {path}")
+    return rows
 
 
-def download_model_file(repo_id: str, filename: str):
-    path = hf_hub_download(repo_id=repo_id, filename=filename)
-    size = Path(path).stat().st_size
-    print(f"Downloaded {filename} from {repo_id}")
-    print(f"  Path: {path}")
-    print(f"  Size: {size:,} bytes")
-    return path
+def load_from_jsonl(path: str | Path) -> list[Row]:
+    return _read_jsonl(path)
 
 
-def cache_summary():
-    cache_path = CACHE_DIR
-    if not cache_path.exists():
-        print("No HF cache found yet.")
-        return
-
-    total_size = 0
-    file_count = 0
-    for f in cache_path.rglob("*"):
-        if f.is_file():
-            total_size += f.stat().st_size
-            file_count += 1
-
-    print(f"HF Dataset Cache: {cache_path}")
-    print(f"  Files: {file_count}")
-    print(f"  Total size: {total_size / (1024 * 1024):.1f} MB")
-
-
-def load_from_parquet(path: str):
-    ds = Dataset.from_parquet(path)
-    print(f"Loaded {len(ds)} rows from {path}")
-    return ds
-
-
-def load_from_csv(path: str):
-    ds = Dataset.from_csv(path)
-    print(f"Loaded {len(ds)} rows from {path}")
-    return ds
+def make_splits(
+    rows: Iterable[Mapping[str, object]],
+    train_ratio: float = 0.75,
+    val_ratio: float = 0.125,
+    seed: int = 42,
+) -> dict[str, list[Row]]:
+    records = [dict(row) for row in rows]
+    if len(records) < 3 or train_ratio <= 0 or val_ratio <= 0 or train_ratio + val_ratio >= 1:
+        raise ValueError("ratios must be positive, leave a test split, and fit at least three rows")
+    indices = list(range(len(records)))
+    random.Random(seed).shuffle(indices)
+    train_count = int(len(records) * train_ratio)
+    val_count = int(len(records) * val_ratio)
+    test_count = len(records) - train_count - val_count
+    if min(train_count, val_count, test_count) == 0:
+        raise ValueError("ratios must produce three non-empty splits")
+    splits = {
+        "train": [records[index] for index in indices[:train_count]],
+        "val": [records[index] for index in indices[train_count : train_count + val_count]],
+        "test": [records[index] for index in indices[train_count + val_count :]],
+    }
+    print(f"Splits (seed={seed}): train={len(splits['train'])}, val={len(splits['val'])}, test={len(splits['test'])}")
+    return splits
 
 
-def load_from_json(path: str):
-    ds = Dataset.from_json(path)
-    print(f"Loaded {len(ds)} rows from {path}")
-    return ds
-
-
-def fingerprint(ds, num_rows: int = 100):
-    sample = ds.select(range(min(num_rows, len(ds))))
-    content = json.dumps([row for row in sample], default=str).encode()
+def fingerprint(rows: Iterable[Mapping[str, object]], num_rows: int = 100) -> str:
+    if num_rows < 0:
+        raise ValueError("num_rows must not be negative")
+    sample = [dict(row) for row in rows][:num_rows]
+    content = json.dumps(sample, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     digest = hashlib.sha256(content).hexdigest()[:16]
-    print(f"Dataset fingerprint (first {num_rows} rows): {digest}")
+    print(f"Dataset fingerprint (first {len(sample)} rows): {digest}")
     return digest
 
 
+def cache_summary(output_dir: str | Path = OUTPUT_DIR) -> dict[str, int | str]:
+    path = Path(output_dir)
+    files = [entry for entry in path.iterdir() if entry.is_file()] if path.exists() else []
+    summary = {"path": str(path), "files": len(files), "bytes": sum(entry.stat().st_size for entry in files)}
+    print(f"Output summary: {summary['files']} files, {summary['bytes']} bytes in {summary['path']}")
+    return summary
+
+
+def main() -> int:
+    print("=" * 60)
+    print("Data Management Utility (stdlib fixture)")
+    print("=" * 60)
+    rows = load_and_inspect()
+    preview = stream_dataset(max_rows=3)
+    print(f"  Preview IDs: {[row['id'] for row in preview]}")
+    paths = convert_format(rows, OUTPUT_DIR, "mini_reviews_sample")
+    reloaded = load_from_jsonl(paths["jsonl"])
+    print(f"Reloaded JSONL rows: {len(reloaded)}")
+    make_splits(reloaded, seed=42)
+    fingerprint(reloaded, num_rows=12)
+    cache_summary(OUTPUT_DIR)
+    print("All offline data checks passed.")
+    return 0
+
+
 if __name__ == "__main__":
-    print("=" * 60)
-    print("Data Management Utility")
-    print("=" * 60)
-
-    print("\n--- 1. Load and inspect a dataset ---")
-    ds = load_and_inspect("cornell-movie-review-data/rotten_tomatoes", split="train")
-
-    print("\n--- 2. Stream a dataset ---")
-    rows = stream_dataset("cornell-movie-review-data/rotten_tomatoes", max_rows=3)
-    for row in rows:
-        print(f"  {row['text'][:80]}...")
-
-    print("\n--- 3. Convert formats ---")
-    small_ds = ds.select(range(500))
-    paths = convert_format(small_ds, "/tmp/data_utils_demo", "rotten_tomatoes_sample")
-
-    print("\n--- 4. Create train/val/test splits ---")
-    splits = make_splits(small_ds, train_ratio=0.8, val_ratio=0.1, seed=42)
-
-    print("\n--- 5. Reload from Parquet ---")
-    reloaded = load_from_parquet(str(paths["parquet"]))
-    print(f"  Columns: {reloaded.column_names}")
-
-    print("\n--- 6. Download a model file ---")
-    download_model_file("sentence-transformers/all-MiniLM-L6-v2", "config.json")
-
-    print("\n--- 7. Dataset fingerprint ---")
-    fingerprint(ds)
-
-    print("\n--- 8. Cache summary ---")
-    cache_summary()
-
-    print("\n" + "=" * 60)
-    print("All checks passed. Your data pipeline is ready.")
-    print("=" * 60)
+    raise SystemExit(main())

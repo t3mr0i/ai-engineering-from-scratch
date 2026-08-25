@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which Docker object should hold model files that must survive rebuilding an image?",
+      "question": "Which Docker storage choice keeps model files when an image is rebuilt?",
       "options": [
-        "A mounted volume",
+        "A named or bind-mounted volume outside the disposable container layer",
+        "A Dockerfile comment",
         "A temporary container layer only",
-        "The Dockerfile comment",
         "The image tag name"
       ],
       "correct": 0,
-      "explanation": "A volume or host bind mount stores data outside the disposable container layer. Rebuilding the image can then replace software without deleting the model or index."
+      "explanation": "The repository, dataset, and named model-cache mounts live outside the writable container layer. Rebuilding software does not recreate those stored files."
     },
     {
       "stage": "check",
-      "question": "What combination lets a container use the host NVIDIA GPU?",
+      "question": "What combination lets the Compose service request the host NVIDIA GPU?",
       "options": [
         "Only a larger Dockerfile and the Python standard library",
-        "A driver, toolkit, and --gpus all",
-        "A bind mount for the README and an exposed HTTP port",
-        "A CPU-only image with CUDA disabled"
-      ],
-      "correct": 1,
-      "explanation": "The host driver and container runtime integration expose the device; the run or Compose configuration must request GPU capability. Installing a Python package alone cannot create that access."
-    },
-    {
-      "stage": "check",
-      "question": "What does inspect_container_config() report as persistent in the lesson's Compose file?",
-      "options": [
-        "Every file copied into the image",
-        "The container's stdout buffer",
-        "The qdrant_data volume",
-        "The EXPOSE declaration"
+        "A CPU-only image with CUDA disabled",
+        "A host driver/runtime plus the Compose device reservation",
+        "A README bind mount and an exposed TCP port"
       ],
       "correct": 2,
-      "explanation": "The demo checks for qdrant_data: in the Compose configuration. EXPOSE documents a port; it does not persist data."
+      "explanation": "The Compose file requests `capabilities: [gpu]`, but the host driver and container runtime still have to satisfy that request. A Python package or port does not create device access."
     },
     {
       "stage": "check",
-      "question": "An inference service needs the vector database in Compose. Which hostname should it use?",
+      "question": "What does inspect_container_config() recognize as the persistent model store?",
       "options": [
-        "localhost on the developer's laptop",
-        "The ephemeral container ID copied from an old run",
-        "The host's public DNS name even when both services share a network",
-        "The Compose service name for the vector database"
-      ],
-      "correct": 3,
-      "explanation": "Compose supplies service-name DNS on its application network. localhost inside the inference container refers to that same container, not its database peer."
-    },
-    {
-      "stage": "post",
-      "question": "The lesson script prints a pinned base image but the Compose inspection says gpu_reservation is false. What should you change?",
-      "options": [
-        "Add the GPU reservation to Compose",
-        "Change the image's WORKDIR to /tmp",
-        "Expose another TCP port",
-        "Remove the qdrant_data volume"
-      ],
-      "correct": 0,
-      "explanation": "A pinned image improves reproducibility but does not request a device. The Compose service needs its GPU reservation so the runtime can pass the device through."
-    },
-    {
-      "stage": "post",
-      "question": "Which small deployment plan keeps this AI stack reproducible and recoverable?",
-      "options": [
-        "Use latest for every image and keep the index inside a disposable container",
-        "Pin the image, mount volumes, and use service DNS",
-        "Bake API keys and downloaded checkpoints into each image rebuild",
-        "Run the database on localhost and omit its health check"
+        "Every file copied into the image",
+        "The `model_cache:` named volume in Compose",
+        "The container's stdout buffer",
+        "The absence of an EXPOSE declaration"
       ],
       "correct": 1,
-      "explanation": "Pinned software makes rebuilds comparable, volumes preserve state, and service DNS keeps the two containers connected. Secrets should be supplied at runtime rather than baked into images."
+      "explanation": "The parser checks for `model_cache:` in the Compose file. The volume is mounted at `/models`; the static flag does not prove Docker created or populated it."
+    },
+    {
+      "stage": "check",
+      "question": "Why does the checked-in configuration report an empty `exposed_ports` list?",
+      "options": [
+        "The parser cannot read Dockerfile instructions",
+        "The Compose GPU reservation hides ports",
+        "The image uses a hidden notebook server",
+        "The Dockerfile intentionally has no `EXPOSE` instruction"
+      ],
+      "correct": 3,
+      "explanation": "This minimal fixture runs a self-terminating Python readiness command and does not advertise a service port. The parser therefore returns an empty list."
+    },
+    {
+      "stage": "post",
+      "question": "The summary reports `persistent_volume: false` after a temporary Compose edit. Which change restores the lesson contract?",
+      "options": [
+        "Add the `model_cache:` named volume and mount it at `/models`",
+        "Change the CUDA tag to `latest`",
+        "Add an unrelated HTTP port",
+        "Copy model files into the image layer"
+      ],
+      "correct": 0,
+      "explanation": "The parser's persistence check is tied to the named model-cache volume. A pinned image, port, or copied file does not preserve data across container recreation."
+    },
+    {
+      "stage": "post",
+      "question": "Which plan keeps this minimal container reproducible while stating what remains unverified?",
+      "options": [
+        "Use latest everywhere and claim the GPU works because the YAML parses",
+        "Bake credentials into the image and remove all mounts",
+        "Pin the image, keep allowlisted packages, retain model/data mounts, and test Docker runtime separately",
+        "Start a vector database that is not present in the Compose file"
+      ],
+      "correct": 2,
+      "explanation": "The static audit supports the pinned image, allowlisted layer, GPU request, and mounts. Docker build, driver visibility, and runtime health need their own observed checks."
     }
   ]
 }

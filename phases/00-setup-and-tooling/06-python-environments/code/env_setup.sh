@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
+# Provisioning helper for phases/00-setup-and-tooling/06-python-environments/docs/en.md.
+# Creates an isolated interpreter and verifies the allowlisted NumPy baseline.
+# PyTorch is optional; this script does not install torchvision or other frameworks.
+# Run from a disposable clone when you intend to create or populate its .venv.
+# The read-only canonical report remains code/main.py.
 set -euo pipefail
 
 PYTHON_MIN_MAJOR=3
 PYTHON_MIN_MINOR=11
 VENV_DIR=".venv"
-CORE_PACKAGES="numpy matplotlib jupyter scikit-learn pandas"
+CORE_PACKAGES="numpy"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -125,10 +130,6 @@ verify_package() {
 }
 
 verify_package "numpy" "numpy"
-verify_package "matplotlib" "matplotlib"
-verify_package "scikit-learn" "sklearn"
-verify_package "pandas" "pandas"
-verify_package "jupyter" "jupyter_core"
 
 echo ""
 python -c "
@@ -147,7 +148,7 @@ if python -c "import torch" 2>/dev/null; then
     pass "PyTorch $TORCH_VERSION (CUDA: $CUDA_AVAIL)"
 else
     warn "PyTorch not installed (install later when needed):"
-    echo "    uv pip install torch torchvision torchaudio"
+    echo "    uv pip install torch"
 fi
 
 echo ""

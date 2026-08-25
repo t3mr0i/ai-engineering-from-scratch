@@ -18,7 +18,7 @@ Common issues and fixes:
 - **Python version too old**: Install with `uv python install 3.12`
 - **CUDA not detected**: Check `nvidia-smi`, then reinstall PyTorch with the correct CUDA version
 - **Node.js missing**: Install with `fnm install 22`
-- **Import errors after install**: Check you're in the right virtual environment with `which python`
+- **Command/runtime mismatch**: Compare `verify.py` with the Rust summary and inspect `which python`, `which node`, and `which cargo`
 - **Permission errors**: Never use `sudo pip install`, use `uv` with a virtual environment instead
 
 Always verify the fix worked by asking the user to run the verification script:

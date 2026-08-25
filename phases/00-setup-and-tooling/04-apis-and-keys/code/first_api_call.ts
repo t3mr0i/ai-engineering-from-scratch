@@ -1,9 +1,8 @@
-// Phase 0 · Lesson 04 — APIs and keys (TypeScript port).
-// Reads ANTHROPIC_API_KEY from env, parses a minimal .env file, then makes one
-// /v1/messages call with global fetch. Set MOCK=1 to skip the network entirely.
-// Refs: https://docs.anthropic.com/en/api/messages
-//       https://nodejs.org/api/process.html#processenv
-//       https://nodejs.org/api/globals.html#fetch (Node 18+ ships fetch)
+// TypeScript companion for phases/00-setup-and-tooling/04-apis-and-keys/docs/en.md.
+// Builds the same Messages-shaped request with a deterministic local fixture.
+// Network access requires LIVE=1 and ANTHROPIC_API_KEY; MOCK=1 always wins.
+// Uses Node's standard library and global fetch, with no SDK dependency.
+// Reference: https://docs.anthropic.com/en/api/messages.
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -67,7 +66,7 @@ const MOCK_RESPONSE: MessagesResponse = {
 };
 
 async function callMessages(apiKey: string, request: MessagesRequest): Promise<MessagesResponse> {
-  if (process.env.MOCK === "1" || apiKey === "mock") {
+  if (process.env.MOCK === "1" || process.env.LIVE !== "1" || !apiKey) {
     return MOCK_RESPONSE;
   }
 
@@ -90,18 +89,18 @@ async function callMessages(apiKey: string, request: MessagesRequest): Promise<M
 
 async function main(): Promise<number> {
   const env = mergeEnv();
-  const apiKey = env.ANTHROPIC_API_KEY ?? "mock";
-  const usingMock = process.env.MOCK === "1" || apiKey === "mock";
+  const apiKey = env.ANTHROPIC_API_KEY ?? "";
+  const usingMock = process.env.MOCK === "1" || process.env.LIVE !== "1" || !apiKey;
 
   process.stdout.write("=== API Calls ===\n\n");
   process.stdout.write(
     usingMock
-      ? "Mode: MOCK (no network). Unset MOCK and export ANTHROPIC_API_KEY for a live call.\n\n"
+      ? "Mode: MOCK (no network). Set LIVE=1 and export ANTHROPIC_API_KEY for a live call.\n\n"
       : "Mode: LIVE.\n\n",
   );
 
   const request: MessagesRequest = {
-    model: "claude-sonnet-4-6",
+    model: "lesson-fixture",
     max_tokens: 256,
     messages: [{ role: "user", content: "What is a neural network in one sentence?" }],
   };
