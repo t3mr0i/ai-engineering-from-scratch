@@ -1,5 +1,10 @@
+# Lesson implementation for phases/00-setup-and-tooling/03-gpu-setup-and-cloud/docs/en.md.
+# Reports PyTorch/CUDA visibility and runs a synchronized local matrix benchmark.
+# Importing PyTorch and using CUDA are optional; the missing-import path exits cleanly.
+# The fp16 parameter figure is a local two-byte estimate, not a capacity guarantee.
+# Run through the canonical entrypoint with: python3 main.py.
+
 import time
-import sys
 
 
 def check_gpu():

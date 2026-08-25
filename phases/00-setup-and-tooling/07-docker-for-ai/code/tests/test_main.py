@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import subprocess
+import re
 import sys
 import unittest
 
@@ -30,17 +31,16 @@ class ContainerAuditTests(unittest.TestCase):
 
     def test_dockerfile_contains_only_allowlisted_python_packages(self) -> None:
         dockerfile = (CODE / "Dockerfile").read_text(encoding="utf-8")
-        for package in ("numpy", "safetensors", "torch==2.3.1"):
-            self.assertIn(package, dockerfile)
-        for forbidden in ("pandas", "scikit-learn", "matplotlib", "jupyter", "transformers", "datasets", "accelerate", "torchvision", "torchaudio"):
-            self.assertNotIn(forbidden, dockerfile)
+        install_block = dockerfile.split("RUN python3 -m pip install", maxsplit=1)[1]
+        packages = set(re.findall(r"^\s{4}([a-z][a-z0-9_-]*(?:==[0-9.]+)?)\s*\\?$", install_block, re.MULTILINE))
+        self.assertEqual(packages, {"numpy", "safetensors", "torch==2.3.1"})
 
     def test_compose_requests_gpu_and_named_model_cache(self) -> None:
         compose = (CODE / "docker-compose.yml").read_text(encoding="utf-8")
         self.assertIn("capabilities: [gpu]", compose)
         self.assertIn("model_cache:", compose)
-        self.assertNotIn("qdrant", compose)
-        self.assertNotIn("jupyter", compose)
+        self.assertNotIn("image:", compose)
+        self.assertNotIn("notebook", compose)
 
     def test_compose_has_no_unadvertised_ports(self) -> None:
         compose = (CODE / "docker-compose.yml").read_text(encoding="utf-8")

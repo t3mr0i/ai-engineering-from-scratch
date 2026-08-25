@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Provisioning helper for phases/00-setup-and-tooling/06-python-environments/docs/en.md.
 # Creates an isolated interpreter and verifies the allowlisted NumPy baseline.
-# PyTorch is optional; this script does not install torchvision or other frameworks.
+# PyTorch is optional; this script does not install additional frameworks.
 # Run from a disposable clone when you intend to create or populate its .venv.
 # The read-only canonical report remains code/main.py.
 set -euo pipefail

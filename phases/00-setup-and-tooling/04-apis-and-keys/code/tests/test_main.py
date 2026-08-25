@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -76,7 +77,7 @@ class RequestBuilderTests(unittest.TestCase):
         self.assertEqual(json.loads(request.data), build_request())  # type: ignore[union-attr]
 
     def test_canonical_demo_defaults_to_mock_and_exits_zero(self) -> None:
-        env = {key: value for key, value in __import__("os").environ.items() if key not in {"ANTHROPIC_API_KEY", "ANTHROPIC_LIVE"}}
+        env = {key: value for key, value in os.environ.items() if key not in {"ANTHROPIC_API_KEY", "ANTHROPIC_LIVE"}}
         result = subprocess.run(
             [sys.executable, MAIN.name],
             cwd=CODE,

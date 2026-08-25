@@ -1,6 +1,8 @@
-// Phase 0 · Lesson 01 — Dev Environment verifier (TypeScript port).
-// Probes node version + presence of git, python3, cargo, deno; mirrors verify.py.
-// Refs: https://nodejs.org/api/process.html  https://nodejs.org/api/child_process.html
+// TypeScript companion for phases/00-setup-and-tooling/01-dev-environment/docs/en.md.
+// Probes command presence with execFileSync and never invokes a shell.
+// Required checks are Node.js, Git, Python, and Cargo; Deno is optional.
+// Uses Node's standard library only and mirrors the Rust/Python comparison probes.
+// Reference: https://nodejs.org/api/child_process.html.
 
 import { execFileSync } from "node:child_process";
 import process from "node:process";
