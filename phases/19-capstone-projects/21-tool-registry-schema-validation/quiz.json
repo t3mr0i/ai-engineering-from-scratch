@@ -1,0 +1,78 @@
+{
+  "lesson": "21-tool-registry-schema-validation",
+  "title": "Tool Registry with Schema Validation",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which name matches ToolRegistry._NAME_RE?",
+      "options": [
+        "Tool.Read",
+        "tool-name",
+        "db.get_user",
+        "1st.tool"
+      ],
+      "correct": 2,
+      "explanation": "The pattern requires lowercase segments beginning with a letter, permits digits and underscores afterward, and separates segments with dots; db.get_user matches it."
+    },
+    {
+      "stage": "check",
+      "question": "Which schema keyword is accepted by validate_schema_shape but is not traversed as a validation rule?",
+      "options": [
+        "required",
+        "items",
+        "pattern",
+        "description"
+      ],
+      "correct": 3,
+      "explanation": "description is in ALLOWED_KEYWORDS for metadata, while _walk dispatches only type, enum, string constraints, object properties, and array items."
+    },
+    {
+      "stage": "check",
+      "question": "What error does validating {\"id\": \"forty-two\"} against db.get_user produce?",
+      "options": [
+        "path /id with keyword type and expected integer",
+        "path / with keyword required because id is missing",
+        "path /fields/1 with keyword enum",
+        "No error, because number-like strings are coerced"
+      ],
+      "correct": 0,
+      "explanation": "The object contains id, but _type_matches rejects str for the integer schema; the demo reports path /id and keyword type."
+    },
+    {
+      "stage": "check",
+      "question": "What happens when a registered tool name is registered again without override=True?",
+      "options": [
+        "The old handler is silently replaced",
+        "register raises ValueError stating the tool is already registered",
+        "The second record is appended under a generated numeric name",
+        "Only the schema is replaced; the handler remains unchanged"
+      ],
+      "correct": 1,
+      "explanation": "ToolRegistry.register checks name in _records and refuses a silent overwrite; callers must pass override=True explicitly."
+    },
+    {
+      "stage": "post",
+      "question": "Why is {\"id\": 1, \"fields\": [\"id\", \"phone\"]} rejected?",
+      "options": [
+        "id must be a string",
+        "fields must be omitted whenever id is present",
+        "path /fields/1 fails the enum [id, name, email]",
+        "phone violates a pattern on the tool name"
+      ],
+      "correct": 2,
+      "explanation": "The fields array accepts only id, name, or email; _check_array descends to index 1 and reports the enum violation at /fields/1."
+    },
+    {
+      "stage": "post",
+      "question": "What does ToolRegistry.validate do with the ToolRecord.handler?",
+      "options": [
+        "It calls the handler once before walking the schema",
+        "It calls the handler only for valid arguments",
+        "It replaces the handler with a validator closure",
+        "It leaves the handler untouched and validates the schema/data only"
+      ],
+      "correct": 3,
+      "explanation": "The validator receives the record schema, walks the arguments, and returns Ok or ValidationError objects; handler execution belongs to the dispatcher."
+    }
+  ]
+}

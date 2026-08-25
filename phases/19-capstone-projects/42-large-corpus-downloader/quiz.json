@@ -4,51 +4,51 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does the downloader keep a separate .partial.json checkpoint per shard?",
+      "question": "What does the per-shard .partial.json state let StreamingDownloader verify before resuming?",
       "options": [
-        "To make the cache directory look organized",
-        "So a resumed download can verify the sha256 prefix over the verified bytes before appending, making silent corruption impossible",
-        "Because urllib requires it",
-        "To store the URL in case the shard file moves"
+        "That the remote server supports every compression format before opening the cache.",
+        "That the on-disk partial has exactly verified_bytes and the recorded SHA-256 prefix before it sends a Range request.",
+        "That all other shards have completed, so a failed shard can be skipped.",
+        "That the JSONL tokenizer has already consumed the shard and can discard the compressed bytes."
       ],
       "correct": 1,
-      "explanation": "The checkpoint records verified_bytes and the sha256 of those bytes; resume only proceeds when the on-disk hash matches."
+      "explanation": "_verify_partial compares the file size with verified_bytes and recomputes the prefix hash. A mismatch causes the partial and checkpoint to be discarded rather than appended blindly."
     },
     {
       "stage": "check",
       "question": "What does the LSH band scheme buy that exact-hash dedup does not?",
       "options": [
         "Constant memory usage",
-        "Sub-linear lookup that flags near-duplicates with high Jaccard similarity even when the documents differ by a few tokens",
         "Lossless compression",
+        "Sub-linear lookup that flags near-duplicates with high Jaccard similarity even when the documents differ by a few tokens",
         "Faster sha256 computation"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "MinHash plus LSH catches paraphrases and boilerplate variants that exact-hash dedup walks past."
     },
     {
       "stage": "check",
-      "question": "Why is the checkpoint written before the bytes are appended, not after?",
+      "question": "The downloader writes the next checkpoint before out.write(buf). What happens if the process dies between those two calls?",
       "options": [
-        "It is convenient",
-        "If the process dies between the write and the checkpoint update, the next resume reads a checkpoint that is behind the bytes and silently re-appends, corrupting the file",
-        "It is faster",
-        "It saves disk space"
+        "The file is longer than the checkpoint, so the downloader silently appends the same bytes a second time.",
+        "The rolling hash is lost, but the file is accepted because the byte count is authoritative.",
+        "The checkpoint is written only after the complete shard, so a mid-shard crash cannot affect resume.",
+        "The checkpoint can claim bytes that are not yet on disk; the next _verify_partial sees the size mismatch and restarts instead of resuming the invalid partial."
       ],
-      "correct": 1,
-      "explanation": "Checkpoint-first matches a write-ahead log: a crash leaves the verified offset trailing or equal to the file, never ahead."
+      "correct": 3,
+      "explanation": "The write-ahead ordering may leave checkpoint metadata ahead of the file, but _verify_partial rejects that state because the file size must equal verified_bytes. The safe fallback is to delete the partial and restart."
     },
     {
       "stage": "check",
-      "question": "What is the role of the manifest sha256 lock file?",
+      "question": "What does the manifest lock file protect?",
       "options": [
-        "It speeds up reads",
-        "Downstream stages refuse to start unless the manifest content matches the pinned hash, closing the silent attack surface where an attacker edits one file",
-        "It records the date",
-        "It is a backup of the manifest"
+        "It stores a digest of the manifest so a consumer can detect content changes before trusting the shard inventory.",
+        "It makes every shard download single-threaded and prevents Range requests.",
+        "It records only the wall-clock time of the last downloader process.",
+        "It replaces the compressed shard files so downstream code never reads them."
       ],
-      "correct": 1,
-      "explanation": "Pinning the manifest hash makes the link between code and data a content-addressed contract."
+      "correct": 0,
+      "explanation": "ManifestWriter writes the manifest and a .json.lock containing its SHA-256. Consumers can compare the digest and notice an edited or mismatched manifest."
     },
     {
       "stage": "post",
@@ -67,11 +67,11 @@
       "question": "What does tombstoning a dropped duplicate preserve that a silent delete does not?",
       "options": [
         "Disk space",
-        "The link between the duplicate and the keeper it collided with, plus an audit trail that survives a later threshold change",
         "Compression ratio",
+        "The link between the duplicate and the keeper it collided with, plus an audit trail that survives a later threshold change",
         "Manifest sha256 stability"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Tombstones let a future pass revisit the dedup threshold; deletes lose the evidence."
     }
   ]

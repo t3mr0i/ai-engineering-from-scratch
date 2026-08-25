@@ -7,11 +7,11 @@
       "question": "Which set best describes a complete training checkpoint?",
       "options": [
         "Model weights only",
-        "Model state, optimizer state, scheduler state, step counters, loss history, and RNG state for python, numpy, torch CPU, torch CUDA",
         "Just the loss history",
-        "Anything torch.save() can serialize"
+        "Model state, optimizer state, scheduler state, step counters, loss history, and RNG state for python, numpy, torch CPU, torch CUDA",
+        "Any Python object is sufficient even if it omits optimizer and RNG state"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Resume must walk the same trajectory. Without optimizer moments, scheduler position, and RNG state the resumed loss is a different curve."
     },
     {
@@ -19,23 +19,23 @@
       "question": "Why does the saver write to a temporary file and then rename instead of writing the target name directly?",
       "options": [
         "Faster I/O",
-        "POSIX rename within the same directory is atomic, so a crash mid-write leaves the previous good file in place rather than a half-written file at the target name",
         "It dedupes the file",
-        "It bypasses fsync"
+        "It bypasses fsync",
+        "POSIX rename within the same directory is atomic, so a crash mid-write leaves the previous good file in place rather than a half-written file at the target name"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "atomic_save calls os.replace from a temp file in the same directory. Cross-device renames lose atomicity, which is why the temp file must live in the target directory."
     },
     {
       "stage": "check",
       "question": "Why does a sharded checkpoint store a sha256 in index.json per shard?",
       "options": [
-        "For SEO",
         "So the loader can detect a truncated or tampered shard at load time instead of silently merging a bad state_dict",
+        "So a dashboard can ignore the schema when parsing the file",
         "To compress the file",
-        "Because torch requires it"
+        "Because tensor serialization rejects files without a digest"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "load_sharded_checkpoint asserts each shard's actual hash matches the recorded one and the meta file's hash too. Silent corruption is the worst failure mode."
     },
     {
@@ -52,26 +52,26 @@
     },
     {
       "stage": "post",
-      "question": "What does the schema field on the payload buy you?",
+      "question": "Which schema guard does load_checkpoint apply before restoring state?",
       "options": [
-        "Nothing",
-        "A migration hook: future format changes bump the schema string and the loader can dispatch on it instead of breaking old runs",
-        "A pretty filename",
-        "Compression"
+        "It accepts any payload with a model key and infers the version from tensor names.",
+        "It rejects every schema except the literal string ckpt.v2.",
+        "It requires payload['schema'].startswith('ckpt') before loading model, optimizer, scheduler, and RNG state.",
+        "It checks only the filename suffix and never reads the payload schema."
       ],
-      "correct": 1,
-      "explanation": "The lesson uses ckpt.v1; the next version is ckpt.v2 with a migrate function. Without the field, format evolution requires breakage."
+      "correct": 2,
+      "explanation": "The loader asserts that the stored schema begins with ckpt; the current payload uses ckpt.v1. The check is a compatibility gate, not a complete migration system."
     },
     {
       "stage": "post",
       "question": "Reading the resume demo summary, what does max_loss_diff_after_resume near 0 prove?",
       "options": [
-        "Nothing useful",
-        "That the post-resume loss trajectory matches the uninterrupted baseline within floating point noise, which means the RNG state and the optimizer state were both restored faithfully",
+        "That each rank used a different initial parameter tensor",
         "That the model is good",
-        "That the disk is fast"
+        "That the disk is fast",
+        "That the post-resume loss trajectory matches the uninterrupted baseline within floating point noise, which means the RNG state and the optimizer state were both restored faithfully"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "If you forget RNG you see a different curve and a non-trivial diff. If you forget optimizer state the diff is huge. The near-zero number is the contract."
     }
   ]

@@ -1,0 +1,78 @@
+{
+  "lesson": "25-verification-gates-observation-budget",
+  "title": "Verification Gates and the Observation Budget",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "In what order does build_default_chain evaluate its four gates?",
+      "options": [
+        "budget → recency → regex → whitelist",
+        "regex → whitelist → budget → recency",
+        "whitelist → regex → recency → budget",
+        "recency → budget → whitelist → regex"
+      ],
+      "correct": 2,
+      "explanation": "The tuple in build_default_chain is WhitelistGate, RegexGate, RecencyGate(window=3), then BudgetGate(max_tokens=budget); GateChain short-circuits at the first denial."
+    },
+    {
+      "stage": "check",
+      "question": "How does estimate_tokens approximate the size of a non-empty observation?",
+      "options": [
+        "It returns the exact character count",
+        "It returns one token per whitespace-delimited word",
+        "It uses len(text)×4 and rounds up",
+        "It returns max(1, len(text)//4)"
+      ],
+      "correct": 3,
+      "explanation": "The scaffold uses a deterministic stand-in: integer division by four with a minimum of one for non-empty text, and zero for empty text."
+    },
+    {
+      "stage": "check",
+      "question": "Why can the observation budget be exceeded by the result of an allowed call?",
+      "options": [
+        "BudgetGate checks cumulative usage before the result is recorded, then the ledger records the returned observation",
+        "BudgetGate never reads the ledger",
+        "The budget is increased after every successful call",
+        "The regex gate converts tokens into bytes after recording"
+      ],
+      "correct": 0,
+      "explanation": "A call cannot know its result length in advance. BudgetGate checks the current ledger; run_synthetic_loop records the observation afterward, so cumulative usage can move past the limit."
+    },
+    {
+      "stage": "check",
+      "question": "When does RecencyGate(window=3) refuse a call?",
+      "options": [
+        "When the current turn is exactly three after the last observation",
+        "When the gap from the latest observation exceeds three turns",
+        "Whenever the ledger has no observations",
+        "Only when the tool is not in the allow-set"
+      ],
+      "correct": 1,
+      "explanation": "The first call passes with no observations; otherwise RecencyGate computes call.turn - latest_turn and denies only if that gap is greater than window."
+    },
+    {
+      "stage": "post",
+      "question": "Which tool causes the fifth demo call to fail at the whitelist gate?",
+      "options": [
+        "read_file",
+        "run_tests",
+        "shell",
+        "list_dir"
+      ],
+      "correct": 2,
+      "explanation": "The allow-set contains list_dir, read_file, and run_tests. The fifth call names shell, so it is denied before regex, recency, or budget decisions."
+    },
+    {
+      "stage": "post",
+      "question": "What aggregate result does run_demo print for its five calls?",
+      "options": [
+        "5 allowed, 0 refused, and 5 observations",
+        "3 allowed, 2 refused, and 2 observations",
+        "2 allowed, 3 refused, and 2 observations",
+        "3 allowed, 2 refused, and 3 observations"
+      ],
+      "correct": 3,
+      "explanation": "The first three calls record observations; turn 4 is denied after the budget reaches 322/200 and turn 5 is denied by whitelist, producing allowed=3, refused=2, observations=3."
+    }
+  ]
+}

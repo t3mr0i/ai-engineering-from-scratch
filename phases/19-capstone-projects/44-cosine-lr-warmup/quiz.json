@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does the cosine-with-warmup schedule start at zero rather than at lr_max?",
+      "question": "For CosineWithWarmup(warmup_steps=4, total_steps=10, lr_max=1.0, lr_min=0.1), what are lr(0) and lr(4)?",
       "options": [
-        "Because lr_max is illegal at step zero",
-        "The first thousand updates are noisy; a linear ramp from zero to lr_max gives the optimizer a small effective step size while running estimates stabilise",
-        "Because Adam requires it",
-        "Random tradition"
+        "lr(0) = 1.0 and lr(4) = 0.1.",
+        "Both values are 0.1 because cosine decay starts immediately.",
+        "Both calls raise because step zero is outside the schedule.",
+        "lr(0) = 0.0 and lr(4) = 1.0."
       ],
-      "correct": 1,
-      "explanation": "Warmup keeps brittle early updates small; the model otherwise either diverges or plateaus."
+      "correct": 3,
+      "explanation": "With a nonzero warmup, the first branch returns lr_max * step / warmup_steps: zero at step 0 and the peak at step 4. A schedule with warmup_steps=0 is the explicit exception and starts at lr_max."
     },
     {
       "stage": "check",
-      "question": "Why is the schedule implemented as a single function over step rather than three glued segments?",
+      "question": "What does this schedule return after its configured decay horizon?",
       "options": [
-        "Single functions are smaller",
-        "A glued schedule loses one boundary the first time lr_max is changed; the single function evaluates the same closed-form expression and preserves continuity at warmup and total endpoints",
-        "Linters require it",
-        "Random"
+        "It returns the configured lr_min for step >= total_steps; it does not extrapolate the cosine below that floor.",
+        "It raises at the first step beyond total_steps so the caller must stop training.",
+        "It wraps to the warmup rate and repeats the cosine cycle.",
+        "It returns NaN because cosine is undefined outside one period."
       ],
-      "correct": 1,
-      "explanation": "Continuity at lr(warmup_steps) and lr(total_steps) follows from the closed form."
+      "correct": 0,
+      "explanation": "The step >= total_steps branch pins the schedule at lr_min, making an overlong run explicit and stable."
     },
     {
       "stage": "check",
-      "question": "What happens for step > total_steps in the schedule?",
+      "question": "Why does TrainState.step record gradient_l2_norm beside the scheduled learning rate?",
       "options": [
-        "It throws an exception",
-        "It pins at lr_min; the schedule does not extrapolate, and trainers that need to extend training change total_steps explicitly",
-        "It returns nan",
-        "It wraps around"
+        "AdamW refuses to step unless a gradient norm is logged.",
+        "The pair lets an operator relate an unusually large update signal to a schedule value when diagnosing an unstable training run.",
+        "The norm replaces the loss, so logging the loss would double-count the update.",
+        "The gradient norm determines the next cosine phase automatically."
       ],
       "correct": 1,
-      "explanation": "A pinned floor keeps an overshooting trainer in a documented state instead of crashing."
+      "explanation": "TrainState.step computes the global gradient norm after backward, obtains the rate from schedule.lr(global_step), logs both, then performs the optimizer step. The schedule itself does not adapt to the norm."
     },
     {
       "stage": "check",
-      "question": "Why log gradient L2 norm next to the learning rate?",
+      "question": "How does TrainState place a schedule value on an optimizer step?",
       "options": [
-        "It looks pretty",
-        "The norm is the other half of training health: a divergent run spikes its norm before the loss; a too-aggressive peak shows up as a norm that stays high after warmup",
-        "Adam requires it",
-        "Tradition"
+        "It increments global_step before computing the rate, so the first update uses step 1.",
+        "It samples a new learning rate from the current batch's loss.",
+        "It takes schedule.lr(global_step), sets every optimizer param group to that rate, steps the optimizer, then increments global_step.",
+        "It changes total_steps after every update to keep the cosine at its maximum."
       ],
-      "correct": 1,
-      "explanation": "Co-logging makes pathological schedules visible at run time, not after the fact."
+      "correct": 2,
+      "explanation": "The implementation evaluates the schedule with the current counter, applies that rate, calls optimizer.step(), and increments the counter afterward."
     },
     {
       "stage": "post",
-      "question": "Why configure warmup_steps as a fraction of total_steps in production?",
+      "question": "What does CosineWithWarmup do when warmup_steps=0?",
       "options": [
-        "Fractions are cleaner",
-        "A fixed warmup count that suits a 20k-step run is essentially no warmup in a 200M-step run; the fraction (typical 1-3 percent) scales with training duration",
-        "Random preference",
-        "Hardware requirement"
+        "It rejects the configuration because warmup must always be positive.",
+        "It keeps the rate at zero until total_steps.",
+        "It uses lr_min at step 0 and jumps to lr_max at total_steps.",
+        "At step 0 it uses lr_max and then follows the cosine branch; there is no zero-to-peak ramp."
       ],
-      "correct": 1,
-      "explanation": "Absolute warmup counts misbehave across training-duration scales."
+      "correct": 3,
+      "explanation": "The warmup branch is conditional on warmup_steps > 0. With zero warmup, step 0 proceeds to the decay branch, whose progress is zero and therefore returns lr_max."
     },
     {
       "stage": "post",
-      "question": "Why is a non-zero lr_min typical in production?",
+      "question": "What is guaranteed when lr_min=0.0?",
       "options": [
-        "Adam requires non-zero",
-        "A floor near 10 percent of lr_max keeps the optimizer learning during the long tail; an lr_min of zero produces a curve that looks good and a model that has not finished training",
-        "Numerical stability",
-        "Backward compatibility"
+        "lr(total_steps) and every later call return zero; whether that floor is a good training choice is outside the schedule's contract.",
+        "The optimizer refuses to update before total_steps.",
+        "The schedule changes to inverse-square-root decay.",
+        "The schedule returns a negative rate after the cosine crosses zero."
       ],
-      "correct": 1,
-      "explanation": "The tail of the schedule is where late-stage refinements land; zeroing it wastes that signal."
+      "correct": 0,
+      "explanation": "The implementation pins at the configured floor once step >= total_steps; with lr_min=0.0, that floor is exactly zero."
     }
   ]
 }

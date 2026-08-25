@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What problem does global L2 gradient clipping solve?",
+      "question": "What does clip_global_l2_norm do when the pre-clip norm is already below max_norm?",
       "options": [
-        "Slow training",
-        "A single bad batch can spike the gradient norm by orders of magnitude; clipping bounds the worst-case optimizer step so one batch cannot reset hours of learning",
-        "Vocabulary drift",
-        "Random restart"
+        "It leaves gradients unchanged and returns equal pre- and post-clip norms.",
+        "It rescales every gradient upward until the norm equals max_norm.",
+        "It discards the batch because clipping is only valid for large tensors.",
+        "It replaces the gradients with their elementwise signs."
       ],
-      "correct": 1,
-      "explanation": "Clipping is the safety belt that keeps a noisy batch from wrecking the loss curve."
+      "correct": 0,
+      "explanation": "The helper computes the global Euclidean norm and returns (pre_clip, pre_clip) when the limit is not exceeded. Scaling happens only when pre_clip > max_norm."
     },
     {
       "stage": "check",
-      "question": "What is the correct order of GradScaler operations in a step?",
+      "question": "For a finite loss and finite gradients, which order does AmpTrainState.step use?",
       "options": [
-        "step, scale, unscale, backward, update",
-        "scaler.scale(loss).backward(); scaler.unscale_(optimizer); clip_grad_norm_; scaler.step(optimizer); scaler.update()",
-        "backward, step, scale, update",
-        "Any order; the scaler reorders internally"
+        "scaler.step(optimizer), then backward and unscale so the scaler can inspect the updated weights.",
+        "scaler.scale(loss).backward(), scaler.unscale_(optimizer), finite-gradient check and clipping, scaler.step(optimizer), then scaler.update().",
+        "Clip the scaled gradients, call scaler.update(), and skip scaler.step() on every clean batch.",
+        "Call scaler.update() before backward so it chooses the scale for the current loss."
       ],
       "correct": 1,
-      "explanation": "Clip on unscaled gradients between unscale_ and step; update always runs."
+      "explanation": "The gradients must be unscaled before the global norm is meaningful. A clean step clips those unscaled gradients, steps the optimizer, and updates the scaler."
     },
     {
       "stage": "check",
-      "question": "What does scaler.update() do on a skipped step?",
+      "question": "What happens on the non-finite-gradient branch after unscale_?",
       "options": [
-        "Nothing",
-        "Halves the scaling factor and resets the no-inf counter; forgetting to call it on the skip path is the bug that produces 'the scaling factor never changed'",
-        "Doubles the scaling factor",
-        "Closes the run"
+        "The helper clips the infinite norm to max_norm and treats the update as successful.",
+        "The optimizer still steps with the finite subset of gradients and the scaler doubles its scale.",
+        "It logs non_finite_grad, skips optimizer.step(), and calls scaler.update() to adjust the scale.",
+        "It raises immediately before recording the skip reason."
       ],
-      "correct": 1,
-      "explanation": "The scaler tunes its factor based on the skip / clean ratio across recent steps."
+      "correct": 2,
+      "explanation": "After unscaling, has_non_finite_grad guards the update. The step is recorded as skipped with an infinite pre-clip norm; the scaler update is the recovery action."
     },
     {
       "stage": "check",
-      "question": "Why is the loss finiteness check necessary even with a GradScaler?",
+      "question": "What happens when the forward loss itself is non-finite?",
       "options": [
-        "Because GradScaler is slow",
-        "GradScaler handles backward-pass overflow but a non-finite loss does not produce useful gradients; skipping before backward saves compute and avoids polluting the scaler's state",
-        "It is decorative",
-        "PyTorch requires it"
+        "It clips the previous step's gradients and continues with the optimizer update.",
+        "It converts the loss to zero and logs a successful step.",
+        "The code performs backward anyway so GradScaler can repair the loss.",
+        "It records non_finite_loss, skips backward and the optimizer step, and does not call scaler.update() because no scaled backward was started."
       ],
-      "correct": 1,
-      "explanation": "Loss check covers forward-pass failures; scaler covers backward-pass failures."
+      "correct": 3,
+      "explanation": "The implementation checks loss finiteness before scaler.scale(loss).backward(). Its skip record explicitly leaves the scaler untouched on this path."
     },
     {
       "stage": "post",
-      "question": "What is the production signal in the rolling skip rate?",
+      "question": "What does rolling_skip_rate(log, window=3) report at each log row?",
       "options": [
-        "Always page on any skip",
-        "A handful of skips per run is healthy; hundreds of skips per epoch (above roughly 5 percent rolling rate) is a hard alert that the model is in a regime FP16 cannot hold",
-        "Skip rate is irrelevant",
-        "Page only on consecutive skips"
+        "The fraction of skipped rows in the trailing window (or in all rows seen so far before three rows exist).",
+        "The fraction of non-finite parameters in the model, independent of the training log.",
+        "The largest gradient norm divided by max_norm.",
+        "The number of scaler updates since the previous checkpoint."
       ],
-      "correct": 1,
-      "explanation": "Rate-based alerting catches silent failure modes that occasional-skip pages would not."
+      "correct": 0,
+      "explanation": "The helper keeps the last window Boolean skip flags and appends their mean. It reports an observable rate rather than enforcing a particular alert threshold."
     },
     {
       "stage": "post",
-      "question": "Why switch from FP16 to BF16 autocast when skips are frequent?",
+      "question": "Why can BF16 reduce overflow-related skips compared with FP16 autocast?",
       "options": [
-        "BF16 is newer",
-        "BF16 has a wider exponent range than FP16 and rarely needs loss scaling; the skip rate typically drops to zero on the same model",
-        "BF16 is slower so it skips less",
-        "Random tradition"
+        "BF16 has more mantissa bits, so it represents every small gradient exactly.",
+        "BF16 has a wider exponent range, so more large intermediate values remain finite; the code does not promise that every model will have zero skips.",
+        "BF16 disables backward and therefore cannot overflow.",
+        "BF16 converts the optimizer to SGD, which has no scaling factor."
       ],
       "correct": 1,
-      "explanation": "FP16 favors mantissa precision over range; BF16 trades the other way, removing the overflow class entirely."
+      "explanation": "BF16 keeps FP32-like exponent width while sacrificing mantissa precision relative to FP16. That wider range is why it often needs less loss scaling, not a guarantee of perfect training."
     }
   ]
 }

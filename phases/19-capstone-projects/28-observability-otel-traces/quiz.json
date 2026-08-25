@@ -1,0 +1,78 @@
+{
+  "lesson": "28-observability-otel-traces",
+  "title": "Observability with OpenTelemetry-Style Traces",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "How long is the hexadecimal trace ID produced by `new_trace_id()`?",
+      "options": [
+        "32 hex characters",
+        "16 hex characters",
+        "8 decimal digits",
+        "64 bytes printed as text"
+      ],
+      "correct": 0,
+      "explanation": "The helper calls `secrets.token_hex(16)`, which represents 16 random bytes as 32 hexadecimal characters. Span IDs use a separate, shorter 8-byte helper."
+    },
+    {
+      "stage": "check",
+      "question": "Which attribute names the provider on a GenAI span?",
+      "options": [
+        "`gen_ai.request.model`",
+        "`gen_ai.provider.name`",
+        "`gen_ai.response.id`",
+        "`gen_ai.tool.call.id`"
+      ],
+      "correct": 1,
+      "explanation": "The lesson's constants define `gen_ai.provider.name` for the provider. The other keys describe the requested model, response identity, or a tool call."
+    },
+    {
+      "stage": "check",
+      "question": "What does `SpanBuilder.span` do when the wrapped operation raises an exception?",
+      "options": [
+        "It silently marks the span OK and returns None.",
+        "It retries the operation until it succeeds.",
+        "It marks the span ERROR, records an exception event, exports it, and re-raises.",
+        "It discards the span so failed work cannot be observed."
+      ],
+      "correct": 2,
+      "explanation": "The context manager records the error status and message, appends an `exception` SpanEvent, exports the completed span in `finally`, and then preserves normal Python error propagation by re-raising."
+    },
+    {
+      "stage": "check",
+      "question": "How are tool latency observations bucketed in this implementation?",
+      "options": [
+        "Only by the trace ID, with no tool label",
+        "By exact floating-point values with no buckets",
+        "With one fixed 100 ms bucket for every operation",
+        "Using explicit millisecond buckets and a `tool_name` label"
+      ],
+      "correct": 3,
+      "explanation": "The Histogram uses the explicit ladder `(5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000)` and tool observations are labeled by `tool_name`."
+    },
+    {
+      "stage": "post",
+      "question": "How many spans does the demo round-trip through its JSONL exporter?",
+      "options": [
+        "Four: one GenAI parent and three tool spans",
+        "One: only the parent span is exported",
+        "Three: denied tool spans are omitted",
+        "Six: every metric sample becomes a span"
+      ],
+      "correct": 0,
+      "explanation": "The demo creates one `gen_ai.chat` span and three tool spans, including the denied/error shell call. The JSONL round trip therefore parses four span records."
+    },
+    {
+      "stage": "post",
+      "question": "Which spans contribute to the `tools_called_total` counter?",
+      "options": [
+        "All spans, including the GenAI parent",
+        "Only spans that carry `gen_ai.tool.name`",
+        "Only spans whose status is OK",
+        "Only spans with a non-empty trace ID"
+      ],
+      "correct": 1,
+      "explanation": "The builder increments the tool counter and observes tool latency when the span is a tool span, identified by the `gen_ai.tool.name` attribute. Error tool spans still count."
+    }
+  ]
+}

@@ -6,25 +6,25 @@
       "stage": "pre",
       "question": "Before reading: a colleague reports their model has perplexity 4.2 on the held-out set. They ask if the model is good. What is the most defensible response?",
       "options": [
-        "Yes: perplexity below 5 means the model is good.",
         "Perplexity tells you how well the model fits the language distribution. It says nothing about whether the model follows instructions or returns correct answers.",
+        "Yes: perplexity below 5 means the model is good.",
         "Perplexity is meaningless without an explicit prompt.",
         "Only judge models can answer that question."
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "Perplexity is one dimension. A model can have low perplexity and still be wrong on factual tasks, or have decent perplexity and still produce bad-quality answers. You need multiple evals, each measuring a different dimension."
     },
     {
       "stage": "check",
-      "question": "The perplexity eval sums per-token negative log-likelihood over non-pad positions and divides by the total non-pad token count. Why not average per-batch perplexities instead?",
+      "question": "How does perplexity_eval aggregate batches in this lesson?",
       "options": [
-        "Averaging per-batch perplexities is mathematically equivalent.",
-        "Averaging per-batch perplexities under-weights short sequences (their per-batch ppl carries more variance) and produces a biased aggregate.",
-        "Batches contain padded tokens that must always be averaged.",
-        "Perplexity is undefined for batched data."
+        "It averages each batch's already-exponentiated perplexity, giving every batch the same weight.",
+        "It sums non-pad token negative log-likelihood and divides by the total non-pad token count, then exponentiates the result.",
+        "It divides total NLL by the number of batches and treats padding as ordinary tokens.",
+        "It takes the maximum per-example perplexity so one hard example dominates the report."
       ],
       "correct": 1,
-      "explanation": "Per-token aggregation is the textbook definition and avoids batch-size and length biases. Per-batch averaging is a common bug; on a fixture with varying sequence lengths it produces a different number from the correct one."
+      "explanation": "The code accumulates total_nll and total_tokens using the shifted attention mask. The final perplexity is exp(total_nll / total_tokens), so longer batches contribute in proportion to their valid tokens."
     },
     {
       "stage": "check",
@@ -40,38 +40,38 @@
     },
     {
       "stage": "check",
-      "question": "The aggregator normalises perplexity with `1 / (1 + log(max(ppl, 1.0)))`. What does this guarantee about the normalised score?",
+      "question": "For a finite raw perplexity p >= 1, what does the aggregator's `1 / (1 + log(p))` normalisation guarantee?",
       "options": [
-        "It is always in [0, 1] and decreases monotonically as raw perplexity grows.",
         "It is always in [0, 1] and increases monotonically as raw perplexity grows.",
         "It is unbounded above.",
-        "It only returns 0 or 1 (binary)."
+        "It only returns 0 or 1 (binary).",
+        "It is always in [0, 1] and decreases monotonically as raw perplexity grows."
       ],
-      "correct": 0,
-      "explanation": "Perplexity 1 (theoretical floor) maps to 1.0. Infinity maps to 0. The score is in [0, 1] and lower perplexity is better, which matches the direction of the other normalised metrics."
+      "correct": 3,
+      "explanation": "For p >= 1, the denominator is at least 1, so the score is in [0, 1] and decreases as p grows. The implementation maps non-finite or non-positive inputs to 0 before this formula."
     },
     {
       "stage": "post",
       "question": "You swap the mock judge for a real frontier-model judge. What is the minimum change to the pipeline?",
       "options": [
-        "Rewrite the aggregator to accept a different score range.",
         "Replace the `judge_fn` argument to `judge_eval` with a function that has the same signature: (instruction, prediction, reference) -> JudgeVerdict.",
+        "Rewrite the aggregator to accept a different score range.",
         "Add a new entry to DEFAULT_WEIGHTS.",
         "Migrate the entire eval suite to async I/O."
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "The judge interface is `(instruction, prediction, reference) -> JudgeVerdict`. Any function with that signature drops in. The pipeline is decoupled from the judge implementation by that boundary, which is the point."
     },
     {
       "stage": "post",
       "question": "Your aggregate score is 0.72, but exact-match is 0.40 and judge is 4.5/5. Which trade-off is the model making?",
       "options": [
-        "The model is hitting the gold string exactly less often, but the judge thinks the open-form answers are decent.",
         "The model is overfitting on the LM corpus.",
+        "The model is hitting the gold string exactly less often, but the judge thinks the open-form answers are decent.",
         "The aggregate is mis-computed.",
         "The judge is mis-aligned with exact-match by definition."
       ],
-      "correct": 0,
+      "correct": 1,
       "explanation": "Low EM with high judge suggests paraphrase: the answers are right in substance but not character-for-character with the gold. This is exactly the dimension that EM misses and judge captures. The trade-off is informative, not a bug."
     }
   ]

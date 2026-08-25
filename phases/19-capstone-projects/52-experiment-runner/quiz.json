@@ -7,47 +7,47 @@
       "question": "Why does the runner spawn a subprocess instead of importing the experiment script in process?",
       "options": [
         "Because Python disallows nested imports",
-        "Because a separate process gives the runner a kill handle on timeout or memory limits and isolates crashes from the orchestrator",
         "Because the metrics format requires it",
-        "Because subprocess is faster than import"
+        "Because subprocess is faster than import",
+        "Because a separate process gives the runner a kill handle on timeout or memory limits and isolates crashes from the orchestrator"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "A separate process is the simplest isolation the language ships. The parent retains a kill handle and an independent address space, so a crashing experiment cannot take the orchestrator with it."
     },
     {
       "stage": "check",
-      "question": "Why is the memory cap described as soft?",
+      "question": "Why is the experiment runner's memory cap described as soft?",
       "options": [
-        "Because it only applies to the heap, not the stack",
-        "Because the poller has a non zero interval, so a process can spike above the cap between polls and the runner only acts on the next observation",
-        "Because the operating system always overrides it",
-        "Because numpy ignores the cap"
+        "The poller samples RSS at intervals, so a process can exceed the configured cap between observations before it is killed.",
+        "The runner never reads memory and records a random peak_rss_mb.",
+        "The cap applies only to the JSON file, not to the child process.",
+        "The operating system converts the cap into a hard virtual-memory reservation."
       ],
-      "correct": 1,
-      "explanation": "The cap is enforced by polling, not by an in kernel limit. The poller interval is the resolution of the cap, and short spikes can briefly exceed the cap before the next observation."
+      "correct": 0,
+      "explanation": "MemoryPoller checks the child periodically and kills it when an observed RSS exceeds the cap. Polling cannot prevent a short-lived spike between checks."
     },
     {
       "stage": "check",
-      "question": "Which terminal label does the runner return when stdout has the metrics but the exit code is non zero?",
+      "question": "A child prints a valid metrics JSON line and then exits with a non-zero code. Which terminal label does _terminal_label return?",
       "options": [
-        "ok",
-        "timeout",
-        "oom",
-        "crash"
+        "ok, because parsed metrics are more important than the exit code.",
+        "crash, because ok requires both exit code 0 and a metrics blob.",
+        "timeout, because any incomplete child run is a timeout.",
+        "oom, because a non-zero exit means memory was exhausted."
       ],
-      "correct": 3,
-      "explanation": "Terminal is ok only when exit code is zero and metrics parsed. A non zero exit code is crash even if some metrics were captured before the failure."
+      "correct": 1,
+      "explanation": "The helper checks OOM and timeout first, then returns ok only for exit code 0 with metrics. Any other exit code is classified as crash, even when partial metrics were printed."
     },
     {
       "stage": "check",
       "question": "How does the runner identify the final metrics blob inside stdout?",
       "options": [
         "It reads the first json line",
-        "It reads the last json line whose keys cover the required metric_keys; earlier covering lines become intermediate metrics",
         "It scans stderr for json",
+        "It reads the last json line whose keys cover the required metric_keys; earlier covering lines become intermediate metrics",
         "It expects exactly one line of output"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Final metrics are the last line that parses as json and includes every required key. Earlier covering lines are kept as intermediate metrics for learning curves."
     },
     {
@@ -55,23 +55,23 @@
       "question": "Why does the ablation helper sweep one knob at a time rather than a full factorial?",
       "options": [
         "Because the runner cannot launch more than one subprocess",
-        "Because one knob at a time produces a clean axis the evaluator can plot, while full factorial blows up exponentially and confuses interpretation",
         "Because numpy does not support the cartesian product",
-        "Because the seed only varies along one knob"
+        "Because the seed only varies along one knob",
+        "Because one knob at a time produces a clean axis the evaluator can plot, while full factorial blows up exponentially and confuses interpretation"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Single knob sweeps keep the result interpretable. Full factorial costs scale exponentially with the number of knobs and the resulting table is hard to read."
     },
     {
       "stage": "post",
       "question": "What guarantee does forwarding spec.seed into config['__seed'] give the evaluator?",
       "options": [
+        "Determinism, so a re run with the same seed produces identical metrics and the evaluator can detect real changes from random noise",
         "Faster wall time",
         "Lower memory consumption",
-        "Determinism, so a re run with the same seed produces identical metrics and the evaluator can detect real changes from random noise",
         "A free significance test"
       ],
-      "correct": 2,
+      "correct": 0,
       "explanation": "The seed pins random initialisation in the experiment. Two runs with the same seed produce identical metrics, which is what lets the evaluator distinguish a real regression from a different draw."
     }
   ]

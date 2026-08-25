@@ -1,0 +1,78 @@
+{
+  "lesson": "33-multihead-self-attention",
+  "title": "Multi-Head Self-Attention",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What must hold for `MultiHeadSelfAttention(d_model, n_heads)` to construct valid heads?",
+      "options": [
+        "`d_model` must be prime.",
+        "`n_heads` must equal the sequence length.",
+        "`d_model` must be divisible by `n_heads`.",
+        "The vocabulary must equal `d_model`."
+      ],
+      "correct": 2,
+      "explanation": "Each head uses `d_head = d_model // n_heads`, so the module rejects configurations whose model width cannot be evenly split among heads."
+    },
+    {
+      "stage": "check",
+      "question": "How does the module obtain Q, K, and V from an input representation?",
+      "options": [
+        "The token IDs are copied three times with no learned projection.",
+        "Only the value projection is learned; Q and K are fixed zeros.",
+        "Three unrelated vocabularies are concatenated before attention.",
+        "A single linear layer outputs `3 * d_model` and is chunked into Q, K, and V."
+      ],
+      "correct": 3,
+      "explanation": "The implementation uses one fused qkv projection with output width `3*d_model`, then splits that tensor into query, key, and value blocks before reshaping into heads."
+    },
+    {
+      "stage": "check",
+      "question": "What happens to attention weight from position `t` toward a future position `u > t`?",
+      "options": [
+        "The causal mask sets its score to negative infinity, so softmax gives zero weight.",
+        "The future score is copied from the current position without masking.",
+        "It is copied from the previous head.",
+        "It is included only when `return_weights=False`."
+      ],
+      "correct": 0,
+      "explanation": "The upper-triangular causal mask is applied to the scores before softmax. Future positions therefore receive zero probability and cannot leak later tokens into the current representation."
+    },
+    {
+      "stage": "check",
+      "question": "If `return_weights=True` for input shape `(B, T, d_model)` and `H` heads, what shape are the weights?",
+      "options": [
+        "`(B, T, d_model)`",
+        "`(B, H, T, T)`",
+        "`(H, T, d_model)`",
+        "`(B, T, T)`"
+      ],
+      "correct": 1,
+      "explanation": "Attention probabilities retain batch, head, query-position, and key-position axes, giving `(B, H, T, T)`. The final output merges the head axis back into d_model."
+    },
+    {
+      "stage": "post",
+      "question": "Why can the repeat-token toy task train with shifted targets?",
+      "options": [
+        "The model is given the target sequence as an extra input channel.",
+        "Causal masking is disabled so every target is visible directly.",
+        "Each position learns to predict the token at the next position, and the repeated sequence makes that relationship predictable.",
+        "The loss compares attention weights to token IDs rather than logits."
+      ],
+      "correct": 2,
+      "explanation": "The language-model objective shifts the token sequence by one position. On the repeated-token fixture, the causal context is enough to learn the next-token pattern, so the demo loss falls."
+    },
+    {
+      "stage": "post",
+      "question": "What output shape does the demo's attention representation have for batch 16, length 12, and width 32?",
+      "options": [
+        "`(16, 4, 12, 12)`",
+        "`(12, 16, 32)`",
+        "`(16, 12, 4)`",
+        "`(16, 12, 32)`"
+      ],
+      "correct": 3,
+      "explanation": "The module merges four heads back into the configured model width, so its representation has the same batch and sequence axes as the input: `(16, 12, 32)`."
+    }
+  ]
+}

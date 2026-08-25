@@ -1,0 +1,78 @@
+{
+  "lesson": "20-agent-harness-loop-contract",
+  "title": "Agent Harness Loop Contract",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which state must HarnessLoop.run see before it begins planning?",
+      "options": [
+        "IDLE",
+        "PLANNING",
+        "AWAITING_TOOL",
+        "DONE"
+      ],
+      "correct": 0,
+      "explanation": "run rejects any state other than IDLE, emits session.start, and then transitions through PLANNING before executing the plan."
+    },
+    {
+      "stage": "check",
+      "question": "How many hook topics are registered in HOOK_TOPICS?",
+      "options": [
+        "6",
+        "10",
+        "11",
+        "8"
+      ],
+      "correct": 1,
+      "explanation": "HOOK_TOPICS contains before/after plan, step, and tool hooks plus on_error, on_pause, on_budget_exceeded, and on_complete: ten topics."
+    },
+    {
+      "stage": "check",
+      "question": "How many event types does the typed event stream allow?",
+      "options": [
+        "6",
+        "10",
+        "11",
+        "14"
+      ],
+      "correct": 2,
+      "explanation": "EVENT_TYPES lists eleven names, including session.start, plan.commit, tool.call, budget.warn, session.pause, and session.complete."
+    },
+    {
+      "stage": "check",
+      "question": "What does the deterministic planner use as its second step?",
+      "options": [
+        "A no-tool step that interprets the goal",
+        "format.summary with style=short, without a tool result",
+        "A replan step that sends the loop to PLANNING",
+        "db.get_user with id=42, marked as requiring a tool result"
+      ],
+      "correct": 3,
+      "explanation": "_default_planner returns step 2 as fetch user record with tool_name=db.get_user and tool_args={id: 42}; the step yields AWAITING_TOOL."
+    },
+    {
+      "stage": "post",
+      "question": "What state and reason does the bundled demo report after both tool results are resumed?",
+      "options": [
+        "state=done and final_reason=goal_met",
+        "state=idle and final_reason=budget_exceeded:turns",
+        "state=awaiting_tool and final_reason=tool_call",
+        "state=planning and final_reason=no_plan"
+      ],
+      "correct": 0,
+      "explanation": "The demo resumes db.get_user and format.summary, reaches the end of its three-step plan, and _complete returns DONE with reason goal_met."
+    },
+    {
+      "stage": "post",
+      "question": "How does the loop expose a budget limit instead of silently continuing?",
+      "options": [
+        "It raises KeyError and discards the event stream",
+        "It emits budget.warn and session.pause, returns a PullRequest, and transitions to IDLE",
+        "It forces DONE immediately without notifying hooks",
+        "It resets counters inside _check_budget and executes the current tool anyway"
+      ],
+      "correct": 1,
+      "explanation": "_check_budget emits budget.warn, fires on_budget_exceeded, and calls _pause; _pause emits session.pause, fires on_pause, transitions to IDLE, and returns a PullRequest for the caller."
+    }
+  ]
+}

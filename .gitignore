@@ -104,4 +104,4 @@ docs/argumentation-api-key-vorkonfiguriert.md
 deploy.sh
 
 # Generierter Konformitäts-Onepager (Schriften eingebettet, siehe build.js)
-docs/onepager-konformitaet/onepager.html
+docs/onepager-konformitaet/onepager*.html

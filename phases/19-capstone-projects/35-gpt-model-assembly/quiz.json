@@ -1,0 +1,78 @@
+{
+  "lesson": "35-gpt-model-assembly",
+  "title": "GPT Model Assembly",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which configuration matches the reference GPT assembled in this lesson?",
+      "options": [
+        "vocab 256, context 32, width 64, 2 heads, 2 layers",
+        "vocab 32, context 2048, width 1024, 16 heads, 24 layers",
+        "vocab 50257, context 1024, width 768, 12 heads, 12 layers",
+        "vocab 50257, context 4096, width 512, 8 heads, 6 layers"
+      ],
+      "correct": 2,
+      "explanation": "The default `GPTConfig` uses the familiar reference-sized settings: vocabulary 50,257, context length 1,024, model width 768, 12 heads, and 12 Transformer layers."
+    },
+    {
+      "stage": "check",
+      "question": "How many parameters are added when the reference model unties its output projection from the token embedding?",
+      "options": [
+        "`50257 + 768`",
+        "`50257 * 12`",
+        "`768 * 12`",
+        "`50257 * 768 = 38,597,376`"
+      ],
+      "correct": 3,
+      "explanation": "Weight tying makes `lm_head.weight` share the token-embedding matrix. Untying creates one additional vocabulary-by-width matrix: `50,257 * 768 = 38,597,376` parameters."
+    },
+    {
+      "stage": "check",
+      "question": "What is the attention head width in the reference configuration?",
+      "options": [
+        "64",
+        "768",
+        "12",
+        "1024"
+      ],
+      "correct": 0,
+      "explanation": "The model divides d_model by the number of heads: `768 // 12 = 64` features per head."
+    },
+    {
+      "stage": "check",
+      "question": "What does `top_k_filter(logits, top_k=5)` do along the vocabulary axis?",
+      "options": [
+        "It multiplies every logit by five.",
+        "It masks values below the fifth-largest logit with negative infinity.",
+        "It keeps only the first five vocabulary IDs regardless of score.",
+        "It samples five tokens before softmax and returns their IDs."
+      ],
+      "correct": 1,
+      "explanation": "The helper finds the kth-largest threshold with `torch.topk` and replaces logits below it with `-inf`. Softmax then assigns probability only to the top-k set, including ties at the threshold."
+    },
+    {
+      "stage": "post",
+      "question": "Which input causes `generate` to raise immediately?",
+      "options": [
+        "A prompt shorter than the context length",
+        "`top_k=None`",
+        "`temperature=0` or any negative temperature",
+        "A prompt containing repeated token IDs"
+      ],
+      "correct": 2,
+      "explanation": "Sampling divides logits by temperature, so the implementation requires a strictly positive temperature and raises ValueError for zero or negative values."
+    },
+    {
+      "stage": "post",
+      "question": "How does generation handle a prompt longer than the model context?",
+      "options": [
+        "It rejects every prompt longer than one token.",
+        "It pads the prompt to twice the context length.",
+        "It permanently changes the model's positional table.",
+        "It keeps only the last `context_length` tokens for each next-token forward pass."
+      ],
+      "correct": 3,
+      "explanation": "The generation loop uses a sliding view of the most recent context tokens before each forward pass. It can therefore extend a long prompt without altering the configured context table."
+    }
+  ]
+}

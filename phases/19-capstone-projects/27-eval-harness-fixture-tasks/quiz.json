@@ -1,0 +1,78 @@
+{
+  "lesson": "27-eval-harness-fixture-tasks",
+  "title": "Evaluation Harness and Fixture Tasks",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "In this harness, what value does `pass_at_k(0.5, 2)` compute?",
+      "options": [
+        "0.25",
+        "0.50",
+        "0.75",
+        "1.00"
+      ],
+      "correct": 2,
+      "explanation": "The teaching helper uses `1 - (1 - p) ** k`, so `1 - 0.5 ** 2 = 0.75`. It clamps p to [0, 1] and returns zero for non-positive k."
+    },
+    {
+      "stage": "check",
+      "question": "Which verifier checks that a file matches a regular expression?",
+      "options": [
+        "`file_equals`",
+        "`shell_exit_zero`",
+        "`p95`",
+        "`regex_match`"
+      ],
+      "correct": 3,
+      "explanation": "The verifier registry maps `regex_match` to the implementation that reads a scratch file and applies `re.search`. `file_equals` compares normalized text, while `shell_exit_zero` runs a command."
+    },
+    {
+      "stage": "check",
+      "question": "What directory layout does `load_fixture` require for one task?",
+      "options": [
+        "`task.json`, `buggy/`, and `expected/`",
+        "Only `README.md` and a generated report",
+        "`input.json` and a single `solution.py` file",
+        "A Git repository with `src/` and `tests/`"
+      ],
+      "correct": 0,
+      "explanation": "The loader reads task.json and constructs a FixtureTask from sibling `buggy` and `expected` directories. The candidate receives a copied scratch directory based on the buggy tree."
+    },
+    {
+      "stage": "check",
+      "question": "When `normalize_trailing_newline` is true, which difference does `verify_file_equals` ignore?",
+      "options": [
+        "Different words in the middle of the file",
+        "A missing or extra final newline",
+        "Different file names",
+        "A changed exit status from a verifier command"
+      ],
+      "correct": 1,
+      "explanation": "The verifier removes the trailing newline from both texts before comparison when that flag is enabled. It does not ignore content changes, paths, or process status."
+    },
+    {
+      "stage": "post",
+      "question": "The reference candidate fixes all five bundled fixtures with `k=1`. What aggregate does the demo report?",
+      "options": [
+        "`pass_at_1=0.0` and `total_cost=0.0`",
+        "`pass_at_1=0.5` and `total_cost=1.0`",
+        "`pass_at_1=1.0` and `total_cost=5.0`",
+        "`pass_at_1=5.0` and `total_cost=1.0`"
+      ],
+      "correct": 2,
+      "explanation": "`apply_known_fixes` copies each expected tree and charges one cost unit. Five passing tasks therefore produce pass_at_1=1.0 and total_cost=5.0."
+    },
+    {
+      "stage": "post",
+      "question": "What happens to the aggregate pass metrics when the bundled no-op candidate is evaluated with `k=3`?",
+      "options": [
+        "The no-op receives pass_at_1=1.0 because k provides retries.",
+        "Only pass_at_3 changes; pass_at_1 remains 1.0 from the reference run.",
+        "The harness raises because k cannot exceed one.",
+        "Both pass_at_1 and pass_at_k are 0.0 because no fixture is fixed."
+      ],
+      "correct": 3,
+      "explanation": "The no-op candidate leaves every buggy tree unchanged, so its empirical pass rate is zero. The helper consequently reports zero for both k=1 and k=3."
+    }
+  ]
+}

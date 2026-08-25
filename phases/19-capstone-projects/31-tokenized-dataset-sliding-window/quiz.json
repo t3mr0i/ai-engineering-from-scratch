@@ -1,0 +1,78 @@
+{
+  "lesson": "31-tokenized-dataset-sliding-window",
+  "title": "Tokenized Dataset with Sliding Windows",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "For a window of length `context_length + 1`, what pair does `SlidingWindowDataset[i]` return?",
+      "options": [
+        "The first half as input and the same first half as target",
+        "The whole window as input and a one-token label",
+        "The first `context_length` tokens as input and the window shifted one token as target",
+        "Two independent random samples of length `context_length`"
+      ],
+      "correct": 2,
+      "explanation": "The dataset slices one next-token-training window, returning `window[:-1]` as input and `window[1:]` as target. Both tensors therefore have the context length."
+    },
+    {
+      "stage": "check",
+      "question": "With `num_ids=100`, `context_length=16`, and `stride=8`, how many windows does `count_windows` return?",
+      "options": [
+        "8",
+        "10",
+        "12",
+        "11"
+      ],
+      "correct": 3,
+      "explanation": "The usable start range has `100 - (16 + 1) = 83` tokens. The implementation computes `1 + 83 // 8 = 11` complete windows."
+    },
+    {
+      "stage": "check",
+      "question": "What stride does the dataset use when no stride is supplied?",
+      "options": [
+        "`context_length`",
+        "`context_length + 1`",
+        "One token",
+        "Half the context length"
+      ],
+      "correct": 0,
+      "explanation": "The constructor defaults stride to the context length, producing non-overlapping training windows unless a smaller stride is explicitly requested."
+    },
+    {
+      "stage": "check",
+      "question": "How does `make_dataloader` make shuffling repeatable across epochs?",
+      "options": [
+        "It uses the wall clock as a new seed each batch.",
+        "It seeds a generator with `base_seed + epoch`.",
+        "It disables shuffling after the first epoch.",
+        "It hashes the vocabulary size but ignores the epoch."
+      ],
+      "correct": 1,
+      "explanation": "The loader creates a generator and calls `manual_seed(base_seed + epoch)`, so the same epoch is reproducible while different epochs receive distinct deterministic orders."
+    },
+    {
+      "stage": "post",
+      "question": "With `context_length=16` and `stride=8`, how many tokens do adjacent windows share?",
+      "options": [
+        "0",
+        "4",
+        "8",
+        "16"
+      ],
+      "correct": 2,
+      "explanation": "Each training window spans 17 token IDs, and starts move forward by eight. Their input portions therefore overlap by `16 - 8 = 8` tokens."
+    },
+    {
+      "stage": "post",
+      "question": "What happens if `SlidingWindowDataset` receives `context_length=0`?",
+      "options": [
+        "It creates one-token examples.",
+        "It silently changes the context to one.",
+        "It returns an empty dataset without an error.",
+        "It raises `ValueError` because context length must be positive."
+      ],
+      "correct": 3,
+      "explanation": "The constructor validates context_length and rejects values below one. It also rejects empty token arrays and non-positive strides rather than creating ambiguous samples."
+    }
+  ]
+}

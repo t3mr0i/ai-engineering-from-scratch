@@ -171,13 +171,6 @@
     border-radius: 2px; padding: 1px 5px; color: var(--ink-2);
   }
 
-  .ask {
-    margin-top: 20px; background: var(--surface); border: 1px solid var(--rule-strong);
-    border-top: 3px solid var(--ink); border-radius: 2px; padding: 26px 28px;
-    display: flex; flex-direction: column; gap: 16px;
-  }
-  .ask ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 10px; max-width: 68ch; }
-  .ask ol li::marker { font-family: "LHG Head", sans-serif; color: var(--accent); font-weight: 700; }
 
   footer.colophon {
     margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--rule);
@@ -474,12 +467,6 @@
       <span class="num">05</span>
       <h2>Was noch offen ist</h2>
     </div>
-    <div class="body">
-      <p>
-        An drei Stellen entspricht der Betrieb heute noch nicht dem, was wir nach außen zusagen
-        wollen.
-      </p>
-    </div>
     <div class="cards">
       <div class="card open">
         <h3>Der Browser lädt von öffentlichen CDNs</h3>
@@ -559,32 +546,6 @@
           Zertifikat war nötig.
         </li>
       </ul>
-    </div>
-  </section>
-
-  <section>
-    <div class="sec-head">
-      <span class="num">07</span>
-      <h2>Was wir jetzt brauchen</h2>
-    </div>
-    <div class="ask">
-      <ol>
-        <li>
-          <strong>Freigabe des laufenden Betriebs</strong> auf ocp03 in der beschriebenen Form:
-          intern erreichbar, ohne serverseitige Lerndaten, mit dem internen Gateway als einzigem
-          Sprachmodell-Pfad.
-        </li>
-        <li>
-          <strong>Zustimmung, die drei CDN-Abhängigkeiten abzulösen.</strong> Der Aufwand liegt bei
-          etwa einem Personentag, danach lädt der Browser ausschließlich aus unserem eigenen
-          Netz.
-        </li>
-        <li>
-          <strong>Eine Entscheidung zur Anmeldung.</strong> Bleibt es beim Schutz über das Netz,
-          oder soll der Reverse Proxy eine Anmeldung gegen unser Verzeichnis erzwingen? Die
-          Anwendung ist auf beides vorbereitet.
-        </li>
-      </ol>
     </div>
   </section>
 

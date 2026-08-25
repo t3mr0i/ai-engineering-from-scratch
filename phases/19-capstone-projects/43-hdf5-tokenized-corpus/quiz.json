@@ -7,71 +7,71 @@
       "question": "Why store the tokenized corpus in a resizable, chunked HDF5 dataset rather than JSONL?",
       "options": [
         "HDF5 has a smaller logo",
-        "HDF5 offers chunked, integer-only, memory-mapped reads with O(1) random access; JSONL forces the parser onto every hot-path read",
         "JSONL is deprecated",
-        "Random reasons"
+        "HDF5 offers chunked, integer-only, memory-mapped reads with O(1) random access; JSONL forces the parser onto every hot-path read",
+        "A JSONL reader can seek to any record without scanning earlier lines"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "The dataloader wants a flat token stream with addressable slices; HDF5 supplies that natively."
     },
     {
       "stage": "check",
-      "question": "What is the right rule for sizing the HDF5 chunk vs the trainer's window_size?",
+      "question": "Why should a training window be considered when choosing the HDF5 chunk_size?",
       "options": [
-        "Always pick chunk=1",
-        "Set chunk to a multiple of window_size so each sample lands inside one or two chunks and reads stay page-cache aligned",
-        "Pick chunk equal to the document length",
-        "Pick the largest chunk that fits in RAM"
+        "The chunk size controls the tokenizer vocabulary, so it must be 257.",
+        "A larger chunk automatically makes every random window contiguous across shards.",
+        "A chunk must equal the document count or HDF5 cannot resize the dataset.",
+        "Choosing a chunk size unrelated to the window forces many more chunk reads; a compatible multiple can keep most sampled windows in one or two chunks."
       ],
-      "correct": 1,
-      "explanation": "Mismatched chunks halve throughput because every sample straddles two chunks instead of one."
+      "correct": 3,
+      "explanation": "The writer stores contiguous token chunks, while SlidingWindowDataloader requests window_size + 1 tokens. Aligning their scales reduces boundary crossings, although it does not guarantee every random window is one chunk."
     },
     {
       "stage": "check",
-      "question": "Why is token_count stored as an HDF5 attribute and not implied from dataset shape?",
+      "question": "Why is tokens.attrs['token_count'] written when the HDF5 shard closes?",
       "options": [
-        "Attributes are pretty",
-        "The trailing chunk may be partially full; without the explicit attribute the reader walks past the real end into zero-padded tokens and the model learns to predict zero",
-        "Shapes are slow to read",
-        "Attributes are mandatory"
+        "It is the explicit logical length used in ShardWriteResult, index construction, and bounds checks; readers do not have to infer that contract from chunk settings.",
+        "It pads the final HDF5 chunk with zeros so all shards have equal length.",
+        "It stores the tokenizer vocabulary size so a reader can decode bytes.",
+        "It records the number of JSONL lines even when a line produced no tokens."
       ],
-      "correct": 1,
-      "explanation": "The chunked layout sometimes leaves trailing slots; the attribute carries the truth."
+      "correct": 0,
+      "explanation": "The writer increments _token_count for flushed token data and stores that value as an attribute. The pipeline copies it into shards.json, where global offsets and slice bounds are computed."
     },
     {
       "stage": "check",
-      "question": "What does the writer accomplish by buffering tokens to chunk_size before each resize?",
+      "question": "What is the purpose of _flush_buffer in HDF5ShardWriter?",
       "options": [
-        "Saves a few CPU cycles",
-        "Writes are contiguous and chunk-aligned, avoiding the fragmentation that follows one-token-at-a-time resizes",
-        "Reduces vocabulary size",
-        "Speeds up sha256"
+        "It rewrites the whole shard after every document so no buffer remains in memory.",
+        "It grows the resizable dataset with a contiguous buffered block and updates the hash/count, while the final call also writes any residual tokens.",
+        "It changes byte IDs into BPE IDs before HDF5 sees them.",
+        "It reserves a fixed file length and discards tokens beyond the first chunk."
       ],
       "correct": 1,
-      "explanation": "Buffer-then-extend at chunk size is the only way to keep HDF5 chunks contiguous on disk."
+      "explanation": "Documents append to _buffer; full chunks are extended and written together, and __exit__ flushes a shorter final block. The same bytes update the running SHA-256 and token count."
     },
     {
       "stage": "post",
-      "question": "Why is swmr=True opened on the reader side, not on the writer side?",
+      "question": "Which side opens a completed HDF5 shard with swmr=True in this lesson?",
       "options": [
-        "Random preference",
-        "Single-Writer-Multiple-Reader mode lets dataloader workers share the file safely; the writer needs no special mode because it writes one shard per process",
-        "Performance",
-        "Security"
+        "MmapTokenStore opens each shard read-only with swmr=True; the writer creates the file and enables its SWMR mode while writing.",
+        "Only the writer opens the completed file with swmr=True; readers use ordinary text mode.",
+        "Both sides reopen the same file for writing so they can share the HDF5 resize lock.",
+        "Neither side uses SWMR; the flag belongs to the JSONL source adapter."
       ],
-      "correct": 1,
-      "explanation": "Mixing the two modes is the most common cause of 'file is locked' failures."
+      "correct": 2,
+      "explanation": "MmapTokenStore calls h5py.File(entry.path, 'r', swmr=True) for concurrent readers. HDF5ShardWriter creates the file, writes chunks and attributes, and closes it before the reader opens the shard."
     },
     {
       "stage": "post",
       "question": "What does the boundary token id exist to make explicit?",
       "options": [
         "Vocabulary size limits",
-        "Document boundaries within a packed window so the model is not silently trained on cross-document concatenation",
         "Compression",
-        "Random data"
+        "It assigns a separate vocabulary to each source document",
+        "Document boundaries within a packed window so the model is not silently trained on cross-document concatenation"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Without an explicit boundary the trainer learns boundaries as noise; with it the boundary becomes a usable separator."
     }
   ]

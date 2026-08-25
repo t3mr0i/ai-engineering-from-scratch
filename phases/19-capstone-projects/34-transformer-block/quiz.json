@@ -1,0 +1,78 @@
+{
+  "lesson": "34-transformer-block",
+  "title": "Transformer Block",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What is the residual order in a pre-LayerNorm `TransformerBlock`?",
+      "options": [
+        "`x = x + attn(ln1(x)); x = x + mlp(ln2(x))`",
+        "`x = ln1(x + attn(x)); x = ln2(x + mlp(x))`",
+        "`x = attn(x) + mlp(x)` with no residuals",
+        "`x = ln1(attn(x)); x = ln2(mlp(x))`"
+      ],
+      "correct": 0,
+      "explanation": "With `pre_ln=True`, each sublayer first normalizes its input and then adds its transformed output to the residual stream. The block therefore applies attention and MLP in two residual updates."
+    },
+    {
+      "stage": "check",
+      "question": "How does the post-LayerNorm variant place its first normalization?",
+      "options": [
+        "It normalizes the input before computing attention.",
+        "It normalizes the residual sum `x + attn(x)`.",
+        "It removes LayerNorm from the attention path.",
+        "It normalizes only the final vocabulary logits."
+      ],
+      "correct": 1,
+      "explanation": "The post-LN path computes the attention residual first and then applies `ln1` to `x + attn(x)`; its second normalization likewise follows the MLP residual."
+    },
+    {
+      "stage": "check",
+      "question": "For `d_model=192` and `mlp_expansion=4`, how wide is the feed-forward hidden layer?",
+      "options": [
+        "192",
+        "384",
+        "768",
+        "4"
+      ],
+      "correct": 2,
+      "explanation": "`FeedForward` sets its hidden width to `mlp_expansion * d_model`, so the configured block uses `4 * 192 = 768` hidden units before projecting back to 192."
+    },
+    {
+      "stage": "check",
+      "question": "What shape does the six-block demo return for token input `(2, 32)` with `d_model=192`?",
+      "options": [
+        "`(2, 32, 6)`",
+        "`(2, 192)`",
+        "`(6, 2, 32, 192)`",
+        "`(2, 32, 192)`"
+      ],
+      "correct": 3,
+      "explanation": "Each block preserves batch and sequence axes and operates on the last feature axis. Stacking six blocks does not add a depth axis, so the final shape is `(2, 32, 192)`."
+    },
+    {
+      "stage": "post",
+      "question": "With dropout disabled and identical weights, what should repeated evaluation of the block produce?",
+      "options": [
+        "The same output for the same input",
+        "A different output on every call because LayerNorm is random",
+        "A shorter sequence after each residual update",
+        "An output whose batch dimension doubles"
+      ],
+      "correct": 0,
+      "explanation": "In evaluation mode with dropout probability zero, the deterministic linear, activation, mask, and normalization operations return the same tensor for the same input and parameters."
+    },
+    {
+      "stage": "post",
+      "question": "What does the demo's pre-vs-post gradient ratio establish?",
+      "options": [
+        "That the variant with the larger ratio is always more accurate.",
+        "That initialization and residual placement can change gradient magnitudes under the same loss.",
+        "That post-LN removes all gradients from the embeddings.",
+        "That the ratio is a calibrated probability of convergence."
+      ],
+      "correct": 1,
+      "explanation": "The demo backpropagates the same sum-of-squares loss through separately initialized pre- and post-LN stacks and compares gradient norms. That is a gradient-flow diagnostic, not an accuracy guarantee."
+    }
+  ]
+}

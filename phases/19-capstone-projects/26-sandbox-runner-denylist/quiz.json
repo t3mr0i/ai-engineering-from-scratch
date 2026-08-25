@@ -1,0 +1,78 @@
+{
+  "lesson": "26-sandbox-runner-denylist",
+  "title": "Sandbox Runner and Denylist",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which executable is rejected immediately by the default sandbox denylist?",
+      "options": [
+        "printf",
+        "git",
+        "rm",
+        "date"
+      ],
+      "correct": 2,
+      "explanation": "The default denylist contains rm, along with commands such as sudo, curl, wget, and shutdown. The other names are not denied merely because of their executable name."
+    },
+    {
+      "stage": "check",
+      "question": "Why does the default configuration reject `python3 -c 'print(1)'` before spawning a process?",
+      "options": [
+        "The output is larger than the default 64 KiB limit.",
+        "The command contains a relative path.",
+        "The timeout is too short for Python startup.",
+        "`-c` is an interpreter-evaluation flag covered by the interpreter block."
+      ],
+      "correct": 3,
+      "explanation": "python3 is in the interpreter block, and the runner rejects it when an evaluation flag such as -c, -e, --eval, or --exec is present. This check happens before subprocess execution."
+    },
+    {
+      "stage": "check",
+      "question": "With `shell=False`, what happens to an argv containing `echo a ; rm -rf`?",
+      "options": [
+        "It is denied because `;` is a shell metacharacter.",
+        "It is run as two independent commands.",
+        "Only the rm token is removed and echo still runs.",
+        "It is allowed because shell=False disables all command checks."
+      ],
+      "correct": 0,
+      "explanation": "The runner scans arguments for shell metacharacters even when it will use exec-style spawning. A semicolon is denied, so the command never reaches the subprocess."
+    },
+    {
+      "stage": "check",
+      "question": "Which path condition does `_check_path_jail` use for a path-like argument?",
+      "options": [
+        "The path is accepted whenever its text contains the project root.",
+        "The resolved path must equal the root or start with the root plus `os.sep`.",
+        "Only paths ending in `.txt` are allowed.",
+        "Every relative path is rejected, even when it resolves inside the root."
+      ],
+      "correct": 1,
+      "explanation": "The runner resolves the argument and accepts the root itself or a descendant whose string starts with `root + os.sep`; otherwise it returns a path-jail denial. This is the implemented prefix check."
+    },
+    {
+      "stage": "post",
+      "question": "What result does the sandbox record when `sleep` exceeds its configured timeout?",
+      "options": [
+        "`exit_code=-100` and `denied=True`",
+        "`exit_code=0` and `timed_out=False`",
+        "`exit_code=-101` and `timed_out=True`",
+        "`exit_code=1` with an ordinary stderr failure"
+      ],
+      "correct": 2,
+      "explanation": "A process that runs past the wall-clock timeout is terminated and returned with the sentinel `TIMED_OUT_EXIT_CODE`, -101, and `timed_out=True`. -100 is reserved for policy denials."
+    },
+    {
+      "stage": "post",
+      "question": "What does `truncate_stream` add when command output exceeds the configured byte limit?",
+      "options": [
+        "It silently drops the excess and reports `truncated=False`.",
+        "It retries the command with a larger output pipe.",
+        "It replaces the entire stream with an empty byte string.",
+        "It keeps the head, appends `[sandbox: output truncated]`, and returns `truncated=True`."
+      ],
+      "correct": 3,
+      "explanation": "The helper preserves the first `max_bytes` bytes, appends the explicit truncation marker, and sets the boolean flag. The demo uses a 512-byte limit to make this visible."
+    }
+  ]
+}

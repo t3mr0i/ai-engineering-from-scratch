@@ -1,0 +1,78 @@
+{
+  "lesson": "36-training-loop-eval",
+  "title": "Training Loop and Evaluation",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "How are the targets formed in `make_batches` for a context window?",
+      "options": [
+        "For source `[t0,...,tT]`, input is `[t1,...,tT]` and target is `[t0,...,t(T-1)]`.",
+        "The source window is used unchanged as both input and target.",
+        "For source `[t0,...,tT]`, input is `[t0,...,t(T-1)]` and target is `[t1,...,tT]`.",
+        "The final token `tT` is the only scalar target for the whole window."
+      ],
+      "correct": 2,
+      "explanation": "The helper takes a window of `context_length + 1` tokens, returns `window[:-1]` as input and `window[1:]` as target. Thus the target at each position is the source token at the following index."
+    },
+    {
+      "stage": "check",
+      "question": "For a 1D token tensor of length `N` and context length `T`, what value does `make_batches` assign to `max_start`?",
+      "options": [
+        "`N - T + 1`",
+        "`N - T`",
+        "`T - N - 1`",
+        "`N - T - 1`"
+      ],
+      "correct": 3,
+      "explanation": "The implementation sets `max_start = token_ids.numel() - context_length - 1`. The extra one is needed because each input window needs a shifted target token."
+    },
+    {
+      "stage": "check",
+      "question": "Which parameters does `build_param_groups` place in the no-decay group?",
+      "options": [
+        "Biases and LayerNorm-style `shift`/`scale` parameters, plus tensors with fewer than two dimensions",
+        "Only parameters whose names contain `weight`",
+        "All matrices and embedding weights",
+        "Only the final language-model head"
+      ],
+      "correct": 0,
+      "explanation": "The grouping excludes bias, shift, and scale names from weight decay and also excludes parameters with dimension below two. Matrix and embedding weights go into the decayed group."
+    },
+    {
+      "stage": "check",
+      "question": "With `max_lr=3e-3` and `warmup_steps=10`, what learning rate does `cosine_with_warmup(step=0)` return?",
+      "options": [
+        "0",
+        "0.0003",
+        "0.003",
+        "0.03"
+      ],
+      "correct": 1,
+      "explanation": "During warmup the function uses `max_lr * (step + 1) / warmup_steps`, so step zero is `0.003 * 1/10 = 0.0003`."
+    },
+    {
+      "stage": "post",
+      "question": "What does `evaluate_model` do after computing its mean loss?",
+      "options": [
+        "It leaves the model in evaluation mode permanently.",
+        "It performs an optimizer step on the validation batches.",
+        "It restores training mode if the model was training before evaluation.",
+        "It returns only the last batch's loss."
+      ],
+      "correct": 2,
+      "explanation": "Evaluation runs under `torch.no_grad()` and averages up to `max_batches`. It records the prior `model.training` state and calls `model.train()` before returning when necessary."
+    },
+    {
+      "stage": "post",
+      "question": "When does the training loop write an evaluation and sample probe with `eval_every=20`?",
+      "options": [
+        "Only at step zero",
+        "At every step, regardless of the interval",
+        "Only after training has already finished",
+        "When `(step + 1) % 20 == 0`, and also on the final step"
+      ],
+      "correct": 3,
+      "explanation": "The loop triggers the eval/sample branch whenever the one-based step count is divisible by eval_every or the current step is the final one, and logs those events as JSONL records."
+    }
+  ]
+}

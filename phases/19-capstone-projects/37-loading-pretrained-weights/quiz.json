@@ -4,75 +4,75 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does the loader need a name map?",
+      "question": "Why does load_safetensors need a pretrained-to-local name map?",
       "options": [
-        "Pretrained tensors and local parameters share the same name",
-        "Published GPT-2 weights use names like wte, wpe, h.N.attn.c_attn; the local model uses tok_embed, pos_embed, blocks.N.attn.qkv; the loader translates one onto the other",
-        "Safetensors files are encrypted",
-        "Torch requires it"
+        "Published GPT-2 keys such as wte and h.0.attn.c_attn must be translated to local names such as tok_embed and blocks.0.attn.qkv.",
+        "The map decrypts the safetensors payload before PyTorch can read it.",
+        "The map changes the model vocabulary to match the checkpoint automatically.",
+        "The map chooses a random seed for each transformer block."
       ],
-      "correct": 1,
-      "explanation": "The two naming conventions are different histories; the map is a literal dict expanded per layer."
+      "correct": 0,
+      "explanation": "make_pretrained_to_local is a literal mapping between the checkpoint naming convention and the parameter names returned by the local model."
     },
     {
       "stage": "check",
-      "question": "What is the conv1d transpose, and which tensors need it?",
+      "question": "Which published GPT-2 weights does _needs_transpose identify before assignment?",
       "options": [
-        "All weight tensors",
-        "Published GPT-2 stores c_attn, c_proj, and c_fc weights in tensorflow conv1d layout, which is the transpose of what nn.Linear.weight expects; the loader calls .t() on those during assignment",
-        "Only the embedding",
-        "Only the LayerNorm scales"
+        "Only wte.weight and wpe.weight, because embeddings are the only two-dimensional tensors.",
+        "The Conv1D-layout projection weights ending in c_attn.weight, c_proj.weight, or c_fc.weight; they are transposed for nn.Linear.weight.",
+        "Every bias and LayerNorm tensor, because one-dimensional tensors need a transpose too.",
+        "Only the final ln_f tensors, because the local model stores LayerNorm backwards."
       ],
       "correct": 1,
-      "explanation": "Three suffixes need transposing; biases and LayerNorms are already shaped correctly."
+      "explanation": "The checkpoint uses the TensorFlow-style Conv1D layout for attention and MLP projections. The loader transposes those matrices, but leaves embeddings, biases, and LayerNorm vectors alone."
     },
     {
       "stage": "check",
-      "question": "Why is the LM head not in the safetensors file?",
+      "question": "After wte.weight is loaded, how does the loader reconstruct the tied language-model head?",
       "options": [
-        "It is computed at runtime from logits",
-        "Weight tying: the LM head shares storage with the token embedding (wte), so loading wte and aliasing lm_head.weight = tok_embed.weight after the load reconstructs the head",
-        "It is too large",
-        "It is loaded from a separate file"
+        "It reads lm_head.weight from a second safetensors file.",
+        "It computes the head from the last hidden state without storing parameters.",
+        "It aliases model.lm_head.weight to model.tok_embed.weight, so both names share storage.",
+        "It copies the position embedding into the head because both have two dimensions."
       ],
-      "correct": 1,
-      "explanation": "Setting lm_head.weight = tok_embed.weight after wte lands restores the alias; copying instead doubles the parameter count."
+      "correct": 2,
+      "explanation": "The checkpoint omits a separate LM-head tensor. With weight tying enabled, assigning the token embedding and then aliasing the head recreates the shared parameter."
     },
     {
       "stage": "check",
-      "question": "What does the loader do on a shape mismatch?",
+      "question": "What does load_safetensors do when a mapped tensor has the wrong shape?",
       "options": [
-        "Pads the smaller tensor",
-        "Records the mismatch in LoadReport.shape_mismatch and refuses to assign, leaving the local parameter untouched",
-        "Crashes the process",
-        "Truncates the larger tensor"
+        "It truncates the checkpoint tensor to fit the local parameter.",
+        "It assigns the tensor and records a warning for a later audit.",
+        "It pads the tensor with zeros until the local shape matches.",
+        "It records the pair in LoadReport.shape_mismatch and skips assignment, leaving the local parameter unchanged."
       ],
-      "correct": 1,
-      "explanation": "Half loaded models are silent failure machines; refusing to assign keeps the report honest."
+      "correct": 3,
+      "explanation": "The loader checks shapes before adding an assignment to its pending list. A mismatch is reported and no partial copy is performed."
     },
     {
       "stage": "post",
-      "question": "Why is the demo's stub fixture not a real GPT-2 download?",
+      "question": "Why does make_stub_safetensors use GPT-2-style names and shapes instead of a real download?",
       "options": [
-        "Real files are not in safetensors format",
-        "The demo must run offline and quickly; the stub uses the exact pretrained naming convention so the loader code path is identical, and swapping in a real file changes nothing about the loader",
-        "Real weights are encrypted",
-        "Safetensors cannot store large tensors"
+        "It keeps the demo offline and small while exercising the same name-map, transpose, shape-check, and weight-tying path as a real file.",
+        "Real GPT-2 checkpoints cannot be represented in safetensors.",
+        "A stub avoids constructing the local model, so the loader can be tested without parameters.",
+        "The loader only accepts files whose tensors were generated with seed 42."
       ],
-      "correct": 1,
-      "explanation": "Same code path, smaller payload; the loader works on either."
+      "correct": 0,
+      "explanation": "The fixture is synthetic in values but faithful in key names and tensor shapes for the configured small model. Replacing it with a compatible real checkpoint does not change the loader logic."
     },
     {
       "stage": "post",
-      "question": "Why generate a sample before and after the load?",
+      "question": "What evidence does the demo collect before and after loading the fixture?",
       "options": [
-        "To measure inference speed",
-        "If the post-load samples are identical to the pre-load samples, the load did not change the model, which means the mapping silently missed every tensor",
-        "To warm up the GPU cache",
-        "To set the random seed"
+        "It compares only wall-clock time, so a faster forward pass proves every tensor landed.",
+        "It records a parameter fingerprint and a deterministic sample; a changed fingerprint/sample is a sanity signal that the load affected the model, while LoadReport supplies coverage details.",
+        "It changes the tokenizer vocabulary and checks whether decoding becomes shorter.",
+        "It resets the random seed after loading and treats any new seed as proof of successful mapping."
       ],
       "correct": 1,
-      "explanation": "Sanity generation is the cheapest gate: a sample fingerprint that fails to change exposes a broken load that the LoadReport summary would not catch on its own."
+      "explanation": "_state_fingerprint and quick_generate provide a coarse before/after signal. They complement, rather than replace, the report's loaded, missing, unexpected, and mismatch lists."
     }
   ]
 }

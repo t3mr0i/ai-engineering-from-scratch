@@ -7,35 +7,35 @@
       "question": "Why does the retrieval client run a BM25 pass and a citation graph pass?",
       "options": [
         "Because BM25 needs the graph to build its index",
-        "Because lexical hits miss foundational papers with different vocabulary, and graph hits miss papers that share no citation with the seed",
         "Because the mock APIs require it",
+        "Because lexical hits miss foundational papers with different vocabulary, and graph hits miss papers that share no citation with the seed",
         "Because the parser fails otherwise"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "Each pass catches what the other misses. Lexical covers shared vocabulary; the graph covers ancestor and descendant papers regardless of vocabulary."
     },
     {
       "stage": "check",
-      "question": "Why is the citation graph traversal capped at two hops?",
+      "question": "If RetrievalConfig(max_hops=5) is constructed, what value does the client actually use?",
       "options": [
-        "Because beyond two hops the result set tends to drift off topic and overwhelm downstream ranking",
-        "Because the Python recursion limit forbids three hops",
-        "Because BM25 only scores two hops away",
-        "Because the corpus only stores two layers of citations"
+        "It uses five hops and lets the graph size determine when to stop.",
+        "It silently changes the value to zero and performs only lexical search.",
+        "It raises because any value above two is invalid.",
+        "Its __post_init__ clamps max_hops to 2 before graph expansion."
       ],
-      "correct": 0,
-      "explanation": "Two hops is the practical ceiling. Three hops blows up the result set on a connected graph and rarely returns more on topic papers."
+      "correct": 3,
+      "explanation": "The configuration explicitly caps the traversal depth: values above 2 are replaced with 2. This is an implementation guard, not a claim that every citation graph should use two hops."
     },
     {
       "stage": "check",
       "question": "What does idf evaluate to for a term that appears in every document?",
       "options": [
-        "A large positive value",
         "A value near zero",
+        "A large positive value",
         "Negative infinity",
         "Undefined; the BM25 implementation skips it"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": "When df equals N the numerator and denominator inside the log are close, and the +1 keeps the term non negative but small. The contribution of universally common terms is near zero."
     },
     {
@@ -55,11 +55,11 @@
       "question": "What does graph_score return for a paper that is two hops from the seed set?",
       "options": [
         "Zero",
-        "0.3 by default",
         "1.0 by default",
+        "0.3 by default",
         "The BM25 score divided by ten"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": "The default graph score schedule is 1.0 at zero hops, 0.6 at one hop, 0.3 at two hops, and zero beyond that."
     },
     {
@@ -67,11 +67,11 @@
       "question": "Why is the corpus loaded once into a RetrievalClient instead of refetched per query?",
       "options": [
         "Because the mock APIs are slow on every call",
-        "Because the BM25 index and citation graph are built once at construction time and reused across queries",
         "Because the parser is global",
-        "Because the recency score requires it"
+        "Because the recency score requires it",
+        "Because the BM25 index and citation graph are built once at construction time and reused across queries"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": "Index construction is the expensive step. Reusing the index amortises that cost across every query the client handles."
     }
   ]

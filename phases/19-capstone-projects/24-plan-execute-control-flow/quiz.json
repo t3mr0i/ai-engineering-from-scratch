@@ -1,0 +1,78 @@
+{
+  "lesson": "24-plan-execute-control-flow",
+  "title": "Plan-Execute Control Flow",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What is the initial four-step plan created by make_deterministic_planner?",
+      "options": [
+        "fetch → transform v1 → render → submit",
+        "survey → execute → review → deploy",
+        "fetch → transform v2 → notify → submit",
+        "plan → tool_call → retry → goal_met"
+      ],
+      "correct": 0,
+      "explanation": "With no last_error, the planner returns Step 1 fetch, Step 2 transform mode=v1, Step 3 render, and Step 4 submit."
+    },
+    {
+      "stage": "check",
+      "question": "What does PlanExecuteAgent do after the forced transform-v1 failure?",
+      "options": [
+        "It marks the session complete with goal_met and skips the rest",
+        "It records the failed step, asks the planner for a revised plan, and executes the replacement",
+        "It retries transform-v1 forever without changing the plan",
+        "It removes every step after transform and returns no_plan"
+      ],
+      "correct": 1,
+      "explanation": "The failed step is appended to history, replans_used increments, plan.draft and plan.diff are emitted, and the recovery planner supplies transform-v2 followed by render and submit."
+    },
+    {
+      "stage": "check",
+      "question": "What does the demo's PlanDiff record for revision 1?",
+      "options": [
+        "added=[2], removed=[2], revised=[]",
+        "added=[], removed=[3,4], revised=[2]",
+        "added=[], removed=[], revised=[2]",
+        "added=[98,99], removed=[1,2,3,4], revised=[]"
+      ],
+      "correct": 2,
+      "explanation": "Comparing the remaining old plan with the v2 recovery plan leaves the same step IDs; only step 2's mode/signature changes, so revised=[2]."
+    },
+    {
+      "stage": "check",
+      "question": "What result is returned when steps_taken reaches max_steps before the next step?",
+      "options": [
+        "status=completed, reason=goal_met",
+        "status=failed, reason=no_plan",
+        "status=completed, reason=replan_budget",
+        "status=failed, reason=step_budget"
+      ],
+      "correct": 3,
+      "explanation": "The loop checks steps_taken >= max_steps at the top of each iteration and emits session.complete with reason step_budget before executing another step."
+    },
+    {
+      "stage": "post",
+      "question": "What final status does the route-around demo report?",
+      "options": [
+        "status=completed and reason=goal_met",
+        "status=failed and reason=replan_budget",
+        "status=failed and reason=no_plan",
+        "status=completed and reason=step_budget"
+      ],
+      "correct": 0,
+      "explanation": "The v2 transform succeeds, render and submit complete, and the final event is session.complete with status completed and reason goal_met."
+    },
+    {
+      "stage": "post",
+      "question": "What recovery-specific evidence does the demo print?",
+      "options": [
+        "transform_v1_calls=0 because the failing step is never attempted",
+        "transform_v1_calls=1, followed by a v2 transform in the revised plan",
+        "transform_v1_calls=5 because max_replans controls retries of v1",
+        "transform_v1_calls=2, with no plan revision"
+      ],
+      "correct": 1,
+      "explanation": "The executor encounters the forced v1 failure once; the recovery planner removes the marker and changes mode to v2, so the counter remains 1."
+    }
+  ]
+}

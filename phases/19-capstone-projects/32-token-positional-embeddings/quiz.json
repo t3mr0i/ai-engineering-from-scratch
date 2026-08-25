@@ -1,0 +1,78 @@
+{
+  "lesson": "32-token-positional-embeddings",
+  "title": "Token and Positional Embeddings",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "Which embedding table has trainable parameters in `LearnedPositionalEmbedding`?",
+      "options": [
+        "The position table of shape `(max_context_length, d_model)`",
+        "The fixed sine/cosine table only",
+        "A scalar shared by every position",
+        "No table; positions are always computed from token IDs"
+      ],
+      "correct": 0,
+      "explanation": "The learned implementation owns an `nn.Embedding(max_context_length, d_model)`, so each position vector is updated by optimization. The sinusoidal variant is parameter-free."
+    },
+    {
+      "stage": "check",
+      "question": "How many trainable parameters does the sinusoidal positional table add?",
+      "options": [
+        "`max_context_length * d_model`",
+        "Zero",
+        "`d_model`",
+        "`2 * max_context_length`"
+      ],
+      "correct": 1,
+      "explanation": "The sinusoidal table is created as a buffer from deterministic sine and cosine values, so it contributes zero trainable parameters."
+    },
+    {
+      "stage": "check",
+      "question": "For even dimension `2i`, what value does the sinusoidal table use at position `pos`?",
+      "options": [
+        "`cos(pos * base^(2i/d_model))`",
+        "`pos + 2i`",
+        "`sin(pos / base^(2i/d_model))`",
+        "`sin(2i / (pos + base))`"
+      ],
+      "correct": 2,
+      "explanation": "The implementation follows the standard pair: even dimensions use `sin(pos / base^(2i/d_model))`, while the following odd dimension uses cosine of the same angle."
+    },
+    {
+      "stage": "check",
+      "question": "What happens when a learned positional embedding receives a sequence longer than its configured maximum?",
+      "options": [
+        "It wraps positions modulo the maximum.",
+        "It pads the extra positions with zeros.",
+        "It silently allocates a larger table.",
+        "It raises an error instead of indexing past the table."
+      ],
+      "correct": 3,
+      "explanation": "The module validates that the sequence length is between one and max_context_length and raises for an overlong sequence. It does not extrapolate or wrap."
+    },
+    {
+      "stage": "post",
+      "question": "What must be true before `EmbeddingComposer` can add token and position outputs?",
+      "options": [
+        "The two modules must use the same `d_model`.",
+        "The token vocabulary and context length must be equal.",
+        "Both modules must be sinusoidal.",
+        "The input batch must contain exactly one sequence."
+      ],
+      "correct": 0,
+      "explanation": "Token embeddings have shape `(B, T, D)` and positional embeddings `(T, D)`, so the composer requires matching D dimensions; the latter then broadcasts over B."
+    },
+    {
+      "stage": "post",
+      "question": "What shape does the composed embedding have for token IDs shaped `(B, T)` and model width `D`?",
+      "options": [
+        "`(T, B, D)`",
+        "`(B, T, D)`",
+        "`(B, D)`",
+        "`(T, D, D)`"
+      ],
+      "correct": 1,
+      "explanation": "The token lookup produces `(B, T, D)` and the position table produces `(T, D)`. Addition broadcasts the position dimension over the batch, preserving `(B, T, D)`."
+    }
+  ]
+}

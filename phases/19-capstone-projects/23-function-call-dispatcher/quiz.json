@@ -1,0 +1,78 @@
+{
+  "lesson": "23-function-call-dispatcher",
+  "title": "Function Call Dispatcher",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What happens before fetch_user's handler can run when id is the string \"x\"?",
+      "options": [
+        "The handler receives id=x and returns a fallback user",
+        "The call waits for the timeout before validating",
+        "Dispatch returns kind=schema with attempts=0",
+        "The call is retried three times as a transient failure"
+      ],
+      "correct": 2,
+      "explanation": "Dispatcher validates registry schema before entering the semaphore or retry loop; the integer mismatch becomes a schema DispatchError with zero attempts."
+    },
+    {
+      "stage": "check",
+      "question": "What does the seeded flaky fetch demonstrate?",
+      "options": [
+        "It fails permanently after one attempt because retries are disabled",
+        "It returns timeout after three attempts",
+        "It is treated as a schema error because the first result is absent",
+        "It raises TransientError once, then succeeds on attempt 2"
+      ],
+      "correct": 3,
+      "explanation": "flaky_fetch increments its counter, raises TransientError while the count is below 2, and then returns the Ada record; the demo reports attempts=2 and ok=true."
+    },
+    {
+      "stage": "check",
+      "question": "What kind is returned for the slow tool whose timeout is 10 ms?",
+      "options": [
+        "timeout",
+        "schema",
+        "not_found",
+        "transient"
+      ],
+      "correct": 0,
+      "explanation": "asyncio.wait_for expires before slow finishes its 50 ms sleep, so the dispatcher records a timeout DispatchError."
+    },
+    {
+      "stage": "check",
+      "question": "What does dispatch return for a tool name absent from MiniRegistry?",
+      "options": [
+        "kind=internal with attempts=1",
+        "kind=not_found with JSON-RPC code -32601 and attempts=0",
+        "kind=schema after creating an empty record",
+        "kind=timeout after waiting for registration"
+      ],
+      "correct": 1,
+      "explanation": "The registry lookup catches KeyError and returns not_found immediately, mapping to ERR_METHOD_NOT_FOUND=-32601 without invoking a handler."
+    },
+    {
+      "stage": "post",
+      "question": "What does the concurrent idempotency-key pair demonstrate?",
+      "options": [
+        "The second call always runs after the first and returns a different result",
+        "Idempotency is available only for non-idempotent records",
+        "Both calls return DispatchOk while the in-flight/cache entry avoids duplicate work",
+        "The second call is rejected as a schema error"
+      ],
+      "correct": 2,
+      "explanation": "With the same key, the second dispatch joins the first in-flight future or reads its cache entry; both values in idempotency_pair are true."
+    },
+    {
+      "stage": "post",
+      "question": "What happens when budget_tool_calls_remaining is zero?",
+      "options": [
+        "The dispatcher grants one final attempt",
+        "It retries only idempotent tools",
+        "It converts the call into a timeout",
+        "It returns kind=budget_exceeded with attempts=0 before invoking the handler"
+      ],
+      "correct": 3,
+      "explanation": "The explicit budget check runs after schema validation and before idempotency execution; a non-positive remaining count returns budget_exceeded immediately."
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "lesson": "22-jsonrpc-stdio-transport",
+  "title": "JSON-RPC 2.0 over Newline-Delimited Stdio",
+  "questions": [
+    {
+      "stage": "pre",
+      "question": "What error code does serve emit for a malformed JSON line such as {not json?",
+      "options": [
+        "-32700 parse error",
+        "-32600 invalid request",
+        "-32601 method not found",
+        "-32603 internal error"
+      ],
+      "correct": 0,
+      "explanation": "json.loads raises JSONDecodeError, and serve writes an error envelope with ERR_PARSE=-32700 and a parse-error message."
+    },
+    {
+      "stage": "check",
+      "question": "What does _handle_one return for a valid JSON-RPC notification with no id?",
+      "options": [
+        "A success envelope with id=null",
+        "None, so the transport writes no response",
+        "A parse error with id=null",
+        "A batch containing the notification"
+      ],
+      "correct": 1,
+      "explanation": "Request.is_notification is true when id is absent; _handle_one still invokes the handler but returns None for both success and mapped errors."
+    },
+    {
+      "stage": "check",
+      "question": "Which code represents a requested method that the handler does not know?",
+      "options": [
+        "-32602",
+        "-32700",
+        "-32601",
+        "-32603"
+      ],
+      "correct": 2,
+      "explanation": "The demo's missing method raises MethodNotFound, whose code is ERR_METHOD_NOT_FOUND=-32601."
+    },
+    {
+      "stage": "check",
+      "question": "What response does math.add return when parameter b is absent?",
+      "options": [
+        "A result of a+0",
+        "-32601 because math.add is removed",
+        "-32700 because params are optional",
+        "-32602 with message \"a and b required\""
+      ],
+      "correct": 3,
+      "explanation": "The demo handler raises InvalidParams when either a or b is missing; _handle_one maps that exception to -32602."
+    },
+    {
+      "stage": "post",
+      "question": "How many responses does the demo's mixed batch produce?",
+      "options": [
+        "Two: the notification is omitted while echo and math.add return results",
+        "Three: notifications always receive id=null responses",
+        "One: the batch stops after the first item",
+        "Zero: batches are accepted only for errors"
+      ],
+      "correct": 0,
+      "explanation": "The batch contains echo id=10, a notification log without id, and math.add id=11; _process_batch appends only the two non-notification envelopes."
+    },
+    {
+      "stage": "post",
+      "question": "How is the demo's RuntimeError(\"intentional\") exposed to the client?",
+      "options": [
+        "As -32602 with the exception text as params",
+        "As -32603 internal error with data.exception=RuntimeError and detail=\"intentional\"",
+        "As -32601 because boom is not registered",
+        "It is swallowed because all server errors become notifications"
+      ],
+      "correct": 1,
+      "explanation": "The generic exception branch emits ERR_INTERNAL=-32603 and includes the exception class and detail in the error data field."
+    }
+  ]
+}
