@@ -1,3 +1,8 @@
+# Bias/variance experiments for phases/02-ml-fundamentals/10-bias-variance/docs/en.md.
+# NumPy supplies polynomial linear algebra; the decomposition and fixtures are local.
+# Each reported term is computed from repeated fitted polynomials, not a library estimator.
+# Run the canonical entry point with: python3 main.py
+
 import numpy as np
 import warnings
 warnings.filterwarnings("ignore")

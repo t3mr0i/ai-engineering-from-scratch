@@ -1,3 +1,8 @@
+# From-scratch evaluation utilities for phases/02-ml-fundamentals/09-model-evaluation/docs/en.md.
+# Stdlib-only splitters, metrics, ROC/AUC, learning curves, and toy estimators are provided.
+# The Python entry point mirrors the Julia implementation without external packages.
+# Run the canonical entry point with: python3 main.py
+
 import random
 import math
 

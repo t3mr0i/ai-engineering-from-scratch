@@ -1,9 +1,7 @@
-# Model evaluation in Julia. Train/val/test split, k-fold + stratified k-fold
-# cross validation, classification metrics (accuracy, precision, recall, F1,
-# ROC, AUC), and regression metrics (MSE, RMSE, MAE, R^2). Stdlib only. Sources:
-#   https://docs.julialang.org/en/v1/stdlib/Random/
-#   https://docs.julialang.org/en/v1/stdlib/Statistics/
-#   https://docs.julialang.org/en/v1/manual/functions/
+# Canonical Julia entry point for phases/02-ml-fundamentals/09-model-evaluation/docs/en.md.
+# Implements train/validation/test splits, k-fold metrics, ROC/AUC, and regression scores.
+# Uses only Julia stdlib modules; the Python implementation exposes the same concepts.
+# Run from this directory with: julia main.jl
 
 using Random
 using Statistics

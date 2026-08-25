@@ -1,3 +1,8 @@
+# From-scratch feature transforms for phases/02-ml-fundamentals/08-feature-engineering/docs/en.md.
+# The module is stdlib-only and keeps training-time statistics explicit in each helper.
+# Its `__main__` block prints a deterministic housing/text fixture for the lesson.
+# Run the canonical entry point with: python3 main.py
+
 import math
 import random
 

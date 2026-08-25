@@ -1,3 +1,8 @@
+# From-scratch tuning algorithms for phases/02-ml-fundamentals/12-hyperparameter-tuning/docs/en.md.
+# NumPy supplies deterministic arrays and linear algebra; Optuna is intentionally absent.
+# Grid, random, and surrogate-guided search share one validation-score contract.
+# Run the compact canonical example with: python3 main.py
+
 import numpy as np
 import itertools
 import time
@@ -495,78 +500,9 @@ def demo_comparison():
     print()
 
 
-def demo_optuna():
-    print("=" * 60)
-    print("OPTUNA (if installed)")
-    print("=" * 60)
-
-    try:
-        import optuna
-        optuna.logging.set_verbosity(optuna.logging.WARNING)
-    except ImportError:
-        print("  Optuna not installed. Install with: pip install optuna")
-        print("  Skipping Optuna demo.")
-        print()
-        return
-
-    X_tr, y_tr, X_val, y_val, X_te, y_te = make_data()
-
-    def objective(trial):
-        lr = trial.suggest_float("learning_rate", 0.005, 0.5, log=True)
-        n_est = trial.suggest_int("n_estimators", 10, 200)
-        max_depth = trial.suggest_int("max_depth", 2, 8)
-        min_split = trial.suggest_int("min_samples_split", 2, 20)
-        subsample = trial.suggest_float("subsample", 0.5, 1.0)
-
-        model = GBMForTuning(
-            n_estimators=n_est,
-            learning_rate=lr,
-            max_depth=max_depth,
-            min_samples_split=min_split,
-            subsample=subsample,
-        )
-        model.fit(X_tr, y_tr)
-        return np.mean((model.predict(X_val) - y_val) ** 2)
-
-    study = optuna.create_study(direction="minimize")
-    study.optimize(objective, n_trials=50)
-
-    print(f"  Best params:")
-    for k, v in study.best_params.items():
-        if isinstance(v, float):
-            print(f"    {k}: {v:.4f}")
-        else:
-            print(f"    {k}: {v}")
-    print(f"  Best val MSE: {study.best_value:.4f}")
-
-    best = study.best_params
-    model = GBMForTuning(
-        n_estimators=best["n_estimators"],
-        learning_rate=best["learning_rate"],
-        max_depth=best["max_depth"],
-        min_samples_split=best["min_samples_split"],
-        subsample=best["subsample"],
-    )
-    model.fit(X_tr, y_tr)
-    test_mse = np.mean((model.predict(X_te) - y_te) ** 2)
-    print(f"  Test MSE: {test_mse:.4f}")
-
-    try:
-        importances = optuna.importance.get_param_importances(study)
-        print(f"\n  Hyperparameter importances:")
-        for k, v in importances.items():
-            bar = "#" * int(v * 40)
-            print(f"    {k:>20s}: {v:.3f} {bar}")
-    except Exception:
-        pass
-
-    print()
-
-
 if __name__ == "__main__":
     demo_grid_search()
     demo_random_search()
     demo_bayesian()
     demo_comparison()
-    demo_optuna()
     print("All tuning demos complete.")

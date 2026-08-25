@@ -1,3 +1,8 @@
+# Naive Bayes implementations for phases/02-ml-fundamentals/14-naive-bayes/docs/en.md.
+# NumPy is used for count tables, Gaussian likelihoods, and stable probability arithmetic.
+# The text and continuous fixtures are generated locally and require no dataset package.
+# Run the canonical entry point with: python3 main.py
+
 import numpy as np
 
 

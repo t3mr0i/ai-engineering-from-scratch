@@ -1,5 +1,9 @@
+# From-scratch ensemble implementations for phases/02-ml-fundamentals/11-ensemble-methods/docs/en.md.
+# NumPy is used only for array arithmetic; no estimator library is required.
+# The lesson exposes stump boosting, regression trees, bagging, and stacking.
+# Run the compact canonical example with: python3 main.py
+
 import numpy as np
-from collections import Counter
 
 
 def make_classification_data(n_samples=300, n_features=5, noise=0.1, seed=42):
@@ -450,47 +454,6 @@ def demo_comparison():
     print()
 
 
-def demo_sklearn_comparison():
-    print("=" * 60)
-    print("SKLEARN COMPARISON")
-    print("=" * 60)
-
-    try:
-        from sklearn.ensemble import (
-            AdaBoostClassifier,
-            GradientBoostingClassifier,
-            RandomForestClassifier,
-        )
-        from sklearn.metrics import accuracy_score
-    except ImportError:
-        print("  sklearn not installed, skipping comparison.")
-        print()
-        return
-
-    X, y = make_classification_data(n_samples=500)
-    y_01 = (y + 1) // 2
-    X_train, X_test, y_train, y_test = train_test_split(X, y)
-    X_train_01, X_test_01, y_train_01, y_test_01 = train_test_split(X, y_01)
-
-    ada_ours = AdaBoostScratch(n_estimators=50)
-    ada_ours.fit(X_train, y_train)
-    print(f"  Our AdaBoost:      {ada_ours.accuracy(X_test, y_test):.3f}")
-
-    ada_sk = AdaBoostClassifier(n_estimators=50, random_state=42, algorithm="SAMME")
-    ada_sk.fit(X_train_01, y_train_01)
-    print(f"  sklearn AdaBoost:  {accuracy_score(y_test_01, ada_sk.predict(X_test_01)):.3f}")
-
-    rf = RandomForestClassifier(n_estimators=100, random_state=42)
-    rf.fit(X_train_01, y_train_01)
-    print(f"  sklearn RF:        {accuracy_score(y_test_01, rf.predict(X_test_01)):.3f}")
-
-    gb = GradientBoostingClassifier(n_estimators=100, random_state=42)
-    gb.fit(X_train_01, y_train_01)
-    print(f"  sklearn GBM:       {accuracy_score(y_test_01, gb.predict(X_test_01)):.3f}")
-
-    print()
-
-
 if __name__ == "__main__":
     demo_adaboost()
     demo_gradient_boosting()
@@ -498,5 +461,4 @@ if __name__ == "__main__":
     demo_bagging()
     demo_stacking()
     demo_comparison()
-    demo_sklearn_comparison()
     print("All ensemble demos complete.")

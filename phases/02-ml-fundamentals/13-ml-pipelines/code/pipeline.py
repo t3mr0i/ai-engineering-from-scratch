@@ -1,3 +1,8 @@
+# From-scratch preprocessing and model pipelines for phases/02-ml-fundamentals/13-ml-pipelines/docs/en.md.
+# NumPy is the only non-stdlib dependency; pandas and estimator frameworks are not needed.
+# Each transformer separates fit-time state from inference-time transformation.
+# Run the compact canonical example with: python3 main.py
+
 import numpy as np
 import warnings
 warnings.filterwarnings("ignore")
@@ -497,68 +502,6 @@ def demo_model_comparison():
     print()
 
 
-def demo_sklearn_pipeline():
-    print("=" * 60)
-    print("SKLEARN PIPELINE (if installed)")
-    print("=" * 60)
-
-    try:
-        from sklearn.pipeline import Pipeline as SkPipeline
-        from sklearn.compose import ColumnTransformer as SkColumnTransformer
-        from sklearn.preprocessing import StandardScaler as SkScaler
-        from sklearn.preprocessing import OneHotEncoder as SkOHE
-        from sklearn.impute import SimpleImputer
-        from sklearn.ensemble import GradientBoostingClassifier
-        from sklearn.model_selection import cross_val_score
-    except ImportError:
-        print("  sklearn not installed, skipping.")
-        print()
-        return
-
-    data = make_mixed_data(n_samples=500)
-
-    import pandas as pd
-    df = pd.DataFrame({
-        "age": data["age"],
-        "income": data["income"],
-        "score": data["score"],
-        "city": data["city"],
-        "plan": data["plan"],
-    })
-    y = data["target"]
-
-    numeric_pipe = SkPipeline([
-        ("impute", SimpleImputer(strategy="median")),
-        ("scale", SkScaler()),
-    ])
-
-    cat_pipe = SkPipeline([
-        ("impute", SimpleImputer(strategy="most_frequent")),
-        ("encode", SkOHE(handle_unknown="ignore", sparse_output=False)),
-    ])
-
-    preprocessor = SkColumnTransformer([
-        ("num", numeric_pipe, ["age", "income", "score"]),
-        ("cat", cat_pipe, ["city", "plan"]),
-    ])
-
-    full_pipe = SkPipeline([
-        ("preprocess", preprocessor),
-        ("model", GradientBoostingClassifier(n_estimators=100, max_depth=3)),
-    ])
-
-    scores = cross_val_score(full_pipe, df, y, cv=5, scoring="accuracy")
-    print(f"  sklearn GBM pipeline:")
-    print(f"  5-fold CV: {scores.mean():.3f} +/- {scores.std():.3f}")
-    print(f"  Per fold:  {[f'{s:.3f}' for s in scores]}")
-    print()
-
-    full_pipe.fit(df, y)
-    print(f"  Pipeline steps: {[name for name, _ in full_pipe.steps]}")
-    print(f"  Preprocessor transformers: {[name for name, _, _ in preprocessor.transformers]}")
-    print()
-
-
 def demo_experiment_tracking():
     print("=" * 60)
     print("EXPERIMENT TRACKING (manual log)")
@@ -648,7 +591,6 @@ if __name__ == "__main__":
     demo_cross_validation()
     demo_unknown_categories()
     demo_model_comparison()
-    demo_sklearn_pipeline()
     demo_experiment_tracking()
     demo_reproducibility()
     print("All pipeline demos complete.")
