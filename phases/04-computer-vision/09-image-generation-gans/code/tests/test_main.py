@@ -29,8 +29,25 @@ class GANTests(unittest.TestCase):
 
     def test_generator_objectives_are_distinct(self) -> None:
         logits = np.array([-4.0, 0.0, 1.0])
-        self.assertGreater(gan.generator_loss_non_saturating(logits), gan.generator_loss_minimax(logits))
-        self.assertGreater(gan.generator_loss_minimax(-logits), gan.generator_loss_non_saturating(-logits))
+        self.assertAlmostEqual(gan.generator_loss_minimax(logits), -float(gan.softplus(logits).mean()))
+        self.assertAlmostEqual(gan.generator_loss_non_saturating(logits), float(gan.softplus(-logits).mean()))
+        self.assertNotEqual(gan.generator_loss_minimax(logits), gan.generator_loss_non_saturating(logits))
+
+    def test_minimax_finite_difference_pushes_fake_logit_up_but_saturates(self) -> None:
+        logit = -8.0
+        epsilon = 1e-5
+        derivative = (
+            gan.generator_loss_minimax(np.array([logit + epsilon]))
+            - gan.generator_loss_minimax(np.array([logit - epsilon]))
+        ) / (2 * epsilon)
+        self.assertLess(derivative, 0.0)
+        gradient_step = logit - 0.1 * derivative
+        self.assertGreater(gradient_step, logit)
+        nonsaturating_derivative = (
+            gan.generator_loss_non_saturating(np.array([logit + epsilon]))
+            - gan.generator_loss_non_saturating(np.array([logit - epsilon]))
+        ) / (2 * epsilon)
+        self.assertLess(abs(derivative), abs(nonsaturating_derivative))
 
     def test_discriminator_loss_rewards_correct_real_fake_logits(self) -> None:
         good = gan.discriminator_loss(np.array([8.0, 7.0]), np.array([-8.0, -7.0]))
@@ -46,6 +63,11 @@ class GANTests(unittest.TestCase):
             gan.generator_samples(np.zeros((2, 2)), 1.0, 0.0)
         with self.assertRaises(ValueError):
             gan.generator_samples(z, np.array([1.0]), 0.0)
+        with self.assertRaises(ValueError):
+            gan.gan_step(
+                {"g_weight": 0.15, "g_bias": -0.5, "d_weight": 0.2, "d_bias": 0.0},
+                np.array([1.0]), np.array([0.0]), lr_g=True,
+            )
 
     def test_gan_step_updates_both_parameter_groups(self) -> None:
         params = {"g_weight": 0.15, "g_bias": -0.5, "d_weight": 0.2, "d_bias": 0.0}

@@ -64,15 +64,15 @@
     },
     {
       "stage": "post",
-      "question": "Which input should raise ValueError rather than silently dropping pixels?",
+      "question": "Which input should raise ValueError before the local ViT calculation?",
       "options": [
-        "An image whose height is not divisible by patch_size",
-        "A finite image with four channels",
+        "A non-dividing patch size or a non-integer/out-of-range softmax axis",
+        "A finite image with four channels and a compatible patch size",
         "A seed of 7 for the deterministic fixture",
         "A batch containing two images of the same shape"
       ],
       "correct": 0,
-      "explanation": "patchify requires both spatial axes to divide evenly by patch_size; cropping a border would alter the documented token geometry."
+      "explanation": "patchify requires both spatial axes to divide evenly by patch_size, and softmax validates its integer axis range; both errors are explicit rather than a crop or raw indexing failure."
     }
   ]
 }

@@ -1,8 +1,6 @@
-# Contract and executable-behavior tests for this lesson demo.
+"""CTC, decoder, rendering, and model-boundary tests for the OCR fixture."""
 from __future__ import annotations
 
-import ast
-import functools
 import importlib.util
 import os
 from pathlib import Path
@@ -10,55 +8,145 @@ import subprocess
 import sys
 import unittest
 
+import numpy as np
+try:
+    import torch
+except ModuleNotFoundError:
+    torch = None
+
 CODE = Path(__file__).resolve().parents[1]
 MAIN = CODE / "main.py"
-ALLOWED = set(sys.stdlib_module_names) | {"numpy", "torch", "h5py", "zstandard", "safetensors"}
+SPEC = importlib.util.spec_from_file_location("lesson_ocr", MAIN)
+OCR = importlib.util.module_from_spec(SPEC)
+assert SPEC.loader is not None
+SPEC.loader.exec_module(OCR)
 
-def source_trees() -> list[ast.AST]:
-    return [ast.parse(path.read_text(encoding="utf-8")) for path in CODE.glob("*.py")]
 
-def external_roots() -> set[str]:
-    roots: set[str] = set()
-    for tree in source_trees():
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                roots.update(alias.name.split(".")[0] for alias in node.names)
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                roots.add(node.module.split(".")[0])
-    return {name for name in roots if not (CODE / f"{name}.py").exists() and not (CODE / name).is_dir()}
+class NumpyBuildTests(unittest.TestCase):
+    def test_numpy_greedy_decoder_collapses_repeats_and_blanks(self) -> None:
+        ids = [0, 3, 3, 0, 3, 4]
+        logits = np.full((len(ids), 1, len(OCR.VOCAB)), -10.0)
+        for step, index in enumerate(ids):
+            logits[step, 0, index] = 0.0
+        self.assertEqual(OCR.numpy_ctc_greedy_decode(logits), [[3, 3, 4]])
 
-@functools.lru_cache(maxsize=1)
-def run_demo() -> subprocess.CompletedProcess[str]:
-    missing = sorted(name for name in external_roots() if name in ALLOWED and importlib.util.find_spec(name) is None)
-    banned = sorted(external_roots() - ALLOWED)
-    if missing or banned:
-        raise unittest.SkipTest(f"demo dependencies unavailable or disallowed: {missing + banned}")
-    env = os.environ.copy()
-    for key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "HF_TOKEN", "HUGGINGFACE_TOKEN"):
-        env.pop(key, None)
-    return subprocess.run(
-        [sys.executable, MAIN.name], cwd=CODE, text=True, capture_output=True,
-        timeout=45, env=env, check=False,
-    )
+    def test_numpy_batch_matches_ctc_shapes_and_ids(self) -> None:
+        images, targets, lengths = OCR.numpy_build_batch(["abc", "xy"], max_len=3)
+        self.assertEqual(images.shape, (2, 1, 32, 48))
+        self.assertEqual(targets.tolist(), [11, 12, 13, 34, 35])
+        self.assertEqual(lengths.tolist(), [3, 2])
 
-class LessonDemoTests(unittest.TestCase):
-    def test_source_compiles(self) -> None:
+    def test_numpy_ctc_forward_loss_is_finite_for_a_valid_path(self) -> None:
+        ids = [0, 3, 0, 4]
+        logits = np.full((len(ids), 1, len(OCR.VOCAB)), -8.0)
+        for step, index in enumerate(ids):
+            logits[step, 0, index] = 0.0
+        logits -= np.log(np.exp(logits).sum(axis=-1, keepdims=True))
+        loss = OCR.numpy_ctc_loss(logits, np.asarray([3, 4]), np.asarray([4]), np.asarray([2]))
+        self.assertTrue(np.isfinite(loss))
+
+    def test_numpy_ctc_rejects_impossible_repeat_alignments(self) -> None:
+        logits = np.zeros((2, 1, len(OCR.VOCAB)))
+        with self.assertRaises(ValueError):
+            OCR.numpy_ctc_loss(logits, np.asarray([3, 3]), np.asarray([2]), np.asarray([2]))
+        with self.assertRaises(ValueError):
+            OCR.numpy_ctc_loss(logits, np.asarray([3, 4]), np.asarray([1]), np.asarray([2]))
+
+    def test_numpy_ctc_contract_rejects_blank_targets_and_bad_text(self) -> None:
+        logits = np.zeros((3, 1, len(OCR.VOCAB)))
+        with self.assertRaises(ValueError):
+            OCR.numpy_ctc_loss(logits, np.asarray([0]), np.asarray([3]), np.asarray([1]))
+        with self.assertRaises(ValueError):
+            OCR.numpy_build_batch(["A"])
+
+
+class OcrFixtureTests(unittest.TestCase):
+    def setUp(self) -> None:
+        if torch is None:
+            self.skipTest("optional PyTorch dependency is unavailable")
+
+    def test_greedy_decoder_merges_repeats_but_not_blank_separated_repeats(self) -> None:
+        ids = [0, 3, 3, 0, 3, 4]
+        logits = torch.full((len(ids), 1, len(OCR.VOCAB)), -10.0)
+        for step, index in enumerate(ids):
+            logits[step, 0, index] = 0.0
+        decoded = OCR.greedy_ctc_decode(torch.log_softmax(logits, dim=-1))
+        self.assertEqual(decoded, [[3, 3, 4]])
+
+    def test_ctc_loss_accepts_consistent_flattened_targets(self) -> None:
+        log_probs = torch.log_softmax(torch.randn(6, 2, len(OCR.VOCAB)), dim=-1)
+        loss = OCR.ctc_loss(log_probs, torch.tensor([3, 4, 5]), torch.tensor([6, 6]), torch.tensor([2, 1]))
+        self.assertTrue(torch.isfinite(loss))
+
+    def test_ctc_loss_rejects_bad_lengths_blank_and_targets(self) -> None:
+        log_probs = torch.log_softmax(torch.randn(4, 1, len(OCR.VOCAB)), dim=-1)
+        cases = [
+            (torch.tensor([3]), torch.tensor([5]), torch.tensor([1])),
+            (torch.tensor([0]), torch.tensor([4]), torch.tensor([1])),
+        ]
+        for targets, input_lengths, target_lengths in cases:
+            with self.subTest(targets=targets), self.assertRaises(ValueError):
+                OCR.ctc_loss(log_probs, targets, input_lengths, target_lengths)
+        with self.assertRaises(ValueError):
+            OCR.ctc_loss(log_probs, torch.tensor([3]), torch.tensor([4]), torch.tensor([1]), blank=len(OCR.VOCAB))
+        short = torch.log_softmax(torch.randn(2, 1, len(OCR.VOCAB)), dim=-1)
+        with self.assertRaises(ValueError):
+            OCR.ctc_loss(short, torch.tensor([3, 3]), torch.tensor([2]), torch.tensor([2]))
+        with self.assertRaises(ValueError):
+            OCR.ctc_loss(short, torch.tensor([3, 4]), torch.tensor([1]), torch.tensor([2]))
+
+    def test_synthetic_line_and_batch_have_expected_shapes(self) -> None:
+        line = OCR.synthetic_line("abc", height=32, char_width=8)
+        self.assertEqual(line.shape, (32, 24))
+        images, targets, lengths = OCR.build_batch(["abc", "xy"], max_len=3)
+        self.assertEqual(tuple(images.shape), (2, 1, 32, 48))
+        self.assertEqual(targets.tolist(), [11, 12, 13, 34, 35])
+        self.assertEqual(lengths.tolist(), [3, 2])
+
+    def test_empty_unknown_and_too_short_text_inputs_are_rejected(self) -> None:
+        for text in ("", "A", "!"):
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                OCR.synthetic_line(text)
+        with self.assertRaises(ValueError):
+            OCR.build_batch([])
+        with self.assertRaises(ValueError):
+            OCR.build_batch(["abcd"], max_len=3)
+
+    def test_crnn_output_uses_ctc_time_batch_vocab_layout(self) -> None:
+        model = OCR.TinyCRNN(vocab_size=len(OCR.VOCAB), hidden=8, feat=4)
+        output = model(torch.zeros(2, 1, 32, 48))
+        self.assertEqual(output.shape[1], 2)
+        self.assertEqual(output.shape[2], len(OCR.VOCAB))
+        self.assertTrue(torch.allclose(output.exp().sum(dim=-1), torch.ones_like(output[..., 0]), atol=1e-5))
+
+    def test_decode_to_str_rejects_blank_and_out_of_range_ids(self) -> None:
+        self.assertEqual(OCR.decode_to_str([11, 12]), "ab")
+        with self.assertRaises(ValueError):
+            OCR.decode_to_str([0])
+        with self.assertRaises(ValueError):
+            OCR.decode_to_str([len(OCR.VOCAB)])
+
+    def test_demo_exits_without_traceback(self) -> None:
+        result = subprocess.run([sys.executable, MAIN.name], cwd=CODE, capture_output=True, text=True, timeout=45, env=os.environ.copy())
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotIn("Traceback", result.stderr)
+        self.assertIn("[CTC fixture]", result.stdout)
+
+
+class OcrFallbackTests(unittest.TestCase):
+    def test_source_compiles_without_importing_torch(self) -> None:
         compile(MAIN.read_text(encoding="utf-8"), str(MAIN), "exec")
 
-    def test_demo_has_explicit_entrypoint(self) -> None:
-        source = MAIN.read_text(encoding="utf-8")
-        self.assertTrue("__main__" in source or "runpy.run_path" in source)
+    def test_module_exposes_dependency_state(self) -> None:
+        self.assertIn(OCR.TORCH_AVAILABLE, (True, False))
 
-    def test_demo_exits_successfully(self) -> None:
-        self.assertEqual(run_demo().returncode, 0, run_demo().stderr)
+    def test_canonical_command_is_bounded_when_torch_is_missing(self) -> None:
+        if torch is not None:
+            self.skipTest("fallback branch is only exercised without PyTorch")
+        result = subprocess.run([sys.executable, MAIN.name], cwd=CODE, capture_output=True, text=True, timeout=10)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("skipped cleanly", result.stdout)
 
-    def test_demo_emits_bounded_output(self) -> None:
-        result = run_demo()
-        self.assertTrue((result.stdout + result.stderr).strip())
-        self.assertLess(len(result.stdout) + len(result.stderr), 1_000_000)
-
-    def test_demo_has_no_traceback(self) -> None:
-        self.assertNotIn("Traceback (most recent call last)", run_demo().stderr)
 
 if __name__ == "__main__":
     unittest.main()

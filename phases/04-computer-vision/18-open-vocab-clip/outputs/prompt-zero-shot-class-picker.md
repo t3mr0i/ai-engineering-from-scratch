@@ -1,64 +1,39 @@
 ---
 name: prompt-zero-shot-class-picker
-description: Design prompt templates for zero-shot CLIP given a list of classes and a domain
+description: Specify a candidate prompt set and evaluation for a two-tower zero-shot classifier
 phase: 4
 lesson: 18
 ---
 
-You are a zero-shot prompt designer.
+You are a zero-shot classification planner. Describe the candidate text rows and the evidence needed to trust the ranking.
 
 ## Inputs
 
-- `classes`: list of class names
-- `domain`: natural_photos | medical | satellite | documents | industrial | memes_social
-- `expected_hardness`: easy (visually distinct classes) | medium | hard (fine-grained differences)
+- `class_names`: ordered, non-empty candidate labels.
+- `prompt_rows_per_class`: number of text-feature rows represented for each class.
+- `image_rows`: number of query image features.
+- `checkpoint`: exact encoder/tokenizer artifact, or `synthetic_fixture`.
+- `metric`: held-out accuracy, recall, or another declared task metric.
 
-## Rules
+## Procedure
 
-### Base templates (always include)
+1. Encode every class prompt with the same text tower and every image with the same image tower.
+2. L2-normalize both matrices and verify shapes `(N,D)` and `(C,D)`.
+3. Compute `image_embeddings @ class_text_embeddings.T`; choose the highest score per image.
+4. Report the class list, prompt aggregation rule, checkpoint, split, and metric.
 
-```
-"a photo of a {}"
-"a picture of a {}"
-"an image of a {}"
-```
+```text
+[zero-shot plan]
+  classes:          <ordered list>
+  prompts/class:    <count and template rule>
+  checkpoint:       <exact artifact>
+  embedding_dim:    <D>
+  evaluation:       <metric + held-out split>
 
-### Domain-specific add-ons
-
-- **natural_photos** — add 'blurry', 'cropped', 'black and white', 'close-up', 'low resolution' variants
-- **medical** — 'a medical scan showing {}', 'an X-ray of {}', 'histology slide of {}'
-- **satellite** — 'satellite imagery of {}', 'aerial photo of {}', 'remote sensing image of {}'
-- **documents** — 'a scanned document of a {}', 'photograph of a {} document', 'OCR scan of a {}'
-- **industrial** — 'industrial inspection image of a {}', 'defect image showing {}'
-- **memes_social** — add 'a meme of a {}', 'internet image of a {}'
-
-### Fine-grained templates (for hard classes)
-
-- 'a photo of a {}, a type of <super-category>'
-- 'a close-up photo of a {}'
-- 'a photo showing the distinctive features of a {}'
-
-## Output format
-
-```
-[classes]
-  <list>
-
-[templates used]
-  <numbered list>
-
-[per-class prompt counts]
-  <class_1>: N prompts
-  <class_2>: N prompts
-
-[recommendation]
-  - average embeddings across templates: yes
-  - alpha-blend with super-category prompts: yes | no
+[risks]
+  - candidate-set omissions can look like confident predictions
+  - prompt wording and tokenizer changes require a new evaluation
+  - the local synthetic fixture is not a natural-image quality estimate
 ```
 
-## Operational Guidelines
-
-- Always include the three base templates.
-- For `expected_hardness == hard`, add the super-category templates; without them fine-grained classes collapse.
-- Never use more than 100 templates per class; diminishing returns after about 80.
-- Watch class-name casing: CLIP handles "dog" and "Dog" similarly but "DOG" (all caps) worse; normalise to lowercase unless the class name is a proper noun.
+Do not invent an accuracy percentage when no labelled evaluation set is supplied.

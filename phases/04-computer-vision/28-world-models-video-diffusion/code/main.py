@@ -1,94 +1,134 @@
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
+"""NumPy-first video tokens, divided-attention costs, and a linear world model."""
+
+# Build-It implementation for phases/04-computer-vision/28-world-models-video-diffusion.
+# It exposes temporal/spatial patch contracts and a deterministic state rollout offline.
+# A video diffusion checkpoint is an optional Use-It backend, not downloaded here.
+# Run from this directory with: python3 main.py
+
+from __future__ import annotations
+
+import numpy as np
 
 
-class VideoPatch3D(nn.Module):
-    def __init__(self, in_channels=4, dim=64, patch_t=2, patch_h=2, patch_w=2):
-        super().__init__()
-        self.proj = nn.Conv3d(
-            in_channels, dim,
-            kernel_size=(patch_t, patch_h, patch_w),
-            stride=(patch_t, patch_h, patch_w),
-        )
-
-    def forward(self, x):
-        x = self.proj(x)
-        n, c, t, h, w = x.shape
-        tokens = x.reshape(n, c, t * h * w).transpose(1, 2)
-        return tokens, (t, h, w)
+def _finite(value: object, *, name: str, ndim: int | None = None) -> np.ndarray:
+    array = np.asarray(value, dtype=np.float64)
+    if ndim is not None and array.ndim != ndim:
+        raise ValueError(f"{name} must have {ndim} dimensions")
+    if array.size == 0 or not np.all(np.isfinite(array)):
+        raise ValueError(f"{name} must be non-empty and finite")
+    return array
 
 
-class DividedAttentionBlock(nn.Module):
-    def __init__(self, dim=64, heads=2):
-        super().__init__()
-        self.time_attn = nn.MultiheadAttention(dim, heads, batch_first=True)
-        self.space_attn = nn.MultiheadAttention(dim, heads, batch_first=True)
-        self.ln1 = nn.LayerNorm(dim)
-        self.ln2 = nn.LayerNorm(dim)
-        self.ln3 = nn.LayerNorm(dim)
-        self.mlp = nn.Sequential(nn.Linear(dim, 4 * dim), nn.GELU(), nn.Linear(4 * dim, dim))
-
-    def forward(self, x, grid):
-        T, H, W = grid
-        n, seq, d = x.shape
-
-        xt = x.view(n, T, H * W, d).permute(0, 2, 1, 3).reshape(n * H * W, T, d)
-        a, _ = self.time_attn(self.ln1(xt), self.ln1(xt), self.ln1(xt), need_weights=False)
-        xt = (xt + a).reshape(n, H * W, T, d).permute(0, 2, 1, 3).reshape(n, seq, d)
-
-        xs = xt.view(n, T, H * W, d).reshape(n * T, H * W, d)
-        a, _ = self.space_attn(self.ln2(xs), self.ln2(xs), self.ln2(xs), need_weights=False)
-        xs = (xs + a).reshape(n, T, H * W, d).reshape(n, seq, d)
-
-        xs = xs + self.mlp(self.ln3(xs))
-        return xs
+def _positive_int(value: object, *, name: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, (int, np.integer)) or value <= 0:
+        raise ValueError(f"{name} must be a positive integer")
+    return int(value)
 
 
-class TinyVideoDiT(nn.Module):
-    def __init__(self, in_channels=4, dim=64, depth=2, heads=2):
-        super().__init__()
-        self.in_channels = in_channels
-        self.dim = dim
-        self.patch = VideoPatch3D(in_channels=in_channels, dim=dim, patch_t=2, patch_h=2, patch_w=2)
-        self.blocks = nn.ModuleList([DividedAttentionBlock(dim, heads) for _ in range(depth)])
-        self.out = nn.Linear(dim, in_channels * 2 * 2 * 2)
-
-    def forward(self, x):
-        tokens, grid = self.patch(x)
-        for blk in self.blocks:
-            tokens = blk(tokens, grid)
-        return self.out(tokens), grid
+def _patch_sizes(patch_t: int, patch_h: int, patch_w: int) -> tuple[int, int, int]:
+    return tuple(_positive_int(value, name=name) for value, name in ((patch_t, "patch_t"), (patch_h, "patch_h"), (patch_w, "patch_w")))
 
 
-def count_tokens(T, H, W, p_t=2, p_h=8, p_w=8):
+def patchify_video(video: object, patch_t: int = 2, patch_h: int = 2, patch_w: int = 2) -> tuple[np.ndarray, tuple[int, int, int]]:
+    """Convert ``(N,C,T,H,W)`` video into patch tokens and return its token grid."""
+    array = _finite(video, name="video", ndim=5)
+    patch_t, patch_h, patch_w = _patch_sizes(patch_t, patch_h, patch_w)
+    n, channels, frames, height, width = array.shape
+    if frames % patch_t or height % patch_h or width % patch_w:
+        raise ValueError("video axes must be divisible by their patch sizes")
+    grid = (frames // patch_t, height // patch_h, width // patch_w)
+    tokens = array.reshape(n, channels, grid[0], patch_t, grid[1], patch_h, grid[2], patch_w)
+    tokens = tokens.transpose(0, 2, 4, 6, 1, 3, 5, 7)
+    return tokens.reshape(n, grid[0] * grid[1] * grid[2], channels * patch_t * patch_h * patch_w), grid
+
+
+def unpatchify_video(tokens: object, video_shape: tuple[int, int, int, int, int], patch_t: int = 2, patch_h: int = 2, patch_w: int = 2) -> np.ndarray:
+    """Invert :func:`patchify_video` for a known ``(N,C,T,H,W)`` shape."""
+    token_array = _finite(tokens, name="tokens", ndim=3)
+    if not isinstance(video_shape, tuple) or len(video_shape) != 5 or any(isinstance(value, bool) or not isinstance(value, (int, np.integer)) or value <= 0 for value in video_shape):
+        raise ValueError("video_shape must contain five positive integer dimensions")
+    patch_t, patch_h, patch_w = _patch_sizes(patch_t, patch_h, patch_w)
+    n, channels, frames, height, width = video_shape
+    if frames % patch_t or height % patch_h or width % patch_w:
+        raise ValueError("video axes must be divisible by their patch sizes")
+    grid = (frames // patch_t, height // patch_h, width // patch_w)
+    expected = (n, grid[0] * grid[1] * grid[2], channels * patch_t * patch_h * patch_w)
+    if token_array.shape != expected:
+        raise ValueError(f"tokens must have shape {expected}")
+    blocks = token_array.reshape(n, grid[0], grid[1], grid[2], channels, patch_t, patch_h, patch_w)
+    return blocks.transpose(0, 4, 1, 5, 2, 6, 3, 7).reshape(video_shape)
+
+
+def count_tokens(T: int, H: int, W: int, p_t: int = 2, p_h: int = 8, p_w: int = 8) -> int:
+    T, H, W = (_positive_int(value, name=name) for value, name in ((T, "T"), (H, "H"), (W, "W")))
+    p_t, p_h, p_w = _patch_sizes(p_t, p_h, p_w)
+    if T % p_t or H % p_h or W % p_w:
+        raise ValueError("dimensions must be divisible by patch sizes")
     return (T // p_t) * (H // p_h) * (W // p_w)
 
 
-def main():
-    print("[token count for 5s 360p video (150 frames, 480x360)]")
-    tokens = count_tokens(150, 480, 360, p_t=2, p_h=8, p_w=8)
-    T_tok = 150 // 2
-    S_tok = (480 // 8) * (360 // 8)
-    print(f"  tokens per clip: {tokens:,}")
-    print(f"  attention pairs (joint): {tokens ** 2:,}")
-    # Divided temporal: T^2 attention at every spatial position.
-    # Divided spatial:  (H*W)^2 attention at every timestep.
-    divided_time = S_tok * T_tok ** 2
-    divided_space = T_tok * S_tok ** 2
-    print(f"  divided time total: {divided_time:,}")
-    print(f"  divided space total: {divided_space:,}")
-    print(f"  divided total: {divided_time + divided_space:,}")
+def divided_attention_cost(T: int, H: int, W: int, p_t: int = 2, p_h: int = 8, p_w: int = 8) -> tuple[int, int, int]:
+    """Return ``(tokens, joint_pairs, divided_pairs)`` for temporal+spatial attention."""
+    tokens = count_tokens(T, H, W, p_t, p_h, p_w)
+    temporal, spatial = T // p_t, (H // p_h) * (W // p_w)
+    joint = tokens * tokens
+    divided = spatial * temporal * temporal + temporal * spatial * spatial
+    return tokens, joint, divided
 
-    torch.manual_seed(0)
-    vid = torch.randn(1, 4, 8, 16, 16)
-    model = TinyVideoDiT(in_channels=4, dim=64, depth=2, heads=2)
-    out, grid = model(vid)
-    print(f"\n[model shapes]")
-    print(f"  input   {tuple(vid.shape)}")
-    print(f"  tokens grid {grid}")
-    print(f"  output  {tuple(out.shape)}")
-    print(f"  params  {sum(p.numel() for p in model.parameters()):,}")
+
+def rollout_linear_world_model(initial_state: object, actions: object, transition: object | None = None, control: object | None = None) -> np.ndarray:
+    """Roll ``state[t+1] = A state[t] + B action[t]`` and include the initial state."""
+    state = _finite(initial_state, name="initial_state", ndim=1)
+    action_array = _finite(actions, name="actions", ndim=2)
+    if action_array.shape[0] == 0:
+        raise ValueError("actions must contain at least one step")
+    dimension = state.shape[0]
+    action_width = action_array.shape[1]
+    if transition is None:
+        matrix_a = np.eye(dimension)
+    else:
+        matrix_a = _finite(transition, name="transition", ndim=2)
+        if matrix_a.shape != (dimension, dimension):
+            raise ValueError("transition must be square with state width")
+    if control is None:
+        matrix_b = np.zeros((dimension, action_width), dtype=np.float64)
+        width = min(dimension, action_width)
+        matrix_b[:width, :width] = np.eye(width)
+    else:
+        matrix_b = _finite(control, name="control", ndim=2)
+        if matrix_b.shape != (dimension, action_width):
+            raise ValueError("control must map action width to state width")
+    states = np.empty((action_array.shape[0] + 1, dimension), dtype=np.float64)
+    states[0] = state
+    for index, action in enumerate(action_array):
+        with np.errstate(over="ignore", invalid="ignore"):
+            states[index + 1] = matrix_a @ states[index] + matrix_b @ action
+        if not np.all(np.isfinite(states[index + 1])):
+            raise ValueError("world-model rollout became non-finite")
+    return states
+
+
+def video_consistency_error(predicted: object, target: object) -> float:
+    prediction = _finite(predicted, name="predicted", ndim=5)
+    truth = _finite(target, name="target", ndim=5)
+    if prediction.shape != truth.shape:
+        raise ValueError("predicted and target videos must have the same shape")
+    result = float(np.mean((prediction - truth) ** 2))
+    if not np.isfinite(result):
+        raise ValueError("video error was not finite")
+    return result
+
+
+def main() -> None:
+    video = np.arange(1 * 2 * 4 * 8 * 8, dtype=np.float64).reshape(1, 2, 4, 8, 8) / 100.0
+    tokens, grid = patchify_video(video, 2, 2, 2)
+    restored = unpatchify_video(tokens, video.shape, 2, 2, 2)
+    token_count, joint, divided = divided_attention_cost(16, 64, 64, 2, 8, 8)
+    states = rollout_linear_world_model(np.array([0.0, 0.0]), np.array(((1.0, 0.0), (0.0, 2.0), (1.0, -1.0))))
+    print("[video world-model Build-It]")
+    print(f"video={video.shape} token_grid={grid} tokens={tokens.shape} roundtrip={np.max(np.abs(restored-video)):.1e}")
+    print(f"attention tokens={token_count} joint_pairs={joint} divided_pairs={divided}")
+    print(f"linear rollout states={states.tolist()} consistency={video_consistency_error(restored, video):.1e}")
 
 
 if __name__ == "__main__":

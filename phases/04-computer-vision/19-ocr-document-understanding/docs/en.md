@@ -1,125 +1,92 @@
 # OCR & Document Understanding
 
-> OCR is a three-stage pipeline — detect text boxes, recognise the characters, then lay them out. Every modern OCR system reorders these stages or merges them.
+> Recognition, layout, and meaning are different contracts; CTC only solves the line-recognition alignment problem.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 4 Lesson 06 (Detection), Phase 7 Lesson 02 (Self-Attention)
+**Prerequisites:** Phase 4 Lesson 06 (Object Detection)
 **Time:** ~45 minutes
 
 ## Learning Objectives
 
-- Trace the classical OCR pipeline (detect -> recognise -> layout) and the modern end-to-end alternatives (Donut, Qwen-VL-OCR)
-- Implement CTC (Connectionist Temporal Classification) loss for sequence-to-sequence OCR training
-- Use PaddleOCR or EasyOCR for production document parsing without training
-- Distinguish OCR, layout parsing, and document understanding — and pick the right tool per task
+- Explain how a CTC blank and repeat-collapse turn framewise IDs into a line string.
+- Implement the greedy decoder and a log-space CTC forward dynamic program with NumPy first.
+- Validate `(T,N,V)` log probabilities, flattened targets, and per-example CTC lengths before calling the loss.
+- Build a fixed-height synthetic line and read its width as the recognizer's time-axis budget.
+- Trace a compact CNN–BiLSTM–CTC recognizer without confusing it with text detection or layout parsing.
+- Separate local deterministic regression results from claims about a production OCR stack or document fields.
 
 ## The Problem
 
-Images full of text are everywhere: receipts, invoices, IDs, scanned books, forms, whiteboards, signs, screenshots. Extracting structured data from them — not just the characters, but "this is the total amount" — is one of the highest-value applied-vision problems.
-
-The field splits into three skill layers:
-
-1. **OCR proper**: turn pixels into text.
-2. **Layout parsing**: group OCR output into regions (title, body, table, header).
-3. **Document understanding**: extract structured fields ("invoice_total = $42.50") from layout.
-
-Each layer has classical and modern approaches, and the gap between "I want text from an image" and "I need the total amount from this receipt" is bigger than most teams realise.
-
-## The Concept
-
-### The classical pipeline
-
-```mermaid
-flowchart LR
-    IMG["Image"] --> DET["Text detection<br/>(DB, EAST, CRAFT)"]
-    DET --> BOX["Word/line<br/>bounding boxes"]
-    BOX --> CROP["Crop each region"]
-    CROP --> REC["Recognition<br/>(CRNN + CTC)"]
-    REC --> TXT["Text strings"]
-    TXT --> LAY["Layout<br/>ordering"]
-    LAY --> OUT["Reading-order text"]
-
-    style DET fill:#dbeafe,stroke:#2563eb
-    style REC fill:#fef3c7,stroke:#d97706
-    style OUT fill:#dcfce7,stroke:#16a34a
-```
-
-- **Text detection** produces per-line or per-word quadrilaterals.
-- **Recognition** crops each region to a fixed height, runs a CNN + BiLSTM + CTC to produce a character sequence.
-- **Layout** rebuilds reading order (top-to-bottom, left-to-right for Latin; different for Arabic, Japanese).
-
-### CTC in one paragraph
-
-OCR recognition produces a variable-length sequence from a fixed-length feature map. CTC (Graves et al., 2006) lets you train this without character-level alignment. The model outputs a distribution over (vocab + blank) at every time step; CTC loss marginalises over all alignments that reduce to the target text after merging repeats and removing blanks.
-
-```
-raw output: "h h h _ _ e e l l _ l l o _ _"
-after merge repeats and remove blanks: "hello"
-```
-
-CTC is the reason CRNN worked in 2015 and still trains most production OCR models in 2026.
-
-### Modern end-to-end models
-
-- **Donut** (Kim et al., 2022) — a ViT encoder + a text decoder; reads an image and emits JSON directly. No text detector, no layout module.
-- **TrOCR** — ViT + transformer decoder for line-level OCR.
-- **Qwen-VL-OCR / InternVL** — full vision-language models fine-tuned for OCR tasks; best accuracy in 2026 on complex documents.
-- **PaddleOCR** — classical DB + CRNN pipeline in a mature production package; still the open-source workhorse.
-
-End-to-end models need more data and compute but skip the error accumulation of multi-stage pipelines.
-
-### Layout parsing
-
-For structured documents, run a layout detector (LayoutLMv3, DocLayNet) that labels each region: Title, Paragraph, Figure, Table, Footnote. Reading order then becomes "iterate through regions in layout order, concatenate."
-
-For forms, use **Key-Value extraction** models (Donut for visually-rich documents, LayoutLMv3 for plain scans). They take image + detected text + positions and predict structured key-value pairs.
-
-### Evaluation metrics
-
-- **Character Error Rate (CER)** — Levenshtein distance / length of reference. Lower is better. Production target: < 2% on clean scans.
-- **Word Error Rate (WER)** — same at the word level.
-- **F1 on structured fields** — for key-value tasks; measures whether `{invoice_total: 42.50}` appears correctly.
-- **Edit distance on JSON** — for end-to-end document parsing; the Donut paper introduced normalised tree edit distance.
-
-
-
+An OCR product may detect text regions, recognize each crop, restore reading order, and extract fields. The local artifact implements only line recognition: a synthetic grayscale line becomes a time-major log-probability tensor and a CTC decoder turns it into IDs. Naming the omitted stages prevents a recognizer score from being mistaken for document understanding.
 
 ## Build It
 
-Reconstruct **OCR & Document Understanding** by following `ctc_loss` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
+`VOCAB[0]` is the blank. The NumPy Build-It path uses `numpy_build_batch`, `numpy_ctc_greedy_decode`, and `numpy_ctc_loss`: `numpy_ctc_loss` walks the blank-interleaved target trellis in log space and rejects an input length below `target_length + adjacent_repeat_count`. `synthetic_line("abc", height=32, char_width=8)` returns a `(32,24)` float image. `numpy_build_batch(["abc","xy"], max_len=3)` pads images to `(2,1,32,48)`, concatenates target IDs to a one-dimensional vector, and returns target lengths `[3,2]`.
+
+The optional Torch Use-It path adds `TinyCRNN` and `ctc_loss`. It reduces height with pooling, treats the remaining width as time, and returns `(T,N,V)` log probabilities. Both loss paths check that every input length is between `1` and `T`, target lengths sum to the flattened target count, targets do not contain blank IDs, and repeated adjacent targets have the extra-frame requirement.
+
+```bash
+cd phases/04-computer-vision/19-ocr-document-understanding/code
+python3 main.py
+```
+
+The demo first builds `(2,1,32,48)` NumPy lines, decodes `[0,11,11,0,12,0]` as `[11,12]`, and evaluates a finite log-space CTC loss. If PyTorch is available it then trains briefly on seeded strings such as `abc7` and `xy45`; otherwise only that optional Use-It path is skipped. This is not a CER claim and not an image detector.
+
+```mermaid
+flowchart LR
+    I["synthetic line (N,1,H,W)"] --> C["CNN height reduction"]
+    C --> R["BiLSTM over width"]
+    R --> L["log_probs (T,N,V)"]
+    L --> D["blank/repeat collapse"]
+    D --> O["line IDs / text"]
+```
 
 ## Use It
 
-Call `ctc_loss` from a small caller with the text "red fox". Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+The framework-free Build-It path is:
+
+```python
+import numpy as np
+from main import numpy_build_batch, numpy_ctc_greedy_decode
+
+images, targets, lengths = numpy_build_batch(["abc", "xy"], max_len=3)
+print(images.shape, targets.tolist(), lengths.tolist())
+```
+
+Use the Torch recognizer when the optional dependency is available:
+
+```python
+import torch
+from main import VOCAB, TinyCRNN, build_batch, ctc_loss, greedy_ctc_decode
+
+images, targets, target_lengths = build_batch(["abc", "xy"], max_len=3)
+model = TinyCRNN(hidden=8, feat=4)
+log_probs = model(images)
+input_lengths = torch.full((2,), log_probs.shape[0], dtype=torch.long)
+loss = ctc_loss(log_probs, targets, input_lengths, target_lengths)
+print(log_probs.shape, float(loss), VOCAB[0])
+```
+
+Construct logits whose winning IDs are `[blank, 3, 3, blank, 3, 4]`; the decoder returns `[3,3,4]`, because a repeated character separated by a blank is not the same as an adjacent repeat.
 
 ## Ship It
 
-Hand off `outputs/prompt-ocr-stack-picker.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [CRNN (Shi et al., 2015)](https://arxiv.org/abs/1507.05717) — the original CNN+RNN+CTC architecture
-- [CTC (Graves et al., 2006)](https://www.cs.toronto.edu/~graves/icml_2006.pdf) — the original CTC paper; densely packed with the algorithmic ideas
-- [Donut (Kim et al., 2022)](https://arxiv.org/abs/2111.15664) — OCR-free document understanding transformer
-- [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) — the open-source production OCR stack
+Use `outputs/skill-ctc-decoder.md` for the decoder boundary and `outputs/prompt-ocr-stack-picker.md` to specify detection, recognition, layout, and field-evaluation requirements separately. The outputs do not import a package or assert a current provider ranking; a production choice needs a held-out document set, script coverage, and a latency gate.
 
 ## Exercises
 
-Use `ctc_loss` as the trace: start from the text "red fox", keep the raw output, and tie each observation to a named objective.
-
-1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using the text "red fox". Follow `ctc_loss`, `greedy_ctc_decode`, `TinyCRNN`. Expect the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text; capture the first printed shape, metric, status, or summary field and state which part supports **Trace the classical OCR pipeline (detect -> recognise -> layout) and the modern end-to-end alternatives (Donut, Qwen-VL-OCR)**.
-2. **Vary one named input.** Repeat the command after changing only the input text: use the text "red fox runs". Predict the direction of the change, then compare the two output values. Explain why **Implement CTC (Connectionist Temporal Classification) loss for sequence-to-sequence OCR training** says the other inputs should stay fixed.
-3. **Probe the empty case.** Feed the implementation an empty string. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Use PaddleOCR or EasyOCR for production document parsing without training** and record the exception text if the code rejects the case.
-4. **Package a usable handoff.** Open `outputs/prompt-ocr-stack-picker.md` and add a worked example using the text "red fox". Include the input contract, one expected output field, and a named acceptance check for **Distinguish OCR, layout parsing, and document understanding — and pick the right tool per task**; note what the demo cannot establish.
+1. Verify `VOCAB.index("a") == 11` and that `build_batch(["abc","xy"], max_len=3)` returns the stated shapes and lengths.
+2. Feed the decoder a hand-built `(6,1,V)` log-probability tensor with IDs `[0,3,3,0,3,4]`; explain the resulting `[3,3,4]`.
+3. Make `input_lengths` exceed `T`, put a blank in `targets`, change the target-length sum, and give `[3,3]` only two input frames. Each should raise `ValueError` before a loss calculation; repeated adjacent labels need one extra frame.
+4. Pass an empty string, an uppercase character, and `max_len=2` to the builders; record the explicit errors.
+5. Compare the recognizer's `(T,N,V)` output with the input `(N,1,H,W)` and identify which axis becomes CTC time.
 
 ## Reference Solution
 
-A checkable result for **OCR & Document Understanding** should contain:
+The blank is ID 0; adjacent duplicate IDs collapse, while duplicates separated by blank remain. The NumPy batch fixture has shape `(2,1,32,48)`, target IDs `[11,12,13,34,35]`, and lengths `[3,2]`; its log-space loss rejects both target-length overflow and the extra-frame requirement for adjacent repeats. A valid Torch CRNN output is time-major `(T,2,37)` for the default vocabulary. `zero_infinity=True` remains a numerical guard after validation, not permission to accept an invalid training example. No local result measures production CER, layout quality, or field F1.
 
-- the `python3 main.py` output for the text "red fox", with `ctc_loss`, `greedy_ctc_decode`, `TinyCRNN` traced to the value or shape that supports **Trace the classical OCR pipeline (detect -> recognise -> layout) and the modern end-to-end alternatives (Donut, Qwen-VL-OCR)**;
-- a before/after comparison for the input text, where the text "red fox runs" changes the observation in the direction predicted by **Implement CTC (Connectionist Temporal Classification) loss for sequence-to-sequence OCR training**;
-- a recorded result for an empty string that matches the implementation’s validation or empty-result contract and explains the evidence for **Use PaddleOCR or EasyOCR for production document parsing without training**; and
-- an updated `outputs/prompt-ocr-stack-picker.md` example with a concrete input, expected output field, and acceptance check tied to **Distinguish OCR, layout parsing, and document understanding — and pick the right tool per task**.
+## Further Reading
 
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+- [CTC](https://www.cs.toronto.edu/~graves/icml_2006.pdf) — alignment marginalization and blank/repeat semantics.
+- [CRNN](https://arxiv.org/abs/1507.05717) — the CNN–recurrent recognition pattern.

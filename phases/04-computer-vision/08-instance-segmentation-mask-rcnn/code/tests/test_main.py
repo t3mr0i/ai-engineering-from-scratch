@@ -37,6 +37,8 @@ class InstanceSegmentationTests(unittest.TestCase):
             mask.validate_boxes(np.empty((0, 4)), (8, 8))
         with self.assertRaises(ValueError):
             mask.roi_align(np.zeros((1, 4, 4)), [[0, 0, 4, 4]], spatial_scale=0)
+        with self.assertRaises(ValueError):
+            mask.roi_align(np.zeros((1, 4, 4)), [[0, 0, 4, 4]], spatial_scale=True)
 
     def test_paste_mask_is_aligned_to_box(self) -> None:
         logits = np.full((2, 2), 10.0)
@@ -44,6 +46,8 @@ class InstanceSegmentationTests(unittest.TestCase):
         self.assertEqual(int(pasted.sum()), 16)
         self.assertTrue(pasted[3:7, 2:6].all())
         self.assertFalse(pasted[:3].any())
+        with self.assertRaises(ValueError):
+            mask.paste_mask(logits, [2, 3, 6, 7], (10, 10), threshold=True)
 
     def test_mask_loss_is_stable_for_extreme_logits_and_bool_targets(self) -> None:
         logits = np.array([[[1000.0, -1000.0]]])
@@ -61,6 +65,10 @@ class InstanceSegmentationTests(unittest.TestCase):
             mask.mask_iou(np.zeros((2, 2), bool), np.zeros((2, 3), bool))
 
     def test_synthetic_scene_is_reproducible_and_nonempty(self) -> None:
+        edge_feature, edge_boxes, edge_masks = mask.synthetic_scene(8, 8)
+        self.assertEqual(edge_feature.shape, (2, 8, 8))
+        np.testing.assert_array_equal(edge_boxes, [[2, 3, 3, 4]])
+        self.assertEqual(int(edge_masks.sum()), 1)
         first = mask.synthetic_scene(12, 14)
         second = mask.synthetic_scene(12, 14)
         for left, right in zip(first, second):
@@ -68,8 +76,9 @@ class InstanceSegmentationTests(unittest.TestCase):
         self.assertEqual(first[0].shape, (2, 12, 14))
         self.assertEqual(first[1].shape, (1, 4))
         self.assertGreater(int(first[2].sum()), 0)
-        with self.assertRaises(ValueError):
-            mask.synthetic_scene(3, 3)
+        for shape in ((7, 8), (8, 7), (3, 3)):
+            with self.assertRaises(ValueError):
+                mask.synthetic_scene(*shape)
 
     def test_canonical_demo_exits_cleanly(self) -> None:
         result = subprocess.run([sys.executable, "main.py"], cwd=CODE, capture_output=True, text=True, check=False)

@@ -48,7 +48,7 @@
         "The step must move from an earlier to a later timestep"
       ],
       "correct": 0,
-      "explanation": "The local DDIM-style formula uses no random sigma term when eta is zero; the reverse relation still requires t_prev < t."
+      "explanation": "The local fixture supports eta=0 only, so it adds no stochastic term and repeats for identical inputs; it also requires t_prev < t. Positive or non-finite eta is rejected rather than sampled implicitly."
     },
     {
       "stage": "post",

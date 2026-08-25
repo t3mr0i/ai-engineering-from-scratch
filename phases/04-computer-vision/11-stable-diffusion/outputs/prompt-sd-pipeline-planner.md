@@ -7,4 +7,4 @@ lesson: 11
 
 # Offline pipeline plan
 
-Record the image `(N,C,H,W)`, downsampling factor, latent channels, conditioning source, scheduler sequence, and safety decision owner. Mark each item as a local fixture, an external checkpoint contract, or not implemented. For this lesson, the accepted smoke test is a finite latent shape, a guidance tensor with matching shape, and a reproducible manifest—not an image file.
+Record the image `(N,C,H,W)`, downsampling factor, latent channels, conditioning source, scheduler sequence, and safety decision owner. The local sigma sequence has at least two entries and includes its requested start and end exactly; reject a one-step request. Mark each item as a local fixture, an external checkpoint contract, or not implemented. For this lesson, the accepted smoke test is a finite latent shape, a guidance tensor with matching shape, and a reproducible manifest—not an image file.

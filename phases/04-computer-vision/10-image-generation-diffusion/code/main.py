@@ -27,7 +27,7 @@ def linear_beta_schedule(T: int = 1000, beta_start: float = 1e-4, beta_end: floa
     T = _positive_int(T, "T")
     if T < 2:
         raise ValueError("T must be at least 2 for a reverse step")
-    if not all(isinstance(v, Real) and np.isfinite(v) for v in (beta_start, beta_end)):
+    if any(isinstance(v, (bool, np.bool_)) for v in (beta_start, beta_end)) or not all(isinstance(v, Real) and np.isfinite(v) for v in (beta_start, beta_end)):
         raise ValueError("beta endpoints must be finite")
     if not 0 < beta_start <= beta_end < 1:
         raise ValueError("beta endpoints must satisfy 0 < start <= end < 1")
@@ -127,12 +127,11 @@ def ddim_step(
     t, t_prev = int(t), int(t_prev)
     if t_prev >= t:
         raise ValueError("t_prev must be earlier than t")
-    if not isinstance(eta, Real) or not np.isfinite(eta) or eta < 0:
-        raise ValueError("eta must be finite and non-negative")
+    if isinstance(eta, (bool, np.bool_)) or not isinstance(eta, Real) or not np.isfinite(eta) or eta != 0:
+        raise ValueError("the local ddim_step supports finite eta=0 only")
     alpha_t, alpha_prev = schedule["alpha_bar"][t], schedule["alpha_bar"][t_prev]
     x0 = (noisy - np.sqrt(1 - alpha_t) * predicted) / np.sqrt(alpha_t)
-    sigma = float(eta) * np.sqrt(max((1 - alpha_prev) / (1 - alpha_t) * (1 - alpha_t / alpha_prev), 0.0))
-    direction = np.sqrt(max(1 - alpha_prev - sigma * sigma, 0.0)) * predicted
+    direction = np.sqrt(1 - alpha_prev) * predicted
     return np.sqrt(alpha_prev) * x0 + direction
 
 

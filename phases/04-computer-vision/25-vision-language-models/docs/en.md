@@ -1,150 +1,68 @@
-# Vision-Language Models — The ViT-MLP-LLM Pattern
+# Vision-Language Models: Projection and Routing
 
-> A vision encoder converts an image into tokens. An MLP projector maps those tokens into the LLM's embedding space. A language model does the rest. That pattern — ViT-MLP-LLM — is every production VLM in 2026.
+> Make the bridge from visual patch features to language-space decisions measurable before using a VLM.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 4 Lesson 14 (ViT), Phase 4 Lesson 18 (CLIP), Phase 7 Lesson 02 (Self-Attention)
-**Time:** ~75 minutes
+**Prerequisites:** 14-vision-transformers, 05-nlp-foundations-to-advanced
+**Time:** ~40 minutes
 
 ## Learning Objectives
 
-- State the ViT-MLP-LLM architecture and explain what each of the three components contributes
-- Compare Qwen3-VL, InternVL3.5, LLaVA-Next, and GLM-4.6V on parameter count, context length, and benchmark performance
-- Explain DeepStack: why multi-level ViT features tighten vision-language alignment better than a single last-layer feature
-- Measure VLM hallucination in production with Cross-Modal Error Rate (CMER) and act on the signal
-
-## The Problem
-
-CLIP (Phase 4 Lesson 18) gives you a shared embedding space for images and text, which is enough for zero-shot classification and retrieval. It cannot answer "how many red cars are in this image?" because CLIP does not generate text — it only scores similarities.
-
-Vision-Language Models (VLMs) — Qwen3-VL, InternVL3.5, LLaVA-Next, GLM-4.6V — bolt a CLIP-family image encoder to a full language model. The model sees an image plus a question and generates an answer. In 2026 open-source VLMs rival or beat GPT-5 and Gemini-2.5-Pro on multimodal benchmarks (MMMU, MMBench, DocVQA, ChartQA, MathVista, OSWorld).
-
-The trio of pieces (ViT, projector, LLM) is the standard. The differences between models are in which ViT, which projector, which LLM, the training data, and the alignment recipe. Once you understand the pattern, swapping any component is mechanical.
-
-## The Concept
-
-### The ViT-MLP-LLM architecture
-
-```mermaid
-flowchart LR
-    IMG["Image<br/>(H x W x 3)"] --> ViT["Vision encoder<br/>(ViT, CLIP-L,<br/>SigLIP, DINOv3)"]
-    ViT --> FEATS["Image tokens<br/>(N, d_vit)"]
-    FEATS --> PROJ["Projector<br/>(2-4 layer MLP<br/>or Q-former)"]
-    PROJ --> VTOK["Image tokens<br/>in LLM space<br/>(N, d_llm)"]
-    TXT["Text prompt"] --> TOK["LLM tokenizer"]
-    TOK --> TTOK["Text tokens<br/>(M, d_llm)"]
-    VTOK --> CONCAT["Interleave<br/>or concat"]
-    TTOK --> CONCAT
-    CONCAT --> LLM["Decoder LLM<br/>(Qwen3, LLaMA, etc.)"]
-    LLM --> OUT["Text answer"]
-
-    style ViT fill:#dbeafe,stroke:#2563eb
-    style PROJ fill:#fef3c7,stroke:#d97706
-    style LLM fill:#dcfce7,stroke:#16a34a
-```
-
-1. **Vision encoder** — a pretrained ViT (CLIP-L/14, SigLIP, DINOv3, or a fine-tuned variant). Produces patch tokens.
-2. **Projector** — a small module (2-4 layer MLP, or a Q-former) that maps vision tokens into the LLM's embedding dimension. This is where most of the fine-tuning happens.
-3. **LLM** — a decoder-only language model (Qwen3, Llama, Mistral, GLM, InternLM). Reads the vision + text tokens in sequence, generates text.
-
-All three pieces are trainable in principle. In practice, the vision encoder and LLM stay mostly frozen while the projector trains — a few billion parameters of signal for cheap.
-
-### DeepStack
-
-Vanilla projection uses only the last ViT layer. DeepStack (Qwen3-VL) samples features from multiple ViT depths and stacks them. Deeper layers carry high-level semantics; shallower layers carry fine-grained spatial and textural information. Feeding both into the LLM closes the gap between "what does the image contain" (semantics) and "where exactly" (spatial grounding).
-
-### Three training stages
-
-Modern VLMs train in stages:
-
-1. **Alignment** — freeze ViT and LLM. Train only the projector on image-caption pairs. Teaches the projector to map vision space into language space.
-2. **Pre-training** — unfreeze everything. Train on large-scale interleaved image-text data (500M+ pairs). Builds the model's visual knowledge.
-3. **Instruction tuning** — fine-tune on curated (image, question, answer) triples. Teaches conversational behaviour and task formats. This is what turns a "vision-aware LM" into a usable assistant.
-
-Most LoRA fine-tunes target stage 3 with a small labelled dataset.
-
-### Model family comparison (early 2026)
-
-| Model | Params | Vision encoder | LLM | Context | Strengths |
-|-------|--------|----------------|-----|---------|-----------|
-| Qwen3-VL-235B-A22B (MoE) | 235B (22B active) | custom ViT + DeepStack | Qwen3 | 256K | General SOTA, GUI agent |
-| Qwen3-VL-30B-A3B (MoE) | 30B (3B active) | custom ViT + DeepStack | Qwen3 | 256K | Smaller MoE alternative |
-| Qwen3-VL-8B (dense) | 8B | custom ViT | Qwen3 | 128K | Production dense default |
-| InternVL3.5-38B | 38B | InternViT-6B | Qwen3 + GPT-OSS | 128K | Strong MMBench / MMVet |
-| InternVL3.5-241B-A28B | 241B (28B active) | InternViT-6B | Qwen3 | 128K | Competitive with GPT-4o |
-| LLaVA-Next 72B | 72B | SigLIP | Llama-3 | 32K | Open, easy to fine-tune |
-| GLM-4.6V | ~70B | custom | GLM | 64K | Open-source, strong OCR |
-| MiniCPM-V-2.6 | 8B | SigLIP | MiniCPM | 32K | Edge-friendly |
-
-### Visual agents
-
-Qwen3-VL-235B reaches top global performance on OSWorld — a benchmark for **visual agents** that operate GUIs (desktop, mobile, web). The model sees a screenshot, understands the UI, and emits actions (click, type, scroll). Combined with tools, it closes the loop on common desktop tasks. This is what most 2026 "AI PC" demos run under the hood.
-
-### Agentic capabilities + RoPE variants
-
-VLMs need to know **when** a frame is in a video. Qwen3-VL evolved from T-RoPE (temporal rotary position embeddings) to **text-based time alignment** — explicit timestamp text tokens interleaved with video frames. The model sees "`<timestamp 00:32>` frame, prompt" and can reason about temporal relationships.
-
-### The alignment problem
-
-12% of image-text pairs in a crawled dataset contain descriptions not fully grounded in the image. A VLM trained on this silently learns to hallucinate — fabricate objects, misread numbers, invent relationships. In production this is the dominant failure mode.
-
-Skywork.ai introduced the **Cross-Modal Error Rate (CMER)** to track it:
-
-```
-CMER = fraction of outputs where the text confidence is high but the image-text similarity (via a CLIP-family checker) is low
-```
-
-High CMER means the model is confidently saying things not grounded in the image. Monitoring CMER and treating it as a production KPI cut hallucination rate by ~35% in their deployment. The trick is not "fix the model" but "route high-CMER outputs to human review."
-
-### Fine-tuning with LoRA / QLoRA
-
-Full fine-tuning of a 70B VLM is out of reach for most teams. LoRA (rank 16-64) on attention + projector layers, or QLoRA with 4-bit base weights, fits on a single A100 / H100. Cost: 5,000-50,000 examples, $100-$5,000 in compute, 2-10 hours of training.
-
-### Spatial reasoning is still weak
-
-Current VLMs score 50-60% on spatial reasoning benchmarks (above-below, left-right, counting, distance). If your use case depends on "which object is on top of which," validate heavily — generic VLM performance is below human. Better-than-VLM alternatives for pure spatial tasks: a specialised keypoint / pose estimator, a depth model, or a detection model with box geometry post-processed.
-
-
-
+- Project a `(batch, patches, vision_width)` tensor into a chosen language width.
+- Mean-pool projected patches without changing the batch dimension.
+- Compute numerically stable multiclass cross-entropy with integer targets.
+- Concatenate same-grid intermediate features as a DeepStack-style seam.
+- Gate high-confidence, low-similarity image/text pairs with a reproducible CMER fixture.
 
 ## Build It
 
-Reconstruct **Vision-Language Models — The ViT-MLP-LLM Pattern** by following `Projector` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+`project_visual_tokens` creates a deterministic seeded linear bridge. For `(N,P,32)` tokens and
+`output_dim=64`, the result is `(N,P,64)`; the function does not pretend to be a trained projector.
+`mean_pool_tokens` maps that to `(N,64)`. `classify_logits` then applies a finite affine head.
+
+`cross_entropy_loss` uses a row maximum before `logsumexp`, so a correct class logit of `1000` does
+not overflow. Targets must be integer class IDs in `[0,C)`, not strings, booleans, or fractional
+labels. `deepstack_features` concatenates layers only when batch and patch grids agree.
+
+For the monitoring seam, `_row_normalize` scales by the largest absolute coordinate before taking a
+norm. `cross_modal_error_rate` flags `similarity < sim_threshold` only when confidence is above
+`conf_threshold`; it returns the fraction of flagged pairs, not a claim about hallucination rates.
+
+```mermaid
+flowchart LR
+  A[Vision patch tokens] --> B[Seeded projector]
+  B --> C[Patch mean]
+  C --> D[Classifier logits]
+  E[Text embedding + confidence] --> F[Cosine gate]
+  D --> G[Offline VLM artifact]
+  F --> G
+```
 
 ## Use It
 
-Call `Projector` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+Run `python3 code/main.py`. The demo prints token/projected/pooled shapes, a stable CE value,
+DeepStack width, and CMER for four deliberately chosen embedding pairs. A pretrained multimodal
+model can replace the seeded matrices, but no checkpoint, tokenizer, or network is required for
+this lesson's Build-It path.
 
 ## Ship It
 
-Hand off `outputs/prompt-vlm-selector.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [Qwen3-VL Technical Report (arXiv 2511.21631)](https://arxiv.org/abs/2511.21631)
-- [InternVL3.5 Advancing Open-Source Multimodal Models (arXiv 2508.18265)](https://arxiv.org/html/2508.18265v1)
-- [LLaVA-Next series](https://llava-vl.github.io/blog/2024-05-10-llava-next-stronger-llms/)
-- [BentoML: Best Open-Source VLMs 2026](https://www.bentoml.com/blog/multimodal-ai-a-guide-to-open-source-vision-language-models)
-- [MMMU: Multi-discipline Multimodal Understanding benchmark](https://mmmu-benchmark.github.io/)
-- [VLMs in manufacturing (Robotics Tomorrow, March 2026)](https://www.roboticstomorrow.com/story/2026/03/when-machines-learn-to-see-like-experts-the-rise-of-vision-language-models-in-manufacturing/26335/)
+Pass the projected tensor with its `(N,P,D)` shape and the class-label mapping. Log the thresholds
+alongside CMER; changing `.25` or `.8` changes the alert definition. Treat CMER as a routing signal
+for review, not as a calibrated safety score.
 
 ## Exercises
 
-Keep two runs side by side for **Vision-Language Models — The ViT-MLP-LLM Pattern**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
-
-1. **Read the first result.** From `code/`, run `python3 main.py` using an 8x8 synthetic image. Follow `Projector`, `forward`, `ToyVLM`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **State the ViT-MLP-LLM architecture and explain what each of the three components contributes**.
-2. **Run a two-value comparison.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Compare Qwen3-VL, InternVL3.5, LLaVA-Next, and GLM-4.6V on parameter count, context length, and benchmark performance** says the other inputs should stay fixed.
-3. **Try an adversarial fixture.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Explain DeepStack: why multi-level ViT features tighten vision-language alignment better than a single last-layer feature** and record the exception text if the code rejects the case.
-4. **Write the operator note.** Open `outputs/prompt-vlm-selector.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **Measure VLM hallucination in production with Cross-Modal Error Rate (CMER) and act on the signal**; note what the demo cannot establish.
+1. Project `(2,4,32)` tokens into width `64` and verify the shape; repeat with the same seed.
+2. Evaluate CE for logits `[[0,0],[2,0]]` and labels `[0,1]` using the max-shift equation.
+3. Build four unit vectors where two high-confidence text vectors oppose their image vectors.
+   Verify CMER is `0.5` when the other two pairs align.
 
 ## Reference Solution
 
-A checkable result for **Vision-Language Models — The ViT-MLP-LLM Pattern** should contain:
-
-- the `python3 main.py` output for an 8x8 synthetic image, with `Projector`, `forward`, `ToyVLM` traced to the value or shape that supports **State the ViT-MLP-LLM architecture and explain what each of the three components contributes**;
-- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Compare Qwen3-VL, InternVL3.5, LLaVA-Next, and GLM-4.6V on parameter count, context length, and benchmark performance**;
-- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Explain DeepStack: why multi-level ViT features tighten vision-language alignment better than a single last-layer feature**; and
-- an updated `outputs/prompt-vlm-selector.md` example with a concrete input, expected output field, and acceptance check tied to **Measure VLM hallucination in production with Cross-Modal Error Rate (CMER) and act on the signal**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+Projection produces `(2,4,64)` and identical seeds produce identical values. The CE fixture is the
+mean of `log(2)` and `log(exp(2)+1)`, because the second example selects the zero logit. In the
+CMER fixture two of four pairs have cosine similarity `-1` and confidence `.9`, so exactly half are
+flagged. A zero embedding, mismatched feature grid, or out-of-range target is rejected before a
+misleading score is emitted.

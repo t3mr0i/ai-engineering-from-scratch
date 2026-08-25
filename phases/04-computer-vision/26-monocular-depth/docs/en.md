@@ -1,145 +1,70 @@
-# Monocular Depth & Geometry Estimation
+# Monocular Depth: Metrics and Camera Geometry
 
-> A depth map is a single-channel image where each pixel is a distance from the camera. Predicting it from one RGB frame used to be impossible without stereo or LiDAR. In 2026 a frozen ViT encoder plus a lightweight head gets within a few percent of ground truth.
+> Separate scale-sensitive depth metrics from the pinhole geometry used to export a point cloud.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 4 Lesson 14 (ViT), Phase 4 Lesson 17 (Self-Supervised Vision), Phase 4 Lesson 07 (U-Net)
-**Time:** ~60 minutes
+**Prerequisites:** 01-image-fundamentals, 20-image-retrieval-metric
+**Time:** ~35 minutes
 
 ## Learning Objectives
 
-- Distinguish relative and metric depth and state which one each production model (MiDaS, Marigold, Depth Anything V3, ZoeDepth) solves
-- Use Depth Anything V3 (DINOv2 backbone) to predict depth for arbitrary single images with no calibration
-- Explain why monocular depth works at all from a single image (perspective cues, texture gradients, learned priors) and what it cannot recover (absolute scale, occluded geometry)
-- Lift 2D detections to 3D points using a depth map and pinhole camera intrinsics
-
-## The Problem
-
-Depth is the missing axis in 2D computer vision. Given RGB, you know where things appear in the image plane; you do not know how far they are. Depth sensors (stereo rigs, LiDAR, time-of-flight) solve this directly but are expensive, fragile, and limited in range.
-
-Monocular depth estimation — predicting depth from a single RGB frame — used to produce blurry, unreliable output. By 2026 large pretrained encoders changed that: Depth Anything V3 uses a frozen DINOv2 backbone and produces depth maps that generalise across indoor, outdoor, medical, and satellite domains. Marigold reframes depth as a conditional diffusion problem. ZoeDepth regresses true metric distances.
-
-Depth is also the bridge between 2D detection and 3D understanding: multiply a detected box's pixels by depth and you lift the 2D object into a 3D point cloud. That is the core of every AR occlusion system, every obstacle-avoidance pipeline, and every "pick up the cup" robot.
-
-## The Concept
-
-### Relative vs metric depth
-
-- **Relative depth** — ordered `z` values without a real-world unit. "Pixel A is closer than pixel B, but the ratio of distances is not anchored to metres."
-- **Metric depth** — absolute distance in metres from the camera. Requires the model to have learnt the statistical relationship between image cues and real distance.
-
-MiDaS and Depth Anything V3 produce relative depth. Marigold produces relative depth. ZoeDepth, UniDepth, and Metric3D produce metric depth. Metric models are sensitive to camera intrinsics; relative models are not.
-
-### The encoder-decoder pattern
-
-```mermaid
-flowchart LR
-    IMG["Image (H x W x 3)"] --> ENC["Frozen ViT encoder<br/>(DINOv2 / DINOv3)"]
-    ENC --> FEATS["Dense features<br/>(H/14, W/14, d)"]
-    FEATS --> DEC["Depth decoder<br/>(conv upsampler,<br/>DPT-style)"]
-    DEC --> DEPTH["Depth map<br/>(H, W, 1)"]
-
-    style ENC fill:#dbeafe,stroke:#2563eb
-    style DEC fill:#fef3c7,stroke:#d97706
-    style DEPTH fill:#dcfce7,stroke:#16a34a
-```
-
-Depth Anything V3 freezes the encoder and trains only the DPT-style decoder. The encoder provides rich features; the decoder interpolates them back to image resolution and regresses depth.
-
-### Why a single image produces depth at all
-
-A 2D image contains many monocular cues that correlate with depth:
-
-- **Perspective** — parallel lines in 3D converge in 2D.
-- **Texture gradient** — surfaces far away have smaller, denser texture.
-- **Occlusion order** — nearer objects occlude farther ones.
-- **Size constancy** — known objects (cars, humans) give approximate scale.
-- **Atmospheric perspective** — distant objects appear hazier and bluer in outdoor scenes.
-
-A ViT trained on billions of images internalises these cues. With enough data and a strong backbone, monocular depth hits reasonable accuracy without any explicit 3D supervision.
-
-### What monocular depth cannot do
-
-- **Absolute metric scale** without intrinsics or a known object in the scene. The network can predict "the cup is twice as far as the spoon" without knowing whether the cup is 1 m or 10 m away.
-- **Occluded geometry** — the back of a chair is unseen and cannot be inferred reliably.
-- **Truly untextured / reflective surfaces** — mirrors, glass, uniform walls. The network reports plausible but wrong depth.
-
-### Depth Anything V3 in 2026
-
-- Vanilla DINOv2 ViT-L/14 as encoder (frozen).
-- DPT decoder.
-- Trained on posed image pairs from diverse sources (no explicit depth supervision needed beyond photometric consistency).
-- Predicts spatially consistent geometry from **an arbitrary number of visual inputs, with or without known camera poses**.
-- SOTA across monocular depth, any-view geometry, visual rendering, camera pose estimation.
-
-This is the drop-in model to call when you need depth in 2026.
-
-### Marigold — diffusion for depth
-
-Marigold (Ke et al., CVPR 2024) reframes depth estimation as conditional image-to-image diffusion. Conditioning: RGB. Target: depth map. Uses a pretrained Stable Diffusion 2 U-Net as backbone. Output depth maps are exceptionally sharp at object boundaries. Trade-off: slower inference than feed-forward models (10-50 denoising steps).
-
-### Intrinsics and the pinhole camera
-
-To lift a pixel `(u, v)` with depth `d` to a 3D point `(X, Y, Z)` in camera coordinates:
-
-```
-fx, fy, cx, cy = camera intrinsics
-X = (u - cx) * d / fx
-Y = (v - cy) * d / fy
-Z = d
-```
-
-Intrinsics come from EXIF metadata, a calibration pattern, or a monocular intrinsics estimator (Perspective Fields, UniDepth). Without intrinsics, you can still render a point cloud by assuming a 60-70° FOV and moderate-resolution principals — usable for visualisation, not for measurement.
-
-### Evaluation
-
-Two standard metrics:
-
-- **AbsRel** (absolute relative error): `mean(|d_pred - d_gt| / d_gt)`. Lower is better. 0.05-0.1 for production models.
-- **delta < 1.25** (threshold accuracy): fraction of pixels where `max(d_pred/d_gt, d_gt/d_pred) < 1.25`. Higher is better. 0.9+ for SOTA.
-
-For relative depth (Depth Anything V3, MiDaS), evaluation uses scale-and-shift invariant versions of both metrics.
-
-
-
+- Compute absolute-relative error with a positive-depth contract.
+- Apply the strict `< threshold` rule for delta accuracy.
+- Fit an affine scale and shift to expose monocular scale ambiguity.
+- Derive `x=(u-cx)z/fx` and `y=(v-cy)z/fy` for a pinhole camera.
+- Export a finite `(H,W,3)` point cloud without an image or mesh dependency.
 
 ## Build It
 
-Reconstruct **Monocular Depth & Geometry Estimation** by following `abs_rel_error` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+`abs_rel_error(pred,target)` computes the mean `|pred-target|/target`; both arrays must be equal,
+non-empty, finite, and strictly positive. `delta_accuracy` checks
+
+```text
+max(pred/target, target/pred) < threshold,
+```
+
+so a ratio exactly `1.25` is not counted when the default threshold is `1.25`. A boolean mask may
+select valid pixels, but it must match the depth shape and select at least one value.
+
+`align_scale_shift` solves `a*pred+b≈target` by least squares and returns an array shaped like the
+original prediction. At least two distinct prediction values are required; this is an alignment
+diagnostic, not a learned metric-invariant model.
+
+For intrinsics `(fx,fy,cx,cy)`, each pixel `(u,v)` with depth `z` maps to
+`((u-cx)z/fx, (v-cy)z/fy, z)`. `depth_to_point_cloud` returns that formula at every pixel and
+`write_ply` writes a small ASCII artifact with an explicit vertex count.
+
+```mermaid
+flowchart LR
+  A[Predicted depth] --> B[AbsRel / delta]
+  A --> C[Affine alignment]
+  D[Depth + intrinsics] --> E[Pinhole points]
+  E --> F[PLY vertex artifact]
+```
 
 ## Use It
 
-Call `abs_rel_error` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+Run `python3 code/main.py` from the lesson directory. It reports raw and aligned metrics, point-
+cloud shape/ranges, and a temporary PLY path. It uses a synthetic plane and rectangle, so the
+numbers demonstrate contracts rather than benchmark a monocular model.
 
 ## Ship It
 
-Hand off `outputs/prompt-depth-model-picker.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [Depth Anything V3 paper page](https://depth-anything.github.io/) — SOTA monocular depth with DINOv2 encoder
-- [Marigold (Ke et al., CVPR 2024)](https://marigoldmonodepth.github.io/) — diffusion-based depth estimation
-- [UniDepth (Piccinelli et al., 2024)](https://arxiv.org/abs/2403.18913) — metric depth with intrinsics
-- [MiDaS v3.1 (Intel ISL)](https://github.com/isl-org/MiDaS) — the canonical relative-depth baseline
-- [DINOv3 blog post (Meta)](https://ai.meta.com/blog/dinov3-self-supervised-vision-model/) — the encoder family that lifts depth accuracy
+Keep the target-depth validity mask and camera intrinsics beside any exported PLY. Do not compare
+raw and aligned scores as if they answer the same question: alignment removes a two-parameter
+scale/shift discrepancy, while raw AbsRel measures it.
 
 ## Exercises
 
-Work from the smallest fixture that the Monocular Depth & Geometry Estimation demo already understands, then make one deliberate change and record what moved.
-
-1. **Run the smallest fixture.** From `code/`, run `python3 main.py` using an 8x8 synthetic image. Follow `abs_rel_error`, `delta_accuracy`, `align_scale_shift`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **Distinguish relative and metric depth and state which one each production model (MiDaS, Marigold, Depth Anything V3, ZoeDepth) solves**.
-2. **Perturb one field.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Use Depth Anything V3 (DINOv2 backbone) to predict depth for arbitrary single images with no calibration** says the other inputs should stay fixed.
-3. **Check the failure boundary.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Explain why monocular depth works at all from a single image (perspective cues, texture gradients, learned priors) and what it cannot recover (absolute scale, occluded geometry)** and record the exception text if the code rejects the case.
-4. **Make the result repeatable.** Open `outputs/prompt-depth-model-picker.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **Lift 2D detections to 3D points using a depth map and pinhole camera intrinsics**; note what the demo cannot establish.
+1. For target `[[4,2]]` and prediction `[[5,2]]`, calculate AbsRel and the default delta result.
+2. Check that prediction `5` versus target `4` fails a strict `1.25` threshold.
+3. Use `depth=[[2]]` and `(fx,fy,cx,cy)=(4,4,0,0)` and verify the exported point is `(0,0,2)`.
 
 ## Reference Solution
 
-A checkable result for **Monocular Depth & Geometry Estimation** should contain:
-
-- the `python3 main.py` output for an 8x8 synthetic image, with `abs_rel_error`, `delta_accuracy`, `align_scale_shift` traced to the value or shape that supports **Distinguish relative and metric depth and state which one each production model (MiDaS, Marigold, Depth Anything V3, ZoeDepth) solves**;
-- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Use Depth Anything V3 (DINOv2 backbone) to predict depth for arbitrary single images with no calibration**;
-- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Explain why monocular depth works at all from a single image (perspective cues, texture gradients, learned priors) and what it cannot recover (absolute scale, occluded geometry)**; and
-- an updated `outputs/prompt-depth-model-picker.md` example with a concrete input, expected output field, and acceptance check tied to **Lift 2D detections to 3D points using a depth map and pinhole camera intrinsics**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+The first fixture has errors `.25` and `0`, so AbsRel is `.125`; both ratios are below `1.25`.
+The exact ratio `5/4=1.25` is excluded by `<`. Affine alignment recovers the target for a
+synthetic `3*depth+.7` prediction when the values vary. A non-positive depth, zero focal length,
+shape mismatch, or constant prediction for alignment raises `ValueError` before division or a
+rank-deficient solve.

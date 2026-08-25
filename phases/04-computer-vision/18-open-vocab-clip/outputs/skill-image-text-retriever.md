@@ -1,120 +1,52 @@
 ---
 name: skill-image-text-retriever
-description: Build an image embedding index with any CLIP checkpoint; support query-by-text and query-by-image
-version: 1.0.0
+description: Build a small exact in-memory image/text embedding index from already encoded rows
+version: 1.1.0
 phase: 4
 lesson: 18
-tags: [clip, retrieval, faiss, zero-shot]
+tags: [clip, retrieval, zero-shot]
 ---
 
 # Image-Text Retriever
 
-Turn a folder of images into a searchable index using CLIP embeddings.
-
-## When to use
-
-- Building a zero-shot image search on an internal catalog.
-- Deduplicating near-identical images by embedding distance.
-- Building a quick "find similar" component without a labelled dataset.
+This artifact assumes that an approved image/text encoder has already produced finite feature rows. It focuses on the contract between encoding and ranking.
 
 ## Inputs
 
-- `image_folder`: directory of image files.
-- `clip_model`: HuggingFace id like `openai/clip-vit-base-patch32` or `google/siglip-base-patch16-224`.
-- `index_type`: flat | IVF | HNSW.
-- `embedding_dim`: inferred from the model.
+- `gallery_embeddings`: finite `(G,D)` image matrix.
+- `query_embeddings`: finite `(Q,D)` image or text matrix.
+- `ids`: length-`G` gallery identifiers.
+- `k`: `1 <= k <= G`.
 
-## Steps
-
-1. Load the CLIP model and preprocessor.
-2. Batch-encode every image in the folder. Save embeddings as (N, D) float32 + filename list.
-3. Build a FAISS index over the embeddings. Use inner-product on L2-normalised vectors for cosine similarity.
-4. Expose two query interfaces:
-   - `search_by_text(text, k)` — embed the text, search.
-   - `search_by_image(image_path, k)` — embed the image, search.
-
-## Output template
+## Exact ranking
 
 ```python
-import os
-import glob
 import numpy as np
-import torch
-from PIL import Image
-from transformers import CLIPModel, CLIPProcessor
-import faiss
 
-
-class ImageTextRetriever:
-    def __init__(self, model_name="openai/clip-vit-base-patch32"):
-        self.model = CLIPModel.from_pretrained(model_name).eval()
-        self.processor = CLIPProcessor.from_pretrained(model_name)
-        self.dim = self.model.config.projection_dim
-        self.index = None
-        self.filenames = []
-
-    @torch.no_grad()
-    def _encode_images(self, paths, batch=16):
-        embs = []
-        for i in range(0, len(paths), batch):
-            imgs = [Image.open(p).convert("RGB") for p in paths[i:i + batch]]
-            inputs = self.processor(images=imgs, return_tensors="pt")
-            out = self.model.get_image_features(**inputs)
-            out = out / out.norm(dim=-1, keepdim=True)
-            embs.append(out.cpu().numpy())
-        return np.concatenate(embs).astype(np.float32)
-
-    @torch.no_grad()
-    def _encode_text(self, texts):
-        inputs = self.processor(text=texts, return_tensors="pt", padding=True)
-        out = self.model.get_text_features(**inputs)
-        out = out / out.norm(dim=-1, keepdim=True)
-        return out.cpu().numpy().astype(np.float32)
-
-    def build_index(self, folder, index_type="flat"):
-        exts = ("*.jpg", "*.jpeg", "*.png", "*.webp", "*.bmp")
-        files = []
-        for ext in exts:
-            files.extend(glob.glob(os.path.join(folder, ext)))
-        self.filenames = sorted(files)
-        embs = self._encode_images(self.filenames)
-        if index_type == "IVF":
-            quantizer = faiss.IndexFlatIP(self.dim)
-            nlist = min(256, max(4, len(embs) // 32))
-            self.index = faiss.IndexIVFFlat(quantizer, self.dim, nlist)
-            self.index.train(embs)
-        elif index_type == "HNSW":
-            self.index = faiss.IndexHNSWFlat(self.dim, 32, faiss.METRIC_INNER_PRODUCT)
-        else:
-            self.index = faiss.IndexFlatIP(self.dim)
-        self.index.add(embs)
-
-    def search_by_text(self, text, k=5):
-        q = self._encode_text([text])
-        dist, idx = self.index.search(q, k)
-        return [(self.filenames[i], float(d)) for d, i in zip(dist[0], idx[0])]
-
-    def search_by_image(self, image_path, k=5):
-        q = self._encode_images([image_path])
-        dist, idx = self.index.search(q, k)
-        return [(self.filenames[i], float(d)) for d, i in zip(dist[0], idx[0])]
+def search(query_embeddings, gallery_embeddings, ids, k=5):
+    if query_embeddings.ndim != 2 or gallery_embeddings.ndim != 2:
+        raise ValueError("query and gallery rows must be matrices")
+    if query_embeddings.shape[1] != gallery_embeddings.shape[1] or gallery_embeddings.shape[0] == 0:
+        raise ValueError("embedding widths must match and the gallery must be non-empty")
+    if not 1 <= k <= gallery_embeddings.shape[0]:
+        raise ValueError("k must fit inside the gallery")
+    query = query_embeddings / np.linalg.norm(query_embeddings, axis=1, keepdims=True)
+    gallery = gallery_embeddings / np.linalg.norm(gallery_embeddings, axis=1, keepdims=True)
+    scores = query @ gallery.T
+    indices = np.argsort(-scores, axis=1, kind="stable")[:, :k]
+    return [[(ids[int(i)], float(scores[row, i])) for i in row_i] for row, row_i in enumerate(indices)]
 ```
 
 ## Report
 
-```
-[retriever]
-  model:          <name>
-  num_images:     <int>
-  dim:            <int>
-  index_type:     flat | IVF | HNSW
-  index_size_mb:  <float>
+```text
+[retrieval]
+  checkpoint:     <exact encoder artifact>
+  gallery_rows:   <G>
+  query_rows:     <Q>
+  embedding_dim:  <D>
+  metric:         cosine via normalized dot product
+  recall:         <held-out result or unknown>
 ```
 
-## Rules
-
-- Always L2-normalise embeddings before indexing; FAISS's inner product on normalised vectors equals cosine similarity.
-- For < 100k images, `IndexFlatIP` (exact) is simplest and fastest.
-- For 100k-10M, `IndexIVFFlat` is the standard trade-off.
-- For > 10M, use HNSW or a product-quantised variant.
-- Never rebuild the index on every query; embed once, search many times.
+The phase-04 code trains a synthetic two-tower fixture and demonstrates ranking. It does not decode image files, fetch a model, or provide an approximate index. Add those integrations only with a separately reviewed dependency and evaluation contract.

@@ -12,9 +12,14 @@ tags: [generative-models, gan, losses]
 Record the following before replacing the scalar fixture with a convolutional model:
 
 1. Discriminator real/fake logits and the exact stable BCE expression.
-2. Generator objective: minimax or non-saturating; do not label one as the other.
+2. Generator objective: the original minimax value is
+   `-mean(softplus(fake_logits)) = E[log(1-D(G(z)))]`; the local update uses
+   `mean(softplus(-fake_logits))` as the non-saturating objective.
 3. The discriminator update's detached fake batch.
 4. The generator update's fresh discriminator evaluation and separate optimizer state.
 5. Seed, batch shape, image range, and a finite bounded acceptance check.
 
-The lesson's `gan_step` is deliberately framework-free. It is a contract scaffold, not a pretrained model or image-quality benchmark.
+The lesson's `gan_step` is deliberately framework-free. It uses the
+non-saturating objective after the discriminator update; the minimax function
+is a value probe for the opposite-sign, saturating gradient. This is a
+contract scaffold, not a pretrained model or image-quality benchmark.

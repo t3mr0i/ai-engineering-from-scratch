@@ -35,7 +35,7 @@ flowchart LR
     C --> E["posterior/DDIM reverse step"]
 ```
 
-`posterior_mean(x_t,x0,t)` uses the two stored coefficients multiplying the clean and noisy states. `ddim_step` first estimates `x0`, then combines it with the predicted direction at an earlier timestep. The documented path is `eta=0`, which is deterministic; this equation fixture does not draw random noise for `eta>0`, so stochastic DDPM sampling belongs to a separate caller.
+`posterior_mean(x_t,x0,t)` uses the two stored coefficients multiplying the clean and noisy states. `ddim_step` first estimates `x0`, then combines it with the predicted direction at an earlier timestep. This equation fixture intentionally implements only the deterministic `eta=0` path: it rejects positive, boolean, and non-finite `eta` rather than pretending to be a stochastic DDIM sampler. A caller needing DDPM noise must provide that separate reverse-step contract explicitly.
 
 `timestep_embedding` supplies sinusoidal features for a future time-conditioned network. `synthetic_circles` returns a tiny NCHW fixture in `[-1,1]`; it is used to exercise shapes, not to claim a generative result.
 
@@ -76,8 +76,10 @@ In a real training loop, the model predicts `epsilon`, `x0`, or a velocity targe
 1. For `T=10`, `beta_start=1e-3`, and `beta_end=0.02`, verify that `alpha_bar` decreases and remains positive. Explain why the final timestep is noisier than the first.
 2. Use a 1×1 clean sample, noise `2`, and timestep `0`. Compute `q_sample` from the two stored square-root coefficients and compare with the function.
 3. Reconstruct a random `(2,1,3,3)` batch with the exact noise passed to `q_sample`. Measure the maximum error and explain why this is an algebra test rather than evidence about a denoiser.
-4. Call `ddim_step` twice with `eta=0` and the same arrays. Then try `t_prev >= t` and an out-of-range timestep; preserve the explicit errors.
+4. Call `ddim_step` twice with `eta=0` and the same arrays. Then try
+   `eta=0.1`, `eta=True`, `t_prev >= t`, and an out-of-range timestep;
+   preserve the explicit errors rather than adding an implicit random draw.
 
 ## Reference Solution
 
-`alpha_bar` is a cumulative product of values below one, so it decreases. At timestep zero, `q_sample` uses almost all of `x0` and a small noise coefficient. Passing the exact noise to `predict_x0_from_eps` recovers every clean element up to floating-point roundoff. `eta=0` makes the DDIM-style step repeatable, while a non-earlier `t_prev` violates the reverse path and is rejected. These checks validate the sampler algebra; they do not train or evaluate a U-Net.
+`alpha_bar` is a cumulative product of values below one, so it decreases. At timestep zero, `q_sample` uses almost all of `x0` and a small noise coefficient. Passing the exact noise to `predict_x0_from_eps` recovers every clean element up to floating-point roundoff. The local `eta=0` DDIM-style step is repeatable; positive, boolean, or non-finite `eta` is rejected because no stochastic noise argument exists. A non-earlier `t_prev` also violates the reverse path. These checks validate the sampler algebra; they do not train or evaluate a U-Net.

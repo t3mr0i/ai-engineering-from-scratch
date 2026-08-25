@@ -1,78 +1,78 @@
 {
   "lesson": "22-3d-gaussian-splatting",
-  "title": "3D Gaussian Splatting",
+  "title": "3D Gaussian Splatting: Projection and Compositing",
   "questions": [
     {
       "stage": "pre",
-      "question": "Where is a 3D Gaussian density largest?",
+      "question": "Why does project_gaussian reject a mean whose camera-space z coordinate is zero?",
       "options": [
-        "At the farthest point from its mean",
-        "Only where its covariance is zero",
-        "At its mean",
-        "At every point with the same depth"
-      ],
-      "correct": 2,
-      "explanation": "The exponent is zero at the mean and decreases away from it, so the Gaussian reaches its maximum there."
-    },
-    {
-      "stage": "check",
-      "question": "Why does the renderer sort Gaussian centers from near to far before compositing?",
-      "options": [
-        "Sorting makes every covariance diagonal",
-        "Farther points must always be drawn first for a larger image",
-        "Depth order is used only to choose the SH degree",
-        "Front-to-back order lets nearer opacity hide farther color"
-      ],
-      "correct": 3,
-      "explanation": "Alpha compositing is order dependent: a foreground Gaussian should consume transmittance before a background Gaussian contributes."
-    },
-    {
-      "stage": "check",
-      "question": "After a splat with opacity a, how is the remaining transmittance updated?",
-      "options": [
-        "T is multiplied by 1-a",
-        "T is replaced by a",
-        "T is increased by a",
-        "T is divided by 1-a"
+        "The pinhole equations divide by z, so the image position is undefined",
+        "The covariance would become diagonal automatically",
+        "Spherical harmonics require a positive RGB value",
+        "Alpha compositing cannot sort an integer depth"
       ],
       "correct": 0,
-      "explanation": "The renderer keeps the fraction of light not absorbed by the splat, so T becomes T*(1-a)."
+      "explanation": "Both image coordinates and the projection Jacobian contain 1/z. The implementation rejects z <= 0 before that division."
     },
     {
       "stage": "check",
-      "question": "What image shape does render_gaussians return when H=W=48 and colors have three channels?",
+      "question": "What shape does eval_2d_gaussian return for 5 splats and a 12x10 point grid?",
       "options": [
-        "(3,48,48,48)",
-        "(48,48,3)",
-        "(48,3)",
-        "(48,48,1)"
+        "(12, 10, 5)",
+        "(5, 12, 10)",
+        "(5, 10, 12)",
+        "(60, 5, 2)"
       ],
       "correct": 1,
-      "explanation": "The output buffer is an H by W image with an RGB color vector at each pixel."
+      "explanation": "The first axis indexes splats, followed by the point-grid height and width."
     },
     {
-      "stage": "post",
-      "question": "Which construction gives a rotated, scaled Gaussian covariance in the lesson?",
+      "stage": "check",
+      "question": "Two identical splats have depths 2 and 1. Which one contributes first in rasterise_2d?",
       "options": [
-        "Sigma = R + S, which is always a covariance",
-        "Sigma = S R^T without a matching rotation",
-        "Sigma = R S R^T, with positive scales represented before squaring",
-        "Sigma = the RGB color matrix of the splat"
+        "The depth-2 splat, because larger depth means nearer",
+        "Both are averaged before alpha is applied",
+        "The depth-1 splat, because the implementation sorts front to back",
+        "The order is random when their covariances match"
       ],
       "correct": 2,
-      "explanation": "The code builds a diagonal scale matrix, rotates it with R, and uses R S R^T; exponentiated scales keep the covariance well behaved."
+      "explanation": "Stable ascending depth order is used. The nearer depth-1 contribution therefore receives the full current transmittance."
+    },
+    {
+      "stage": "check",
+      "question": "Which covariance passes the 2-D Gaussian validation?",
+      "options": [
+        "[[1, 2], [2, 1]]",
+        "[[1, 0], [0, 0]]",
+        "[[1, 0], [0, -1]]",
+        "[[2, 0], [0, 3]]"
+      ],
+      "correct": 3,
+      "explanation": "The matrix must be symmetric positive definite. The diagonal matrix with positive entries is the only valid choice."
     },
     {
       "stage": "post",
-      "question": "How many spherical-harmonic basis values are used for degree 3 in the demo?",
+      "question": "How many real spherical-harmonic basis values does degree three provide in this lesson?",
       "options": [
-        "3",
+        "16",
         "9",
-        "32",
-        "16"
+        "3",
+        "32"
       ],
-      "correct": 3,
-      "explanation": "A degree-l spherical-harmonic expansion has (l+1)^2 terms, giving 16 bases when l=3."
+      "correct": 0,
+      "explanation": "The implementation evaluates (3+1)^2 = 16 basis terms and expects coefficients shaped (N,16,3)."
+    },
+    {
+      "stage": "post",
+      "question": "At a pixel where two depth-sorted splats have contributions, what does the second color receive?",
+      "options": [
+        "The original background, regardless of the first alpha",
+        "The first color multiplied by the second depth",
+        "The second color weighted by transmittance left after the first splat",
+        "A normalized average that ignores opacity"
+      ],
+      "correct": 2,
+      "explanation": "Front-to-back compositing adds T*alpha*color and updates T <- T*(1-alpha), so later colors use the residual T."
     }
   ]
 }

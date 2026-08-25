@@ -5,6 +5,7 @@ from pathlib import Path
 import subprocess
 import sys
 import unittest
+import warnings
 
 import numpy as np
 
@@ -41,6 +42,9 @@ class ViTContractTests(unittest.TestCase):
         probabilities = main.softmax(np.array([[1000.0, 1001.0], [-1000.0, -999.0]]))
         self.assertTrue(np.isfinite(probabilities).all())
         np.testing.assert_allclose(probabilities.sum(axis=-1), [1.0, 1.0])
+        for invalid_axis in (2, True, 1.5, -3):
+            with self.assertRaises(ValueError):
+                main.softmax(np.ones((2, 2)), invalid_axis)
 
     def test_attention_shapes_rows_and_mask(self) -> None:
         q = np.array([[[[1.0, 0.0], [0.0, 1.0]]]])
@@ -53,6 +57,12 @@ class ViTContractTests(unittest.TestCase):
         self.assertEqual(weights[0, 0, 0, 1], 0.0)
         with self.assertRaises(ValueError):
             main.scaled_dot_product_attention(q, q, v, np.zeros((1, 1, 2, 2), dtype=bool))
+        empty_head = np.empty((1, 1, 2, 0))
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            with self.assertRaises(ValueError):
+                main.scaled_dot_product_attention(empty_head, empty_head, empty_head)
+        self.assertEqual(caught, [])
 
     def test_cls_token_and_positions(self) -> None:
         patches = np.zeros((2, 4, 6))
@@ -62,6 +72,12 @@ class ViTContractTests(unittest.TestCase):
         self.assertEqual(main.sinusoidal_positions(5, 6).shape, (5, 6))
         with self.assertRaises(ValueError):
             main.sinusoidal_positions(5, 5)
+        with self.assertRaises(ValueError):
+            main.add_cls_token(np.empty((1, 2, 0)), np.empty(0))
+        with self.assertRaises(ValueError):
+            main.layer_norm(np.ones((1, 2, 2)), eps=True)
+        with self.assertRaises(ValueError):
+            main.layer_norm(np.ones((1, 2, 2)), eps="1e-5")
 
     def test_vit_forward_is_deterministic_and_has_expected_shapes(self) -> None:
         images = np.arange(2 * 3 * 32 * 32, dtype=float).reshape(2, 3, 32, 32) / 1000.0

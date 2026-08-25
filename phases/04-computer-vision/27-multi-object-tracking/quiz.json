@@ -1,78 +1,48 @@
 {
   "lesson": "27-multi-object-tracking",
-  "title": "Multi-Object Tracking",
+  "title": "Multi-Object Tracking: IoU Association and Lifecycle",
   "questions": [
     {
       "stage": "pre",
-      "question": "What does bounding-box IoU divide the intersection area by?",
-      "options": [
-        "The union area of the two boxes",
-        "The sum of their center coordinates",
-        "The larger box's perimeter",
-        "The number of tracker frames"
-      ],
+      "question": "How is IoU defined for two axis-aligned boxes?",
+      "options": ["Intersection area divided by union area", "Center distance divided by width", "The sum of their areas", "The number of matching corner coordinates"],
       "correct": 0,
-      "explanation": "IoU is intersection over union, so overlapping area is normalized by the area covered by either box."
+      "explanation": "bbox_iou computes intersection area divided by area(left)+area(right)-intersection."
     },
     {
       "stage": "check",
-      "question": "How does the tracker turn IoU into a Hungarian assignment cost?",
-      "options": [
-        "It uses IoU directly and rewards every invalid pair",
-        "It uses 1-IoU and gives very large cost to invalid low-IoU pairs",
-        "It uses the box perimeter as the only cost",
-        "It assigns every detection to the oldest track"
-      ],
+      "question": "What cost does the tracker derive from an IoU value?",
+      "options": ["IoU itself, so larger is worse", "1-IoU, while values below the threshold are incompatible", "The box perimeter", "The frame number"],
       "correct": 1,
-      "explanation": "Higher overlap should mean lower cost; pairs below the configured overlap threshold are discouraged with a large sentinel cost."
+      "explanation": "The assignment maximizes compatible IoU; conceptually its minimization cost is 1-IoU and low-IoU pairs are not eligible."
     },
     {
       "stage": "check",
-      "question": "With match_iou_threshold=0.3, which pair is considered geometrically valid?",
-      "options": [
-        "A pair with IoU below 0.3",
-        "Only a pair whose boxes are identical",
-        "A pair with IoU at least 0.3",
-        "A pair chosen without looking at IoU"
-      ],
+      "question": "For IoU matrix [[.9,.8],[.85,.1]], which global pairing has the larger total IoU?",
+      "options": ["(.9,.1), total 1.0", "(.9,.85), reusing a column", "(.8,.85), total 1.65", "No pairing is allowed"],
       "correct": 2,
-      "explanation": "The tracker accepts an assignment when its overlap reaches the threshold; lower-overlap matches are treated as invalid."
+      "explanation": "One-to-one assignment chooses row0-column1 and row1-column0: .8+.85=1.65, larger than .9+.1."
     },
     {
       "stage": "check",
-      "question": "What does a track's max_age measure?",
-      "options": [
-        "The maximum width of its bounding box",
-        "The number of classes in the detector",
-        "The age of the video file on disk",
-        "How many frames it may remain unmatched before removal"
-      ],
-      "correct": 3,
-      "explanation": "Each missed update increases the track's age, and max_age controls how long that missing track is retained."
+      "question": "When does SimpleTracker create a new Track?",
+      "options": ["For every matched detection", "Only after five frames", "For an unmatched detection after association", "When an old track is updated"],
+      "correct": 2,
+      "explanation": "Detections not used by a compatible assignment receive the next positive tracker ID."
     },
     {
       "stage": "post",
-      "question": "What happens to a detection that cannot be matched to an existing track?",
-      "options": [
-        "The tracker creates a new Track with a new ID",
-        "It is assigned the first track's ID automatically",
-        "It is used only to change the frame rate",
-        "It is discarded even when new-track creation is enabled"
-      ],
-      "correct": 0,
-      "explanation": "Unmatched detections represent possible new objects, so the implementation starts tracks for them."
-    },
-    {
-      "stage": "post",
-      "question": "When does count_id_switches report an ID switch?",
-      "options": [
-        "A frame contains two detections of different objects",
-        "The same ground-truth object is associated with a different tracker ID later",
-        "A track survives a missed frame",
-        "A bounding box has zero area"
-      ],
+      "question": "With max_age=0, what happens after a track is absent for one frame?",
+      "options": ["It remains forever", "It is removed before a later detection can reuse its ID", "Its box becomes the whole image", "Its ID is changed in place"],
       "correct": 1,
-      "explanation": "An ID switch measures identity inconsistency over time, not simply the presence of multiple objects or missed detections."
+      "explanation": "A track is retained only while frame-last_frame <= max_age. At the next frame with max_age=0 the old ID is stale."
+    },
+    {
+      "stage": "post",
+      "question": "What is an ID switch in count_id_switches?",
+      "options": ["Any false-positive detection", "A ground-truth object is paired with a different tracker ID later", "A box changes size", "A frame has no detections"],
+      "correct": 1,
+      "explanation": "The helper remembers each ground-truth ID's previous matched tracker ID and counts a later change."
     }
   ]
 }

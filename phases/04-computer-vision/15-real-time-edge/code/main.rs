@@ -1,11 +1,7 @@
-// Lesson: Real-Time Vision Edge Deployment (phase 04 / lesson 15)
-// Topic: edge inference loop in Rust. Builds a tiny depthwise-separable conv block
-// (the MobileNet primitive), runs it over a 160x160x3 input tensor, and reports
-// p50/p95/p99 latency the way an on-device profiler would. Stdlib only.
-// Refs:
-//   https://doc.rust-lang.org/std/time/struct.Instant.html
-//   https://arxiv.org/abs/1704.04861  (MobileNetV1: depthwise separable convolutions)
-//   https://pytorch.org/docs/stable/quantization.html  (edge measurement discipline)
+// Real-Time Vision — Edge Deployment (phase 04 / lesson 15).
+// Canonical stdlib-only Rust companion for docs/en.md.
+// It benchmarks one depthwise-plus-pointwise block on a deterministic fixture.
+// Reference: https://doc.rust-lang.org/std/time/struct.Instant.html
 // Build: rustc --edition 2021 -O code/main.rs -o /tmp/lesson_edge && /tmp/lesson_edge
 
 use std::time::Instant;
@@ -39,7 +35,9 @@ impl Tensor {
 // Cheap deterministic PRNG. Avoids pulling in rand for a stdlib-only lesson.
 fn lcg(seed: &mut u64) -> f32 {
     *seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
-    let bits = (*seed >> 33) as u32;
+    // Keep the high 32 bits; shifting by 33 would discard one more bit and
+    // only expose 31 random bits while still dividing by the 32-bit maximum.
+    let bits = (*seed >> 32) as u32;
     (bits as f32 / u32::MAX as f32) * 2.0 - 1.0
 }
 
@@ -184,4 +182,47 @@ fn main() {
     println!("  - fixed input resolution (production resolution must match)");
     println!("  - p50 reported alongside p99 so tail latency is visible");
     println!();
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn tensor_shape_and_index_are_consistent() {
+        let tensor = Tensor::zeros(2, 3, 4);
+        assert_eq!(tensor.data.len(), 24);
+        assert_eq!(tensor.idx(1, 2, 3), 23);
+    }
+
+    #[test]
+    fn lcg_is_full_range_and_deterministic() {
+        let mut seed = 7;
+        let mut has_negative = false;
+        let mut has_positive = false;
+        for _ in 0..1000 {
+            let value = lcg(&mut seed);
+            assert!((-1.0..=1.0).contains(&value));
+            has_negative |= value < 0.0;
+            has_positive |= value > 0.0;
+        }
+        assert!(has_negative && has_positive);
+    }
+
+    #[test]
+    fn flops_count_is_positive() {
+        assert!(flops_per_pass() > 0);
+    }
+
+    #[test]
+    fn empty_percentile_uses_zero_sentinel() {
+        assert_eq!(percentile(&[], 0.95), 0.0);
+    }
+
+    #[test]
+    fn percentile_selects_a_sorted_observation() {
+        let values = [1.0, 2.0, 5.0, 8.0];
+        assert_eq!(percentile(&values, 0.50), 5.0);
+        assert_eq!(percentile(&values, 0.99), 8.0);
+    }
 }

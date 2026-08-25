@@ -1,78 +1,48 @@
 {
   "lesson": "28-world-models-video-diffusion",
-  "title": "World Models with Video Diffusion",
+  "title": "World Models and Video Diffusion: Temporal Contracts",
   "questions": [
     {
       "stage": "pre",
-      "question": "What does VideoPatch3D turn a video into before transformer blocks?",
-      "options": [
-        "One class label per complete video",
-        "A list of text captions with no pixel features",
-        "Spatiotemporal tokens from strided 3D convolution blocks",
-        "Independent 2D images with time discarded"
-      ],
-      "correct": 2,
-      "explanation": "The patchifier groups neighboring time, height, and width positions so the transformer can process a token sequence."
-    },
-    {
-      "stage": "check",
-      "question": "For input (1,4,8,16,16) and patch sizes (2,2,2), how many tokens are produced?",
-      "options": [
-        "64",
-        "512",
-        "1024",
-        "256"
-      ],
-      "correct": 3,
-      "explanation": "The code treats the shape as (batch, channels, time, height, width): the token grid is (8/2,16/2,16/2)=(4,8,8), so it contains 4*8*8=256 tokens; channels do not add token positions."
-    },
-    {
-      "stage": "check",
-      "question": "What does count_tokens(150,480,360,2,8,8) return?",
-      "options": [
-        "202500",
-        "13500",
-        "90000",
-        "518400"
-      ],
-      "correct": 0,
-      "explanation": "The helper computes (150/2)*(480/8)*(360/8) = 75*60*45 = 202500 tokens."
-    },
-    {
-      "stage": "check",
-      "question": "How is divided attention organized in the video transformer?",
-      "options": [
-        "Only the first video frame receives attention",
-        "Temporal attention runs within each spatial location, then spatial attention runs across locations",
-        "Spatial attention is replaced by an image classifier",
-        "The model attends to text but never to neighboring frames"
-      ],
+      "question": "What does patchify_video return besides the token array?",
+      "options": ["A class label", "The token grid (T_tokens, H_tokens, W_tokens)", "A camera calibration matrix", "A random seed only"],
       "correct": 1,
-      "explanation": "Factorizing the operation separates time and space, reducing the cost of a full attention matrix over all video tokens."
+      "explanation": "The grid records how temporal and spatial patches map back to the original video axes."
     },
     {
-      "stage": "post",
-      "question": "What output shape does the TinyVideoDiT example report for its token features?",
-      "options": [
-        "(1,4,8,16,16)",
-        "(256,1,32,32)",
-        "(1,256,32)",
-        "(1,32,256,256)"
-      ],
+      "stage": "check",
+      "question": "For a (1,2,4,4,4) video and 2x2x2 patches, how many tokens are produced?",
+      "options": ["4", "8", "16", "32"],
+      "correct": 1,
+      "explanation": "The grid is 2x2x2, so it contains 8 token locations; each token has 2*2*2*2 channel/patch values."
+    },
+    {
+      "stage": "check",
+      "question": "What does unpatchify_video require to reconstruct the original tensor?",
+      "options": ["Only the number of tokens", "The video shape and the same three patch sizes", "A pretrained decoder", "A text prompt"],
+      "correct": 1,
+      "explanation": "The channel count and axis lengths determine the reshape; the function checks both shape and patch convention."
+    },
+    {
+      "stage": "check",
+      "question": "For temporal token count T' and spatial count S', what pair count does divided attention use?",
+      "options": ["(T'S')^2 only", "T'+S'", "S'T'^2 + T'S'^2", "T'^2+S'^2 without multiplicities"],
       "correct": 2,
-      "explanation": "After patchifying the example video, the transformer keeps a batch of 256 tokens with embedding width 32."
+      "explanation": "Temporal attention runs at each spatial location and spatial attention at each time, giving S'T'^2 + T'S'^2."
     },
     {
       "stage": "post",
-      "question": "What makes a video world model action-conditioned?",
-      "options": [
-        "It predicts only the next action from a single still image",
-        "It removes time so all frames share one state",
-        "It uses a larger RGB palette without an action input",
-        "Its prediction of future frames also receives the actions taken by the agent"
-      ],
-      "correct": 3,
-      "explanation": "Conditioning on actions lets the model simulate how different decisions can change the future observation sequence."
+      "question": "What is the default transition in rollout_linear_world_model when A is omitted?",
+      "options": ["A is the identity matrix", "A is all zeros", "A is sampled per frame", "A is a convolution"],
+      "correct": 0,
+      "explanation": "The default state persists and the default control maps matching leading action coordinates into the state."
+    },
+    {
+      "stage": "post",
+      "question": "Why does patchify_video reject five frames with a temporal patch size of two?",
+      "options": ["Odd frame counts cannot contain finite pixels", "It would silently drop a frame, breaking the inverse shape contract", "Attention requires exactly 30 frames", "The action sequence becomes text"],
+      "correct": 1,
+      "explanation": "This Build-It path requires exact divisibility rather than cropping or padding an unrecorded remainder."
     }
   ]
 }

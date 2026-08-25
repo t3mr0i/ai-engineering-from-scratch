@@ -33,9 +33,14 @@ class NeRFMathTests(unittest.TestCase):
     def test_ray_sampling_has_expected_points(self) -> None:
         points, t_vals = nerf.sample_ray_points([[0, 0, 0]], [[0, 0, 1]], 2, 6, 3)
         np.testing.assert_allclose(t_vals, [2, 4, 6])
+        np.testing.assert_allclose(t_vals[[0, -1]], [2, 6])
         np.testing.assert_allclose(points[0, :, 2], t_vals)
         with self.assertRaises(ValueError):
+            nerf.sample_ray_points([[0, 0, 0]], [[0, 0, 1]], 2, 6, 1)
+        with self.assertRaises(ValueError):
             nerf.sample_ray_points([[0, 0, 0]], [[0, 0, 1]], 4, 2, 3)
+        with self.assertRaises(ValueError):
+            nerf.sample_ray_points([[0, 0, 0]], [[0, 0, 1]], False, 2, 3)
 
     def test_zero_density_is_transparent(self) -> None:
         sigma = np.zeros(4)
@@ -53,6 +58,16 @@ class NeRFMathTests(unittest.TestCase):
         self.assertLessEqual(float(weights.sum()), 1.0)
         self.assertGreaterEqual(float(depth), 0.0)
         self.assertTrue(np.all((rendered >= 0) & (rendered <= 1)))
+
+    def test_opaque_density_keeps_residual_transmittance_nonnegative(self) -> None:
+        sigma = np.array([1000.0, 1000.0, 1000.0])
+        rgb = np.ones((3, 3))
+        rendered, _, weights = nerf.volume_render(
+            sigma, rgb, np.array([1.0, 2.0, 3.0]), background=np.zeros(3)
+        )
+        self.assertLessEqual(float(weights.sum()), 1.0)
+        self.assertGreaterEqual(float(1.0 - weights.sum()), 0.0)
+        np.testing.assert_allclose(rendered, [1.0, 1.0, 1.0])
 
     def test_volume_render_validates_density_color_and_depth(self) -> None:
         with self.assertRaises(ValueError):

@@ -1,145 +1,85 @@
 # Real-Time Vision — Edge Deployment
 
-> Edge inference is the discipline of getting a 90-accuracy model to run at 30 fps on a device with 2 GB of RAM. Every percentage point of accuracy is traded against milliseconds of latency.
+> A latency number is useful only when its warmup, input shape, device, and tail percentile are recorded with it.
 
 **Type:** Build
 **Languages:** Python, Rust
-**Prerequisites:** Phase 4 Lesson 04 (Image Classification), Phase 10 Lesson 11 (Quantization)
-**Time:** ~75 minutes
+**Prerequisites:** Phase 4 Lesson 04 (Image Classification)
+**Time:** ~45 minutes
 
 ## Learning Objectives
 
-- Measure inference latency, peak memory, and throughput for any PyTorch model, and read the FLOPs / params / latency trade-off
-- Quantise a vision model to INT8 using PyTorch's post-training quantisation and verify accuracy loss < 1%
-- Export to ONNX and compile with ONNX Runtime or TensorRT; name the three most common export failures and their fixes
-- Explain when to pick MobileNetV3, EfficientNet-Lite, ConvNeXt-Tiny, or MobileViT for an edge constraint
+- Measure a bounded forward pass with warmup, device synchronization, and p50/p95/p99 percentiles.
+- Distinguish parameter count and a multiply/add FLOP estimate from a quality or wall-clock guarantee.
+- Explain why grouped/depthwise convolution changes the FLOP calculation.
+- Compare two identical-contract local backbones while keeping the input shape fixed.
+- Compile the stdlib-only Rust companion and read its deterministic fixture output without treating it as a device SLA.
 
 ## The Problem
 
-A training-time vision model is a floating-point monster. 100M parameters, 10 GFLOPs per forward pass, 2 GB of VRAM. None of that fits on a phone, a car's infotainment unit, an industrial camera, or a drone. Shipping a vision system means fitting the same predictions into a budget that is 100x smaller.
-
-Three knobs do most of the work: model choice (a smaller architecture with the same recipe), quantisation (INT8 instead of FP32), and the inference runtime (ONNX Runtime, TensorRT, Core ML, TFLite). Getting them right is the difference between a demo that runs on a workstation and a product that ships on a $30 camera module.
-
-This lesson sets up the measurement discipline first (you cannot optimise what you cannot measure), then walks the three knobs. The goal is not to learn every edge runtime but to know what levers exist and how to verify each one does what you think.
-
-## The Concept
-
-### The three budgets
-
-```mermaid
-flowchart LR
-    M["Model"] --> LAT["Latency<br/>ms per image"]
-    M --> MEM["Memory<br/>peak MB"]
-    M --> PWR["Power<br/>mJ per inference"]
-
-    LAT --> SHIP["Ship / no-ship<br/>decision"]
-    MEM --> SHIP
-    PWR --> SHIP
-
-    style LAT fill:#fecaca,stroke:#dc2626
-    style MEM fill:#fef3c7,stroke:#d97706
-    style PWR fill:#dbeafe,stroke:#2563eb
-```
-
-- **Latency**: p50, p95, p99. Averaging only p50 hides tail behaviour that matters for real-time systems.
-- **Peak memory**: the maximum the device ever sees, not the steady-state average. Matters because OOMs are fatal on embedded targets.
-- **Power / energy**: millijoules per inference on a battery-powered device. Often proxied by CPU/GPU utilisation * time.
-
-A table of (model, latency, memory, accuracy) is what an edge decision is made from. Every cell is measured on the target device, not the workstation.
-
-### Measurement discipline
-
-Three rules that every edge profile should follow:
-
-1. **Warm up** the model with 5-10 dummy forward passes before measuring. Cold caches and JIT compilation produce unrepresentative first numbers.
-2. **Synchronise** GPU workloads with `torch.cuda.synchronize()` before and after the timed block. Without this you measure kernel dispatch, not kernel execution.
-3. **Fix input sizes** to the production resolution. Latency on 224x224 is not latency on 512x512.
-
-### FLOPs as a proxy
-
-FLOPs (floating-point operations per inference) is a cheap, device-independent proxy for latency. Useful for architecture comparison, misleading as absolute wall-clock. A model with 10% more FLOPs can be 2x faster in practice because it uses hardware-friendly ops (depthwise convs compile well, large 7x7 convs do not).
-
-Rule: use FLOPs for architecture search, use on-device latency for deployment decisions.
-
-### Quantisation in one paragraph
-
-Replace FP32 weights and activations with INT8. Model size drops 4x, memory bandwidth drops 4x, compute drops 2-4x on hardware that has INT8 kernels (every modern mobile SoC, every NVIDIA GPU with Tensor Cores). Accuracy loss on vision tasks is typically 0.1-1 percentage points with post-training static quantisation.
-
-Types:
-
-- **Dynamic** — quantise weights to INT8, activations computed in FP. Easy, small speedup.
-- **Static (post-training)** — quantise weights + calibrate activation ranges on a small calibration set. Much faster than dynamic.
-- **Quantisation-aware training (QAT)** — simulate quantisation during training so the model learns around it. Best accuracy, needs labelled data.
-
-For vision, post-training static quantisation gives 95% of the benefit with 5% of the effort. Use QAT only when accuracy loss from PTQ is unacceptable.
-
-### Pruning and distillation
-
-- **Pruning** — remove unimportant weights (magnitude-based) or channels (structured). Works well on overparameterised models; less useful on already-compact architectures.
-- **Distillation** — train a small student to mimic a large teacher's logits. Often recovers most of the accuracy lost by shrinking the model. Standard for production edge models.
-
-### The inference runtimes
-
-- **PyTorch eager** — slow, not for deployment. Use for development only.
-- **TorchScript** — legacy. Superseded by `torch.compile` and ONNX export.
-- **ONNX Runtime** — the neutral runtime. CPU, CUDA, CoreML, TensorRT, OpenVINO all have ONNX providers. Start here.
-- **TensorRT** — NVIDIA's compiler. Best latency on NVIDIA GPUs (workstation and Jetson). Integrates with ONNX Runtime or standalone.
-- **Core ML** — Apple's runtime for iOS/macOS. Needs `.mlmodel` or `.mlpackage`.
-- **TFLite** — Google's runtime for Android/ARM. Needs `.tflite`.
-- **OpenVINO** — Intel's runtime for CPU/VPU. Needs `.xml` + `.bin`.
-
-In practice: export PyTorch -> ONNX -> pick the runtime for the target. ONNX is the lingua franca.
-
-### Edge architecture picker
-
-| Budget | Model | Why |
-|--------|-------|-----|
-| < 3M params | MobileNetV3-Small | Compiles everywhere, good baseline |
-| 3-10M | EfficientNet-Lite-B0 | Best accuracy per param on TFLite |
-| 10-20M | ConvNeXt-Tiny | Best accuracy-per-param, CPU-friendly |
-| 20-30M | MobileViT-S or EfficientViT | Transformer with ImageNet accuracy |
-| 30-80M | Swin-V2-Tiny | If stack supports window attention |
-
-Quantise all of these to INT8 unless you have a specific reason not to.
-
-
-
+An edge decision has at least three independent gates: the model must fit in memory, finish within the tail-latency budget, and meet the task-quality threshold. A workstation measurement can demonstrate the measurement procedure, but it cannot establish a phone, camera, or accelerator SLA. This lesson therefore ships a small offline fixture rather than pretending that an uninstalled deployment runtime is available.
 
 ## Build It
 
-Reconstruct **Real-Time Vision — Edge Deployment** by following `measure_latency` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+The executable Build-It artifact is the stdlib-only Rust companion. It applies a depthwise 3×3 pass and a pointwise 1×1 pass over a fixed `160×160×3` tensor, measures warmup/timing percentiles, and has five inline tests. This makes the convolution and measurement ideas runnable even when no ML framework is installed.
+
+The optional Python Use-It artifact compares `TinyDenseBackbone` and `TinyDepthwiseBackbone`. Both accept `(N, 3, H, W)` and return ten logits. The only architectural change is the first feature extractor: the dense model uses two ordinary convolutions, while the second uses a three-channel depthwise convolution followed by a pointwise mix.
+
+The Python `measure_latency` path validates a four-dimensional positive shape, `warmup >= 0`, and `iters > 0`. It calls the model without gradients, synchronizes CUDA/MPS when requested, sorts the timed calls, and reports four finite fields. `flops_estimate` counts two operations per multiply/add and uses `c_in_per_group`, so a depthwise layer is not charged as if every output saw every input channel.
+
+```bash
+cd phases/04-computer-vision/15-real-time-edge/code
+python3 main.py
+```
+
+When PyTorch is unavailable, the Python command still prints a deterministic shape/FLOP/fixture-percentile plan and exits successfully; the Rust command remains the substantive Build-It benchmark. The Python numbers are a planning fixture, not a device benchmark.
+
+The Rust companion implements the same idea with a depthwise 3×3 pass followed by a pointwise 1×1 pass over a fixed `160×160×3` tensor. It has no crates beyond the standard library:
+
+```bash
+rustc --edition 2021 -O main.rs -o /tmp/lesson-edge
+/tmp/lesson-edge
+rustc --edition 2021 --test main.rs -o /tmp/lesson-edge-tests
+/tmp/lesson-edge-tests
+```
 
 ## Use It
 
-Call `measure_latency` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+Compile/run the Rust Build-It path first, then use the Python module to compare the two rows returned by `compare_backbones(resolution=16, warmup=0, iters=2)`. The `params` and `flops` fields are deterministic for a given architecture; the timing fields are observations and may vary between runs. Keep `input_shape=(1,3,16,16)` fixed when comparing them. Try `iters=0`, a zero dimension, and `device="tpu"`; each Python call must fail before a timing loop starts.
 
 ## Ship It
 
-Hand off `outputs/prompt-edge-deployment-planner.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
+Use `outputs/prompt-edge-deployment-planner.md` as a handoff template. It asks for the target device, input shape, p95 gate, and task-quality gate without inventing a latency value. The reusable `skill-latency-profiler` mirrors the same warmup/percentile contract with stdlib `tracemalloc`; it does not import a deployment runtime.
 
-## Further Reading
+## Measurement Notes
 
-- [EfficientNet (Tan & Le, 2019)](https://arxiv.org/abs/1905.11946) — compound scaling for efficient architectures
-- [MobileNetV3 (Howard et al., 2019)](https://arxiv.org/abs/1905.02244) — mobile-first architecture with h-swish and squeeze-excite
-- [A Practical Guide to TensorRT Optimization (NVIDIA)](https://developer.nvidia.com/blog/accelerating-model-inference-with-tensorrt-tips-and-best-practices-for-pytorch-users/) — how to actually get the throughput numbers in the paper
-- [ONNX Runtime docs](https://onnxruntime.ai/docs/) — quantisation, graph optimisation, provider selection
+```mermaid
+flowchart LR
+    S["fixed input shape"] --> W["bounded warmup"]
+    W --> T["synchronized timed calls"]
+    T --> P["p50 / p95 / p99"]
+    P --> G["compare with target-device gate"]
+    M["params + FLOPs"] --> G
+```
+
+- **Warmup** removes the first-call path from the reported sample; it does not make the model faster.
+- **Percentiles** expose the tail. `p95_ms` is the smallest recorded value at or above the 95th percentile of the sorted sample according to the fixture's index rule.
+- **FLOPs** describe the counted operations in these Conv2d/Linear modules. They omit unsupported operators and memory traffic, so they are not milliseconds.
+- **Quantization, export, and runtime compilation** are follow-up integration work. This lesson does not claim an INT8 accuracy delta or an ONNX/TensorRT result without those tools and a calibration/evaluation set.
 
 ## Exercises
 
-Use `measure_latency` as the trace: start from an 8x8 synthetic image, keep the raw output, and tie each observation to a named objective.
-
-1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using an 8x8 synthetic image. Follow `measure_latency`, `parameter_count`, `flops_estimate`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **Measure inference latency, peak memory, and throughput for any PyTorch model, and read the FLOPs / params / latency trade-off**.
-2. **Vary one named input.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Quantise a vision model to INT8 using PyTorch's post-training quantisation and verify accuracy loss < 1%** says the other inputs should stay fixed.
-3. **Probe the empty case.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Export to ONNX and compile with ONNX Runtime or TensorRT; name the three most common export failures and their fixes** and record the exception text if the code rejects the case.
-4. **Package a usable handoff.** Open `outputs/prompt-edge-deployment-planner.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **Explain when to pick MobileNetV3, EfficientNet-Lite, ConvNeXt-Tiny, or MobileViT for an edge constraint**; note what the demo cannot establish.
+1. Run `compare_backbones(resolution=16, warmup=0, iters=4)` twice. Record the identical `params`/`flops` fields and the changing timing fields.
+2. Verify the grouped-convolution calculation by comparing `flops_estimate(nn.Conv2d(4,4,3,padding=1,groups=4), (1,4,5,5))` with `2*1*4*3*3*5*5 = 1800`.
+3. Change only `resolution` from 16 to 32. Explain why the convolutional FLOPs grow with spatial area while the linear head count does not.
+4. Compile the Rust tests and identify which five tests cover shape indexing, PRNG bounds, FLOP positivity, and percentile boundaries. Do not copy their local milliseconds into a production SLA.
 
 ## Reference Solution
 
-A checkable result for **Real-Time Vision — Edge Deployment** should contain:
+A complete solution shows two rows from `compare_backbones`, with stable integer parameter/FLOP counts and explicitly labelled local timing observations. The padded grouped-convolution hand calculation is 1800 operations for the stated fixture. Invalid `iters`, dimensions, and devices raise `ValueError` before a model call. The Rust binary reports p50/p95/p99 after three ignored warmups and its inline test binary passes five tests. None of these outputs establishes accuracy, memory, power, or a target-device latency guarantee.
 
-- the `python3 main.py` output for an 8x8 synthetic image, with `measure_latency`, `parameter_count`, `flops_estimate` traced to the value or shape that supports **Measure inference latency, peak memory, and throughput for any PyTorch model, and read the FLOPs / params / latency trade-off**;
-- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Quantise a vision model to INT8 using PyTorch's post-training quantisation and verify accuracy loss < 1%**;
-- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Export to ONNX and compile with ONNX Runtime or TensorRT; name the three most common export failures and their fixes**; and
-- an updated `outputs/prompt-edge-deployment-planner.md` example with a concrete input, expected output field, and acceptance check tied to **Explain when to pick MobileNetV3, EfficientNet-Lite, ConvNeXt-Tiny, or MobileViT for an edge constraint**.
+## Further Reading
 
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+- [MobileNetV1](https://arxiv.org/abs/1704.04861) — the depthwise-separable convolution idea used by the Rust fixture.
+- [PyTorch CUDA synchronization](https://pytorch.org/docs/stable/generated/torch.cuda.synchronize.html) — why asynchronous device work needs an explicit boundary around a timer.
+- [Rust `Instant`](https://doc.rust-lang.org/std/time/struct.Instant.html) — the standard-library timer used by `main.rs`.

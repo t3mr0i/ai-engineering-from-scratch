@@ -25,13 +25,18 @@ For a discriminator, real labels are one and fake labels are zero:
 L_D = mean(softplus(-real_logit)) + mean(softplus(fake_logit))
 ```
 
-The minimax generator objective minimizes `softplus(fake_logit)`, equivalent to `-log(1-D(G(z)))`. In practice the local update uses the non-saturating objective:
+The original minimax generator value is
+`E[log(1-D(G(z)))] = -mean(softplus(fake_logit))`. If treated as the scalar
+objective for gradient descent, its derivative is `-sigmoid(fake_logit)`, so a
+step raises a fake logit. For a strongly negative logit that derivative is
+nearly zero, which is the saturation problem. In practice the local update
+uses the non-saturating objective:
 
 ```text
 L_G_non_sat = mean(softplus(-fake_logit))
 ```
 
-Both expressions use the same stable `softplus(x)=max(x,0)+log1p(exp(-abs(x)))` identity. They are different objectives; one should not be swapped into an explanation merely because both mention the discriminator.
+Both expressions use the same stable `softplus(x)=max(x,0)+log1p(exp(-abs(x)))` identity. `generator_loss_minimax` reports the original minimax value (which is non-positive), namely `-mean(softplus(fake_logit))`, while `gan_step` deliberately optimizes `generator_loss_non_saturating`; one should not be swapped into an explanation merely because both mention the discriminator.
 
 ```mermaid
 flowchart LR
@@ -79,11 +84,24 @@ When moving to an image GAN, preserve this order: discriminator fake samples are
 
 ## Exercises
 
-1. Evaluate the two generator losses on logits `[-4,0,1]`. Explain why the non-saturating loss strongly penalizes a fake logit of `-4` while the minimax expression does not have the same gradient emphasis.
+1. Evaluate the original minimax value and the non-saturating loss on logits
+   `[-4,0,1]`. Use a centered finite difference at `-8` to show that the
+   minimax derivative is negative (gradient descent raises the fake logit) but
+   much smaller in magnitude than the non-saturating derivative.
 2. Derive the discriminator logit gradients for one real value `r` and one fake value `f`: `sigmoid(d(r))-1` and `sigmoid(d(f))`. Check the signs in `gan_step`.
 3. Run `gan_step` once and compare `g_weight` and `d_weight` before and after. Identify which batch is detached conceptually and why the generator still uses the discriminator's current weight.
 4. Run `train_toy_gan(steps=12,batch_size=8,seed=3)` twice. Compare both loss histories and record the finite-value acceptance check; do not call the final fake mean an image-quality metric.
 
 ## Reference Solution
 
-For logits `[-4,0,1]`, `softplus(-logit)` is the non-saturating generator loss and weights a badly rejected fake heavily; `softplus(logit)` is the minimax form. The discriminator gradients have the real-minus-one and fake probabilities shown above. A step changes both parameter groups, but the discriminator sees the generator output as a detached value before its own update. Repeating the same seeded 12-step run gives identical histories and finite values, which is the useful local regression—not evidence that the toy game has converged.
+For logits `[-4,0,1]`, the original minimax value is
+`-mean(softplus(logit))`, while `softplus(-logit)` is the non-saturating loss
+used by `gan_step`. At `logit=-8`, a finite difference of the minimax value is
+negative, so subtracting that gradient increases the logit; its magnitude is
+approximately `sigmoid(-8)`, much smaller than the non-saturating magnitude
+`1-sigmoid(-8)`. The discriminator gradients have the real-minus-one and fake
+probabilities shown above. A step changes both parameter groups, but the
+discriminator sees the generator output as a detached value before its own
+update. Repeating the same seeded 12-step run gives identical histories and
+finite values, which is the useful local regression—not evidence that the toy
+game has converged.

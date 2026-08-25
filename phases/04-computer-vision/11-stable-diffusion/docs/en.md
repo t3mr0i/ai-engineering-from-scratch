@@ -27,7 +27,7 @@ Classifier-free guidance combines two predictions:
 guided = unconditional + guidance_scale * (conditional - unconditional)
 ```
 
-The `guidance_scale` is a policy input. It is not a universal quality setting, and the function does not generate an image. `lora_update` applies `base + scale * (up @ down)` when `down` has shape `(rank,in_features)` and `up` has shape `(out_features,rank)`.
+The `guidance_scale` is a finite, non-boolean policy input. It is not a universal quality setting, and the function does not generate an image. `lora_update` applies `base + scale * (up @ down)` when `down` has shape `(rank,in_features)` and `up` has shape `(out_features,rank)`; all matrix dimensions and `scale` must be meaningful and finite.
 
 ```mermaid
 flowchart LR
@@ -39,7 +39,7 @@ flowchart LR
     F --> G["safety policy"]
 ```
 
-The manifest labels the text encoder, denoiser, and safety check as contract-only components. There is no `diffusers` import, no network access, no weights download, and no generated PNG to mistake for Stable Diffusion inference.
+The manifest labels the text encoder, denoiser, and safety check as contract-only components. `scheduler_sigmas(num_steps,start,end)` requires at least two steps and includes both supplied endpoints exactly. There is no `diffusers` import, no network access, no weights download, and no generated PNG to mistake for Stable Diffusion inference.
 
 ## Build It
 
@@ -73,11 +73,11 @@ For a real pipeline handoff, record the checkpoint's own VAE scaling and schedul
 
 ## Exercises
 
-1. Compute `latent_shape((2,3,32,32),8,4)` and explain why a 30-pixel height is rejected.
+1. Compute `latent_shape((2,3,32,32),8,4)` and explain why a 30-pixel height is rejected. Also verify that an input with five channels cannot be compressed into only four latent channels by this fixture.
 2. With unconditional zeros and conditional ones, evaluate guidance scales 0, 1, and 5. State which scale reproduces the unconditional prediction and which reaches 5.
-3. Multiply a `(4,2)` `up` matrix by a `(2,4)` `down` matrix. Verify that the result has the same `(4,4)` shape as `base` and identify the rank bound of the update.
+3. Multiply a `(4,2)` `up` matrix by a `(2,4)` `down` matrix. Verify that the result has the same `(4,4)` shape as `base` and identify the rank bound of the update. Try an empty matrix and preserve the explicit error.
 4. Read `pipeline_manifest()` and label each component as implemented fixture or contract-only. Explain why the output is not evidence of image generation.
 
 ## Reference Solution
 
-The factor-8 shape is `(2,4,4,4)` and a 30-pixel spatial axis cannot be divided into equal factor-8 cells. Guidance 0 returns unconditional, guidance 1 returns conditional, and guidance 5 extrapolates five conditional-minus-unconditional differences. The LoRA product is `(4,4)` with rank at most 2. The manifest identifies the scheduler as a NumPy sigma fixture and the safety component as not implemented; no model or image was loaded.
+The factor-8 shape is `(2,4,4,4)` and a 30-pixel spatial axis cannot be divided into equal factor-8 cells. Guidance 0 returns unconditional, guidance 1 returns conditional, and guidance 5 extrapolates five conditional-minus-unconditional differences. The LoRA product is `(4,4)` with rank at most 2 and empty factors are rejected. A scheduler with two steps returns exactly `[start,end]`; one step is rejected because it cannot represent both endpoints. The manifest identifies the scheduler as a NumPy sigma fixture and the safety component as not implemented; no model or image was loaded.

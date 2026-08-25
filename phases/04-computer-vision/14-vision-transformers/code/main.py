@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import math
+from numbers import Real
 from typing import Any
 
 import numpy as np
@@ -60,6 +61,8 @@ def layer_norm(values: Any, eps: float = 1e-5) -> np.ndarray:
     array = _finite(values, "values")
     if array.ndim < 2 or array.shape[-1] <= 0:
         raise ValueError("values must have a non-empty feature dimension")
+    if isinstance(eps, (bool, np.bool_)) or not isinstance(eps, Real):
+        raise ValueError("eps must be finite and positive")
     epsilon = float(eps)
     if not math.isfinite(epsilon) or epsilon <= 0:
         raise ValueError("eps must be finite and positive")
@@ -71,7 +74,12 @@ def layer_norm(values: Any, eps: float = 1e-5) -> np.ndarray:
 def softmax(values: Any, axis: int = -1) -> np.ndarray:
     """Compute a finite, max-shifted softmax."""
     array = _finite(values, "values")
-    if array.ndim == 0 or array.shape[axis] == 0:
+    if array.ndim == 0 or isinstance(axis, (bool, np.bool_)) or not isinstance(axis, (int, np.integer)):
+        raise ValueError("axis must be an integer for a non-scalar array")
+    axis = int(axis)
+    if axis < 0:
+        axis += array.ndim
+    if axis < 0 or axis >= array.ndim or array.shape[axis] == 0:
         raise ValueError("softmax needs a non-empty axis")
     shifted = array - np.max(array, axis=axis, keepdims=True)
     exponentials = np.exp(shifted)
@@ -95,7 +103,7 @@ def scaled_dot_product_attention(
         raise ValueError("query, key, and value need batch, sequence, and feature axes")
     if q.shape[:-2] != k.shape[:-2] or q.shape[:-2] != v.shape[:-2]:
         raise ValueError("leading attention dimensions must match")
-    if q.shape[-1] != k.shape[-1] or q.shape[-2] == 0 or k.shape[-2] == 0:
+    if q.shape[-1] != k.shape[-1] or q.shape[-1] == 0 or q.shape[-2] == 0 or k.shape[-2] == 0:
         raise ValueError("query/key sequence and head dimensions are incompatible")
     if v.shape[-2] != k.shape[-2] or v.shape[-1] == 0:
         raise ValueError("value sequence dimension must match key")
@@ -119,7 +127,8 @@ def add_cls_token(patch_tokens: Any, cls_token: Any) -> np.ndarray:
     """Prepend one class token to each ``(N, T, D)`` patch sequence."""
     patches = _finite(patch_tokens, "patch_tokens")
     cls = _finite(cls_token, "cls_token")
-    if patches.ndim != 3 or patches.shape[0] == 0 or patches.shape[1] == 0:
+    if (patches.ndim != 3 or patches.shape[0] == 0 or patches.shape[1] == 0 or
+            patches.shape[2] == 0):
         raise ValueError("patch_tokens must have shape (N, T, D) with N,T > 0")
     if cls.ndim == 1:
         cls = np.broadcast_to(cls, (patches.shape[0], 1, patches.shape[2]))

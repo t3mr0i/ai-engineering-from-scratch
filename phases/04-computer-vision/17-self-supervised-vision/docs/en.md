@@ -1,148 +1,100 @@
 # Self-Supervised Vision — SimCLR, DINO, MAE
 
-> Labels are the bottleneck of supervised vision. Self-supervised pretraining removes them: learn visual features from 100M unlabelled images, fine-tune on 10k labelled ones.
+> The pretext signal changes, but the engineering question stays concrete: what tensor is the target, and what state is updated?
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 4 Lesson 04 (Image Classification), Phase 4 Lesson 14 (ViT)
-**Time:** ~75 minutes
+**Prerequisites:** Phase 4 Lesson 14 (Vision Transformers)
+**Time:** ~45 minutes
 
 ## Learning Objectives
 
-- Trace the three major self-supervised families — contrastive (SimCLR), teacher-student (DINO), masked reconstruction (MAE) — and state what each one optimises
-- Implement an InfoNCE loss from scratch and explain why a batch of 512 works but a batch of 32 fails
-- Explain why MAE's 75% masking ratio is not arbitrary and how it differs from BERT's 15% for text
-- Use DINOv2 or MAE ImageNet checkpoints for linear probing and zero-shot retrieval
+- Derive the symmetric InfoNCE target layout for two batches of paired views.
+- Compute normalized InfoNCE, masking, and teacher probabilities with NumPy before using Torch.
+- Explain why unit-normalization and a positive temperature are part of the local loss contract.
+- Generate a deterministic visible/masked patch partition and count both sides.
+- Distinguish a DINO-style student log-probability from a centered, sharpened, detached teacher probability.
+- Update a teacher center with a bounded EMA and validate its feature width.
 
 ## The Problem
 
-Supervised ImageNet has 1.3M labelled images, which cost an estimated $10M to annotate. Medical and industrial datasets are smaller and even more expensive to label. Every vision team asks: can we pretrain on cheap unlabelled data — YouTube frames, web crawls, webcam footage, satellite sweeps — and then fine-tune on a small labelled set?
-
-Self-supervised learning is the answer. A modern self-supervised ViT trained on LAION or JFT reaches or beats supervised ImageNet accuracy when fine-tuned. It also transfers better to downstream tasks (detection, segmentation, depth) than supervised pretraining. DINOv2 (Meta, 2023) and MAE (Meta, 2022) are the current production defaults for transferable vision features.
-
-The conceptual shift is that the pretext task — the thing the model is trained to do — does not have to be the downstream task. What matters is that it forces the model to learn useful features. Predict the colour of grayscale images, rotate images and ask the model to classify the rotation, mask patches and reconstruct them — all have worked. The three approaches that scale are contrastive learning, teacher-student distillation, and masked reconstruction.
-
-## The Concept
-
-### Three families
-
-```mermaid
-flowchart LR
-    A["Contrastive<br/>SimCLR, MoCo, CLIP"] --> AT["positive pairs<br/>(same image, 2 augs)<br/>pulled together,<br/>negatives pushed apart"]
-    B["Teacher-student<br/>DINO, BYOL, iBOT"] --> BT["student predicts<br/>teacher's output;<br/>teacher is EMA of student"]
-    C["Masked reconstruction<br/>MAE, BEiT, SimMIM"] --> CT["mask 75% of patches;<br/>reconstruct pixel or<br/>token targets"]
-
-    style A fill:#dbeafe,stroke:#2563eb
-    style B fill:#fef3c7,stroke:#d97706
-    style C fill:#dcfce7,stroke:#16a34a
-```
-
-### Contrastive learning (SimCLR)
-
-Take one image, apply two random augmentations, get two views. Feed both through the same encoder plus a projection head. Minimise a loss that says "these two embeddings should be close" and "this embedding should be far from every other image's embeddings in the batch."
-
-```
-Loss for positive pair (z_i, z_j) among 2N views per batch:
-
-   L_ij = -log( exp(sim(z_i, z_j) / tau) / sum_k in batch \ {i} exp(sim(z_i, z_k) / tau) )
-
-sim = cosine similarity
-tau = temperature (0.1 standard)
-```
-
-This is the InfoNCE loss. It requires many negatives per positive, so batch size matters — SimCLR needs 512-8192. MoCo introduced a momentum queue of past batches to decouple negative count from batch size.
-
-### Teacher-student (DINO)
-
-Two networks with the same architecture: student and teacher. The teacher is an exponential moving average (EMA) of the student's weights. Both see augmented views of the image. The student's output is trained to match the teacher's — no explicit negatives.
-
-```
-loss = CE( student_output(view_1),  teacher_output(view_2) )
-     + CE( student_output(view_2),  teacher_output(view_1) )
-
-teacher_weights = m * teacher_weights + (1 - m) * student_weights   (m ≈ 0.996)
-```
-
-Why it does not collapse to "predict a constant": the teacher's output is centred (subtract per-dimension mean) and sharpened (divide by small temperature). Centering prevents one dimension from dominating; sharpening prevents output collapse to uniform.
-
-DINO is what DINOv2 scales up, on 142M curated images. The resulting features are the current SOTA for zero-shot visual retrieval and dense prediction.
-
-### Masked reconstruction (MAE)
-
-Mask 75% of patches of a ViT input. Pass only the visible 25% through the encoder. A small decoder receives the encoder's output plus mask tokens at masked positions, and is trained to reconstruct the pixels of the masked patches.
-
-```
-Encoder:  visible 25% of patches -> features
-Decoder:  features + mask tokens at masked positions -> reconstructed pixels
-Loss:     MSE between reconstructed and original pixels on masked patches only
-```
-
-Key design choices that make MAE work:
-
-- **75% mask ratio** — high. Forces the encoder to learn semantic features; reconstructing 25% would be near-trivial (neighbouring pixels are so correlated that a CNN could nail it).
-- **Asymmetric encoder/decoder** — the big ViT encoder only sees visible patches; a small decoder (8-layer, 512-dim) handles reconstruction. 3x faster pretraining than naive BEiT.
-- **Pixel-space reconstruction target** — simpler than BEiT's tokenised target and works better on ViT.
-
-After pretraining, discard the decoder. The encoder is the feature extractor.
-
-### Why 75% and not 15%
-
-BERT masks 15% of tokens. MAE masks 75%. The difference is information density.
-
-- Natural language has high entropy per token. Predicting 15% of tokens is still hard because each masked position has many plausible completions.
-- Image patches have low entropy — an unmasked neighbourhood often determines the masked patch's pixels almost exactly. To make prediction require semantic understanding, you have to mask aggressively.
-
-75% is high enough that simple spatial extrapolation cannot solve the task; the encoder must represent the image content.
-
-### Linear-probe evaluation
-
-After self-supervised pretraining, the standard evaluation is a **linear probe**: freeze the encoder, train a single linear classifier on top on ImageNet labels. Reports top-1 accuracy.
-
-- SimCLR ResNet-50: ~71% (2020)
-- DINO ViT-S/16: ~77% (2021)
-- MAE ViT-L/16: ~76% (2022)
-- DINOv2 ViT-g/14: ~86% (2023)
-
-Linear probe is a pure measure of feature quality; fine-tuning typically adds 2-5 points but also mixes in the effect of head retraining.
-
-
-
+Self-supervised methods replace human labels with a relation that can be generated from an image: two views should agree, a teacher should provide a stable target, or masked patches should be reconstructed. The names SimCLR, DINO, and MAE describe families; this lesson implements only the numerical seams that can be checked without a dataset or checkpoint.
 
 ## Build It
 
-Reconstruct **Self-Supervised Vision — SimCLR, DINO, MAE** by following `info_nce` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+The NumPy Build-It path exposes the same seams as `numpy_info_nce`, `numpy_mask_indices`, `numpy_dino_teacher`, and `numpy_update_centre`. `numpy_info_nce` takes two finite `(N,D)` arrays with `N >= 2`, normalizes each row with a scale-stable norm, concatenates them into `2N` rows, masks the diagonal, and targets row `i` at `i+N` (and vice versa). `tau` must be finite and strictly positive, the temperature-scaled similarities must be representable, and the final loss must remain finite; otherwise the helper raises `ValueError`. `numpy_update_centre` computes column means with scaling so repeated `1e308` logits do not overflow. `numpy_mask_indices(196, 0.75, seed=0)` returns 49 sorted visible indices and 147 sorted masked indices, with no overlap and deterministic replay.
+
+The optional Torch path mirrors these contracts in `info_nce`, `random_mask_indices`, and `DinoHead`.
+
+`DinoHead` has one projection shared by the local student and teacher views. The student returns `log_softmax(projection / temp)`. The teacher subtracts the EMA center, divides by its own temperature, returns `softmax`, and detaches the result. `update_centre` consumes finite `(N,out_dim)` teacher logits and updates the registered buffer; it does not update projection weights.
+
+```bash
+cd phases/04-computer-vision/17-self-supervised-vision/code
+python3 main.py
+```
+
+Without PyTorch the command still prints a NumPy InfoNCE value, a 4/12 mask partition, and a teacher row sum of 1.000; only the optional Torch Use-It path is skipped. It does not claim a pretrained feature result.
+
+```mermaid
+flowchart LR
+    V1["view 1"] --> E1["normalize + encoder"]
+    V2["view 2"] --> E2["normalize + encoder"]
+    E1 --> N["2N x 2N similarities"]
+    E2 --> N
+    N --> X["InfoNCE diagonal-shift targets"]
+    F["teacher logits"] --> C["EMA center"]
+    C --> T["center + sharpen + detach"]
+```
 
 ## Use It
 
-Call `info_nce` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+Start with the framework-free calculation:
+
+```python
+import numpy as np
+from main import numpy_info_nce, numpy_mask_indices, numpy_dino_teacher
+
+rng = np.random.default_rng(4)
+z = rng.normal(size=(4, 8))
+print(numpy_info_nce(z, z))
+print(numpy_mask_indices(16, mask_ratio=0.5, seed=4))
+print(numpy_dino_teacher(rng.normal(size=(2, 6))).sum(axis=1))
+```
+
+When PyTorch is available, use the corresponding module API:
+
+```python
+import torch
+from main import DinoHead, info_nce, random_mask_indices
+
+torch.manual_seed(4)
+z1, z2 = torch.randn(4, 8), torch.randn(4, 8)
+print(info_nce(z1, z2).item())
+visible, masked = random_mask_indices(16, mask_ratio=0.5, seed=4)
+head = DinoHead(in_dim=8, out_dim=6)
+print(visible.tolist(), masked.tolist(), head.teacher(torch.randn(2, 8)).shape)
+```
+
+The local output compares aligned pairs, prints the MAE partition, and verifies that teacher rows sum to one. These are fixture observations; they do not establish a batch-size threshold, pretraining quality, or transfer accuracy.
 
 ## Ship It
 
-Hand off `outputs/prompt-ssl-pretraining-picker.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [SimCLR (Chen et al., 2020)](https://arxiv.org/abs/2002.05709) — contrastive learning reference
-- [DINO (Caron et al., 2021)](https://arxiv.org/abs/2104.14294) — teacher-student with momentum, centring, sharpening
-- [MAE (He et al., 2022)](https://arxiv.org/abs/2111.06377) — masked autoencoder pretraining for ViT
-- [DINOv2 (Oquab et al., 2023)](https://arxiv.org/abs/2304.07193) — scaling self-supervised ViT to production features
+Use `outputs/prompt-ssl-pretraining-picker.md` to record the pretext task, batch/queue design, temperature, checkpoint provenance, and downstream evaluation. Use `outputs/skill-linear-probe-runner.md` as a conceptual linear-probe checklist; the local lesson does not download a checkpoint or run an external dataset.
 
 ## Exercises
 
-Keep two runs side by side for **Self-Supervised Vision — SimCLR, DINO, MAE**. The important evidence is the named field, shape, or status—not a polished paragraph about the run.
-
-1. **Read the first result.** From `code/`, run `python3 main.py` using an 8x8 synthetic image. Follow `info_nce`, `random_mask_indices`, `DinoHead`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **Trace the three major self-supervised families — contrastive (SimCLR), teacher-student (DINO), masked reconstruction (MAE) — and state what each one optimises**.
-2. **Run a two-value comparison.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Implement an InfoNCE loss from scratch and explain why a batch of 512 works but a batch of 32 fails** says the other inputs should stay fixed.
-3. **Try an adversarial fixture.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Explain why MAE's 75% masking ratio is not arbitrary and how it differs from BERT's 15% for text** and record the exception text if the code rejects the case.
-4. **Write the operator note.** Open `outputs/prompt-ssl-pretraining-picker.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **Use DINOv2 or MAE ImageNet checkpoints for linear probing and zero-shot retrieval**; note what the demo cannot establish.
+1. For `z1,z2` with shape `(4,8)`, inspect the `8×8` similarity matrix and verify targets `[4,5,6,7,0,1,2,3]`.
+2. Compare `info_nce(z,z)` with `info_nce(z,torch.roll(z,1,0))` at `tau=0.1`; explain why the paired diagonal is favored.
+3. Run `random_mask_indices(16, 0.75, seed=4)` twice and verify the partition. Try ratios `1.0`, `-0.1`, and `True`; each is rejected.
+4. Update a `DinoHead(in_dim=4,out_dim=3,momentum=0.5)` with a `(5,3)` tensor and calculate the first center as half the batch mean. Confirm that a wrong width fails.
+5. Use `torch.autograd` to check that the student output has a gradient path while the teacher output does not.
 
 ## Reference Solution
 
-A checkable result for **Self-Supervised Vision — SimCLR, DINO, MAE** should contain:
+The NumPy and Torch InfoNCE target order is the diagonal shifted by `N`; row-normalization makes the score a cosine similarity. The 196-patch, 75%-mask fixture keeps 49 and masks 147. A valid NumPy teacher row sums to one, while the Torch teacher also has `requires_grad=False`; its center changes by `(1-momentum) * batch_mean` on the first update from zero. Invalid temperatures, ratios, patch counts, and feature widths fail explicitly.
 
-- the `python3 main.py` output for an 8x8 synthetic image, with `info_nce`, `random_mask_indices`, `DinoHead` traced to the value or shape that supports **Trace the three major self-supervised families — contrastive (SimCLR), teacher-student (DINO), masked reconstruction (MAE) — and state what each one optimises**;
-- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Implement an InfoNCE loss from scratch and explain why a batch of 512 works but a batch of 32 fails**;
-- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Explain why MAE's 75% masking ratio is not arbitrary and how it differs from BERT's 15% for text**; and
-- an updated `outputs/prompt-ssl-pretraining-picker.md` example with a concrete input, expected output field, and acceptance check tied to **Use DINOv2 or MAE ImageNet checkpoints for linear probing and zero-shot retrieval**.
+## Further Reading
 
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+- [SimCLR](https://arxiv.org/abs/2002.05709) — contrastive views and temperature-scaled similarities.
+- [DINO](https://arxiv.org/abs/2104.14294) — teacher/student centering and sharpening.
+- [MAE](https://arxiv.org/abs/2111.06377) — masked patch reconstruction.

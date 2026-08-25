@@ -70,11 +70,16 @@ def generator_loss_non_saturating(fake_logits: np.ndarray) -> float:
 
 
 def generator_loss_minimax(fake_logits: np.ndarray) -> float:
-    """The minimax generator objective, written as -log(1-D(G(z)))."""
+    """Return the original minimax value ``E[log(1-D(G(z)))]``.
+
+    Since ``D = sigmoid(logit)``, this value is ``-mean(softplus(logit))``.
+    Treating it as a scalar minimized by gradient descent pushes fake logits
+    upward, but its gradient is tiny when a fake logit is very negative.
+    """
     scores = _finite(fake_logits, "fake_logits")
     if scores.size == 0:
         raise ValueError("fake_logits must be non-empty")
-    return float(softplus(scores).mean())
+    return float(-softplus(scores).mean())
 
 
 def generator_samples(z: np.ndarray, weight: float, bias: float) -> np.ndarray:
@@ -101,9 +106,9 @@ def gan_step(
     lr_d: float = 0.05,
 ) -> tuple[dict[str, float], dict[str, float]]:
     """Update D on detached generator samples, then G with the non-saturating loss."""
-    if not isinstance(lr_g, Real) or not np.isfinite(lr_g) or lr_g <= 0:
+    if isinstance(lr_g, (bool, np.bool_)) or not isinstance(lr_g, Real) or not np.isfinite(lr_g) or lr_g <= 0:
         raise ValueError("lr_g must be positive and finite")
-    if not isinstance(lr_d, Real) or not np.isfinite(lr_d) or lr_d <= 0:
+    if isinstance(lr_d, (bool, np.bool_)) or not isinstance(lr_d, Real) or not np.isfinite(lr_d) or lr_d <= 0:
         raise ValueError("lr_d must be positive and finite")
     required = ("g_weight", "g_bias", "d_weight", "d_bias")
     if set(params) != set(required):

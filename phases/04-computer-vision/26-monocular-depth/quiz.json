@@ -1,78 +1,48 @@
 {
   "lesson": "26-monocular-depth",
-  "title": "Monocular Depth Estimation",
+  "title": "Monocular Depth: Metrics and Camera Geometry",
   "questions": [
     {
       "stage": "pre",
-      "question": "How is absRel computed for a predicted depth p and target depth t?",
-      "options": [
-        "Mean(p+t)",
-        "Mean(|p-t|) multiplied by t",
-        "Mean(|p-t| / t)",
-        "The fraction of pixels with p exactly equal to t"
-      ],
-      "correct": 2,
-      "explanation": "Absolute relative error divides each absolute depth error by the target before averaging."
-    },
-    {
-      "stage": "check",
-      "question": "For pred=5 and target=4, does the strict delta-1.25 metric count the pixel?",
-      "options": [
-        "Yes; equality is always accepted",
-        "Yes; the ratio is 0.8",
-        "No; delta compares only image width",
-        "No; the ratio is exactly 1.25 and the helper uses < 1.25"
-      ],
-      "correct": 3,
-      "explanation": "The max of 5/4 and 4/5 is 1.25, which fails the implementation's strict threshold."
-    },
-    {
-      "stage": "check",
-      "question": "What does align_scale_shift fit between predicted and target depth?",
-      "options": [
-        "a and b in a*pred + b using least squares",
-        "A focal length and a camera rotation",
-        "Only a binary foreground mask",
-        "A class probability for each pixel"
-      ],
+      "question": "What does abs_rel_error average for each valid pixel?",
+      "options": ["|prediction-target|/target", "prediction/target only", "squared target", "the raw depth value"],
       "correct": 0,
-      "explanation": "The alignment compensates for affine scale and shift ambiguity by solving for a and b from the flattened depth arrays."
+      "explanation": "AbsRel is the mean absolute error divided by the positive target depth at each selected pixel."
     },
     {
       "stage": "check",
-      "question": "Which pinhole equation gives the 3D x coordinate from pixel u and depth z?",
-      "options": [
-        "x = (u+cx)fx/z",
-        "x = (u-cx)z/fx",
-        "x = z/(u-cx)",
-        "x = u*cx*z"
-      ],
-      "correct": 1,
-      "explanation": "Subtracting the principal point and undoing focal scaling recovers the camera-space coordinate."
-    },
-    {
-      "stage": "post",
-      "question": "What is the shape of the point cloud made from a 96x96 depth map?",
-      "options": [
-        "(3,96)",
-        "(96,96,1,3)",
-        "(96,96,3)",
-        "(96,3,96)"
-      ],
+      "question": "With prediction 5, target 4, and threshold 1.25, what does delta_accuracy return?",
+      "options": ["1.0 because 5/4 is close enough", "0.5", "0.0 because the comparison is strict and 5/4 equals 1.25", "It raises because targets may be positive"],
       "correct": 2,
-      "explanation": "Each pixel becomes one XYZ vector while the image's height and width remain indexed in the first two axes."
+      "explanation": "The metric counts ratios strictly below the threshold, so equality is excluded."
+    },
+    {
+      "stage": "check",
+      "question": "What problem does align_scale_shift address in monocular predictions?",
+      "options": ["It adds RGB color", "It fits a*prediction+b to the target and exposes scale/shift ambiguity", "It computes IoU", "It changes the camera focal length"],
+      "correct": 1,
+      "explanation": "The least-squares affine fit removes a two-parameter discrepancy for diagnostic comparison; it is not a new depth model."
+    },
+    {
+      "stage": "check",
+      "question": "For depth z at pixel (u,v), which x coordinate does depth_to_point_cloud use?",
+      "options": ["(u+cx)z*fx", "(u-cx)z/fx", "(u-cx)fx/z", "u/z"],
+      "correct": 1,
+      "explanation": "The pinhole inverse projection is x=(u-cx)z/fx; y uses the corresponding fy and cy."
     },
     {
       "stage": "post",
-      "question": "Why can monocular depth need scale alignment before comparison?",
-      "options": [
-        "Depth models never output a value per pixel",
-        "The camera's RGB channels have different labels",
-        "Scale alignment converts a depth map into a segmentation mask",
-        "A single image often determines relative structure without a fixed metric scale"
-      ],
-      "correct": 3,
-      "explanation": "Without an external scale reference, two predictions can have the same ordering of surfaces but differ by scale or offset."
+      "question": "What shape does a point cloud from a 96x96 depth map have before flattening?",
+      "options": ["(96, 96, 3)", "(3, 96, 96)", "(96, 3)", "(9216, 1)"],
+      "correct": 0,
+      "explanation": "Each pixel retains its row and column and gains three coordinates x, y, and z."
+    },
+    {
+      "stage": "post",
+      "question": "Why does align_scale_shift reject a constant prediction array?",
+      "options": ["A least-squares scale/shift fit needs at least two distinct prediction values", "PLY cannot store constants", "Delta accuracy forbids repeated depths", "The target must be RGB"],
+      "correct": 0,
+      "explanation": "With no variation in the predictor, the two-column [prediction, 1] design is rank deficient and the affine parameters are not identifiable."
     }
   ]
 }

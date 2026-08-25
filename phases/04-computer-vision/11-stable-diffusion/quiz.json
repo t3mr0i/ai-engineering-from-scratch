@@ -64,15 +64,15 @@
     },
     {
       "stage": "post",
-      "question": "Why must a real integration record its own VAE scale and scheduler configuration?",
+      "question": "What does `scheduler_sigmas(2, start=1.0, end=0.1)` return, and why is one step rejected?",
       "options": [
-        "The local factor-8 mean-pool fixture is a universal checkpoint standard",
-        "Latent shape and reverse updates depend on the actual model and scheduler contract",
-        "Scheduler settings affect only the filename",
-        "VAE settings are irrelevant once guidance is enabled"
+        "[1.0, 1.0], because the final sigma is always the start value",
+        "[1.0, 0.1], because two endpoints require at least two sequence entries",
+        "[0.1, 1.0], because reverse schedules run from low to high sigma",
+        "[1.0], because a one-entry schedule can represent both endpoints"
       ],
       "correct": 1,
-      "explanation": "The lesson uses illustrative offline conventions. A real checkpoint's latent adapter and scheduler determine valid shapes and reverse equations."
+      "explanation": "`np.linspace` includes both endpoints when there are at least two steps; `scheduler_sigmas(1,...)` is rejected because a single value cannot represent both start and end."
     }
   ]
 }

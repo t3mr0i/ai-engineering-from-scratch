@@ -1,7 +1,7 @@
 ---
 name: skill-pipeline-budget-planner
-description: Given target latency and throughput, assign a time budget to every pipeline stage and flag which stage will miss its budget first
-version: 1.0.0
+description: Assign an evidence-based p95 budget to each stage of a vision pipeline
+version: 1.1.0
 phase: 4
 lesson: 16
 tags: [vision, pipeline, performance, deployment]
@@ -9,67 +9,44 @@ tags: [vision, pipeline, performance, deployment]
 
 # Pipeline Budget Planner
 
-Turn a latency/throughput target into a stage-by-stage budget so every team member knows what number they are engineering toward.
-
-## When to use
-
-- Before building a new vision service, to set expectations for each stage.
-- After a first benchmark, to see which stage is farthest from its budget.
-- When an SLA changes and budgets need to be renegotiated.
+Turn measured stage timings into a reviewable budget. Do not fill an unknown stage with a convenient estimate.
 
 ## Inputs
 
-- `p95_latency_target_ms`: per-request budget.
-- `target_qps`: throughput per replica.
-- `stages`: list of `{ name: str, current_ms: float }`.
+- `p95_target_ms`: end-to-end p95 target.
+- `stages`: records with `name`, `p95_ms`, and the input shape/device used.
+- `quality_gate`: task metric and held-out threshold.
 
-## Allocation rules
+## Procedure
 
-Default allocation across the seven standard stages if no current measurements provided:
+1. Confirm every stage was measured on the same target shape and device.
+2. Sum the stage p95 values as a conservative diagnostic; do not infer a percentile for the sum from separate medians.
+3. Mark a stage `over` when its p95 exceeds its assigned budget.
+4. Change one stage at a time and rerun the complete pipeline, including the quality gate.
 
-| Stage | Share |
-|-------|-------|
-| decode + preprocess | 15% |
-| detector forward | 55% |
-| postprocess detections (NMS, clamp) | 5% |
-| crop + resize for classifier | 5% |
-| classifier forward | 15% |
-| schema validation | <1% |
-| response serialisation | 4% |
-
-On GPU-bound pipelines (cloud), the detector share often rises to 70%. On CPU, preprocessing and classifier batching eat more.
+```python
+def gate(stage, budget_ms):
+    if stage["p95_ms"] < 0 or budget_ms <= 0:
+        raise ValueError("timings and budgets must be positive")
+    return "pass" if stage["p95_ms"] <= budget_ms else "over"
+```
 
 ## Report
 
-```
+```text
 [budget plan]
-  p95 target:  <ms>
-  throughput:  <qps per replica>
+  target p95: <ms>
+  measured sum of stage p95 values: <ms>
 
-| stage               | target_ms | current_ms | headroom | gate |
-|---------------------|-----------|------------|----------|------|
-| decode+preprocess   | ...       | ...        | ...      | ok|X |
-| detector            | ...       | ...        | ...      | ok|X |
-| ...                 | ...       | ...        | ...      |      |
+| stage       | budget_ms | p95_ms | gate |
+|-------------|-----------|--------|------|
+| preprocess  | ...       | ...    | ...  |
+| detect      | ...       | ...    | ...  |
+| classify    | ...       | ...    | ...  |
+| total       | ...       | ...    | ...  |
 
-[bottleneck]
-  stage:  <name>
-  miss:   <ms over budget>
-  lever:  <specific action>
-
-[levers]
-  decode+preprocess:   Pillow-SIMD, libjpeg-turbo, decode on GPU via NVJPEG
-  detector:            smaller backbone, lower input resolution, INT8, TensorRT
-  postprocess:         GPU-side NMS (torchvision.ops), fused masks
-  crop+resize:         GPU crop with grid_sample, batched interpolate
-  classifier:          smaller backbone, INT8, warm cache, batch
-  schema:              skip validation in hot path, validate at boundaries only
-  response:            orjson, stream protobuf
+[caveat]
+  <device, shape, quality, and concurrency assumptions>
 ```
 
-## Rules
-
-- Never recommend dropping schema validation from the production path; propose moving it to the boundary instead.
-- If preprocessing misses its budget, always try Pillow-SIMD or NVJPEG before changing the model.
-- If the detector miss is more than 30% of target, switch models instead of optimising the current one.
-- Flag the gate as `X` when current_ms > 1.1 * target_ms; mark `ok` if within 10% of budget.
+The lesson's `benchmark` exposes `preprocess`, `detect`, `classify`, and `total`. Schema validation remains part of the boundary; removing it is not a performance optimization.

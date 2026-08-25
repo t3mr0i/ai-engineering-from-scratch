@@ -1,78 +1,48 @@
 {
   "lesson": "25-vision-language-models",
-  "title": "Vision-Language Models",
+  "title": "Vision-Language Models: Projection and Routing",
   "questions": [
     {
       "stage": "pre",
-      "question": "What shape does Projector map (N,P,32) to when its output width is 64?",
-      "options": [
-        "(N,P,64)",
-        "(N,32,64)",
-        "(P,N,32)",
-        "(N,P,32,32)"
-      ],
-      "correct": 0,
-      "explanation": "The linear bridge acts on the final feature dimension and preserves batch and patch-token axes."
-    },
-    {
-      "stage": "check",
-      "question": "How does ToyVLM turn projected visual tokens into the input for its head?",
-      "options": [
-        "It sorts tokens by pixel brightness and drops the batch axis",
-        "It mean-pools the patch tokens and applies the linear head",
-        "It decodes each token as a separate image",
-        "It replaces the projector with a convolution over text"
-      ],
+      "question": "What shape does project_visual_tokens produce from tokens shaped (N, P, 32) with output_dim=64?",
+      "options": ["(N, 32, P)", "(N, P, 64)", "(64, N, P)", "(N, P, 32, 64)"],
       "correct": 1,
-      "explanation": "The demo averages projected patch features over the token axis before classifying the resulting vector."
+      "explanation": "The seeded affine bridge changes only the last feature width; batch and patch axes remain N and P."
     },
     {
       "stage": "check",
-      "question": "Concatenating three deep feature tensors of shape (4,16,32) along the last axis gives what shape?",
-      "options": [
-        "(12,16,32)",
-        "(4,48,32)",
-        "(4,16,96)",
-        "(4,16,32)"
-      ],
+      "question": "Which operation turns projected (N, P, D) tokens into one feature vector per example?",
+      "options": ["mean_pool_tokens averages axis P", "deepstack_features drops the batch", "cross_entropy_loss sums the patches", "CMER sorts the token IDs"],
+      "correct": 0,
+      "explanation": "mean_pool_tokens averages over the patch axis and returns (N,D), preserving one row per example."
+    },
+    {
+      "stage": "check",
+      "question": "Why does cross_entropy_loss subtract a row maximum before exponentiating?",
+      "options": ["To change the target labels", "To force every class logit to zero", "To avoid overflow while preserving the log-sum-exp difference", "To make logits binary"],
       "correct": 2,
-      "explanation": "The batch and token dimensions stay fixed while the three 32-wide features form a 96-wide representation."
+      "explanation": "Subtracting the maximum leaves the softmax ratios unchanged while keeping exponentials in a safe numerical range."
     },
     {
       "stage": "check",
-      "question": "When does the CMER-style check flag a visual token in the helper?",
-      "options": [
-        "When similarity is above 0.25 and confidence is below 0.8",
-        "Whenever both values are exactly zero",
-        "Only when the token index is even",
-        "When similarity is below 0.25 and confidence is above 0.8"
-      ],
+      "question": "Three same-grid feature layers each have width 32. What is deepstack_features' final width?",
+      "options": ["32", "35", "64", "96"],
       "correct": 3,
-      "explanation": "The rule looks for a confident prediction whose visual-text agreement is unusually low."
+      "explanation": "DeepStack concatenates the last axis, so 32+32+32=96 while batch and patch dimensions stay unchanged."
     },
     {
       "stage": "post",
-      "question": "What problem does the projector solve in a vision-language model?",
-      "options": [
-        "It maps visual feature width into the language model's expected width",
-        "It converts every image into a hard class ID",
-        "It removes the token sequence so text has no visual context",
-        "It normalizes only the optimizer learning rate"
-      ],
-      "correct": 0,
-      "explanation": "The bridge aligns representations from the vision encoder with the dimensional interface consumed by the language side."
-    },
-    {
-      "stage": "post",
-      "question": "Which loss matches the demo's integer class targets for the ToyVLM head?",
-      "options": [
-        "Mean squared error between token positions",
-        "Cross-entropy over the logits",
-        "IoU between image masks",
-        "A triplet loss over bounding boxes"
-      ],
+      "question": "When does cross_modal_error_rate flag a pair?",
+      "options": ["Similarity is low regardless of confidence", "Confidence is high and cosine similarity is below the similarity threshold", "Confidence is low and similarity is high", "The two embedding widths differ"],
       "correct": 1,
-      "explanation": "The classifier produces logits for discrete classes, so cross-entropy is the matching supervised objective."
+      "explanation": "The gate is `(confidence > conf_threshold) & (similarity < sim_threshold)` after stable row normalization."
+    },
+    {
+      "stage": "post",
+      "question": "What should happen when a target label equals the number of classifier columns?",
+      "options": ["It selects the last column", "It wraps to class zero", "It is rejected because valid IDs are 0 through C-1", "It changes the projector width"],
+      "correct": 2,
+      "explanation": "A class index equal to C is out of range; the local CE contract raises ValueError instead of silently wrapping it."
     }
   ]
 }

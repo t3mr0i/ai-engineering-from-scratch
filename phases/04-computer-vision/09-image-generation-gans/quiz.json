@@ -66,13 +66,13 @@
       "stage": "post",
       "question": "For `logits=[-4,0,1]`, why are minimax and non-saturating generator losses not interchangeable?",
       "options": [
-        "They use different softplus signs and therefore different gradient emphasis",
+        "The minimax value is -mean(softplus(logits)), while non-saturating uses mean(softplus(-logits)); their gradients emphasize different regions",
         "They differ only in the printed decimal formatting",
         "Minimax has no discriminator term",
         "Non-saturating loss removes the latent input"
       ],
       "correct": 0,
-      "explanation": "The local minimax form averages softplus(logits), while non-saturating averages softplus(-logits); the signs change both values and gradients."
+      "explanation": "The original minimax value is E[log(1-D(G(z)))] = -mean(softplus(logits)); the local update uses mean(softplus(-logits)) instead. At very negative logits the minimax derivative saturates near zero, while the non-saturating derivative remains useful."
     }
   ]
 }

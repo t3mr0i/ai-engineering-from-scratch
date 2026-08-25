@@ -35,6 +35,8 @@ def sample_dense(num_frames_total: int, T: int, rng: np.random.Generator | None 
     total, count = _positive_int(num_frames_total, "num_frames_total"), _positive_int(T, "T")
     if total <= count:
         return np.concatenate((np.arange(total), np.full(count - total, total - 1))).astype(np.int64)
+    if rng is not None and not isinstance(rng, np.random.Generator):
+        raise ValueError("rng must be a numpy.random.Generator or None")
     generator = np.random.default_rng() if rng is None else rng
     start = int(generator.integers(0, total - count + 1))
     return np.arange(start, start + count, dtype=np.int64)
@@ -42,7 +44,8 @@ def sample_dense(num_frames_total: int, T: int, rng: np.random.Generator | None 
 
 def temporal_pool(features: np.ndarray, indices: np.ndarray | None = None) -> np.ndarray:
     values = _finite(features, "features")
-    if values.ndim not in (2, 3) or values.shape[-2] == 0 or values.shape[-1] == 0:
+    if (values.ndim not in (2, 3) or values.shape[-2] == 0 or
+            values.shape[-1] == 0 or (values.ndim == 3 and values.shape[0] == 0)):
         raise ValueError("features must have shape (T,D) or (N,T,D)")
     count = values.shape[-2]
     if indices is None:
@@ -86,7 +89,9 @@ def conv2plus1d_parameter_count(
 
 def temporal_split(num_frames: int, train_fraction: float = 0.8) -> tuple[np.ndarray, np.ndarray]:
     total = _positive_int(num_frames, "num_frames")
-    if total < 2 or not isinstance(train_fraction, Real) or not np.isfinite(train_fraction) or not 0 < train_fraction < 1:
+    if (total < 2 or isinstance(train_fraction, (bool, np.bool_)) or
+            not isinstance(train_fraction, Real) or not np.isfinite(train_fraction) or
+            not 0 < train_fraction < 1):
         raise ValueError("num_frames must be at least 2 and train_fraction must lie in (0,1)")
     boundary = int(np.floor(total * float(train_fraction)))
     boundary = min(max(boundary, 1), total - 1)

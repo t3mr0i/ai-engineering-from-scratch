@@ -1,78 +1,63 @@
 {
   "lesson": "23-diffusion-transformers-rectified-flow",
-  "title": "Diffusion Transformers & Rectified Flow",
+  "title": "Diffusion Transformers and Rectified Flow",
   "questions": [
     {
       "stage": "pre",
-      "question": "How many 2x2 patches does a 16x16 image produce in TinyDiT?",
-      "options": [
-        "64",
-        "8",
-        "32",
-        "256"
-      ],
-      "correct": 0,
-      "explanation": "There are 16/2=8 patches along each axis, so the token sequence has 8*8=64 patches."
+      "question": "For an NCHW image with shape (1, 3, 16, 16) and patch_size=2, how many patch tokens does patchify create?",
+      "options": ["8", "32", "64", "256"],
+      "correct": 2,
+      "explanation": "There are 16/2 by 16/2 spatial patches: 8*8 = 64 tokens, each carrying 3*2*2 values."
     },
     {
       "stage": "check",
-      "question": "What is the initial effect of AdaLNZero's zero residual gate?",
+      "question": "What happens to rectified_flow_path(x0, noise, t) at t=0?",
       "options": [
-        "All token features are permanently zero",
-        "Attention and MLP residual updates start at zero",
-        "The input image is converted to one token",
-        "The timestep embedding is discarded"
+        "It returns noise and zero velocity",
+        "It returns x0 and velocity noise-x0",
+        "It returns the midpoint and velocity x0-noise",
+        "It raises because t must be positive"
       ],
       "correct": 1,
-      "explanation": "The branches can learn useful updates, but their residual contribution is initially gated off for a stable start."
+      "explanation": "The path is (1-t)x0+t noise, so t=0 yields x0; its constant velocity remains noise-x0."
     },
     {
       "stage": "check",
-      "question": "Which interpolation defines x_t in the rectified-flow helper?",
+      "question": "Why must a patchified image have height and width divisible by patch_size?",
       "options": [
-        "x_t = t x_0 + epsilon",
-        "x_t = x_0 - t epsilon for every t",
-        "x_t = (1-t)x_0 + t epsilon",
-        "x_t = x_0 / (1-t)"
+        "The sinusoidal embedding only accepts square images",
+        "The RGB channels would otherwise be discarded by softmax",
+        "Unpatchify needs complete non-overlapping blocks to restore the original grid",
+        "Rectified flow requires an integer noise value"
       ],
       "correct": 2,
-      "explanation": "The path starts at the data sample x_0 when t=0 and reaches the noise sample epsilon when t=1."
+      "explanation": "The local contract does not pad or crop. A remainder would make the inverse token ordering ambiguous, so it raises ValueError."
     },
     {
       "stage": "check",
-      "question": "What velocity target matches that straight interpolation?",
-      "options": [
-        "epsilon + x_0",
-        "x_0 / epsilon",
-        "t(epsilon - x_0)",
-        "epsilon - x_0"
-      ],
-      "correct": 3,
-      "explanation": "Differentiating (1-t)x_0+t epsilon with respect to t gives the constant vector epsilon-x_0."
+      "question": "What is the velocity for x0=0 and noise=1 in every coordinate?",
+      "options": ["0", "-1", "1", "It depends on t"],
+      "correct": 2,
+      "explanation": "Rectified flow uses the constant difference noise-x0, which is one and does not depend on t."
     },
     {
       "stage": "post",
-      "question": "With 20 Euler steps from t=0 to t=1, what step size does the sampler use?",
-      "options": [
-        "0.05",
-        "0.2",
-        "1.0",
-        "20.0"
-      ],
+      "question": "With four Euler steps and velocity 1, what does euler_reverse_sample start at x1=1 and end at?",
+      "options": ["0", "0.25", "1", "4"],
       "correct": 0,
-      "explanation": "The interval has length one, so dt=1/20=0.05."
+      "explanation": "Each reverse step subtracts Δt=1/4; four subtractions move 1 to zero."
     },
     {
       "stage": "post",
-      "question": "What shape does TinyDiT restore after unpatchifying a batch of 4 RGB 16x16 images?",
+      "question": "Which input is rejected by timestep_embedding?",
       "options": [
-        "(4,64,3)",
-        "(4,3,16,16)",
-        "(4,3,8,8)",
-        "(64,4,16,16)"
+        "times [0.0, 0.5] with dim=8",
+        "times [1.0] with dim=2",
+        "times [0.0] with dim=7",
+        "times [-0.2] with dim=4"
       ],
-      "correct": 1,
-      "explanation": "The patch grid is rearranged back into the original batch, channel, height, and width dimensions."
+      "correct": 2,
+      "explanation": "The embedding width must be a positive even integer. Time range validation belongs to the flow path, not this sinusoid helper."
     }
   ]
 }

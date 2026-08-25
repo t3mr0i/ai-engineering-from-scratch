@@ -17,7 +17,7 @@
 
 ## Temporal contracts
 
-The lesson is a NumPy temporal-geometry lab, not a pretrained video classifier. `sample_uniform(total,T)` returns `T` valid indices spread over the full sequence; if a sequence is shorter than `T`, its last frame is repeated to preserve the requested length. `sample_dense(total,T,rng)` returns one contiguous clip when enough frames exist, using a seeded start.
+The lesson is a NumPy temporal-geometry lab, not a pretrained video classifier. `sample_uniform(total,T)` returns `T` valid indices spread over the full sequence; if a sequence is shorter than `T`, its last frame is repeated to preserve the requested length. `sample_dense(total,T,rng)` returns one contiguous clip when enough frames exist, using a seeded `numpy.random.Generator`; another `rng` object is rejected explicitly.
 
 ```mermaid
 flowchart LR
@@ -27,7 +27,7 @@ flowchart LR
     A --> E["contiguous train/test split"]
 ```
 
-`temporal_pool` accepts `(T,D)` or `(N,T,D)` and averages only the selected time indices. It never treats a feature dimension as time. `temporal_split` returns `[0,boundary)` and `[boundary,N)`; this is a simple forecasting-style boundary, not a claim that every video task must use chronological validation.
+`temporal_pool` accepts non-empty `(T,D)` or `(N,T,D)` arrays and averages only the selected time indices; an empty batch is rejected rather than returned as a misleading summary. It never treats a feature dimension as time. `temporal_split` returns `[0,boundary)` and `[boundary,N)` and requires a strictly interior, non-boolean `train_fraction`; this is a simple forecasting-style boundary, not a claim that every video task must use chronological validation.
 
 Inflating a 2D kernel `(out,in,H,W)` to `(out,in,K_t,H,W)` repeats the spatial kernel over time and divides by `K_t`. Summing the temporal slices therefore recovers the original kernel. `conv2plus1d_parameter_count` reports the two-factor parameter formula for a spatial convolution followed by a temporal one; it does not instantiate a framework layer.
 

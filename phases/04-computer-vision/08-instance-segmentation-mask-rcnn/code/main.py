@@ -75,7 +75,7 @@ def roi_align(
     fmap = _finite(feature, "feature")
     if fmap.ndim != 3 or 0 in fmap.shape:
         raise ValueError("feature must have a non-empty (C,H,W) shape")
-    if not isinstance(spatial_scale, Real) or not np.isfinite(spatial_scale) or spatial_scale <= 0:
+    if isinstance(spatial_scale, (bool, np.bool_)) or not isinstance(spatial_scale, Real) or not np.isfinite(spatial_scale) or spatial_scale <= 0:
         raise ValueError("spatial_scale must be positive and finite")
     out_h, out_w = _output_size(output_size)
     image_shape = (fmap.shape[1] / float(spatial_scale), fmap.shape[2] / float(spatial_scale))
@@ -129,7 +129,7 @@ def paste_mask(
     logits = _finite(mask_logits, "mask_logits")
     if logits.ndim != 2 or 0 in logits.shape:
         raise ValueError("mask_logits must have a non-empty (H,W) shape")
-    if not isinstance(threshold, Real) or not np.isfinite(threshold) or not 0 <= threshold <= 1:
+    if isinstance(threshold, (bool, np.bool_)) or not isinstance(threshold, Real) or not np.isfinite(threshold) or not 0 <= threshold <= 1:
         raise ValueError("threshold must lie in [0,1]")
     validated = validate_boxes(np.asarray(box).reshape(1, 4), image_shape)[0]
     x1, y1 = int(np.floor(validated[0])), int(np.floor(validated[1]))
@@ -161,8 +161,8 @@ def mask_iou(prediction: np.ndarray, target: np.ndarray) -> float:
 
 def synthetic_scene(height: int = 16, width: int = 20) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     height, width = _positive_int(height, "height"), _positive_int(width, "width")
-    if height < 4 or width < 4:
-        raise ValueError("scene must be at least 4x4")
+    if height < 8 or width < 8:
+        raise ValueError("scene must be at least 8x8 for the fixed box offsets")
     yy, xx = np.meshgrid(np.arange(height), np.arange(width), indexing="ij")
     feature = np.stack((xx / max(width - 1, 1), yy / max(height - 1, 1)), axis=0)
     boxes = np.array([[2, 3, width - 5, height - 4]], dtype=np.float64)

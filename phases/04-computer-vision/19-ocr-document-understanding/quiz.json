@@ -52,15 +52,15 @@
     },
     {
       "stage": "post",
-      "question": "What does ctc_loss's zero_infinity=True protect against?",
+      "question": "How should zero_infinity=True be used with the lesson's CTC length checks?",
       "options": [
-        "It replaces infinite losses from impossible alignments with zero instead of propagating infinity",
-        "It makes every character probability exactly zero",
-        "It removes the blank symbol from the vocabulary",
-        "It forces input and target lengths to be identical"
+        "Validate alignment feasibility first; zero_infinity is only a numerical safeguard, not permission to accept impossible examples",
+        "Use it to make every character probability exactly zero",
+        "Use it to remove the blank symbol from the vocabulary",
+        "Use it to force input and target lengths to be identical"
       ],
       "correct": 0,
-      "explanation": "The option prevents an invalid alignment from poisoning optimization with an infinite loss; it does not change the sequence model's vocabulary."
+      "explanation": "The implementation rejects input lengths below target_length plus adjacent-repeat_count before calling the Torch loss. zero_infinity=True remains a downstream numerical guard and does not validate sequence feasibility."
     },
     {
       "stage": "post",

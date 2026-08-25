@@ -29,6 +29,8 @@ class VideoUnderstandingTests(unittest.TestCase):
         np.testing.assert_array_equal(first, second)
         np.testing.assert_array_equal(np.diff(first), 1)
         self.assertTrue(np.all((first >= 0) & (first < 20)))
+        with self.assertRaises(ValueError):
+            video.sample_dense(20, 5, rng="not-a-generator")
 
     def test_temporal_pool_handles_batched_features_and_indices(self) -> None:
         features = np.arange(2 * 4 * 3, dtype=float).reshape(2, 4, 3)
@@ -37,6 +39,8 @@ class VideoUnderstandingTests(unittest.TestCase):
         np.testing.assert_allclose(pooled[0], (features[0, 1] + features[0, 3]) / 2)
         with self.assertRaises(ValueError):
             video.temporal_pool(features, np.array([4]))
+        with self.assertRaises(ValueError):
+            video.temporal_pool(np.empty((0, 4, 3)))
 
     def test_inflated_kernel_preserves_spatial_kernel_average(self) -> None:
         kernel = np.arange(2 * 3 * 3 * 3, dtype=float).reshape(2, 3, 3, 3)
@@ -59,6 +63,8 @@ class VideoUnderstandingTests(unittest.TestCase):
         self.assertEqual(set(train).intersection(test), set())
         with self.assertRaises(ValueError):
             video.temporal_split(1, 0.8)
+        with self.assertRaises(ValueError):
+            video.temporal_split(10, True)
 
     def test_synthetic_video_is_reproducible(self) -> None:
         first = video.synthetic_video(6, 8, 10, seed=7)

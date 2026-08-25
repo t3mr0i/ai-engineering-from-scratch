@@ -59,9 +59,11 @@ The observable contract is:
 | logits | `(2, 4)` for the four local fixture classes |
 
 `scaled_dot_product_attention` divides the query-key scores by
-`sqrt(head_dim)`. A boolean mask can hide keys, but every query must retain at
-least one visible key. `softmax` uses a max shift, so large finite scores do
-not create an avoidable overflow.
+`sqrt(head_dim)` and rejects an empty head before that square root. A boolean
+mask can hide keys, but every query must retain at least one visible key.
+`softmax` requires a non-boolean integer axis in range (negative axes are
+normalized) and uses a max shift, so large finite scores do not create an
+avoidable overflow. `add_cls_token` also rejects a zero-width embedding.
 
 ## Use It
 
@@ -116,7 +118,8 @@ For the canonical fixture, the checkable reasoning is:
    24 features over three heads gives `head_dim=8`.
 3. Attention scores have shape `(2, 3, 17, 17)`. The boolean mask test has a
    zero in its hidden-key column and every valid row sums to one.
-4. A non-dividing patch size raises `ValueError`; it does not crop the image.
-   Changing the seed leaves `patches` unchanged but changes the deterministic
-   random projection/classifier outputs. These checks establish tensor
-   plumbing, not pretrained recognition quality.
+4. A non-dividing patch size or an invalid softmax axis raises `ValueError`; the
+   implementation does not crop the image or leak a raw `IndexError`. Changing
+   the seed leaves `patches` unchanged but changes the deterministic random
+   projection/classifier outputs. These checks establish tensor plumbing, not
+   pretrained recognition quality.

@@ -1,78 +1,48 @@
 {
   "lesson": "24-sam3-open-vocab-segmentation",
-  "title": "Open-Vocabulary Segmentation",
+  "title": "Open-Vocabulary Segmentation Contracts",
   "questions": [
     {
       "stage": "pre",
-      "question": "What concepts does split_concepts('cats, dogs and balloons') return?",
-      "options": [
-        "['cats, dogs and balloons']",
-        "['cats', 'dogs and balloons']",
-        "['cats', 'dogs', 'balloons']",
-        "['catsdogsballoons']"
-      ],
-      "correct": 2,
-      "explanation": "The helper splits on commas and the word 'and', trims whitespace, and drops empty entries."
-    },
-    {
-      "stage": "check",
-      "question": "How should split_concepts handle the phrase 'yellow school bus'?",
-      "options": [
-        "Split it into three concepts",
-        "Discard it because it contains two words",
-        "Treat 'school' as an image coordinate",
-        "Keep it as one concept"
-      ],
-      "correct": 3,
-      "explanation": "Only the configured separators divide concepts; words inside a noun phrase remain together."
-    },
-    {
-      "stage": "check",
-      "question": "What does the RLE round trip test in the lesson establish?",
-      "options": [
-        "Decoding the encoded runs reconstructs the original binary mask",
-        "Every mask must contain exactly one foreground pixel",
-        "RLE changes a mask into an RGB image",
-        "The mask's bounding box is always square"
-      ],
-      "correct": 0,
-      "explanation": "Run-length encoding is lossless here: the alternating runs decode back to the same flattened mask."
-    },
-    {
-      "stage": "check",
-      "question": "If the stub returns two detections per concept, how many does run_multi_concept return for two concepts?",
-      "options": [
-        "2",
-        "4",
-        "1",
-        "0"
-      ],
+      "question": "How does split_concepts treat the phrase 'yellow school bus'?",
+      "options": ["It returns three concepts", "It keeps the whole phrase as one concept", "It rejects every phrase with spaces", "It converts every word to an instance ID"],
       "correct": 1,
-      "explanation": "The helper runs detection for each concept and concatenates the two results from each call."
+      "explanation": "Whitespace is not a separator. The helper only splits explicit comma, semicolon, and/or, or ampersand separators."
     },
     {
-      "stage": "post",
-      "question": "Which fields identify one ConceptDetection in the lesson?",
-      "options": [
-        "only an RGB color and a filename",
-        "a class index with no location or mask",
-        "concept, instance_id, box, score, and mask_rle",
-        "the model's optimizer state and batch size"
-      ],
+      "stage": "check",
+      "question": "What does the exact-length check in rle_decode protect?",
+      "options": ["It makes scores calibrated", "It prevents a truncated mask from being reshaped as a full image", "It sorts instance IDs", "It removes all background pixels"],
+      "correct": 1,
+      "explanation": "The decoded run count must equal height*width; otherwise mask coordinates would no longer align with the image."
+    },
+    {
+      "stage": "check",
+      "question": "For 'cats, dogs and balloons', what list does split_concepts return?",
+      "options": ["['cats, dogs and balloons']", "['cats', 'dogs and balloons']", "['cats', 'dogs', 'balloons']", "['catsdogsballoons']"],
       "correct": 2,
-      "explanation": "Each record keeps the text concept, instance identity, box, confidence score, and compact mask representation."
+      "explanation": "The comma and the explicit word 'and' are both separators, producing three non-empty concepts."
+    },
+    {
+      "stage": "check",
+      "question": "How many detections does StubOpenVocabSeg produce for two concepts?",
+      "options": ["Two total", "One per image", "Four, because it emits two instances per concept", "It emits no records without a checkpoint"],
+      "correct": 2,
+      "explanation": "The deterministic backend returns instance IDs 0 and 1 for each already-separated concept."
     },
     {
       "stage": "post",
-      "question": "Why does the lesson define an abstract detector interface?",
-      "options": [
-        "It prevents any implementation from returning masks",
-        "It makes every concept a fixed closed-set class",
-        "It removes the need to parse text prompts",
-        "A real model and the stub can share the same detect contract"
-      ],
-      "correct": 3,
-      "explanation": "The interface isolates pipeline code from the detector backend, so a deterministic stub can be swapped for a model without changing callers."
+      "question": "Which fields make up one ConceptDetection record?",
+      "options": ["concept, instance_id, box, score, mask_rle", "tokens, logits, caption, depth, pose", "image, prompt, seed, loss, epoch", "class_name and an unshaped pixel list only"],
+      "correct": 0,
+      "explanation": "Those five fields preserve the prompt identity, instance identity, geometry, confidence, and serialized binary mask."
+    },
+    {
+      "stage": "post",
+      "question": "What score range does ConceptDetection enforce?",
+      "options": ["Any finite real number", "Exactly 0 or 1", "A finite value in [0, 1]", "A positive integer"],
+      "correct": 2,
+      "explanation": "The local record treats score as a bounded confidence-like value and rejects NaN, infinities, and out-of-range values."
     }
   ]
 }

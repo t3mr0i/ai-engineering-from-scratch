@@ -1,64 +1,71 @@
-# Contract and executable-behavior tests for this lesson demo.
 from __future__ import annotations
 
-import ast
-import functools
 import importlib.util
-import os
 from pathlib import Path
 import subprocess
 import sys
 import unittest
 
+import numpy as np
+
 CODE = Path(__file__).resolve().parents[1]
-MAIN = CODE / "main.py"
-ALLOWED = set(sys.stdlib_module_names) | {"numpy", "torch", "h5py", "zstandard", "safetensors"}
+SPEC = importlib.util.spec_from_file_location("mot_lesson", CODE / "main.py")
+assert SPEC and SPEC.loader
+main = importlib.util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = main
+SPEC.loader.exec_module(main)
 
-def source_trees() -> list[ast.AST]:
-    return [ast.parse(path.read_text(encoding="utf-8")) for path in CODE.glob("*.py")]
 
-def external_roots() -> set[str]:
-    roots: set[str] = set()
-    for tree in source_trees():
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                roots.update(alias.name.split(".")[0] for alias in node.names)
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                roots.add(node.module.split(".")[0])
-    return {name for name in roots if not (CODE / f"{name}.py").exists() and not (CODE / name).is_dir()}
+class MultiObjectTrackingTests(unittest.TestCase):
+    def test_iou_identity_and_no_overlap(self):
+        first = np.array([[0.0, 0.0, 2.0, 2.0]])
+        second = np.array([[0.0, 0.0, 2.0, 2.0], [3.0, 3.0, 4.0, 4.0]])
+        values = main.bbox_iou(first, second)
+        np.testing.assert_allclose(values, [[1.0, 0.0]])
 
-@functools.lru_cache(maxsize=1)
-def run_demo() -> subprocess.CompletedProcess[str]:
-    missing = sorted(name for name in external_roots() if name in ALLOWED and importlib.util.find_spec(name) is None)
-    banned = sorted(external_roots() - ALLOWED)
-    if missing or banned:
-        raise unittest.SkipTest(f"demo dependencies unavailable or disallowed: {missing + banned}")
-    env = os.environ.copy()
-    for key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "HF_TOKEN", "HUGGINGFACE_TOKEN"):
-        env.pop(key, None)
-    return subprocess.run(
-        [sys.executable, MAIN.name], cwd=CODE, text=True, capture_output=True,
-        timeout=45, env=env, check=False,
-    )
+    def test_iou_rejects_degenerate_box(self):
+        with self.assertRaises(ValueError):
+            main.bbox_iou([[0.0, 0.0, 0.0, 1.0]], [[0.0, 0.0, 1.0, 1.0]])
 
-class LessonDemoTests(unittest.TestCase):
-    def test_source_compiles(self) -> None:
-        compile(MAIN.read_text(encoding="utf-8"), str(MAIN), "exec")
+    def test_tracker_keeps_id_for_matching_detection(self):
+        tracker = main.SimpleTracker(iou_threshold=0.3, max_age=1)
+        first = tracker.step([[0.0, 0.0, 2.0, 2.0]], 0)
+        second = tracker.step([[0.1, 0.0, 2.1, 2.0]], 1)
+        self.assertEqual(first[0][0], second[0][0])
 
-    def test_demo_has_explicit_entrypoint(self) -> None:
-        source = MAIN.read_text(encoding="utf-8")
-        self.assertTrue("__main__" in source or "runpy.run_path" in source)
+    def test_tracker_creates_id_after_unmatched_detection(self):
+        tracker = main.SimpleTracker(iou_threshold=0.5, max_age=0)
+        tracker.step([[0.0, 0.0, 2.0, 2.0]], 0)
+        tracks = tracker.step([[10.0, 10.0, 12.0, 12.0]], 1)
+        self.assertEqual([track_id for track_id, _box in tracks], [2])
 
-    def test_demo_exits_successfully(self) -> None:
-        self.assertEqual(run_demo().returncode, 0, run_demo().stderr)
+    def test_tracker_age_removes_stale_track(self):
+        tracker = main.SimpleTracker(max_age=1)
+        tracker.step([[0.0, 0.0, 2.0, 2.0]], 0)
+        tracker.step([], 1)
+        self.assertEqual(tracker.step([], 2), [])
 
-    def test_demo_emits_bounded_output(self) -> None:
-        result = run_demo()
-        self.assertTrue((result.stdout + result.stderr).strip())
-        self.assertLess(len(result.stdout) + len(result.stderr), 1_000_000)
+    def test_synthetic_frames_are_reproducible(self):
+        first, truth = main.synthetic_frames(num_frames=4, num_objects=2, seed=2)
+        second, _ = main.synthetic_frames(num_frames=4, num_objects=2, seed=2)
+        self.assertEqual(first, second)
+        self.assertEqual(len(truth), 4)
 
-    def test_demo_has_no_traceback(self) -> None:
-        self.assertNotIn("Traceback (most recent call last)", run_demo().stderr)
+    def test_metrics_are_perfect_for_ground_truth_boxes(self):
+        detections, truth = main.synthetic_frames(num_frames=4, num_objects=2, seed=1)
+        tracks = [[(object_id + 1, box) for object_id, box in enumerate(frame)] for frame in detections]
+        self.assertEqual(main.mota_score(tracks, truth), 1.0)
+        self.assertEqual(main.idf1_score(tracks, truth), 1.0)
+
+    def test_assignment_uses_global_best_pairing(self):
+        iou = np.array([[0.9, 0.8], [0.85, 0.1]])
+        self.assertEqual(main._assignment(iou, 0.0), [(0, 1), (1, 0)])
+
+    def test_demo_exits_and_reports_mota(self):
+        result = subprocess.run([sys.executable, "main.py"], cwd=CODE, capture_output=True, text=True, timeout=10)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("MOTA=", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -64,15 +64,15 @@
     },
     {
       "stage": "post",
-      "question": "Which input violation should be rejected before the volume-rendering calculation?",
+      "question": "Which input violation should be rejected before this ray/rendering calculation?",
       "options": [
-        "A density below zero or colors outside [0, 1]",
+        "Requesting one ray sample, a negative density, or a color outside [0, 1]",
         "A ray with several ordered samples",
         "A background color supplied for a zero-density ray",
         "A positional encoding with more than one frequency"
       ],
       "correct": 0,
-      "explanation": "Density represents opacity per unit distance and must be nonnegative; the local contract also bounds RGB values and checks finite, increasing samples."
+      "explanation": "The sampler needs at least two samples to include both near and far, while rendering requires nonnegative density and RGB values in [0,1]; all depths must be finite and increasing."
     }
   ]
 }

@@ -44,8 +44,14 @@ class StableDiffusionContractTests(unittest.TestCase):
         sigmas = sd.scheduler_sigmas(5, 1.0, 0.1)
         self.assertTrue(np.all(np.diff(sigmas) < 0))
         self.assertTrue(np.isfinite(sigmas).all())
+        endpoints = sd.scheduler_sigmas(2, 1.0, 0.1)
+        np.testing.assert_allclose(endpoints, [1.0, 0.1])
+        with self.assertRaises(ValueError):
+            sd.scheduler_sigmas(1, 1.0, 0.1)
         with self.assertRaises(ValueError):
             sd.scheduler_sigmas(5, 0.1, 1.0)
+        with self.assertRaises(ValueError):
+            sd.scheduler_sigmas(2, True, 0.1)
 
     def test_lora_update_has_low_rank_delta(self) -> None:
         base = np.zeros((4, 4))
@@ -56,6 +62,10 @@ class StableDiffusionContractTests(unittest.TestCase):
         np.testing.assert_allclose(updated, 1.0)
         with self.assertRaises(ValueError):
             sd.lora_update(base, np.ones((3, 5)), up)
+        with self.assertRaises(ValueError):
+            sd.lora_update(np.zeros((0, 2)), np.zeros((1, 2)), np.zeros((0, 1)))
+        with self.assertRaises(ValueError):
+            sd.lora_update(np.zeros((2, 2)), np.zeros((0, 2)), np.zeros((2, 0)))
 
     def test_manifest_names_roles_without_external_framework(self) -> None:
         manifest = sd.pipeline_manifest()
@@ -68,7 +78,11 @@ class StableDiffusionContractTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             sd.classifier_free_guidance(np.zeros(2), np.zeros(2), -1)
         with self.assertRaises(ValueError):
+            sd.classifier_free_guidance(np.zeros(2), np.zeros(2), True)
+        with self.assertRaises(ValueError):
             sd.lora_update(np.zeros((2, 2)), np.zeros((1, 2)), np.zeros((2, 1)), scale=np.inf)
+        with self.assertRaises(ValueError):
+            sd.lora_update(np.zeros((2, 2)), np.ones((1, 2)), np.ones((2, 1)), scale=True)
 
     def test_canonical_demo_exits_cleanly(self) -> None:
         result = subprocess.run([sys.executable, "main.py"], cwd=CODE, capture_output=True, text=True, check=False)

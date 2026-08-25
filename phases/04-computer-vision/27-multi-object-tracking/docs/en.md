@@ -1,142 +1,66 @@
-# Multi-Object Tracking & Video Memory
+# Multi-Object Tracking: IoU Association and Lifecycle
 
-> Tracking is detection plus association. Detect every frame. Match this frame's detections to last frame's tracks by ID.
+> Match detections to tracks, age missing objects, and measure identity continuity with explicit rules.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 4 Lesson 06 (YOLO Detection), Phase 4 Lesson 08 (Mask R-CNN), Phase 4 Lesson 24 (SAM 3)
-**Time:** ~60 minutes
+**Prerequisites:** 06-object-detection-yolo, 20-image-retrieval-metric
+**Time:** ~40 minutes
 
 ## Learning Objectives
 
-- Distinguish tracking-by-detection from query-based tracking and name the algorithm families (SORT, DeepSORT, ByteTrack, BoT-SORT, SAM 2 memory tracker, SAM 3.1 Object Multiplex)
-- Implement IoU + Hungarian assignment from scratch for classic tracking-by-detection
-- Explain SAM 2's memory bank and why it handles occlusion better than IoU-based association
-- Read the three tracking metrics (MOTA, IDF1, HOTA) and pick which one matters for a given use case
-
-## The Problem
-
-A detector tells you where the objects are in a single frame. A tracker tells you which detection in frame `t` is the same object as a detection in frame `t-1`. Without that, you cannot count objects crossing a line, follow a ball through an occlusion, or know "car #4 has been in the lane for 8 seconds."
-
-Tracking is essential to every video-facing product: sports analytics, surveillance, autonomous driving, medical video analysis, wildlife monitoring, wordmark counting. The core building blocks are shared: a per-frame detector, a motion model (Kalman filter or something richer), an association step (Hungarian algorithm on IoU / cosine / learned features), and a track lifecycle (birth, update, death).
-
-2026 brought two new patterns: **SAM 2 memory-based tracking** (feature-memory instead of motion-model association) and **SAM 3.1 Object Multiplex** (shared memory for many instances of the same concept). This lesson walks the classical stack first, then the memory-based approach.
-
-## The Concept
-
-### Tracking-by-detection
-
-```mermaid
-flowchart LR
-    F1["Frame t"] --> DET["Detector"] --> D1["Detections at t"]
-    PREV["Tracks up to t-1"] --> PREDICT["Motion predict<br/>(Kalman)"]
-    PREDICT --> PRED["Predicted tracks at t"]
-    D1 --> ASSOC["Hungarian assignment<br/>(IoU / cosine / motion)"]
-    PRED --> ASSOC
-    ASSOC --> UPDATE["Update matched tracks"]
-    ASSOC --> NEW["Birth new tracks"]
-    ASSOC --> DEAD["Age unmatched tracks; delete after N"]
-    UPDATE --> NEXT["Tracks at t"]
-    NEW --> NEXT
-    DEAD --> NEXT
-
-    style DET fill:#dbeafe,stroke:#2563eb
-    style ASSOC fill:#fef3c7,stroke:#d97706
-    style NEXT fill:#dcfce7,stroke:#16a34a
-```
-
-Every tracker you will encounter in 2026 is a variation on this loop. The differences:
-
-- **SORT** (2016): Kalman filter + IoU Hungarian. Simple, fast, no appearance model.
-- **DeepSORT** (2017): SORT + a CNN-based appearance feature per track (ReID embedding). Handles crossings better.
-- **ByteTrack** (2021): associates low-confidence detections as a second stage; no appearance features needed but top performer on MOT17.
-- **BoT-SORT** (2022): Byte + camera motion compensation + ReID.
-- **StrongSORT / OC-SORT** — ByteTrack descendants with better motion and appearance.
-
-### Kalman filter in one paragraph
-
-A Kalman filter maintains a per-track state `(x, y, w, h, dx, dy, dw, dh)` with a covariance. At each frame, **predict** the state using a constant-velocity model, then **update** with the matched detection. The update trusts the detection more when the predict uncertainty is high. This gives smooth trajectories and the ability to continue a track through a short occlusion (1-5 frames).
-
-Every classical tracker uses a Kalman filter in the motion-prediction step.
-
-### The Hungarian algorithm
-
-Given a `M x N` cost matrix (tracks x detections), find the one-to-one assignment that minimises total cost. Cost is usually `1 - IoU(track_bbox, detection_bbox)` or negative cosine similarity of appearance features. Runtime is O((M+N)^3); for M, N up to ~1000 it is fast enough in Python via `scipy.optimize.linear_sum_assignment`.
-
-### ByteTrack's key idea
-
-Standard trackers drop low-confidence detections (< 0.5). ByteTrack keeps them around as **second-stage candidates**: after matching tracks to high-confidence detections, unmatched tracks try to match low-confidence detections with a slightly looser IoU threshold. Recovers short occlusions, ID switches near crowds.
-
-### SAM 2 memory-based tracking
-
-SAM 2 handles video by keeping a **memory bank** of per-instance spatio-temporal features. Given a prompt (click, box, text) on one frame, it encodes the instance into memory. On subsequent frames, the memory is cross-attended against the new frame's features, and the decoder produces a mask for the same instance in the new frame.
-
-No Kalman filter, no Hungarian assignment. The association is implicit in the memory-attention operation.
-
-Pros:
-- Robust to large occlusions (memory carries instance identity across many frames).
-- Open-vocabulary when combined with SAM 3's text prompts.
-- Works without a separate motion model.
-
-Cons:
-- Slower than ByteTrack for many-object tracking.
-- Memory bank grows; limits the context window.
-
-### SAM 3.1 Object Multiplex
-
-Prior SAM 2 / SAM 3 tracking keeps a separate memory bank per instance. For 50 objects, 50 memory banks. Object Multiplex (March 2026) collapses them into one shared memory with **per-instance query tokens**. Cost scales sub-linearly in number of instances.
-
-Multiplex is the new default for crowd tracking in 2026: concert crowds, warehouse workers, traffic intersections.
-
-### Three metrics to know
-
-- **MOTA (Multi-Object Tracking Accuracy)** — 1 - (FN + FP + ID switches) / GT. Weighted by error type; a single metric that conflates detection and association failures.
-- **IDF1 (ID F1)** — harmonic mean of ID precision and recall. Focuses specifically on how well each ground-truth track keeps its ID over time. Better than MOTA for ID-switch-sensitive tasks.
-- **HOTA (Higher Order Tracking Accuracy)** — decomposes into detection accuracy (DetA) and association accuracy (AssA). The community standard since 2020; most comprehensive.
-
-For surveillance (who is who): IDF1 is what you report. For sports analytics (counting passes): HOTA. For general academic comparison: HOTA.
-
-
-
+- Compute pairwise IoU for valid half-open `xyxy` boxes.
+- Explain why association maximizes total compatible IoU rather than matching each row greedily.
+- Implement deterministic new-track, update, unmatched, and `max_age` transitions.
+- Distinguish detection errors from identity switches in simple MOT metrics.
+- State the limits of a bounded assignment solver without a motion model.
 
 ## Build It
 
-Reconstruct **Multi-Object Tracking & Video Memory** by following `bbox_iou` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+`bbox_iou` rejects non-finite or zero-area boxes and returns an `(N,M)` matrix; empty detection
+sets produce a correctly shaped zero matrix. `SimpleTracker` accepts a matching only when IoU is at
+least `iou_threshold`. For up to ten tracks/detections, `_assignment` uses a small dynamic program
+to maximize total IoU while permitting unmatched rows; larger matrices use a documented deterministic
+greedy fallback to keep the offline demo bounded.
+
+The lifecycle is intentionally observable: an unmatched detection creates the next positive ID; an
+unmatched existing track remains until `frame-last_frame > max_age`; a matched track increments
+`hits`. Frames must be non-decreasing. There is no Kalman prediction, appearance embedding, or
+occlusion reasoning in this artifact.
+
+```mermaid
+flowchart TD
+  A[Detections at frame t] --> B[Pairwise IoU]
+  B --> C[Global compatible assignment]
+  C --> D[Update matched tracks]
+  C --> E[Create IDs for unmatched detections]
+  C --> F[Age and remove stale tracks]
+```
 
 ## Use It
 
-Call `bbox_iou` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+Run `python3 code/main.py`. The synthetic stream contains moving boxes and controlled dropouts.
+The demo prints active IDs, ID switches, MOTA, and IDF1. These metrics are local fixture measurements;
+they are not a claim about a production tracker or a benchmark leaderboard.
 
 ## Ship It
 
-Hand off `outputs/prompt-tracker-picker.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [SORT (Bewley et al., 2016)](https://arxiv.org/abs/1602.00763) — the minimal tracking-by-detection paper
-- [DeepSORT (Wojke et al., 2017)](https://arxiv.org/abs/1703.07402) — adds appearance feature
-- [ByteTrack (Zhang et al., 2022)](https://arxiv.org/abs/2110.06864) — low-confidence second pass
-- [BoT-SORT (Aharon et al., 2022)](https://arxiv.org/abs/2206.14651) — camera motion compensation
-- [HOTA (Luiten et al., 2020)](https://arxiv.org/abs/2009.07736) — decomposed tracking metric
-- [SAM 2 video segmentation (Meta, 2024)](https://ai.meta.com/sam2/) — memory-based tracker
-- [SAM 3.1 Object Multiplex (Meta, March 2026)](https://ai.meta.com/blog/segment-anything-model-3/)
+Persist each frame's `(track_id, bbox)` output with the frame number. Configure `iou_threshold` and
+`max_age` in the same record: changing either changes when an object receives a new identity. Use
+MOTA/IDF1 only with a declared IoU threshold and ground-truth timeline.
 
 ## Exercises
 
-Use `bbox_iou` as the trace: start from an 8x8 synthetic image, keep the raw output, and tie each observation to a named objective.
-
-1. **Reproduce the reference path.** From `code/`, run `python3 main.py` using an 8x8 synthetic image. Follow `bbox_iou`, `Track`, `update`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **Distinguish tracking-by-detection from query-based tracking and name the algorithm families (SORT, DeepSORT, ByteTrack, BoT-SORT, SAM 2 memory tracker, SAM 3.1 Object Multiplex)**.
-2. **Vary one named input.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Implement IoU + Hungarian assignment from scratch for classic tracking-by-detection** says the other inputs should stay fixed.
-3. **Probe the empty case.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Explain SAM 2's memory bank and why it handles occlusion better than IoU-based association** and record the exception text if the code rejects the case.
-4. **Package a usable handoff.** Open `outputs/prompt-tracker-picker.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **Read the three tracking metrics (MOTA, IDF1, HOTA) and pick which one matters for a given use case**; note what the demo cannot establish.
+1. Compute IoU for identical `0,0,2,2` boxes and for the same box against `3,3,4,4`.
+2. Feed one box at frames `0` and `1`, then a nearby box. Verify the ID remains stable.
+3. Set `max_age=0`, miss one frame, and verify the next detection receives a new ID.
+4. Compare the two possible pairings for IoU matrix `[[.9,.8],[.85,.1]]`; the global sum chooses
+   `.8+.85`, not `.9+.1`.
 
 ## Reference Solution
 
-A checkable result for **Multi-Object Tracking & Video Memory** should contain:
-
-- the `python3 main.py` output for an 8x8 synthetic image, with `bbox_iou`, `Track`, `update` traced to the value or shape that supports **Distinguish tracking-by-detection from query-based tracking and name the algorithm families (SORT, DeepSORT, ByteTrack, BoT-SORT, SAM 2 memory tracker, SAM 3.1 Object Multiplex)**;
-- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Implement IoU + Hungarian assignment from scratch for classic tracking-by-detection**;
-- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Explain SAM 2's memory bank and why it handles occlusion better than IoU-based association**; and
-- an updated `outputs/prompt-tracker-picker.md` example with a concrete input, expected output field, and acceptance check tied to **Read the three tracking metrics (MOTA, IDF1, HOTA) and pick which one matters for a given use case**.
-
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+The identical-box IoU is `1`, and the disjoint-box IoU is `0`. The two-row matrix is globally best
+matched by `(row0,col1)` and `(row1,col0)`, total `1.65`. With `max_age=0`, a missing frame removes
+the old track before the next detection is created. A perfect replay of the ground-truth boxes has
+MOTA and IDF1 equal to `1`; a switch is counted only when the same ground-truth ID is later paired
+with a different tracker ID.

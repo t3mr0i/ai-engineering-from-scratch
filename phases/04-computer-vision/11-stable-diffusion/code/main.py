@@ -71,14 +71,16 @@ def classifier_free_guidance(unconditional: np.ndarray, conditional: np.ndarray,
     uncond, cond = _finite(unconditional, "unconditional"), _finite(conditional, "conditional")
     if uncond.shape != cond.shape or uncond.size == 0:
         raise ValueError("unconditional and conditional predictions must share a non-empty shape")
-    if not isinstance(guidance_scale, Real) or not np.isfinite(guidance_scale) or guidance_scale < 0:
+    if isinstance(guidance_scale, (bool, np.bool_)) or not isinstance(guidance_scale, Real) or not np.isfinite(guidance_scale) or guidance_scale < 0:
         raise ValueError("guidance_scale must be finite and non-negative")
     return uncond + float(guidance_scale) * (cond - uncond)
 
 
 def scheduler_sigmas(num_steps: int, start: float = 1.0, end: float = 0.01) -> np.ndarray:
     num_steps = _positive_int(num_steps, "num_steps")
-    if not all(isinstance(v, Real) and np.isfinite(v) for v in (start, end)) or not 0 < end <= start:
+    if num_steps < 2:
+        raise ValueError("num_steps must be at least 2 to include both endpoints")
+    if any(isinstance(v, (bool, np.bool_)) for v in (start, end)) or not all(isinstance(v, Real) and np.isfinite(v) for v in (start, end)) or not 0 < end <= start:
         raise ValueError("scheduler sigmas require finite 0 < end <= start")
     return np.linspace(float(start), float(end), num_steps)
 
@@ -86,9 +88,12 @@ def scheduler_sigmas(num_steps: int, start: float = 1.0, end: float = 0.01) -> n
 def lora_update(base: np.ndarray, down: np.ndarray, up: np.ndarray, scale: float = 1.0) -> np.ndarray:
     weights = _finite(base, "base")
     lower, upper = _finite(down, "down"), _finite(up, "up")
-    if weights.ndim != 2 or lower.ndim != 2 or upper.ndim != 2 or lower.shape[1] != weights.shape[1] or upper.shape[0] != weights.shape[0] or upper.shape[1] != lower.shape[0]:
+    if (weights.ndim != 2 or lower.ndim != 2 or upper.ndim != 2 or
+            0 in weights.shape or 0 in lower.shape or 0 in upper.shape or
+            lower.shape[1] != weights.shape[1] or upper.shape[0] != weights.shape[0] or
+            upper.shape[1] != lower.shape[0]):
         raise ValueError("base, down, and up have incompatible 2-D LoRA shapes")
-    if not isinstance(scale, Real) or not np.isfinite(scale):
+    if isinstance(scale, (bool, np.bool_)) or not isinstance(scale, Real) or not np.isfinite(scale):
         raise ValueError("scale must be finite")
     return weights + float(scale) * (upper @ lower)
 

@@ -45,7 +45,9 @@ def sample_ray_points(
     if ray_origins.shape != ray_directions.shape or ray_origins.ndim != 2 or ray_origins.shape[1] != 3 or ray_origins.shape[0] == 0:
         raise ValueError("origins and directions must have matching non-empty (R,3) shapes")
     n_samples = _positive_int(n_samples, "n_samples")
-    if not all(isinstance(v, Real) and np.isfinite(v) for v in (near, far)) or near < 0 or far <= near:
+    if n_samples < 2:
+        raise ValueError("n_samples must be at least 2 to include near and far")
+    if any(isinstance(v, (bool, np.bool_)) for v in (near, far)) or not all(isinstance(v, Real) and np.isfinite(v) for v in (near, far)) or near < 0 or far <= near:
         raise ValueError("near and far must be finite with 0 <= near < far")
     t_vals = np.linspace(float(near), float(far), n_samples, dtype=np.float64)
     points = ray_origins[:, None, :] + ray_directions[:, None, :] * t_vals[None, :, None]
@@ -69,7 +71,10 @@ def volume_render(
     deltas = np.diff(depths)
     deltas = np.concatenate((deltas, deltas[-1:]))
     alpha = 1.0 - np.exp(-density * deltas)
-    transmittance = np.cumprod(np.concatenate((np.ones(density.shape[:-1] + (1,)), 1.0 - alpha + 1e-12), axis=-1), axis=-1)[..., :-1]
+    transmittance = np.cumprod(
+        np.concatenate((np.ones(density.shape[:-1] + (1,)), 1.0 - alpha), axis=-1),
+        axis=-1,
+    )[..., :-1]
     weights = alpha * transmittance
     rendered = np.sum(weights[..., None] * colors, axis=-2)
     depth = np.sum(weights * depths, axis=-1)

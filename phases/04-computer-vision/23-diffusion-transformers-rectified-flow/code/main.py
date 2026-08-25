@@ -1,158 +1,144 @@
+"""NumPy-first patch tokens and rectified-flow equations."""
+
+# Build-It implementation for phases/04-computer-vision/23-diffusion-transformers-rectified-flow.
+# It makes patch geometry and the straight interpolation path observable offline.
+# A transformer or checkpoint is an optional Use-It implementation, not required here.
+# Run from this directory with: python3 main.py
+
+from __future__ import annotations
+
 import math
+from typing import Callable
+
 import numpy as np
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
 
 
-def timestep_embedding(t, dim):
+def _finite(value: object, *, name: str, ndim: int | None = None) -> np.ndarray:
+    arr = np.asarray(value, dtype=np.float64)
+    if ndim is not None and arr.ndim != ndim:
+        raise ValueError(f"{name} must have {ndim} dimensions")
+    if arr.size == 0 or not np.all(np.isfinite(arr)):
+        raise ValueError(f"{name} must be non-empty and finite")
+    return arr
+
+
+def _positive_int(value: object, *, name: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, (int, np.integer)) or value <= 0:
+        raise ValueError(f"{name} must be a positive integer")
+    return int(value)
+
+
+def timestep_embedding(t: object, dim: int) -> np.ndarray:
+    """Return sinusoidal embeddings with shape ``(batch, dim)``."""
+    dim = _positive_int(dim, name="dim")
+    if dim % 2:
+        raise ValueError("dim must be even")
+    times = _finite(t, name="t", ndim=1)
     half = dim // 2
-    freqs = torch.exp(-math.log(10000) * torch.arange(half, device=t.device) / half)
-    args = t[:, None].float() * freqs[None]
-    return torch.cat([args.sin(), args.cos()], dim=-1)
+    frequencies = np.exp(-math.log(10000.0) * np.arange(half, dtype=np.float64) / half)
+    arguments = times[:, None] * frequencies[None, :]
+    return np.concatenate((np.sin(arguments), np.cos(arguments)), axis=1)
 
 
-class AdaLNZero(nn.Module):
-    def __init__(self, dim, cond_dim):
-        super().__init__()
-        self.norm = nn.LayerNorm(dim, elementwise_affine=False)
-        self.mlp = nn.Linear(cond_dim, dim * 3)
-        nn.init.zeros_(self.mlp.weight)
-        nn.init.zeros_(self.mlp.bias)
-
-    def forward(self, x, cond):
-        scale, shift, gate = self.mlp(cond).chunk(3, dim=-1)
-        h = self.norm(x) * (1 + scale.unsqueeze(1)) + shift.unsqueeze(1)
-        return h, gate.unsqueeze(1)
+def patchify(image: object, patch_size: int = 2) -> np.ndarray:
+    """Convert NCHW images into ``(N, patches, C*patch_size**2)`` tokens."""
+    image_arr = _finite(image, name="image", ndim=4)
+    patch_size = _positive_int(patch_size, name="patch_size")
+    n, channels, height, width = image_arr.shape
+    if height % patch_size or width % patch_size:
+        raise ValueError("image height and width must be divisible by patch_size")
+    rows, cols = height // patch_size, width // patch_size
+    tokens = image_arr.reshape(n, channels, rows, patch_size, cols, patch_size)
+    return tokens.transpose(0, 2, 4, 1, 3, 5).reshape(n, rows * cols, channels * patch_size * patch_size)
 
 
-class DiTBlock(nn.Module):
-    def __init__(self, dim=96, heads=3, mlp_ratio=4, cond_dim=96):
-        super().__init__()
-        self.adaln1 = AdaLNZero(dim, cond_dim)
-        self.attn = nn.MultiheadAttention(dim, heads, batch_first=True)
-        self.adaln2 = AdaLNZero(dim, cond_dim)
-        self.mlp = nn.Sequential(
-            nn.Linear(dim, dim * mlp_ratio),
-            nn.GELU(),
-            nn.Linear(dim * mlp_ratio, dim),
-        )
-
-    def forward(self, x, cond):
-        h, gate1 = self.adaln1(x, cond)
-        a, _ = self.attn(h, h, h, need_weights=False)
-        x = x + gate1 * a
-        h, gate2 = self.adaln2(x, cond)
-        x = x + gate2 * self.mlp(h)
-        return x
+def unpatchify(tokens: object, image_shape: tuple[int, int, int, int], patch_size: int = 2) -> np.ndarray:
+    """Invert :func:`patchify` for a known NCHW image shape."""
+    token_arr = _finite(tokens, name="tokens", ndim=3)
+    patch_size = _positive_int(patch_size, name="patch_size")
+    if not isinstance(image_shape, tuple) or len(image_shape) != 4:
+        raise ValueError("image_shape must be (N, C, H, W)")
+    n, channels, height, width = image_shape
+    if any(isinstance(value, bool) or not isinstance(value, (int, np.integer)) or value <= 0 for value in image_shape):
+        raise ValueError("image_shape dimensions must be positive integers")
+    rows, cols = height // patch_size, width // patch_size
+    if height % patch_size or width % patch_size or token_arr.shape != (n, rows * cols, channels * patch_size * patch_size):
+        raise ValueError("tokens do not match image_shape and patch_size")
+    return token_arr.reshape(n, rows, cols, channels, patch_size, patch_size).transpose(0, 3, 1, 4, 2, 5).reshape(image_shape)
 
 
-class TinyDiT(nn.Module):
-    def __init__(self, image_size=16, patch_size=2, in_channels=3, dim=96, depth=4, heads=3):
-        super().__init__()
-        self.patch_size = patch_size
-        self.image_size = image_size
-        self.num_patches = (image_size // patch_size) ** 2
-        self.in_channels = in_channels
-        self.patch = nn.Conv2d(in_channels, dim, kernel_size=patch_size, stride=patch_size)
-        self.pos = nn.Parameter(torch.zeros(1, self.num_patches, dim))
-        self.time_mlp = nn.Sequential(
-            nn.Linear(dim, dim * 2),
-            nn.SiLU(),
-            nn.Linear(dim * 2, dim),
-        )
-        self.blocks = nn.ModuleList([DiTBlock(dim, heads, cond_dim=dim) for _ in range(depth)])
-        self.norm_out = nn.LayerNorm(dim, elementwise_affine=False)
-        self.head = nn.Linear(dim, patch_size * patch_size * in_channels)
-        nn.init.trunc_normal_(self.pos, std=0.02)
-
-    def forward(self, x, t):
-        n = x.size(0)
-        x = self.patch(x)
-        x = x.flatten(2).transpose(1, 2) + self.pos
-        t_emb = self.time_mlp(timestep_embedding(t, self.pos.size(-1)))
-        for blk in self.blocks:
-            x = blk(x, t_emb)
-        x = self.norm_out(x)
-        x = self.head(x)
-        return self._unpatchify(x, n)
-
-    def _unpatchify(self, x, n):
-        p = self.patch_size
-        h = w = int(self.num_patches ** 0.5)
-        x = x.view(n, h, w, p, p, self.in_channels).permute(0, 5, 1, 3, 2, 4)
-        x = x.reshape(n, self.in_channels, h * p, w * p)
-        return x
+def rectified_flow_path(x0: object, noise: object, t: object) -> tuple[np.ndarray, np.ndarray]:
+    """Return ``x_t=(1-t)x0+t noise`` and its constant velocity ``noise-x0``."""
+    start = _finite(x0, name="x0")
+    endpoint = _finite(noise, name="noise")
+    if start.shape != endpoint.shape or start.ndim < 1:
+        raise ValueError("x0 and noise must have the same non-empty shape")
+    times = np.asarray(t, dtype=np.float64)
+    if times.ndim == 0:
+        times = np.full((start.shape[0],), float(times))
+    if times.ndim != 1 or times.shape[0] != start.shape[0] or not np.all(np.isfinite(times)):
+        raise ValueError("t must be one finite value per batch item")
+    if np.any((times < 0.0) | (times > 1.0)):
+        raise ValueError("t must lie in [0, 1]")
+    weights = times.reshape((times.shape[0],) + (1,) * (start.ndim - 1))
+    point = (1.0 - weights) * start + weights * endpoint
+    velocity = endpoint - start
+    if not np.all(np.isfinite(point)) or not np.all(np.isfinite(velocity)):
+        raise ValueError("flow calculation produced a non-finite value")
+    return point, velocity
 
 
-def rectified_flow_train_step(model, x0, optimizer, device):
-    model.train()
-    x0 = x0.to(device)
-    n = x0.size(0)
-    t = torch.rand(n, device=device)
-    epsilon = torch.randn_like(x0)
-    x_t = (1 - t[:, None, None, None]) * x0 + t[:, None, None, None] * epsilon
-    target_v = epsilon - x0
-    pred_v = model(x_t, t)
-    loss = F.mse_loss(pred_v, target_v)
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
-    return loss.item()
-
-
-@torch.no_grad()
-def rectified_flow_sample(model, shape, steps=20, device="cpu"):
-    model.eval()
-    x = torch.randn(shape, device=device)
+def euler_reverse_sample(
+    x1: object,
+    velocity_fn: Callable[[float, np.ndarray], np.ndarray],
+    steps: int = 20,
+) -> np.ndarray:
+    """Integrate a velocity field from ``t=1`` to ``t=0`` with explicit Euler."""
+    state = _finite(x1, name="x1").copy()
+    steps = _positive_int(steps, name="steps")
     dt = 1.0 / steps
-    t = torch.ones(shape[0], device=device)
-    for _ in range(steps):
-        v = model(x, t)
-        x = x - dt * v
-        t = t - dt
-    return x
+    for index in range(steps):
+        time = 1.0 - index * dt
+        velocity = _finite(velocity_fn(time, state), name="velocity")
+        if velocity.shape != state.shape:
+            raise ValueError("velocity_fn must preserve the state shape")
+        state -= dt * velocity
+    if not np.all(np.isfinite(state)):
+        raise ValueError("Euler integration produced a non-finite sample")
+    return state
 
 
-def synthetic_blobs(num=200, size=16, seed=0):
+def synthetic_blobs(num: int = 32, size: int = 16, seed: int = 0) -> np.ndarray:
+    """Make deterministic RGB blob images in ``[-1, 1]`` for a local fixture."""
+    num = _positive_int(num, name="num")
+    size = _positive_int(size, name="size")
+    if size < 8:
+        raise ValueError("size must be at least 8 so a blob has room")
     rng = np.random.default_rng(seed)
-    out = np.zeros((num, 3, size, size), dtype=np.float32)
+    output = np.zeros((num, 3, size, size), dtype=np.float64)
     yy, xx = np.meshgrid(np.arange(size), np.arange(size), indexing="ij")
-    for i in range(num):
-        cx, cy = rng.uniform(4, size - 4, size=2)
-        r = rng.uniform(2, 4)
-        mask = (xx - cx) ** 2 + (yy - cy) ** 2 < r ** 2
-        colour = rng.uniform(-1, 1, size=3)
-        for c in range(3):
-            out[i, c][mask] = colour[c]
-    return torch.from_numpy(out)
+    for index in range(num):
+        cx, cy = rng.uniform(3.0, size - 3.0, size=2)
+        radius = rng.uniform(1.5, min(4.0, size / 3.0))
+        colour = rng.uniform(-1.0, 1.0, size=3)
+        mask = (xx - cx) ** 2 + (yy - cy) ** 2 <= radius * radius
+        output[index, :, mask] = colour[None, :]
+    return output
 
 
-def main():
-    torch.manual_seed(0)
-    device = "cpu"
-    data = synthetic_blobs(num=128, size=16)
-    print(f"data shape: {tuple(data.shape)}")
-
-    model = TinyDiT(image_size=16, patch_size=2, in_channels=3, dim=96, depth=4, heads=3).to(device)
-    print(f"params: {sum(p.numel() for p in model.parameters()):,}")
-
-    opt = torch.optim.Adam(model.parameters(), lr=3e-4)
-
-    batch = 32
-    for step in range(300):
-        idx = np.random.choice(len(data), batch)
-        x0 = data[idx]
-        loss = rectified_flow_train_step(model, x0, opt, device)
-        if step % 50 == 0:
-            print(f"step {step:3d}  rf_mse {loss:.4f}")
-
-    print("\n[sample] steps=20")
-    s20 = rectified_flow_sample(model, (4, 3, 16, 16), steps=20, device=device)
-    print(f"  samples range [{s20.min():.2f}, {s20.max():.2f}]  shape {tuple(s20.shape)}")
-    print("[sample] steps=4 (schnell-like)")
-    s4 = rectified_flow_sample(model, (4, 3, 16, 16), steps=4, device=device)
-    print(f"  samples range [{s4.min():.2f}, {s4.max():.2f}]  shape {tuple(s4.shape)}")
+def main() -> None:
+    images = synthetic_blobs(num=4, size=16, seed=7)
+    tokens = patchify(images, patch_size=2)
+    restored = unpatchify(tokens, images.shape, patch_size=2)
+    x0 = np.zeros((2, 3), dtype=np.float64)
+    noise = np.ones_like(x0)
+    point, velocity = rectified_flow_path(x0, noise, np.array([0.25, 0.75]))
+    sampled = euler_reverse_sample(noise, lambda _t, _x: np.ones_like(_x), steps=4)
+    print("[DiT/rectified-flow Build-It]")
+    print(f"blob fixture={images.shape} patch tokens={tokens.shape} roundtrip_max={np.max(np.abs(restored - images)):.1e}")
+    print(f"path t=[.25,.75] values={point[:, 0].round(3).tolist()} velocity={velocity[0, 0]:.1f}")
+    print(f"reverse Euler constant field steps=4 final={sampled[0, 0]:.3f}")
+    print(f"time embedding shape={timestep_embedding(np.array([0.0, 0.5]), 8).shape}")
 
 
 if __name__ == "__main__":

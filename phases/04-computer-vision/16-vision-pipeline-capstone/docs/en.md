@@ -1,134 +1,94 @@
 # Build a Complete Vision Pipeline — Capstone
 
-> A production vision system is a chain of models and rules stitched with data contracts. The pieces are already in this phase; the capstone wires them together end-to-end.
+> A pipeline is a sequence of contracts: pixels become a tensor, boxes become crops, and predictions become validated JSON.
 
 **Type:** Build
 **Languages:** Python
-**Prerequisites:** Phase 4 Lessons 01-15
-**Time:** ~120 minutes
+**Prerequisites:** Phase 4 Lessons 01–15
+**Time:** ~75 minutes
 
 ## Learning Objectives
 
-- Design a production vision pipeline that detects objects, classifies them, and emits structured JSON — with every failure path handled
-- Plug a detector (Mask R-CNN or YOLO), a classifier (ConvNeXt-Tiny), and a data contract (Pydantic) into one service
-- Benchmark the end-to-end pipeline and identify the first bottleneck (usually preprocessing, then the detector)
-- Ship a minimal FastAPI service that accepts an image upload, runs the pipeline, and returns detections with classifications
+- Validate an RGB input and convert HWC `uint8` pixels into a CHW tensor in `[0,1]`.
+- Run the complete detector/crop/classifier seam with NumPy before introducing a framework.
+- Preserve detector box coordinates while clamping them to the image before cropping.
+- Skip crops below a declared `min_crop` without losing the original detection record.
+- Encode detections, classifications, and timing as a deterministic dataclass-based JSON contract.
+- Benchmark preprocessing, detection, classification, and total time without hiding an empty-crop path.
 
 ## The Problem
 
-Individual vision models are useful; vision products are chains of them. A retail shelf audit is a detector plus a product classifier plus a price-OCR pipeline. Autonomous driving is a 2D detector plus a 3D detector plus a segmenter plus a tracker plus a planner. A medical pre-screen is a segmenter plus a region classifier plus a clinician UI.
-
-Wiring those chains is the part that separates a ML prototype from a product. Every interface between models is a new place for bugs. Every coordinate transform, every normalisation, every mask resize is a silent-failure candidate. A pipeline is as strong as its weakest interface.
-
-This capstone sets up the minimum viable pipeline: detection + classification + structured output + a serving layer. Everything else in Phase 4 slots into this skeleton: swap Mask R-CNN for YOLOv8, add a OCR head, add a segmentation branch, add a tracker. The architecture is stable; the pieces are pluggable.
-
-## The Concept
-
-### The pipeline
-
-```mermaid
-flowchart LR
-    REQ["HTTP request<br/>+ image bytes"] --> LOAD["Decode<br/>+ preprocess"]
-    LOAD --> DET["Detector<br/>(YOLO / Mask R-CNN)"]
-    DET --> CROP["Crop + resize<br/>each detection"]
-    CROP --> CLS["Classifier<br/>(ConvNeXt-Tiny)"]
-    CLS --> AGG["Aggregate<br/>detections + classes"]
-    AGG --> SCHEMA["Pydantic<br/>validation"]
-    SCHEMA --> RESP["JSON response"]
-
-    REQ -.->|error| RESP
-
-    style DET fill:#fef3c7,stroke:#d97706
-    style CLS fill:#dbeafe,stroke:#2563eb
-    style SCHEMA fill:#dcfce7,stroke:#16a34a
-```
-
-Seven stages. The two model stages are expensive; the five other stages are where the bugs live.
-
-### Data contracts with Pydantic
-
-Every model boundary becomes a typed object. This turns silent failures into loud ones.
-
-```
-Detection(
-    box: tuple[float, float, float, float],   # (x1, y1, x2, y2), absolute pixels
-    score: float,                              # [0, 1]
-    class_id: int,                             # from detector's label map
-    mask: Optional[list[list[int]]],           # RLE-encoded if present
-)
-
-PipelineResult(
-    image_id: str,
-    detections: list[Detection],
-    classifications: list[Classification],
-    inference_ms: float,
-)
-```
-
-When a detector returns boxes in `(cx, cy, w, h)` instead of `(x1, y1, x2, y2)`, Pydantic's validation fails at the boundary and you find out immediately instead of debugging a downstream crop that silently returns empty regions.
-
-### Where latency goes
-
-Three truths hold in nearly every vision pipeline:
-
-1. **Preprocessing is often the biggest single block.** Decoding JPEGs, converting colour spaces, resizing — these are CPU-bound and easy to forget.
-2. **The detector dominates GPU time.** 70-90% of GPU time is in the detection forward pass.
-3. **Postprocessing (NMS, RLE encode/decode) is cheap on GPU, expensive on CPU.** Always profile with the actual target.
-
-Knowing the distribution is what turns optimisation into a prioritised list.
-
-### Failure modes
-
-- **Empty detections** — return empty list, do not crash. Log.
-- **Out-of-bounds boxes** — clamp to image size before cropping.
-- **Tiny crops** — skip classification for boxes smaller than the classifier's minimum input.
-- **Corrupt upload** — 400 response with a specific error code, not 500.
-- **Model load failure** — fail at service startup, not at first request.
-
-A production pipeline handles each of these without writing generic `try/except` that hides the failure. Every failure gets a named code and a response.
-
-### Batching
-
-A production service serves multiple clients. Batching detections and classifications across requests multiplies throughput. The trade-off: extra latency from waiting for a batch to fill. Typical setup: collect requests for up to 20ms, batch together, process, distribute responses. `torchserve` and `triton` do this natively; small services with predictable load roll their own micro-batcher.
-
-
-
+Model demos often stop at a tensor. A usable vision service needs to state what happens at every boundary: malformed pixels, an out-of-bounds box, a crop too small for a classifier, an unknown class ID, and an image with no usable crops. The local capstone makes those decisions inspectable without downloading weights or importing a service framework.
 
 ## Build It
 
-Reconstruct **Build a Complete Vision Pipeline — Capstone** by following `Detection` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
+`numpy_pipeline` is the Build-It path. `numpy_preprocess` converts HWC pixels to CHW floats, `numpy_detect` emits three deterministic boxes with scores `[0.92, 0.85, 0.71]`, and `numpy_classify_crop` turns channel means into a small softmax-like class score. The same detector/crop policy is exposed through `VisionPipeline` and `StubClassifier` for the optional Torch Use-It path. Both paths return the dataclasses `Detection`, `Classification`, and `PipelineResult`. `run` clamps every box to the `(H,W)` image boundary, records it, and only resizes crops whose integer width and height meet `min_crop` (16 by default). Classifications retain the detector index so a downstream consumer can join the two lists.
+
+The Python standard library supplies JSON serialization and NumPy supplies the executable Build-It fixture. PyTorch supplies only the optional tensor Use-It path. The canonical command is bounded and still computes the NumPy pipeline when PyTorch is not installed:
+
+```bash
+cd phases/04-computer-vision/16-vision-pipeline-capstone/code
+python3 main.py
+```
+
+The output reports three detections, three accepted classifications at the default gate, and the four `PipelineResult` JSON fields. It is a local fixture result, not evidence that a particular detector or classifier is production-ready.
+
+```mermaid
+flowchart LR
+    A["HxWx3 uint8"] --> B["preprocess -> 3xHxW float"]
+    B --> C["detector boxes / scores / labels"]
+    C --> D["clamp + min_crop gate"]
+    D --> E["resize accepted crops"]
+    E --> F["classifier probabilities"]
+    C --> G["Detection records"]
+    F --> H["PipelineResult JSON"]
+    G --> H
+```
 
 ## Use It
 
-Call `Detection` from a small caller with an 8x8 synthetic image. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+The framework-free call is enough to inspect the full contract:
+
+```python
+import numpy as np
+from main import numpy_pipeline
+
+result = numpy_pipeline(np.zeros((64, 96, 3), dtype=np.uint8), image_id="camera-0001")
+print(result.to_json())
+```
+
+When PyTorch is available, compare that output with the optional `VisionPipeline` implementation:
+
+```python
+import numpy as np
+from main import StubClassifier, StubDetector, VisionPipeline
+
+pipe = VisionPipeline(StubDetector(), StubClassifier(), [f"class_{i}" for i in range(10)])
+result = pipe.run(np.zeros((64, 96, 3), dtype=np.uint8), image_id="camera-0001")
+print(result.to_json())
+```
+
+Try a float image in `[0,1]`, an HWC array with two channels, and a tensor containing `2.0`. Only the first two valid representations are accepted; the failures are explicit rather than silent normalization changes. Set `min_crop=40` to observe three detection records and no classifications.
+
+`benchmark` returns p50/p95 for `preprocess`, `detect`, `classify`, and `total` on the Torch path. The stage numbers are observations on the current machine and should be compared only under the same fixture and shape.
 
 ## Ship It
 
-Hand off `outputs/prompt-vision-service-shape-reviewer.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
-
-## Further Reading
-
-- [Full Stack Deep Learning — Deploying Models](https://fullstackdeeplearning.com/course/2022/lecture-5-deployment/) — the canonical overview of production ML deployment
-- [BentoML docs](https://docs.bentoml.com) — serving framework with batching, versioning, and metrics
-- [torchserve docs](https://pytorch.org/serve/) — PyTorch's official serving library
-- [NVIDIA Triton Inference Server](https://developer.nvidia.com/triton-inference-server) — high-throughput serving with batching and multi-model support
+Use `outputs/prompt-vision-service-shape-reviewer.md` to review a future service at the same boundaries. Use `outputs/skill-pipeline-budget-planner.md` to assign a p95 budget only after measuring the real target. A web endpoint, JPEG decoder, and model-serving runtime are integration layers outside this stdlib/NumPy/PyTorch lesson; do not represent them as implemented here.
 
 ## Exercises
 
-This lab follows `Detection` and `Classification` on a controlled fixture; write down the value before changing the input.
-
-1. **Trace the canonical fixture.** From `code/`, run `python3 main.py` using an 8x8 synthetic image. Follow `Detection`, `Classification`, `PipelineResult`. Expect the reported height/width or feature-map shape changes predictably, without inventing pixels; capture the first printed shape, metric, status, or summary field and state which part supports **Design a production vision pipeline that detects objects, classifies them, and emits structured JSON — with every failure path handled**.
-2. **Change the controlled parameter.** Repeat the command after changing only the center-pixel value: use the same image with one bright center pixel. Predict the direction of the change, then compare the two output values. Explain why **Plug a detector (Mask R-CNN or YOLO), a classifier (ConvNeXt-Tiny), and a data contract (Pydantic) into one service** says the other inputs should stay fixed.
-3. **Exercise the guard.** Feed the implementation a 1x1 image with all values zero. Before running it, write down whether the relevant function should return an empty value, a zero-sized result, or a validation error. Check the observed status against **Benchmark the end-to-end pipeline and identify the first bottleneck (usually preprocessing, then the detector)** and record the exception text if the code rejects the case.
-4. **Prepare the artifact for reuse.** Open `outputs/prompt-vision-service-shape-reviewer.md` and add a worked example using an 8x8 synthetic image. Include the input contract, one expected output field, and a named acceptance check for **Ship a minimal FastAPI service that accepts an image upload, runs the pipeline, and returns detections with classifications**; note what the demo cannot establish.
+1. Run the canonical command and validate the JSON with `json.loads`. Check that every detection box has positive width/height and lies within `96×64`.
+2. Run with `min_crop=40`. Explain why the detections remain present while classifications become an empty list.
+3. Pass a float HWC array containing `0.5` and verify the tensor contains `0.5`; then pass a float value outside `[0,1]` and record the `ValueError`.
+4. Call `benchmark(pipe, num_runs=2, image_size=(16,20))`. Record all four stage keys and explain why total time is not the sum of independently measured medians.
+5. Create a `Detection((1,2,1,4),0.5,0)` and a score of `1.1`; both must fail the dataclass contract.
 
 ## Reference Solution
 
-A checkable result for **Build a Complete Vision Pipeline — Capstone** should contain:
+The NumPy reference run emits three clamped detection records and three classifications. With the default `min_crop=16`, each fixture box is large enough to produce a classification; with `min_crop=40`, no crop qualifies but the detection list is unchanged. `PipelineResult.to_json()` contains exactly the four top-level fields. The optional Torch benchmark exposes four stage names and finite non-negative p50/p95 values. Malformed shape, range, score, and box inputs fail before a response is serialized.
 
-- the `python3 main.py` output for an 8x8 synthetic image, with `Detection`, `Classification`, `PipelineResult` traced to the value or shape that supports **Design a production vision pipeline that detects objects, classifies them, and emits structured JSON — with every failure path handled**;
-- a before/after comparison for the center-pixel value, where the same image with one bright center pixel changes the observation in the direction predicted by **Plug a detector (Mask R-CNN or YOLO), a classifier (ConvNeXt-Tiny), and a data contract (Pydantic) into one service**;
-- a recorded result for a 1x1 image with all values zero that matches the implementation’s validation or empty-result contract and explains the evidence for **Benchmark the end-to-end pipeline and identify the first bottleneck (usually preprocessing, then the detector)**; and
-- an updated `outputs/prompt-vision-service-shape-reviewer.md` example with a concrete input, expected output field, and acceptance check tied to **Ship a minimal FastAPI service that accepts an image upload, runs the pipeline, and returns detections with classifications**.
+## Further Reading
 
-Run the lesson tests after the demo. If the boundary behaves differently from the prediction, keep the actual exception or output and explain the implementation path that produced it.
+- [PyTorch `interpolate`](https://pytorch.org/docs/stable/generated/torch.nn.functional.interpolate.html) — the resize operation used for accepted crops.
+- [Python `dataclasses`](https://docs.python.org/3/library/dataclasses.html) — the stdlib record type used instead of a validation framework.

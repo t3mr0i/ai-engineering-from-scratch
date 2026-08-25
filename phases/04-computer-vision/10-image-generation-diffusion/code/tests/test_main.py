@@ -26,6 +26,8 @@ class DiffusionTests(unittest.TestCase):
         self.assertTrue(np.all((betas > 0) & (betas < 1)))
         with self.assertRaises(ValueError):
             diffusion.linear_beta_schedule(1)
+        with self.assertRaises(ValueError):
+            diffusion.linear_beta_schedule(2, beta_start=True, beta_end=0.2)
 
     def test_precomputed_alpha_bar_decreases(self) -> None:
         alpha_bar = self.schedule["alpha_bar"]
@@ -63,6 +65,9 @@ class DiffusionTests(unittest.TestCase):
         np.testing.assert_array_equal(first, second)
         with self.assertRaises(ValueError):
             diffusion.ddim_step(x, 2, 8, eps, self.schedule)
+        for invalid_eta in (0.1, True, np.nan):
+            with self.assertRaises(ValueError):
+                diffusion.ddim_step(x, 8, 2, eps, self.schedule, eta=invalid_eta)
 
     def test_timestep_embedding_and_fixture_are_reproducible(self) -> None:
         embedding = diffusion.timestep_embedding(np.array([0, 2, 4]), dim=7)

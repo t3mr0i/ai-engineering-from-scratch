@@ -20,6 +20,7 @@ It checks tensor geometry and attention rows; it does not claim model quality.
 - After projection, require `tokens.shape == (N, T+1, D)` when a `[CLS]` token
   is used.
 - Require `D % num_heads == 0` and record `head_dim = D / num_heads`.
+- Require a non-empty head and a non-boolean integer softmax axis in range.
 - Check every attention row sums to one and every masked query retains a key.
 
 ## Example record
