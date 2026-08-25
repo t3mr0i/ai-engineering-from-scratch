@@ -19,7 +19,7 @@
       "question": "For a 4.7 GB model on the 60 GB/s Apple A18 row, what ceiling is approximately implied?",
       "options": [
         "60 tok/s",
-        "About 12.8 tok/s",
+        "12.8 tok/s",
         "4.7 tok/s",
         "About 282 tok/s"
       ],
@@ -45,7 +45,7 @@
         "GGUF Q4 without conversion",
         "NVFP4 weights with FP8 KV",
         "BF16 only",
-        "Q4 MLC q4f16_1 with compiled WebGPU artifacts"
+        "Q4 MLC (q4f16_1)"
       ],
       "correct": 3,
       "explanation": "The table specifies Q4 MLC q4f16_1 and a compiled wasm path; GGUF is explicitly not the WebGPU artifact in this lesson."
@@ -54,7 +54,7 @@
       "stage": "post",
       "question": "Which browser support gap is called out for 2026?",
       "options": [
-        "Firefox Android is still catching up while Safari iOS 26 is GA",
+        "Firefox Android lagging"
         "Chrome Android cannot use WebGPU at all",
         "Safari iOS 26 has no WebGPU landing",
         "WebLLM works only on desktop Firefox"
@@ -67,7 +67,7 @@
       "question": "Why does the lesson call edge decode memory-bandwidth-bound?",
       "options": [
         "The model reads no weights during decode",
-        "Mobile DRAM bandwidth is roughly 30–50× below datacenter HBM3",
+        "Mobile DRAM is 30–50× slower"
         "TOPS is always zero on mobile NPUs",
         "Network RTT dominates even when the model is local"
       ],

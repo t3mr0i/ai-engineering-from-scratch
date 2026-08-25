@@ -215,6 +215,16 @@
   --shadow-lg:       0 14px 40px rgba(5, 22, 77, 0.12);
   --shadow-focus:    0 0 0 3px rgba(45, 95, 228, 0.30);
 
+  /* ── Interactive cards ─────────────────────────────────────────
+     One interaction vocabulary for every clickable card family. */
+  --card-hover-lift:        -3px;
+  --card-hover-border:      var(--action-accent);
+  --card-hover-shadow:      var(--shadow-lg);
+  --card-hover-wash-strong: rgba(45, 95, 228, 0.11);
+  --card-hover-wash-soft:   rgba(45, 95, 228, 0.045);
+  --card-icon-hover-lift:   -2px;
+  --card-action-shift:      2px;
+
   /* ── Motion — calm, no bounce ─────────────────────────────────── */
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-out:      cubic-bezier(0.16, 1, 0.3, 1);

@@ -21,7 +21,7 @@
         "51.2 KB",
         "5.12 GB",
         "512 GB",
-        "0.512 GB of KV data (about 5.12 ms at 100 GB/s)"
+        "0.512 GB KV"
       ],
       "correct": 3,
       "explanation": "4,096 × 125,000 bytes = 512,000,000 bytes = 0.512 GB; at 100 GB/s the transfer takes about 5.12 ms."
@@ -43,7 +43,7 @@
       "question": "Why is TCP transfer slower than the NIXL RDMA path in ms_disaggregated?",
       "options": [
         "TCP skips the KV transfer entirely",
-        "NIXL_TCP_GB_S is 10 versus NIXL_RDMA_GB_S of 100",
+        "TCP 10 GB/s vs RDMA 100",
         "RDMA adds a second prefill pass",
         "TCP uses a larger decode GPU"
       ],
@@ -56,7 +56,7 @@
       "options": [
         "Only for zero output tokens",
         "Only when TCP is slower than RDMA",
-        "At longer prompts, when faster decode can outweigh KV-transfer overhead",
+        "Longer prompts favor disaggregation"
         "When prompt length is removed from prefill"
       ],
       "correct": 2,

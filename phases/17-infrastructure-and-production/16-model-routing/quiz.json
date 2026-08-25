@@ -8,7 +8,7 @@
       "options": [
         "The request is rejected as too difficult",
         "The cheapest model is always selected",
-        "The request is pinned to the frontier model",
+        "Similarity ≥ 0.88 pins frontier"
         "The threshold is ignored until after a random retry"
       ],
       "correct": 2,
@@ -56,7 +56,7 @@
       "options": [
         "It calls the frontier model first and discards its answer",
         "It sends every query to both models concurrently",
-        "It pays for the cheap model first, then escalates when confidence is insufficient",
+        "Cheap first, escalate uncertain cases"
         "It routes all simple queries to the frontier model"
       ],
       "correct": 2,

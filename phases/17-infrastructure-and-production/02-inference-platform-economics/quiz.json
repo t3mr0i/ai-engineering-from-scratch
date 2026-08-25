@@ -6,7 +6,7 @@
       "stage": "pre",
       "question": "Which pricing branch does cost_per_day use for Replicate?",
       "options": [
-        "per_prediction multiplied by predictions_per_day",
+        "per_prediction × count",
         "per-minute billing with a 1,440-minute floor",
         "per-million output tokens",
         "A fixed monthly reservation"
@@ -19,7 +19,7 @@
       "question": "Baseten serves 100M tokens/day at 900k tokens/minute. Why does the demo still bill 1,440 minutes?",
       "options": [
         "The token rate is ignored for per-minute vendors",
-        "Its reserved-minute floor is 1,440, above the roughly 111 saturated minutes",
+        "The 1,440-minute reservation floor",
         "Baseten bills every request for 60 minutes",
         "The workload is converted to 1,440 predictions"
       ],
@@ -54,7 +54,7 @@
       "stage": "post",
       "question": "Which vendor has the shortest cold_start_sec in VENDORS?",
       "options": [
-        "Fireworks at 1.5 seconds",
+        "Fireworks (1.5 s)",
         "Modal at 2.5 seconds",
         "Together at 2.0 seconds",
         "Replicate at 4.0 seconds"
@@ -67,7 +67,7 @@
       "question": "What utilization rule does the demo give for reserved per-minute billing?",
       "options": [
         "Per-minute always wins, even at one request",
-        "It tends to beat per-token once saturation stays around 60–70% or higher",
+        "Per-minute wins above ~60–70% saturation",
         "Per-token always wins above 10% utilization",
         "The pricing model cannot be compared after normalization"
       ],

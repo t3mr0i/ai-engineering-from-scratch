@@ -45,7 +45,7 @@
         "Azure PTUs are never considered when use_ptu is true",
         "The PTU path always has higher TTFT, so it is rejected",
         "The code compares only median TTFT and ignores cost",
-        "simulate chooses the cheaper of the computed PTU and on-demand costs"
+        "min(cost_ondemand, cost_ptu)"
       ],
       "correct": 3,
       "explanation": "simulate computes both costs and uses min(cost_ondemand, cost_ptu); a PTU is not selected merely because use_ptu is enabled."
@@ -67,7 +67,7 @@
       "question": "The lock-in example adds 3% gateway overhead and 10% idle secondary headroom. What uplift does it report?",
       "options": [
         "3% of primary spend",
-        "13% of primary spend",
+        "13% uplift",
         "30% of primary spend",
         "10% of primary spend"
       ],

@@ -521,7 +521,7 @@
 
     replaceChildren(els.academyPathList, visiblePaths.map(function (path) {
       var link = document.createElement("a");
-      link.className = "academy-card";
+      link.className = "interactive-card academy-card";
       link.dataset.pathId = path.id;
       var isActive = context.activePath && context.activePath.academyCourse === path.academyCourse;
       link.dataset.selected = String(Boolean(isActive));
@@ -532,7 +532,7 @@
       });
 
       var icon = document.createElement("span");
-      icon.className = "academy-card__icon";
+      icon.className = "interactive-card__icon academy-card__icon";
       icon.setAttribute("aria-hidden", "true");
       icon.appendChild(lucideIcon(academyPathIcon(path)));
 
@@ -553,8 +553,10 @@
       stageBadge.className = "academy-card__level";
       stageBadge.textContent = selectedStage ? i18n("lrn_depth_" + selectedStage.label.toLowerCase(), selectedStage.label) : activeLevel;
 
-      var chevron = lucideIcon("arrow-right");
-      chevron.classList.add("academy-card__chevron");
+      var chevron = document.createElement("span");
+      chevron.className = "interactive-card__action academy-card__chevron";
+      chevron.setAttribute("aria-hidden", "true");
+      chevron.appendChild(lucideIcon("arrow-right"));
       link.append(icon, code, identity, stageBadge, chevron);
       return link;
     }));
@@ -727,7 +729,7 @@
 
   function courseCard(course, entry, index) {
     var card = document.createElement("a");
-    card.className = "course-card";
+    card.className = "interactive-card course-card";
     card.href = courseHref(course.id);
     // Stagger only when the set changed (index >= 0): 45ms/card, capped at 8 steps
     // so a 19-card grid still settles in ~360ms.
@@ -745,7 +747,7 @@
     head.className = "course-card__head";
 
     var tile = document.createElement("span");
-    tile.className = "course-card__tile";
+    tile.className = "interactive-card__icon course-card__tile";
     tile.setAttribute("aria-hidden", "true");
     tile.appendChild(lucideIcon(format.icon));
 
@@ -790,7 +792,7 @@
       progressMeter(entry.progress.percent, "Progress " + course.title)
     );
     var open = document.createElement("span");
-    open.className = "course-card__open";
+    open.className = "interactive-card__action course-card__open";
     open.setAttribute("aria-hidden", "true");
     open.appendChild(lucideIcon("arrow-right"));
     foot.appendChild(open);

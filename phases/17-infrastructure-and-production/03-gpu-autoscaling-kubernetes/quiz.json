@@ -45,7 +45,7 @@
         "15 seconds of HPA delay only",
         "45 seconds of model load only",
         "110 seconds of cluster autoscaler plus 45 seconds",
-        "50 seconds node provision plus 45 seconds model load"
+        "50 + 45 = 95 seconds"
       ],
       "correct": 3,
       "explanation": "pending_replicas receive ready_at = now + NODE_PROVISION_SEC + MODEL_LOAD_SEC = 50 + 45 seconds; the cluster autoscaler constant is only a comparison."
@@ -67,7 +67,7 @@
       "question": "Why is DUTY_CYCLE a misleading default signal for this LLM workload?",
       "options": [
         "It cannot observe any Kubernetes object",
-        "DCGM duty-cycle utilization can look low while requests wait on queue or KV state",
+        "Backlog is the useful signal"
         "It always adds 16 replicas at once",
         "It measures queue depth twice and drops every request"
       ],

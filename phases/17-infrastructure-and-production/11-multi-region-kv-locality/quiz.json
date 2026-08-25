@@ -32,7 +32,7 @@
       "options": [
         "Whenever the remote replica has any queue depth",
         "Only when the remote region is eu-west-1",
-        "When cache-hit latency plus RTT is below the miss cost",
+        "Hit + RTT must beat 800 ms",
         "Never; GLOBAL always chooses a local replica"
       ],
       "correct": 2,
@@ -45,7 +45,7 @@
         "A missing GPU price list only",
         "A missing cross-region DNS record only",
         "An absent request ID in logs",
-        "Tokenizer files or quantization configurations"
+        "Tokenizer/quantization files"
       ],
       "correct": 3,
       "explanation": "The DR checklist includes tokenizer.json/tokenizer.model and quantization configs; backing up weights alone is not enough."
@@ -54,7 +54,7 @@
       "stage": "post",
       "question": "Why does ROUND_ROBIN underperform on a repeated-prefix workload?",
       "options": [
-        "It ignores which replica already holds the prefix cache",
+        "Round-robin ignores prefix location"
         "It always routes all traffic to eu-west-1",
         "It disables the request queue",
         "It adds 800 ms of RTT to every request"
@@ -67,7 +67,7 @@
       "question": "What is the key distinction between Bedrock CRI or a GKE multi-cluster gateway and the router in this lesson?",
       "options": [
         "Commercial offerings expose KV prefix hashes to every client",
-        "Commercial offerings handle availability across regions but do not provide this KV-aware routing decision",
+        "Availability, not KV-aware routing"
         "The local router cannot account for RTT",
         "The local router is only a billing API"
       ],

@@ -6,7 +6,7 @@
       "stage": "pre",
       "question": "In SpecPoint, what does alpha measure?",
       "options": [
-        "The fraction of draft tokens accepted by verification",
+        "Accepted draft-token fraction",
         "The number of target-model layers",
         "The GPU memory capacity in GB",
         "The probability of a provider timeout"
@@ -32,7 +32,7 @@
       "options": [
         "It becomes zero because batches share verification",
         "It is divided by the concurrency",
-        "It increases through the factor 1 + concurrency/256",
+        "Concurrency increases verification overhead",
         "It is replaced by alpha"
       ],
       "correct": 2,
@@ -54,7 +54,7 @@
       "stage": "post",
       "question": "Why can speculative decoding have a worse P99 tail even when expected_speedup is above 1?",
       "options": [
-        "Rejected drafts can pay an extra target pass, creating high per-token batches",
+        "Rejection adds a target pass",
         "The plain decoder always has zero latency",
         "alpha is ignored by simulate_tail",
         "P99 is computed from the number of GPUs, not token latencies"
@@ -67,7 +67,7 @@
       "question": "Which local combination is explicitly documented as not compiling together?",
       "options": [
         "EAGLE-3 with a KV cache",
-        "An N-gram GPU draft model with chunked prefill",
+        "N-gram GPU draft + chunked prefill"
         "EAGLE-3 with concurrency 32",
         "A target model with FP8 weights"
       ],

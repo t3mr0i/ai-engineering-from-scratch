@@ -19,7 +19,7 @@
       "question": "What does RadixCache.walk return for a request whose first two segment paths are already present?",
       "options": [
         "The number of evicted leaves",
-        "The tokens reused along the longest matching prefix",
+        "Reused tokens on the longest prefix",
         "The request's branch count only",
         "The total KV budget in blocks"
       ],
@@ -32,7 +32,7 @@
       "options": [
         "By request ID in ascending order",
         "By the shortest prompt first",
-        "By the maximum branch_count times cumulative prefix-token sum",
+        "branch count × prefix tokens",
         "By randomizing all leaves equally"
       ],
       "correct": 2,
@@ -45,7 +45,7 @@
         "It removes the SYSTEM segment entirely",
         "It uses a larger cache budget than workload_rag",
         "It gives every request the same question ID",
-        "It shuffles SYSTEM, TOOLS, and DOC so shared prefixes no longer align"
+        "Shuffled prefixes do not align"
       ],
       "correct": 3,
       "explanation": "Radix reuse requires identical leading paths; scrambling the prefix segments makes otherwise shared content appear at different tree positions."
@@ -67,7 +67,7 @@
       "question": "What design change does the lesson associate with a rise from roughly 7% to 74% cache hits?",
       "options": [
         "Increasing every question to 2,000 tokens",
-        "Moving dynamic content out of the stable prompt prefix",
+        "Move dynamic text after stable prefix"
         "Disabling the radix tree and using FCFS",
         "Reducing the cache budget to one block"
       ],

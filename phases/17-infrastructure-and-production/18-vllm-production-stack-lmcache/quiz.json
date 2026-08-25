@@ -21,7 +21,7 @@
         "Only when cached_local is true",
         "Never; LMCACHE is a reporting label",
         "Only after all four engines fail",
-        "When the prefix is absent locally but present in shared_cache"
+        "Not local, but shared hit"
       ],
       "correct": 3,
       "explanation": "LMCACHE checks cached_local first; if false and cached_lmcache is true, it pays blocks × 3 ms and restores the prefix locally."
@@ -43,7 +43,7 @@
       "question": "What production problem is shared LMCache meant to address across four engines?",
       "options": [
         "It changes the model's tokenizer",
-        "It reuses repeated prefixes after an individual engine evicted its local copy",
+        "Shared cache survives local eviction",
         "It increases decode rate by changing output_tokens",
         "It removes all HBM capacity limits"
       ],
@@ -56,7 +56,7 @@
       "options": [
         "It forces a full 40-token/ms prefill",
         "It moves the prefix to the shared cache and counts a miss",
-        "The simulator skips prefill and increments re_prefills_avoided",
+        "Local hit skips prefill",
         "It rejects the request because HBM is full"
       ],
       "correct": 2,
@@ -69,7 +69,7 @@
         "It never stores local prefixes",
         "It uses a global cache with a one-block TTL",
         "It changes prefix_id on every request",
-        "It only checks that engine's local set, not a cluster-shared cache"
+        "No cross-engine shared cache"
       ],
       "correct": 3,
       "explanation": "NATIVE_ONLY can skip work only when cached_local is true; a prefix evicted locally on the newly selected engine is re-prefilled because no shared cache is consulted."

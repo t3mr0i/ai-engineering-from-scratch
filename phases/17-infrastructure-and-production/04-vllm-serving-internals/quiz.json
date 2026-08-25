@@ -32,7 +32,7 @@
       "options": [
         "It disables continuous admission",
         "It pads every request to the longest prompt",
-        "It limits one prefill step to a 512-token slice",
+        "512-token prefill slices",
         "It raises KV_BLOCKS_AVAILABLE to infinity"
       ],
       "correct": 2,
@@ -45,7 +45,7 @@
         "It never runs a decode forward",
         "It rejects all prompts longer than 16 tokens",
         "It uses no KV blocks at all",
-        "It pads prompt and output work to the slowest request in each batch of 16"
+        "Pads to each batch's longest request"
       ],
       "correct": 3,
       "explanation": "simulate_static chooses max prompt and max output for each fixed window, so shorter requests pay for padding and wait for the slowest member."
@@ -67,7 +67,7 @@
       "question": "What is the intended effect of CONTINUOUS + CHUNKED in the demo's final comparison?",
       "options": [
         "More padding and a higher P99 ITL",
-        "Interleave long-prefill slices with decode to reduce tail ITL",
+        "Lets decode run between prefill slices"
         "Serial execution with no admission or release",
         "A larger prompt cache but no scheduling change"
       ],

@@ -8,7 +8,7 @@
       "options": [
         "The candidate receives all traffic at 100% immediately",
         "The baseline is deleted before comparison",
-        "The candidate receives duplicated requests but its output is never returned to the user",
+        "Shadow output never reaches users"
         "Shadow mode bypasses cost and latency measurement"
       ],
       "correct": 2,
@@ -43,7 +43,7 @@
       "question": "What should happen to a cost_mult=1.25 rollout once the cost gate is exceeded?",
       "options": [
         "It is promoted because cost is not an LLM gate",
-        "It halts at the first breached stage and prints a rollback",
+        "HALT then rollback"
         "It silently changes the baseline cost",
         "It retries the same stage until the noise disappears"
       ],
@@ -56,7 +56,7 @@
       "options": [
         "Pins the candidate and sets rollout to 100%",
         "Keeps the candidate at the current percentage",
-        "Repins the stored baseline and sets rolloutPct to 0",
+        "Baseline digest, 0% rollout"
         "Deletes both digests so no model can serve"
       ],
       "correct": 2,
@@ -69,7 +69,7 @@
         "For any empty sample list",
         "When one baseline cost is exactly zero",
         "Only when candidate output text differs",
-        "When mean cost delta exceeds 30% or mean latency delta exceeds 50%"
+        "Cost >30% or latency >50%"
       ],
       "correct": 3,
       "explanation": "The policy builds reasons for meanCost > 30 or meanLat > 50; alert is true when at least one reason exists."

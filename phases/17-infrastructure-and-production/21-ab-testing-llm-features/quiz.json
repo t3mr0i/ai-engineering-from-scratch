@@ -69,7 +69,7 @@
         "The planned full-horizon sample sizes",
         "The number of variants in the catalog",
         "The pooled count before random assignment",
-        "The observations accumulated up to the stop point"
+        "Samples at the stop point"
       ],
       "correct": 3,
       "explanation": "The returned counts are incremented inside the loop and can be below max_n when the z-boundary fires, especially for the strong-signal case."

@@ -295,6 +295,10 @@ zero value.
   at 1px hairline everywhere, on every page.
 - **Do** keep shadows soft and blue-tinted (`rgba(5, 22, 77, …)`), scaling
   from `xs` to `lg` by context, never by inventing a new one-off value.
+- **Do** put every clickable catalog card on the `.interactive-card` contract.
+  Card variants own layout only; shared hover/focus behavior and the
+  `__icon`/`__action` slots are controlled centrally by card tokens. Never
+  patch the global link underline separately on individual card families.
 - **Do** load the same stylesheet composition on every page. Right now
   `index.html` loads only `lrn.css`+`badges.css`, `about.html`/`catalog.html`/
   `glossary.html`/`assessment.html`/`prereqs.html` load only `style.css`,

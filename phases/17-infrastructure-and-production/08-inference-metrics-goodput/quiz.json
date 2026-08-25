@@ -6,7 +6,7 @@
       "stage": "pre",
       "question": "In the demo's goodput function, when is one RequestTrace counted as good?",
       "options": [
-        "When TTFT, GenAI-Perf TPOT, and E2E all meet their limits",
+        "All three SLOs pass",
         "When aggregate throughput exceeds the target",
         "When its mean TPOT is below the limit, regardless of E2E",
         "When at least one of the three latency limits passes"
@@ -32,7 +32,7 @@
       "options": [
         "12.00 ms",
         "5.00 ms",
-        "About 7.07 ms",
+        "7.07 ms",
         "About 0.07 ms"
       ],
       "correct": 2,
@@ -45,7 +45,7 @@
         "7.07 ms because it starts at token 2",
         "500 ms because TTFT is the only input",
         "0 ms because decode is excluded",
-        "12.00 ms from e2e_ms divided by 100 tokens"
+        "e2e / 100 = 12 ms",
       ],
       "correct": 3,
       "explanation": "LLMPerf's local method returns e2e_ms/output_tokens = (500 + 700)/100 = 12.00 ms, including TTFT."
@@ -54,7 +54,7 @@
       "stage": "post",
       "question": "Why can high aggregate throughput coexist with poor goodput?",
       "options": [
-        "Tokens can be produced quickly in aggregate while many requests miss one SLO",
+        "Aggregate speed can hide SLO misses",
         "Goodput ignores all latency constraints",
         "Throughput is always computed from P99 only",
         "A request is good if any single token arrives"
@@ -67,7 +67,7 @@
       "question": "Why does the lesson emphasize P50, P90, and P99 rather than only a mean?",
       "options": [
         "Percentiles remove the need to define TTFT",
-        "Right-skewed tail requests can be hidden by an apparently good mean",
+        "Tails disappear in the mean"
         "The mean cannot be calculated for a list of traces",
         "P99 is always lower than P50 in this simulator"
       ],

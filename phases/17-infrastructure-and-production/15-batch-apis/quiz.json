@@ -21,7 +21,7 @@
         "Adds a 50% surcharge",
         "Charges only output tokens",
         "Doubles the cached-input rate",
-        "Multiplies the synchronous bill by one half"
+        "BATCH halves the bill"
       ],
       "correct": 3,
       "explanation": "cost_batch returns cost_sync(...) * BATCH_DISCOUNT, so the batch price is 50% of the corresponding synchronous bill."
@@ -30,7 +30,7 @@
       "stage": "check",
       "question": "How does cost_sync_cache treat the first shared prefix?",
       "options": [
-        "It pays one CACHE_WRITE_5MIN write, then later calls use CACHED_INPUT",
+        "One write, then cached reads"
         "It charges CACHED_INPUT for every document including the first",
         "It removes the prefix from every request",
         "It applies BATCH_DISCOUNT before calculating any input cost"
@@ -43,7 +43,7 @@
       "question": "What lifecycle does closeBatch implement for a queued batch?",
       "options": [
         "It rejects all deferred promises and leaves status queued",
-        "It marks in_progress, waits, settles jobs, then marks completed",
+        "queued → in_progress → completed"
         "It marks completed before processing and never waits",
         "It processes only the first job and marks failed"
       ],
@@ -69,7 +69,7 @@
         "Batching removes all output-token charges",
         "The cache write is free after the first request",
         "The batch API changes the model's output length",
-        "It stacks a 50% batch multiplier on a large saving from cached repeated prefixes"
+        "50% batch discount + cache savings"
       ],
       "correct": 3,
       "explanation": "cost_batch_cache halves cost_sync_cache, and the repeated prefix makes most later input reads much cheaper; the exact ratio depends on the workload mix."

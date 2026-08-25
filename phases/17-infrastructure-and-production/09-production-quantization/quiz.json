@@ -32,7 +32,7 @@
       "options": [
         "It automatically becomes 4 bits with the weights",
         "It is removed from the memory calculation",
-        "It remains 16 bits, separate from the 4-bit weights",
+        "KV stays at 16 bits",
         "It is always set to 32 bits"
       ],
       "correct": 2,
@@ -54,7 +54,7 @@
       "stage": "post",
       "question": "Why can a calibration set built from generic web text hurt a medical or code deployment?",
       "options": [
-        "It may protect the wrong salient weights for the deployment domain",
+        "Domain-mismatched calibration protects wrong weights",
         "Calibration changes the model's tokenizer vocabulary only",
         "It increases KV precision to 32 bits",
         "It makes all formats use the same engine"
@@ -67,7 +67,7 @@
       "question": "Why should a 4-bit weight result not be treated as the whole production memory budget?",
       "options": [
         "The weight file is always larger than the model parameter count",
-        "KV cache and activations are calculated separately and grow with context and concurrency",
+        "KV and activations still scale with context/concurrency"
         "Quantized weights cannot be loaded into HBM",
         "The simulator ignores weight memory entirely"
       ],
