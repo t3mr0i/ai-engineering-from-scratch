@@ -2941,6 +2941,9 @@
       var LUCIDE_TARGET = '<svg ' + LUCIDE_SVG_ATTRS + '><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>';
       var LUCIDE_FLASK = '<svg ' + LUCIDE_SVG_ATTRS + '><path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"/><path d="M6.453 15h11.094"/><path d="M8.5 2h7"/></svg>';
       var LUCIDE_CHECK_CIRCLE = '<svg ' + LUCIDE_SVG_ATTRS + '><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>';
+      // Standalone panel-icon variant: no inline margin, since it sits alone
+      // (centered via flex) in a .ai-panel-icon box rather than inline before text.
+      var LUCIDE_ARROW_RIGHT_ICON = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
 
       function renderLesson(md) {
         var el = document.getElementById('lessonContent');
@@ -4620,6 +4623,12 @@
         var conceptH2 = article.querySelector('#the-concept, #concept');
         var buildH2 = article.querySelector('#build-it, #build');
         var keyTermsH2 = article.querySelector('#key-terms');
+        // ai-panels ("Next Activity" etc.) + the bottom prev/next nav are
+        // already in the article by the time this runs (renderLesson inserts
+        // them synchronously; quiz data arrives later via fetch). Anchor the
+        // beforeend fallbacks here instead of the article's true end, so the
+        // quiz lands above "Next Activity" rather than below it.
+        var aiPanels = article.querySelector('#aiPanels');
 
         var preQuizHtml = buildQuizHtml(questions.filter(function (q) { return q.stage === 'pre'; }), 'pre', 'Pre-Lesson Check');
         var checkQuizHtml = buildQuizHtml(questions.filter(function (q) { return q.stage === 'check'; }), 'check', 'Mid-Lesson Check');
@@ -4629,6 +4638,8 @@
           var allHtml = buildQuizHtml(questions, 'all', 'Quiz');
           if (allHtml && keyTermsH2) {
             keyTermsH2.insertAdjacentHTML('beforebegin', allHtml);
+          } else if (allHtml && aiPanels) {
+            aiPanels.insertAdjacentHTML('beforebegin', allHtml);
           } else if (allHtml) {
             article.insertAdjacentHTML('beforeend', allHtml);
           }
@@ -4658,6 +4669,8 @@
 
         if (postQuizHtml && keyTermsH2) {
           keyTermsH2.insertAdjacentHTML('beforebegin', postQuizHtml);
+        } else if (postQuizHtml && aiPanels) {
+          aiPanels.insertAdjacentHTML('beforebegin', postQuizHtml);
         } else if (postQuizHtml) {
           article.insertAdjacentHTML('beforeend', postQuizHtml);
         }
@@ -5146,7 +5159,7 @@
         var panel = document.createElement('div');
         panel.className = 'ai-panel';
 
-        var html = '<div class="ai-panel-header"><div class="ai-panel-icon">N</div><div class="ai-panel-title">Next Activity</div></div>';
+        var html = '<div class="ai-panel-header"><div class="ai-panel-icon">' + LUCIDE_ARROW_RIGHT_ICON + '</div><div class="ai-panel-title">Next Activity</div></div>';
         html += '<div class="continue-panel">';
         html += '<div class="continue-links">';
         if (lrnContext.next) {
