@@ -9,6 +9,7 @@ const crypto = require("node:crypto");
 const fs = require("node:fs");
 const { resolveAdmin, can } = require("./admin-auth");
 const { AdminStore, StoreError } = require("./admin-store");
+const { LrnReportStore } = require("./lrn-report-store");
 const { validateCurriculum, curriculumStats } = require("./admin-curriculum");
 const { createAdminAi, AdminAiError } = require("./admin-ai");
 const { createGitLabPublisher, GitLabError } = require("./admin-gitlab");
@@ -65,6 +66,7 @@ function createAdminApi(options = {}) {
   const webRoot = options.webRoot || path.resolve(env.WEB_ROOT || path.join(__dirname, "..", "site"));
   const dataDir = options.dataDir || path.resolve(env.ADMIN_DATA_DIR || path.join(__dirname, "..", ".admin-data"));
   const store = options.store || new AdminStore({ dataDir, webRoot });
+  const reportStore = options.reportStore || new LrnReportStore({ dataDir: path.join(dataDir, "lrn-reports"), webRoot });
   const ai = options.ai || createAdminAi({ env, fetchFn: options.fetchFn });
   const publisher = options.publisher || createGitLabPublisher({ env, fetchFn: options.fetchFn });
   const repoRoot = options.repoRoot || path.resolve(webRoot, "..");
@@ -81,6 +83,12 @@ function createAdminApi(options = {}) {
       if (pathOnly === "/api/admin/me") {
         requireMethod(req, "GET");
         sendJson(res, 200, { ok: true, actor });
+        return true;
+      }
+
+      if (pathOnly === "/api/admin/lrn-stats") {
+        requireMethod(req, "GET");
+        sendJson(res, 200, { ok: true, stats: reportStore.aggregate() });
         return true;
       }
 

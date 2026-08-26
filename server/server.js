@@ -25,6 +25,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('node:crypto');
 const {
   COOKIE_NAME,
   TTL_MS,
@@ -34,6 +35,9 @@ const {
   cookieFromRequest,
 } = require('./gate-core');
 const { createAdminApi } = require('./admin-api');
+const { readJson, sendJson } = require('./admin-api');
+const { StoreError } = require('./admin-store');
+const { LrnReportStore, ReportError } = require('./lrn-report-store');
 
 const PORT = process.env.PORT || 8080;
 const BIND_HOST = process.env.BIND_HOST || undefined;
@@ -46,6 +50,12 @@ const GATE_SECRET = process.env.GATE_SECRET;
 const GATE_DISABLED = process.env.GATE_DISABLED === 'true';
 const handleAdminApi = createAdminApi({ webRoot: WEB_ROOT });
 
+// Same persistent volume as the curriculum admin store (see openshift/
+// deployment.yaml's `admin-data` PVC) — reports live in a subdirectory of it
+// so no new OpenShift volume is needed.
+const ADMIN_DATA_DIR = path.resolve(process.env.ADMIN_DATA_DIR || path.join(__dirname, '..', '.admin-data'));
+const lrnReportStore = new LrnReportStore({ dataDir: path.join(ADMIN_DATA_DIR, 'lrn-reports'), webRoot: WEB_ROOT });
+
 // Server-side proxy for the LHIND LLM gateway (Bifrost). The key lives only
 // here — notebooks call this same-origin endpoint instead of gateway.lhind.ai
 // directly, so no per-user key ever needs to reach the browser.
@@ -55,6 +65,12 @@ const LLM_GATEWAY_KEY = process.env.LLM_GATEWAY_KEY;
 // disabled) — keeps one client from burning the shared gateway budget.
 const LLM_RATE_LIMIT_PER_MIN = 20;
 const llmRateState = new Map(); // ip -> { count, windowStart }
+
+// Separate, smaller budget for the anonymous progress-report endpoint — one
+// learner's browser syncs at most once every few seconds, so this cap is
+// only meant to blunt abuse, not accommodate legitimate bursts.
+const LRN_REPORT_RATE_LIMIT_PER_MIN = 10;
+const lrnReportRateState = new Map(); // ip -> { count, windowStart }
 
 // Paths a logged-out visitor may reach. Keep this minimal — gate.html is
 // self-contained, so the passcode page needs nothing else.
@@ -187,6 +203,17 @@ function llmRateLimited(ip) {
   return entry.count > LLM_RATE_LIMIT_PER_MIN;
 }
 
+function lrnReportRateLimited(ip) {
+  const now = Date.now();
+  const entry = lrnReportRateState.get(ip);
+  if (!entry || now - entry.windowStart > 60000) {
+    lrnReportRateState.set(ip, { count: 1, windowStart: now });
+    return false;
+  }
+  entry.count += 1;
+  return entry.count > LRN_REPORT_RATE_LIMIT_PER_MIN;
+}
+
 // Proxies notebook LLM calls to the Bifrost gateway, injecting the shared key
 // server-side. Any Authorization header the client sends is ignored — the
 // key never needs to exist in the browser.
@@ -231,6 +258,39 @@ function handleLlmProxy(req, res) {
       res.end(JSON.stringify({ error: { message: 'upstream request failed' } }));
     }
   });
+}
+
+// Accepts an anonymous learner's current profile/level/completed-courses
+// snapshot. Runs behind the passcode gate like the rest of the site — see
+// the dispatch block below.
+async function handleLrnReport(req, res) {
+  const errorId = crypto.randomBytes(5).toString('hex');
+  if (req.method !== 'POST') {
+    res.writeHead(405, { 'Content-Type': 'text/plain' });
+    res.end('Method Not Allowed');
+    return;
+  }
+  if (lrnReportRateLimited(clientIp(req))) {
+    res.writeHead(429, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ ok: false, error: { code: 'report.rate_limited', message: 'Zu viele Anfragen, bitte kurz warten.' } }));
+    return;
+  }
+  try {
+    const body = await readJson(req);
+    const record = lrnReportStore.save(body);
+    sendJson(res, 200, { ok: true, updatedAt: record.updatedAt });
+  } catch (error) {
+    const known = error instanceof ReportError || error instanceof StoreError;
+    if (!known) console.error(`[lrn-report:${errorId}]`, error);
+    sendJson(res, known ? error.status : 400, {
+      ok: false,
+      error: {
+        code: known ? error.code : 'report.invalid',
+        message: known ? error.message : 'Der Report konnte nicht verarbeitet werden.',
+        id: errorId,
+      },
+    });
+  }
 }
 
 const server = http.createServer((req, res) => {
@@ -286,6 +346,13 @@ const server = http.createServer((req, res) => {
     }
     res.writeHead(401, { 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('Unauthorized');
+    return;
+  }
+
+  // 4b. Anonymous learner progress reports — the gate check above already
+  // passed, so only actual visitors to the gated site can report.
+  if (pathOnly === '/api/lrn/report') {
+    handleLrnReport(req, res);
     return;
   }
 
