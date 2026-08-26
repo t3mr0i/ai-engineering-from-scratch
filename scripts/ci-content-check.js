@@ -776,24 +776,25 @@ function check18() {
   vm.runInContext(readFileSync(path.join(REPO, "site/lrn/data.js"), "utf8"), sandbox);
   const data = sandbox.window.LrnData;
 
-  if (!data || !data.aseRoles) {
+  if (!data || !data.specializations) {
     record("18", "ASE matrix integrity", 0, THRESHOLDS.c18_aseMatrix, {
-      note: "uebersprungen: data.js traegt keine aseRoles (Vor-Migrations-Stand)",
+      note: "uebersprungen: data.js traegt keine specializations (Vor-Migrations-Stand)",
     });
     return;
   }
 
   const DEPTHS = ["Acquire", "Deepen", "Create"];
-  const roleIds = new Set(data.aseRoles.map((r) => r.id));
+  const aseSpecializations = data.specializations.filter((s) => s.keyAreaId === "ase");
+  const specializationIds = new Set(aseSpecializations.map((s) => s.id));
   const problems = [];
   const cell = new Map();
-  for (const r of data.aseRoles) for (const d of DEPTHS) cell.set(r.id + ":" + d, 0);
+  for (const s of aseSpecializations) for (const d of DEPTHS) cell.set(s.id + ":" + d, 0);
 
   for (const c of data.courses) {
-    if (!c.ase) continue;
-    for (const a of c.ase) {
-      if (!roleIds.has(a.role)) {
-        problems.push(`${c.id}: unbekannte Rollen-ID "${a.role}"`);
+    if (!c.specializationDepths) continue;
+    for (const a of c.specializationDepths) {
+      if (!specializationIds.has(a.specializationId)) {
+        problems.push(`${c.id}: unbekannte Auspraegungs-ID "${a.specializationId}"`);
         continue;
       }
       for (const d of a.depths || []) {
@@ -801,7 +802,7 @@ function check18() {
           problems.push(`${c.id}: unbekannter Tiefenwert "${d}"`);
           continue;
         }
-        const key = a.role + ":" + d;
+        const key = a.specializationId + ":" + d;
         cell.set(key, cell.get(key) + 1);
       }
     }
@@ -809,10 +810,10 @@ function check18() {
 
   for (const [k, n] of cell) if (n === 0) problems.push(`Zelle ${k} ist leer`);
 
-  const tagged = data.courses.filter((c) => c.ase).length;
-  record("18", "ASE matrix integrity (role/depth valid, no empty cell)", problems.length, THRESHOLDS.c18_aseMatrix, {
+  const tagged = data.courses.filter((c) => c.specializationDepths).length;
+  record("18", "ASE matrix integrity (specialization/depth valid, no empty cell)", problems.length, THRESHOLDS.c18_aseMatrix, {
     details: problems,
-    note: `${tagged}/${data.courses.length} Kurse tragen ein ase-Feld, ${cell.size} Zellen geprueft`,
+    note: `${tagged}/${data.courses.length} Kurse tragen ein specializationDepths-Feld, ${cell.size} Zellen geprueft`,
   });
 }
 

@@ -676,3 +676,31 @@ test("the ase key area belongs to the Technology Consulting role", () => {
   assert.ok(aseKeyArea, "ase keyArea missing from data.js");
   assert.equal(aseKeyArea.roleId, "tc");
 });
+
+test("every course references known key areas, specializations, and valid depths", () => {
+  const DEPTHS = new Set(["Acquire", "Deepen", "Create"]);
+  const keyAreaIds = new Set((data.keyAreas || []).map((keyArea) => keyArea.id));
+  const specializationIds = new Set((data.specializations || []).map((spec) => spec.id));
+
+  for (const course of data.courses) {
+    for (const entry of course.specializationDepths || []) {
+      assert.ok(specializationIds.has(entry.specializationId),
+        `${course.id}: specializationDepths references unknown specialization ${entry.specializationId}`);
+      for (const depth of entry.depths || []) {
+        assert.ok(DEPTHS.has(depth),
+          `${course.id}: specializationDepths for ${entry.specializationId} has invalid depth ${depth}`);
+      }
+    }
+    if (Array.isArray(course.keyAreaIds) && course.keyAreaIds.length) {
+      for (const keyAreaId of course.keyAreaIds) {
+        assert.ok(keyAreaIds.has(keyAreaId), `${course.id}: keyAreaIds references unknown keyArea ${keyAreaId}`);
+      }
+    }
+    if (Array.isArray(course.specializationIds) && course.specializationIds.length) {
+      for (const specializationId of course.specializationIds) {
+        assert.ok(specializationIds.has(specializationId),
+          `${course.id}: specializationIds references unknown specialization ${specializationId}`);
+      }
+    }
+  }
+});

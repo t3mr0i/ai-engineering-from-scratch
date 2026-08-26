@@ -263,12 +263,12 @@
   // underlying selection set or language changes — not on every progress tick.
   function renderControls() {
     renderRoleSelect();
-    renderKeyAreaSelect();
-    renderSpecializationSelect();
     renderLevelSelect();
   }
 
   function render() {
+    renderKeyAreaSelect();
+    renderSpecializationSelect();
     var computed = compute();
     var academyContext = computeAcademyContext(computed);
     syncSelects();
@@ -304,6 +304,7 @@
     if (!options.length) {
       if (wrapper) wrapper.hidden = true;
       els.keyAreaSelect.innerHTML = "";
+      state.keyAreaId = null;
       return;
     }
     if (wrapper) wrapper.hidden = false;
@@ -333,7 +334,7 @@
     replaceChildren(els.specializationSelect, options.map(function (spec) {
       var option = document.createElement("option");
       option.value = spec.id;
-      option.textContent = spec.labelDe || spec.label;
+      option.textContent = spec.label;
       return option;
     }));
     if (!options.some(function (s) { return s.id === state.specializationId; })) {
