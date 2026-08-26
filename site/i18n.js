@@ -226,10 +226,14 @@ window.SITE_I18N = {
   topic_engineering: { en: "Engineering", de: "Engineering" },
   topic_governance: { en: "Governance", de: "Governance" },
   topic_leadership: { en: "Leadership", de: "Leadership" },
-  profile_label: { en: "Profile", de: "Profil" },
+  role_label: { en: "Role", de: "Rolle" },
+  role_select_label: { en: "Choose role", de: "Rolle auswählen" },
+  key_area_label: { en: "Key Area", de: "Key Area" },
+  key_area_select_label: { en: "Choose key area", de: "Key Area auswählen" },
+  specialization_label: { en: "Ausprägung", de: "Ausprägung" },
+  specialization_select_label: { en: "Choose specialization", de: "Ausprägung auswählen" },
   level_label: { en: "Level", de: "Level" },
   selector_group_label: { en: "Choose profile and level, then search courses", de: "Profil und Level auswählen und Kurse durchsuchen" },
-  profile_select_label: { en: "Choose profile", de: "Profil auswählen" },
   level_select_label: { en: "Choose level", de: "Level auswählen" },
   course_filters_label: { en: "Course filters", de: "Kursfilter" },
   course_status_filters_label: { en: "Filter course status", de: "Kursstatus filtern" },
@@ -254,7 +258,7 @@ window.SITE_I18N = {
   lrn_empty_no_matches: { en: "No matches. Try All or clear the search.", de: "Keine Treffer. Versuche „Alle“ oder lösche die Suche." },
 
   // lrn/lrn.js — aria-live announcements
-  lrn_announce_profile_set: { en: "Profile set: {profile}.", de: "Profil festgelegt: {profile}." },
+  lrn_announce_profile_set: { en: "Role set: {profile}.", de: "Rolle festgelegt: {profile}." },
   lrn_announce_level_set: { en: "Level set: {level}.", de: "Level festgelegt: {level}." },
   lrn_announce_reset: { en: "Selection reset. Activity progress is preserved in the activity tracker.", de: "Auswahl zurückgesetzt. Der Aktivitätsfortschritt bleibt im Aktivitäts-Tracker erhalten." },
 

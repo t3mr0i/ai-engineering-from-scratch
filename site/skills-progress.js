@@ -227,17 +227,17 @@
 
     function currentProfileId() {
       if (profileSelect && profileSelect.value) return profileSelect.value;
-      return (data.profiles || []).some(function (profile) { return profile.id === "tc"; }) ? "tc" : (data.profiles[0] && data.profiles[0].id || "tc");
+      return (data.roles || []).some(function (role) { return role.id === "tc"; }) ? "tc" : (data.roles[0] && data.roles[0].id || "tc");
     }
 
     function storedProfileId() {
       try {
         var saved = JSON.parse(window.localStorage.getItem(cockpitStore));
-        if (saved && (data.profiles || []).some(function (profile) { return profile.id === saved.profileId; })) {
+        if (saved && (data.roles || []).some(function (role) { return role.id === saved.profileId; })) {
           return saved.profileId;
         }
       } catch (error) {}
-      return (data.profiles || []).some(function (profile) { return profile.id === "tc"; }) ? "tc" : (data.profiles[0] && data.profiles[0].id || "tc");
+      return (data.roles || []).some(function (role) { return role.id === "tc"; }) ? "tc" : (data.roles[0] && data.roles[0].id || "tc");
     }
 
     function saveProfileId(profileId) {
@@ -250,9 +250,9 @@
 
     function populateProfileSelect() {
       if (!profileSelect) return;
-      (data.profiles || []).forEach(function (profile) {
-        var option = element("option", "", profile.label);
-        option.value = profile.id;
+      (data.roles || []).forEach(function (role) {
+        var option = element("option", "", role.label);
+        option.value = role.id;
         profileSelect.appendChild(option);
       });
       profileSelect.value = storedProfileId();

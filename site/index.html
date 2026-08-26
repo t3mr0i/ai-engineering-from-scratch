@@ -111,8 +111,16 @@
     <section class="cockpit" id="cockpit" aria-label="AI course catalog">
       <div class="selector-card" role="group" aria-label="Choose profile and level, then search courses" data-i18n-aria-label="selector_group_label">
         <label class="selector-field">
-          <span class="selector-field__label"><i class="ph-light ph-user-circle" aria-hidden="true"></i> <span data-i18n="profile_label">Profile</span></span>
-          <select id="profileSelect" aria-label="Choose profile" data-i18n-aria-label="profile_select_label"></select>
+          <span class="selector-field__label"><i class="ph-light ph-user-circle" aria-hidden="true"></i> <span data-i18n="role_label">Role</span></span>
+          <select id="roleSelect" aria-label="Choose role" data-i18n-aria-label="role_select_label"></select>
+        </label>
+        <label class="selector-field" hidden>
+          <span class="selector-field__label"><i class="ph-light ph-squares-four" aria-hidden="true"></i> <span data-i18n="key_area_label">Key Area</span></span>
+          <select id="keyAreaSelect" aria-label="Choose key area" data-i18n-aria-label="key_area_select_label"></select>
+        </label>
+        <label class="selector-field" hidden>
+          <span class="selector-field__label"><i class="ph-light ph-identification-badge" aria-hidden="true"></i> <span data-i18n="specialization_label">Ausprägung</span></span>
+          <select id="specializationSelect" aria-label="Choose specialization" data-i18n-aria-label="specialization_select_label"></select>
         </label>
         <label class="selector-field">
           <span class="selector-field__label"><i class="ph-light ph-chart-line-up" aria-hidden="true"></i> <span data-i18n="level_label">Level</span></span>

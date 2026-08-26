@@ -153,7 +153,7 @@ window.LrnData = {
       "text": "To what extent do you actively shape new AI-based solutions, workflows, or services and share your experience?"
     }
   ],
-  "profiles": [
+  "roles": [
     {
       "id": "bsc",
       "code": "R01-BSC",
@@ -253,10 +253,30 @@ window.LrnData = {
       }
     }
   ],
-  "aseParentProfileId": "tc",
-  "aseRoles": [
+  "keyAreas": [
+    {
+      "id": "software-engineering",
+      "roleId": "tc",
+      "label": "Software Engineering",
+      "labelDe": "Software Engineering"
+    },
+    {
+      "id": "ai-automation",
+      "roleId": "tc",
+      "label": "AI Automation",
+      "labelDe": "AI Automation"
+    },
+    {
+      "id": "ase",
+      "roleId": "tc",
+      "label": "Agentic Software Engineering",
+      "labelDe": "Agentic Software Engineering"
+    }
+  ],
+  "specializations": [
     {
       "id": "spec",
+      "keyAreaId": "ase",
       "code": "ASE-SPEC",
       "label": "Spec Owner",
       "labelDe": "Spezifizieren",
@@ -264,6 +284,7 @@ window.LrnData = {
     },
     {
       "id": "orch",
+      "keyAreaId": "ase",
       "code": "ASE-ORCH",
       "label": "Agent Orchestrator",
       "labelDe": "Orchestrieren",
@@ -275,6 +296,7 @@ window.LrnData = {
     },
     {
       "id": "verify",
+      "keyAreaId": "ase",
       "code": "ASE-VER",
       "label": "Verification Lead",
       "labelDe": "Verifizieren",
@@ -282,6 +304,7 @@ window.LrnData = {
     },
     {
       "id": "integrate",
+      "keyAreaId": "ase",
       "code": "ASE-INT",
       "label": "Integration Engineer",
       "labelDe": "Integrieren",
@@ -289,6 +312,7 @@ window.LrnData = {
     },
     {
       "id": "operate",
+      "keyAreaId": "ase",
       "code": "ASE-OPS",
       "label": "Operations & Reliability Lead",
       "labelDe": "Betreiben",
@@ -677,7 +701,7 @@ window.LrnData = {
       "title": "Interactive LLM Primer",
       "status": "Available",
       "source": "llm-primer",
-      "profileIds": [
+      "roleIds": [
         "all",
         "bsc",
         "pvs",
@@ -696,37 +720,37 @@ window.LrnData = {
       "levels": [
         "Acquire"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "spec",
+          "specializationId": "spec",
           "depths": [
             "Acquire",
             "Deepen"
           ]
         },
         {
-          "role": "orch",
+          "specializationId": "orch",
           "depths": [
             "Acquire",
             "Deepen"
           ]
         },
         {
-          "role": "verify",
+          "specializationId": "verify",
           "depths": [
             "Acquire",
             "Deepen"
           ]
         },
         {
-          "role": "integrate",
+          "specializationId": "integrate",
           "depths": [
             "Acquire",
             "Deepen"
           ]
         },
         {
-          "role": "operate",
+          "specializationId": "operate",
           "depths": [
             "Acquire",
             "Deepen"
@@ -747,7 +771,7 @@ window.LrnData = {
       "title": "AI Fundamentals / AI for Everyone",
       "status": "Maintained in SharePoint",
       "source": "trainings.xlsx",
-      "profileIds": [
+      "roleIds": [
         "all",
         "bsc",
         "pvs",
@@ -768,37 +792,37 @@ window.LrnData = {
       "levels": [
         "Acquire"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "spec",
+          "specializationId": "spec",
           "depths": [
             "Acquire",
             "Deepen"
           ]
         },
         {
-          "role": "orch",
+          "specializationId": "orch",
           "depths": [
             "Acquire",
             "Deepen"
           ]
         },
         {
-          "role": "verify",
+          "specializationId": "verify",
           "depths": [
             "Acquire",
             "Deepen"
           ]
         },
         {
-          "role": "integrate",
+          "specializationId": "integrate",
           "depths": [
             "Acquire",
             "Deepen"
           ]
         },
         {
-          "role": "operate",
+          "specializationId": "operate",
           "depths": [
             "Acquire",
             "Deepen"
@@ -825,7 +849,7 @@ window.LrnData = {
       "title": "AI: Concepts and Tools for Personal Productivity",
       "status": "Maintained in SharePoint / LHIND tool part to build",
       "source": "trainings.xlsx",
-      "profileIds": [
+      "roleIds": [
         "all",
         "bsc",
         "pvs",
@@ -848,9 +872,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "spec",
+          "specializationId": "spec",
           "depths": [
             "Acquire",
             "Deepen",
@@ -858,7 +882,7 @@ window.LrnData = {
           ]
         },
         {
-          "role": "orch",
+          "specializationId": "orch",
           "depths": [
             "Acquire",
             "Deepen",
@@ -866,7 +890,7 @@ window.LrnData = {
           ]
         },
         {
-          "role": "verify",
+          "specializationId": "verify",
           "depths": [
             "Acquire",
             "Deepen",
@@ -874,7 +898,7 @@ window.LrnData = {
           ]
         },
         {
-          "role": "integrate",
+          "specializationId": "integrate",
           "depths": [
             "Acquire",
             "Deepen",
@@ -882,7 +906,7 @@ window.LrnData = {
           ]
         },
         {
-          "role": "operate",
+          "specializationId": "operate",
           "depths": [
             "Acquire",
             "Deepen",
@@ -912,7 +936,7 @@ window.LrnData = {
       "title": "Responsible & Trustworthy AI / GDPR & AI",
       "status": "To derive from DOCX template",
       "source": "DOCX",
-      "profileIds": [
+      "roleIds": [
         "all",
         "bsc",
         "pvs",
@@ -932,9 +956,9 @@ window.LrnData = {
         "Acquire",
         "Deepen"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "spec",
+          "specializationId": "spec",
           "depths": [
             "Acquire",
             "Deepen",
@@ -942,7 +966,7 @@ window.LrnData = {
           ]
         },
         {
-          "role": "orch",
+          "specializationId": "orch",
           "depths": [
             "Acquire",
             "Deepen",
@@ -950,7 +974,7 @@ window.LrnData = {
           ]
         },
         {
-          "role": "verify",
+          "specializationId": "verify",
           "depths": [
             "Acquire",
             "Deepen",
@@ -958,7 +982,7 @@ window.LrnData = {
           ]
         },
         {
-          "role": "integrate",
+          "specializationId": "integrate",
           "depths": [
             "Acquire",
             "Deepen",
@@ -966,7 +990,7 @@ window.LrnData = {
           ]
         },
         {
-          "role": "operate",
+          "specializationId": "operate",
           "depths": [
             "Acquire",
             "Deepen",
@@ -993,7 +1017,7 @@ window.LrnData = {
       "title": "Hands-on Prompt Engineering Workshop",
       "status": "In development",
       "source": "DOCX",
-      "profileIds": [
+      "roleIds": [
         "all",
         "bsc",
         "pvs",
@@ -1013,9 +1037,9 @@ window.LrnData = {
       "levels": [
         "Deepen"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "orch",
+          "specializationId": "orch",
           "depths": [
             "Deepen",
             "Create"
@@ -1042,7 +1066,7 @@ window.LrnData = {
       "title": "AI Use Case Identification & Business Value Assessment",
       "status": "To derive from DOCX template",
       "source": "DOCX",
-      "profileIds": [
+      "roleIds": [
         "bsc",
         "pvs",
         "pma",
@@ -1061,9 +1085,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "spec",
+          "specializationId": "spec",
           "depths": [
             "Deepen",
             "Create"
@@ -1091,7 +1115,7 @@ window.LrnData = {
       "title": "AI for Software Engineers / GitHub Copilot",
       "status": "Maintained in SharePoint",
       "source": "trainings.xlsx",
-      "profileIds": [
+      "roleIds": [
         "tc",
         "am",
         "pvs"
@@ -1108,9 +1132,9 @@ window.LrnData = {
         "Acquire",
         "Deepen"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "orch",
+          "specializationId": "orch",
           "depths": [
             "Acquire",
             "Deepen",
@@ -1139,7 +1163,7 @@ window.LrnData = {
       "title": "AI: Introduction to Architecture for AI-Systems",
       "status": "Maintained in SharePoint",
       "source": "trainings.xlsx",
-      "profileIds": [
+      "roleIds": [
         "tc",
         "pvs"
       ],
@@ -1155,9 +1179,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "integrate",
+          "specializationId": "integrate",
           "depths": [
             "Deepen",
             "Create"
@@ -1187,7 +1211,7 @@ window.LrnData = {
       "title": "AI: Agentic Software Engineering",
       "status": "Maintained in SharePoint",
       "source": "trainings.xlsx",
-      "profileIds": [
+      "roleIds": [
         "tc",
         "am"
       ],
@@ -1202,9 +1226,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "orch",
+          "specializationId": "orch",
           "depths": [
             "Deepen",
             "Create"
@@ -1232,7 +1256,7 @@ window.LrnData = {
       "title": "Corporate Ethics & Compliance for AI",
       "status": "New from capability gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "bsc",
         "pvs",
         "tc",
@@ -1254,9 +1278,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "spec",
+          "specializationId": "spec",
           "depths": [
             "Acquire",
             "Deepen",
@@ -1264,7 +1288,7 @@ window.LrnData = {
           ]
         },
         {
-          "role": "orch",
+          "specializationId": "orch",
           "depths": [
             "Acquire",
             "Deepen",
@@ -1272,7 +1296,7 @@ window.LrnData = {
           ]
         },
         {
-          "role": "verify",
+          "specializationId": "verify",
           "depths": [
             "Acquire",
             "Deepen",
@@ -1280,7 +1304,7 @@ window.LrnData = {
           ]
         },
         {
-          "role": "integrate",
+          "specializationId": "integrate",
           "depths": [
             "Acquire",
             "Deepen",
@@ -1288,7 +1312,7 @@ window.LrnData = {
           ]
         },
         {
-          "role": "operate",
+          "specializationId": "operate",
           "depths": [
             "Acquire",
             "Deepen",
@@ -1311,7 +1335,7 @@ window.LrnData = {
       "title": "AI-Driven Testing & QA",
       "status": "New from capability gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "pvs",
         "tc",
         "am"
@@ -1329,9 +1353,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "verify",
+          "specializationId": "verify",
           "depths": [
             "Acquire",
             "Deepen",
@@ -1354,7 +1378,7 @@ window.LrnData = {
       "title": "AI-Supported Code Modernization",
       "status": "New from capability gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "bsc",
         "pvs",
         "tc",
@@ -1373,9 +1397,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "orch",
+          "specializationId": "orch",
           "depths": [
             "Deepen",
             "Create"
@@ -1397,7 +1421,7 @@ window.LrnData = {
       "title": "AI-Assisted Documentation",
       "status": "New from capability gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "bsc",
         "pvs",
         "tc",
@@ -1419,16 +1443,16 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "spec",
+          "specializationId": "spec",
           "depths": [
             "Deepen",
             "Create"
           ]
         },
         {
-          "role": "integrate",
+          "specializationId": "integrate",
           "depths": [
             "Deepen",
             "Create"
@@ -1450,7 +1474,7 @@ window.LrnData = {
       "title": "Sustainable Software & Green Coding",
       "status": "New from capability gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "bsc",
         "pvs",
         "tc",
@@ -1469,9 +1493,9 @@ window.LrnData = {
         "Acquire",
         "Deepen"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "operate",
+          "specializationId": "operate",
           "depths": [
             "Acquire",
             "Deepen",
@@ -1494,7 +1518,7 @@ window.LrnData = {
       "title": "AI-Enhanced User Research",
       "status": "New from capability gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "bsc",
         "pvs",
         "tc",
@@ -1515,9 +1539,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "orch",
+          "specializationId": "orch",
           "depths": [
             "Deepen",
             "Create"
@@ -1539,7 +1563,7 @@ window.LrnData = {
       "title": "AI & Automation Use Case Spotting",
       "status": "New from capability gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "bsc",
         "pvs",
         "tc",
@@ -1562,9 +1586,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "spec",
+          "specializationId": "spec",
           "depths": [
             "Acquire",
             "Deepen",
@@ -1587,7 +1611,7 @@ window.LrnData = {
       "title": "AI Cost & Value Economics",
       "status": "New from capability gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "bsc",
         "pvs",
         "tc",
@@ -1609,9 +1633,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "operate",
+          "specializationId": "operate",
           "depths": [
             "Deepen",
             "Create"
@@ -1633,7 +1657,7 @@ window.LrnData = {
       "title": "Consultative Prompting",
       "status": "New from capability gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "bsc",
         "pvs",
         "tc",
@@ -1656,9 +1680,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "spec",
+          "specializationId": "spec",
           "depths": [
             "Acquire",
             "Deepen",
@@ -1681,7 +1705,7 @@ window.LrnData = {
       "title": "AI Ecosystem & Vendor Landscape",
       "status": "New from capability gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "bsc",
         "pvs",
         "tc",
@@ -1704,37 +1728,37 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "spec",
+          "specializationId": "spec",
           "depths": [
             "Deepen",
             "Create"
           ]
         },
         {
-          "role": "orch",
+          "specializationId": "orch",
           "depths": [
             "Deepen",
             "Create"
           ]
         },
         {
-          "role": "verify",
+          "specializationId": "verify",
           "depths": [
             "Deepen",
             "Create"
           ]
         },
         {
-          "role": "integrate",
+          "specializationId": "integrate",
           "depths": [
             "Deepen",
             "Create"
           ]
         },
         {
-          "role": "operate",
+          "specializationId": "operate",
           "depths": [
             "Deepen",
             "Create"
@@ -1762,7 +1786,7 @@ window.LrnData = {
       "title": "AI for Leaders and Workforce Transformation",
       "status": "Mapped to AI-08 source package",
       "source": "AI-08 AI for Leaders.docx",
-      "profileIds": [
+      "roleIds": [
         "tc",
         "bsc",
         "pvs",
@@ -1807,7 +1831,7 @@ window.LrnData = {
       "title": "Data-Driven Decision Making with AI",
       "status": "Mapped to AI-07 source package",
       "source": "AI-07 Einfuehrung in Datengetreibene Entscheidungsfindung.docx",
-      "profileIds": [
+      "roleIds": [
         "tc",
         "bsc",
         "pvs",
@@ -1829,9 +1853,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "verify",
+          "specializationId": "verify",
           "depths": [
             "Deepen",
             "Create"
@@ -1860,7 +1884,7 @@ window.LrnData = {
       "title": "Data Literacy for AI Projects",
       "status": "New from capability gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "all",
         "bsc",
         "pvs",
@@ -1883,9 +1907,9 @@ window.LrnData = {
         "Acquire",
         "Deepen"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "spec",
+          "specializationId": "spec",
           "depths": [
             "Acquire",
             "Deepen",
@@ -1893,7 +1917,7 @@ window.LrnData = {
           ]
         },
         {
-          "role": "verify",
+          "specializationId": "verify",
           "depths": [
             "Acquire",
             "Deepen",
@@ -1916,7 +1940,7 @@ window.LrnData = {
       "title": "AI Security and Prompt Injection Defense",
       "status": "New from capability gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "pvs",
         "tc",
         "am",
@@ -1935,16 +1959,16 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "verify",
+          "specializationId": "verify",
           "depths": [
             "Deepen",
             "Create"
           ]
         },
         {
-          "role": "integrate",
+          "specializationId": "integrate",
           "depths": [
             "Deepen",
             "Create"
@@ -1971,7 +1995,7 @@ window.LrnData = {
       "title": "Internal Knowledge Assistants with RAG",
       "status": "New from capability gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "all",
         "bsc",
         "pvs",
@@ -1994,16 +2018,16 @@ window.LrnData = {
         "Acquire",
         "Deepen"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "orch",
+          "specializationId": "orch",
           "depths": [
             "Deepen",
             "Create"
           ]
         },
         {
-          "role": "integrate",
+          "specializationId": "integrate",
           "depths": [
             "Deepen",
             "Create"
@@ -2030,7 +2054,7 @@ window.LrnData = {
       "title": "AI Vendor and Procurement Evaluation",
       "status": "New from capability gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "bsc",
         "pvs",
         "tc",
@@ -2053,16 +2077,16 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "integrate",
+          "specializationId": "integrate",
           "depths": [
             "Deepen",
             "Create"
           ]
         },
         {
-          "role": "operate",
+          "specializationId": "operate",
           "depths": [
             "Deepen",
             "Create"
@@ -2089,7 +2113,7 @@ window.LrnData = {
       "title": "AI Operations and Incident Response",
       "status": "New from capability gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "pvs",
         "tc",
         "am",
@@ -2107,9 +2131,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "operate",
+          "specializationId": "operate",
           "depths": [
             "Deepen",
             "Create"
@@ -2136,7 +2160,7 @@ window.LrnData = {
       "title": "AI for Service Management and Support",
       "status": "New from role gap",
       "source": "DOCX/XLSX role gap",
-      "profileIds": [
+      "roleIds": [
         "am",
         "tc",
         "pma",
@@ -2156,9 +2180,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "operate",
+          "specializationId": "operate",
           "depths": [
             "Acquire",
             "Deepen",
@@ -2181,7 +2205,7 @@ window.LrnData = {
       "title": "AI Meeting Facilitation and Workshop Design",
       "status": "New from productivity gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "all",
         "bsc",
         "pvs",
@@ -2221,7 +2245,7 @@ window.LrnData = {
       "title": "AI Project Reporting and Steering",
       "status": "New from delivery gap",
       "source": "DOCX/XLSX role gap",
-      "profileIds": [
+      "roleIds": [
         "pma",
         "lead",
         "bsc",
@@ -2244,9 +2268,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "spec",
+          "specializationId": "spec",
           "depths": [
             "Deepen",
             "Create"
@@ -2268,7 +2292,7 @@ window.LrnData = {
       "title": "AI Data Quality and Master Data Processes",
       "status": "New from data gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "tc",
         "am",
         "corp",
@@ -2290,16 +2314,16 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "spec",
+          "specializationId": "spec",
           "depths": [
             "Deepen",
             "Create"
           ]
         },
         {
-          "role": "integrate",
+          "specializationId": "integrate",
           "depths": [
             "Deepen",
             "Create"
@@ -2321,7 +2345,7 @@ window.LrnData = {
       "title": "AI Process Analysis and Automation Design",
       "status": "New from process gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "bsc",
         "pvs",
         "pma",
@@ -2343,9 +2367,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "spec",
+          "specializationId": "spec",
           "depths": [
             "Deepen",
             "Create"
@@ -2367,7 +2391,7 @@ window.LrnData = {
       "title": "AI Risk Management and Internal Controls",
       "status": "New from governance gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "corp",
         "lead",
         "bsc",
@@ -2389,16 +2413,16 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "verify",
+          "specializationId": "verify",
           "depths": [
             "Deepen",
             "Create"
           ]
         },
         {
-          "role": "operate",
+          "specializationId": "operate",
           "depths": [
             "Deepen",
             "Create"
@@ -2425,7 +2449,7 @@ window.LrnData = {
       "title": "AI Knowledge Management and Content Governance",
       "status": "New from knowledge gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "all",
         "bsc",
         "pvs",
@@ -2450,9 +2474,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "orch",
+          "specializationId": "orch",
           "depths": [
             "Deepen",
             "Create"
@@ -2474,7 +2498,7 @@ window.LrnData = {
       "title": "AI Architecture Decision Governance",
       "status": "New from architecture gap",
       "source": "DOCX/XLSX role gap",
-      "profileIds": [
+      "roleIds": [
         "tc",
         "pvs",
         "am",
@@ -2495,9 +2519,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "integrate",
+          "specializationId": "integrate",
           "depths": [
             "Deepen",
             "Create"
@@ -2519,7 +2543,7 @@ window.LrnData = {
       "title": "AI Product Backlog and Prioritization",
       "status": "New from product gap",
       "source": "DOCX/XLSX role gap",
-      "profileIds": [
+      "roleIds": [
         "pvs",
         "pma",
         "bsc",
@@ -2538,9 +2562,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "spec",
+          "specializationId": "spec",
           "depths": [
             "Deepen",
             "Create"
@@ -2562,7 +2586,7 @@ window.LrnData = {
       "title": "AI Test Data and Synthetic Data Governance",
       "status": "New from QA/data gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "tc",
         "am",
         "pvs",
@@ -2579,9 +2603,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "verify",
+          "specializationId": "verify",
           "depths": [
             "Deepen",
             "Create"
@@ -2603,7 +2627,7 @@ window.LrnData = {
       "title": "AI Business Applications, ERP, and CRM Consulting",
       "status": "New from role/capability gap",
       "source": "DOCX/XLSX role gap",
-      "profileIds": [
+      "roleIds": [
         "bsc",
         "pvs",
         "corp",
@@ -2623,9 +2647,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "integrate",
+          "specializationId": "integrate",
           "depths": [
             "Deepen",
             "Create"
@@ -2647,7 +2671,7 @@ window.LrnData = {
       "title": "AI Cloud, Data Platform, and IoT Use Case Design",
       "status": "New from platform/data gap",
       "source": "DOCX/XLSX role gap",
-      "profileIds": [
+      "roleIds": [
         "tc",
         "am",
         "pvs",
@@ -2665,9 +2689,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "integrate",
+          "specializationId": "integrate",
           "depths": [
             "Deepen",
             "Create"
@@ -2689,7 +2713,7 @@ window.LrnData = {
       "title": "AI Human Review and Approval Workflow Design",
       "status": "New from governance/compliance gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "tc",
         "corp",
         "lead",
@@ -2709,9 +2733,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "verify",
+          "specializationId": "verify",
           "depths": [
             "Deepen",
             "Create"
@@ -2733,7 +2757,7 @@ window.LrnData = {
       "title": "AI Operating Model and Center of Excellence",
       "status": "New from leadership/operating model gap",
       "source": "DOCX/XLSX role gap",
-      "profileIds": [
+      "roleIds": [
         "tc",
         "lead",
         "pma",
@@ -2753,33 +2777,33 @@ window.LrnData = {
       "levels": [
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "spec",
+          "specializationId": "spec",
           "depths": [
             "Create"
           ]
         },
         {
-          "role": "orch",
+          "specializationId": "orch",
           "depths": [
             "Create"
           ]
         },
         {
-          "role": "verify",
+          "specializationId": "verify",
           "depths": [
             "Create"
           ]
         },
         {
-          "role": "integrate",
+          "specializationId": "integrate",
           "depths": [
             "Create"
           ]
         },
         {
-          "role": "operate",
+          "specializationId": "operate",
           "depths": [
             "Create"
           ]
@@ -2800,7 +2824,7 @@ window.LrnData = {
       "title": "AI Service Desk Runbook and Knowledge Automation",
       "status": "New from application management gap",
       "source": "DOCX/XLSX role gap",
-      "profileIds": [
+      "roleIds": [
         "am",
         "tc",
         "corp",
@@ -2820,9 +2844,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "operate",
+          "specializationId": "operate",
           "depths": [
             "Deepen",
             "Create"
@@ -2844,7 +2868,7 @@ window.LrnData = {
       "title": "AI Security Review and Threat Triage for Business Teams",
       "status": "New from security/governance gap",
       "source": "DOCX/XLSX role gap",
-      "profileIds": [
+      "roleIds": [
         "tc",
         "corp",
         "lead",
@@ -2865,9 +2889,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "verify",
+          "specializationId": "verify",
           "depths": [
             "Acquire",
             "Deepen",
@@ -2890,7 +2914,7 @@ window.LrnData = {
       "title": "AI Prompt Library Governance and Reuse",
       "status": "New from prompt/knowledge gap",
       "source": "DOCX/XLSX capability gap",
-      "profileIds": [
+      "roleIds": [
         "corp",
         "lead",
         "tc",
@@ -2912,9 +2936,9 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "orch",
+          "specializationId": "orch",
           "depths": [
             "Deepen",
             "Create"
@@ -2936,7 +2960,7 @@ window.LrnData = {
       "title": "Harness Engineering for Reliable Agent Delivery",
       "status": "New curriculum course",
       "source": "Phase 14 agent workbench track",
-      "profileIds": [
+      "roleIds": [
         "tc"
       ],
       "dimensions": [
@@ -2952,16 +2976,16 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "orch",
+          "specializationId": "orch",
           "depths": [
             "Deepen",
             "Create"
           ]
         },
         {
-          "role": "verify",
+          "specializationId": "verify",
           "depths": [
             "Deepen",
             "Create"
@@ -2994,7 +3018,7 @@ window.LrnData = {
       "title": "AI for Pre-Sales and Sales",
       "status": "Mapped to AI-10 source package",
       "source": "AI-10 AI for Pre-Sals & Sales.docx",
-      "profileIds": [
+      "roleIds": [
         "tc",
         "bsc",
         "pvs",
@@ -3037,7 +3061,7 @@ window.LrnData = {
       "title": "AI Infrastructure Basics for Software Developers",
       "status": "Mapped to AI-12 source package",
       "source": "AI-12_Infrastructure_Basics_for_Software_Developers_Trainingsinhalte.docx",
-      "profileIds": [
+      "roleIds": [
         "tc",
         "am",
         "pvs"
@@ -3055,23 +3079,23 @@ window.LrnData = {
         "Deepen",
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "orch",
+          "specializationId": "orch",
           "depths": [
             "Deepen",
             "Create"
           ]
         },
         {
-          "role": "integrate",
+          "specializationId": "integrate",
           "depths": [
             "Deepen",
             "Create"
           ]
         },
         {
-          "role": "operate",
+          "specializationId": "operate",
           "depths": [
             "Deepen",
             "Create"
@@ -3101,7 +3125,7 @@ window.LrnData = {
       "title": "AI Champion / Community Lead",
       "status": "Role format from DOCX",
       "source": "DOCX",
-      "profileIds": [
+      "roleIds": [
         "tc",
         "bsc",
         "pvs",
@@ -3122,33 +3146,33 @@ window.LrnData = {
       "levels": [
         "Create"
       ],
-      "ase": [
+      "specializationDepths": [
         {
-          "role": "spec",
+          "specializationId": "spec",
           "depths": [
             "Create"
           ]
         },
         {
-          "role": "orch",
+          "specializationId": "orch",
           "depths": [
             "Create"
           ]
         },
         {
-          "role": "verify",
+          "specializationId": "verify",
           "depths": [
             "Create"
           ]
         },
         {
-          "role": "integrate",
+          "specializationId": "integrate",
           "depths": [
             "Create"
           ]
         },
         {
-          "role": "operate",
+          "specializationId": "operate",
           "depths": [
             "Create"
           ]
@@ -3602,7 +3626,7 @@ window.LrnData = {
       "id": "baseline",
       "code": "LP01",
       "label": "Core AI Foundation",
-      "profileIds": [
+      "roleIds": [
         "all",
         "bsc",
         "pvs",
@@ -3648,7 +3672,7 @@ window.LrnData = {
       "id": "consulting",
       "code": "LP02",
       "label": "Consulting & Value Creation",
-      "profileIds": [
+      "roleIds": [
         "bsc",
         "pvs",
         "pma"
@@ -3697,7 +3721,7 @@ window.LrnData = {
       "id": "technology",
       "code": "LP03",
       "label": "Technology & Engineering Delivery",
-      "profileIds": [
+      "roleIds": [
         "tc",
         "am"
       ],
@@ -3758,7 +3782,7 @@ window.LrnData = {
       "id": "leadership",
       "code": "LP04",
       "label": "Leadership & Transformation",
-      "profileIds": [
+      "roleIds": [
         "lead",
         "corp",
         "pma",
@@ -3809,7 +3833,7 @@ window.LrnData = {
       "id": "corporate-functions",
       "code": "LP05",
       "label": "Corporate Functions Enablement",
-      "profileIds": [
+      "roleIds": [
         "corp"
       ],
       "stages": [
