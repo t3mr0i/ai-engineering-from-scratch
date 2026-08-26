@@ -429,8 +429,8 @@
     return (path.stages || []).some(function (stage) { return stage.label === activeLevel; });
   }
 
-  function academyRecommendationRank(path, profileId) {
-    var rank = path.recommendationRanks && path.recommendationRanks[profileId];
+  function academyRecommendationRank(path, roleId) {
+    var rank = path.recommendationRanks && path.recommendationRanks[roleId];
     return Number.isFinite(Number(rank)) && Number(rank) > 0 ? Number(rank) : null;
   }
 
@@ -443,11 +443,11 @@
     });
   }
 
-  function saveAcademyPath(path, profileId, activeLevel, source) {
+  function saveAcademyPath(path, roleId, activeLevel, source) {
     if (!path || !progressApi || !progressApi.saveLearningPath) return;
     progressApi.saveLearningPath({
       academyCourse: path.academyCourse,
-      profileId: profileId,
+      profileId: roleId,
       targetLevel: activeLevel,
       source: source || "choice"
     });
