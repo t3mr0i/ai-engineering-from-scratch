@@ -12,7 +12,7 @@
       return curriculum.visibleCourseIds.indexOf(course.id) !== -1;
     });
   }
-  var profileById = indexBy(data.profiles, "id");
+  var roleById = indexBy(data.roles, "id");
   var courseById = indexBy(data.courses, "id");
   var state = loadState();
 
@@ -64,7 +64,9 @@
   };
 
   var els = {
-    profileSelect: document.getElementById("profileSelect"),
+    roleSelect: document.getElementById("roleSelect"),
+    keyAreaSelect: document.getElementById("keyAreaSelect"),
+    specializationSelect: document.getElementById("specializationSelect"),
     levelSelect: document.getElementById("levelSelect"),
     courseFilters: document.getElementById("courseFilters"),
     courseGrid: document.getElementById("courseGrid"),
@@ -89,6 +91,8 @@
   function loadState() {
     var fallback = {
       profileId: "tc",
+      keyAreaId: null,
+      specializationId: null,
       externalLevel: 1,
       filter: "recommended",
       activeCourseId: null,
@@ -97,9 +101,11 @@
 
     try {
       var saved = JSON.parse(localStorage.getItem(STORE));
-      if (!saved || !profileById[saved.profileId]) return fallback;
+      if (!saved || !roleById[saved.profileId]) return fallback;
       return {
         profileId: saved.profileId,
+        keyAreaId: saved.keyAreaId || null,
+        specializationId: saved.specializationId || null,
         externalLevel: validDepthValue(saved.externalLevel) ? Number(saved.externalLevel) : fallback.externalLevel,
         filter: ["recommended", "optional", "inprogress", "completed", "all"].indexOf(saved.filter) !== -1 ? saved.filter : "recommended",
         activeCourseId: saved.activeCourseId || null,
@@ -115,7 +121,7 @@
     var changed = false;
     var rawLevel = params.get("level") || params.get("score") || params.get("assessment");
     var rawDepth = params.get("depth");
-    var rawProfile = params.get("profile") || params.get("role");
+    var rawRole = params.get("profile") || params.get("role");
     var rawQuery = params.get("q");
 
     if (rawQuery && els.searchInput) {
@@ -134,10 +140,10 @@
       }
     }
 
-    if (rawProfile) {
-      var profileId = resolveProfile(rawProfile);
-      if (profileId) {
-        state.profileId = profileId;
+    if (rawRole) {
+      var roleId = resolveRole(rawRole);
+      if (roleId) {
+        state.profileId = roleId;
         changed = true;
       }
     }
@@ -156,6 +162,8 @@
   function wireActions() {
     els.resetBtn.addEventListener("click", function () {
       state.profileId = "tc";
+      state.keyAreaId = null;
+      state.specializationId = null;
       state.externalLevel = 1;
       state.filter = "recommended";
       state.activeCourseId = null;
@@ -205,14 +213,36 @@
       }
     });
 
-    els.profileSelect.addEventListener("change", function () {
-      var profile = profileById[els.profileSelect.value];
-      if (!profile || state.profileId === profile.id) return;
-      state.profileId = profile.id;
+    els.roleSelect.addEventListener("change", function () {
+      var role = roleById[els.roleSelect.value];
+      if (!role || state.profileId === role.id) return;
+      state.profileId = role.id;
+      state.keyAreaId = null;
+      state.specializationId = null;
       saveState();
       render();
-      announce(i18n("lrn_announce_profile_set").replace("{profile}", profile.label));
+      announce(i18n("lrn_announce_profile_set").replace("{profile}", role.label));
     });
+
+    if (els.keyAreaSelect) {
+      els.keyAreaSelect.addEventListener("change", function () {
+        if (state.keyAreaId === els.keyAreaSelect.value) return;
+        state.keyAreaId = els.keyAreaSelect.value;
+        state.specializationId = null;
+        saveState();
+        renderSpecializationSelect();
+        render();
+      });
+    }
+
+    if (els.specializationSelect) {
+      els.specializationSelect.addEventListener("change", function () {
+        if (state.specializationId === els.specializationSelect.value) return;
+        state.specializationId = els.specializationSelect.value;
+        saveState();
+        render();
+      });
+    }
 
     els.levelSelect.addEventListener("change", function () {
       var level = Number(els.levelSelect.value);
@@ -232,7 +262,9 @@
   // Controls (profile/level selects) only need a full rebuild when the
   // underlying selection set or language changes — not on every progress tick.
   function renderControls() {
-    renderProfileSelect();
+    renderRoleSelect();
+    renderKeyAreaSelect();
+    renderSpecializationSelect();
     renderLevelSelect();
   }
 
@@ -247,14 +279,67 @@
     refreshIcons();
   }
 
-  function renderProfileSelect() {
-    replaceChildren(els.profileSelect, data.profiles.map(function (profile) {
+  function renderRoleSelect() {
+    replaceChildren(els.roleSelect, data.roles.map(function (role) {
       var option = document.createElement("option");
-      option.value = profile.id;
-      option.textContent = profile.label;
+      option.value = role.id;
+      option.textContent = role.label;
       return option;
     }));
-    els.profileSelect.value = state.profileId;
+    els.roleSelect.value = state.profileId;
+  }
+
+  function keyAreasForRole(roleId) {
+    return (data.keyAreas || []).filter(function (keyArea) { return keyArea.roleId === roleId; });
+  }
+
+  function specializationsForKeyArea(keyAreaId) {
+    return (data.specializations || []).filter(function (spec) { return spec.keyAreaId === keyAreaId; });
+  }
+
+  function renderKeyAreaSelect() {
+    if (!els.keyAreaSelect) return;
+    var options = keyAreasForRole(state.profileId);
+    var wrapper = els.keyAreaSelect.closest(".selector-field");
+    if (!options.length) {
+      if (wrapper) wrapper.hidden = true;
+      els.keyAreaSelect.innerHTML = "";
+      return;
+    }
+    if (wrapper) wrapper.hidden = false;
+    replaceChildren(els.keyAreaSelect, options.map(function (keyArea) {
+      var option = document.createElement("option");
+      option.value = keyArea.id;
+      option.textContent = keyArea.label;
+      return option;
+    }));
+    if (!options.some(function (k) { return k.id === state.keyAreaId; })) {
+      state.keyAreaId = options[0].id;
+    }
+    els.keyAreaSelect.value = state.keyAreaId;
+  }
+
+  function renderSpecializationSelect() {
+    if (!els.specializationSelect) return;
+    var options = state.keyAreaId ? specializationsForKeyArea(state.keyAreaId) : [];
+    var wrapper = els.specializationSelect.closest(".selector-field");
+    if (!options.length) {
+      if (wrapper) wrapper.hidden = true;
+      els.specializationSelect.innerHTML = "";
+      state.specializationId = null;
+      return;
+    }
+    if (wrapper) wrapper.hidden = false;
+    replaceChildren(els.specializationSelect, options.map(function (spec) {
+      var option = document.createElement("option");
+      option.value = spec.id;
+      option.textContent = spec.labelDe || spec.label;
+      return option;
+    }));
+    if (!options.some(function (s) { return s.id === state.specializationId; })) {
+      state.specializationId = options[0].id;
+    }
+    els.specializationSelect.value = state.specializationId;
   }
 
   function renderLevelSelect() {
@@ -268,7 +353,7 @@
   }
 
   function syncSelects() {
-    if (els.profileSelect.value !== state.profileId) els.profileSelect.value = state.profileId;
+    if (els.roleSelect.value !== state.profileId) els.roleSelect.value = state.profileId;
     if (els.levelSelect.value !== String(state.externalLevel)) els.levelSelect.value = String(state.externalLevel);
   }
 
@@ -551,7 +636,7 @@
         : i18n("academy_paths_show_all", "Show all AI trainings");
     }
 
-    var profile = profileById[context.profileId];
+    var profile = roleById[context.profileId];
     var groups = [
       academyPathGroup(
         "recommended",
@@ -871,7 +956,7 @@
     meta.className = "course-card__meta";
     var metaText = document.createElement("span");
     // Course-Card-Meta counts the *lessons* inside the course (per
-    // LHIND LRN taxonomy: Profile → Level → Course → Unit → Activity).
+    // LHIND LRN taxonomy: Role → Key Area → Ausprägung → Level → Course → Unit → Activity).
     // The cockpit already names this layer "Lesson" on the syllabus row
     // (course.js: activityType → "Lesson"/"Guided Lesson"/"Knowledge Check"),
     // so the catalog-side label should match.
@@ -918,33 +1003,43 @@
   }
 
   function compute() {
-    var profile = profileById[state.profileId];
+    var role = roleById[state.profileId];
     var level = levelDefinitions.find(function (item) {
       return item.value === Number(state.externalLevel);
     }) || levelDefinitions[0];
-    var entries = rankedCourses(profile, level);
-    return { profile: profile, level: level, entries: entries };
+    var entries = rankedCourses(role, level);
+    return { profile: role, level: level, entries: entries };
   }
 
-  function rankedCourses(profile, level) {
+  function rankedCourses(role, level) {
     // Course candidacy comes from the curated learning tracks (LP01-LP05), not
     // from re-deriving it via tag matching. A course only counts as on-path for
-    // this profile/level if it sits in a track serving the profile, in a stage
+    // this role/level if it sits in a track serving the role, in a stage
     // matching the external level's focus (Acquire/Deepen/Create).
-    var stageCoursesForLevel = curatedCourseIds(profile, level.focusLevels);
+    var stageCoursesForLevel = curatedCourseIds(role, level.focusLevels);
 
     var entries = data.courses.filter(function (course) {
-      return course.profileIds.indexOf(profile.id) !== -1;
+      return course.roleIds.indexOf(role.id) !== -1;
     }).map(function (course) {
       var onPath = stageCoursesForLevel.indexOf(course.id) !== -1;
       var roleTargetMatch = course.dimensions.some(function (dimensionId) {
-        return Number(profile.targets[dimensionId] || 0) > 0;
+        return Number(role.targets[dimensionId] || 0) > 0;
       });
+      var keyAreaMatch = state.keyAreaId &&
+        Array.isArray(course.keyAreaIds) && course.keyAreaIds.indexOf(state.keyAreaId) !== -1;
+      var specializationMatch = state.specializationId && (
+        (Array.isArray(course.specializationIds) && course.specializationIds.indexOf(state.specializationId) !== -1) ||
+        (Array.isArray(course.specializationDepths) && course.specializationDepths.some(function (entry) {
+          return entry.specializationId === state.specializationId;
+        }))
+      );
       var progress = courseProgress(course);
       // Sharpness score decides which of the relevant courses survive the cap.
       var score = 10;
       if (onPath) score += 60;
       if (roleTargetMatch) score += 8;
+      if (specializationMatch) score += 20;
+      else if (keyAreaMatch) score += 10;
       if (progress.percent > 0 && progress.percent < 100) score += 12;
       if (progress.percent === 100 && progress.lessonCount > 0) score -= 20;
       return {
@@ -960,7 +1055,7 @@
       return a.course.id.localeCompare(b.course.id);
     });
 
-    // A profile/level whose track stages have no on-path courses would
+    // A role/level whose track stages have no on-path courses would
     // otherwise leave the Recommended tab empty — fall back to showing
     // everything relevant instead.
     var hasStrict = entries.some(function (entry) { return entry.kind === "recommended"; });
@@ -969,7 +1064,7 @@
     }
 
     // Enforce the cap: demote recommended courses past RECOMMEND_CAP to optional
-    // so the focused list never balloons for broad profiles/interests.
+    // so the focused list never balloons for broad roles/interests.
     var shown = 0;
     entries.forEach(function (entry) {
       if (entry.kind !== "recommended") return;
@@ -980,12 +1075,12 @@
     return entries;
   }
 
-  // Course ids drawn from the curated tracks that serve this profile, limited to
+  // Course ids drawn from the curated tracks that serve this role, limited to
   // stages whose label matches the external level's focus (Acquire/Deepen/Create).
-  function curatedCourseIds(profile, focusLevels) {
+  function curatedCourseIds(role, focusLevels) {
     var ids = [];
     (data.tracks || []).forEach(function (track) {
-      if (track.profileIds.indexOf(profile.id) === -1) return;
+      if (track.roleIds.indexOf(role.id) === -1) return;
       (track.stages || []).forEach(function (stage) {
         if (focusLevels.indexOf(stage.label) === -1) return;
         stage.courses.forEach(function (id) {
@@ -1125,13 +1220,13 @@
     return match || null;
   }
 
-  function resolveProfile(rawProfile) {
-    var normalized = String(rawProfile).trim().toLowerCase();
-    if (profileById[normalized]) return normalized;
-    var match = data.profiles.find(function (profile) {
-      return profile.segment.toLowerCase() === normalized ||
-        profile.label.toLowerCase() === normalized ||
-        profile.label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") === normalized;
+  function resolveRole(rawRole) {
+    var normalized = String(rawRole).trim().toLowerCase();
+    if (roleById[normalized]) return normalized;
+    var match = data.roles.find(function (role) {
+      return role.segment.toLowerCase() === normalized ||
+        role.label.toLowerCase() === normalized ||
+        role.label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") === normalized;
     });
     return match && match.id;
   }
