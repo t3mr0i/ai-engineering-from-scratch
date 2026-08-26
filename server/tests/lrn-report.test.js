@@ -1,8 +1,10 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
+const net = require("node:net");
 const os = require("node:os");
 const path = require("node:path");
+const { spawn } = require("node:child_process");
 
 const { LrnReportStore, ReportError } = require("../lrn-report-store");
 
@@ -14,6 +16,44 @@ const OTHER_ANON_ID = "22222222-2222-4222-8222-222222222222";
 function makeStore() {
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "lrn-report-"));
   return new LrnReportStore({ dataDir, webRoot: SITE });
+}
+
+function findFreePort() {
+  return new Promise((resolve, reject) => {
+    const probe = net.createServer();
+    probe.once("error", reject);
+    probe.listen(0, "127.0.0.1", () => {
+      const { port } = probe.address();
+      probe.close(() => resolve(port));
+    });
+  });
+}
+
+// Spawns the real server and waits for its startup log line before resolving,
+// so tests hit real HTTP dispatch instead of exercising modules in isolation.
+function spawnServer(env) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, [path.join(ROOT, "server", "server.js")], {
+      cwd: ROOT,
+      env: { ...process.env, ...env },
+    });
+    let output = "";
+    const onData = (chunk) => {
+      output += chunk;
+      if (/gated server on/.test(output)) {
+        child.stdout.off("data", onData);
+        resolve(child);
+      }
+    };
+    child.stdout.on("data", onData);
+    child.stderr.on("data", (chunk) => { output += chunk; });
+    child.once("error", reject);
+    child.once("exit", (code) => {
+      if (!/gated server on/.test(output)) {
+        reject(new Error(`server exited before starting (code ${code}): ${output}`));
+      }
+    });
+  });
 }
 
 test("save rejects an anonId that is not a UUID", () => {
@@ -75,4 +115,39 @@ test("aggregate counts learners per profile, level, and course completion", () =
 test("aggregate returns zero totals when no reports exist yet", () => {
   const store = makeStore();
   assert.deepEqual(store.aggregate(), { totalLearners: 0, byProfile: {}, byLevel: {}, courseCompletions: {} });
+});
+
+test("POST /api/lrn/report returns 401 without a valid gate cookie when the gate is enabled", async (t) => {
+  const port = await findFreePort();
+  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "lrn-report-http-"));
+  const child = await spawnServer({
+    WEB_ROOT: SITE,
+    ADMIN_DATA_DIR: dataDir,
+    PORT: String(port),
+    SITE_PASSCODE: "test-passcode",
+    GATE_SECRET: "test-gate-secret",
+  });
+  t.after(() => child.kill());
+
+  const response = await fetch(`http://127.0.0.1:${port}/api/lrn/report`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ anonId: VALID_ANON_ID, profileId: "tc", externalLevel: 1, completedCourses: [] }),
+  });
+  assert.equal(response.status, 401);
+});
+
+test("GET /api/admin/lrn-stats returns 401 without an admin identity", async (t) => {
+  const port = await findFreePort();
+  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "lrn-report-http-"));
+  const child = await spawnServer({
+    WEB_ROOT: SITE,
+    ADMIN_DATA_DIR: dataDir,
+    PORT: String(port),
+    GATE_DISABLED: "true",
+  });
+  t.after(() => child.kill());
+
+  const response = await fetch(`http://127.0.0.1:${port}/api/admin/lrn-stats`);
+  assert.equal(response.status, 401);
 });

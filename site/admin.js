@@ -2159,7 +2159,7 @@
   async function boot() {
     try {
       const [me, curriculum, changesets, aiSkills, publishConfig, lessons, lrnStats] = await Promise.all([
-        api("/api/admin/me"), api("/api/admin/curriculum"), api("/api/admin/changesets"), api("/api/admin/ai/skills"), api("/api/admin/publish/config"), api("/api/admin/lessons"), api("/api/admin/lrn-stats"),
+        api("/api/admin/me"), api("/api/admin/curriculum"), api("/api/admin/changesets"), api("/api/admin/ai/skills"), api("/api/admin/publish/config"), api("/api/admin/lessons"), api("/api/admin/lrn-stats").catch(() => ({ stats: null })),
       ]);
       state.actor = me.actor;
       state.base = curriculum;

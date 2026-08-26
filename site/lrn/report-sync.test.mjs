@@ -90,10 +90,15 @@ test("sync posts the current selection and completed courses after the debounce"
   });
   api.sync();
   fireTimers();
-  assert.equal(calls.length, 1);
-  assert.equal(calls[0].url, "/api/lrn/report");
-  const body = JSON.parse(calls[0].options.body);
-  assert.equal(body.anonId, "generated-anon-id");
-  assert.equal(body.profileId, "tc");
-  assert.deepEqual(body.completedCourses, ["A"]);
+  // mount() itself schedules one sync at load time (in addition to the
+  // explicit api.sync() above), so this fixture's fake timer queue sees two
+  // identical, harmless (same-anonId overwrite) POSTs.
+  assert.equal(calls.length, 2);
+  calls.forEach((call) => {
+    assert.equal(call.url, "/api/lrn/report");
+    const body = JSON.parse(call.options.body);
+    assert.equal(body.anonId, "generated-anon-id");
+    assert.equal(body.profileId, "tc");
+    assert.deepEqual(body.completedCourses, ["A"]);
+  });
 });

@@ -98,6 +98,8 @@
       window.AIFSProgress.onChange(function (state) { scheduleSync(state); });
     }
 
+    scheduleSync();
+
     window.LrnReportSync = {
       sync: function () { scheduleSync(); },
       computeCompletedCourseIds: computeCompletedCourseIds,

@@ -12,6 +12,11 @@ const { loadBaseCurriculum } = require("./admin-curriculum");
 
 const ANON_ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+// Upper bound on distinct anonymous learners tracked at once — protects disk
+// and aggregate() cost against unbounded pseudonym cardinality. Updating an
+// existing anonId's snapshot is never blocked by this cap.
+const MAX_REPORTS = 50000;
+
 class ReportError extends Error {
   constructor(code, message, status = 400) {
     super(message);
@@ -34,7 +39,10 @@ class LrnReportStore {
   }
 
   catalog() {
-    return loadBaseCurriculum(this.webRoot).catalog;
+    if (!this._catalog) {
+      this._catalog = loadBaseCurriculum(this.webRoot).catalog;
+    }
+    return this._catalog;
   }
 
   validate(payload) {
@@ -62,15 +70,30 @@ class LrnReportStore {
 
   save(payload) {
     const clean = this.validate(payload);
+    const file = path.join(this.reportsDir, `${clean.anonId}.json`);
+    if (!fs.existsSync(file)) {
+      fs.mkdirSync(this.reportsDir, { recursive: true });
+      const count = fs.readdirSync(this.reportsDir).filter((name) => name.endsWith(".json")).length;
+      if (count >= MAX_REPORTS) {
+        throw new ReportError("report.capacity.exceeded", "Die maximale Anzahl an Lernenden-Reports ist erreicht.", 429);
+      }
+    }
     const record = { ...clean, updatedAt: new Date().toISOString() };
-    atomicJson(path.join(this.reportsDir, `${clean.anonId}.json`), record);
+    atomicJson(file, record);
     return record;
   }
 
   aggregate() {
     fs.mkdirSync(this.reportsDir, { recursive: true });
     const files = fs.readdirSync(this.reportsDir).filter((name) => name.endsWith(".json"));
-    const reports = files.map((name) => JSON.parse(fs.readFileSync(path.join(this.reportsDir, name), "utf8")));
+    const reports = [];
+    for (const name of files) {
+      try {
+        reports.push(JSON.parse(fs.readFileSync(path.join(this.reportsDir, name), "utf8")));
+      } catch (error) {
+        continue; // a corrupt/partial report file is best-effort telemetry, not fatal
+      }
+    }
 
     const byProfile = {};
     const byLevel = {};

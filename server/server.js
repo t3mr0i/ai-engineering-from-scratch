@@ -25,6 +25,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('node:crypto');
 const {
   COOKIE_NAME,
   TTL_MS,
@@ -64,6 +65,12 @@ const LLM_GATEWAY_KEY = process.env.LLM_GATEWAY_KEY;
 // disabled) — keeps one client from burning the shared gateway budget.
 const LLM_RATE_LIMIT_PER_MIN = 20;
 const llmRateState = new Map(); // ip -> { count, windowStart }
+
+// Separate, smaller budget for the anonymous progress-report endpoint — one
+// learner's browser syncs at most once every few seconds, so this cap is
+// only meant to blunt abuse, not accommodate legitimate bursts.
+const LRN_REPORT_RATE_LIMIT_PER_MIN = 10;
+const lrnReportRateState = new Map(); // ip -> { count, windowStart }
 
 // Paths a logged-out visitor may reach. Keep this minimal — gate.html is
 // self-contained, so the passcode page needs nothing else.
@@ -196,6 +203,17 @@ function llmRateLimited(ip) {
   return entry.count > LLM_RATE_LIMIT_PER_MIN;
 }
 
+function lrnReportRateLimited(ip) {
+  const now = Date.now();
+  const entry = lrnReportRateState.get(ip);
+  if (!entry || now - entry.windowStart > 60000) {
+    lrnReportRateState.set(ip, { count: 1, windowStart: now });
+    return false;
+  }
+  entry.count += 1;
+  return entry.count > LRN_REPORT_RATE_LIMIT_PER_MIN;
+}
+
 // Proxies notebook LLM calls to the Bifrost gateway, injecting the shared key
 // server-side. Any Authorization header the client sends is ignored — the
 // key never needs to exist in the browser.
@@ -246,9 +264,15 @@ function handleLlmProxy(req, res) {
 // snapshot. Runs behind the passcode gate like the rest of the site — see
 // the dispatch block below.
 async function handleLrnReport(req, res) {
+  const errorId = crypto.randomBytes(5).toString('hex');
   if (req.method !== 'POST') {
     res.writeHead(405, { 'Content-Type': 'text/plain' });
     res.end('Method Not Allowed');
+    return;
+  }
+  if (lrnReportRateLimited(clientIp(req))) {
+    res.writeHead(429, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ ok: false, error: { code: 'report.rate_limited', message: 'Zu viele Anfragen, bitte kurz warten.' } }));
     return;
   }
   try {
@@ -257,9 +281,14 @@ async function handleLrnReport(req, res) {
     sendJson(res, 200, { ok: true, updatedAt: record.updatedAt });
   } catch (error) {
     const known = error instanceof ReportError || error instanceof StoreError;
+    if (!known) console.error(`[lrn-report:${errorId}]`, error);
     sendJson(res, known ? error.status : 400, {
       ok: false,
-      error: { code: known ? error.code : 'report.invalid', message: known ? error.message : 'Der Report konnte nicht verarbeitet werden.' },
+      error: {
+        code: known ? error.code : 'report.invalid',
+        message: known ? error.message : 'Der Report konnte nicht verarbeitet werden.',
+        id: errorId,
+      },
     });
   }
 }
