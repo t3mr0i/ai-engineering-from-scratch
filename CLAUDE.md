@@ -263,14 +263,24 @@ Use this hierarchy everywhere in `site/lrn/*` and in LRN mode of
 `site/lesson.html`:
 
 ```text
-Profile -> External level -> Learning path -> Course  -> Unit -> Activity
-Rxx     -> LVx            -> LPxx          -> LRN-NN  -> Uxx  -> Axx
+Role -> Key Area -> Ausprägung -> Learning path -> Course  -> Unit -> Activity
+Rxx  -> KAxx      -> AUxx       -> LPxx          -> LRN-NN  -> Uxx  -> Axx
 ```
 
 Stable codes:
 
-- Profiles: `R01-BSC`, `R02-PVS`, `R03-TC`, `R04-AM`, `R05-PMA`,
+- Roles: `R01-BSC`, `R02-PVS`, `R03-TC`, `R04-AM`, `R05-PMA`,
   `R06-CF`, `R07-LEAD`.
+- Key Areas and Ausprägungen: optional layers under a Role, sourced from
+  Lufthansa's `#MyCompetence` model (`260810 - ASE Roles Sounding AC.pdf`,
+  `TC2-Software Dev und Architecture_Überarbeitung 2026_for Review_v3.xlsx`).
+  Only `R03-TC` (Technology Consulting) has data today: Key Areas
+  `software-engineering`, `ai-automation`, `ase` (Agentic Software
+  Engineering); `ase` has 5 Ausprägungen (Spezifizieren, Orchestrieren,
+  Verifizieren, Integrieren, Betreiben — same ids/codes as the former
+  `aseRoles`). The other 6 roles have no Key Area data — the cockpit falls
+  back to Role-level course recommendation for them. A course may tag
+  multiple Ausprägungen (many-to-many, not strict containment).
 - External assessment levels: `LV1` through `LV5`. These are the numbers the
   external self-assessment passes in; do not render self-assessment questions.
 - Learning paths: `LP01` Core AI Foundation Path, `LP02` Consulting & Value
