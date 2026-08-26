@@ -148,6 +148,7 @@
   function saveState() {
     try {
       localStorage.setItem(STORE, JSON.stringify(state));
+      if (window.LrnReportSync) window.LrnReportSync.sync();
     } catch (error) {
       // Selection persistence is a convenience only. Lesson progress is owned by progress.js / LRN.
     }
