@@ -48,7 +48,7 @@ class LrnReportStore {
   validate(payload) {
     payload = payload && typeof payload === "object" ? payload : {};
     const catalog = this.catalog();
-    const profileIds = new Set((catalog.profiles || []).map((item) => item.id));
+    const profileIds = new Set((catalog.roles || []).map((item) => item.id));
     const levelIds = new Set((catalog.levels || []).map((item) => item.id));
     const courseIds = new Set((catalog.courses || []).map((item) => item.id));
 

@@ -441,7 +441,7 @@
     }
 
     const profileTitle = (id) => {
-      const profile = (state.snapshot.catalog.profiles || []).find((item) => item.id === id);
+      const profile = (state.snapshot.catalog.roles || []).find((item) => item.id === id);
       return profile ? profile.label : id;
     };
     const courseTitle = (id) => {
