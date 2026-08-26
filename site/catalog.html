@@ -498,8 +498,8 @@
       document.addEventListener('DOMContentLoaded', function () {
         // Technology Consulting scope: catalog only surfaces lessons that back
         // at least one of the LRN cockpit's TC courses (curriculum-map.js).
-        // Every course in courseMaps carries "tc" in profileIds by construction
-        // (site/lrn/data.js), so no further profile filtering is needed here.
+        // Every course in courseMaps carries "tc" in roleIds by construction
+        // (site/lrn/data.js), so no further role filtering is needed here.
         var tcLessonPaths = {};
         if (window.LrnCurriculumMap && window.LrnCurriculumMap.courseMaps) {
           // Rollout gate — see curriculum-map.js:visibleCourseIds.
