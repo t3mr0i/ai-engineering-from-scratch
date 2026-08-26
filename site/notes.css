@@ -28,6 +28,32 @@ p.notes-glossary-hint {
   display: none;
 }
 
+.progress-transfer__code {
+  width: 100%;
+  min-height: 96px;
+  font-family: monospace;
+  font-size: 0.85rem;
+  padding: 12px;
+  border: 1px solid var(--border, #e0e0e0);
+  background: var(--surface, #fff);
+  color: inherit;
+  resize: vertical;
+  word-break: break-all;
+  margin-bottom: 16px;
+}
+
+.progress-transfer__code[hidden] {
+  display: none;
+}
+
+.progress-transfer__status {
+  min-height: 1.2em;
+}
+
+.progress-transfer__status--error {
+  color: var(--danger, #b3261e);
+}
+
 .notes-empty {
   border: 1px solid var(--blueprint);
   padding: 32px;

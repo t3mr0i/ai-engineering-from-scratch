@@ -75,11 +75,37 @@
       </div>
       <div id="notesList"></div>
     </section>
+
+    <section class="cockpit" aria-labelledby="transferTitle">
+      <h2 id="transferTitle" class="notes-section-title">Fortschritt sichern</h2>
+      <p>Erzeuge einen Code für deinen gesamten Fortschritt (Lektionen, Streak, Merkzettel, Badges) zum Kopieren — z.B. um auf einem anderen Gerät weiterzumachen. Der Code bleibt bei dir, es gibt keinen Server dazwischen.</p>
+      <div class="notes-actions" id="transferExportActions">
+        <button type="button" class="btn" id="progressExportBtn">
+          <i class="ph-light ph-export" aria-hidden="true"></i> Fortschritt exportieren
+        </button>
+        <button type="button" class="btn" id="progressCopyBtn" hidden>
+          <i class="ph-light ph-copy" aria-hidden="true"></i> In Zwischenablage kopieren
+        </button>
+      </div>
+      <textarea id="progressExportOutput" class="progress-transfer__code" readonly hidden aria-label="Export-Code"></textarea>
+
+      <h3 class="notes-section-title">Fortschritt importieren</h3>
+      <p>Einfügen überschreibt den aktuellen Fortschritt auf diesem Gerät.</p>
+      <textarea id="progressImportInput" class="progress-transfer__code" placeholder="Export-Code hier einfügen…" aria-label="Export-Code zum Importieren"></textarea>
+      <div class="notes-actions">
+        <button type="button" class="btn" id="progressImportBtn">
+          <i class="ph-light ph-upload-simple" aria-hidden="true"></i> Importieren
+        </button>
+      </div>
+      <p id="progressTransferStatus" class="progress-transfer__status" role="status" aria-live="polite"></p>
+    </section>
   </main>
 
   <script src="data.js?v=20260525a"></script>
   <script src="progress.js?v=20260724a"></script>
   <script src="badges.js?v=20260713a"></script>
+  <script src="progress-transfer.js?v=20260826a"></script>
+  <script src="progress-transfer-ui.js?v=20260826a"></script>
   <script src="notes.js?v=20260724a"></script>
   <script src="theme-toggle.js"></script>
 </body>
