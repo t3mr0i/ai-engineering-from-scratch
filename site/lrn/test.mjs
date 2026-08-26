@@ -91,12 +91,12 @@ test("every Course has a unique id", () => {
 });
 
 test("every Course has the required fields", () => {
-  const required = ["id", "title", "profileIds", "dimensions", "levels", "modules"];
+  const required = ["id", "title", "roleIds", "dimensions", "levels", "modules"];
   for (const c of data.courses) {
     for (const f of required) {
       assert.ok(c[f] !== undefined, `Course ${c.id} missing field ${f}`);
     }
-    assert.ok(Array.isArray(c.profileIds), `Course ${c.id}.profileIds must be array`);
+    assert.ok(Array.isArray(c.roleIds), `Course ${c.id}.roleIds must be array`);
     assert.ok(Array.isArray(c.dimensions), `Course ${c.id}.dimensions must be array`);
     assert.ok(Array.isArray(c.levels), `Course ${c.id}.levels must be array`);
     assert.ok(Array.isArray(c.modules) && c.modules.length > 0, `Course ${c.id}.modules must be non-empty array`);
@@ -158,25 +158,25 @@ test("every Course has an outcomes: field (empty array is allowed)", () => {
   }
 });
 
-test("Harness Engineering course is scoped to the Technology Consulting profile", () => {
+test("Harness Engineering course is scoped to the Technology Consulting role", () => {
   const course = data.courses.find((c) => c.id === "LRN-26");
   assert.ok(course, "HARNESS-TC-01 missing from data.js");
-  assert.deepEqual([...course.profileIds], ["tc"]);
+  assert.deepEqual([...course.roleIds], ["tc"]);
   assert.ok(course.interests.includes("consulting"), "course must support the Consulting interest");
   assert.ok(course.interests.includes("engineering"), "course may also support the Engineering interest");
   assert.deepEqual([...course.levels], ["Deepen", "Create"]);
   assert.equal(course.modules.length, 8, "course must expose eight course units as modules");
   assert.equal(course.outcomes.length, 4, "course should have four authored outcomes");
-  const tc = data.profiles.find((profile) => profile.id === "tc");
-  assert.ok(tc && tc.code === "R03-TC", "Technology Consulting profile must retain code R03-TC");
+  const tc = data.roles.find((role) => role.id === "tc");
+  assert.ok(tc && tc.code === "R03-TC", "Technology Consulting role must retain code R03-TC");
 });
 
 test("the learner model exposes all seven AI Literacy roles", () => {
   assert.deepEqual(
-    [...data.profiles.map((profile) => profile.id)],
+    [...data.roles.map((role) => role.id)],
     ["bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
   );
-  assert.equal(new Set(data.profiles.map((profile) => profile.code)).size, 7);
+  assert.equal(new Set(data.roles.map((role) => role.code)).size, 7);
 });
 
 test("capability targets match the supplied role-depth matrix", () => {
@@ -255,7 +255,7 @@ test("Harness Engineering is staged in LP03 and not broadened through LP02", () 
   const lp03Stages = lp03.stages.filter((stage) => stage.courses.includes("LRN-26"));
   assert.deepEqual([...lp03Stages.map((stage) => stage.label)], ["Deepen", "Create"]);
   assert.equal(lp02.stages.some((stage) => stage.courses.includes("LRN-26")), false);
-  assert.ok(lp03.profileIds.includes("tc"), "LP03 must serve Technology Consulting");
+  assert.ok(lp03.roleIds.includes("tc"), "LP03 must serve Technology Consulting");
 });
 
 test("Academy learning paths cover every imported AI course exactly once", () => {
@@ -268,7 +268,7 @@ test("Academy learning paths cover every imported AI course exactly once", () =>
 });
 
 test("Academy paths separate shared foundations from explicit profile recommendations", () => {
-  const profileIds = new Set(data.profiles.map((profile) => profile.id));
+  const roleIds = new Set(data.roles.map((role) => role.id));
   const categories = new Set(["foundation", "role", "technical"]);
 
   for (const path of data.academyPaths) {
@@ -288,11 +288,11 @@ test("Academy paths separate shared foundations from explicit profile recommenda
         `Academy path ${path.id} needs at least one explicit profile recommendation`);
     }
 
-    for (const [profileId, rank] of recommendations) {
-      assert.ok(profileIds.has(profileId),
-        `Academy path ${path.id} recommends unknown profile ${profileId}`);
+    for (const [roleId, rank] of recommendations) {
+      assert.ok(roleIds.has(roleId),
+        `Academy path ${path.id} recommends unknown role ${roleId}`);
       assert.ok(Number.isInteger(rank) && rank > 0,
-        `Academy path ${path.id} has invalid rank ${rank} for ${profileId}`);
+        `Academy path ${path.id} has invalid rank ${rank} for ${roleId}`);
     }
   }
 });
@@ -487,13 +487,13 @@ test("curriculum-map.js exports courseMaps keyed by Course id", () => {
 });
 
 test("every Course referenced by curriculum-map is visible in the active cockpit profile", () => {
-  // The LRN cockpit filters Course.profileIds through state.profileId
+  // The LRN cockpit filters Course.roleIds through state.profileId
   // (see lrn.js render → courseFilter / trackFilter). curriculum-map
   // entries for courses outside the active profile would be dead links
   // in the cockpit UI — flag them so they get fixed or removed.
   const visibleIds = new Set(
     data.courses
-      .filter((c) => Array.isArray(c.profileIds) && c.profileIds.includes(activeProfileId))
+      .filter((c) => Array.isArray(c.roleIds) && c.roleIds.includes(activeProfileId))
       .map((c) => c.id)
   );
   for (const cid of Object.keys(cmap.courseMaps)) {
@@ -643,4 +643,36 @@ test("the schedule helper reports free seats and a readable date range", () => {
   assert.equal(schedule.seatsFree({ seats: 20, seatsTaken: 18 }), 2);
   assert.equal(schedule.seatsFree({ seats: 20, seatsTaken: 25 }), 0);
   assert.equal(schedule.formatRange({ start: "2026-10-12", end: "2026-10-12" }, "de-DE"), "12.10.2026");
+});
+
+test("every keyArea references an existing role", () => {
+  const roleIds = new Set(data.roles.map((role) => role.id));
+  for (const keyArea of data.keyAreas || []) {
+    assert.ok(roleIds.has(keyArea.roleId), `keyArea ${keyArea.id} references unknown role ${keyArea.roleId}`);
+  }
+});
+
+test("every specialization references an existing keyArea", () => {
+  const keyAreaIds = new Set((data.keyAreas || []).map((keyArea) => keyArea.id));
+  for (const specialization of data.specializations || []) {
+    assert.ok(keyAreaIds.has(specialization.keyAreaId),
+      `specialization ${specialization.id} references unknown keyArea ${specialization.keyAreaId}`);
+  }
+});
+
+test("the ASE key area retains its five specializations", () => {
+  const ase = (data.specializations || []).filter((s) => s.keyAreaId === "ase");
+  assert.deepEqual(
+    [...ase.map((s) => s.id)].sort(),
+    ["integrate", "operate", "orch", "spec", "verify"],
+  );
+  const byId = new Map(ase.map((s) => [s.id, s]));
+  assert.equal(byId.get("spec").code, "ASE-SPEC");
+  assert.equal(byId.get("spec").labelDe, "Spezifizieren");
+});
+
+test("the ase key area belongs to the Technology Consulting role", () => {
+  const aseKeyArea = (data.keyAreas || []).find((k) => k.id === "ase");
+  assert.ok(aseKeyArea, "ase keyArea missing from data.js");
+  assert.equal(aseKeyArea.roleId, "tc");
 });
