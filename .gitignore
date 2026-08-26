@@ -105,3 +105,5 @@ deploy.sh
 
 # Generierter Konformitäts-Onepager (Schriften eingebettet, siehe build.js)
 docs/onepager-konformitaet/onepager*.html
+
+.worktrees/
