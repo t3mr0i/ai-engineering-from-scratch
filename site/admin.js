@@ -500,7 +500,7 @@
         field("Format", selectFor(course.format || "self-paced", [
           { value: "self-paced", label: "Self-paced" }, { value: "blended", label: "Blended" }, { value: "workshop", label: "Workshop" }, { value: "cohort", label: "Cohort" },
         ], (value) => update("format", value), { disabled: !editable })),
-        field("Profile", inputFor((course.profileIds || []).join(", "), (value) => update("profileIds", splitList(value)), { disabled: !editable }), false, "Kommagetrennte Profil-IDs"),
+        field("Rolle", inputFor((course.roleIds || []).join(", "), (value) => update("roleIds", splitList(value)), { disabled: !editable }), false, "Kommagetrennte Rollen-IDs"),
         field("Voraussetzungen", inputFor((course.prerequisites || []).join(", "), (value) => update("prerequisites", splitList(value)), { disabled: !editable }), true, "Kurs-IDs, kommagetrennt; Zyklen blockieren das Review."),
       ]),
     ]);
@@ -579,14 +579,14 @@
         for (const row of rows) {
           let course = snapshot.catalog.courses.find((item) => item.id === row.id);
           if (!course) {
-            course = { id: row.id, sequence: snapshot.catalog.courses.length + 1, title: row.title || "Imported course", status: "draft", source: "CSV import", profileIds: [], dimensions: {}, interests: [], levels: [], ase: {}, format: "self-paced", summary: "", outcomes: [], modules: [] };
+            course = { id: row.id, sequence: snapshot.catalog.courses.length + 1, title: row.title || "Imported course", status: "draft", source: "CSV import", roleIds: [], dimensions: {}, interests: [], levels: [], specializationDepths: [], format: "self-paced", summary: "", outcomes: [], modules: [] };
             snapshot.catalog.courses.push(course);
             snapshot.curriculumMap.courseMaps[row.id] = [];
             created += 1;
           } else updated += 1;
           for (const key of ["title", "status", "format", "summary"]) if (row[key]) course[key] = row[key];
           if (row.sequence) course.sequence = Number(row.sequence);
-          if (row.profileIds) course.profileIds = row.profileIds.split("|").map((item) => item.trim()).filter(Boolean);
+          if (row.roleIds) course.roleIds = row.roleIds.split("|").map((item) => item.trim()).filter(Boolean);
           if (row.outcomes) course.outcomes = row.outcomes.split("|").map((item) => item.trim()).filter(Boolean);
         }
         summary = `${rows.length} CSV-Zeilen: ${created} neue und ${updated} bestehende Kurse. Nicht genannte Felder bleiben erhalten.`;
@@ -701,11 +701,11 @@
       title: "Neuer Kurs",
       status: "draft",
       source: "Curriculum Admin",
-      profileIds: [],
+      roleIds: [],
       dimensions: {},
       interests: [],
       levels: [],
-      ase: {},
+      specializationDepths: [],
       format: "self-paced",
       summary: "",
       outcomes: [],
@@ -753,7 +753,7 @@
         field("Pfad-Code", inputFor(track.code, (value) => update("code", value), { disabled: !editable, pattern: "LP[0-9]{2}" })),
         field("Name", inputFor(track.label, (value) => update("label", value), { disabled: !editable }), true),
         field("Status", selectFor(track.status || "active", [{ value: "active", label: "Aktiv" }, { value: "draft", label: "Entwurf" }, { value: "archived", label: "Archiviert" }], (value) => update("status", value), { disabled: !editable })),
-        field("Profile", inputFor((track.profileIds || []).join(", "), (value) => update("profileIds", splitList(value)), { disabled: !editable }), true, "Kommagetrennte Profil-IDs"),
+        field("Rolle", inputFor((track.roleIds || []).join(", "), (value) => update("roleIds", splitList(value)), { disabled: !editable }), true, "Kommagetrennte Rollen-IDs"),
       ]),
     ]);
     const stages = h("section", { class: "editor-section" }, [
@@ -770,19 +770,19 @@
   }
 
   function renderPathMatrix(track) {
-    const roles = state.snapshot.catalog.aseRoles || [];
+    const specializations = (state.snapshot.catalog.specializations || []).filter((s) => s.keyAreaId === "ase");
     const coursesById = new Map((state.snapshot.catalog.courses || []).map((course) => [course.id, course]));
     const selectedIds = new Set((track.stages || []).flatMap((stage) => stage.courses || []));
     const depths = ["Acquire", "Deepen", "Create"];
     const tbody = h("tbody");
-    for (const role of roles) {
+    for (const specialization of specializations) {
       const counts = Object.fromEntries(depths.map((depth) => [depth, 0]));
       for (const courseId of selectedIds) {
         const course = coursesById.get(courseId);
-        const assignment = course && (course.ase || []).find((item) => item.role === role.id);
+        const assignment = course && (course.specializationDepths || []).find((item) => item.specializationId === specialization.id);
         for (const depth of (assignment && assignment.depths) || []) if (depth in counts) counts[depth] += 1;
       }
-      tbody.append(h("tr", {}, [h("th", { scope: "row" }, [h("strong", { text: role.labelDe || role.label }), h("small", { text: role.code })]), ...depths.map((depth) => h("td", { class: "coverage-cell", "data-covered": String(counts[depth] > 0), text: counts[depth] || "—" }))]));
+      tbody.append(h("tr", {}, [h("th", { scope: "row" }, [h("strong", { text: specialization.labelDe || specialization.label }), h("small", { text: specialization.code })]), ...depths.map((depth) => h("td", { class: "coverage-cell", "data-covered": String(counts[depth] > 0), text: counts[depth] || "—" }))]));
     }
     return h("section", { class: "editor-section" }, [
       h("div", { class: "admin-panel__header" }, [h("h2", { text: "Rollen- und Level-Abdeckung" }), h("span", { text: `${selectedIds.size} eindeutige Kurse` })]),
@@ -1569,7 +1569,7 @@
     const tracks = state.snapshot.catalog.tracks;
     const next = Math.max(0, ...tracks.map((track) => Number((/^LP(\d+)$/.exec(track.code) || [])[1]) || 0)) + 1;
     const code = `LP${String(next).padStart(2, "0")}`;
-    const track = { id: `path-${String(next).padStart(2, "0")}`, code, label: "Neuer Lernpfad", profileIds: [], stages: [{ label: "Acquire", courses: [] }, { label: "Deepen", courses: [] }, { label: "Create", courses: [] }] };
+    const track = { id: `path-${String(next).padStart(2, "0")}`, code, label: "Neuer Lernpfad", roleIds: [], stages: [{ label: "Acquire", courses: [] }, { label: "Deepen", courses: [] }, { label: "Create", courses: [] }] };
     tracks.push(track);
     state.selectedPathId = track.id;
     markDirty();
