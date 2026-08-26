@@ -43,6 +43,7 @@
     loadedSnapshot: null,
     conflict: null,
     baseCurrent: true,
+    lrnStats: null,
   };
 
   const ROLE_LABELS = {
@@ -368,6 +369,7 @@
       assistant: renderAssistant,
       review: renderReview,
       history: renderHistory,
+      stats: renderStats,
     })[state.view]();
   }
 
@@ -420,6 +422,70 @@
       button("Prüfbericht öffnen", "quiet", () => activateView("review"), "arrow-right"),
     ]);
     dashboard.append(changePanel, qualityPanel);
+    panel.append(dashboard);
+  }
+
+  function renderStats() {
+    const panel = $("#view-stats");
+    panel.replaceChildren(pageHeading(
+      "statsTitle",
+      "Statistik",
+      "Firmenweiter Lernfortschritt",
+      "Anonym erhoben — jeder Datenpunkt ist ein zufälliges Browser-Pseudonym, kein Klarname.",
+    ));
+
+    const stats = state.lrnStats || { totalLearners: 0, byProfile: {}, byLevel: {}, courseCompletions: {} };
+    if (!stats.totalLearners) {
+      panel.append(emptyState("chart-bar", "Noch keine Daten", "Sobald Lernende die LRN-Kachel öffnen, erscheinen hier aggregierte Zahlen."));
+      return;
+    }
+
+    const profileTitle = (id) => {
+      const profile = (state.snapshot.catalog.profiles || []).find((item) => item.id === id);
+      return profile ? profile.label : id;
+    };
+    const courseTitle = (id) => {
+      const course = (state.snapshot.catalog.courses || []).find((item) => item.id === id);
+      return course ? course.title : id;
+    };
+
+    const dashboard = h("div", { class: "admin-dashboard" });
+    dashboard.append(h("dl", { class: "admin-inventory", "aria-label": "Lernende gesamt" }, [
+      h("div", { class: "admin-inventory__item" }, [
+        h("dt", { text: "Lernende (anonym)" }),
+        h("dd", { text: stats.totalLearners }),
+        h("small", { text: "Ein Eintrag pro Browser-Pseudonym" }),
+      ]),
+    ]));
+
+    const profileRows = Object.entries(stats.byProfile).sort((a, b) => b[1] - a[1]);
+    const profilePanel = h("article", { class: "admin-panel admin-dashboard__wide" }, [
+      h("div", { class: "admin-panel__header" }, [h("h2", { text: "Nach Profil" })]),
+      h("div", { class: "admin-table-wrap" }, h("table", { class: "admin-table" }, [
+        h("thead", {}, h("tr", {}, [h("th", { text: "Profil" }), h("th", { text: "Lernende" })])),
+        h("tbody", {}, profileRows.map(([id, count]) => h("tr", {}, [h("td", { text: profileTitle(id) }), h("td", { text: count })]))),
+      ])),
+    ]);
+
+    const levelRows = Object.entries(stats.byLevel).sort((a, b) => Number(a[0]) - Number(b[0]));
+    const levelPanel = h("aside", { class: "admin-panel admin-dashboard__side" }, [
+      h("div", { class: "admin-panel__header" }, [h("h2", { text: "Nach Level" })]),
+      h("div", { class: "admin-table-wrap" }, h("table", { class: "admin-table" }, [
+        h("thead", {}, h("tr", {}, [h("th", { text: "Level" }), h("th", { text: "Lernende" })])),
+        h("tbody", {}, levelRows.map(([level, count]) => h("tr", {}, [h("td", { text: level }), h("td", { text: count })]))),
+      ])),
+    ]);
+
+    const courseRows = Object.entries(stats.courseCompletions).sort((a, b) => b[1] - a[1]);
+    const coursePanel = h("article", { class: "admin-panel admin-dashboard__wide" }, [
+      h("div", { class: "admin-panel__header" }, [h("h2", { text: "Kursabschlüsse" })]),
+      h("div", { class: "admin-table-wrap" }, h("table", { class: "admin-table" }, [
+        h("thead", {}, h("tr", {}, [h("th", { text: "Kurs" }), h("th", { text: "Abschlüsse" })])),
+        h("tbody", {}, courseRows.map(([id, count]) => h("tr", {}, [h("td", { text: courseTitle(id) }), h("td", { text: count })]))),
+      ])),
+    ]);
+
+    dashboard.append(profilePanel, levelPanel, coursePanel);
     panel.append(dashboard);
   }
 
@@ -2092,8 +2158,8 @@
 
   async function boot() {
     try {
-      const [me, curriculum, changesets, aiSkills, publishConfig, lessons] = await Promise.all([
-        api("/api/admin/me"), api("/api/admin/curriculum"), api("/api/admin/changesets"), api("/api/admin/ai/skills"), api("/api/admin/publish/config"), api("/api/admin/lessons"),
+      const [me, curriculum, changesets, aiSkills, publishConfig, lessons, lrnStats] = await Promise.all([
+        api("/api/admin/me"), api("/api/admin/curriculum"), api("/api/admin/changesets"), api("/api/admin/ai/skills"), api("/api/admin/publish/config"), api("/api/admin/lessons"), api("/api/admin/lrn-stats"),
       ]);
       state.actor = me.actor;
       state.base = curriculum;
@@ -2105,6 +2171,7 @@
       state.skills = aiSkills.skills;
       state.publishConfigured = publishConfig.configured;
       state.lessons = lessons.lessons;
+      state.lrnStats = lrnStats.stats;
       $("#adminUsername").textContent = state.actor.username;
       $("#adminRoles").textContent = state.actor.roles.map((role) => ROLE_LABELS[role] || role).join(" · ");
       $("#adminAvatar").textContent = initials(state.actor.username);
