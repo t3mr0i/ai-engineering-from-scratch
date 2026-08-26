@@ -4,6 +4,14 @@
   <script src="/gate-guard.js"></script>
   <script>
     (function () {
+      // The curriculum admin API (/api/admin/*) only exists on the OpenShift
+      // Node server (server/admin-api.js) — the Azure Static Web App has no
+      // Azure Function for it, so every admin call 404s here. Send admins to
+      // the working deployment instead of showing a broken panel.
+      if (/\.azurestaticapps\.net$/.test(location.hostname)) {
+        location.replace("https://trainingcamp.lhind.app.lufthansa.com/admin.html");
+        return;
+      }
       try {
         var stored = localStorage.getItem("theme");
         if (stored === "dark" || stored === "light") document.documentElement.dataset.theme = stored;
