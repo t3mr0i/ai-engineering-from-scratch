@@ -312,7 +312,7 @@ test("uses the configured model, gateway, server key, timeout signal, and normal
   assert.equal(request.url, "https://gateway.internal.test/v1/chat/completions");
   assert.equal(request.options.headers.Authorization, "Bearer server-secret");
   assert.equal(body.model, "azure/test-model");
-  assert.equal(body.max_completion_tokens, 1400);
+  assert.equal(body.max_tokens, 1400);
   assert.ok(request.options.signal instanceof AbortSignal);
   assert.doesNotMatch(request.options.body, /browser-key-must-not-win|server-secret/);
   assert.equal(result.toolTrace.at(-1).detail, "azure/test-model");

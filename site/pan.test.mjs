@@ -1,9 +1,29 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
+import { readFileSync } from "node:fs";
 
 const require = createRequire(import.meta.url);
 const PAN = require("./pan.js");
+
+test("learner surfaces load the shared PAN assets", () => {
+  const index = readFileSync(new URL("./index.html", import.meta.url), "utf8");
+  const lesson = readFileSync(new URL("./lesson.html", import.meta.url), "utf8");
+  const course = readFileSync(new URL("./lrn/course.html", import.meta.url), "utf8");
+  assert.match(index, /href="pan\.css\?v=[^"]+"/);
+  assert.match(index, /src="pan\.js\?v=[^"]+"/);
+  assert.match(lesson, /href="pan\.css\?v=[^"]+"/);
+  assert.match(lesson, /src="pan\.js\?v=[^"]+"/);
+  assert.match(course, /href="\.\.\/pan\.css\?v=[^"]+"/);
+  assert.match(course, /src="\.\.\/pan\.js\?v=[^"]+"/);
+});
+
+test("the cockpit wires the editable personal-plan engine", () => {
+  const index = readFileSync(new URL("./index.html", import.meta.url), "utf8");
+  assert.match(index, /id="personalPlan"[^>]+aria-labelledby="personalPlanTitle"/);
+  assert.match(index, /src="lrn\/learning-plan\.js\?v=[^"]+"/);
+  assert.match(index, /src="lrn\/plan-builder\.js\?v=[^"]+"/);
+});
 
 test("safeHref accepts same-origin learner destinations", () => {
   const location = { origin: "https://learning.test", href: "https://learning.test/index.html" };

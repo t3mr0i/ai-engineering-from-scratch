@@ -1,6 +1,6 @@
 {
   "domain": "corporate-ai-curriculum",
-  "version": 1,
+  "version": 2,
   "capabilities": [
     { "id": "role-based-learning-plans",        "tier": "table-stakes", "test": "Catalog of plans organized by role/track (AI engineer, TC, security, …)" },
     { "id": "plan-milestones",                  "tier": "table-stakes", "test": "Each plan names its milestones (units/activities) with progression" },
@@ -17,6 +17,10 @@
     { "id": "plan-assignment-and-reporting",   "tier": "table-stakes", "test": "Manager/L&D can assign plans and view team progress + reporting" },
     { "id": "applied-skills-assessment",       "tier": "table-stakes", "test": "Lab/scenario assessment issuing a verifiable skill credential" },
     { "id": "role-outcome-statements",         "tier": "table-stakes", "test": "Each LP/course states 'After X you can …' in role-task terms" },
+    { "id": "curriculum-grounded-ai-tutor",    "tier": "table-stakes", "test": "Learners can ask in-context questions and receive answers grounded in approved curriculum sources with deep links" },
+    { "id": "learner-owned-goal-plan",         "tier": "table-stakes", "test": "A learner can generate, edit, and persist a plan from role, goal, cadence, progress, and assessed gaps" },
+    { "id": "progress-aware-next-action",      "tier": "table-stakes", "test": "The product can recommend one explainable next action using current progress and learner context" },
+    { "id": "ai-trust-and-assessment-guards",  "tier": "table-stakes", "test": "Learner AI uses server-held credentials, source allowlists, prompt boundaries, visible evidence, and graded-answer safeguards" },
     { "id": "llm-crawler-discoverability",     "tier": "edge",         "test": "Curriculum content surfaced to LLM crawlers" },
     { "id": "industry-recognized-certificate", "tier": "edge",         "test": "Org- or partner-issued credential recognizable to hiring managers" },
     { "id": "credential-verification",         "tier": "edge",         "test": "Third party can verify credential by URL/ID" },
@@ -25,6 +29,11 @@
     { "id": "translation-localization",        "tier": "edge",         "test": "UI + content available in languages beyond English" },
     { "id": "consultant-case-library",         "tier": "edge",         "test": "Anonymized real-world case studies from own engagements" },
     { "id": "facilitator-toolkit",             "tier": "edge",         "test": "Instructor-led delivery pack (decks, workshop scripts)" },
-    { "id": "compliance-evidence-bundle",      "tier": "edge",         "test": "Downloadable audit-evidence bundle for client-assurance" }
+    { "id": "compliance-evidence-bundle",      "tier": "edge",         "test": "Downloadable audit-evidence bundle for client-assurance" },
+    { "id": "persistent-tutor-threads",        "tier": "edge",         "test": "Learners can resume and clear bounded tutor conversations with an explicit retention boundary" },
+    { "id": "adaptive-practice-and-roleplay",  "tier": "edge",         "test": "Tutor runs diagnostic practice, coaching, or roleplay that adapts after each learner response" },
+    { "id": "concept-mastery-and-replanning",  "tier": "edge",         "test": "Concept-level evidence and uncertainty drive spaced review and automatic plan changes" },
+    { "id": "flow-of-work-learning-agent",     "tier": "edge",         "test": "The assistant can surface governed learning actions inside approved work tools such as Teams or Slack" },
+    { "id": "tutor-evaluation-harness",        "tier": "edge",         "test": "Automated evaluations cover groundedness, citation validity, quiz leakage, pedagogy, latency, and cost" }
   ]
 }

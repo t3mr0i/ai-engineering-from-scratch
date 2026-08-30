@@ -18,8 +18,10 @@
  *   GATE_DISABLED    'true' to skip the passcode gate entirely
  *   PORT             injected by App Service; defaults to 8080 locally
  *   WEB_ROOT         static root; defaults to ../site
- *   LLM_GATEWAY_KEY  Bifrost gateway key, injected server-side by
- *                    POST /api/llm/chat/completions — see handleLlmProxy
+ *   LLM_GATEWAY_KEY  Bifrost gateway key, injected server-side for the raw
+ *                    notebook proxy and curriculum-grounded PAN requests
+ *   LEARNER_LLM_MODEL optional PAN model override (defaults to the internal
+ *                    azure/gpt-5.4-mini deployment)
  */
 
 const http = require('http');

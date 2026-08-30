@@ -627,7 +627,7 @@ function createLearnerAi(options = {}) {
           body: JSON.stringify({
             model,
             temperature: 0.2,
-            max_completion_tokens: maxTokens,
+            max_tokens: maxTokens,
             messages: buildMessages(input, retrieval),
           }),
           signal: controller.signal,

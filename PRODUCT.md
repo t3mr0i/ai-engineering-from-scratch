@@ -21,7 +21,26 @@ JupyterLite), progress tracking, and badges. Success looks like an employee
 finding the right course for their role without confusion about internal
 curriculum jargon (`Pxx`/`Lxx` phase/lesson numbers are implementation
 details, never surfaced in this UI — see `CLAUDE.md` §3), and completing
-lessons without the interface getting in the way.
+lessons without the interface getting in the way. Learners can also turn a
+concrete goal into an editable personal plan and ask PAN for curriculum-bound
+help without exposing the shared model credential to the browser.
+
+## AI Learning Assistance
+
+- **PAN is a tutor, not a general chatbot.** It uses the current course or
+  lesson, the learner's selected role and level, local progress, assessment
+  gaps, and saved plan only when the learner submits a message.
+- **Approved sources are the boundary.** Course recommendations and lesson
+  explanations must resolve to shipped catalog records or bounded lesson
+  excerpts, with visible deep links. Curriculum text is data, never an
+  instruction to the model.
+- **Coach before revealing.** PAN uses diagnostic questions and hints and must
+  not disclose graded quiz answers or complete exercise solutions.
+- **The learner owns the plan.** Plan ranking is deterministic and explainable;
+  the learner can reorder, remove, save, or clear steps locally. Focus-session
+  capacity is not presented as a course-duration estimate.
+- **AI failure never blocks learning.** Courses, progress, assessment, and the
+  saved plan remain usable when the internal gateway is unavailable.
 
 ## Brand Personality
 
