@@ -137,6 +137,49 @@ test("POST /api/lrn/report returns 401 without a valid gate cookie when the gate
   assert.equal(response.status, 401);
 });
 
+test("POST /api/lrn/ai/chat is protected by the learner gate", async (t) => {
+  const port = await findFreePort();
+  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "learner-ai-http-"));
+  const child = await spawnServer({
+    WEB_ROOT: SITE,
+    ADMIN_DATA_DIR: dataDir,
+    PORT: String(port),
+    SITE_PASSCODE: "test-passcode",
+    GATE_SECRET: "test-gate-secret",
+  });
+  t.after(() => child.kill());
+
+  const response = await fetch(`http://127.0.0.1:${port}/api/lrn/ai/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: "Was lerne ich als Nächstes?" }),
+  });
+  assert.equal(response.status, 401);
+});
+
+test("POST /api/lrn/ai/chat exposes a stable not-configured envelope", async (t) => {
+  const port = await findFreePort();
+  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "learner-ai-http-"));
+  const child = await spawnServer({
+    WEB_ROOT: SITE,
+    ADMIN_DATA_DIR: dataDir,
+    PORT: String(port),
+    GATE_DISABLED: "true",
+    LLM_GATEWAY_KEY: "",
+  });
+  t.after(() => child.kill());
+
+  const response = await fetch(`http://127.0.0.1:${port}/api/lrn/ai/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: "Was lerne ich als Nächstes?", locale: "de", learner: {} }),
+  });
+  const payload = await response.json();
+  assert.equal(response.status, 503);
+  assert.equal(payload.ok, false);
+  assert.equal(payload.error.code, "ai.not_configured");
+});
+
 test("GET /api/admin/lrn-stats returns 401 without an admin identity", async (t) => {
   const port = await findFreePort();
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "lrn-report-http-"));

@@ -1,6 +1,7 @@
 /**
- * UI-chrome translation dictionary — DE/EN. Lesson content stays English;
- * this only covers nav, buttons, labels and short headings tagged with
+ * UI-chrome translation dictionary — DE/EN. Lesson content is English by
+ * default and may use an available German translation when DE is selected;
+ * this dictionary covers nav, buttons, labels and short headings tagged with
  * data-i18n in the HTML. Loaded before lang.js on every subpage.
  */
 window.SITE_I18N = {

@@ -46,6 +46,7 @@
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/light/style.css">
   <link rel="stylesheet" href="style.css?v=20260824a">
+  <link rel="stylesheet" href="pan.css?v=20260830a">
   <link rel="stylesheet" href="badges.css?v=20260713a">
   <link rel="stylesheet" href="learning-visuals.css?v=20260825h">
   <style>
@@ -2145,12 +2146,14 @@
 
   <script src="i18n.js?v=20260825d"></script>
   <script src="lang.js"></script>
+  <script src="lesson-language.js?v=20260830a"></script>
   <script src="data.js?v=20260525a"></script>
   <script src="progress.js?v=20260724a"></script>
   <script src="lrn/report-sync.js?v=20260826a"></script>
   <script src="badges.js?v=20260713a"></script>
   <script src="lrn/data.js?v=20260825a"></script>
   <script src="lrn/curriculum-map.js?v=20260824b"></script>
+  <script src="pan.js?v=20260830a"></script>
   <script src="search.js?v=20260813a" defer></script>
   <script src="cmdpalette.js?v=20260813a" defer></script>
   <script src="analytics.js?v=20260525a" defer></script>
@@ -2222,9 +2225,11 @@
       var lrnContext = null;
       // Language of the currently-rendered lesson content, derived from
       // whichever docs/<lang>.md the page actually fetched (see fetchLesson).
-      // Only en.md exists today, but deriving this from the URL rather than
-      // hardcoding it means it tracks correctly once a de.md fallback ships.
+      // The article gets this language independently from the surrounding UI,
+      // because a German UI may legitimately fall back to English content.
       var currentLessonLang = 'en';
+      var requestedLessonLang = null;
+      var lessonLoadSequence = 0;
 
       // Lesson content (docs/en.md, quiz.json, code/main.py, assets/*) is
       // gated server-side by the /api/content function — see api/content/
@@ -2434,8 +2439,23 @@
       }
 
       // Load the runnable-block manifest before rendering so code blocks can be
-      // decorated with a Run button as they render.
-      loadRunnableManifest().then(function () { fetchLesson(lessonPath); });
+      // decorated with a Run button as they render. English is canonical;
+      // selecting German opts into docs/de.md when that translation exists.
+      var runnableManifestReady = loadRunnableManifest();
+      function requestLessonContent() {
+        var selected = window.SiteLang ? window.SiteLang.get() : 'en';
+        var preferred = window.LessonLanguage.normalize(selected);
+        if (preferred === requestedLessonLang) return;
+        requestedLessonLang = preferred;
+        var loadSequence = ++lessonLoadSequence;
+        runnableManifestReady.then(function () {
+          if (loadSequence === lessonLoadSequence) {
+            fetchLesson(lessonPath, preferred, loadSequence);
+          }
+        });
+      }
+      document.addEventListener('sitelang:change', requestLessonContent);
+      requestLessonContent();
       updateNotesNavCount();
 
       function extractPhaseSlug(phase, index) {
@@ -2781,40 +2801,22 @@
         });
       }
 
-      function fetchLesson(path) {
+      function fetchLesson(path, preferredLang, loadSequence) {
         // Load lesson content through the gated /api/content function (see
         // contentUrl() above), not from GitHub and not from a static site
-        // path. `path` is "phases/<phase>/<lesson>". Tries docs/de.md first,
-        // falling back to docs/en.md — as of this writing 504 lessons ship a
-        // de.md, so every fetch still falls through to English, but the
-        // fallback is real: the moment a de.md exists, this starts serving
-        // it (B1).
+        // path. `path` is "phases/<phase>/<lesson>". The selected UI language
+        // determines the candidate order: EN loads docs/en.md only; DE tries
+        // docs/de.md and falls back to the required English variant.
         var quizUrl = path + '/quiz.json';
-        var deUrl = path + '/docs/de.md';
-        var enUrl = path + '/docs/en.md';
 
-        fetch(contentUrl(deUrl))
-          .then(function (res) {
-            if (res.ok) return { url: deUrl, text: res.text() };
-            return fetch(contentUrl(enUrl)).then(function (res2) {
-              if (!res2.ok) throw new Error('fetch-failed');
-              return { url: enUrl, text: res2.text() };
-            });
-          })
-          .then(function (found) {
-            return Promise.resolve(found.text).then(function (md) {
-              return { url: found.url, md: md };
-            });
-          })
+        window.LessonLanguage.load(path, preferredLang, function (contentPath) {
+          return fetch(contentUrl(contentPath));
+        })
           .then(function (loaded) {
-            var md = loaded.md;
-            // Derived from the URL rather than hardcoded so it reflects
-            // whichever docs/<lang>.md actually got served (D5 — content
-            // lang attribute).
-            var langMatch = loaded.url.match(/\/docs\/([a-z]{2})\.md$/);
-            currentLessonLang = langMatch ? langMatch[1] : 'en';
+            if (loadSequence !== lessonLoadSequence) return;
+            currentLessonLang = loaded.lang;
             try {
-              renderLesson(md);
+              renderLesson(loaded.text);
             } catch (err) {
               console.error('renderLesson failed', err);
               showError('Render error', 'Loaded the lesson markdown but failed to render it. Details in the browser console.');
@@ -2824,12 +2826,14 @@
               .then(function (res) { return res.ok ? res.json() : null; })
               .catch(function () { return null; })
               .then(function (data) {
+                if (loadSequence !== lessonLoadSequence) return;
                 if (!data) return;
                 try { renderQuiz(data); }
                 catch (err) { console.error('renderQuiz failed', err); }
               });
           })
           .catch(function () {
+            if (loadSequence !== lessonLoadSequence) return;
             var suggestion = suggestLesson(path);
             var msg = 'Could not fetch the lesson at <code>' + escapeHtml(path) + '</code>.';
             if (suggestion) {
@@ -2921,7 +2925,7 @@
           '@context': 'https://schema.org',
           '@graph': [
             { '@type': 'LearningResource', name: title, description: desc, url: url,
-              inLanguage: 'en', isAccessibleForFree: true,
+              inLanguage: currentLessonLang, isAccessibleForFree: true,
               isPartOf: { '@type': 'Course', name: 'LHIND AI Learning Catalog', url: ORIGIN } },
             { '@type': 'BreadcrumbList', itemListElement: [
               { '@type': 'ListItem', position: 1, name: 'Home', item: ORIGIN },
@@ -2976,7 +2980,11 @@
         document.querySelectorAll('a[href^="#"]').forEach(function (link) {
           link.addEventListener('click', function (e) {
             if (link.classList && link.classList.contains('toc-link')) return;
-            var target = document.querySelector(link.getAttribute('href'));
+            var href = link.getAttribute('href');
+            // Controls such as the language toggle use href="#" as a
+            // progressive-enhancement placeholder, not a fragment target.
+            if (!href || href === '#') return;
+            var target = document.querySelector(href);
             if (target) {
               e.preventDefault();
               var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;

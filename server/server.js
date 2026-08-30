@@ -38,6 +38,7 @@ const { createAdminApi } = require('./admin-api');
 const { readJson, sendJson } = require('./admin-api');
 const { StoreError } = require('./admin-store');
 const { LrnReportStore, ReportError } = require('./lrn-report-store');
+const { createLearnerAi, LearnerAiError } = require('./learner-ai');
 
 const PORT = process.env.PORT || 8080;
 const BIND_HOST = process.env.BIND_HOST || undefined;
@@ -49,6 +50,7 @@ const GATE_SECRET = process.env.GATE_SECRET;
 // VPN) and don't need the passcode gate on top.
 const GATE_DISABLED = process.env.GATE_DISABLED === 'true';
 const handleAdminApi = createAdminApi({ webRoot: WEB_ROOT });
+const learnerAi = createLearnerAi({ webRoot: WEB_ROOT });
 
 // Same persistent volume as the curriculum admin store (see openshift/
 // deployment.yaml's `admin-data` PVC) — reports live in a subdirectory of it
@@ -71,6 +73,11 @@ const llmRateState = new Map(); // ip -> { count, windowStart }
 // only meant to blunt abuse, not accommodate legitimate bursts.
 const LRN_REPORT_RATE_LIMIT_PER_MIN = 10;
 const lrnReportRateState = new Map(); // ip -> { count, windowStart }
+
+// PAN has a deliberately smaller budget than the raw notebook proxy. The
+// learner endpoint retrieves curriculum context and calls the shared model.
+const LEARNER_AI_RATE_LIMIT_PER_MIN = 12;
+const learnerAiRateState = new Map(); // ip -> { count, windowStart }
 
 // Paths a logged-out visitor may reach. Keep this minimal — gate.html is
 // self-contained, so the passcode page needs nothing else.
@@ -214,6 +221,73 @@ function lrnReportRateLimited(ip) {
   return entry.count > LRN_REPORT_RATE_LIMIT_PER_MIN;
 }
 
+function learnerAiRateLimited(ip) {
+  const now = Date.now();
+  const entry = learnerAiRateState.get(ip);
+  if (!entry || now - entry.windowStart > 60000) {
+    learnerAiRateState.set(ip, { count: 1, windowStart: now });
+    return false;
+  }
+  entry.count += 1;
+  return entry.count > LEARNER_AI_RATE_LIMIT_PER_MIN;
+}
+
+function readLearnerAiJson(req) {
+  return new Promise((resolve, reject) => {
+    let body = '';
+    let size = 0;
+    let tooLarge = false;
+    req.on('data', (chunk) => {
+      size += chunk.length;
+      if (size > 64_000) {
+        tooLarge = true;
+        return;
+      }
+      body += chunk;
+    });
+    req.on('end', () => {
+      if (tooLarge) {
+        reject(new LearnerAiError('ai.request.too_large', 'Die PAN-Anfrage ist zu groß.', 413));
+        return;
+      }
+      try {
+        resolve(body ? JSON.parse(body) : {});
+      } catch (_) {
+        reject(new LearnerAiError('ai.request.invalid_json', 'Die PAN-Anfrage enthält ungültiges JSON.', 400));
+      }
+    });
+    req.on('error', reject);
+  });
+}
+
+async function handleLearnerAi(req, res) {
+  const errorId = crypto.randomBytes(5).toString('hex');
+  if (req.method !== 'POST') {
+    sendJson(res, 405, { ok: false, error: { code: 'method.not_allowed', message: 'Methode nicht erlaubt.' } });
+    return;
+  }
+  if (learnerAiRateLimited(clientIp(req))) {
+    sendJson(res, 429, { ok: false, error: { code: 'ai.rate_limited', message: 'Zu viele PAN-Anfragen, bitte kurz warten.' } });
+    return;
+  }
+  try {
+    const body = await readLearnerAiJson(req);
+    const response = await learnerAi.run(body);
+    sendJson(res, 200, { ok: true, response });
+  } catch (error) {
+    const known = error instanceof LearnerAiError;
+    if (!known) console.error(`[learner-ai:${errorId}]`, error);
+    sendJson(res, known ? error.status : 500, {
+      ok: false,
+      error: {
+        code: known ? error.code : 'ai.internal',
+        message: known ? error.message : 'PAN konnte die Anfrage nicht verarbeiten.',
+        id: errorId,
+      },
+    });
+  }
+}
+
 // Proxies notebook LLM calls to the Bifrost gateway, injecting the shared key
 // server-side. Any Authorization header the client sends is ignored — the
 // key never needs to exist in the browser.
@@ -315,13 +389,6 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // 1b. LLM proxy for notebooks — server-injected key, own rate limit,
-  // independent of gate state (see handleLlmProxy).
-  if (pathOnly === '/api/llm/chat/completions') {
-    handleLlmProxy(req, res);
-    return;
-  }
-
   // 2. Cookie-check endpoint kept for compatibility with gate-guard.js.
   if (pathOnly === '/api/check') {
     const ok = GATE_DISABLED || (Boolean(GATE_SECRET) && validToken(cookieFromRequest(req), GATE_SECRET));
@@ -349,7 +416,19 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // 4b. Anonymous learner progress reports — the gate check above already
+  // 4b. Learner APIs — the gate check above already passed. PAN has its own
+  // validated contract; the raw proxy remains available for lesson notebooks.
+  if (pathOnly === '/api/lrn/ai/chat') {
+    handleLearnerAi(req, res);
+    return;
+  }
+
+  if (pathOnly === '/api/llm/chat/completions') {
+    handleLlmProxy(req, res);
+    return;
+  }
+
+  // 4c. Anonymous learner progress reports — the gate check above already
   // passed, so only actual visitors to the gated site can report.
   if (pathOnly === '/api/lrn/report') {
     handleLrnReport(req, res);
