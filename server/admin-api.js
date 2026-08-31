@@ -10,6 +10,7 @@ const fs = require("node:fs");
 const { resolveAdmin, can } = require("./admin-auth");
 const { AdminStore, StoreError } = require("./admin-store");
 const { LrnReportStore } = require("./lrn-report-store");
+const { TeamLearningStore, TeamLearningError } = require("./team-learning-store");
 const { validateCurriculum, curriculumStats } = require("./admin-curriculum");
 const { createAdminAi, AdminAiError } = require("./admin-ai");
 const { createGitLabPublisher, GitLabError } = require("./admin-gitlab");
@@ -67,6 +68,7 @@ function createAdminApi(options = {}) {
   const dataDir = options.dataDir || path.resolve(env.ADMIN_DATA_DIR || path.join(__dirname, "..", ".admin-data"));
   const store = options.store || new AdminStore({ dataDir, webRoot });
   const reportStore = options.reportStore || new LrnReportStore({ dataDir: path.join(dataDir, "lrn-reports"), webRoot });
+  const teamStore = options.teamStore || new TeamLearningStore({ dataDir: path.join(dataDir, "team-learning"), webRoot, signingSecret: env.CREDENTIAL_SIGNING_SECRET || env.GATE_SECRET });
   const ai = options.ai || createAdminAi({ env, fetchFn: options.fetchFn });
   const publisher = options.publisher || createGitLabPublisher({ env, fetchFn: options.fetchFn });
   const repoRoot = options.repoRoot || path.resolve(webRoot, "..");
@@ -89,6 +91,27 @@ function createAdminApi(options = {}) {
       if (pathOnly === "/api/admin/lrn-stats") {
         requireMethod(req, "GET");
         sendJson(res, 200, { ok: true, stats: reportStore.aggregate() });
+        return true;
+      }
+
+      if (pathOnly === "/api/admin/team-assignments") {
+        if (req.method === "GET") {
+          sendJson(res, 200, { ok: true, assignments: teamStore.assignments(), reporting: reportStore.aggregate().assignmentProgress });
+          return true;
+        }
+        requireMethod(req, "POST");
+        requireRole(actor, "editor");
+        const body = await readJson(req);
+        sendJson(res, 201, { ok: true, assignment: teamStore.create(body, actor) });
+        return true;
+      }
+
+      const teamMatch = pathOnly.match(/^\/api\/admin\/team-assignments\/(team-[0-9a-f-]{36})$/);
+      if (teamMatch) {
+        requireMethod(req, "PUT");
+        requireRole(actor, "editor");
+        const body = await readJson(req);
+        sendJson(res, 200, { ok: true, assignment: teamStore.update(teamMatch[1], body, actor) });
         return true;
       }
 
@@ -310,7 +333,7 @@ function createAdminApi(options = {}) {
 
       throw new StoreError("method.not_allowed", "Methode nicht erlaubt.", 405);
     } catch (error) {
-      const known = error instanceof StoreError || error instanceof AdminAiError || error instanceof GitLabError || error instanceof LessonError;
+      const known = error instanceof StoreError || error instanceof AdminAiError || error instanceof GitLabError || error instanceof LessonError || error instanceof TeamLearningError;
       if (!known) console.error(`[admin:${errorId}]`, error);
       sendJson(res, known ? error.status : 500, {
         ok: false,

@@ -6,7 +6,9 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node --test tests/*.test.js"
+    "test": "node --test tests/*.test.js",
+    "eval:pan": "node pan-eval.js",
+    "eval:pan:live": "node pan-eval.js --live"
   },
   "engines": {
     "node": ">=18"

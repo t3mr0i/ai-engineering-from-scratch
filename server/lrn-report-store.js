@@ -65,7 +65,28 @@ class LrnReportStore {
     const completedCourses = Array.isArray(payload.completedCourses)
       ? [...new Set(payload.completedCourses.filter((id) => courseIds.has(id)))]
       : [];
-    return { anonId: payload.anonId, profileId: payload.profileId, externalLevel, completedCourses };
+    const assignmentIds = Array.isArray(payload.assignmentIds)
+      ? [...new Set(payload.assignmentIds.map(String).filter((id) => /^team-[0-9a-f-]{36}$/.test(id)))].slice(0, 16)
+      : [];
+    const capabilityIds = new Set((catalog.capabilities || []).map((item) => Number(item.id)));
+    const capabilityMastery = Array.isArray(payload.capabilityMastery)
+      ? payload.capabilityMastery.slice(0, 64).map((row) => {
+        if (!row || !capabilityIds.has(Number(row.capabilityId))) return null;
+        return {
+          capabilityId: Number(row.capabilityId),
+          percent: Math.max(0, Math.min(100, Math.round(Number(row.percent) || 0))),
+          evidenceCount: Math.max(0, Math.min(10_000, Math.floor(Number(row.evidenceCount) || 0))),
+          appliedEvidenceCount: Math.max(0, Math.min(1_000, Math.floor(Number(row.appliedEvidenceCount) || 0))),
+        };
+      }).filter(Boolean)
+      : [];
+    return { anonId: payload.anonId, profileId: payload.profileId, externalLevel, completedCourses, assignmentIds, capabilityMastery };
+  }
+
+  get(anonId) {
+    if (typeof anonId !== "string" || !ANON_ID_RE.test(anonId)) return null;
+    try { return JSON.parse(fs.readFileSync(path.join(this.reportsDir, `${anonId}.json`), "utf8")); }
+    catch (_) { return null; }
   }
 
   save(payload) {
@@ -98,14 +119,29 @@ class LrnReportStore {
     const byProfile = {};
     const byLevel = {};
     const courseCompletions = {};
+    const assignmentProgress = {};
     for (const report of reports) {
       byProfile[report.profileId] = (byProfile[report.profileId] || 0) + 1;
       byLevel[report.externalLevel] = (byLevel[report.externalLevel] || 0) + 1;
       for (const courseId of report.completedCourses) {
         courseCompletions[courseId] = (courseCompletions[courseId] || 0) + 1;
       }
+      for (const assignmentId of report.assignmentIds || []) {
+        if (!assignmentProgress[assignmentId]) assignmentProgress[assignmentId] = { learners: 0, courseCompletions: {}, masteryTotal: 0, masterySignals: 0 };
+        const team = assignmentProgress[assignmentId];
+        team.learners += 1;
+        for (const courseId of report.completedCourses) team.courseCompletions[courseId] = (team.courseCompletions[courseId] || 0) + 1;
+        for (const row of report.capabilityMastery || []) {
+          team.masteryTotal += row.percent;
+          team.masterySignals += 1;
+        }
+      }
     }
-    return { totalLearners: reports.length, byProfile, byLevel, courseCompletions };
+    Object.values(assignmentProgress).forEach((team) => {
+      team.averageMastery = team.masterySignals ? Math.round(team.masteryTotal / team.masterySignals) : 0;
+      delete team.masteryTotal;
+    });
+    return { totalLearners: reports.length, byProfile, byLevel, courseCompletions, assignmentProgress };
   }
 }
 

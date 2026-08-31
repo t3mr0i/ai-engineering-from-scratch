@@ -17,6 +17,7 @@
   var PLAN_KEY = "aifs:personal-plan:v1";
   var COCKPIT_KEY = "lhind:lrn-cockpit:v3";
   var ASSESSMENT_KEY = "aifs:assessment";
+  var ASSIGNMENT_KEY = "aifs:team-assignments:v1";
   var MAX_STORED_MESSAGES = 16;
   var activeController = null;
   var launcher = null;
@@ -208,6 +209,15 @@
     var progress = courseProgressSnapshot();
     var context = currentContext();
     var profileId = bounded(cockpit.profileId || plan.profileId, 40);
+    var progressState = root.AIFSProgress && typeof root.AIFSProgress.getState === "function" ? root.AIFSProgress.getState() : { lessons: {} };
+    var mastery = root.LrnMastery ? root.LrnMastery.summarize({ progressState: progressState, curriculumMap: root.LrnCurriculumMap || {} }) : { courses: [], dueReviews: [] };
+    var assignmentState = readJson(ASSIGNMENT_KEY, { assignments: [] });
+    var assignedCourses = [];
+    (assignmentState.assignments || []).forEach(function (assignment) {
+      (assignment.courseIds || []).forEach(function (courseId) {
+        if (assignedCourses.indexOf(courseId) < 0) assignedCourses.push(courseId);
+      });
+    });
     return {
       profileId: profileId,
       currentLevel: Number(cockpit.externalLevel || plan.currentLevel || 1),
@@ -217,7 +227,14 @@
       assessmentGaps: assessmentGaps(profileId),
       currentCourseId: context.currentCourseId,
       currentLessonPath: context.currentLessonPath,
-      plannedCourses: Array.isArray(plan.steps) ? plan.steps.map(function (step) { return step.courseId; }).filter(Boolean).slice(0, 20) : []
+      plannedCourses: Array.isArray(plan.steps) ? plan.steps.map(function (step) { return step.courseId; }).filter(Boolean).slice(0, 20) : [],
+      assignedCourses: assignedCourses.slice(0, 24),
+      courseMastery: (mastery.courses || []).map(function (row) {
+        return { courseId: row.courseId, percent: row.percent, evidenceCount: row.evidenceCount, dueCount: row.dueCount };
+      }).slice(0, 40),
+      dueReviews: (mastery.dueReviews || []).map(function (row) {
+        return { lessonPath: row.lessonPath, percent: row.percent, dueAt: row.dueAt };
+      }).slice(0, 20)
     };
   }
 

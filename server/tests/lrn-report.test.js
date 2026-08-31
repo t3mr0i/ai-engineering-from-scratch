@@ -114,7 +114,24 @@ test("aggregate counts learners per profile, level, and course completion", () =
 
 test("aggregate returns zero totals when no reports exist yet", () => {
   const store = makeStore();
-  assert.deepEqual(store.aggregate(), { totalLearners: 0, byProfile: {}, byLevel: {}, courseCompletions: {} });
+  assert.deepEqual(store.aggregate(), { totalLearners: 0, byProfile: {}, byLevel: {}, courseCompletions: {}, assignmentProgress: {} });
+});
+
+test("save validates mastery summaries and aggregates anonymous team progress", () => {
+  const store = makeStore();
+  const assignmentId = "team-11111111-1111-4111-8111-111111111111";
+  store.save({
+    anonId: VALID_ANON_ID,
+    profileId: "tc",
+    externalLevel: 2,
+    completedCourses: ["LRN-01"],
+    assignmentIds: [assignmentId, "forged"],
+    capabilityMastery: [{ capabilityId: 1, percent: 84.4, evidenceCount: 7, appliedEvidenceCount: 1 }, { capabilityId: 99999, percent: 100, evidenceCount: 99 }],
+  });
+  const stored = store.get(VALID_ANON_ID);
+  assert.deepEqual(stored.assignmentIds, [assignmentId]);
+  assert.deepEqual(stored.capabilityMastery, [{ capabilityId: 1, percent: 84, evidenceCount: 7, appliedEvidenceCount: 1 }]);
+  assert.equal(store.aggregate().assignmentProgress[assignmentId].averageMastery, 84);
 });
 
 test("POST /api/lrn/report returns 401 without a valid gate cookie when the gate is enabled", async (t) => {

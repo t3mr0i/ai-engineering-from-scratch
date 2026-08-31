@@ -31,7 +31,7 @@ test("every catalog navigation surface loads the role-aware admin entry", () => 
 test("collapsed admin navigation keeps explicit accessible names", () => {
   const html = read("admin.html");
   const buttons = html.match(/<button class="admin-nav__item[\s\S]*?<\/button>/g) || [];
-  assert.equal(buttons.length, 9);
+  assert.equal(buttons.length, 11);
   for (const button of buttons) assert.match(button, /aria-label="[^"]+"/);
 });
 
@@ -44,7 +44,7 @@ test("admin shell exposes theme and dismissible mobile navigation controls", () 
   assert.match(runtime, /function setSidebarOpen\(open\)/);
 });
 
-test("trainer and calendar views are wired from navigation to renderer", () => {
+test("trainer, calendar, and team-learning views are wired from navigation to renderer", () => {
   const html = read("admin.html");
   const runtime = read("admin.js");
   for (const view of ["trainers", "calendar"]) {
@@ -55,6 +55,10 @@ test("trainer and calendar views are wired from navigation to renderer", () => {
   assert.match(runtime, /function renderTrainerEditor\(trainer\)/);
   assert.match(runtime, /function renderSessionEditor\(session\)/);
   assert.match(runtime, /function renderCalendarMonth\(sessions\)/);
+  assert.match(html, /data-view="teams"/);
+  assert.match(html, /data-view-panel="teams"/);
+  assert.match(runtime, /teams: renderTeams,/);
+  assert.match(runtime, /function renderTeams\(\)/);
 });
 
 test("course editor assigns one responsible trainer and a trainer pool", () => {

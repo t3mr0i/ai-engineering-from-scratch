@@ -406,6 +406,14 @@ button, select { touch-action: manipulation; }
 .admin-field input[readonly] { background: var(--color-surface-sunken); color: var(--text-muted); }
 .admin-form-hint { margin: 0; color: var(--text-muted); font-size: var(--fs-caption); }
 
+.team-assignment-form { margin-bottom: var(--space-5); }
+.team-assignment-form__actions { display: flex; justify-content: flex-end; margin-top: var(--space-4); }
+.team-assignment-form select[multiple] { min-height: 220px; padding: var(--space-2); }
+.team-assignment-form select[multiple] option { padding: var(--space-2); border-radius: var(--radius-xs); }
+.team-assignment-report td:first-child strong,
+.team-assignment-report td:first-child small { display: block; }
+.team-assignment-report td:first-child small { margin-top: 2px; color: var(--text-muted); }
+
 .unit-list, .stage-list { display: grid; gap: var(--space-3); }
 .path-view-switch { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-6); padding-bottom: var(--space-4); border-bottom: var(--border-hairline); }
 .coverage-matrix th[scope="row"] strong, .coverage-matrix th[scope="row"] small { display: block; }

@@ -44,6 +44,8 @@
     conflict: null,
     baseCurrent: true,
     lrnStats: null,
+    teamAssignments: [],
+    teamReporting: {},
   };
 
   const ROLE_LABELS = {
@@ -366,6 +368,7 @@
       paths: renderPaths,
       trainers: renderTrainers,
       calendar: renderCalendar,
+      teams: renderTeams,
       assistant: renderAssistant,
       review: renderReview,
       history: renderHistory,
@@ -487,6 +490,110 @@
 
     dashboard.append(profilePanel, levelPanel, coursePanel);
     panel.append(dashboard);
+  }
+
+  function teamProgress(assignment) {
+    const report = state.teamReporting[assignment.id] || { learners: 0, courseCompletions: {}, averageMastery: 0 };
+    const possible = report.learners * assignment.courseIds.length;
+    const completed = assignment.courseIds.reduce((sum, courseId) => sum + (report.courseCompletions[courseId] || 0), 0);
+    return { ...report, percent: possible ? Math.round(completed / possible * 100) : 0 };
+  }
+
+  async function createTeamAssignment(event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const selected = Array.from(form.elements.courseIds.selectedOptions).map((option) => option.value);
+    if (!selected.length) {
+      toast("Wähle mindestens einen Kurs.", "error");
+      form.elements.courseIds.focus();
+      return;
+    }
+    const submit = form.querySelector("button[type=submit]");
+    submit.disabled = true;
+    try {
+      const body = await api("/api/admin/team-assignments", {
+        method: "POST",
+        body: JSON.stringify({
+          title: form.elements.title.value.trim(),
+          objective: form.elements.objective.value.trim(),
+          dueAt: form.elements.dueAt.value,
+          courseIds: selected,
+          status: "active",
+        }),
+      });
+      state.teamAssignments.push(body.assignment);
+      form.reset();
+      renderTeams();
+      toast(`Teamplan ${body.assignment.code} erstellt.`);
+    } catch (error) { toast(error.message, "error"); }
+    finally { submit.disabled = false; }
+  }
+
+  async function setTeamAssignmentStatus(assignment, status) {
+    try {
+      const body = await api(`/api/admin/team-assignments/${assignment.id}`, {
+        method: "PUT",
+        body: JSON.stringify({ ...assignment, status }),
+      });
+      state.teamAssignments = state.teamAssignments.map((row) => row.id === assignment.id ? body.assignment : row);
+      renderTeams();
+      toast(status === "archived" ? "Teamplan archiviert." : "Teamplan aktiviert.");
+    } catch (error) { toast(error.message, "error"); }
+  }
+
+  function renderTeams() {
+    const panel = $("#view-teams");
+    panel.replaceChildren(pageHeading(
+      "teamsTitle",
+      "Teamlernen",
+      "Pläne zuweisen und Evidenz aggregiert verfolgen",
+      "Beitrittscodes verbinden Teampläne mit anonymen Browser-Pseudonymen. Keine Klarnamen werden erfasst.",
+    ));
+
+    const courseSelect = h("select", { id: "teamCourseIds", name: "courseIds", multiple: "", size: "8", required: "" });
+    state.snapshot.catalog.courses.forEach((course) => courseSelect.append(h("option", { value: course.id, text: `${course.id} · ${course.title}` })));
+    const form = h("form", { class: "admin-panel team-assignment-form", onsubmit: createTeamAssignment }, [
+      h("div", { class: "admin-panel__header" }, [h("h2", { text: "Neuen Teamplan anlegen" }), h("p", { class: "admin-context-line", text: "Der Beitrittscode wird automatisch erzeugt." })]),
+      h("div", { class: "admin-form-grid" }, [
+        field("Titel", inputFor("", () => {}, { name: "title", required: "", maxlength: "120", autocomplete: "off", placeholder: "z. B. Agent Readiness Q4" })),
+        field("Fällig am", inputFor("", () => {}, { name: "dueAt", type: "date" })),
+        field("Ziel", textareaFor("", () => {}, { name: "objective", maxlength: "600", rows: "3", placeholder: "Welche Fähigkeit soll das Team anschließend anwenden können?" }), true),
+        field("Zugewiesene Kurse", courseSelect, true, "Mehrere Kurse mit Strg/Cmd oder Umschalt auswählen."),
+      ]),
+      h("div", { class: "team-assignment-form__actions" }, button("Teamplan erstellen", "primary", null, "plus", { type: "submit", disabled: !hasRole("editor") })),
+    ]);
+    panel.appendChild(form);
+
+    if (!state.teamAssignments.length) {
+      panel.append(emptyState("users-four", "Noch keine Teampläne", "Erstelle oben den ersten Plan und teile den Beitrittscode mit dem Team."));
+      return;
+    }
+
+    const rows = state.teamAssignments.slice().sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).map((assignment) => {
+      const progress = teamProgress(assignment);
+      const codeButton = button(assignment.code, "quiet", async () => {
+        try { await navigator.clipboard.writeText(assignment.code); toast("Beitrittscode kopiert."); }
+        catch (_) { toast(`Beitrittscode: ${assignment.code}`); }
+      }, "copy", { "aria-label": `Beitrittscode ${assignment.code} kopieren` });
+      const action = button(assignment.status === "archived" ? "Aktivieren" : "Archivieren", "secondary", () => setTeamAssignmentStatus(assignment, assignment.status === "archived" ? "active" : "archived"), assignment.status === "archived" ? "play" : "archive", { disabled: !hasRole("editor") });
+      return h("tr", {}, [
+        h("td", {}, [h("strong", { text: assignment.title }), assignment.dueAt ? h("small", { text: `Fällig ${new Date(`${assignment.dueAt}T00:00:00`).toLocaleDateString("de-DE")}` }) : null]),
+        h("td", {}, codeButton),
+        h("td", { text: String(assignment.courseIds.length) }),
+        h("td", { class: "number", text: String(progress.learners) }),
+        h("td", { class: "number", text: `${progress.percent}%` }),
+        h("td", { class: "number", text: `${progress.averageMastery || 0}%` }),
+        h("td", {}, h("span", { class: "status-dot", "data-status": assignment.status, text: assignment.status === "active" ? "Aktiv" : assignment.status === "archived" ? "Archiviert" : "Entwurf" })),
+        h("td", {}, action),
+      ]);
+    });
+    panel.append(h("section", { class: "admin-panel team-assignment-report" }, [
+      h("div", { class: "admin-panel__header" }, [h("h2", { text: "Teamfortschritt" }), h("p", { class: "admin-context-line", text: "Mastery basiert ausschließlich auf synchronisierter Quiz-Evidenz." })]),
+      h("div", { class: "admin-table-wrap" }, h("table", { class: "admin-table" }, [
+        h("thead", {}, h("tr", {}, ["Teamplan", "Code", "Kurse", "Lernende", "Abschluss", "Mastery", "Status", "Aktion"].map((label) => h("th", { scope: "col", text: label })))),
+        h("tbody", {}, rows),
+      ])),
+    ]));
   }
 
   function renderChangesetTable(items) {
@@ -2158,8 +2265,8 @@
 
   async function boot() {
     try {
-      const [me, curriculum, changesets, aiSkills, publishConfig, lessons, lrnStats] = await Promise.all([
-        api("/api/admin/me"), api("/api/admin/curriculum"), api("/api/admin/changesets"), api("/api/admin/ai/skills"), api("/api/admin/publish/config"), api("/api/admin/lessons"), api("/api/admin/lrn-stats").catch(() => ({ stats: null })),
+      const [me, curriculum, changesets, aiSkills, publishConfig, lessons, lrnStats, teams] = await Promise.all([
+        api("/api/admin/me"), api("/api/admin/curriculum"), api("/api/admin/changesets"), api("/api/admin/ai/skills"), api("/api/admin/publish/config"), api("/api/admin/lessons"), api("/api/admin/lrn-stats").catch(() => ({ stats: null })), api("/api/admin/team-assignments").catch(() => ({ assignments: [], reporting: {} })),
       ]);
       state.actor = me.actor;
       state.base = curriculum;
@@ -2172,6 +2279,9 @@
       state.publishConfigured = publishConfig.configured;
       state.lessons = lessons.lessons;
       state.lrnStats = lrnStats.stats;
+      state.teamAssignments = teams.assignments || [];
+      state.teamReporting = teams.reporting || {};
+      $("#teamNavCount").textContent = state.teamAssignments.filter((assignment) => assignment.status === "active").length || "";
       $("#adminUsername").textContent = state.actor.username;
       $("#adminRoles").textContent = state.actor.roles.map((role) => ROLE_LABELS[role] || role).join(" · ");
       $("#adminAvatar").textContent = initials(state.actor.username);

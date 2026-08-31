@@ -71,8 +71,8 @@ test("getOrCreateAnonId generates once and reuses the stored id", () => {
 test("buildPayload shapes the request body", () => {
   const { api } = loadReportSync();
   assert.deepEqual(
-    api.buildPayload("anon-1", { profileId: "tc", externalLevel: 2 }, ["LRN-01"]),
-    { anonId: "anon-1", profileId: "tc", externalLevel: 2, completedCourses: ["LRN-01"] },
+    api.buildPayload("anon-1", { profileId: "tc", externalLevel: 2 }, ["LRN-01"], ["TEAMCODE"], [{ capabilityId: 1, percent: 84, evidenceCount: 7, appliedEvidenceCount: 1, private: "drop" }]),
+    { anonId: "anon-1", profileId: "tc", externalLevel: 2, completedCourses: ["LRN-01"], assignmentCodes: ["TEAMCODE"], capabilityMastery: [{ capabilityId: 1, percent: 84, evidenceCount: 7, appliedEvidenceCount: 1 }] },
   );
 });
 
@@ -100,5 +100,7 @@ test("sync posts the current selection and completed courses after the debounce"
     assert.equal(body.anonId, "generated-anon-id");
     assert.equal(body.profileId, "tc");
     assert.deepEqual(body.completedCourses, ["A"]);
+    assert.deepEqual(body.assignmentCodes, []);
+    assert.deepEqual(body.capabilityMastery, []);
   });
 });

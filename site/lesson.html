@@ -2148,11 +2148,13 @@
   <script src="lang.js"></script>
   <script src="lesson-language.js?v=20260830a"></script>
   <script src="data.js?v=20260525a"></script>
-  <script src="progress.js?v=20260724a"></script>
-  <script src="lrn/report-sync.js?v=20260826a"></script>
+  <script src="progress.js?v=20260830a"></script>
   <script src="badges.js?v=20260713a"></script>
   <script src="lrn/data.js?v=20260825a"></script>
   <script src="lrn/curriculum-map.js?v=20260824b"></script>
+  <script src="skills-progress-evidence.js?v=20260825a"></script>
+  <script src="lrn/mastery.js?v=20260830a"></script>
+  <script src="lrn/report-sync.js?v=20260830a"></script>
   <script src="pan.js?v=20260830a"></script>
   <script src="search.js?v=20260813a" defer></script>
   <script src="cmdpalette.js?v=20260813a" defer></script>
@@ -3927,7 +3929,7 @@
         var gutterLines = [];
         for (var i = 1; i <= lineCount; i++) gutterLines.push(i);
         var blankLabel = blanks.length + (blanks.length === 1 ? ' blank' : ' blanks');
-        return '<div class="fillin-block" data-template="' + escapeAttr(code) + '">' +
+        return '<div class="fillin-block" data-evidence-id="fillin-' + blockHash(code + '\n') + '" data-template="' + escapeAttr(code) + '">' +
           '<div class="fillin-head">' +
             '<span class="fillin-badge">Challenge &middot; ' + blankLabel + '</span>' +
             '<span class="fillin-actions">' +
@@ -4162,6 +4164,7 @@
           var template = block.getAttribute('data-template') || '';
           var out = block.querySelector('.fillin-console');
           var idleText = out.textContent;
+          var revealed = false;
 
           function buildCode() {
             var idx = 0;
@@ -4184,11 +4187,15 @@
               el.classList.toggle('fillin-ok', ok && el.value.trim() !== '');
             });
           }
+          // Once the solution was revealed, editing a character must not turn
+          // the copied answer into applied evidence. An explicit reset clears
+          // every answer and starts a genuinely fresh attempt.
           inputs.forEach(function (el) { el.addEventListener('input', mark); });
 
           var solveBtn = block.querySelector('.fillin-solve');
           if (solveBtn) solveBtn.addEventListener('click', function () {
             inputs.forEach(function (el) { el.value = el.getAttribute('data-answer') || ''; });
+            revealed = true;
             mark();
             runBtn.click();
           });
@@ -4196,6 +4203,7 @@
           var resetBtn = block.querySelector('.fillin-reset');
           if (resetBtn) resetBtn.addEventListener('click', function () {
             inputs.forEach(function (el) { el.value = ''; el.classList.remove('fillin-ok'); });
+            revealed = false;
             setConsole(idleText, null);
           });
 
@@ -4218,6 +4226,9 @@
                   // that as console color instead of leaving it as plain text.
                   var state = /\bWRONG\b/.test(text) ? 'fail' : /\bPASS\b/.test(text) ? 'pass' : null;
                   setConsole(text, state);
+                  if (state === 'pass' && !revealed && lessonPath && window.AIFSProgress && window.AIFSProgress.recordAppliedEvidence) {
+                    window.AIFSProgress.recordAppliedEvidence(lessonPath, block.getAttribute('data-evidence-id'), true);
+                  }
                 })
                 .catch(function (err) {
                   setConsole(captured.text() + '\n' + String(err.message || err), 'fail');

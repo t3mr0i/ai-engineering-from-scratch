@@ -9,7 +9,7 @@ import { readFileSync } from "node:fs";
 import vm from "node:vm";
 
 const require = createRequire(import.meta.url);
-const { buildPlan } = require("./learning-plan.js");
+const { buildPlan, adaptPlan } = require("./learning-plan.js");
 
 function course(id, sequence, title, overrides = {}) {
   return {
@@ -58,7 +58,7 @@ test("returns a versioned plan with bounded, evenly ordered target weeks", () =>
   const plan = planFor(courses, { roleId: "tc", currentLevel: "Deepen" }, { durationWeeks: 8, sessionsPerWeek: 2 });
 
   assert.equal(plan.schemaVersion, 1);
-  assert.equal(plan.algorithmVersion, "deterministic-priority-v1");
+  assert.equal(plan.algorithmVersion, "mastery-adaptive-v2");
   assert.equal(plan.capacity.availableSessionSlots, 16);
   assert.equal(plan.capacity.focusCourseSlots, 4);
   assert.equal(plan.steps.length, 4);
@@ -197,4 +197,43 @@ test("ignores stale progress ids but records a deterministic warning", () => {
 
   assert.equal(plan.steps[0].courseId, "A");
   assert.equal(plan.warnings[0], "Ignored unknown progress course ids: OLD-A, OLD-B, OLD-C");
+});
+
+test("quiz mastery gaps outrank otherwise equivalent courses", () => {
+  const courses = [course("LRN-01", 1, "One"), course("LRN-02", 2, "Two")];
+  const plan = planFor(courses, {
+    roleId: "tc",
+    mastery: { courses: [{ courseId: "LRN-02", probability: 0.3, evidenceCount: 6, dueCount: 2 }] },
+  }, { durationWeeks: 4, sessionsPerWeek: 1 });
+
+  assert.equal(plan.steps[0].courseId, "LRN-02");
+  assert.ok(plan.steps[0].signals.some((signal) => signal.type === "mastery_gap"));
+  assert.ok(plan.steps[0].sources.some((source) => source.type === "quiz_mastery"));
+});
+
+test("team assignments take priority and due reviews are preserved", () => {
+  const courses = [course("LRN-01", 1, "One"), course("LRN-02", 2, "Two")];
+  const plan = planFor(courses, {
+    roleId: "tc",
+    assignments: [{ id: "team-1", title: "Agent readiness", courseIds: ["LRN-02"], dueAt: "2026-10-01" }],
+    mastery: { dueReviews: [{ conceptId: "p#q", lessonPath: "p", lessonTitle: "Prompting", courseId: "LRN-02", percent: 42, dueAt: 1 }] },
+  }, { durationWeeks: 4, sessionsPerWeek: 1 });
+
+  assert.equal(plan.steps[0].courseId, "LRN-02");
+  assert.equal(plan.reviewQueue.length, 1);
+  assert.ok(plan.steps[0].signals.some((signal) => signal.type === "team_assignment"));
+});
+
+test("adaptPlan records an auditable revision", () => {
+  const previous = { algorithmVersion: "old", createdAt: 12, steps: [{ courseId: "LRN-01" }] };
+  const next = adaptPlan(previous, {
+    catalog: catalog([course("LRN-01", 1, "One"), course("LRN-02", 2, "Two")]),
+    learner: { roleId: "tc", currentLevel: 1 },
+    durationWeeks: 4,
+    sessionsPerWeek: 1,
+  });
+
+  assert.equal(next.createdAt, 12);
+  assert.equal(next.revision.reason, "mastery-and-progress-update");
+  assert.ok(Array.isArray(next.revision.addedCourseIds));
 });

@@ -108,6 +108,9 @@ function validPayload(overrides = {}) {
       completedCourses: ["LRN-01"],
       inProgressCourses: ["LRN-02"],
       plannedCourses: ["LRN-02"],
+      assignedCourses: ["LRN-02"],
+      courseMastery: [{ courseId: "LRN-02", percent: 42, evidenceCount: 7, dueCount: 2 }],
+      dueReviews: [{ lessonPath: "phases/11-llm/02-context", percent: 42, dueAt: 1 }],
       assessmentGaps: [{ capabilityId: 11, currentLevel: "Basic", targetLevel: "Expert" }],
       currentCourseId: "LRN-02",
       currentLessonPath: "phases/11-llm/02-context",
@@ -158,6 +161,9 @@ test("allowlists and canonicalizes the learner snapshot", () => {
     completedCourses: ["LRN-01", "UNKNOWN", "LRN-01"],
     inProgressCourses: ["LRN-02", "UNKNOWN"],
     plannedCourses: ["LRN-02", "UNKNOWN"],
+    assignedCourses: ["LRN-02", "UNKNOWN"],
+    courseMastery: [{ courseId: "LRN-02", percent: 42.4, evidenceCount: 7, dueCount: 2, privateNote: "secret" }, { courseId: "UNKNOWN", percent: 100 }],
+    dueReviews: [{ lessonPath: "phases/11-llm/02-context", percent: 41 }, { lessonPath: "https://evil.example", percent: 100 }],
     assessmentGaps: [{ capabilityId: 11, title: "forged", currentLevel: "Basic", targetLevel: "Expert", privateNote: "secret" }],
     notes: "private notes",
     answers: { q1: "private answer" },
@@ -167,6 +173,9 @@ test("allowlists and canonicalizes the learner snapshot", () => {
   assert.deepEqual(input.learner.completedCourses, ["LRN-01"]);
   assert.deepEqual(input.learner.inProgressCourses, ["LRN-02"]);
   assert.deepEqual(input.learner.plannedCourses, ["LRN-02"]);
+  assert.deepEqual(input.learner.assignedCourses, ["LRN-02"]);
+  assert.deepEqual(input.learner.courseMastery, [{ courseId: "LRN-02", percent: 42, evidenceCount: 7, dueCount: 2 }]);
+  assert.deepEqual(input.learner.dueReviews, [{ lessonPath: "phases/11-llm/02-context", title: "Context Engineering", courseId: "LRN-02", percent: 41 }]);
   assert.equal(input.learner.assessmentGaps[0].title, "AI-Augmented Requirement Engineering");
   assert.equal(input.learner.assessmentGaps[0].currentLevel, "Acquire");
   assert.equal(input.learner.assessmentGaps[0].targetLevel, "Deepen", "canonical role target wins");

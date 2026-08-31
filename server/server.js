@@ -41,24 +41,35 @@ const { readJson, sendJson } = require('./admin-api');
 const { StoreError } = require('./admin-store');
 const { LrnReportStore, ReportError } = require('./lrn-report-store');
 const { createLearnerAi, LearnerAiError } = require('./learner-ai');
+const { TeamLearningStore, TeamLearningError } = require('./team-learning-store');
 
 const PORT = process.env.PORT || 8080;
 const BIND_HOST = process.env.BIND_HOST || undefined;
 const WEB_ROOT = path.resolve(process.env.WEB_ROOT || path.join(__dirname, '..', 'site'));
+const ADMIN_DATA_DIR = path.resolve(process.env.ADMIN_DATA_DIR || path.join(__dirname, '..', '.admin-data'));
 const SITE_PASSCODE = process.env.SITE_PASSCODE;
 const GATE_SECRET = process.env.GATE_SECRET;
 // Escape hatch for deployments that are already access-restricted at the
 // network layer (e.g. an internal-only OpenShift route reachable only over
 // VPN) and don't need the passcode gate on top.
 const GATE_DISABLED = process.env.GATE_DISABLED === 'true';
-const handleAdminApi = createAdminApi({ webRoot: WEB_ROOT });
 const learnerAi = createLearnerAi({ webRoot: WEB_ROOT });
 
 // Same persistent volume as the curriculum admin store (see openshift/
 // deployment.yaml's `admin-data` PVC) — reports live in a subdirectory of it
 // so no new OpenShift volume is needed.
-const ADMIN_DATA_DIR = path.resolve(process.env.ADMIN_DATA_DIR || path.join(__dirname, '..', '.admin-data'));
 const lrnReportStore = new LrnReportStore({ dataDir: path.join(ADMIN_DATA_DIR, 'lrn-reports'), webRoot: WEB_ROOT });
+const teamLearningStore = new TeamLearningStore({
+  dataDir: path.join(ADMIN_DATA_DIR, 'team-learning'),
+  webRoot: WEB_ROOT,
+  signingSecret: process.env.CREDENTIAL_SIGNING_SECRET || GATE_SECRET,
+});
+const handleAdminApi = createAdminApi({
+  webRoot: WEB_ROOT,
+  dataDir: ADMIN_DATA_DIR,
+  reportStore: lrnReportStore,
+  teamStore: teamLearningStore,
+});
 
 // Server-side proxy for the LHIND LLM gateway (Bifrost). The key lives only
 // here — notebooks call this same-origin endpoint instead of gateway.lhind.ai
@@ -353,6 +364,8 @@ async function handleLrnReport(req, res) {
   }
   try {
     const body = await readJson(req);
+    body.assignmentIds = teamLearningStore.resolveActiveIds(body.assignmentCodes);
+    delete body.assignmentCodes;
     const record = lrnReportStore.save(body);
     sendJson(res, 200, { ok: true, updatedAt: record.updatedAt });
   } catch (error) {
@@ -366,6 +379,38 @@ async function handleLrnReport(req, res) {
         id: errorId,
       },
     });
+  }
+}
+
+async function handleTeamAssignment(req, res) {
+  try {
+    if (req.method !== 'GET') throw new TeamLearningError('method.not_allowed', 'Methode nicht erlaubt.', 405);
+    const url = new URL(req.url, 'http://learner.local');
+    const assignment = teamLearningStore.findActiveByCode(url.searchParams.get('code'));
+    sendJson(res, 200, { ok: true, assignment });
+  } catch (error) {
+    const known = error instanceof TeamLearningError;
+    sendJson(res, known ? error.status : 400, { ok: false, error: { code: known ? error.code : 'team.invalid', message: known ? error.message : 'Die Team-Zuweisung konnte nicht geladen werden.' } });
+  }
+}
+
+async function handleCredential(req, res, pathOnly) {
+  try {
+    if (pathOnly === '/api/lrn/credentials') {
+      if (req.method !== 'POST') throw new TeamLearningError('method.not_allowed', 'Methode nicht erlaubt.', 405);
+      const body = await readJson(req);
+      const credential = teamLearningStore.issueCredential(body, lrnReportStore);
+      sendJson(res, 201, { ok: true, credential });
+      return;
+    }
+    if (req.method !== 'GET') throw new TeamLearningError('method.not_allowed', 'Methode nicht erlaubt.', 405);
+    const match = pathOnly.match(/^\/api\/lrn\/credentials\/(cred-[0-9a-f-]{36})$/);
+    if (!match) throw new TeamLearningError('credential.not_found', 'Skill-Nachweis nicht gefunden.', 404);
+    const url = new URL(req.url, 'http://learner.local');
+    sendJson(res, 200, { ok: true, ...teamLearningStore.verifyCredential(match[1], url.searchParams.get('proof')) });
+  } catch (error) {
+    const known = error instanceof TeamLearningError;
+    sendJson(res, known ? error.status : 400, { ok: false, error: { code: known ? error.code : 'credential.invalid', message: known ? error.message : 'Der Skill-Nachweis konnte nicht verarbeitet werden.' } });
   }
 }
 
@@ -434,6 +479,16 @@ const server = http.createServer((req, res) => {
   // passed, so only actual visitors to the gated site can report.
   if (pathOnly === '/api/lrn/report') {
     handleLrnReport(req, res);
+    return;
+  }
+
+  if (pathOnly === '/api/lrn/team-assignments') {
+    handleTeamAssignment(req, res);
+    return;
+  }
+
+  if (pathOnly === '/api/lrn/credentials' || pathOnly.startsWith('/api/lrn/credentials/')) {
+    handleCredential(req, res, pathOnly);
     return;
   }
 

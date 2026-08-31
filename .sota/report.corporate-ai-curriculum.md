@@ -4,13 +4,13 @@ Mode: **standard** · Recherchiert am **30. August 2026** bis zur leichten Sätt
 
 ## Verdict
 
-Die Plattform ist nach diesem Umsetzungsschnitt **COMPETITIVE**: Curriculum, Cockpit und Lernfortschritt waren bereits stark; neu hinzugekommen sind ein quellengebundener PAN-Tutor und ein learner-owned, editierbarer Plan. Für Top-Tier fehlen vor allem ein belastbares Mastery-Modell mit adaptiver Neuplanung sowie Manager-Zuweisung und verifizierbare Skill-Nachweise.
+Die Plattform ist nach diesem Umsetzungsschnitt **FRONTIER**: Alle 19 Table-Stakes des direkten Enterprise-AI-Learning-Clusters sind belegt. PAN ist curriculum-grounded und evaluiert, persönliche Pläne reagieren auf beobachtete Mastery und Team-Zuweisungen, und angewandte Evidenz kann als eng begrenzter, prüfbarer Kompetenznachweis ausgegeben werden.
 
-**Tier:** COMPETITIVE · **Table-stakes coverage:** 89% (17/19) · **Field:** 6 direkte Peers + 4 breitere Referenzen
+**Tier:** FRONTIER · **Table-stakes coverage:** 100% (19/19) · **Field:** 6 direkte Peers + 4 breitere Referenzen
 
 ## Since last scan
 
-Der vorherige gespeicherte Scan vom 24. August 2026 bewertete die andere Domäne `open-source-ai-curriculum`. Ein Prozentvergleich wäre daher irreführend. Für die bereits vorhandene Corporate-Rubrik wurde die Messlatte transparent von v1 auf v2 angehoben: vier im aktuellen Markt wiederkehrende AI-Table-Stakes und fünf Edge-Capabilities kamen hinzu; bestehende Kriterien und Gewichte wurden nicht still verändert.
+Der vorherige gespeicherte Scan vom 24. August 2026 bewertete die andere Domäne `open-source-ai-curriculum`. Ein domänenübergreifender Prozentvergleich wäre daher irreführend. Innerhalb dieses Corporate-Scans stieg die belegte Abdeckung durch die Umsetzung von 89% auf 100%: `plan-assignment-and-reporting` und `applied-skills-assessment` sind neu erfüllt; außerdem wurden die Edge-Capabilities `concept-mastery-and-replanning`, `credential-verification` und `tutor-evaluation-harness` geschlossen.
 
 ## Field framing
 
@@ -20,11 +20,13 @@ Primärer Cluster ist eine **enterprise AI learning platform**: rollenbezogene C
 
 Sana und 360Learning setzen den aktuellen Maßstab für source-grounded Tutor-Flows und kontextbewusste Next-best-actions. Degreed, Docebo und Cornerstone prüfen Enterprise-Skills, Coaching und Talent-Workflows; Coursera zeigt den kursnahen Tutor im großen Maßstab. Khanmigo ist die didaktische Referenz für hint-first und Assessment-Schutz. Open edX und Oppia liefern überprüfbare Open-Source-Muster für Unit-Kontext, Telemetrie, Prerequisites und Mastery. Go1 zeigt den Transfer in Teams und Slack.
 
-## Do next
+## In diesem Schnitt umgesetzt
 
-1. **Concept Mastery + adaptive Neuplanung:** Quiz-Evidenz stärker gewichten als Lesen/Selbstrating, Capstone-BKT produktisieren und Spaced Review auslösen.
-2. **Manager-Zuweisung + Skill-Nachweis:** persönliche Pläne in zuweisbare Team-Pläne überführen und Applied Assessments mit verifizierbarem Receipt verbinden.
-3. **Tutor-Evaluation:** feste Testsets für Groundedness, Zitatgültigkeit, Quiz-Leakage, Prompt Injection, pädagogische Qualität, Latenz und Kosten ergänzen.
+1. **Concept Mastery + adaptive Neuplanung:** BKT-artige Mastery nutzt wiederholte Quiz-Evidenz, terminiert Spaced Reviews und repriorisiert gespeicherte Pläne mit nachvollziehbarer Revision und Undo.
+2. **Manager-Zuweisung + Skill-Nachweis:** Admins erstellen Teampläne mit Kursen und Fälligkeit; Lernende treten pseudonym per Code bei. Ein Receipt setzt Quiz-Mastery und einen bestandenen, nicht aufgedeckten Runnable Self-Check voraus.
+3. **Tutor-Evaluation:** das offline und live ausführbare Golden Set bewertet Groundedness, Zitate, Pädagogik, Quiz-Leakage, Prompt Injection, Latenz und Tokenbudget; Runtime Safety blockiert unsichere Antworten fail-closed.
+
+Nächste strategische Ausbaustufe außerhalb der direkten Table-Stakes: adaptive Rollenspiele, Teams-/Slack-Integration, xAPI/SCORM und externe bzw. proktorierte Credentials.
 
 ## Field
 
@@ -59,8 +61,8 @@ GitHub-Metadaten am Scan-Tag: `openedx/openedx-platform` 8.175 Stars, letzter Pu
 | Open lesson pool | ✅ | 600 auditierte Lessons |
 | In-browser execution | ✅ | Pyodide-Runtime in `site/lesson.html` |
 | Static deployment | ✅ | statisches Frontend; geschützte Node-API für interne Funktionen |
-| Plan assignment and reporting | ⚠️ | aggregiertes Reporting vorhanden, aber keine Manager-Zuweisung persönlicher Pläne |
-| Applied skills assessment | ⚠️ | Labs und Capstone-Verifikation vorhanden, aber kein allgemein verifizierbares Skill Credential |
+| Plan assignment and reporting | ✅ | `site/admin.js`, `server/admin-api.js`, `server/team-learning-store.js`: Teampläne, Join Codes, Fälligkeit und anonymes Completion-/Mastery-Reporting |
+| Applied skills assessment | ✅ | `site/lesson.html`, `site/progress.js`: bestandener Runnable Self-Check ohne Reveal plus Quiz-Mastery; signiertes Receipt über `server/team-learning-store.js` |
 | Role outcome statements | ✅ | Course Outcomes und rollenbezogene Beschreibungen |
 | Curriculum-grounded AI tutor | ✅ | `server/learner-ai.js`, `site/pan.js`; freigegebene Course-/Lesson-Quellen und Deep Links |
 | Learner-owned goal plan | ✅ | `learning-plan.js` + `plan-builder.js`; Rolle, Ziel, Rhythmus, Assessment und Fortschritt |
@@ -68,7 +70,7 @@ GitHub-Metadaten am Scan-Tag: `openedx/openedx-platform` 8.175 Stars, letzter Pu
 | AI trust and assessment guards | ✅ | Gate, Rate Limit, serverseitiger Key, Allowlisting, Source-Normalisierung, Untrusted-Data-Grenze und Hint-first-/Quiz-Schutz |
 | LLM crawler discoverability | ✅ edge | `site/llms.txt` |
 | Industry-recognized certificate | ❌ edge | kein externer oder partnergestützter Abschluss |
-| Credential verification | ⚠️ edge | Capstone-Receipt, noch nicht als allgemeines Skill Credential integriert |
+| Credential verification | ✅ edge | `site/credential.html` und `/api/lrn/credentials/:id`: HMAC-Prüfung mit explizit begrenzter Aussage zu Selbststudium statt Identität/Proctoring |
 | SCORM/xAPI export | ❌ edge | kein LMS-Exportpfad |
 | AI-assisted plan authoring | ✅ edge | bestehender Admin-Copilot für Curriculum-Proposals |
 | Translation/localization | ⚠️ edge | zweisprachige UI und Teilübersetzung, keine Vollabdeckung |
@@ -77,36 +79,37 @@ GitHub-Metadaten am Scan-Tag: `openedx/openedx-platform` 8.175 Stars, letzter Pu
 | Compliance evidence bundle | ❌ edge | kein exportierbares Assurance-Paket |
 | Persistent tutor threads | ✅ edge | begrenzte lokale PAN-History mit sichtbarer Retention und Clear-Aktion |
 | Adaptive practice and roleplay | ❌ edge | Quick Action vorhanden, noch kein antwortabhängiger Practice-State |
-| Concept mastery and replanning | ❌ edge | Capstone-BKT existiert isoliert, nicht im Learner Model |
+| Concept mastery and replanning | ✅ edge | `site/lrn/mastery.js`, `learning-plan.js`, `plan-builder.js`: Quiz-Mastery, Review Queue, adaptive Revision und Undo |
 | Flow-of-work learning agent | ❌ edge | keine Teams-/Slack-Integration |
-| Tutor evaluation harness | ⚠️ edge | Quellen-, Input-, Prompt- und Route-Tests vorhanden; noch kein pädagogisches Eval-Set |
+| Tutor evaluation harness | ✅ edge | `server/pan-eval.js`, `server/evals/pan-golden.json`: offline/live Golden Set und Kategorien für Qualität, Safety, Latenz und Tokenbudget |
 
 ## Gaps
 
 ### Direct-peer gaps
 
-- Manager/L&D können persönliche Pläne noch nicht zuweisen, genehmigen oder teamweit auswerten.
-- Applied Assessments erzeugen noch keinen überall prüfbaren Skill-Nachweis.
+- Keine offenen Table-Stakes im gescannten direkten Peer-Cluster.
 
 ### Maturity gaps
 
-- PAN ist nicht streamingfähig und hat noch keine produktionsgemessenen Latenz-/Kostenbudgets.
-- Tutor-Groundedness und Quiz-Leakage werden strukturell getestet, aber noch nicht gegen ein festes Golden Set bewertet.
+- PAN misst Latenz und Tokenverbrauch im Live-Eval, aber noch ohne langfristige Produktions-SLO-Zeitreihe.
+- Streaming bleibt eine optionale UX-Verbesserung; es ist kein Table-Stake des gescannten Clusters.
 
 ### Onboarding gaps
 
-- Der Planer arbeitet sofort lokal; ein kurzer erster Diagnostic Check wäre belastbarer als reine Selbsteinschätzung.
+- Der Planer kann vorhandene Quiz-Mastery sofort adaptiv nutzen; für neue Nutzer wäre ein kurzer Performance-Diagnostic vor dem ersten Plan weiterhin stärker als reine Selbsteinschätzung.
 - Zeitplanung nutzt Fokus-Sessions, weil der Katalog keine verlässlichen Kursdauern trägt. Das wird ehrlich ausgewiesen, verhindert aber kalendergenaue Zusagen.
 
 ### Cross-cluster transfer gaps
 
-- Oppias Concept-Mastery und OpenTutor-/OATutor-artige BKT-/Spaced-Review-Mechanik sind noch nicht produktisiert.
 - Go1s Flow-of-Work-Pattern in Teams/Slack fehlt.
 - Adaptive Roleplays wie bei Degreed Maestro fehlen.
+- Externe oder proktorierte Partner-Credentials und xAPI/SCORM bleiben Integrationsoptionen.
 
 ## What we already match
 
 - Rollen- und Level-Cockpit, kuratierte Academy Paths, 600 auditierte Lessons, Browser-Ausführung, Quizze und lokaler Fortschritt bilden eine ungewöhnlich starke Basis.
 - PAN ist kein frei formulierter Chat-Proxy: Er minimiert Learner-Daten, rankt freigegebene Inhalte deterministisch, bindet echte Lesson-Auszüge ein und lässt nur serverseitig aufgelöste Quellen/Aktionen durch.
-- Der persönliche Plan ist learner-owned, transparent und editierbar. Das Modell erklärt seine Signale und erfindet keine Kursstunden.
+- Der persönliche Plan ist learner-owned, transparent und editierbar. Er reagiert auf Quiz-Mastery, fällige Wiederholungen und Team-Zuweisungen; die vorige Revision bleibt wiederherstellbar.
+- Team-Reporting bleibt pseudonym und aggregiert. Der prüfbare Kompetenznachweis belegt ausschließlich Signatur und synchronisierte Selbststudiums-Evidenz, ausdrücklich nicht Identität oder Proctoring.
+- PANs Golden Set hält Groundedness, Zitierbarkeit, Pädagogik und Assessment-Schutz als reproduzierbare Regression fest.
 - Der bestehende Admin-Copilot deckt AI-assisted Curriculum Authoring bereits mit auditierten Proposals ab.

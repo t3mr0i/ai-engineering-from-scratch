@@ -112,9 +112,9 @@ test("lrn i18n uses a supplied fallback for future data-driven labels", () => {
 test("control render path rebuilds stable selects once", () => {
   const controls = lrnSource.match(/function renderControls\(\) \{[\s\S]*?\n  \}/)?.[0] || "";
   const render = lrnSource.match(/function render\(\) \{[\s\S]*?\n  \}/)?.[0] || "";
-  assert.equal((controls.match(/renderProfileSelect\(\)/g) || []).length, 1);
+  assert.equal((controls.match(/renderRoleSelect\(\)/g) || []).length, 1);
   assert.equal((controls.match(/renderLevelSelect\(\)/g) || []).length, 1);
-  assert.doesNotMatch(render, /renderProfileSelect\(\)|renderLevelSelect\(\)/);
+  assert.doesNotMatch(render, /renderRoleSelect\(\)|renderLevelSelect\(\)/);
 });
 
 test("reset clears search and restores the canonical filter state", () => {

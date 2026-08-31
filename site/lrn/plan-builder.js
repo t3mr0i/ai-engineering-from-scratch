@@ -15,6 +15,8 @@
   var STORE = "aifs:personal-plan:v1";
   var COCKPIT_STORE = "lhind:lrn-cockpit:v3";
   var ASSESSMENT_STORE = "aifs:assessment";
+  var ASSIGNMENT_STORE = "aifs:team-assignments:v1";
+  var PREVIOUS_PLAN_STORE = "aifs:personal-plan:previous:v1";
   var draft = null;
   var saved = null;
   var host = null;
@@ -58,7 +60,14 @@
       goalReason: "Matches your stated goal: {terms}.",
       gapReason: "Addresses an assessment gap from {current} to {target}.",
       progressReason: "Continues work you already started.",
+      masteryReason: "Quiz evidence shows this course needs reinforcement.",
+      assignmentReason: "Required by your active team assignment.",
       defaultReason: "Selected from the approved course catalog.",
+      reviewTitle: "Review due now",
+      reviewIntro: "These quiz concepts are scheduled before new material.",
+      reviewOpen: "Review lesson",
+      adapted: "Plan updated from your latest quiz evidence and progress.",
+      undoAdapt: "Undo automatic update",
       save: "Save plan",
       clear: "Clear plan",
       clearConfirm: "Clear your personal plan from this browser?",
@@ -102,7 +111,14 @@
       goalReason: "Passt zu deinem Ziel: {terms}.",
       gapReason: "Schließt eine Assessment-Lücke von {current} zu {target}.",
       progressReason: "Setzt einen bereits begonnenen Kurs fort.",
+      masteryReason: "Quiz-Evidenz zeigt, dass dieser Kurs noch gefestigt werden sollte.",
+      assignmentReason: "Von deiner aktiven Team-Zuweisung vorgegeben.",
       defaultReason: "Aus dem freigegebenen Kurskatalog ausgewählt.",
+      reviewTitle: "Jetzt wiederholen",
+      reviewIntro: "Diese Quiz-Konzepte sind vor neuem Stoff fällig.",
+      reviewOpen: "Lektion wiederholen",
+      adapted: "Plan anhand deiner neuesten Quiz-Evidenz und deines Fortschritts aktualisiert.",
+      undoAdapt: "Automatische Aktualisierung rückgängig machen",
       save: "Plan speichern",
       clear: "Plan löschen",
       clearConfirm: "Persönlichen Plan aus diesem Browser löschen?",
@@ -167,12 +183,20 @@
   function learnerSnapshot(goal) {
     var cockpit = read(COCKPIT_STORE, {});
     var assessment = read(ASSESSMENT_STORE, {});
+    var progressState = root.AIFSProgress && root.AIFSProgress.getState ? root.AIFSProgress.getState() : { lessons: {} };
+    var mastery = root.LrnMastery ? root.LrnMastery.summarize({
+      progressState: progressState,
+      curriculumMap: root.LrnCurriculumMap || {},
+    }) : { courses: [], dueReviews: [] };
+    var assignmentState = read(ASSIGNMENT_STORE, { assignments: [] });
     return {
       roleId: cockpit.profileId || "tc",
       currentLevel: Number(cockpit.externalLevel || 1),
       goal: String(goal || "").trim().slice(0, 500),
       assessment: { ratings: assessment.ratings || {} },
-      progress: progressSnapshot()
+      progress: progressSnapshot(),
+      mastery: { courses: mastery.courses || [], dueReviews: mastery.dueReviews || [] },
+      assignments: Array.isArray(assignmentState.assignments) ? assignmentState.assignments : []
     };
   }
 
@@ -220,6 +244,8 @@
       signals.find(function (item) { return item.type === "role_match"; });
     if (!signal) return t("defaultReason");
     if (signal.type === "progress") return t("progressReason");
+    if (signal.type === "mastery_gap") return t("masteryReason");
+    if (signal.type === "team_assignment") return t("assignmentReason");
     if (signal.type === "goal_match") return t("goalReason", { terms: (signal.terms || []).join(", ") });
     if (signal.type === "assessment_gap") return t("gapReason", { current: signal.currentLevel, target: signal.targetLevel });
     if (signal.type === "level_match") return t("levelReason");
@@ -277,6 +303,24 @@
     head.append(copy, badge);
     result.appendChild(head);
 
+    if (Array.isArray(draft.reviewQueue) && draft.reviewQueue.length) {
+      var reviews = create("section", "personal-plan-reviews");
+      reviews.append(create("h4", "", t("reviewTitle")), create("p", "", t("reviewIntro")));
+      var reviewList = create("ul", "personal-plan-reviews__list");
+      draft.reviewQueue.slice(0, 5).forEach(function (review) {
+        var reviewItem = create("li", "personal-plan-review");
+        var reviewCopy = create("div", "");
+        reviewCopy.append(create("strong", "", review.lessonTitle), create("span", "", review.percent + "%"));
+        var reviewLink = create("a", "personal-plan-step__link", t("reviewOpen"));
+        reviewLink.href = "lesson.html?path=" + encodeURIComponent(review.lessonPath) + (review.courseId ? "&course=" + encodeURIComponent(review.courseId) : "");
+        reviewLink.appendChild(icon("arrow-right"));
+        reviewItem.append(reviewCopy, reviewLink);
+        reviewList.appendChild(reviewItem);
+      });
+      reviews.appendChild(reviewList);
+      result.appendChild(reviews);
+    }
+
     if (!draft.steps.length) result.appendChild(create("p", "personal-plan-result__empty", t("empty")));
     else {
       var list = create("ol", "personal-plan-steps");
@@ -287,6 +331,12 @@
     var footer = create("div", "personal-plan-result__footer");
     footer.appendChild(create("p", "personal-plan-result__hint", t("customizeHint")));
     var actions = create("div", "personal-plan-result__actions");
+    if (draft.revision) {
+      var undo = create("button", "personal-plan__secondary", t("undoAdapt"));
+      undo.type = "button";
+      undo.addEventListener("click", undoAdaptation);
+      actions.appendChild(undo);
+    }
     var save = create("button", "personal-plan__primary", t("save"));
     save.type = "button";
     save.disabled = !draft.steps.length;
@@ -362,11 +412,48 @@
   function clearPlan() {
     if (!root.confirm(t("clearConfirm"))) return;
     try { root.localStorage.removeItem(STORE); } catch (_) {}
+    try { root.localStorage.removeItem(PREVIOUS_PLAN_STORE); } catch (_) {}
     saved = null;
     draft = null;
     setStatus("", "");
     renderPlan();
     root.dispatchEvent(new CustomEvent("aifs:personal-plan-change", { detail: null }));
+  }
+
+  function undoAdaptation() {
+    var previous = read(PREVIOUS_PLAN_STORE, null);
+    if (!previous || !Array.isArray(previous.steps)) return;
+    try {
+      root.localStorage.setItem(STORE, JSON.stringify(previous));
+      root.localStorage.removeItem(PREVIOUS_PLAN_STORE);
+      saved = JSON.parse(JSON.stringify(previous));
+      draft = JSON.parse(JSON.stringify(previous));
+      setStatus(t("planSaved"), "saved");
+      renderPlan();
+    } catch (_) { setStatus(t("saveError"), "error"); }
+  }
+
+  function adaptSavedPlan() {
+    var current = read(STORE, null);
+    if (!current || !Array.isArray(current.steps) || !current.cadence || !root.LrnLearningPlan || !root.LrnData) return;
+    try {
+      var next = root.LrnLearningPlan.adaptPlan(current, {
+        catalog: root.LrnData,
+        learner: learnerSnapshot(current.learner && current.learner.goal),
+        durationWeeks: current.cadence.durationWeeks,
+        sessionsPerWeek: current.cadence.sessionsPerWeek,
+      });
+      var currentShape = JSON.stringify({ steps: current.steps.map(function (step) { return step.courseId; }), reviews: current.reviewQueue || [] });
+      var nextShape = JSON.stringify({ steps: next.steps.map(function (step) { return step.courseId; }), reviews: next.reviewQueue || [] });
+      if (currentShape === nextShape) return;
+      root.localStorage.setItem(PREVIOUS_PLAN_STORE, JSON.stringify(current));
+      root.localStorage.setItem(STORE, JSON.stringify(next));
+      saved = JSON.parse(JSON.stringify(next));
+      draft = JSON.parse(JSON.stringify(next));
+      setStatus(t("adapted"), "saved");
+      renderPlan();
+      root.dispatchEvent(new CustomEvent("aifs:personal-plan-change", { detail: saved }));
+    } catch (_) { /* Progress must never be blocked by a failed replan. */ }
   }
 
   function option(select, value, label) {
@@ -467,6 +554,8 @@
     if (!root.document) return;
     function run() {
       buildUi();
+      if (root.AIFSProgress && root.AIFSProgress.onChange) root.AIFSProgress.onChange(adaptSavedPlan);
+      root.addEventListener("aifs:team-assignment-change", adaptSavedPlan);
       root.document.addEventListener("sitelang:change", renderLocale);
       if (root.location && root.location.hash === "#personalPlan") open();
     }

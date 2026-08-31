@@ -16,6 +16,13 @@ test("lesson page loads the shared Python runtime before its inline code", () =>
   assert.ok(inlineScript > runtimeScript, "the runtime must load before lesson code uses it");
 });
 
+test("revealing a fill-in solution stays ineligible until an explicit reset", () => {
+  assert.match(lessonHtml, /revealed = true;[\s\S]*?runBtn\.click\(\)/);
+  assert.match(lessonHtml, /fillin-reset[\s\S]*?revealed = false;/);
+  assert.doesNotMatch(lessonHtml, /addEventListener\('input',[^\n]*revealed = false/);
+  assert.match(lessonHtml, /state === 'pass' && !revealed[\s\S]*?recordAppliedEvidence/);
+});
+
 test("initialization makes lrn_llm available without running a setup cell", async () => {
   const pyodide = await loadPyodide();
   await LessonPythonRuntime.initialize(pyodide);

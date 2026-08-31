@@ -60,8 +60,8 @@
     {"id":"open-source-lesson-pool","us":"met","tier":"table-stakes","evidence":"600 audited lessons"},
     {"id":"in-browser-execution","us":"met","tier":"table-stakes","evidence":"Pyodide runtime in site/lesson.html"},
     {"id":"static-deployment","us":"met","tier":"table-stakes","evidence":"Static frontend with a protected Node API for internal functions"},
-    {"id":"plan-assignment-and-reporting","us":"partial","tier":"table-stakes","evidence":"Aggregate reporting exists; manager assignment of personal plans does not"},
-    {"id":"applied-skills-assessment","us":"partial","tier":"table-stakes","evidence":"Labs and capstone verification exist without a generally verifiable skill credential"},
+    {"id":"plan-assignment-and-reporting","us":"met","tier":"table-stakes","evidence":"Admin team plans, anonymous join codes, course assignments, due dates, and aggregate completion/mastery reporting in site/admin.js and server/team-learning-store.js"},
+    {"id":"applied-skills-assessment","us":"met","tier":"table-stakes","evidence":"Quiz mastery plus unrevealed runnable self-check evidence gates signed capability receipts in site/lesson.html and server/team-learning-store.js"},
     {"id":"role-outcome-statements","us":"met","tier":"table-stakes","evidence":"Course outcomes and role descriptions"},
     {"id":"curriculum-grounded-ai-tutor","us":"met","tier":"table-stakes","evidence":"server/learner-ai.js and site/pan.js"},
     {"id":"learner-owned-goal-plan","us":"met","tier":"table-stakes","evidence":"site/lrn/learning-plan.js and plan-builder.js"},
@@ -69,7 +69,7 @@
     {"id":"ai-trust-and-assessment-guards","us":"met","tier":"table-stakes","evidence":"Gate, rate limit, server key, allowlists, source normalization, prompt boundary, and graded-answer guard"},
     {"id":"llm-crawler-discoverability","us":"met","tier":"edge","evidence":"site/llms.txt"},
     {"id":"industry-recognized-certificate","us":"missing","tier":"edge","evidence":"No external or partner credential"},
-    {"id":"credential-verification","us":"partial","tier":"edge","evidence":"Capstone receipt is not integrated as a general skill credential"},
+    {"id":"credential-verification","us":"met","tier":"edge","evidence":"HMAC-signed capability receipt, proof endpoint, and public verifier UI; assurance is explicitly self-directed, not identity/proctoring"},
     {"id":"scorm-xapi-export","us":"missing","tier":"edge","evidence":"No LMS export path"},
     {"id":"ai-assisted-plan-authoring","us":"met","tier":"edge","evidence":"Existing admin curriculum copilot and auditable proposals"},
     {"id":"translation-localization","us":"partial","tier":"edge","evidence":"Bilingual UI and partial translated lesson coverage"},
@@ -78,16 +78,16 @@
     {"id":"compliance-evidence-bundle","us":"missing","tier":"edge","evidence":"No exportable assurance bundle"},
     {"id":"persistent-tutor-threads","us":"met","tier":"edge","evidence":"Bounded local PAN history with visible retention and clear action"},
     {"id":"adaptive-practice-and-roleplay","us":"missing","tier":"edge","evidence":"Quick action exists without response-adaptive practice state"},
-    {"id":"concept-mastery-and-replanning","us":"missing","tier":"edge","evidence":"Capstone BKT remains isolated from the learner product"},
+    {"id":"concept-mastery-and-replanning","us":"met","tier":"edge","evidence":"BKT-style per-question mastery, spaced review queue, team/mastery reprioritization, plan revisions, and undo in site/lrn/mastery.js and learning-plan.js"},
     {"id":"flow-of-work-learning-agent","us":"missing","tier":"edge","evidence":"No Teams or Slack integration"},
-    {"id":"tutor-evaluation-harness","us":"partial","tier":"edge","evidence":"Input, source, prompt, and route tests exist without a pedagogical golden set"}
+    {"id":"tutor-evaluation-harness","us":"met","tier":"edge","evidence":"Labeled offline/live golden set for grounding, citations, pedagogy, quiz leakage, injection, latency, and token budgets in server/pan-eval.js"}
   ],
-  "coverage": {"met":17,"total":19,"pct":89},
-  "tier": "COMPETITIVE",
-  "gaps_total": 2,
+  "coverage": {"met":19,"total":19,"pct":100},
+  "tier": "FRONTIER",
+  "gaps_total": 0,
   "gaps": {
-    "direct_peer": ["plan-assignment-and-reporting","applied-skills-assessment"],
-    "maturity": ["tutor-evaluation-harness","concept-mastery-and-replanning"],
+    "direct_peer": [],
+    "maturity": [],
     "onboarding": ["performance-based-diagnostic"],
     "cross_cluster": ["adaptive-practice-and-roleplay","flow-of-work-learning-agent"]
   },
@@ -96,6 +96,8 @@
     "The corporate rubric moved from v1 to v2 because the current field consistently exposed four additional AI table stakes.",
     "Closed-source comparator capabilities are based on primary product documentation; GitHub stars are not applicable.",
     "Course durations are absent from the catalog, so the personal plan exposes focus-session capacity rather than invented hour estimates.",
-    "PAN is implemented and tested but requires the existing LLM_GATEWAY_KEY in deployment for live answers."
+    "PAN is implemented and tested but requires the existing LLM_GATEWAY_KEY in deployment for live answers.",
+    "Capability receipts prove issuer and synchronized evidence integrity for self-directed assessments; they do not prove learner identity or proctoring.",
+    "Applied evidence is recorded only when an unrevealed runnable self-check reports PASS; reading, completion, or revealing the solution is insufficient."
   ]
 }

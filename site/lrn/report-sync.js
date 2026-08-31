@@ -10,6 +10,7 @@
   var ANON_ID_KEY = "aifs:anon-id:v1";
   var LRN_STORE_KEY = "lhind:lrn-cockpit:v3";
   var REPORT_ENDPOINT = "/api/lrn/report";
+  var ASSIGNMENT_STORE_KEY = "aifs:team-assignments:v1";
   var DEBOUNCE_MS = 2000;
 
   function readLrnSelection(storage) {
@@ -56,13 +57,24 @@
       .filter(function (courseId) { return isCourseComplete(courseMaps, courseId, progressState); });
   }
 
-  function buildPayload(anonId, selection, completedCourseIds) {
+  function buildPayload(anonId, selection, completedCourseIds, assignmentCodes, capabilityMastery) {
     return {
       anonId: anonId,
       profileId: selection.profileId,
       externalLevel: selection.externalLevel,
       completedCourses: completedCourseIds,
+      assignmentCodes: Array.isArray(assignmentCodes) ? assignmentCodes.slice(0, 16) : [],
+      capabilityMastery: Array.isArray(capabilityMastery) ? capabilityMastery.slice(0, 64).map(function (row) {
+        return { capabilityId: row.capabilityId, percent: row.percent, evidenceCount: row.evidenceCount, appliedEvidenceCount: row.appliedEvidenceCount || 0 };
+      }) : [],
     };
+  }
+
+  function readAssignments(storage) {
+    try {
+      var saved = JSON.parse(storage.getItem(ASSIGNMENT_STORE_KEY));
+      return Array.isArray(saved && saved.assignments) ? saved.assignments : [];
+    } catch (_) { return []; }
   }
 
   function mount() {
@@ -80,7 +92,18 @@
       if (!state) return;
       var anonId = getOrCreateAnonId(window.localStorage, function () { return crypto.randomUUID(); });
       var completedCourseIds = computeCompletedCourseIds(data.courses, curriculum.courseMaps, state);
-      var payload = buildPayload(anonId, selection, completedCourseIds);
+      var assignments = readAssignments(window.localStorage);
+      var mastery = window.LrnMastery ? window.LrnMastery.summarize({ progressState: state, curriculumMap: curriculum }) : { courses: [] };
+      var capabilityMastery = window.LrnMastery && window.AIFSCapabilityEvidence
+        ? window.LrnMastery.capabilitySummary(mastery, window.AIFSCapabilityEvidence)
+        : [];
+      var payload = buildPayload(
+        anonId,
+        selection,
+        completedCourseIds,
+        assignments.map(function (assignment) { return assignment.code; }).filter(Boolean),
+        capabilityMastery
+      );
       fetch(REPORT_ENDPOINT, {
         method: "POST",
         credentials: "same-origin",
@@ -106,6 +129,7 @@
       buildPayload: buildPayload,
       readLrnSelection: readLrnSelection,
       getOrCreateAnonId: getOrCreateAnonId,
+      readAssignments: readAssignments,
     };
   }
 

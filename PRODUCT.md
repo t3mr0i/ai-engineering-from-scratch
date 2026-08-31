@@ -38,7 +38,23 @@ help without exposing the shared model credential to the browser.
   not disclose graded quiz answers or complete exercise solutions.
 - **The learner owns the plan.** Plan ranking is deterministic and explainable;
   the learner can reorder, remove, save, or clear steps locally. Focus-session
-  capacity is not presented as a course-duration estimate.
+  capacity is not presented as a course-duration estimate. Quiz-derived concept
+  mastery, spaced-review due dates, and team assignments can reprioritize a
+  saved plan; the previous revision remains available for undo.
+- **Mastery requires observed evidence.** Reading and completion inform course
+  progress but never raise concept mastery. Capability receipts require enough
+  quiz observations, at least 80% modeled mastery, and a passed runnable
+  self-check completed without revealing the solution.
+- **Team learning stays pseudonymous.** Managers assign allowlisted courses via
+  join codes and see aggregate completion and mastery. Learner reports use a
+  browser-generated anonymous identifier rather than a name.
+- **Receipts make a narrow claim.** The signed verifier proves issuer and
+  evidence integrity for a self-directed assessment; it does not prove identity
+  or proctoring and must say so in the learner and verifier UI.
+- **PAN quality is regression-tested.** A labeled golden set covers grounding,
+  citation validity, pedagogy, quiz leakage, prompt injection, latency, and token
+  budgets. Runtime response safety fails closed before unsafe model output
+  reaches the learner.
 - **AI failure never blocks learning.** Courses, progress, assessment, and the
   saved plan remain usable when the internal gateway is unavailable.
 

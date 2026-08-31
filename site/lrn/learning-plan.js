@@ -13,7 +13,7 @@
   "use strict";
 
   var SCHEMA_VERSION = 1;
-  var ALGORITHM_VERSION = "deterministic-priority-v1";
+  var ALGORITHM_VERSION = "mastery-adaptive-v2";
   var SESSIONS_PER_FOCUS_SLOT = 4;
   var MAX_FOCUS_COURSES = 8;
   var LEVEL_RANK = {
@@ -228,6 +228,48 @@
     return ratings;
   }
 
+  function readMastery(learner, catalogIds) {
+    var raw = learner.mastery && typeof learner.mastery === "object" ? learner.mastery : {};
+    var courses = Object.create(null);
+    toArray(raw.courses).forEach(function (row) {
+      if (!row || typeof row !== "object" || !catalogIds[row.courseId]) return;
+      courses[row.courseId] = {
+        probability: Math.max(0, Math.min(1, Number(row.probability) || 0)),
+        evidenceCount: Math.max(0, Math.floor(Number(row.evidenceCount) || 0)),
+        dueCount: Math.max(0, Math.floor(Number(row.dueCount) || 0)),
+      };
+    });
+    var dueReviews = toArray(raw.dueReviews).filter(function (row) {
+      return row && typeof row === "object" && typeof row.lessonPath === "string" && row.lessonPath;
+    }).slice(0, 40).map(function (row) {
+      return {
+        conceptId: String(row.conceptId || ""),
+        lessonPath: row.lessonPath,
+        lessonTitle: String(row.lessonTitle || row.lessonPath),
+        courseId: catalogIds[row.courseId] ? row.courseId : "",
+        percent: Math.max(0, Math.min(100, Math.round(Number(row.percent) || 0))),
+        dueAt: Math.max(0, Number(row.dueAt) || 0),
+      };
+    });
+    return { courses: courses, dueReviews: dueReviews };
+  }
+
+  function readAssignments(learner, catalogIds) {
+    var assigned = Object.create(null);
+    toArray(learner.assignments).forEach(function (assignment) {
+      if (!assignment || typeof assignment !== "object") return;
+      toArray(assignment.courseIds).forEach(function (courseId) {
+        if (!catalogIds[courseId]) return;
+        assigned[courseId] = {
+          assignmentId: String(assignment.id || ""),
+          title: String(assignment.title || "Team assignment"),
+          dueAt: String(assignment.dueAt || ""),
+        };
+      });
+    });
+    return assigned;
+  }
+
   function computeAssessmentGaps(catalog, learner, roleId) {
     var ratings = readRatings(learner);
     var capabilities = toArray(catalog.capabilities);
@@ -410,12 +452,14 @@
       }
       if (signal.type === "role_match") sources.push({ type: "learner_role", roleId: roleId });
       if (signal.type === "level_match") sources.push({ type: "learner_level", level: signal.level });
+      if (signal.type === "mastery_gap") sources.push({ type: "quiz_mastery", courseId: course.id, evidenceCount: signal.evidenceCount });
+      if (signal.type === "team_assignment") sources.push({ type: "team_assignment", assignmentId: signal.assignmentId });
     });
     return sources;
   }
 
   function rationaleFor(signals) {
-    var preferred = ["progress", "goal_match", "assessment_gap", "level_match", "role_match"];
+    var preferred = ["team_assignment", "mastery_gap", "progress", "goal_match", "assessment_gap", "level_match", "role_match"];
     var details = [];
     preferred.forEach(function (type) {
       signals.forEach(function (signal) {
@@ -451,6 +495,8 @@
     if (goal.length > 500) throw new RangeError("learner.goal must be at most 500 characters");
     var currentLevel = levelRank(learner.currentLevel, "learner.currentLevel");
     var progress = readProgress(learner, catalogIds);
+    var mastery = readMastery(learner, catalogIds);
+    var assignments = readAssignments(learner, catalogIds);
     var gaps = computeAssessmentGaps(catalog, learner, roleId);
     var goalTokens = tokens(goal);
     var ranked = [];
@@ -464,6 +510,26 @@
       }
       var document = courseDocument(course);
       var signals = [];
+      if (assignments[course.id]) {
+        signals.push({
+          type: "team_assignment",
+          score: 120,
+          assignmentId: assignments[course.id].assignmentId,
+          dueAt: assignments[course.id].dueAt,
+          detail: "Required by the active team assignment" + (assignments[course.id].dueAt ? " before " + assignments[course.id].dueAt : "") + ".",
+        });
+      }
+      if (mastery.courses[course.id] && mastery.courses[course.id].evidenceCount > 0 && mastery.courses[course.id].probability < 0.8) {
+        var courseMastery = mastery.courses[course.id];
+        signals.push({
+          type: "mastery_gap",
+          score: Math.min(80, Math.round((0.8 - courseMastery.probability) * 80) + courseMastery.dueCount * 10),
+          probability: courseMastery.probability,
+          evidenceCount: courseMastery.evidenceCount,
+          dueCount: courseMastery.dueCount,
+          detail: "Quiz evidence shows this course needs reinforcement.",
+        });
+      }
       if (progress.inProgress[course.id]) {
         signals.push({
           type: "progress",
@@ -543,14 +609,33 @@
         excludedRoleCourseIds: roleExcluded.sort(),
         tieBreak: ["rankScore desc", "course sequence asc", "course id asc"],
       },
+      reviewQueue: mastery.dueReviews,
       warnings: warnings,
     };
+  }
+
+  function adaptPlan(existing, input) {
+    if (!existing || typeof existing !== "object") return buildPlan(input);
+    var next = buildPlan(input);
+    var previousIds = toArray(existing.steps).map(function (step) { return step.courseId; });
+    var nextIds = next.steps.map(function (step) { return step.courseId; });
+    next.createdAt = existing.createdAt || Date.now();
+    next.updatedAt = Date.now();
+    next.revision = {
+      reason: "mastery-and-progress-update",
+      previousAlgorithmVersion: existing.algorithmVersion || "unknown",
+      addedCourseIds: nextIds.filter(function (id) { return previousIds.indexOf(id) < 0; }),
+      removedCourseIds: previousIds.filter(function (id) { return nextIds.indexOf(id) < 0; }),
+      reviewCount: next.reviewQueue.length,
+    };
+    return next;
   }
 
   return {
     SCHEMA_VERSION: SCHEMA_VERSION,
     ALGORITHM_VERSION: ALGORITHM_VERSION,
     buildPlan: buildPlan,
+    adaptPlan: adaptPlan,
     tokenize: tokens,
   };
 });

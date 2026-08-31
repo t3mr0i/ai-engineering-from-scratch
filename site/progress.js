@@ -158,8 +158,9 @@
 
   function ensureLesson(state, path) {
     if (!state.lessons[path]) {
-      state.lessons[path] = { answers: {}, completedAt: null, visitedAt: 0, readPct: 0 };
+      state.lessons[path] = { answers: {}, appliedEvidence: {}, completedAt: null, visitedAt: 0, readPct: 0 };
     }
+    if (!state.lessons[path].appliedEvidence || typeof state.lessons[path].appliedEvidence !== 'object') state.lessons[path].appliedEvidence = {};
     return state.lessons[path];
   }
 
@@ -205,7 +206,15 @@
     if (!path || !qid) return;
     var state = read();
     var lesson = ensureLesson(state, path);
-    lesson.answers[qid] = { picked: picked, correct: !!correct, t: Date.now() };
+    var now = Date.now();
+    var previous = lesson.answers[qid];
+    var attempts = previous && Array.isArray(previous.attempts)
+      ? previous.attempts.slice(-19)
+      : previous && typeof previous.correct === 'boolean'
+        ? [{ picked: previous.picked, correct: previous.correct, t: previous.t || now }]
+        : [];
+    attempts.push({ picked: picked, correct: !!correct, t: now });
+    lesson.answers[qid] = { picked: picked, correct: !!correct, t: now, attempts: attempts };
     touchActivity(state);
     write(state);
   }
@@ -219,6 +228,15 @@
       touchActivity(state);
       write(state);
     }
+  }
+
+  function recordAppliedEvidence(path, evidenceId, passed) {
+    if (!path || !evidenceId || !passed) return;
+    var state = read();
+    var lesson = ensureLesson(state, path);
+    lesson.appliedEvidence[String(evidenceId).slice(0, 120)] = { passed: true, t: Date.now(), source: 'runnable-self-check' };
+    touchActivity(state);
+    write(state);
   }
 
   function unmarkLessonComplete(path) {
@@ -459,6 +477,7 @@
     getState: function () { return read(); },
     recordVisit: recordVisit,
     recordAnswer: recordAnswer,
+    recordAppliedEvidence: recordAppliedEvidence,
     markLessonComplete: markLessonComplete,
     unmarkLessonComplete: unmarkLessonComplete,
     saveKeyTerms: saveKeyTerms,

@@ -84,3 +84,23 @@ test("a learner can clear the saved path without clearing course progress", () =
   assert.equal(fixture.api.getLearningPath(), null);
   assert.ok(fixture.stored().lessons["phases/00-setup/01-start"]);
 });
+
+test("quiz answers retain a bounded attempt history for mastery updates", () => {
+  const fixture = loadProgress();
+  fixture.api.recordAnswer("phases/00-setup/01-start", "check-q0", 1, false);
+  fixture.api.recordAnswer("phases/00-setup/01-start", "check-q0", 2, true);
+  const answer = fixture.stored().lessons["phases/00-setup/01-start"].answers["check-q0"];
+  assert.equal(answer.correct, true);
+  assert.equal(answer.attempts.length, 2);
+  assert.deepEqual(answer.attempts.map((row) => row.correct), [false, true]);
+});
+
+test("only passed runnable self-checks become applied evidence", () => {
+  const fixture = loadProgress();
+  fixture.api.recordAppliedEvidence("phases/00-setup/01-start", "fillin-abc", false);
+  assert.equal(fixture.stored(), null);
+  fixture.api.recordAppliedEvidence("phases/00-setup/01-start", "fillin-abc", true);
+  const evidence = fixture.stored().lessons["phases/00-setup/01-start"].appliedEvidence["fillin-abc"];
+  assert.equal(evidence.passed, true);
+  assert.equal(evidence.source, "runnable-self-check");
+});
