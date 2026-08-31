@@ -775,7 +775,7 @@
     (Array.isArray(result.sources) ? result.sources : []).forEach(function (source) {
       if (!source || sources.length >= 4) return;
       var type = source.type;
-      var id = bounded(source.id || source.target || source.courseId || source.lessonPath, 300);
+      var id = bounded(source.id || source.target || source.courseId || source.course_id || source.lessonPath || source.lesson_path, 300);
       var key = type + ":" + id;
       if (!id || seen[key]) return;
       if (type === "course" && maps.courses[id]) {
@@ -801,7 +801,7 @@
     var seenActions = {};
     function addAction(action) {
       if (!action || typeof action !== "object" || actions.length >= 9) return;
-      var target = bounded(action.target || action.courseId || action.lessonPath, 300);
+      var target = bounded(action.target || action.courseId || action.course_id || action.lessonPath || action.lesson_path, 300);
       var label = "";
       if (action.type === "open-plan-builder") {
         target = "";

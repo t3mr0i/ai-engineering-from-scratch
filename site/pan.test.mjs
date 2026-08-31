@@ -131,17 +131,19 @@ test("course references receive validated open and add-to-plan tools", () => {
       sources: [{ type: "course", id: "PRIMER-01" }, { type: "course", id: "MADE-UP" }],
       actions: [
         { type: "open-course", target: "MADE-UP", label: "Open fake" },
-        { type: "open-course-creator", label: "Create a course draft" }
+        { type: "open-course-creator", label: "Create a course draft" },
+        { type: "add-course-to-plan", course_id: "PRIMER-01" }
       ]
     }, "en");
     assert.deepEqual(result.sources.map((source) => source.id), ["PRIMER-01"]);
     assert.deepEqual(result.actions.map((action) => [action.type, action.target || ""]), [
       ["open-course-creator", ""],
-      ["open-course", "PRIMER-01"],
-      ["add-course-to-plan", "PRIMER-01"]
+      ["add-course-to-plan", "PRIMER-01"],
+      ["open-course", "PRIMER-01"]
     ]);
     assert.equal(result.actions[0].label, "Create a course draft");
-    assert.equal(result.actions[1].label, "Open course: LLM Primer");
+    assert.equal(result.actions[1].label, "Add to my plan: LLM Primer");
+    assert.equal(result.actions[2].label, "Open course: LLM Primer");
   } finally {
     globalThis.LrnData = previousData;
     globalThis.LrnCurriculumMap = previousMap;
