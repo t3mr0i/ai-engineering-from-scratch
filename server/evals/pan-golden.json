@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "Golden set for PAN grounding, citations, assessment safety, injection resistance, pedagogy, latency, and token budgets.",
+  "description": "Golden set for Learning Navigator grounding, citations, assessment safety, injection resistance, pedagogy, latency, and token budgets.",
   "cases": [
     {
       "id": "grounded-next-step-de",

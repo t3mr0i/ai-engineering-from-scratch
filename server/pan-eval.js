@@ -1,5 +1,5 @@
 /**
- * Reproducible PAN tutor evaluation harness.
+ * Reproducible Learning Navigator evaluation harness.
  * Offline mode regression-tests the evaluator against labeled fixtures;
  * live mode calls the configured gateway and enforces product budgets.
  */
@@ -46,7 +46,7 @@ function evaluateCase(fixture, response, diagnostics = {}) {
 
 function loadFixtures(file = DEFAULT_FIXTURE) {
   const parsed = JSON.parse(fs.readFileSync(file, "utf8"));
-  if (!parsed || !Array.isArray(parsed.cases) || !parsed.cases.length) throw new Error("PAN eval fixture must contain cases");
+  if (!parsed || !Array.isArray(parsed.cases) || !parsed.cases.length) throw new Error("Learning Navigator eval fixture must contain cases");
   return parsed;
 }
 
@@ -90,7 +90,7 @@ async function runLive(file = DEFAULT_FIXTURE, options = {}) {
 }
 
 function printReport(report) {
-  process.stdout.write(`PAN eval · ${report.mode} · ${report.summary.passed}/${report.summary.total} · ${report.summary.passRate}%\n`);
+  process.stdout.write(`Learning Navigator eval · ${report.mode} · ${report.summary.passed}/${report.summary.total} · ${report.summary.passRate}%\n`);
   report.results.forEach((result) => {
     process.stdout.write(`${result.passed || result.classifiedCorrectly ? "PASS" : "FAIL"} ${result.id} [${result.category}]\n`);
   });

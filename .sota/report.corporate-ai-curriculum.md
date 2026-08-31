@@ -4,7 +4,7 @@ Mode: **standard** · Recherchiert am **30. August 2026** bis zur leichten Sätt
 
 ## Verdict
 
-Die Plattform ist nach diesem Umsetzungsschnitt **FRONTIER**: Alle 19 Table-Stakes des direkten Enterprise-AI-Learning-Clusters sind belegt. PAN ist curriculum-grounded und evaluiert, persönliche Pläne reagieren auf beobachtete Mastery und Team-Zuweisungen, und angewandte Evidenz kann als eng begrenzter, prüfbarer Kompetenznachweis ausgegeben werden.
+Die Plattform ist nach diesem Umsetzungsschnitt **FRONTIER**: Alle 19 Table-Stakes des direkten Enterprise-AI-Learning-Clusters sind belegt. Learning Navigator ist curriculum-grounded und evaluiert, persönliche Pläne reagieren auf beobachtete Mastery und Team-Zuweisungen, und angewandte Evidenz kann als eng begrenzter, prüfbarer Kompetenznachweis ausgegeben werden.
 
 **Tier:** FRONTIER · **Table-stakes coverage:** 100% (19/19) · **Field:** 6 direkte Peers + 4 breitere Referenzen
 
@@ -66,7 +66,7 @@ GitHub-Metadaten am Scan-Tag: `openedx/openedx-platform` 8.175 Stars, letzter Pu
 | Role outcome statements | ✅ | Course Outcomes und rollenbezogene Beschreibungen |
 | Curriculum-grounded AI tutor | ✅ | `server/learner-ai.js`, `site/pan.js`; freigegebene Course-/Lesson-Quellen und Deep Links |
 | Learner-owned goal plan | ✅ | `learning-plan.js` + `plan-builder.js`; Rolle, Ziel, Rhythmus, Assessment und Fortschritt |
-| Progress-aware next action | ✅ | deterministische Priorisierung plus PAN-Retrieval aus Progress/Plan/Context |
+| Progress-aware next action | ✅ | deterministische Priorisierung plus Learning-Navigator-Retrieval aus Progress/Plan/Context |
 | AI trust and assessment guards | ✅ | Gate, Rate Limit, serverseitiger Key, Allowlisting, Source-Normalisierung, Untrusted-Data-Grenze und Hint-first-/Quiz-Schutz |
 | LLM crawler discoverability | ✅ edge | `site/llms.txt` |
 | Industry-recognized certificate | ❌ edge | kein externer oder partnergestützter Abschluss |
@@ -77,7 +77,7 @@ GitHub-Metadaten am Scan-Tag: `openedx/openedx-platform` 8.175 Stars, letzter Pu
 | Consultant case library | ⚠️ edge | Use-Case-Inhalte, aber keine kuratierte anonymisierte Engagement-Library |
 | Facilitator toolkit | ❌ edge | kein vollständiges Delivery-Pack je Blended Course |
 | Compliance evidence bundle | ❌ edge | kein exportierbares Assurance-Paket |
-| Persistent tutor threads | ✅ edge | begrenzte lokale PAN-History mit sichtbarer Retention und Clear-Aktion |
+| Persistent tutor threads | ✅ edge | begrenzte lokale Learning-Navigator-History mit sichtbarer Retention und Clear-Aktion |
 | Adaptive practice and roleplay | ❌ edge | Quick Action vorhanden, noch kein antwortabhängiger Practice-State |
 | Concept mastery and replanning | ✅ edge | `site/lrn/mastery.js`, `learning-plan.js`, `plan-builder.js`: Quiz-Mastery, Review Queue, adaptive Revision und Undo |
 | Flow-of-work learning agent | ❌ edge | keine Teams-/Slack-Integration |
@@ -91,7 +91,7 @@ GitHub-Metadaten am Scan-Tag: `openedx/openedx-platform` 8.175 Stars, letzter Pu
 
 ### Maturity gaps
 
-- PAN misst Latenz und Tokenverbrauch im Live-Eval, aber noch ohne langfristige Produktions-SLO-Zeitreihe.
+- Learning Navigator misst Latenz und Tokenverbrauch im Live-Eval, aber noch ohne langfristige Produktions-SLO-Zeitreihe.
 - Streaming bleibt eine optionale UX-Verbesserung; es ist kein Table-Stake des gescannten Clusters.
 
 ### Onboarding gaps
@@ -108,8 +108,8 @@ GitHub-Metadaten am Scan-Tag: `openedx/openedx-platform` 8.175 Stars, letzter Pu
 ## What we already match
 
 - Rollen- und Level-Cockpit, kuratierte Academy Paths, 600 auditierte Lessons, Browser-Ausführung, Quizze und lokaler Fortschritt bilden eine ungewöhnlich starke Basis.
-- PAN ist kein frei formulierter Chat-Proxy: Er minimiert Learner-Daten, rankt freigegebene Inhalte deterministisch, bindet echte Lesson-Auszüge ein und lässt nur serverseitig aufgelöste Quellen/Aktionen durch.
+- Learning Navigator ist kein frei formulierter Chat-Proxy: Er minimiert Learner-Daten, rankt freigegebene Inhalte deterministisch, bindet echte Lesson-Auszüge ein und lässt nur serverseitig aufgelöste Quellen/Aktionen durch.
 - Der persönliche Plan ist learner-owned, transparent und editierbar. Er reagiert auf Quiz-Mastery, fällige Wiederholungen und Team-Zuweisungen; die vorige Revision bleibt wiederherstellbar.
 - Team-Reporting bleibt pseudonym und aggregiert. Der prüfbare Kompetenznachweis belegt ausschließlich Signatur und synchronisierte Selbststudiums-Evidenz, ausdrücklich nicht Identität oder Proctoring.
-- PANs Golden Set hält Groundedness, Zitierbarkeit, Pädagogik und Assessment-Schutz als reproduzierbare Regression fest.
+- Das Golden Set von Learning Navigator hält Groundedness, Zitierbarkeit, Pädagogik und Assessment-Schutz als reproduzierbare Regression fest.
 - Der bestehende Admin-Copilot deckt AI-assisted Curriculum Authoring bereits mit auditierten Proposals ab.

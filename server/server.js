@@ -19,8 +19,8 @@
  *   PORT             injected by App Service; defaults to 8080 locally
  *   WEB_ROOT         static root; defaults to ../site
  *   LLM_GATEWAY_KEY  Bifrost gateway key, injected server-side for the raw
- *                    notebook proxy and curriculum-grounded PAN requests
- *   LEARNER_LLM_MODEL optional PAN model override (defaults to the internal
+ *                    notebook proxy and curriculum-grounded Navigator requests
+ *   LEARNER_LLM_MODEL optional Navigator model override (defaults to the internal
  *                    azure/gpt-5.4-mini deployment)
  */
 
@@ -87,7 +87,7 @@ const llmRateState = new Map(); // ip -> { count, windowStart }
 const LRN_REPORT_RATE_LIMIT_PER_MIN = 10;
 const lrnReportRateState = new Map(); // ip -> { count, windowStart }
 
-// PAN has a deliberately smaller budget than the raw notebook proxy. The
+// Learning Navigator has a deliberately smaller budget than the raw notebook proxy. The
 // learner endpoint retrieves curriculum context and calls the shared model.
 const LEARNER_AI_RATE_LIMIT_PER_MIN = 12;
 const learnerAiRateState = new Map(); // ip -> { count, windowStart }
@@ -260,13 +260,13 @@ function readLearnerAiJson(req) {
     });
     req.on('end', () => {
       if (tooLarge) {
-        reject(new LearnerAiError('ai.request.too_large', 'Die PAN-Anfrage ist zu groß.', 413));
+        reject(new LearnerAiError('ai.request.too_large', 'Die Anfrage an Learning Navigator ist zu groß.', 413));
         return;
       }
       try {
         resolve(body ? JSON.parse(body) : {});
       } catch (_) {
-        reject(new LearnerAiError('ai.request.invalid_json', 'Die PAN-Anfrage enthält ungültiges JSON.', 400));
+        reject(new LearnerAiError('ai.request.invalid_json', 'Die Anfrage an Learning Navigator enthält ungültiges JSON.', 400));
       }
     });
     req.on('error', reject);
@@ -280,7 +280,7 @@ async function handleLearnerAi(req, res) {
     return;
   }
   if (learnerAiRateLimited(clientIp(req))) {
-    sendJson(res, 429, { ok: false, error: { code: 'ai.rate_limited', message: 'Zu viele PAN-Anfragen, bitte kurz warten.' } });
+    sendJson(res, 429, { ok: false, error: { code: 'ai.rate_limited', message: 'Zu viele Anfragen an Learning Navigator. Bitte kurz warten.' } });
     return;
   }
   try {
@@ -294,7 +294,7 @@ async function handleLearnerAi(req, res) {
       ok: false,
       error: {
         code: known ? error.code : 'ai.internal',
-        message: known ? error.message : 'PAN konnte die Anfrage nicht verarbeiten.',
+        message: known ? error.message : 'Learning Navigator konnte die Anfrage nicht verarbeiten.',
         id: errorId,
       },
     });
@@ -463,7 +463,7 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // 4b. Learner APIs — the gate check above already passed. PAN has its own
+  // 4b. Learner APIs — the gate check above already passed. Learning Navigator has its own
   // validated contract; the raw proxy remains available for lesson notebooks.
   if (pathOnly === '/api/lrn/ai/chat') {
     handleLearnerAi(req, res);

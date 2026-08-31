@@ -1,5 +1,5 @@
 /**
- * PAN learner assistant — a curriculum-grounded chat surface for the LRN
+ * Learning Navigator — a curriculum-grounded chat surface for the LRN
  * catalog. Learner context stays deliberately small and is sent only when the
  * learner submits a message. Conversation history is stored in this browser.
  */
@@ -35,14 +35,14 @@
 
   var COPY = {
     en: {
-      open: "Open PAN learning assistant",
+      open: "Open Learning Navigator",
       eyebrow: "Curriculum-grounded",
-      title: "PAN",
+      title: "Learning Navigator",
       subtitle: "Your learning assistant",
-      close: "Close PAN",
+      close: "Close Learning Navigator",
       clear: "Clear conversation",
       introTitle: "Learn with the catalog, not around it.",
-      intro: "PAN uses only approved learning content and the context you choose to share when you send a message.",
+      intro: "Learning Navigator uses only approved learning content and the context you choose to share when you send a message.",
       next: "What should I learn next?",
       explain: "Explain this page",
       practice: "Check my understanding",
@@ -51,14 +51,14 @@
       send: "Send",
       cancel: "Cancel",
       privacy: "Your chat stays in this browser. Only the current request and a compact learning context are sent to the internal AI gateway.",
-      thinking: "PAN is checking approved curriculum sources…",
-      ready: "PAN is ready.",
+      thinking: "Learning Navigator is checking approved curriculum sources…",
+      ready: "Learning Navigator is ready.",
       sources: "Sources",
       trace: "How this answer was prepared",
       sourceUnavailable: "Source unavailable",
-      error: "PAN could not answer right now. Your local learning plan and progress are unaffected.",
+      error: "Learning Navigator could not answer right now. Your local learning plan and progress are unaffected.",
       retry: "Try again",
-      clearConfirm: "Clear this browser's PAN conversation?",
+      clearConfirm: "Clear this browser's Learning Navigator conversation?",
       openAction: "Open recommendation",
       planPrompt: "Build a realistic learning plan for my goal. Explain the priorities and use only courses in the catalog.",
       nextPrompt: "What is the single best next learning step for me? Consider my role, progress, assessment gaps, and saved plan.",
@@ -66,14 +66,14 @@
       practicePrompt: "Check my understanding of the current page. Ask one question at a time and give hints before revealing an explanation."
     },
     de: {
-      open: "PAN-Lernhilfe öffnen",
+      open: "Learning Navigator öffnen",
       eyebrow: "Curriculum-basiert",
-      title: "PAN",
+      title: "Learning Navigator",
       subtitle: "Deine Lernhilfe",
-      close: "PAN schließen",
+      close: "Learning Navigator schließen",
       clear: "Unterhaltung löschen",
       introTitle: "Mit dem Katalog lernen – nicht daran vorbei.",
-      intro: "PAN nutzt nur freigegebene Lerninhalte und den Kontext, den du beim Absenden einer Nachricht teilst.",
+      intro: "Learning Navigator nutzt nur freigegebene Lerninhalte und den Kontext, den du beim Absenden einer Nachricht teilst.",
       next: "Was soll ich als Nächstes lernen?",
       explain: "Diese Seite erklären",
       practice: "Mein Verständnis prüfen",
@@ -82,14 +82,14 @@
       send: "Senden",
       cancel: "Abbrechen",
       privacy: "Dein Chat bleibt in diesem Browser. Nur die aktuelle Anfrage und ein kompakter Lernkontext gehen an das interne KI-Gateway.",
-      thinking: "PAN prüft freigegebene Curriculum-Quellen …",
-      ready: "PAN ist bereit.",
+      thinking: "Learning Navigator prüft freigegebene Curriculum-Quellen …",
+      ready: "Learning Navigator ist bereit.",
       sources: "Quellen",
       trace: "So wurde die Antwort vorbereitet",
       sourceUnavailable: "Quelle nicht verfügbar",
-      error: "PAN kann gerade nicht antworten. Dein lokaler Lernplan und Fortschritt bleiben unverändert.",
+      error: "Learning Navigator kann gerade nicht antworten. Dein lokaler Lernplan und Fortschritt bleiben unverändert.",
       retry: "Erneut versuchen",
-      clearConfirm: "PAN-Unterhaltung in diesem Browser löschen?",
+      clearConfirm: "Unterhaltung mit Learning Navigator in diesem Browser löschen?",
       openAction: "Empfehlung öffnen",
       planPrompt: "Baue einen realistischen Lernplan für mein Ziel. Erkläre die Prioritäten und verwende nur Kurse aus dem Katalog.",
       nextPrompt: "Was ist der beste einzelne nächste Lernschritt für mich? Berücksichtige Rolle, Fortschritt, Assessment-Lücken und meinen gespeicherten Plan.",
@@ -294,7 +294,7 @@
   function renderMessage(message, index) {
     var article = el("article", "pan-message pan-message--" + message.role + (message.failed ? " pan-message--error" : ""));
     article.dataset.messageIndex = String(index);
-    var label = el("p", "pan-message__label", message.role === "user" ? (locale() === "de" ? "Du" : "You") : "PAN");
+    var label = el("p", "pan-message__label", message.role === "user" ? (locale() === "de" ? "Du" : "You") : "Learning Navigator");
     article.appendChild(label);
     bounded(message.content, 12000).split(/\n{2,}/).forEach(function (paragraph) {
       article.appendChild(el("p", "pan-message__copy", paragraph));
@@ -497,7 +497,7 @@
     launcher.setAttribute("aria-controls", "panPanel");
     launcher.setAttribute("aria-label", t("open"));
     launcher.title = t("open");
-    launcher.append(icon("compass"), el("span", "pan-nav-trigger__label", "PAN"));
+    launcher.append(icon("compass"), el("span", "pan-nav-trigger__label", "Navigator"));
     var insertBefore = nav.querySelector("#darkModeToggle, .notes-link, .nav-settings");
     nav.insertBefore(launcher, insertBefore || null);
     launcher.addEventListener("click", open);

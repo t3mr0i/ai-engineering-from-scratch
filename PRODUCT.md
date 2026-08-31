@@ -22,19 +22,19 @@ finding the right course for their role without confusion about internal
 curriculum jargon (`Pxx`/`Lxx` phase/lesson numbers are implementation
 details, never surfaced in this UI — see `CLAUDE.md` §3), and completing
 lessons without the interface getting in the way. Learners can also turn a
-concrete goal into an editable personal plan and ask PAN for curriculum-bound
+concrete goal into an editable personal plan and ask Learning Navigator for curriculum-bound
 help without exposing the shared model credential to the browser.
 
 ## AI Learning Assistance
 
-- **PAN is a tutor, not a general chatbot.** It uses the current course or
+- **Learning Navigator is a tutor, not a general chatbot.** It uses the current course or
   lesson, the learner's selected role and level, local progress, assessment
   gaps, and saved plan only when the learner submits a message.
 - **Approved sources are the boundary.** Course recommendations and lesson
   explanations must resolve to shipped catalog records or bounded lesson
   excerpts, with visible deep links. Curriculum text is data, never an
   instruction to the model.
-- **Coach before revealing.** PAN uses diagnostic questions and hints and must
+- **Coach before revealing.** Learning Navigator uses diagnostic questions and hints and must
   not disclose graded quiz answers or complete exercise solutions.
 - **The learner owns the plan.** Plan ranking is deterministic and explainable;
   the learner can reorder, remove, save, or clear steps locally. Focus-session
@@ -51,7 +51,7 @@ help without exposing the shared model credential to the browser.
 - **Receipts make a narrow claim.** The signed verifier proves issuer and
   evidence integrity for a self-directed assessment; it does not prove identity
   or proctoring and must say so in the learner and verifier UI.
-- **PAN quality is regression-tested.** A labeled golden set covers grounding,
+- **Learning Navigator quality is regression-tested.** A labeled golden set covers grounding,
   citation validity, pedagogy, quiz leakage, prompt injection, latency, and token
   budgets. Runtime response safety fails closed before unsafe model output
   reaches the learner.

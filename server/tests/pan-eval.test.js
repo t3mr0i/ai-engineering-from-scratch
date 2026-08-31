@@ -5,7 +5,7 @@ const { evaluateCase, loadFixtures, runOffline, summarize } = require("../pan-ev
 const { responseSafety, normalizeResult, normalizeInput, rankCurriculum, loadCurriculum } = require("../learner-ai");
 const path = require("node:path");
 
-test("golden set covers every required PAN evaluation category", () => {
+test("golden set covers every required Learning Navigator evaluation category", () => {
   const fixture = loadFixtures();
   const categories = new Set(fixture.cases.map((row) => row.category));
   for (const category of ["groundedness", "citation-validity", "quiz-leakage", "prompt-injection", "pedagogy", "latency", "cost"]) {

@@ -4,9 +4,9 @@ import { createRequire } from "node:module";
 import { readFileSync } from "node:fs";
 
 const require = createRequire(import.meta.url);
-const PAN = require("./pan.js");
+const Navigator = require("./pan.js");
 
-test("learner surfaces load the shared PAN assets", () => {
+test("learner surfaces load the shared Learning Navigator assets", () => {
   const index = readFileSync(new URL("./index.html", import.meta.url), "utf8");
   const lesson = readFileSync(new URL("./lesson.html", import.meta.url), "utf8");
   const course = readFileSync(new URL("./lrn/course.html", import.meta.url), "utf8");
@@ -16,6 +16,15 @@ test("learner surfaces load the shared PAN assets", () => {
   assert.match(lesson, /src="pan\.js\?v=[^"]+"/);
   assert.match(course, /href="\.\.\/pan\.css\?v=[^"]+"/);
   assert.match(course, /src="\.\.\/pan\.js\?v=[^"]+"/);
+});
+
+test("Learning Navigator has consistent visible and accessible naming", () => {
+  const source = readFileSync(new URL("./pan.js", import.meta.url), "utf8");
+  assert.match(source, /open: "Open Learning Navigator"/);
+  assert.match(source, /open: "Learning Navigator öffnen"/);
+  assert.match(source, /title: "Learning Navigator"/);
+  assert.match(source, /pan-nav-trigger__label", "Navigator"/);
+  assert.doesNotMatch(source, /Open PAN|PAN-Lernhilfe|title: "PAN"|>PAN</);
 });
 
 test("the personal-plan page wires the editable planning engine", () => {
@@ -34,16 +43,16 @@ test("the team-learning page wires assignments and evidence", () => {
 
 test("safeHref accepts same-origin learner destinations", () => {
   const location = { origin: "https://learning.test", href: "https://learning.test/index.html" };
-  assert.equal(PAN.safeHref("lesson.html?path=phases%2F11-x%2F01-y", location), "/lesson.html?path=phases%2F11-x%2F01-y");
-  assert.equal(PAN.safeHref("/lrn/course.html?id=LRN-01#modules", location), "/lrn/course.html?id=LRN-01#modules");
-  assert.equal(PAN.safeHref("personal-plan.html", location), "/personal-plan.html");
+  assert.equal(Navigator.safeHref("lesson.html?path=phases%2F11-x%2F01-y", location), "/lesson.html?path=phases%2F11-x%2F01-y");
+  assert.equal(Navigator.safeHref("/lrn/course.html?id=LRN-01#modules", location), "/lrn/course.html?id=LRN-01#modules");
+  assert.equal(Navigator.safeHref("personal-plan.html", location), "/personal-plan.html");
 });
 
 test("safeHref blocks external and executable links", () => {
   const location = { origin: "https://learning.test", href: "https://learning.test/index.html" };
-  assert.equal(PAN.safeHref("https://example.com/course", location), "");
-  assert.equal(PAN.safeHref("javascript:alert(1)", location), "");
-  assert.equal(PAN.safeHref("/admin.html", location), "");
+  assert.equal(Navigator.safeHref("https://example.com/course", location), "");
+  assert.equal(Navigator.safeHref("javascript:alert(1)", location), "");
+  assert.equal(Navigator.safeHref("/admin.html", location), "");
 });
 
 test("courseProgressSnapshot distinguishes complete and in-progress courses", () => {
@@ -59,7 +68,7 @@ test("courseProgressSnapshot distinguishes complete and in-progress courses", ()
   globalThis.AIFSProgress = { getState: () => ({ lessons: {
     "a/1": { completedAt: 1 }, "a/2": { completedAt: 2 }, "b/1": { visitedAt: 3, answers: {} }
   } }) };
-  assert.deepEqual(PAN.courseProgressSnapshot(), { completedCourseIds: ["A"], inProgressCourseIds: ["B"] });
+  assert.deepEqual(Navigator.courseProgressSnapshot(), { completedCourseIds: ["A"], inProgressCourseIds: ["B"] });
   globalThis.LrnData = previousData;
   globalThis.LrnCurriculumMap = previousMap;
   globalThis.AIFSProgress = previousProgress;

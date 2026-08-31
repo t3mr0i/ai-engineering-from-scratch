@@ -1,5 +1,5 @@
 /**
- * PAN learner-facing AI orchestration.
+ * Learning Navigator learner-facing AI orchestration.
  *
  * The module owns input minimization, deterministic curriculum retrieval,
  * prompt boundaries, gateway access, and output normalization. Callers only
@@ -444,7 +444,7 @@ function promptRecords(retrieval) {
 function buildMessages(input, retrieval) {
   const responseLanguage = input.locale === "en" ? "English" : "German";
   const system = [
-    "You are PAN, the learning assistant for the LHIND AI Learning Catalog.",
+    "You are Learning Navigator, the learning assistant for the LHIND AI Learning Catalog.",
     `Answer in ${responseLanguage}. Be concise, pedagogically useful, and explicit when the supplied curriculum data is insufficient.`,
     "Use only the supplied approved curriculum records for course or lesson recommendations. Do not invent ids, links, completion state, or assessment results.",
     "Ground explanations in the supplied course metadata and lesson excerpts. If those records do not support an answer, say so and point to the closest approved source.",
@@ -605,8 +605,8 @@ function normalizeResult(raw, retrieval, meta = {}) {
   const locale = normalizeLocale(meta.locale);
   let answer = cleanText(parsed && parsed.answer, 20_000) || (
     locale === "en"
-      ? "PAN could not produce a usable answer."
-      : "PAN konnte keine verwendbare Antwort erzeugen."
+      ? "Learning Navigator could not produce a usable answer."
+      : "Learning Navigator konnte keine verwendbare Antwort erzeugen."
   );
   const safetyIssues = responseSafety(answer);
   if (safetyIssues.length) answer = safeCoachingAnswer(locale);
@@ -673,7 +673,7 @@ function createLearnerAi(options = {}) {
       if (!env.LLM_GATEWAY_KEY) {
         throw new LearnerAiError(
           "ai.not_configured",
-          "Der interne LLM-Gateway ist für PAN nicht konfiguriert.",
+          "Das interne LLM-Gateway ist für Learning Navigator nicht konfiguriert.",
           503,
         );
       }
@@ -698,7 +698,7 @@ function createLearnerAi(options = {}) {
         });
       } catch (error) {
         if (controller.signal.aborted) {
-          throw new LearnerAiError("ai.gateway.timeout", "PAN hat nicht rechtzeitig geantwortet.", 504);
+          throw new LearnerAiError("ai.gateway.timeout", "Learning Navigator hat nicht rechtzeitig geantwortet.", 504);
         }
         throw new LearnerAiError("ai.gateway.unreachable", "Der interne LLM-Gateway ist derzeit nicht erreichbar.", 502);
       } finally {
