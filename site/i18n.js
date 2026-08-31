@@ -415,13 +415,6 @@ window.SITE_I18N = {
   // Shared learning visualizations — lesson route, course route, catalog chart,
   // and assessment profile all use the same semantic renderer.
   viz_lesson_title: { en: "In this lesson", de: "In dieser Lektion" },
-  viz_lesson_desc: { en: "Jump between {count} sections. The active section follows your reading progress.", de: "Springe zwischen {count} Abschnitten. Der aktive Abschnitt folgt deinem Lesefortschritt." },
-  viz_lesson_purpose_problem: { en: "Why it matters", de: "Warum das wichtig ist" },
-  viz_lesson_purpose_concept: { en: "How it works", de: "Wie es funktioniert" },
-  viz_lesson_purpose_build: { en: "Build it yourself", de: "Selbst entwickeln" },
-  viz_lesson_purpose_use: { en: "Apply the production tool", de: "Produktiv anwenden" },
-  viz_lesson_purpose_ship: { en: "Take away a reusable result", de: "Ergebnis mitnehmen" },
-  viz_lesson_purpose_learn: { en: "Understand the core idea", de: "Kernidee verstehen" },
   artifact_panel_title: { en: "What this lesson ships", de: "Was diese Lektion mitgibt" },
   artifact_panel_subtitle: { en: "Open reusable prompts, skills, and artifacts without leaving the lesson.", de: "Öffne wiederverwendbare Prompts, Skills und Artefakte direkt in der Lektion." },
   artifact_preview_open: { en: "Preview {file}", de: "Vorschau für {file} öffnen" },

@@ -48,7 +48,7 @@ const PATTERNS = [
  *    is still inside it. This is also not sufficient on its own: taken
  *    alone it would happily serve *any* file under _data/ (or, if DATA_DIR
  *    itself ever moved, anything reachable via enough "../"), which is a far
- *    bigger surface than "one of the four lesson-content shapes we intend to
+ *    bigger surface than "one of the five lesson-content shapes we intend to
  *    expose". It's the regex that keeps the endpoint scoped to lesson
  *    content at all.
  *

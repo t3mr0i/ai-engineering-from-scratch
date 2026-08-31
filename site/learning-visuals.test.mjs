@@ -15,12 +15,17 @@ test("selectMilestones does not duplicate short routes", () => {
   assert.deepEqual(visuals._test.selectMilestones(["a", "b", "c"], 6), ["a", "b", "c"]);
 });
 
-test("lesson route assigns a useful purpose to canonical sections", () => {
-  assert.equal(visuals._test.stepState("The Problem"), "problem");
-  assert.equal(visuals._test.stepState("The Concept"), "concept");
-  assert.equal(visuals._test.stepState("Build It"), "build");
-  assert.equal(visuals._test.stepState("Use It"), "use");
-  assert.equal(visuals._test.stepState("Ship It"), "ship");
+test("lesson route keeps useful sections and removes supporting sections", () => {
+  const heading = (id, textContent) => ({ id, textContent, closest: () => null });
+  const result = visuals._test.lessonSections({
+    querySelectorAll: () => [
+      heading("problem", "The Problem"),
+      heading("concept", "The Concept"),
+      heading("build-it", "Build It"),
+      heading("further-reading", "Further Reading")
+    ]
+  });
+  assert.deepEqual(result.map((section) => section.id), ["problem", "concept", "build-it"]);
 });
 
 test("phaseStats aggregates totals and visible matches", () => {
@@ -71,7 +76,8 @@ test("visualization integrations preserve state, focus, and reduced motion", asy
     readFile(new URL("lesson.html", import.meta.url), "utf8")
   ]);
   assert.match(visualSource, /setAttribute\("aria-current", "step"\)/);
-  assert.match(visualSource, /learning-route__purpose/);
+  assert.doesNotMatch(visualSource, /viz_lesson_desc|learning-route__purpose/,
+    "lesson navigation should not explain an interaction that is already self-evident");
   assert.doesNotMatch(visualStyles, /\.learning-route::before/,
     "lesson index should not fall back to a decorative timeline connector");
   assert.match(visualSource, /dataset\.phaseId/);
