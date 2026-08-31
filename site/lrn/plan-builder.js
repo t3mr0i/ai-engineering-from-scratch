@@ -556,6 +556,7 @@
       buildUi();
       if (root.AIFSProgress && root.AIFSProgress.onChange) root.AIFSProgress.onChange(adaptSavedPlan);
       root.addEventListener("aifs:team-assignment-change", adaptSavedPlan);
+      root.addEventListener("aifs:personal-plan-change", function () { buildUi(); });
       root.document.addEventListener("sitelang:change", renderLocale);
       if (root.location && root.location.hash === "#personalPlan") open();
     }

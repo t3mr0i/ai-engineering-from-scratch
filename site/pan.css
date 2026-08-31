@@ -39,6 +39,7 @@
 .pan-compose__send:focus-visible,
 .pan-compose__cancel:focus-visible,
 .pan-message__action:focus-visible,
+.pan-tool-action:focus-visible,
 .personal-plan button:focus-visible,
 .personal-plan input:focus-visible,
 .personal-plan select:focus-visible {
@@ -271,6 +272,66 @@
 
 .pan-message__copy + .pan-message__copy { margin-top: var(--space-3, 12px); }
 
+.pan-markdown {
+  color: inherit;
+  font-size: var(--fs-body-sm, 16px);
+  line-height: var(--lh-normal, 1.5);
+  overflow-wrap: anywhere;
+}
+
+.pan-markdown > :first-child { margin-top: 0; }
+.pan-markdown > :last-child { margin-bottom: 0; }
+
+.pan-markdown h3,
+.pan-markdown h4,
+.pan-markdown h5 {
+  margin: var(--space-4, 16px) 0 var(--space-2, 8px);
+  color: inherit;
+  font-family: var(--font-head, sans-serif);
+  font-size: var(--fs-body-sm, 16px);
+  font-weight: var(--weight-bold, 700);
+  line-height: var(--lh-snug, 1.2);
+  letter-spacing: var(--ls-heading, -0.01em);
+}
+
+.pan-markdown p,
+.pan-markdown ul,
+.pan-markdown ol,
+.pan-markdown blockquote,
+.pan-markdown pre {
+  margin: 0 0 var(--space-3, 12px);
+}
+
+.pan-markdown ul,
+.pan-markdown ol { padding-inline-start: var(--space-5, 24px); }
+.pan-markdown li + li { margin-top: var(--space-1, 4px); }
+.pan-markdown strong { font-weight: var(--weight-bold, 700); }
+.pan-markdown a { color: var(--text-link, #2d5fe4); text-underline-offset: 0.16em; }
+
+.pan-markdown code {
+  padding: 0.12em 0.34em;
+  border-radius: var(--radius-xs, 4px);
+  background: color-mix(in srgb, currentColor 9%, transparent);
+  font: 0.88em/1.4 var(--font-mono, monospace);
+}
+
+.pan-markdown pre {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: var(--space-3, 12px);
+  border: 1px solid var(--border-subtle, #e3e1de);
+  border-radius: var(--radius-sm, 8px);
+  background: var(--color-surface, #fff);
+}
+
+.pan-markdown pre code { padding: 0; background: transparent; white-space: pre; }
+
+.pan-markdown blockquote {
+  padding-inline-start: var(--space-3, 12px);
+  border-inline-start: 3px solid var(--action-accent, #2d5fe4);
+  color: var(--text-secondary, #52617c);
+}
+
 .pan-evidence,
 .pan-trace {
   margin-top: var(--space-3, 12px);
@@ -318,6 +379,60 @@
 
 .pan-source__detail { color: var(--text-muted, #6b6764); }
 
+.pan-tool-actions {
+  margin-top: var(--space-4, 16px);
+  padding-top: var(--space-3, 12px);
+  border-top: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+}
+
+.pan-tool-actions__label {
+  margin: 0 0 var(--space-2, 8px);
+  color: var(--text-secondary, #52617c);
+  font-size: var(--fs-caption, 13px);
+  font-weight: var(--weight-medium, 500);
+}
+
+.pan-tool-actions__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2, 8px);
+}
+
+.pan-tool-action {
+  display: inline-flex;
+  gap: var(--space-2, 8px);
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  border: 1px solid var(--border-strong, #cfccc8);
+  border-radius: var(--radius-sm, 8px);
+  background: var(--color-surface, #fff);
+  color: var(--text-primary, #05164d);
+  font: 500 var(--fs-caption, 13px)/1.35 var(--font-text, sans-serif);
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.pan-tool-action:hover {
+  border-color: var(--action-accent, #2d5fe4);
+  background: var(--color-accent-soft, #dce7f6);
+}
+
+.pan-tool-action--open-course,
+.pan-tool-action--open-lesson {
+  border-color: var(--action-accent, #2d5fe4);
+  color: var(--text-link, #2d5fe4);
+}
+
+.pan-tool-action[data-state="completed"] {
+  border-color: var(--color-ok, #1b8a5a);
+  background: color-mix(in srgb, var(--color-ok, #1b8a5a) 10%, var(--color-surface, #fff));
+  color: var(--color-ok, #1b8a5a);
+  cursor: default;
+}
+
 .pan-message__action {
   display: inline-flex;
   gap: var(--space-2, 8px);
@@ -338,7 +453,7 @@
 }
 
 .pan-followup {
-  min-height: 40px;
+  min-height: 44px;
   padding: var(--space-2, 8px) var(--space-3, 12px);
   border: 1px solid var(--border-strong, #cfccc8);
   border-radius: var(--radius-sm, 8px);
@@ -347,6 +462,11 @@
   font: 400 var(--fs-caption, 13px)/var(--lh-normal, 1.5) var(--font-text, sans-serif);
   text-align: start;
   cursor: pointer;
+}
+
+.pan-followup:hover {
+  border-color: var(--action-accent, #2d5fe4);
+  background: var(--color-accent-soft, #dce7f6);
 }
 
 .pan-trace__list {
