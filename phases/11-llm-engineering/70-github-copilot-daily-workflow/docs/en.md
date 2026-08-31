@@ -5,14 +5,15 @@
 **Type:** Learn
 **Languages:** Python
 **Prerequisites:** Phase 11 · 01 (Prompt engineering), Phase 15 · 09 (Coding-agent landscape)
-**Time:** ~50 minutes
+**Time:** ~60 minutes
 
 ## Learning Objectives
 
-- Explain the production problem addressed by GitHub Copilot for Software Engineers: The Daily Workflow (2026)
-- Apply the lesson's decision or implementation workflow to a concrete case
-- Measure quality, cost, latency, and risk with explicit acceptance criteria
-- Identify failure modes and define a safe rollback or review path
+- Route a concrete engineering task to completion, chat, edits, agent mode, or the coding agent based on ambiguity and blast radius
+- Turn a sanitized project ticket into a bounded Copilot brief with allowed files, forbidden changes, and observable acceptance checks
+- Curate repository context without exposing secrets, personal data, or restricted project information
+- Review an AI-generated diff for correctness, security, privacy, maintainability, scope, and test reward hacking
+- Produce a reproducible issue-to-PR evidence pack with test output, residual risks, and a human merge owner
 
 ## The Problem
 
@@ -66,19 +67,36 @@ They converge on the same loop — plan, edit, run, verify — and increasingly 
 
 Copilot does not own: the decision of *what* to build, the architecture trade-off, the judgment that a green test suite actually covers the risk, and the accountability for the merge. Phase 15 · 09 showed that scaffolding now matters as much as the model. In the IDE *you* are part of the scaffold — the retrieval step (which tabs, which `#`-refs), the verifier (which tests you trust), and the kill switch (the approval you withhold).
 
+## Project Transfer Scenario
+
+The lab uses a sanitized LCAG-style fallback ticket so the workflow stays close to delivery work without requiring confidential project material:
+
+> Make retries in a booking synchronization service idempotent. A repeated delivery event must not create a second status update. Preserve the public handler signature and current error semantics; do not add dependencies or log booking identifiers.
+
+The named change surface is deliberately small: `src/booking_sync.py` and `tests/test_booking_sync.py`. Completion evidence is observable: the existing test suite remains green, a repeated event identifier produces one status update, a new identifier still follows the success path, and malformed input retains the documented validation error.
+
+This case is not the goal by itself. It is a safe rehearsal for the transfer step: replace it with one anonymized ticket from your current project. Keep the same contract shape and remove client names, credentials, personal data, production logs, proprietary identifiers, and restricted source code before an approved assistant receives any context.
+
+The exercise connects four layers that are often taught separately:
+
+1. **Theory:** the capability ladder explains why ambiguity and verification needs determine the Copilot surface.
+2. **Worked example:** `build_copilot_brief()` turns the fallback ticket into explicit scope and evidence.
+3. **Hands-on transfer:** you repeat the process with an anonymized project ticket.
+4. **Proof:** the final handoff contains the brief, annotated diff, test output, boundary result, residual risks, and a named human merge owner.
+
 
 
 ## Build It
 
-Reconstruct **GitHub Copilot for Software Engineers: The Daily Workflow (2026)** by following `Rung` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.
+Run `python3 main.py` from `code/`. Trace `example_project_task()` into `build_copilot_brief()`, then inspect the selected `Rung`, the allowed-file boundary, forbidden changes, acceptance checks, output contract, and human review gate. The fallback must select agent mode because the work crosses two files and requires a test loop.
 
 ## Use It
 
-Call `Rung` from a small caller with the smallest valid record {"id": 1}. Compare its result with the demo output, and record the input contract and the one field a downstream user should rely on.
+Copy the `ProjectTask` shape into a small caller and replace only the fallback content with a sanitized ticket from your current project. Predict the rung before running the code. If the router and your prediction disagree, explain which ambiguity or verification signal caused the difference instead of editing the description until it returns the answer you wanted.
 
 ## Ship It
 
-Hand off `outputs/skill-copilot-task-router.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
+Use `outputs/skill-copilot-task-router.md` as the project handoff template. Ship five linked artifacts: the bounded brief, repository-context packet, annotated diff review, captured verification output, and pull-request handoff with residual risks and a human owner. Another engineer should be able to reproduce the checks without reading this lesson.
 
 ## Further Reading
 
@@ -90,20 +108,24 @@ Hand off `outputs/skill-copilot-task-router.md` with the command `python3 main.p
 
 ## Exercises
 
-Treat this as a lab exercise. Preserve the setup and result, then explain which observation is doing the evidentiary work.
+Treat this as a project lab. Preserve the input, decision, output, and interpretation together so another engineer can reproduce the work.
 
-1. **Reproduce the control run.** Run [main.py](../code/main.py) with `python3 main.py` from the lesson's `code/` directory. Record the smallest input that demonstrates “Explain the production problem addressed by GitHub Copilot for Software Engineers: The Daily Workflow (2026)”. Point to `route_task()`, `acceptance()` and name the returned field or printed value that serves as evidence.
-2. **Change one decision.** Change exactly one input, threshold, or option that affects “Apply the lesson's decision or implementation workflow to a concrete case”. Predict the direction of the change before running it, then compare the two outputs and explain why the other fields should stay stable.
-3. **Probe a boundary.** Construct a case that stresses “Measure quality, cost, latency, and risk with explicit acceptance criteria”: choose an empty collection, missing field, maximum-sized value, malformed record, or another boundary that fits this lesson. Write the expected behavior first and distinguish an intentional guard from an accidental crash.
-4. **Transfer the result.** Open outputs/skill-copilot-task-router.md and adapt one example to a real workflow. State the owner, evidence, and next decision required for “Identify failure modes and define a safe rollback or review path”; mark any assumption that the demo does not establish.
+1. **Trace the fallback case.** Run [main.py](../code/main.py) with `python3 main.py` from the lesson's `code/` directory. Follow `example_project_task()`, `build_copilot_brief()`, `route_task()`, and `acceptance()`. Record why the task selects agent mode and point to the exact prompt sections that bound the change.
+2. **Compare two task shapes.** Reduce the fallback to a one-file, no-test change and predict the new rung before running it. Compare the result with the two-file test-bearing case. Explain which signal changed the blast radius; keep every unrelated field stable.
+3. **Exercise the privacy boundary.** Set `data_classification="restricted"` and record the validation error. Then create a sanitized `internal` version that contains no client name, personal data, credentials, production identifiers, or proprietary log content. Explain what information was removed and what technical signal was preserved.
+4. **Test the verifier, not just the feature.** Evaluate three diffs with `acceptance()`: a clean reviewed diff, a green diff with a weakened assertion, and a green diff containing a secret literal. Record why test color alone cannot decide merge readiness.
+5. **Transfer to one real ticket.** Use an anonymized ticket from your current project. Name allowed files, forbidden changes, acceptance checks, and the human owner before invoking Copilot. If you cannot use project material, stay with the fallback and add one realistic boundary case from your domain.
+6. **Prepare the pull-request evidence pack.** Complete the template in `outputs/skill-copilot-task-router.md`. Link the brief, context packet, annotated diff, command output, failure/boundary result, residual risks, and final human decision.
 
 ## Reference Solution
 
-A complete handoff records python3 main.py, the observed output, and the reasoning behind it. Check:
+A complete handoff is not a polished paragraph. It is a small evidence chain another engineer can audit:
 
-- evidence for “Explain the production problem addressed by GitHub Copilot for Software Engineers: The Daily Workflow (2026)” with the relevant input and returned field;
-- a one-variable comparison that makes “Apply the lesson's decision or implementation workflow to a concrete case” visible;
-- a predicted and observed boundary result for “Measure quality, cost, latency, and risk with explicit acceptance criteria”, including why the behavior is safe; and
-- one concrete update to outputs/skill-copilot-task-router.md that applies “Identify failure modes and define a safe rollback or review path” without hiding uncertainty.
+- the sanitized `ProjectTask`, including data classification, allowed files, forbidden changes, and acceptance checks;
+- the predicted and observed `Rung`, with the routing signal that explains the choice;
+- the generated brief given to Copilot and a list of repository context deliberately excluded;
+- an annotated diff showing how every changed line traces to the ticket and whether tests became stronger, weaker, or stayed equivalent;
+- the exact verification commands and captured results, including one failure or boundary case;
+- the `acceptance()` decision with unresolved risks and a named human merge owner.
 
-Use route_task(), acceptance() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
+For the fallback, `build_copilot_brief(example_project_task())` selects `Rung.AGENT`, rejects repository escape paths such as `../secrets.txt`, and refuses `restricted` material until it is sanitized. A green diff with a weakened assertion or inline secret returns `BLOCK`; a clean, green, human-reviewed diff returns `MERGE`. If your project result disagrees with a prediction, retain the failed prediction and explain the new evidence rather than quietly changing the fixture.

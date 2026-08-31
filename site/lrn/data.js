@@ -759,7 +759,12 @@ window.LrnData = {
       ],
       "format": "Interactive mini-games, real GPT tokenizer, glossary, quiz",
       "summary": "~75-minute hands-on primer on how large language models work: tokens, context, prompting, tool use, RAG, and limits, through 20 mini-games and a quiz.",
-      "outcomes": [],
+      "outcomes": [
+        "Explain how tokens, context windows, retrieval, tools, and sampling shape an LLM response",
+        "Diagnose a weak answer by checking the prompt, available context, retrieval result, and tool boundary",
+        "Choose between prompting, retrieval, and tool use for a small, concrete task",
+        "Complete the interactive scenarios and use the quiz result to identify the next learning gap"
+      ],
       "modules": [
         "Interactive LLM Primer"
       ]
@@ -1142,19 +1147,52 @@ window.LrnData = {
           ]
         }
       ],
-      "format": "Code task lab, review checklist, guided tool practice",
-      "summary": "AI in daily development work, pair programming, AI app basics, architecture context, and responsible code use.",
+      "format": "Issue-to-PR project lab, guided Copilot practice, review checklist",
+      "summary": "Take a bounded engineering ticket from Copilot mode selection and repository context through a reviewed diff, passing tests, and a human-owned pull request.",
       "outcomes": [
         "Choose the appropriate GitHub Copilot interaction mode for a concrete engineering task",
-        "Provide task constraints, repository context, and explicit output expectations in prompts",
+        "Turn a project ticket into a bounded prompt with repository context, constraints, and acceptance checks",
         "Review AI-generated code for correctness, security, privacy, maintainability, and scope",
-        "Verify proposed changes with tests and a human-controlled pull-request workflow"
+        "Verify proposed changes with tests and a human-controlled pull-request workflow",
+        "Produce a review-ready evidence pack that another engineer can reproduce and approve"
       ],
       "modules": [
-        "Generative AI for Software Development",
-        "Get started with AI apps and agents on Azure",
-        "Integrating AI into the Product Architecture"
-      ]
+        "Copilot modes, context, and repository instructions",
+        "Project transfer lab: sanitized issue to bounded change",
+        "Diff review, security checks, tests, and pull-request evidence"
+      ],
+      "learningContract": {
+        "promise": "Complete the course with a repeatable workflow for turning one scoped project ticket into a tested, review-ready change without delegating engineering accountability.",
+        "projectScenario": {
+          "title": "LCAG-style project transfer: safe booking synchronization",
+          "description": "Start with a sanitized ticket from the learner's current project. The built-in fallback asks for idempotent retry handling in a booking synchronization service while preserving the public API and existing error semantics.",
+          "guardrail": "Use anonymized code, tickets, logs, and identifiers only; never send secrets, personal data, or restricted project material to an unapproved assistant."
+        },
+        "stages": [
+          {
+            "kind": "theory",
+            "title": "Understand the control model",
+            "description": "Learn the Copilot capability ladder, context sources, trust boundaries, and why task ambiguity determines blast radius."
+          },
+          {
+            "kind": "guided",
+            "title": "Trace a worked engineering case",
+            "description": "Turn the fallback ticket into a bounded brief, compare Copilot modes, and inspect a proposed change against explicit acceptance criteria."
+          },
+          {
+            "kind": "hands-on",
+            "title": "Transfer it to project work",
+            "description": "Repeat the workflow with an anonymized real ticket, review the diff, run the relevant checks, and prepare a human-owned pull-request handoff."
+          }
+        ],
+        "evidence": [
+          "A bounded task brief naming the goal, allowed files, forbidden changes, and acceptance checks",
+          "A repository-context packet with the relevant instructions, files, and sanitized ticket details",
+          "An annotated diff review covering correctness, security, privacy, maintainability, and scope",
+          "Captured test and verification output, including one deliberate failure or boundary case",
+          "A pull-request handoff that names the human owner, residual risks, and merge decision"
+        ]
+      }
     },
     {
       "id": "LRN-25",
@@ -1322,7 +1360,12 @@ window.LrnData = {
       ],
       "format": "Policy scenario, risk triage, escalation checklist",
       "summary": "Review AI use against GDPR, internal policies, security guardrails, and documented approvals.",
-      "outcomes": [],
+      "outcomes": [
+        "Classify a proposed AI use by data sensitivity, purpose, legal basis, and applicable internal policy",
+        "Identify the required business, security, privacy, and compliance owners before a pilot starts",
+        "Document an AI-use decision with its evidence, conditions, approvals, and review date",
+        "Escalate a non-compliant or unclear use case instead of routing it around an approval gate"
+      ],
       "modules": [
         "Policy intake",
         "Risk register",
@@ -1365,7 +1408,12 @@ window.LrnData = {
       ],
       "format": "QA lab, eval rubric, regression checklist",
       "summary": "AI-supported test ideas, evaluation sets, QA gates, and review loops for LLM features.",
-      "outcomes": [],
+      "outcomes": [
+        "Turn product requirements and failure risks into observable test and evaluation cases",
+        "Build a compact evaluation set with representative, boundary, and adversarial fixtures",
+        "Compare an AI-assisted change against explicit quality thresholds and regression evidence",
+        "Define the human review gate that decides whether an LLM feature can progress or must be blocked"
+      ],
       "modules": [
         "Eval design",
         "Test generation",
@@ -1408,7 +1456,12 @@ window.LrnData = {
       ],
       "format": "Legacy case, modernization plan, review checklist",
       "summary": "Use AI to analyze legacy code, define refactoring slices, control risks, and prepare reviews.",
-      "outcomes": [],
+      "outcomes": [
+        "Map a legacy component's responsibilities, dependencies, tests, and operational risks before changing it",
+        "Split a modernization goal into bounded refactoring slices with preserved behavior and rollback points",
+        "Review AI-generated modernization proposals for scope drift, hidden coupling, and weakened guarantees",
+        "Prepare a review-ready modernization change with tests, migration notes, and explicit residual risks"
+      ],
       "modules": [
         "Legacy intake",
         "Modernization backlog",
@@ -1461,7 +1514,12 @@ window.LrnData = {
       ],
       "format": "Documentation sprint, source-grounding checklist, quality review",
       "summary": "Use AI for architecture, operations, compliance, and handover documentation without losing sources or accountability.",
-      "outcomes": [],
+      "outcomes": [
+        "Turn verified project evidence into architecture, operations, compliance, or handover documentation",
+        "Separate sourced facts, engineering judgments, assumptions, and unresolved questions in an AI-assisted draft",
+        "Review generated documentation for accuracy, sensitive information, ownership, and maintenance triggers",
+        "Publish a traceable document with source links, named reviewers, and a clear update responsibility"
+      ],
       "modules": [
         "Source-grounded docs",
         "Review rubric",
@@ -1505,7 +1563,12 @@ window.LrnData = {
       ],
       "format": "Efficiency case, metric worksheet, architecture trade-off",
       "summary": "Review AI and software decisions for efficiency, cost, emissions, and measurable operational impact.",
-      "outcomes": [],
+      "outcomes": [
+        "Identify the compute, storage, network, and model choices that drive a workload's resource use",
+        "Compare implementation options using measurable latency, utilization, cost, and emissions proxies",
+        "Design an efficiency experiment with a baseline, one controlled change, and an observable target",
+        "Document the trade-off between environmental impact, user value, reliability, and engineering effort"
+      ],
       "modules": [
         "Efficiency metrics",
         "Model-routing trade-offs",
@@ -1550,7 +1613,12 @@ window.LrnData = {
       ],
       "format": "Research synthesis, persona check, insight review",
       "summary": "Use AI to cluster user research, structure hypotheses, check bias, and prepare validatable product decisions.",
-      "outcomes": [],
+      "outcomes": [
+        "Prepare de-identified research material and define what an AI assistant may and may not infer",
+        "Cluster interview evidence while preserving source references, minority signals, and contradictory observations",
+        "Turn research patterns into falsifiable product hypotheses rather than unsupported personas or conclusions",
+        "Review an AI-assisted synthesis for sampling bias, hallucinated evidence, and missing participant context"
+      ],
       "modules": [
         "Research intake",
         "Insight synthesis",
@@ -1598,7 +1666,12 @@ window.LrnData = {
       ],
       "format": "Process walk-through, opportunity canvas, prioritization board",
       "summary": "Identify automation and AI opportunities in processes, sort them by value and risk, and formulate pilots.",
-      "outcomes": [],
+      "outcomes": [
+        "Map a process with its actors, decisions, handoffs, exceptions, data, and current pain points",
+        "Distinguish deterministic automation, assistive AI, and autonomous behavior for each opportunity",
+        "Rank candidate use cases by value, feasibility, data readiness, operational risk, and reversibility",
+        "Write a bounded pilot hypothesis with an owner, baseline, success measure, stop condition, and review gate"
+      ],
       "modules": [
         "Opportunity scan",
         "Value-risk scoring",
@@ -1644,7 +1717,12 @@ window.LrnData = {
       ],
       "format": "Cost model, value case, operating metric review",
       "summary": "Evaluate token, model, platform, and operating costs against value, risk, and scalability.",
-      "outcomes": [],
+      "outcomes": [
+        "Estimate an AI use case's model, retrieval, storage, integration, evaluation, and operating costs",
+        "Model cost under realistic volume, token, caching, retry, and support assumptions",
+        "Compare architecture and vendor options by unit economics, value contribution, risk, and scale behavior",
+        "Define cost guardrails and monitoring signals that expose an uneconomic pilot before it scales"
+      ],
       "modules": [
         "Unit economics",
         "Value hypothesis",
@@ -1692,7 +1770,12 @@ window.LrnData = {
       ],
       "format": "Client-case prompt clinic, output critique, reusable prompt pack",
       "summary": "Build prompts for consulting situations, stakeholder context, hypothesis work, and robust output review.",
-      "outcomes": [],
+      "outcomes": [
+        "Translate a consulting question into a prompt with decision context, evidence boundaries, and output criteria",
+        "Use stakeholder, hypothesis, and counterargument prompts without presenting generated claims as facts",
+        "Review an AI response for missing evidence, weak assumptions, stakeholder bias, and decision relevance",
+        "Create a reusable consulting prompt pattern with an owner, example input, review checklist, and failure case"
+      ],
       "modules": [
         "Consulting brief",
         "Prompt iteration",
@@ -1927,7 +2010,12 @@ window.LrnData = {
       ],
       "format": "Source inventory, quality triage, data-readiness worksheet",
       "summary": "Check data sources, quality, freshness, sensitivity, and evaluation before an AI pilot starts.",
-      "outcomes": [],
+      "outcomes": [
+        "Inventory the sources, owners, lineage, permissions, and refresh behavior required by an AI use case",
+        "Profile data for completeness, consistency, freshness, representativeness, and label quality",
+        "Identify sensitive fields, leakage paths, retention constraints, and evaluation-data contamination",
+        "Produce a data-readiness decision with blocking gaps, remediation owners, and measurable acceptance criteria"
+      ],
       "modules": [
         "Source inventory",
         "Quality and freshness",
@@ -2192,7 +2280,12 @@ window.LrnData = {
       ],
       "format": "Support triage, confidence threshold, escalation checklist",
       "summary": "Use AI for ticket triage, knowledge articles, support responses, and incident handoffs with service controls.",
-      "outcomes": [],
+      "outcomes": [
+        "Classify support work into safe assistance, approval-required action, and prohibited automation",
+        "Design a source-grounded workflow for ticket triage, response drafting, and knowledge retrieval",
+        "Review AI-generated support output for customer impact, data exposure, accuracy, and escalation needs",
+        "Measure the workflow with resolution quality, handoff accuracy, containment, and rework signals"
+      ],
       "modules": [
         "Service scope",
         "Confidence threshold",
@@ -2232,7 +2325,12 @@ window.LrnData = {
       ],
       "format": "Agenda contract, facilitation script, decision log, action tracker",
       "summary": "Use AI for better meetings and workshops: clear outcomes, decisions, and follow-up instead of only summaries.",
-      "outcomes": [],
+      "outcomes": [
+        "Turn a meeting objective into a facilitation plan with decisions, inputs, roles, and time boxes",
+        "Use AI to prepare questions, alternatives, and workshop material without fabricating stakeholder positions",
+        "Capture decisions, dissent, owners, deadlines, and unresolved questions from approved meeting notes",
+        "Produce a reviewed follow-up package that separates commitments from suggestions and generated content"
+      ],
       "modules": [
         "Agenda contract",
         "Decision log",
@@ -2279,7 +2377,12 @@ window.LrnData = {
       ],
       "format": "Status evidence, RAG check, risk owner, steering question",
       "summary": "Use AI for project status, steering packs, and decision materials with clear evidence and decision questions.",
-      "outcomes": [],
+      "outcomes": [
+        "Convert verified project data into a status narrative that distinguishes facts, forecasts, and assumptions",
+        "Frame steering decisions with options, trade-offs, dependencies, evidence, and a clear decision question",
+        "Detect unsupported confidence, hidden delivery risk, and inconsistent metrics in AI-generated reporting",
+        "Build a reproducible steering pack with source references, named owners, and an update cadence"
+      ],
       "modules": [
         "Source snapshot",
         "RAG status",
@@ -2332,7 +2435,12 @@ window.LrnData = {
       ],
       "format": "Data owner, quality rule, sample check, issue backlog",
       "summary": "Identify data quality and master data gaps before AI workflows scale poor sources.",
-      "outcomes": [],
+      "outcomes": [
+        "Trace an AI workflow to the master data, reference data, owners, and quality rules it depends on",
+        "Measure duplicate, missing, stale, inconsistent, and invalid records against business-critical thresholds",
+        "Prioritize data-quality remediation by downstream impact, recurrence, ownership, and control effectiveness",
+        "Define monitoring and escalation rules that stop an AI workflow from amplifying degraded source data"
+      ],
       "modules": [
         "Data owner",
         "Quality rule",
@@ -2378,7 +2486,12 @@ window.LrnData = {
       ],
       "format": "Process map, exception log, value check, human fallback",
       "summary": "Evaluate AI automation ideas only after process understanding, exception analysis, and pilot controls.",
-      "outcomes": [],
+      "outcomes": [
+        "Model the current process with decisions, queues, handoffs, systems, controls, and exception paths",
+        "Locate where deterministic rules, human judgment, and probabilistic AI each fit or do not fit",
+        "Design a bounded automation pilot with fallback behavior, human review, observability, and stop conditions",
+        "Evaluate pilot evidence for cycle time, quality, exception load, risk, and sustainable ownership"
+      ],
       "modules": [
         "Process map",
         "Exception log",
@@ -2485,7 +2598,12 @@ window.LrnData = {
       ],
       "format": "Content owner, freshness check, source ranking, access rule",
       "summary": "Curate knowledge sources for AI search and internal assistants before retrieval amplifies poor sources.",
-      "outcomes": [],
+      "outcomes": [
+        "Inventory knowledge sources by owner, authority, audience, sensitivity, freshness, and retention rule",
+        "Define ingestion, review, versioning, access, and retirement controls for AI-retrievable content",
+        "Detect duplicate, stale, contradictory, and low-authority material before it enters retrieval",
+        "Create a governance workflow with accountable owners, quality measures, and an auditable correction path"
+      ],
       "modules": [
         "Source owner",
         "Freshness check",
@@ -2530,7 +2648,12 @@ window.LrnData = {
       ],
       "format": "ADR, threat model, cost model, architecture review",
       "summary": "Document AI architecture decisions for models, vendors, security boundaries, and costs in a traceable way.",
-      "outcomes": [],
+      "outcomes": [
+        "Frame an AI architecture decision with context, constraints, alternatives, and measurable quality attributes",
+        "Compare model, vendor, data, integration, security, observability, and cost trade-offs",
+        "Record a decision with evidence, assumptions, consequences, owners, and a review trigger",
+        "Revisit an architecture decision when usage, risk, regulation, performance, or vendor conditions change"
+      ],
       "modules": [
         "ADR",
         "Threat model",
@@ -2573,7 +2696,12 @@ window.LrnData = {
       ],
       "format": "Evidence note, scoring rubric, dependency check, decision log",
       "summary": "Use AI to structure backlog and roadmap decisions more transparently by value, effort, risk, and dependencies.",
-      "outcomes": [],
+      "outcomes": [
+        "Normalize backlog items into comparable problems, outcomes, evidence, dependencies, and acceptance criteria",
+        "Use AI to surface duplicates, missing assumptions, sequencing conflicts, and stakeholder trade-offs",
+        "Prioritize work with an explicit model for value, effort, risk, learning, and strategic alignment",
+        "Prepare a roadmap decision that retains human ownership and records why deferred items were not selected"
+      ],
       "modules": [
         "Evidence note",
         "Scoring rubric",
@@ -2614,7 +2742,12 @@ window.LrnData = {
       ],
       "format": "Data classification, coverage matrix, drift check, leakage test",
       "summary": "Use synthetic and masked test data for AI and software tests with privacy, coverage, and leakage controls.",
-      "outcomes": [],
+      "outcomes": [
+        "Classify test-data fields by sensitivity, utility, retention, and permitted transformation",
+        "Choose masking, generation, sampling, or simulation based on privacy risk and required test behavior",
+        "Evaluate synthetic data for coverage, realism, bias, memorization, and leakage against source records",
+        "Document a governed test-data set with provenance, approval, limitations, expiry, and safe reuse rules"
+      ],
       "modules": [
         "Classification",
         "Coverage",
@@ -2658,7 +2791,12 @@ window.LrnData = {
       ],
       "format": "System boundary, data owner, exception rule, integration note",
       "summary": "Evaluate AI use cases in SAP, Salesforce, Microsoft business solutions, and ERP/CRM workflows with system boundaries, data ownership, and integration context.",
-      "outcomes": [],
+      "outcomes": [
+        "Map an ERP or CRM use case across business process, system of record, data owner, and integration boundary",
+        "Identify where AI can assist without bypassing transaction controls, authorizations, or audit requirements",
+        "Compare embedded vendor features with custom extensions by value, data flow, lock-in, and operations effort",
+        "Define a pilot with representative process cases, exception handling, owners, and measurable business outcomes"
+      ],
       "modules": [
         "System boundary",
         "Data owner",
@@ -2700,7 +2838,12 @@ window.LrnData = {
       ],
       "format": "Architecture sketch, data boundary, streaming fit, platform decision",
       "summary": "Design AI use cases with cloud, data platform, and IoT context around data flows, latency, ownership, and platform boundaries.",
-      "outcomes": [],
+      "outcomes": [
+        "Trace an AI use case from device or source through ingestion, storage, processing, model, and consuming system",
+        "Specify latency, availability, sovereignty, security, data-quality, and observability requirements",
+        "Compare edge, cloud, batch, and streaming placements against operational and economic constraints",
+        "Create an architecture sketch with accountable owners, failure paths, test signals, and scale assumptions"
+      ],
       "modules": [
         "Architecture sketch",
         "Data boundary",
@@ -2744,7 +2887,12 @@ window.LrnData = {
       ],
       "format": "Review role, approval gate, quality checklist, appeal path",
       "summary": "Design human-in-the-loop review, approval gates, escalation, and quality checklists for AI-supported decisions and content.",
-      "outcomes": [],
+      "outcomes": [
+        "Identify AI-supported decisions that require review based on impact, uncertainty, reversibility, and policy",
+        "Assign reviewers with the authority, context, time, and evidence needed to make a real decision",
+        "Design approve, revise, reject, and escalate paths with explicit service levels and audit records",
+        "Measure review quality using disagreement, override, rework, delay, and downstream harm signals"
+      ],
       "modules": [
         "Review role",
         "Approval gate",
@@ -2811,7 +2959,12 @@ window.LrnData = {
       ],
       "format": "Role charter, standards backlog, asset registry, governance cadence",
       "summary": "Operationalize AI scaling through clear roles, standards, reusable assets, a champion network, and governance cadence.",
-      "outcomes": [],
+      "outcomes": [
+        "Define decision rights and responsibilities across product, engineering, data, security, compliance, and business",
+        "Design reusable standards, review gates, platforms, and support services for multiple AI teams",
+        "Set up an intake and portfolio cadence that balances experimentation, reuse, risk, and measurable value",
+        "Create an operating-model roadmap with owners, capability gaps, adoption measures, and review milestones"
+      ],
       "modules": [
         "Role charter",
         "Asset registry",
@@ -2855,7 +3008,12 @@ window.LrnData = {
       ],
       "format": "Ticket pattern, runbook step, source article, handoff trigger",
       "summary": "Evaluate recurring service desk tickets, known fixes, runbooks, and knowledge base gaps for AI-supported support automation.",
-      "outcomes": [],
+      "outcomes": [
+        "Analyze recurring tickets by intent, root cause, known resolution, exception rate, and automation risk",
+        "Convert approved support knowledge into source-grounded runbook steps with prerequisites and stop conditions",
+        "Design an AI-assisted support flow with confidence thresholds, human handoff, logging, and rollback",
+        "Evaluate the flow using resolution accuracy, containment, escalation quality, rework, and knowledge freshness"
+      ],
       "modules": [
         "Ticket pattern",
         "Runbook step",
@@ -2901,7 +3059,12 @@ window.LrnData = {
       ],
       "format": "Data boundary, tool approval, access check, abuse case",
       "summary": "Triage business AI ideas for sensitive data, external tools, identity risks, and untrusted inputs before security review starts.",
-      "outcomes": [],
+      "outcomes": [
+        "Map an AI idea's data, identities, external services, untrusted inputs, outputs, and privileged actions",
+        "Recognize prompt injection, data leakage, excessive permission, supply-chain, and retention risks",
+        "Apply immediate containment and safe-design requirements before detailed security review",
+        "Produce a security triage package with risk owners, open questions, evidence, and escalation priority"
+      ],
       "modules": [
         "Data boundary",
         "Tool approval",
@@ -2947,7 +3110,12 @@ window.LrnData = {
       ],
       "format": "Pattern owner, version note, evaluation example, retirement rule",
       "summary": "Manage shared prompts as reusable patterns with an owner, version, evaluation example, and retirement rule.",
-      "outcomes": [],
+      "outcomes": [
+        "Package a prompt with purpose, approved inputs, context requirements, output contract, and known limitations",
+        "Attach representative examples and evaluation checks that detect quality or safety regressions",
+        "Assign ownership, versioning, approval, change history, access, and retirement rules to shared prompts",
+        "Review prompt-library usage and feedback to update, restrict, merge, or retire weak patterns"
+      ],
       "modules": [
         "Pattern owner",
         "Version note",
@@ -3180,7 +3348,12 @@ window.LrnData = {
       ],
       "format": "Mentoring plan, brown-bag kit, community contribution backlog",
       "summary": "Multiplier role for knowledge transfer, brown bags, communities of practice, and piloting new AI approaches.",
-      "outcomes": [],
+      "outcomes": [
+        "Plan a focused knowledge-sharing session with a target behavior, practical example, and follow-up resource",
+        "Facilitate a community of practice that captures questions, patterns, evidence, and unresolved risks",
+        "Run a bounded AI pilot with volunteers, an accountable sponsor, guardrails, measures, and a stop condition",
+        "Turn local learning into reusable guidance while preserving ownership, review, and escalation channels"
+      ],
       "modules": [
         "Mentoring checklist",
         "Brown-bag template",

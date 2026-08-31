@@ -263,7 +263,7 @@
 
     var children = [intro, facts, overview];
 
-    var learningContract = learningContractSection(course);
+    var learningContract = learningContractSection(course, map, stats);
     if (learningContract) children.push(learningContract);
 
     var sessions = sessionSection(course);
@@ -806,12 +806,77 @@
     return detail;
   }
 
-  function learningContractSection(courseItem) {
-    var contract = courseItem && courseItem.learningContract;
-    if (!contract || !contract.promise) return null;
+  function defaultLearningContract(courseItem, courseUnits, courseStats) {
+    var units = Array.isArray(courseUnits) ? courseUnits.length : 0;
+    var activities = courseStats && Number.isFinite(courseStats.lessonCount)
+      ? courseStats.lessonCount
+      : 0;
+    return {
+      promise: i18n(
+        "course_default_contract_promise",
+        "Complete this course with a concrete, reviewable result that demonstrates one published course outcome and transfers to your work."
+      ),
+      projectScenario: {
+        title: i18n("course_default_project_title", "Transfer one sanitized case from your work"),
+        description: i18n(
+          "course_default_project_description",
+          "Apply one course method to an anonymized project case. Keep the original problem, constraints, acceptance criteria, and responsible owner visible so another person can review the result in context."
+        ),
+        guardrail: i18n(
+          "course_default_project_guardrail",
+          "Use approved tools and anonymized inputs only; remove secrets, personal data, customer identifiers, and restricted project material before starting."
+        )
+      },
+      stages: [
+        {
+          kind: "theory",
+          title: i18n("course_default_theory_title", "Build the foundation"),
+          description: i18nFmt(
+            "course_default_theory_description",
+            { count: units },
+            units + " curriculum units explain the concepts, constraints, and technical background before application."
+          )
+        },
+        {
+          kind: "guided",
+          title: i18n("course_default_guided_title", "Trace worked cases"),
+          description: i18nFmt(
+            "course_default_guided_description",
+            { count: activities },
+            activities + " mapped lessons connect the concepts to concrete examples, implementation paths, and review decisions."
+          )
+        },
+        {
+          kind: "hands-on",
+          title: i18n("course_default_hands_on_title", "Apply and verify"),
+          description: i18n(
+            "course_default_hands_on_description",
+            "Run the lesson demos and exercises, inspect the reusable artifacts, and check the result against tests or an explicit review rubric."
+          )
+        }
+      ],
+      evidence: [
+        i18n(
+          "course_default_evidence_outcome",
+          "A result that demonstrates one of the published course outcomes"
+        ),
+        i18n("course_default_evidence_case", "Worked-case notes that identify assumptions, constraints, and trade-offs"),
+        i18n("course_default_evidence_artifact", "A completed hands-on exercise, runnable artifact, or project worksheet"),
+        i18n("course_default_evidence_verification", "Verification evidence such as tests, quiz results, source checks, or review notes"),
+        i18n("course_default_evidence_transfer", "A short transfer note for one anonymized project case, including the next action and responsible owner")
+      ]
+    };
+  }
+
+  function learningContractSection(courseItem, courseUnits, courseStats) {
+    if (!courseItem) return null;
+    var authoredContract = courseItem.learningContract;
+    var contract = authoredContract || defaultLearningContract(courseItem, courseUnits, courseStats);
+    if (!contract.promise) return null;
 
     var section = document.createElement("section");
     section.className = "learning-contract";
+    section.dataset.contract = authoredContract ? "authored" : "course-default";
     section.setAttribute("aria-labelledby", "learningContractTitle");
 
     var header = document.createElement("header");

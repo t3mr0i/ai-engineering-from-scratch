@@ -2382,6 +2382,15 @@ i[class^="ph "] {
   font-size: var(--fs-body-sm);
 }
 
+.course-card__learning-mix {
+  margin: 0;
+  color: var(--text-muted);
+  font-family: var(--font-text);
+  font-size: var(--fs-caption);
+  font-weight: var(--weight-medium);
+  line-height: var(--lh-snug);
+}
+
 .course-card__summary {
   display: -webkit-box;
   -webkit-box-orient: vertical;

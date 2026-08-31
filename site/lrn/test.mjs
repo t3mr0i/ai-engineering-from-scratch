@@ -129,33 +129,60 @@ test("learning format exemplars stay semantically distinct", () => {
   }
 });
 
-// The TOP12 are the flagship TC courses (see .tc-rewrite-shared.mjs).
-// They must have outcomes authored (3-5 verbs each) — that is the table-stakes
-// capability we closed. Other courses may carry an empty outcomes: [] placeholder.
-const TOP12_IDS = [
-  "LRN-01", "LRN-02", "LRN-03", "LRN-22", "LRN-23",
-  "LRN-28", "LRN-18", "LRN-15", "LRN-36", "LRN-40", "LRN-41", "LRN-39",
-];
-
-test("every TOP12 flagship course has 3-5 outcomes", () => {
-  const byId = new Map(data.courses.map((c) => [c.id, c]));
-  for (const id of TOP12_IDS) {
-    const c = byId.get(id);
-    assert.ok(c, `TOP12 course ${id} missing from data.js`);
-    assert.ok(Array.isArray(c.outcomes), `Course ${id} must have an outcomes: field (use [] if not yet authored)`);
+test("every catalog course publishes 3-5 concrete outcomes", () => {
+  for (const c of data.courses) {
+    assert.ok(Array.isArray(c.outcomes), `Course ${c.id} must have an outcomes array`);
     assert.ok(c.outcomes.length >= 3 && c.outcomes.length <= 5,
-      `Course ${id} must have 3-5 outcomes, got ${c.outcomes.length}`);
+      `Course ${c.id} must have 3-5 outcomes, got ${c.outcomes.length}`);
     for (const o of c.outcomes) {
-      assert.equal(typeof o, "string", `Course ${id} outcome must be a string`);
-      assert.ok(o.trim().length >= 24, `Course ${id} outcome too short: ${JSON.stringify(o)}`);
+      assert.equal(typeof o, "string", `Course ${c.id} outcome must be a string`);
+      assert.ok(o.trim().length >= 40, `Course ${c.id} outcome too short: ${JSON.stringify(o)}`);
+      assert.match(o, /^[A-Z][a-z]+\b/, `Course ${c.id} outcome must begin with an action verb`);
     }
   }
 });
 
-test("every Course has an outcomes: field (empty array is allowed)", () => {
-  for (const c of data.courses) {
-    assert.ok(Array.isArray(c.outcomes), `Course ${c.id} missing outcomes: field (use [] if not yet authored)`);
+test("learning contracts carry a project case, learning sequence, and completion evidence", () => {
+  for (const course of data.courses.filter((item) => item.learningContract)) {
+    const contract = course.learningContract;
+    assert.ok(typeof contract.promise === "string" && contract.promise.length >= 80,
+      `Course ${course.id} needs a concrete learning-contract promise`);
+    assert.ok(contract.projectScenario && typeof contract.projectScenario.title === "string",
+      `Course ${course.id} learning contract needs a project scenario`);
+    assert.ok(typeof contract.projectScenario.description === "string" && contract.projectScenario.description.length >= 100,
+      `Course ${course.id} project scenario must explain the real work`);
+    assert.ok(typeof contract.projectScenario.guardrail === "string" && contract.projectScenario.guardrail.length >= 80,
+      `Course ${course.id} project scenario needs a data guardrail`);
+    assert.deepEqual(Array.from(contract.stages, (stage) => stage.kind), ["theory", "guided", "hands-on"],
+      `Course ${course.id} must connect theory, a guided case, and hands-on transfer`);
+    assert.ok(contract.stages.every((stage) => stage.title && stage.description),
+      `Course ${course.id} learning stages need titles and descriptions`);
+    assert.ok(Array.isArray(contract.evidence) && contract.evidence.length >= 4,
+      `Course ${course.id} needs at least four observable completion artifacts`);
   }
+});
+
+test("AI for Software Engineers exposes the full project-transfer learning contract", () => {
+  const course = data.courses.find((item) => item.id === "LRN-06");
+  assert.ok(course, "LRN-06 missing from data.js");
+  assert.equal(course.outcomes.length, 5);
+  assert.match(course.summary, /ticket/i);
+  assert.match(course.summary, /pull request/i);
+  assert.ok(course.learningContract, "LRN-06 must publish its learning contract");
+  assert.match(course.learningContract.projectScenario.title, /LCAG/i);
+  assert.ok(course.learningContract.evidence.some((item) => /test/i.test(item)));
+  assert.ok(course.learningContract.evidence.some((item) => /pull-request/i.test(item)));
+});
+
+test("catalog and course detail surface outcomes before and after selection", () => {
+  const catalogSource = readFileSync("site/lrn/lrn.js", "utf8");
+  const detailSource = readFileSync("site/lrn/course.js", "utf8");
+  assert.match(catalogSource, /course-card__outcome/);
+  assert.match(catalogSource, /course\.outcomes\[0\]/);
+  assert.match(catalogSource, /course-card__learning-mix/);
+  assert.match(detailSource, /learningContractSection\(course, map, stats\)/);
+  assert.match(detailSource, /defaultLearningContract/);
+  assert.match(detailSource, /learning-contract__evidence/);
 });
 
 test("Harness Engineering course is scoped to the Technology Consulting role", () => {
@@ -362,7 +389,7 @@ test("the learner catalog exposes the Academy paths with current browser data", 
     "catalog needs a learner-visible Academy path container");
   assert.match(html, /id="myLearningPathContent"/,
     "catalog needs a persistent learner-path summary and next-step surface");
-  assert.match(html, /lrn\/data\.js\?v=20260825a/,
+  assert.match(html, /lrn\/data\.js\?v=\d{8}[a-z]/,
     "catalog must cache-bust the browser data that contains Academy paths");
   assert.match(lrn, /function renderAcademyPaths\(context\)/,
     "catalog needs to render Academy paths from LrnData");

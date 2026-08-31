@@ -989,6 +989,13 @@
       outcome.append(outcomeLabel, document.createTextNode(course.outcomes[0]));
     }
 
+    var learningMix = document.createElement("p");
+    learningMix.className = "course-card__learning-mix";
+    learningMix.textContent = i18n(
+      "course_card_learning_mix",
+      "Theory · worked examples · hands-on"
+    );
+
     var summary = null;
     if (!outcome && entry.searchMatch && course.summary) {
       summary = document.createElement("p");
@@ -1007,7 +1014,7 @@
     open.appendChild(lucideIcon("arrow-right"));
     foot.appendChild(open);
 
-    card.append(head, code, h, meta);
+    card.append(head, code, h, meta, learningMix);
     if (outcome) card.appendChild(outcome);
     if (summary) card.appendChild(summary);
     card.appendChild(foot);

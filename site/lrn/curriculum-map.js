@@ -374,11 +374,12 @@ window.LrnCurriculumMap = {
       {
         "title": "Coding with Copilot day to day",
         "decision": "core",
-        "note": "The actual GitHub Copilot workflow: completion → chat → agent mode → server-side coding agent, with the review discipline that keeps you accountable.",
+        "note": "Theory, a worked engineering case, and a project-transfer lab: completion → chat → edits → agent mode → server-side coding agent, with explicit context and verification gates.",
         "lessons": [
           {
             "path": "phases/11-llm-engineering/70-github-copilot-daily-workflow",
-            "title": "GitHub Copilot for Software Engineers: The Daily Workflow"
+            "title": "GitHub Copilot for Software Engineers: The Daily Workflow",
+            "activityType": "lab"
           },
           {
             "path": "phases/11-llm-engineering/71-copilot-code-review-pr-workflow",
@@ -405,7 +406,7 @@ window.LrnCurriculumMap = {
       {
         "title": "Engineering workbench discipline",
         "decision": "core",
-        "note": "Maps the curriculum's agent-workbench lessons into day-to-day engineering practice.",
+        "note": "Adds the technical depth behind reliable project use: tool contracts, executable repository instructions, durable context, and bounded agent behavior.",
         "lessons": [
           {
             "path": "phases/14-agent-engineering/06-tool-use-and-function-calling",
@@ -436,7 +437,7 @@ window.LrnCurriculumMap = {
       {
         "title": "Testing AI-assisted code",
         "decision": "core",
-        "note": "Prevents AI-assisted coding from becoming unchecked code generation.",
+        "note": "Turns generated code into reproducible engineering evidence: fixtures, adversarial cases, review gates, and a human-owned merge decision.",
         "lessons": [
           {
             "path": "phases/11-llm-engineering/10-evaluation",

@@ -40,3 +40,67 @@ Before any diff above completion lands:
 - **Claude Code** — terminal-native, permission modes + routines; best for unattended / scripted runs.
 
 Lock-in is low. The transferable skill is the ladder + the gate, not the vendor.
+
+## Project transfer: issue-to-PR evidence pack
+
+Use this with one anonymized ticket from the current project. If project data
+cannot leave its approved environment, use the lesson's booking-synchronization
+fallback. Never paste credentials, personal data, production identifiers,
+restricted source, or proprietary logs into an unapproved assistant.
+
+### A. Bounded task brief
+
+- **Ticket / goal:**
+- **Why this change is needed:**
+- **Allowed files:**
+- **Forbidden changes:**
+- **Acceptance checks:**
+- **Data classification:** public / sanitized internal
+- **Predicted Copilot rung:**
+- **Why this rung fits the ambiguity and blast radius:**
+
+Before editing, run `python3 main.py` and compare this brief with the generated
+`build_copilot_brief()` contract. A missing allowed-file list or observable
+acceptance check is a stop condition, not a prompt-writing inconvenience.
+
+### B. Repository-context packet
+
+- **Instructions used:** `.github/copilot-instructions.md`, `AGENTS.md`, or equivalent
+- **Files deliberately opened/pinned:**
+- **Ticket details included after sanitization:**
+- **Context deliberately excluded and why:**
+- **MCP sources used, permission level, and trust boundary:**
+
+### C. Annotated diff review
+
+For every changed file, record:
+
+| File | Why each change is in scope | Correctness/security/privacy finding | Test impact |
+|---|---|---|---|
+| `<relative path>` |  |  | stronger / equivalent / weaker |
+
+Any unrelated cleanup, secret literal, weakened assertion, unexpected file, or
+unexplained public-interface change blocks the handoff until resolved.
+
+### D. Verification receipt
+
+- **Commands run:**
+- **Observed result:**
+- **Deliberate failure or boundary case:**
+- **Expected vs observed behavior:**
+- **Residual risk not covered by the checks:**
+
+Keep raw command output or a stable link beside the interpretation. “Copilot
+said tests pass” is not evidence.
+
+### E. Pull-request handoff
+
+- **Intent and linked ticket:**
+- **What changed and why:**
+- **Verification evidence:**
+- **Known limitations / rollback:**
+- **Human reviewer and merge owner:**
+- **Decision:** merge / request changes / block
+
+The evidence pack is complete only when another engineer can reproduce the
+verification and the named human owner has read the diff.

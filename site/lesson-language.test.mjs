@@ -100,3 +100,11 @@ test("lesson page wires the resolver to initial load and language changes", () =
   assert.match(lessonHtml, /inLanguage: currentLessonLang/);
   assert.match(lessonHtml, /if \(!href \|\| href === '#'\) return/);
 });
+
+test("lesson objectives render as a localized, evidence-oriented outcome section", () => {
+  assert.match(lessonHtml, /lesson_outcomes_title/);
+  assert.match(lessonHtml, /lesson_outcomes_intro/);
+  assert.match(lessonHtml, /<section class="learning-objectives" aria-labelledby=/);
+  assert.match(lessonHtml, /<h2 id="' \+ slug2 \+ '" class="learning-objectives-title">/);
+  assert.match(lessonHtml, /<p class="learning-objectives-intro">/);
+});
