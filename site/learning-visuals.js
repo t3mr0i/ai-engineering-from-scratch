@@ -109,10 +109,25 @@
 
   function stepState(label) {
     var value = cleanLabel(label).toLowerCase();
+    if (/problem|challenge|why|herausforderung/.test(value)) return "problem";
+    if (/concept|how it works|konzept|prinzip/.test(value)) return "concept";
     if (/build|implement|construct|entwick|bauen/.test(value)) return "build";
     if (/use|apply|practice|anwenden|nutzen/.test(value)) return "use";
     if (/ship|deploy|deliver|publish|ausliefer|bereitstell/.test(value)) return "ship";
     return "learn";
+  }
+
+  function stepPurpose(kind) {
+    var purposes = {
+      problem: ["viz_lesson_purpose_problem", "Why it matters"],
+      concept: ["viz_lesson_purpose_concept", "How it works"],
+      build: ["viz_lesson_purpose_build", "Build it yourself"],
+      use: ["viz_lesson_purpose_use", "Apply the production tool"],
+      ship: ["viz_lesson_purpose_ship", "Take away a reusable result"],
+      learn: ["viz_lesson_purpose_learn", "Understand the core idea"]
+    };
+    var purpose = purposes[kind] || purposes.learn;
+    return text(purpose[0], purpose[1]);
   }
 
   function renderLessonRoute(article) {
@@ -126,7 +141,7 @@
     nav.setAttribute("aria-label", text("viz_lesson_title", "Lesson route"));
     nav.appendChild(makeHeader(
       text("viz_lesson_title", "Lesson route"),
-      text("viz_lesson_desc", "See the concepts in sequence and jump to any section."),
+      text("viz_lesson_desc", "Jump between {count} sections. The active section follows your reading progress.", { count: steps.length }),
       "p"
     ));
 
@@ -136,7 +151,8 @@
     steps.forEach(function (step, index) {
       var item = document.createElement("li");
       item.className = "learning-route__step";
-      item.dataset.kind = stepState(step.label);
+      var kind = stepState(step.label);
+      item.dataset.kind = kind;
       var link = document.createElement("a");
       link.href = "#" + step.id;
       link.dataset.routeTarget = step.id;
@@ -145,10 +161,19 @@
       marker.className = "learning-route__marker";
       marker.setAttribute("aria-hidden", "true");
       marker.textContent = String(index + 1).padStart(2, "0");
-      var label = document.createElement("span");
+      var copy = document.createElement("span");
+      copy.className = "learning-route__copy";
+      var label = document.createElement("strong");
       label.className = "learning-route__label";
       label.textContent = step.label;
-      link.append(marker, label);
+      var purpose = document.createElement("small");
+      purpose.className = "learning-route__purpose";
+      purpose.textContent = stepPurpose(kind);
+      copy.append(label, purpose);
+      var arrow = document.createElement("i");
+      arrow.className = "ph-light ph-arrow-down-right learning-route__arrow";
+      arrow.setAttribute("aria-hidden", "true");
+      link.append(marker, copy, arrow);
       item.appendChild(link);
       list.appendChild(item);
     });
@@ -345,6 +370,7 @@
     renderCapabilityProfile: renderCapabilityProfile,
     _test: {
       selectMilestones: selectMilestones,
+      stepState: stepState,
       phaseStats: phaseStats,
       capabilityClusters: capabilityClusters
     }

@@ -50,7 +50,8 @@ cd "$REPO_ROOT"
 # files, which matches every current lesson (298 assets/ dirs, each with
 # exactly one flat .svg file, no subdirectories) — if a lesson ever nests
 # assets in a subfolder, both this pattern and the site's image resolver
-# would need revisiting together.
+# would need revisiting together. `outputs/*` intentionally stages direct
+# lesson artifacts only; the lesson reader exposes those as internal previews.
 node site/build.js
 mkdir -p site/phases
 rsync -a --prune-empty-dirs \
@@ -59,6 +60,7 @@ rsync -a --prune-empty-dirs \
   --include='docs/de.md' \
   --include='quiz.json' \
   --include='code/main.py' \
+  --include='outputs/*' \
   --include='assets/*' \
   --exclude='*' \
   phases/ site/phases/
@@ -72,6 +74,7 @@ rsync -a --prune-empty-dirs \
   --include='docs/de.md' \
   --include='quiz.json' \
   --include='code/main.py' \
+  --include='outputs/*' \
   --include='assets/*' \
   --exclude='*' \
   phases/ api/content/_data/phases/

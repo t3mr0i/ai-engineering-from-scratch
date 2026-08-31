@@ -48,7 +48,7 @@
   <link rel="stylesheet" href="style.css?v=20260824a">
   <link rel="stylesheet" href="pan.css?v=20260830a">
   <link rel="stylesheet" href="badges.css?v=20260713a">
-  <link rel="stylesheet" href="learning-visuals.css?v=20260825h">
+  <link rel="stylesheet" href="learning-visuals.css?v=20260831a">
   <style>
     .scroll-progress {
       position: fixed;
@@ -1073,35 +1073,87 @@
     }
 
     .lesson-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+      display: grid;
+      grid-template-areas: "type languages prerequisites time";
+      grid-template-columns: minmax(7rem, 0.65fr) minmax(8rem, 0.8fr) minmax(0, 2fr) minmax(8rem, 0.75fr);
       margin: 0 0 28px;
-      padding: 14px 0;
-      border-top: 1px solid var(--rule-soft);
-      border-bottom: 1px solid var(--rule-soft);
+      padding: 0;
+      border-block: 1px solid var(--rule-soft);
     }
 
     .lesson-meta-tag {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+      margin: 0;
+      padding: var(--space-4);
+      border: 0;
+      border-inline-start: 1px solid var(--rule-soft);
+      background: transparent;
+      color: var(--ink);
       font-family: var(--font-body);
-      font-size: 0.85rem;
       letter-spacing: 0;
       text-transform: none;
-      padding: 4px 14px;
-      border: 1px solid var(--rule-soft);
-      color: var(--ink-soft);
-      background: transparent;
     }
 
-    .lesson-meta-tag strong {
-      font-weight: 500;
+    .lesson-meta-tag:first-child {
+      border-inline-start: 0;
+    }
+
+    .lesson-meta-tag[data-meta-kind="type"] { grid-area: type; }
+    .lesson-meta-tag[data-meta-kind="languages"] { grid-area: languages; }
+    .lesson-meta-tag[data-meta-kind="prerequisites"] { grid-area: prerequisites; }
+    .lesson-meta-tag[data-meta-kind="time"] { grid-area: time; }
+
+    .lesson-meta-label {
+      color: var(--text-secondary, var(--ink-soft));
+      font-size: 0.72rem;
+      font-weight: 400;
+      line-height: 1.2;
+    }
+
+    .lesson-meta-value {
+      min-width: 0;
+      margin: 0;
       color: var(--ink);
+      font-size: 0.9rem;
+      font-weight: 500;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
     }
 
-    .lesson-meta-tag.time-tag {
-      border-color: var(--blueprint);
+    .lesson-meta-tag[data-meta-kind="time"] .lesson-meta-value {
       color: var(--blueprint);
-      background: var(--blueprint-tint);
+      font-variant-numeric: tabular-nums;
+    }
+
+    @media (max-width: 780px) {
+      .lesson-meta {
+        grid-template-areas:
+          "type languages time"
+          "prerequisites prerequisites prerequisites";
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .lesson-meta-tag[data-meta-kind="prerequisites"] {
+        border-block-start: 1px solid var(--rule-soft);
+        border-inline-start: 0;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .lesson-meta {
+        grid-template-areas:
+          "type languages"
+          "time time"
+          "prerequisites prerequisites";
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .lesson-meta-tag[data-meta-kind="time"] {
+        border-block-start: 1px solid var(--rule-soft);
+        border-inline-start: 0;
+      }
     }
 
     .quiz-section,
@@ -1563,23 +1615,68 @@
       margin-bottom: 18px;
     }
 
-    .output-cards,
     .code-cards {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: 14px;
     }
 
-    .output-card {
+    .output-artifacts {
+      display: grid;
+      gap: 10px;
+    }
+
+    .artifact-disclosure {
       border: 1px solid var(--rule-soft);
-      padding: 18px;
       background: var(--bg);
       transition: border-color 0.15s, background 0.15s;
     }
 
-    .output-card:hover {
+    .artifact-disclosure[open] {
       border-color: var(--blueprint);
       background: var(--blueprint-tint);
+    }
+
+    .artifact-disclosure__summary {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      min-height: 44px;
+      padding: 10px 14px;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .artifact-disclosure__summary::-webkit-details-marker { display: none; }
+
+    .artifact-disclosure__summary::after,
+    .artifact-chevron {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-right: 1.5px solid currentColor;
+      border-bottom: 1.5px solid currentColor;
+      color: var(--ink-soft);
+      transform: rotate(45deg);
+      transition: transform 0.15s ease-out;
+    }
+
+    .artifact-disclosure[open] > .artifact-disclosure__summary::after,
+    .inline-artifact-trigger[aria-expanded="true"] .artifact-chevron {
+      transform: rotate(225deg);
+    }
+
+    .artifact-disclosure__summary:hover .output-card-name,
+    .artifact-disclosure__summary:hover::after {
+      color: var(--blueprint);
+    }
+
+    .artifact-disclosure__summary:focus-visible,
+    .inline-artifact-trigger:focus-visible,
+    .artifact-preview__copy:focus-visible {
+      outline: 2px solid var(--blueprint);
+      outline-offset: 3px;
     }
 
     .output-card-name {
@@ -1587,19 +1684,20 @@
       font-size: 0.84rem;
       color: var(--ink);
       word-break: break-all;
-      margin-bottom: 10px;
+      margin: 0;
       text-transform: none;
     }
 
     .output-badge {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
       font-family: var(--font-mono);
       font-size: 0.62rem;
       font-weight: 500;
       text-transform: uppercase;
       letter-spacing: 0.12em;
       padding: 2px 8px;
-      margin-bottom: 10px;
+      margin: 0;
       border: 1px solid var(--blueprint);
       color: var(--blueprint);
       background: var(--blueprint-tint);
@@ -1613,56 +1711,116 @@
       background: var(--blueprint-tint);
     }
 
-    .output-desc {
+    .artifact-disclosure__description {
+      display: block;
       font-family: var(--font-body);
-      font-size: 0.96rem;
+      font-size: 0.84rem;
       color: var(--ink-soft);
-      line-height: 1.5;
-      margin-bottom: 12px;
-      text-transform: none;
-      letter-spacing: 0;
-      font-variant: normal;
-      text-align: left;
+      line-height: 1.45;
+      margin: 2px 0 0;
     }
 
-    .output-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+    .inline-artifact-trigger {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      color: inherit;
+      background: transparent;
+      font: inherit;
+      cursor: pointer;
+      vertical-align: baseline;
     }
 
-    .output-btn {
-      font-family: var(--font-mono);
-      font-size: 0.68rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 4px 10px;
+    .inline-artifact-trigger::before {
+      content: '';
+      position: absolute;
+      inset: -8px -5px;
+    }
+
+    .inline-artifact-trigger code {
+      color: var(--blueprint);
       text-decoration: none;
+    }
+
+    .artifact-chevron {
+      display: inline-block;
+      flex: 0 0 auto;
+    }
+
+    .artifact-preview {
+      margin: 0 14px 14px;
+      border: 1px solid var(--rule-soft);
+      background: var(--code-bg);
+    }
+
+    .artifact-inline-preview {
+      margin: 10px 0 20px;
+    }
+
+    .artifact-preview__bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 40px;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--rule-soft);
+    }
+
+    .artifact-preview__path {
+      min-width: 0;
+      flex: 1;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: var(--ink-soft);
+      word-break: break-all;
+    }
+
+    .artifact-preview__copy {
+      flex: 0 0 auto;
+      min-height: 32px;
+      padding: 5px 10px;
       border: 1px solid var(--rule-soft);
       color: var(--ink-soft);
       background: transparent;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
       cursor: pointer;
       transition: color 0.15s, border-color 0.15s;
     }
 
-    .output-btn:hover {
+    .artifact-preview__copy:hover {
       border-color: var(--blueprint);
       color: var(--blueprint);
     }
 
-    .output-install-hint {
-      font-family: var(--font-mono);
-      font-size: 0.74rem;
+    .artifact-preview__status {
+      padding: 14px;
       color: var(--ink-soft);
-      background: var(--code-bg);
-      padding: 8px 12px;
-      border: 1px solid var(--rule-soft);
-      margin-top: 10px;
-      word-break: break-all;
-      display: none;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
     }
 
-    .output-install-hint.visible { display: block; }
+    .artifact-preview__status.is-error { color: var(--error, #b42318); }
+
+    .lesson-article .artifact-preview__pre {
+      max-height: 36rem;
+      margin: 0;
+      overflow: auto;
+      border: 0;
+      border-radius: 0;
+      background: var(--code-bg);
+    }
+
+    .lesson-article .artifact-preview__pre code {
+      display: block;
+      padding: 16px;
+      white-space: pre;
+      overflow-wrap: normal;
+    }
 
     .code-output {
       font-family: var(--font-mono);
@@ -2005,7 +2163,6 @@
       .lesson-article .motto { font-size: 1.05rem; padding: 14px 16px; }
       .ai-panels { margin-top: 40px; gap: 28px; }
       .ai-panel { padding: 22px 16px; }
-      .output-cards,
       .code-cards { grid-template-columns: 1fr; }
       .lesson-nav-bottom { flex-direction: column; gap: 12px; }
       .lesson-nav-btn { max-width: 100%; }
@@ -2091,7 +2248,7 @@
     .lesson-article code {
       border-radius: 6px;
     }
-    .lesson-meta-tag { border-radius: 999px; }
+    .lesson-meta-tag { border-radius: 0; }
   </style>
 </head>
 <body>
@@ -2161,7 +2318,7 @@
   <script src="analytics.js?v=20260525a" defer></script>
   <script src="figures.js?v=20260607a"></script>
   <script src="lesson-figures.js?v=20260607a"></script>
-  <script src="learning-visuals.js?v=20260825h"></script>
+  <script src="learning-visuals.js?v=20260831a"></script>
   <script src="python-runtime.js?v=20260824a"></script>
   <script>
     // Shared by the mermaid init below and updateMermaidThemeAndRerender()
@@ -3257,6 +3414,7 @@
 
       function parseMd(md) {
         resetGlossaryState();
+        _artifactPreviewSeq = 0;
         var lines = md.split(/\r?\n/);
         var out = '';
         var inCodeBlock = false;
@@ -3280,7 +3438,7 @@
         function flushMeta() {
           if (!inMeta) return '';
           inMeta = false;
-          return '</div>';
+          return '</dl>';
         }
 
         function flushLabChallenge() {
@@ -3544,13 +3702,17 @@
             line.match(/^\*\*\s*([^*:]+?)\s*:?\s*\*\*\s*:?\s*(.+)/);
           if (metaMatch) {
             if (!inMeta) {
-              out += '<div class="lesson-meta">';
+              out += '<dl class="lesson-meta">';
               inMeta = true;
             }
             var metaLabel = metaMatch[1].replace(/:\s*$/, '');
-            var tagClass = /time/i.test(metaLabel) ? ' time-tag' : '';
-            out += '<span class="lesson-meta-tag' + tagClass + '"><strong>' +
-              escapeHtml(metaLabel) + ':</strong> ' + inlineFormat(metaMatch[2]) + '</span>';
+            var metaKind = /^(type|typ)$/i.test(metaLabel) ? 'type'
+              : /^(languages?|sprachen?)$/i.test(metaLabel) ? 'languages'
+                : /^(prerequisites?|voraussetzungen?)$/i.test(metaLabel) ? 'prerequisites'
+                  : /^(time|zeit)$/i.test(metaLabel) ? 'time' : 'other';
+            out += '<div class="lesson-meta-tag" data-meta-kind="' + metaKind + '">' +
+              '<dt class="lesson-meta-label">' + escapeHtml(metaLabel) + '</dt>' +
+              '<dd class="lesson-meta-value">' + inlineFormat(metaMatch[2]) + '</dd></div>';
             continue;
           }
 
@@ -3625,6 +3787,9 @@
         return contentUrl(stack.join('/'));
       }
 
+      var _artifactPreviewSeq = 0;
+      var _artifactContentCache = Object.create(null);
+
       function inlineFormat(text, opts) {
         text = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         text = text.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
@@ -3635,9 +3800,12 @@
             return '<a href="#codeContent" class="inline-code-link"><code>' + inner + '</code></a>';
           }
           var outMatch = inner.match(/^outputs\/([\w.\-]+)$/);
-          if (outMatch && lessonPath) {
-            var url = 'https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training/-/blob/main/' + lessonPath + '/outputs/' + outMatch[1];
-            return '<a href="' + url + '" target="_blank" rel="noopener" class="inline-code-link"><code>' + inner + '</code></a>';
+          if (outMatch && lessonPath && safeArtifactFilename(outMatch[1])) {
+            var previewId = 'artifact-inline-' + (++_artifactPreviewSeq);
+            var previewLabel = artifactText('artifact_preview_open', 'Preview {file}', { file: inner });
+            return '<button type="button" class="inline-artifact-trigger" data-output-file="' + escapeAttr(outMatch[1]) + '" ' +
+              'aria-expanded="false" aria-controls="' + previewId + '" aria-label="' + escapeAttr(previewLabel) + '">' +
+              '<code>' + inner + '</code><span class="artifact-chevron" aria-hidden="true"></span></button>';
           }
           return '<code>' + inner + '</code>';
         });
@@ -3999,6 +4167,7 @@
         initCodeVscode();
         initCodeRun();
         initFillin();
+        initInlineArtifactPreviews();
       }
 
       // "Save to My Merkzettel" on the Key Terms table: persists this lesson's
@@ -4924,106 +5093,155 @@
         renderContinuePanel(container);
       }
 
-      function ghApiFetch(apiPath, cb) {
-        // The project moved to LHIND GitLab, which has no anonymous
-        // contents-listing endpoint usable from the browser (the old
-        // api.github.com call is gone). Signal "no data" so each panel
-        // falls back to its direct GitLab tree link below.
-        cb(new Error('no remote listing'), null);
+      function artifactText(key, fallback, vars) {
+        var lang = window.SiteLang && window.SiteLang.get ? window.SiteLang.get() : 'en';
+        var entry = window.SITE_I18N && window.SITE_I18N[key];
+        var value = entry && entry[lang] != null ? entry[lang] : fallback;
+        Object.keys(vars || {}).forEach(function (name) {
+          value = value.replace(new RegExp('\\{' + name + '\\}', 'g'), String(vars[name]));
+        });
+        return value;
       }
 
-      function classifyOutput(name) {
-        var lower = name.toLowerCase();
-        if (lower.indexOf('prompt') >= 0) return 'prompt';
-        if (lower.indexOf('skill') >= 0) return 'skill';
-        return 'other';
+      function safeArtifactFilename(filename) {
+        return /^[A-Za-z0-9_-]+\.(?:md|json|jsonl|py|js|ts|rs|jl|sh|txt|ya?ml|toml)$/.test(filename || '');
       }
 
-      function langIcon(filename) {
-        var ext = filename.split('.').pop().toLowerCase();
-        var map = { py: 'PY', python: 'PY', ts: 'TS', js: 'JS', rust: 'RS', rs: 'RS', jl: 'JL', julia: 'JL', sh: 'SH', bash: 'SH' };
-        return map[ext] || '··';
+      function fetchArtifactContent(filename) {
+        if (!lessonPath || !safeArtifactFilename(filename)) {
+          return Promise.reject(new Error('invalid artifact path'));
+        }
+        var artifactPath = lessonPath + '/outputs/' + filename;
+        if (!_artifactContentCache[artifactPath]) {
+          _artifactContentCache[artifactPath] = fetch(contentUrl(artifactPath)).then(function (res) {
+            if (!res.ok) throw new Error('artifact unavailable');
+            return res.text();
+          });
+        }
+        return _artifactContentCache[artifactPath];
       }
 
-      function langCommand(filename) {
-        var ext = filename.split('.').pop().toLowerCase();
-        if (ext === 'py') return 'python';
-        if (ext === 'ts') return 'npx tsx';
-        if (ext === 'js') return 'node';
-        if (ext === 'rs') return 'cargo run --';
-        if (ext === 'jl') return 'julia';
-        if (ext === 'sh') return 'bash';
-        return 'run';
+      function createArtifactPreview(filename, id, extraClass) {
+        var preview = document.createElement('div');
+        preview.className = 'artifact-preview' + (extraClass ? ' ' + extraClass : '');
+        if (id) preview.id = id;
+        preview.setAttribute('aria-busy', 'false');
+        preview.innerHTML = '<div class="artifact-preview__bar">' +
+          '<span class="artifact-preview__path">outputs/' + escapeHtml(filename) + '</span>' +
+          '<button type="button" class="artifact-preview__copy" hidden>' +
+            escapeHtml(artifactText('artifact_copy', 'Copy file')) +
+          '</button></div>' +
+          '<div class="artifact-preview__status" role="status">' +
+            escapeHtml(artifactText('artifact_ready', 'Open the preview to load this file.')) +
+          '</div>' +
+          '<pre class="artifact-preview__pre" hidden><code class="artifact-preview__code"></code></pre>';
+        return preview;
       }
 
-      function formatSize(bytes) {
-        if (bytes < 1024) return bytes + ' B';
-        return (bytes / 1024).toFixed(1) + ' KB';
+      function loadArtifactPreview(preview, filename) {
+        if (!preview || preview.getAttribute('data-loaded') === 'true' || preview.getAttribute('data-loading') === 'true') return;
+        var status = preview.querySelector('.artifact-preview__status');
+        var pre = preview.querySelector('.artifact-preview__pre');
+        var code = preview.querySelector('.artifact-preview__code');
+        var copy = preview.querySelector('.artifact-preview__copy');
+
+        preview.setAttribute('data-loading', 'true');
+        preview.setAttribute('aria-busy', 'true');
+        status.classList.remove('is-error');
+        status.hidden = false;
+        status.textContent = artifactText('artifact_loading', 'Loading file…');
+
+        fetchArtifactContent(filename).then(function (content) {
+          code.textContent = content;
+          pre.hidden = false;
+          status.hidden = true;
+          copy.hidden = false;
+          preview.setAttribute('data-loaded', 'true');
+          copy.addEventListener('click', function () {
+            if (!navigator.clipboard || !navigator.clipboard.writeText) return;
+            navigator.clipboard.writeText(content).then(function () {
+              copy.textContent = artifactText('artifact_copied', 'Copied');
+              setTimeout(function () {
+                copy.textContent = artifactText('artifact_copy', 'Copy file');
+              }, 1500);
+            });
+          });
+        }).catch(function () {
+          status.hidden = false;
+          status.classList.add('is-error');
+          status.textContent = artifactText('artifact_error', 'This file could not be loaded inside the application.');
+        }).finally(function () {
+          preview.removeAttribute('data-loading');
+          preview.setAttribute('aria-busy', 'false');
+        });
       }
 
-      function extractFrontmatterDesc(content) {
-        var match = content.match(/^---[\s\S]*?description:\s*(.+?)[\r\n]/m);
-        if (match) return match[1].replace(/^["']|["']$/g, '').trim();
-        var firstLine = content.split('\n').find(function (l) { return l.trim() && !l.match(/^[#-]/) && !l.match(/^---/); });
-        return firstLine ? firstLine.trim().substring(0, 120) : '';
+      function initInlineArtifactPreviews() {
+        document.querySelectorAll('.inline-artifact-trigger').forEach(function (trigger) {
+          trigger.addEventListener('click', function () {
+            var filename = trigger.getAttribute('data-output-file');
+            var previewId = trigger.getAttribute('aria-controls');
+            var preview = document.getElementById(previewId);
+            var expanded = trigger.getAttribute('aria-expanded') === 'true';
+
+            if (!preview) {
+              preview = createArtifactPreview(filename, previewId, 'artifact-inline-preview');
+              preview.hidden = true;
+              var host = trigger.closest('p, li, dd, blockquote') || trigger.parentElement;
+              host.insertAdjacentElement('afterend', preview);
+            }
+
+            trigger.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+            preview.hidden = expanded;
+            if (!expanded) loadArtifactPreview(preview, filename);
+          });
+        });
+      }
+
+      function initArtifactDisclosures(container) {
+        container.querySelectorAll('.artifact-disclosure').forEach(function (details) {
+          details.addEventListener('toggle', function () {
+            if (!details.open) return;
+            loadArtifactPreview(details.querySelector('.artifact-preview'), details.getAttribute('data-output-file'));
+          });
+        });
       }
 
       function renderOutputsPanel(container) {
+        var artifacts = typeof ARTIFACTS !== 'undefined' && Array.isArray(ARTIFACTS)
+          ? ARTIFACTS.filter(function (artifact) {
+              return artifact.lessonPath === lessonPath && artifact.file && safeArtifactFilename(artifact.file.split('/').pop());
+            })
+          : [];
+        if (!artifacts.length) return;
+
         var panel = document.createElement('div');
         panel.className = 'ai-panel';
-        panel.innerHTML = '<div class="ai-panel-header"><div class="ai-panel-icon">O</div><div class="ai-panel-title">What This Lesson Ships</div></div><div class="ai-panel-subtitle">Prompts, skills, and artifacts you can use right now</div><div id="outputsContent" class="panel-loading">Loading outputs...</div>';
-        container.appendChild(panel);
+        var html = '<div class="ai-panel-header"><div class="ai-panel-icon">O</div><div class="ai-panel-title">' +
+          escapeHtml(artifactText('artifact_panel_title', 'What this lesson ships')) +
+          '</div></div><div class="ai-panel-subtitle">' +
+          escapeHtml(artifactText('artifact_panel_subtitle', 'Open reusable prompts, skills, and artifacts without leaving the lesson.')) +
+          '</div><div class="output-artifacts">';
 
-        ghApiFetch(lessonPath + '/outputs', function (err, data) {
-          var el = document.getElementById('outputsContent');
-          if (err || !data || !Array.isArray(data) || data.length === 0) {
-            el.innerHTML = '<div class="panel-fallback"><a href="https://git02.lhind.app.lufthansa.com/lhind/pace/agentic-software-engineering/ai-training/-/tree/main/' + lessonPath + '" target="_blank" rel="noopener">View lesson on GitLab</a></div>';
-            return;
-          }
-
-          var html = '<div class="output-cards">';
-          data.forEach(function (file, idx) {
-            var type = classifyOutput(file.name);
-            var badgeClass = type;
-            var badgeText = type === 'prompt' ? 'Prompt' : type === 'skill' ? 'Skill' : 'Output';
-            var installId = 'install-hint-' + idx;
-            var installHint = '';
-            if (type === 'prompt') {
-              installHint = 'Paste into Claude, Cursor, Codex, OpenClaw, Hermes, or any agent that reads prompts';
-            } else if (type === 'skill') {
-              var skillName = file.name.replace(/\.md$/, '').replace(/^skill-/, '');
-              installHint = 'Add to ~/.claude/skills/ from the LHIND GitLab repo · skill: ' + skillName;
-            }
-
-            html += '<div class="output-card">';
-            html += '<div class="output-badge ' + badgeClass + '">' + badgeText + '</div>';
-            html += '<div class="output-card-name">' + escapeHtml(file.name) + '</div>';
-            html += '<div class="output-desc" id="desc-' + idx + '">Loading description...</div>';
-            html += '<div class="output-actions">';
-            html += '<a class="output-btn" href="' + file.html_url + '" target="_blank" rel="noopener">View on GitLab</a>';
-            if (installHint) {
-              html += '<button class="output-btn" onclick="var h=document.getElementById(\'' + installId + '\');h.classList.toggle(\'visible\')">Install</button>';
-            }
-            html += '</div>';
-            if (installHint) {
-              html += '<div class="output-install-hint" id="' + installId + '">' + escapeHtml(installHint) + '</div>';
-            }
-            html += '</div>';
-
-            fetch(file.download_url).then(function (r) { return r.text(); }).then(function (content) {
-              var descEl = document.getElementById('desc-' + idx);
-              if (descEl) {
-                var desc = extractFrontmatterDesc(content);
-                descEl.textContent = desc || file.name;
-              }
-            }).catch(function () {
-              var descEl = document.getElementById('desc-' + idx);
-              if (descEl) descEl.textContent = file.name;
-            });
-          });
-          html += '</div>';
-          el.innerHTML = html;
+        artifacts.forEach(function (artifact) {
+          var filename = artifact.file.split('/').pop();
+          var badgeText = artifact.kind === 'prompt' ? 'Prompt' : artifact.kind === 'skill' ? 'Skill' : 'Output';
+          html += '<details class="artifact-disclosure" data-output-file="' + escapeAttr(filename) + '">' +
+            '<summary class="artifact-disclosure__summary">' +
+              '<span class="output-badge ' + escapeAttr(artifact.kind || 'other') + '">' + badgeText + '</span>' +
+              '<span><span class="output-card-name">outputs/' + escapeHtml(filename) + '</span>' +
+                (artifact.description ? '<span class="artifact-disclosure__description">' + escapeHtml(artifact.description) + '</span>' : '') +
+              '</span>' +
+            '</summary></details>';
         });
+
+        html += '</div>';
+        panel.innerHTML = html;
+        panel.querySelectorAll('.artifact-disclosure').forEach(function (details) {
+          details.appendChild(createArtifactPreview(details.getAttribute('data-output-file')));
+        });
+        container.appendChild(panel);
+        initArtifactDisclosures(panel);
       }
 
       // Libraries with no Pyodide/WASM wheel — these lessons can't run in-browser.

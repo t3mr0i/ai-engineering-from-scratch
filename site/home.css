@@ -1,4 +1,4 @@
-/* Hallmark · genre: modern-minimal · macrostructure: Index-First · theme: LHIND Flight Deck · enrichment: none · nav: N9 · footer: none · design-system: DESIGN.md · designed-as-app · pre-emit critique: P5 H5 E4 S5 R5 V5 */
+/* Hallmark · genre: modern-minimal · macrostructure: Index-First · theme: LHIND Flight Deck · enrichment: none · nav: N9 · footer: none · design-system: DESIGN.md · designed-as-app · pre-emit critique: P5 H5 E5 S5 R5 V5 · contrast: pass (40–41) · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49) · icons: pass (30) · mobile: pass (34, 49, 50–57) */
 
 /* Homepage-only composition layer. The shared Lufthansa tokens and component
    contracts continue to live in lrn/tokens.css, lrn/lrn.css, and pan.css. */
@@ -9,7 +9,7 @@
 }
 
 .page--home .hero {
-  padding-block: var(--space-8);
+  padding-block: var(--space-7) var(--space-9);
   background: var(--lhg-core-blue);
   text-align: start;
 }
@@ -29,6 +29,7 @@
 }
 
 .page--home .hero h1 {
+  min-width: 0;
   max-width: 24ch;
   overflow-wrap: anywhere;
   font-size: clamp(var(--fs-h2), 4vw, var(--fs-h1));
@@ -69,6 +70,8 @@
 .page--home .my-learning-path__heading h2,
 .page--home .academy-paths__heading h2,
 .home-section-heading h2 {
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-weight: var(--weight-light);
 }
 
@@ -129,6 +132,14 @@
   border-radius: var(--radius-xs);
   outline: 2px solid var(--border-focus);
   outline-offset: 2px;
+}
+
+.recommendation-settings summary:hover {
+  color: var(--text-primary);
+}
+
+.recommendation-settings summary:active {
+  color: var(--action-primary-hover);
 }
 
 .recommendation-settings__chevron {
@@ -219,6 +230,10 @@
   outline-offset: -3px;
 }
 
+.learning-tool summary:active {
+  background: var(--color-accent-soft);
+}
+
 .learning-tool__icon {
   display: inline-grid;
   place-items: center;
@@ -237,6 +252,8 @@
 }
 
 .learning-tool__copy strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-family: var(--font-head);
   font-size: var(--fs-h4);
   font-weight: var(--weight-medium);
@@ -320,7 +337,7 @@
 
 @media (max-width: 40rem) {
   .page--home .hero {
-    padding-block: var(--space-7);
+    padding-block: var(--space-6) var(--space-8);
   }
 
   .page--home .resume-button {

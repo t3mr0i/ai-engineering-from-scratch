@@ -10,7 +10,7 @@
  *
  * The requested file is bundled with the function at deploy time under
  * ./_data (staged from phases/ — see the workflow and serve.sh), mirroring
- * the docs/en.md, docs/de.md + quiz.json + code/main.py + assets/*
+ * the docs/en.md, docs/de.md + quiz.json + code/main.py + outputs/* + assets/*
  * selection the site has always used.
  */
 
@@ -20,17 +20,19 @@ const { COOKIE_NAME, readCookie, isValidToken } = require('../lib/gate-auth');
 
 const DATA_DIR = path.resolve(__dirname, '_data');
 
-// Every path this endpoint will ever serve has exactly one of these four
+// Every path this endpoint will ever serve has exactly one of these five
 // shapes. <phase>, <lesson>, and <filename> are restricted to a conservative
 // character class (letters, digits, dot, dash, underscore) with no slashes
 // inside a segment — that alone rules out extra path segments, wrong
 // extensions, and (because the pattern requires a literal "phases/" prefix
 // with no leading slash) absolute paths.
 const SEGMENT = '[A-Za-z0-9._-]+';
+const OUTPUT_FILE = '[A-Za-z0-9_-]+\\.(?:md|json|jsonl|py|js|ts|rs|jl|sh|txt|ya?ml|toml)';
 const PATTERNS = [
   { re: new RegExp('^phases/(' + SEGMENT + ')/(' + SEGMENT + ')/docs/(?:en|de)\\.md$'), type: 'text/markdown' },
   { re: new RegExp('^phases/(' + SEGMENT + ')/(' + SEGMENT + ')/quiz\\.json$'), type: 'application/json' },
   { re: new RegExp('^phases/(' + SEGMENT + ')/(' + SEGMENT + ')/code/main\\.py$'), type: 'text/x-python' },
+  { re: new RegExp('^phases/(' + SEGMENT + ')/(' + SEGMENT + ')/outputs/(' + OUTPUT_FILE + ')$'), type: 'text/plain; charset=utf-8' },
   { re: new RegExp('^phases/(' + SEGMENT + ')/(' + SEGMENT + ')/assets/(' + SEGMENT + ')$'), type: 'image/svg+xml' },
 ];
 

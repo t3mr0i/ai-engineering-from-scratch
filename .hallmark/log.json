@@ -1,6 +1,14 @@
 [
   {
     "date": "2026-08-31",
+    "macrostructure": "Long Document / Chapter Rail",
+    "theme": "LHIND Flight Deck",
+    "enrichment": "none",
+    "brief": "Clarify lesson metadata and turn the decorative lesson route into a useful chapter index",
+    "scope": "component"
+  },
+  {
+    "date": "2026-08-31",
     "macrostructure": "Index-First",
     "theme": "LHIND Flight Deck",
     "enrichment": "none",
