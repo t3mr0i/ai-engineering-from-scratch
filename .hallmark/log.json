@@ -1,5 +1,13 @@
 [
   {
+    "date": "2026-08-31",
+    "macrostructure": "Index-First",
+    "theme": "LHIND Flight Deck",
+    "enrichment": "none",
+    "brief": "Reorder the learning homepage around one current path, focused recommendations, optional tools, and the full catalog",
+    "scope": "app"
+  },
+  {
     "date": "2026-08-24",
     "macrostructure": "Split Studio",
     "theme": "DESIGN.md / Flight Deck",

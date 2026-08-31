@@ -403,16 +403,14 @@
     }).sort(function (a, b) {
       return Number(a.foundationRank || 999) - Number(b.foundationRank || 999);
     });
-    var visiblePaths = state.academyAll
-      ? allPaths
-      : uniqueAcademyPaths(primaryRecommendations.concat(foundationPaths));
+    var visiblePaths = state.academyAll ? allPaths : primaryRecommendations;
     var saved = progressApi && progressApi.getLearningPath ? progressApi.getLearningPath() : null;
     var activePath = saved && saved.profileId === profileId && allPaths.find(function (path) {
       return path.academyCourse === saved.academyCourse;
     });
 
     if (!activePath && visiblePaths.length) {
-      activePath = foundationPaths[0] || primaryRecommendations[0];
+      activePath = primaryRecommendations[0] || foundationPaths[0];
       saveAcademyPath(activePath, profileId, activeLevel, "recommendation");
     }
 

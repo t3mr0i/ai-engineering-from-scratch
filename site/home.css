@@ -1,0 +1,369 @@
+/* Hallmark · genre: modern-minimal · macrostructure: Index-First · theme: LHIND Flight Deck · enrichment: none · nav: N9 · footer: none · design-system: DESIGN.md · designed-as-app · pre-emit critique: P5 H5 E4 S5 R5 V5 */
+
+/* Homepage-only composition layer. The shared Lufthansa tokens and component
+   contracts continue to live in lrn/tokens.css, lrn/lrn.css, and pan.css. */
+
+.page--home {
+  width: min(var(--container-max), 100%);
+  padding-block-end: var(--space-10);
+}
+
+.page--home .hero {
+  padding-block: var(--space-8);
+  background: var(--lhg-core-blue);
+  text-align: start;
+}
+
+.page--home .hero__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-7);
+  align-items: end;
+  width: min(var(--container-max), 100%);
+}
+
+.hero__copy {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.page--home .hero h1 {
+  max-width: 24ch;
+  overflow-wrap: anywhere;
+  font-size: clamp(var(--fs-h2), 4vw, var(--fs-h1));
+  font-weight: var(--weight-light);
+}
+
+.hero__copy p {
+  max-width: 58ch;
+  margin: 0;
+  color: var(--lhg-blue-100);
+  font-size: var(--fs-body);
+}
+
+.page--home .resume-button {
+  flex: none;
+  min-height: 48px;
+  margin: 0;
+  padding-inline: var(--space-5);
+  border-width: 1px;
+  font-family: var(--font-text);
+  font-size: var(--fs-body-sm);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+}
+
+.page--home .resume-button:hover {
+  transform: translateY(-1px);
+}
+
+.page--home .cockpit {
+  gap: 0;
+}
+
+.page--home .my-learning-path {
+  margin-block-start: var(--space-8);
+}
+
+.page--home .my-learning-path__heading h2,
+.page--home .academy-paths__heading h2,
+.home-section-heading h2 {
+  font-weight: var(--weight-light);
+}
+
+.page--home .academy-paths {
+  gap: var(--space-6);
+  margin-block: var(--space-10) 0;
+  padding-block: 0;
+  border-block: 0;
+}
+
+.page--home .academy-paths__heading {
+  align-items: start;
+  padding-block-end: var(--space-5);
+  border-block-end: 1px solid var(--border-subtle);
+}
+
+.page--home .academy-paths__heading p:last-child {
+  margin-block-start: var(--space-2);
+}
+
+.page--home .academy-paths__actions {
+  align-self: end;
+}
+
+.recommendation-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(12rem, 0.45fr);
+  gap: var(--space-4);
+  align-items: end;
+  padding: var(--space-5);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-sunken);
+}
+
+.recommendation-settings {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.recommendation-settings summary {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  width: fit-content;
+  min-height: 44px;
+  color: var(--text-link);
+  font-size: var(--fs-body-sm);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  list-style: none;
+}
+
+.recommendation-settings summary::-webkit-details-marker {
+  display: none;
+}
+
+.recommendation-settings summary:focus-visible {
+  border-radius: var(--radius-xs);
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.recommendation-settings__chevron {
+  transition: transform var(--dur-base) var(--ease-standard);
+}
+
+.recommendation-settings[open] .recommendation-settings__chevron {
+  transform: rotate(180deg);
+}
+
+.recommendation-controls .selector-field select {
+  background: var(--color-surface);
+}
+
+.page--home .academy-path-list {
+  gap: var(--space-5);
+}
+
+.page--home .academy-path-group__heading {
+  display: none;
+}
+
+.page--home .academy-path-group__grid {
+  gap: var(--space-4);
+}
+
+.learning-tools,
+.training-catalog {
+  display: grid;
+  gap: var(--space-5);
+  margin-block-start: var(--space-10);
+}
+
+.home-section-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(20rem, 1.2fr);
+  gap: var(--space-7);
+  align-items: end;
+  padding-block-end: var(--space-5);
+  border-block-end: 1px solid var(--border-subtle);
+}
+
+.home-section-heading h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-family: var(--font-head);
+  font-size: clamp(var(--fs-h3), 3vw, var(--fs-h2));
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-heading);
+  text-wrap: balance;
+}
+
+.home-section-heading p {
+  max-width: 52ch;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-body-sm);
+  text-wrap: pretty;
+}
+
+.learning-tool {
+  overflow: clip;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-xs);
+}
+
+.learning-tool summary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  gap: var(--space-4);
+  align-items: center;
+  min-height: 72px;
+  padding: var(--space-4) var(--space-5);
+  color: var(--text-primary);
+  cursor: pointer;
+  list-style: none;
+  transition: background-color var(--dur-fast) var(--ease-standard);
+}
+
+.learning-tool summary::-webkit-details-marker {
+  display: none;
+}
+
+.learning-tool summary:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: -3px;
+}
+
+.learning-tool__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--color-accent-soft);
+  color: var(--action-primary);
+  font-size: var(--fs-h4);
+}
+
+.learning-tool__copy {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.learning-tool__copy strong {
+  font-family: var(--font-head);
+  font-size: var(--fs-h4);
+  font-weight: var(--weight-medium);
+  line-height: var(--lh-snug);
+}
+
+.learning-tool__copy span {
+  color: var(--text-secondary);
+  font-size: var(--fs-body-sm);
+}
+
+.learning-tool__action {
+  color: var(--text-link);
+  font-size: var(--fs-caption);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+}
+
+.learning-tool__chevron {
+  color: var(--text-muted);
+  transition: transform var(--dur-base) var(--ease-standard);
+}
+
+.learning-tool[open] .learning-tool__chevron {
+  transform: rotate(180deg);
+}
+
+.learning-tool > .personal-plan,
+.learning-tool > .team-learning {
+  margin: 0;
+  padding: var(--space-7) var(--space-5);
+  border: 0;
+  border-block-start: 1px solid var(--border-subtle);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.training-catalog {
+  padding-block-start: var(--space-8);
+  border-block-start: 1px solid var(--border-strong);
+}
+
+.home-section-heading--catalog {
+  padding-block-end: 0;
+  border-block-end: 0;
+}
+
+.course-search--home {
+  display: grid;
+  gap: var(--space-2);
+  width: min(48rem, 100%);
+}
+
+.course-search--home .course-search__control {
+  width: 100%;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .learning-tool summary:hover {
+    background: var(--color-surface-sunken);
+  }
+}
+
+@media (max-width: 52rem) {
+  .page--home .hero__inner,
+  .home-section-heading {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+  }
+
+  .page--home .resume-button {
+    justify-self: start;
+  }
+
+  .page--home .academy-paths,
+  .learning-tools,
+  .training-catalog {
+    margin-block-start: var(--space-9);
+  }
+}
+
+@media (max-width: 40rem) {
+  .page--home .hero {
+    padding-block: var(--space-7);
+  }
+
+  .page--home .resume-button {
+    width: 100%;
+  }
+
+  .page--home .my-learning-path {
+    margin-block-start: var(--space-7);
+  }
+
+  .recommendation-controls {
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--space-4);
+  }
+
+  .page--home .academy-paths__actions {
+    align-items: stretch;
+  }
+
+  .learning-tool summary {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: var(--space-3);
+    padding-inline: var(--space-4);
+  }
+
+  .learning-tool__copy span,
+  .learning-tool__action {
+    display: none;
+  }
+
+  .learning-tool > .personal-plan,
+  .learning-tool > .team-learning {
+    padding: var(--space-5) var(--space-4);
+  }
+
+  .training-catalog {
+    padding-block-start: var(--space-7);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recommendation-settings__chevron,
+  .learning-tool__chevron {
+    transition: none;
+  }
+}

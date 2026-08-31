@@ -14,6 +14,7 @@ window.SITE_I18N = {
   lang_toggle_title: { en: "Switch language", de: "Sprache wechseln" },
   skip_content: { en: "Skip to content", de: "Zum Inhalt springen" },
   skip_catalog: { en: "Skip to course catalog", de: "Zum Kurskatalog springen" },
+  skip_learning_home: { en: "Skip to your learning", de: "Zu deinem Lernen springen" },
   // shared hybrid search / command palette
   global_search_label: { en: "Search learning catalog", de: "Lernkatalog durchsuchen" },
   global_search_short: { en: "Search", de: "Suche" },
@@ -30,6 +31,20 @@ window.SITE_I18N = {
 
   // index.html — hero title + resume button are rendered dynamically
   // (time-of-day greeting + last lesson name) in index.html's inline script.
+  home_hero_intro: { en: "Continue your current course or choose one clear next step below.", de: "Setze deinen aktuellen Kurs fort oder wähle unten einen klaren nächsten Schritt." },
+  home_explore_recommendations: { en: "Explore recommendations", de: "Empfehlungen ansehen" },
+  home_dashboard_label: { en: "Learning dashboard", de: "Lernübersicht" },
+  recommendation_controls_label: { en: "Choose profile and level", de: "Profil und Level auswählen" },
+  recommendation_settings_toggle: { en: "Adjust recommendations", de: "Empfehlungen anpassen" },
+  learning_tools_title: { en: "Plan and verify", de: "Planen und nachweisen" },
+  learning_tools_intro: { en: "Open these tools only when you need a custom plan or team evidence.", de: "Öffne diese Werkzeuge nur, wenn du einen eigenen Plan oder Team-Nachweise brauchst." },
+  learning_tool_plan_title: { en: "Build a personal plan", de: "Persönlichen Plan erstellen" },
+  learning_tool_plan_intro: { en: "Turn one concrete goal into an editable course sequence.", de: "Mache aus einem konkreten Ziel eine anpassbare Kursreihenfolge." },
+  learning_tool_team_title: { en: "Join team learning", de: "Teamlernen beitreten" },
+  learning_tool_team_intro: { en: "Use an assignment code and build quiz-based evidence.", de: "Nutze einen Zuweisungscode und sammle quizbasierte Nachweise." },
+  learning_tool_open: { en: "Details", de: "Details" },
+  training_catalog_title: { en: "Browse all trainings", de: "Alle Trainings durchsuchen" },
+  training_catalog_intro: { en: "Search the full catalog or narrow it by learning status.", de: "Durchsuche den vollständigen Katalog oder filtere nach Lernstatus." },
   skills_progress_overline: { en: "Learning progress", de: "Lernfortschritt" },
   skills_progress_title: { en: "Your capability progress", de: "Dein Kompetenzfortschritt" },
   skills_progress_intro: { en: "Assigned courses move you through Acquire, Deepen, and Create — with every contribution visible.", de: "Zugeordnete Kurse bringen dich durch Acquire, Deepen und Create – jeder Beitrag bleibt nachvollziehbar." },
@@ -147,8 +162,8 @@ window.SITE_I18N = {
 
   // lrn/data.js academyPaths — source-aligned AI Literacy Academy paths.
   academy_paths_overline: { en: "AI Literacy Academy", de: "AI Literacy Academy" },
-  academy_paths_title: { en: "Your AI trainings", de: "Deine AI Trainings" },
-  academy_paths_intro: { en: "Your profile and level shape the first recommendations. Shared foundations remain visible for everyone.", de: "Dein Profil und Level bestimmen die ersten Empfehlungen. Gemeinsame Grundlagen bleiben für alle sichtbar." },
+  academy_paths_title: { en: "Recommended next", de: "Als Nächstes empfohlen" },
+  academy_paths_intro: { en: "Three focused options based on your profile and learning depth.", de: "Drei fokussierte Optionen passend zu deinem Profil und deiner Lerntiefe." },
   academy_paths_count: { en: "{count} matching trainings", de: "{count} passende Trainings" },
   academy_paths_count_relevant: { en: "{count} selected trainings", de: "{count} ausgewählte Trainings" },
   academy_paths_count_all: { en: "{count} trainings in total", de: "{count} Trainings insgesamt" },
@@ -162,8 +177,8 @@ window.SITE_I18N = {
   academy_group_role_intro: { en: "Trainings for consulting, decision, leadership, and sales responsibilities.", de: "Trainings für Beratung, Entscheidungen, Führung und Vertrieb." },
   academy_group_technical_title: { en: "Technical specializations", de: "Technische Spezialisierungen" },
   academy_group_technical_intro: { en: "Advanced paths for engineering, architecture, agents, and infrastructure.", de: "Vertiefende Pfade für Engineering, Architektur, Agenten und Infrastruktur." },
-  my_path_title: { en: "Your learning path", de: "Dein Lernpfad" },
-  my_path_intro: { en: "Your selected path is saved in this browser and always points you to the next useful step.", de: "Dein gewählter Pfad wird in diesem Browser gespeichert und zeigt dir jederzeit den nächsten sinnvollen Schritt." },
+  my_path_title: { en: "Your current path", de: "Dein aktueller Lernpfad" },
+  my_path_intro: { en: "See your progress and open the next useful course.", de: "Sieh deinen Fortschritt und öffne den nächsten sinnvollen Kurs." },
   my_path_saved_locally: { en: "Saved in this browser", de: "In diesem Browser gespeichert" },
   my_path_save_error: { en: "This browser could not save your path", de: "Dieser Browser konnte deinen Pfad nicht speichern" },
   my_path_progress: { en: "Overall path progress", de: "Gesamter Lernpfad-Fortschritt" },

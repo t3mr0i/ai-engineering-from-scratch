@@ -34,9 +34,10 @@
   <link rel="stylesheet" href="lrn/lrn.css?v=20260825d">
   <link rel="stylesheet" href="badges.css?v=20260713a">
   <link rel="stylesheet" href="pan.css?v=20260830a">
+  <link rel="stylesheet" href="home.css?v=20260831a">
 </head>
 <body>
-  <a class="skip-link" href="#cockpit" data-i18n="skip_catalog">Skip to course catalog</a>
+  <a class="skip-link" href="#myLearningPath" data-i18n="skip_learning_home">Skip to your learning</a>
   <header class="nav-edge" aria-label="Site navigation">
     <a class="wordmark" href="index.html">
       <img class="wordmark__logo" src="assets/logo/lhind-logo-blue.png" alt="LHIND" />
@@ -60,7 +61,7 @@
       <span id="langIcon" class="theme-icon">EN</span>
     </a>
   </header>
-  <script src="i18n.js?v=20260825d"></script>
+  <script src="i18n.js?v=20260831a"></script>
   <script src="lang.js"></script>
   <script>
     /* D1 — dark-mode toggle button. Wires the button in the header above
@@ -101,33 +102,114 @@
   <main class="page page--home">
     <section class="hero" aria-labelledby="heroTitle">
       <div class="hero__inner">
-        <h1 id="heroTitle">Ready to continue?</h1>
-        <a id="resumeButton" href="#" class="resume-button">
-          <span class="button-text" id="resumeButtonText">Continue</span>
+        <div class="hero__copy">
+          <h1 id="heroTitle">Ready to continue?</h1>
+          <p data-i18n="home_hero_intro">Continue your current course or choose one clear next step below.</p>
+        </div>
+        <a id="resumeButton" href="#academyPathsTitle" class="resume-button">
+          <span class="button-text" id="resumeButtonText" data-i18n="home_explore_recommendations">Explore recommendations</span>
+          <i class="ph-light ph-arrow-right" aria-hidden="true"></i>
         </a>
       </div>
     </section>
 
-    <!-- Original cockpit / course view stays intact -->
-    <section class="cockpit" id="cockpit" aria-label="AI course catalog">
-      <div class="selector-card" role="group" aria-label="Choose profile and level, then search courses" data-i18n-aria-label="selector_group_label">
-        <label class="selector-field">
-          <span class="selector-field__label"><i class="ph-light ph-user-circle" aria-hidden="true"></i> <span data-i18n="role_label">Role</span></span>
-          <select id="roleSelect" aria-label="Choose role" data-i18n-aria-label="role_select_label"></select>
-        </label>
-        <label class="selector-field" hidden>
-          <span class="selector-field__label"><i class="ph-light ph-squares-four" aria-hidden="true"></i> <span data-i18n="key_area_label">Key Area</span></span>
-          <select id="keyAreaSelect" aria-label="Choose key area" data-i18n-aria-label="key_area_select_label"></select>
-        </label>
-        <label class="selector-field" hidden>
-          <span class="selector-field__label"><i class="ph-light ph-identification-badge" aria-hidden="true"></i> <span data-i18n="specialization_label">Ausprägung</span></span>
-          <select id="specializationSelect" aria-label="Choose specialization" data-i18n-aria-label="specialization_select_label"></select>
-        </label>
-        <label class="selector-field">
-          <span class="selector-field__label"><i class="ph-light ph-chart-line-up" aria-hidden="true"></i> <span data-i18n="level_label">Level</span></span>
-          <select id="levelSelect" aria-label="Choose level" data-i18n-aria-label="level_select_label"></select>
-        </label>
-        <form class="course-search course-search--selector" id="searchForm" role="search">
+    <section class="cockpit" id="cockpit" aria-label="Learning dashboard" data-i18n-aria-label="home_dashboard_label">
+      <section class="my-learning-path" id="myLearningPath" aria-labelledby="myLearningPathTitle">
+        <div class="my-learning-path__heading">
+          <div>
+            <h2 id="myLearningPathTitle" data-i18n="my_path_title">Your learning path</h2>
+            <p data-i18n="my_path_intro">Your selected path is saved in this browser and always points you to the next useful step.</p>
+          </div>
+          <span class="my-learning-path__saved" id="myLearningPathSaved">
+            <i class="ph-light ph-device-mobile" aria-hidden="true"></i>
+            <span data-i18n="my_path_saved_locally">Saved in this browser</span>
+          </span>
+        </div>
+        <div id="myLearningPathContent"></div>
+      </section>
+
+      <section class="academy-paths" aria-labelledby="academyPathsTitle">
+        <div class="academy-paths__heading">
+          <div>
+            <h2 id="academyPathsTitle" data-i18n="academy_paths_title">Recommended next</h2>
+            <p data-i18n="academy_paths_intro">Three focused options based on your profile and learning depth.</p>
+          </div>
+          <div class="academy-paths__actions">
+            <span id="academyPathCount" aria-live="polite"></span>
+            <button class="academy-paths__toggle" id="academyAllToggle" type="button" aria-pressed="false" data-i18n="academy_paths_show_all">Show all AI trainings</button>
+          </div>
+        </div>
+        <details class="recommendation-settings">
+          <summary>
+            <i class="ph-light ph-sliders-horizontal" aria-hidden="true"></i>
+            <span data-i18n="recommendation_settings_toggle">Adjust recommendations</span>
+            <i class="ph-light ph-caret-down recommendation-settings__chevron" aria-hidden="true"></i>
+          </summary>
+          <div class="recommendation-controls" role="group" aria-label="Choose profile and level" data-i18n-aria-label="recommendation_controls_label">
+            <label class="selector-field">
+              <span class="selector-field__label"><i class="ph-light ph-user-circle" aria-hidden="true"></i> <span data-i18n="role_label">Role</span></span>
+              <select id="roleSelect" aria-label="Choose role" data-i18n-aria-label="role_select_label"></select>
+            </label>
+            <label class="selector-field" hidden>
+              <span class="selector-field__label"><i class="ph-light ph-squares-four" aria-hidden="true"></i> <span data-i18n="key_area_label">Key Area</span></span>
+              <select id="keyAreaSelect" aria-label="Choose key area" data-i18n-aria-label="key_area_select_label"></select>
+            </label>
+            <label class="selector-field" hidden>
+              <span class="selector-field__label"><i class="ph-light ph-identification-badge" aria-hidden="true"></i> <span data-i18n="specialization_label">Ausprägung</span></span>
+              <select id="specializationSelect" aria-label="Choose specialization" data-i18n-aria-label="specialization_select_label"></select>
+            </label>
+            <label class="selector-field">
+              <span class="selector-field__label"><i class="ph-light ph-chart-line-up" aria-hidden="true"></i> <span data-i18n="level_label">Level</span></span>
+              <select id="levelSelect" aria-label="Choose level" data-i18n-aria-label="level_select_label"></select>
+            </label>
+          </div>
+        </details>
+        <div class="academy-path-list" id="academyPathList"></div>
+      </section>
+
+      <section class="learning-tools" aria-labelledby="learningToolsTitle">
+        <div class="home-section-heading">
+          <h2 id="learningToolsTitle" data-i18n="learning_tools_title">Plan and verify</h2>
+          <p data-i18n="learning_tools_intro">Open these tools only when you need a custom plan or team evidence.</p>
+        </div>
+
+        <details class="learning-tool">
+          <summary>
+            <span class="learning-tool__icon" aria-hidden="true"><i class="ph-light ph-target"></i></span>
+            <span class="learning-tool__copy">
+              <strong data-i18n="learning_tool_plan_title">Build a personal plan</strong>
+              <span data-i18n="learning_tool_plan_intro">Turn one concrete goal into an editable course sequence.</span>
+            </span>
+            <span class="learning-tool__action" data-i18n="learning_tool_open">Details</span>
+            <i class="ph-light ph-caret-down learning-tool__chevron" aria-hidden="true"></i>
+          </summary>
+          <section class="personal-plan" id="personalPlan" aria-labelledby="personalPlanTitle">
+            <div id="personalPlanApp"></div>
+          </section>
+        </details>
+
+        <details class="learning-tool">
+          <summary>
+            <span class="learning-tool__icon" aria-hidden="true"><i class="ph-light ph-users-three"></i></span>
+            <span class="learning-tool__copy">
+              <strong data-i18n="learning_tool_team_title">Join team learning</strong>
+              <span data-i18n="learning_tool_team_intro">Use an assignment code and build quiz-based evidence.</span>
+            </span>
+            <span class="learning-tool__action" data-i18n="learning_tool_open">Details</span>
+            <i class="ph-light ph-caret-down learning-tool__chevron" aria-hidden="true"></i>
+          </summary>
+          <section class="team-learning" id="teamLearning" aria-label="Team learning and skill evidence">
+            <div id="teamLearningApp"></div>
+          </section>
+        </details>
+      </section>
+
+      <section class="training-catalog" aria-labelledby="trainingCatalogTitle">
+        <div class="home-section-heading home-section-heading--catalog">
+          <h2 id="trainingCatalogTitle" data-i18n="training_catalog_title">Browse all trainings</h2>
+          <p data-i18n="training_catalog_intro">Search the full catalog or narrow it by learning status.</p>
+        </div>
+        <form class="course-search course-search--home" id="searchForm" role="search">
           <label class="selector-field__label" for="searchInput">
             <i class="ph-light ph-magnifying-glass" aria-hidden="true"></i>
             <span data-i18n="lrn_search_label">Search courses</span>
@@ -151,73 +233,18 @@
           </div>
           <p class="course-search__hint" id="searchHint" data-i18n="lrn_search_hint">Matches titles, topics, formats, related terms, and common typos in German and English.</p>
         </form>
-      </div>
 
-      <section class="my-learning-path" id="myLearningPath" aria-labelledby="myLearningPathTitle">
-        <div class="my-learning-path__heading">
-          <div>
-            <h2 id="myLearningPathTitle" data-i18n="my_path_title">Your learning path</h2>
-            <p data-i18n="my_path_intro">Your selected path is saved in this browser and always points you to the next useful step.</p>
-          </div>
-          <span class="my-learning-path__saved" id="myLearningPathSaved">
-            <i class="ph-light ph-device-mobile" aria-hidden="true"></i>
-            <span data-i18n="my_path_saved_locally">Saved in this browser</span>
-          </span>
+        <div class="catalog-bar" role="group" aria-label="Course filters" data-i18n-aria-label="course_filters_label">
+          <div class="seg-control" id="courseFilters" role="group" aria-label="Filter course status" data-i18n-aria-label="course_status_filters_label"></div>
+          <button class="filter-reset" type="button" id="resetBtn" aria-label="Reset all filters and selections" data-i18n-aria-label="reset_filters_label" title="Reset all filters and selections" data-i18n-title="reset_filters_label">
+            <i class="ph-light ph-arrow-counter-clockwise" aria-hidden="true"></i>
+            <span data-i18n="reset_btn">Reset</span>
+          </button>
         </div>
-        <div id="myLearningPathContent"></div>
+
+        <p class="result-line" id="resultLine" aria-live="polite"></p>
+        <div class="course-grid" id="courseGrid"></div>
       </section>
-
-      <section class="personal-plan" id="personalPlan" aria-labelledby="personalPlanTitle">
-        <div id="personalPlanApp"></div>
-      </section>
-
-      <section class="team-learning" id="teamLearning" aria-label="Team learning and skill evidence">
-        <div id="teamLearningApp"></div>
-      </section>
-
-      <section class="upskilling-journey" aria-labelledby="upskillingJourneyTitle">
-        <div class="upskilling-journey__heading">
-          <p class="academy-paths__overline" data-i18n="upskilling_overline">Your development path</p>
-          <h2 id="upskillingJourneyTitle" data-i18n="upskilling_title">AI Upskilling, step by step</h2>
-        </div>
-        <ol class="upskilling-journey__steps">
-          <li data-step="1">
-            <a href="assessment.html"><span>01</span><strong data-i18n="upskilling_step_assess">Complete self-assessment</strong></a>
-          </li>
-          <li data-step="2"><span>02</span><strong data-i18n="upskilling_step_recommendations">Receive recommended trainings</strong></li>
-          <li data-step="3"><span>03</span><strong data-i18n="upskilling_step_online">Complete online training</strong></li>
-          <li data-step="4"><span>04</span><strong data-i18n="upskilling_step_blended">Join an optional blended session</strong></li>
-          <li data-step="5">
-            <a href="skills.html"><span>05</span><strong data-i18n="upskilling_step_progress">Track capability progress</strong></a>
-          </li>
-        </ol>
-      </section>
-
-      <section class="academy-paths" aria-labelledby="academyPathsTitle">
-        <div class="academy-paths__heading">
-          <div>
-            <p class="academy-paths__overline" data-i18n="academy_paths_overline">AI Literacy Academy</p>
-            <h2 id="academyPathsTitle" data-i18n="academy_paths_title">Your AI trainings</h2>
-            <p data-i18n="academy_paths_intro">Your profile and level shape the first recommendations. Shared foundations remain visible for everyone.</p>
-          </div>
-          <div class="academy-paths__actions">
-            <span id="academyPathCount" aria-live="polite"></span>
-            <button class="academy-paths__toggle" id="academyAllToggle" type="button" aria-pressed="false" data-i18n="academy_paths_show_all">Show all AI trainings</button>
-          </div>
-        </div>
-        <div class="academy-path-list" id="academyPathList"></div>
-      </section>
-
-      <div class="catalog-bar" role="group" aria-label="Course filters" data-i18n-aria-label="course_filters_label">
-        <div class="seg-control" id="courseFilters" role="group" aria-label="Filter course status" data-i18n-aria-label="course_status_filters_label"></div>
-        <button class="filter-reset" type="button" id="resetBtn" aria-label="Reset all filters and selections" data-i18n-aria-label="reset_filters_label" title="Reset all filters and selections" data-i18n-title="reset_filters_label">
-          <i class="ph-light ph-arrow-counter-clockwise" aria-hidden="true"></i>
-          <span data-i18n="reset_btn">Reset</span>
-        </button>
-      </div>
-
-      <p class="result-line" id="resultLine" aria-live="polite"></p>
-      <div class="course-grid" id="courseGrid"></div>
     </section>
   </main>
 
@@ -234,7 +261,7 @@
   <script src="lrn/mastery.js?v=20260830a"></script>
   <script src="lrn/learning-plan.js?v=20260830a"></script>
   <script src="lrn/plan-builder.js?v=20260830a"></script>
-  <script src="lrn/lrn.js?v=20260825d"></script>
+  <script src="lrn/lrn.js?v=20260831a"></script>
   <script src="lrn/report-sync.js?v=20260830a"></script>
   <script src="lrn/team-learning.js?v=20260830a"></script>
   <script src="pan.js?v=20260830a"></script>
@@ -314,8 +341,7 @@
         }
       }
 
-      resumeButton.href = resumeHref;
-      resumeButton.style.display = lessonName ? '' : 'none';
+      resumeButton.href = lessonName ? resumeHref : '#academyPathsTitle';
       render();
       document.addEventListener('sitelang:change', render);
     });
