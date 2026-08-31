@@ -85,6 +85,8 @@ test("PAN sends an OpenAI-compatible, curriculum-grounded request", () => {
     assert.equal(request.temperature, undefined);
     assert.equal(request.messages[0].role, "system");
     assert.match(request.messages[0].content, /Markdown/);
+    assert.match(request.messages[0].content, /2[–-]4 short paragraphs/i);
+    assert.match(request.messages[0].content, /recommendation, alternatives, and next step/i);
     assert.match(request.messages[0].content, /complete user messages in the first person/i);
     assert.match(request.messages[0].content, /add-course-to-plan/);
     assert.match(request.messages[1].content, /PRIMER-01/);
@@ -118,6 +120,36 @@ test("Markdown is parsed into a constrained block model without interpreting HTM
     { type: "paragraph", text: "<script>alert(1)</script>" }
   ]);
   assert.doesNotMatch(panSource, /\.innerHTML\s*=/);
+});
+
+test("long PAN prose is split into short readable paragraphs", () => {
+  const answer = "I can do either. For you as an AI Engineer, the most role-relevant next course is usually better: LRN-25 — AI: Introduction to Architecture for AI-Systems. If you want the easiest continuation from what you already have in progress, LRN-06 — AI for Software Engineers / GitHub Copilot is the smoother next step. If you want, I can recommend one based on either role fit or continuity.";
+  assert.deepEqual(PAN.parseMarkdownBlocks(answer), [
+    { type: "paragraph", text: "I can do either." },
+    { type: "paragraph", text: "For you as an AI Engineer, the most role-relevant next course is usually better: LRN-25 — AI: Introduction to Architecture for AI-Systems." },
+    { type: "paragraph", text: "If you want the easiest continuation from what you already have in progress, LRN-06 — AI for Software Engineers / GitHub Copilot is the smoother next step." },
+    { type: "paragraph", text: "If you want, I can recommend one based on either role fit or continuity." }
+  ]);
+});
+
+test("only validated source-backed course mentions become inline references", () => {
+  const sources = [{
+    type: "course",
+    id: "LRN-25",
+    title: "AI: Introduction to Architecture for AI-Systems",
+    href: "/lrn/course.html?id=LRN-25"
+  }];
+  const text = "Start with LRN-25 — AI: Introduction to Architecture for AI-Systems, then compare the options.";
+  const mention = PAN.findCourseMention(text, sources);
+  assert.equal(text.slice(mention.index, mention.end), "LRN-25 — AI: Introduction to Architecture for AI-Systems");
+  assert.equal(mention.source.href, "/lrn/course.html?id=LRN-25");
+  assert.equal(PAN.findCourseMention("Start with LRN-99.", sources), null);
+
+  const titleOnly = PAN.findCourseMention("Open AI: Introduction to Architecture for AI-Systems next.", sources);
+  assert.equal(
+    "Open AI: Introduction to Architecture for AI-Systems next.".slice(titleOnly.index, titleOnly.end),
+    "AI: Introduction to Architecture for AI-Systems"
+  );
 });
 
 test("course references receive validated open and add-to-plan tools", () => {

@@ -40,6 +40,7 @@
 .pan-compose__cancel:focus-visible,
 .pan-message__action:focus-visible,
 .pan-tool-action:focus-visible,
+.pan-course-reference:focus-visible,
 .personal-plan button:focus-visible,
 .personal-plan input:focus-visible,
 .personal-plan select:focus-visible {
@@ -306,7 +307,29 @@
 .pan-markdown ol { padding-inline-start: var(--space-5, 24px); }
 .pan-markdown li + li { margin-top: var(--space-1, 4px); }
 .pan-markdown strong { font-weight: var(--weight-bold, 700); }
-.pan-markdown a { color: var(--text-link, #2d5fe4); text-underline-offset: 0.16em; }
+.pan-markdown a {
+  color: var(--text-link, #2d5fe4);
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.16em;
+}
+
+.pan-course-reference {
+  padding-inline: 0.12em;
+  border-radius: var(--radius-xs, 4px);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  font-weight: var(--weight-semibold, 600);
+  text-decoration-color: color-mix(in srgb, var(--text-link, #2d5fe4) 58%, transparent);
+  transition: color var(--dur-fast, 140ms) var(--ease-standard, ease),
+              background-color var(--dur-fast, 140ms) var(--ease-standard, ease),
+              text-decoration-color var(--dur-fast, 140ms) var(--ease-standard, ease);
+}
+
+.pan-course-reference:hover {
+  background: var(--color-accent-soft, #dce7f6);
+  color: var(--action-accent-hover, #1f4fca);
+  text-decoration-color: currentColor;
+}
 
 .pan-markdown code {
   padding: 0.12em 0.34em;
