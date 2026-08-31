@@ -5,6 +5,7 @@ import { readFileSync } from "node:fs";
 
 const require = createRequire(import.meta.url);
 const PAN = require("./pan.js");
+const panSource = readFileSync(new URL("./pan.js", import.meta.url), "utf8");
 
 test("learner surfaces load the shared PAN assets", () => {
   const index = readFileSync(new URL("./index.html", import.meta.url), "utf8");
@@ -56,4 +57,51 @@ test("courseProgressSnapshot distinguishes complete and in-progress courses", ()
   globalThis.LrnData = previousData;
   globalThis.LrnCurriculumMap = previousMap;
   globalThis.AIFSProgress = previousProgress;
+});
+
+test("PAN uses the deployed OpenAI-compatible gateway route", () => {
+  assert.match(panSource, /GATEWAY_PATH = "\/api\/llm\/chat\/completions"/);
+  assert.match(panSource, /fetch\(GATEWAY_PATH/);
+  assert.doesNotMatch(panSource, /\/api\/lrn\/ai\/chat/);
+  assert.match(panSource, /azure\/gpt-5\.6-luna/);
+});
+
+test("PAN sends an OpenAI-compatible, curriculum-grounded request", () => {
+  const previousData = globalThis.LrnData;
+  const previousMap = globalThis.LrnCurriculumMap;
+  globalThis.LrnData = { courses: [{ id: "PRIMER-01", title: "LLM Primer", summary: "Tokens and context" }] };
+  globalThis.LrnCurriculumMap = { courseMaps: {} };
+  try {
+    const request = PAN.gatewayRequest("What next?", "en", [], { plannedCourses: [] });
+    assert.equal(request.model, "azure/gpt-5.6-luna");
+    assert.equal(request.temperature, undefined);
+    assert.equal(request.messages[0].role, "system");
+    assert.match(request.messages[1].content, /PRIMER-01/);
+    assert.deepEqual(request.messages.at(-1), { role: "user", content: "What next?" });
+  } finally {
+    globalThis.LrnData = previousData;
+    globalThis.LrnCurriculumMap = previousMap;
+  }
+});
+
+test("PAN normalizes a structured gateway completion", () => {
+  const payload = {
+    choices: [{
+      message: {
+        content: JSON.stringify({
+          answer: "Start with the primer.",
+          sources: [{ type: "course", id: "PRIMER-01" }],
+          followups: ["Why this course?"],
+          nextAction: { type: "open-course", target: "PRIMER-01", label: "Open primer" }
+        })
+      }
+    }]
+  };
+
+  assert.deepEqual(PAN.responseObject(payload), {
+    answer: "Start with the primer.",
+    sources: [{ type: "course", id: "PRIMER-01" }],
+    followups: ["Why this course?"],
+    nextAction: { type: "open-course", target: "PRIMER-01", label: "Open primer" }
+  });
 });

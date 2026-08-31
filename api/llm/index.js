@@ -12,6 +12,8 @@
  */
 
 const LLM_GATEWAY_URL = 'https://gateway.lhind.ai/v1/chat/completions';
+const PRIMARY_MODEL = 'azure/gpt-5.6-luna';
+const FALLBACK_MODEL = 'azure/gpt-5.4-mini';
 const LLM_RATE_LIMIT_PER_MIN = 20;
 const MAX_BODY_BYTES = 1_000_000;
 
@@ -50,12 +52,26 @@ module.exports = async function (context, req) {
   try {
     const headers = { 'content-type': 'application/json' };
     if (key) headers.Authorization = `Bearer ${key}`;
-    const upstream = await fetch(LLM_GATEWAY_URL, {
+    let upstream = await fetch(LLM_GATEWAY_URL, {
       method: 'POST',
       headers,
       body: raw,
     });
-    const text = await upstream.text();
+    let text = await upstream.text();
+    let requestedModel = '';
+    let parsedBody;
+    try {
+      parsedBody = JSON.parse(raw);
+      requestedModel = parsedBody && parsedBody.model;
+    } catch (_) {}
+    if (requestedModel === PRIMARY_MODEL && upstream.status >= 500) {
+      upstream = await fetch(LLM_GATEWAY_URL, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ ...parsedBody, model: FALLBACK_MODEL }),
+      });
+      text = await upstream.text();
+    }
     context.res = {
       status: upstream.status,
       headers: { 'Content-Type': 'application/json' },
