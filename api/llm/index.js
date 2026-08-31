@@ -1,10 +1,9 @@
 /**
- * LLM gateway proxy for notebooks — Azure Static Web Apps counterpart to
- * server/server.js's handleLlmProxy (see B31: this route existed only in
- * the OpenShift/dev server, so it 404'd on the SWA deployment regardless
- * of what the dev server could do). Injects LLM_GATEWAY_KEY server-side so
- * it never reaches the browser; kept independent of the ase_gate cookie,
- * same as the OpenShift version.
+ * LLM gateway proxy for notebooks — legacy Azure Static Web Apps managed
+ * function. Canonical implementation: server/server.js handleLlmProxy
+ * (OpenShift + local dev via serve.sh). Uses LLM_GATEWAY_KEY server-side when
+ * configured; the current internal gateway also accepts trusted requests
+ * without that optional credential. Kept independent of the ase_gate cookie.
  *
  * The rate limiter is in-memory per function instance, so it caps per
  * instance, not globally, under Functions' Consumption plan scale-out —
@@ -37,11 +36,6 @@ function rateLimited(ip) {
 
 module.exports = async function (context, req) {
   const key = process.env.LLM_GATEWAY_KEY;
-  if (!key) {
-    context.res = { status: 500, body: { error: { message: 'LLM gateway not configured' } } };
-    return;
-  }
-
   if (rateLimited(clientIp(req))) {
     context.res = { status: 429, body: { error: { message: 'rate limit exceeded, try again shortly' } } };
     return;
@@ -54,12 +48,11 @@ module.exports = async function (context, req) {
   }
 
   try {
+    const headers = { 'content-type': 'application/json' };
+    if (key) headers.Authorization = `Bearer ${key}`;
     const upstream = await fetch(LLM_GATEWAY_URL, {
       method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        Authorization: `Bearer ${key}`,
-      },
+      headers,
       body: raw,
     });
     const text = await upstream.text();
