@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-1a1a1a?style=flat-square&labelColor=fafaf5" alt="MIT License"></a>
-  <a href="ROADMAP.md"><img src="https://img.shields.io/badge/lessons-504-3553ff?style=flat-square&labelColor=fafaf5" alt="504 lessons"></a>
+  <a href="ROADMAP.md"><img src="https://img.shields.io/badge/lessons-600-3553ff?style=flat-square&labelColor=fafaf5" alt="600 lessons"></a>
   <a href="#contents"><img src="https://img.shields.io/badge/phases-20-3553ff?style=flat-square&labelColor=fafaf5" alt="20 phases"></a>
   <a href="https://github.com/rohitg00/ai-engineering-from-scratch/stargazers"><img src="https://img.shields.io/github/stars/rohitg00/ai-engineering-from-scratch?style=flat-square&labelColor=fafaf5&color=3553ff" alt="GitHub stars"></a>
   <a href="https://aiengineeringfromscratch.com"><img src="https://img.shields.io/badge/web-aiengineeringfromscratch.com-3553ff?style=flat-square&labelColor=fafaf5" alt="Website"></a>
@@ -1032,7 +1032,7 @@ or any agent that reads a SKILL.md / AGENTS.md directory.
 
 ### Install every course skill into your agent
 
-The repo ships 388 skills and 99 prompts under `phases/**/outputs/`.
+The repo ships 443 skills and 101 prompts under `phases/**/outputs/`.
 
 **Recommended: install via [skills.sh](https://skills.sh).** No clone, no Python,
 detects your agent's skills directory automatically:
