@@ -241,7 +241,7 @@ test("rejects unknown action targets but keeps the fixed plan-builder action saf
   assert.deepEqual(builder.nextAction, {
     type: "open-plan-builder",
     label: "Meinen Lernplan zusammenstellen",
-    href: "/index.html#personalPlan",
+    href: "/personal-plan.html",
   });
 });
 

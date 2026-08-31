@@ -1,0 +1,102 @@
+/* Standalone learner tools. The workflows keep their shared component
+   styling in pan.css; this file only defines the page-level composition. */
+
+.page--tool {
+  display: grid;
+  gap: var(--space-7);
+  width: min(var(--container-max), 100%);
+  padding-block: clamp(var(--space-6), 6vw, var(--space-9)) var(--space-10);
+}
+
+.tool-page__back {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: var(--space-2);
+  min-height: 44px;
+  color: var(--text-link);
+  font-size: var(--fs-body-sm);
+  font-weight: var(--weight-medium);
+  text-decoration: none;
+}
+
+.tool-page__back:focus-visible {
+  border-radius: var(--radius-xs);
+  outline: 2px solid var(--border-focus);
+  outline-offset: 3px;
+}
+
+.tool-page__masthead {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(20rem, 1.28fr);
+  gap: clamp(var(--space-6), 6vw, var(--space-9));
+  align-items: end;
+  padding: 0 clamp(var(--space-2), 2vw, var(--space-5)) var(--space-7);
+  border-block-end: 1px solid var(--border-subtle);
+}
+
+.tool-page__masthead h1 {
+  max-width: 15ch;
+  margin: 0;
+  color: var(--text-primary);
+  font-family: var(--font-head);
+  font-size: clamp(var(--fs-h2), 5vw, var(--fs-display-2));
+  font-weight: var(--weight-light);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-display);
+  text-wrap: balance;
+}
+
+.tool-page__masthead p {
+  max-width: 58ch;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-body);
+  line-height: var(--lh-normal);
+  text-wrap: pretty;
+}
+
+.tool-page__workspace {
+  min-width: 0;
+}
+
+.page--tool .personal-plan,
+.page--tool .team-learning {
+  margin-block: 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tool-page__back:hover {
+    color: var(--text-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+}
+
+@media (max-width: 52rem) {
+  .tool-page__masthead {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 40rem) {
+  .page--tool {
+    gap: var(--space-5);
+    padding-block: var(--space-5) var(--space-8);
+  }
+
+  .tool-page__masthead {
+    padding-inline: 0;
+    padding-block-end: var(--space-5);
+  }
+
+  .tool-page__masthead h1 {
+    font-size: var(--fs-h2);
+  }
+
+  .page--tool .personal-plan__intro h2,
+  .page--tool .team-learning__header h2 {
+    font-size: var(--fs-h3);
+  }
+}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="/gate-guard.js"></script>
+  <script src="/admin-entry.js?v=20260825b" defer></script>
+  <script>
+    (function () {
+      function apply() {
+        var stored = null;
+        try { stored = localStorage.getItem('theme'); } catch (e) {}
+        if (stored === 'dark' || stored === 'light') document.documentElement.setAttribute('data-theme', stored);
+      }
+      apply();
+      window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+    })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title data-i18n="title_team_learning">Team Learning · LHIND AI Learning Catalog</title>
+  <meta name="description" content="Join assigned AI learning and turn quiz results into verifiable team evidence.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305164d'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Arial,sans-serif' font-size='14' font-weight='700' fill='%23f8fafc'%3EAI%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/light/style.css">
+  <link rel="stylesheet" href="lrn/lrn.css?v=20260825d">
+  <link rel="stylesheet" href="pan.css?v=20260830a">
+  <link rel="stylesheet" href="tool-page.css?v=20260831a">
+</head>
+<body>
+  <a class="skip-link" href="#teamLearning" data-i18n="skip_team_learning">Skip to team learning</a>
+  <header class="nav-edge" aria-label="Site navigation" data-i18n-aria-label="nav_site_label">
+    <a class="wordmark" href="index.html">
+      <img class="wordmark__logo" src="assets/logo/lhind-logo-blue.png" alt="LHIND" />
+      <span>AI Learning Catalog</span>
+    </a>
+    <div class="nav-edge__spacer" aria-hidden="true" style="flex:1"></div>
+    <a href="skills.html" class="nav-settings" title="Capability progress" aria-label="Capability progress" data-i18n-title="nav_skills">
+      <i class="ph-light ph-chart-line-up" aria-hidden="true"></i>
+    </a>
+    <a href="badges.html" class="nav-settings" title="Your badges" aria-label="Your badges" data-i18n-title="badges_link_title">
+      <i class="ph-light ph-medal" aria-hidden="true"></i>
+    </a>
+    <a href="glossary.html" class="nav-settings" title="Glossary" aria-label="Glossary" data-i18n-title="nav_glossary">
+      <i class="ph-light ph-book" aria-hidden="true"></i>
+    </a>
+    <button type="button" id="darkModeToggle" class="nav-settings theme-toggle" aria-pressed="false">
+      <i class="ph-light ph-moon" aria-hidden="true" id="darkModeIcon"></i>
+    </button>
+    <a href="#" id="langToggle" class="nav-settings lang-toggle theme-toggle" title="Switch language" aria-label="Switch language" data-i18n-title="lang_toggle_title">
+      <span id="langIcon" class="theme-icon">EN</span>
+    </a>
+  </header>
+  <script src="i18n.js?v=20260831b"></script>
+  <script src="lang.js"></script>
+  <script src="theme-toggle.js"></script>
+
+  <main class="page page--tool" id="teamLearningMain" aria-labelledby="teamLearningPageTitle">
+    <a class="tool-page__back" href="index.html#learningToolsTitle">
+      <i class="ph-light ph-arrow-left" aria-hidden="true"></i>
+      <span data-i18n="tool_page_back">Back to learning overview</span>
+    </a>
+
+    <header class="tool-page__masthead">
+      <h1 id="teamLearningPageTitle" data-i18n="team_learning_page_title">Team learning</h1>
+      <p data-i18n="team_learning_page_intro">Join assigned learning, follow shared course priorities, and turn quiz results into verifiable evidence.</p>
+    </header>
+
+    <section class="tool-page__workspace team-learning" id="teamLearning" aria-label="Team learning and skill evidence" data-i18n-aria-label="team_learning_workspace_label">
+      <div id="teamLearningApp"></div>
+    </section>
+  </main>
+
+  <noscript><p class="noscript-note">JavaScript is required to join team learning and calculate evidence.</p></noscript>
+  <script src="progress.js?v=20260830a"></script>
+  <script src="lrn/data.js?v=20260825a"></script>
+  <script src="lrn/curriculum-map.js?v=20260824b"></script>
+  <script src="skills-progress-evidence.js?v=20260825a"></script>
+  <script src="lrn/mastery.js?v=20260830a"></script>
+  <script src="lrn/report-sync.js?v=20260830a"></script>
+  <script src="lrn/team-learning.js?v=20260830a"></script>
+  <script src="pan.js?v=20260831a"></script>
+</body>
+</html>

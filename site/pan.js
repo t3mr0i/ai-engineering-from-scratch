@@ -128,7 +128,7 @@
     try {
       var parsed = new URL(href, locationValue.href || locationValue.origin);
       if (parsed.origin !== locationValue.origin) return "";
-      if (!/(?:^|\/)(?:index|lesson|assessment|skills|prereqs)\.html$/.test(parsed.pathname) &&
+      if (!/(?:^|\/)(?:index|lesson|assessment|skills|prereqs|personal-plan|team-learning)\.html$/.test(parsed.pathname) &&
           !/(?:^|\/)lrn\/(?:course|path)\.html$/.test(parsed.pathname)) return "";
       return parsed.pathname + parsed.search + parsed.hash;
     } catch (_) {
@@ -424,9 +424,9 @@
     sendMessage(t(key + "Prompt"));
   }
 
-  function indexHref() {
+  function planHref() {
     var path = (root.location && root.location.pathname) || "";
-    return /\/lrn\//.test(path) ? "../index.html#personalPlan" : "index.html#personalPlan";
+    return /\/lrn\//.test(path) ? "../personal-plan.html" : "personal-plan.html";
   }
 
   function openPlanBuilder() {
@@ -435,7 +435,7 @@
       root.AIFSPersonalPlan.open();
       return;
     }
-    root.location.href = indexHref();
+    root.location.href = planHref();
   }
 
   function close() {

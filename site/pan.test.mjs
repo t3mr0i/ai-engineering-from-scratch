@@ -18,18 +18,25 @@ test("learner surfaces load the shared PAN assets", () => {
   assert.match(course, /src="\.\.\/pan\.js\?v=[^"]+"/);
 });
 
-test("the cockpit wires the editable personal-plan engine", () => {
-  const index = readFileSync(new URL("./index.html", import.meta.url), "utf8");
-  assert.match(index, /id="personalPlan"[^>]+aria-labelledby="personalPlanTitle"/);
-  assert.match(index, /src="lrn\/learning-plan\.js\?v=[^"]+"/);
-  assert.match(index, /src="lrn\/plan-builder\.js\?v=[^"]+"/);
+test("the personal-plan page wires the editable planning engine", () => {
+  const page = readFileSync(new URL("./personal-plan.html", import.meta.url), "utf8");
+  assert.match(page, /id="personalPlan"[^>]+aria-label="Personal learning plan"/);
+  assert.match(page, /src="lrn\/learning-plan\.js\?v=[^"]+"/);
+  assert.match(page, /src="lrn\/plan-builder\.js\?v=[^"]+"/);
+});
+
+test("the team-learning page wires assignments and evidence", () => {
+  const page = readFileSync(new URL("./team-learning.html", import.meta.url), "utf8");
+  assert.match(page, /id="teamLearning"[^>]+aria-label="Team learning and skill evidence"/);
+  assert.match(page, /src="lrn\/report-sync\.js\?v=[^"]+"/);
+  assert.match(page, /src="lrn\/team-learning\.js\?v=[^"]+"/);
 });
 
 test("safeHref accepts same-origin learner destinations", () => {
   const location = { origin: "https://learning.test", href: "https://learning.test/index.html" };
   assert.equal(PAN.safeHref("lesson.html?path=phases%2F11-x%2F01-y", location), "/lesson.html?path=phases%2F11-x%2F01-y");
   assert.equal(PAN.safeHref("/lrn/course.html?id=LRN-01#modules", location), "/lrn/course.html?id=LRN-01#modules");
-  assert.equal(PAN.safeHref("index.html#personalPlan", location), "/index.html#personalPlan");
+  assert.equal(PAN.safeHref("personal-plan.html", location), "/personal-plan.html");
 });
 
 test("safeHref blocks external and executable links", () => {

@@ -558,7 +558,7 @@ function normalizeNextAction(value, retrieval, locale) {
     return {
       type: value.type,
       label: label || (locale === "en" ? "Build my learning plan" : "Meinen Lernplan zusammenstellen"),
-      href: "/index.html#personalPlan",
+      href: "/personal-plan.html",
     };
   }
   const maps = approvedSourceMaps(retrieval);
