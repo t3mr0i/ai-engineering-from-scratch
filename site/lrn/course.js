@@ -263,6 +263,9 @@
 
     var children = [intro, facts, overview];
 
+    var learningContract = learningContractSection(course);
+    if (learningContract) children.push(learningContract);
+
     var sessions = sessionSection(course);
     if (sessions) children.push(sessions);
 
@@ -801,6 +804,121 @@
     strong.textContent = label + ":";
     detail.append(strong, document.createTextNode(" " + value));
     return detail;
+  }
+
+  function learningContractSection(courseItem) {
+    var contract = courseItem && courseItem.learningContract;
+    if (!contract || !contract.promise) return null;
+
+    var section = document.createElement("section");
+    section.className = "learning-contract";
+    section.setAttribute("aria-labelledby", "learningContractTitle");
+
+    var header = document.createElement("header");
+    header.className = "learning-contract__header";
+
+    var eyebrow = document.createElement("p");
+    eyebrow.className = "learning-contract__eyebrow";
+    eyebrow.textContent = i18n("course_learning_contract_label", "Learning contract");
+
+    var title = document.createElement("h2");
+    title.id = "learningContractTitle";
+    title.textContent = i18n("course_learning_contract_title", "From concept to project evidence");
+
+    var promise = document.createElement("p");
+    promise.className = "learning-contract__promise";
+    promise.textContent = contract.promise;
+    header.append(eyebrow, title, promise);
+
+    var body = document.createElement("div");
+    body.className = "learning-contract__body";
+
+    if (contract.projectScenario && contract.projectScenario.title) {
+      var scenario = document.createElement("article");
+      scenario.className = "learning-contract__scenario";
+
+      var scenarioLabel = document.createElement("p");
+      scenarioLabel.className = "learning-contract__section-label";
+      scenarioLabel.append(
+        lucideIcon("briefcase"),
+        document.createTextNode(i18n("course_project_scenario_title", "Project scenario"))
+      );
+
+      var scenarioTitle = document.createElement("h3");
+      scenarioTitle.textContent = contract.projectScenario.title;
+
+      var scenarioDescription = document.createElement("p");
+      scenarioDescription.textContent = contract.projectScenario.description || "";
+      scenario.append(scenarioLabel, scenarioTitle, scenarioDescription);
+
+      if (contract.projectScenario.guardrail) {
+        var guardrail = document.createElement("p");
+        guardrail.className = "learning-contract__guardrail";
+        guardrail.append(
+          lucideIcon("shield-check"),
+          document.createTextNode(contract.projectScenario.guardrail)
+        );
+        scenario.appendChild(guardrail);
+      }
+      body.appendChild(scenario);
+    }
+
+    var stages = Array.isArray(contract.stages) ? contract.stages : [];
+    if (stages.length) {
+      var method = document.createElement("div");
+      method.className = "learning-contract__method";
+
+      var methodTitle = document.createElement("h3");
+      methodTitle.textContent = i18n("course_learning_method_title", "How you learn");
+
+      var stageList = document.createElement("ol");
+      stageList.className = "learning-contract__stages";
+      stages.forEach(function (stage, index) {
+        var item = document.createElement("li");
+        item.dataset.kind = stage.kind || "guided";
+
+        var marker = document.createElement("span");
+        marker.className = "learning-contract__stage-marker";
+        marker.setAttribute("aria-hidden", "true");
+        marker.textContent = String(index + 1).padStart(2, "0");
+
+        var copy = document.createElement("div");
+        var stageTitle = document.createElement("strong");
+        stageTitle.textContent = stage.title;
+        var stageDescription = document.createElement("p");
+        stageDescription.textContent = stage.description;
+        copy.append(stageTitle, stageDescription);
+        item.append(marker, copy);
+        stageList.appendChild(item);
+      });
+      method.append(methodTitle, stageList);
+      body.appendChild(method);
+    }
+
+    var evidenceItems = Array.isArray(contract.evidence) ? contract.evidence : [];
+    if (evidenceItems.length) {
+      var evidence = document.createElement("div");
+      evidence.className = "learning-contract__evidence";
+
+      var evidenceTitle = document.createElement("h3");
+      evidenceTitle.append(
+        lucideIcon("seal-check"),
+        document.createTextNode(i18n("course_completion_evidence_title", "Evidence of completion"))
+      );
+
+      var evidenceList = document.createElement("ul");
+      evidenceItems.forEach(function (text) {
+        var item = document.createElement("li");
+        item.append(lucideIcon("check"), document.createTextNode(text));
+        evidenceList.appendChild(item);
+      });
+      evidence.append(evidenceTitle, evidenceList);
+      section.append(header, body, evidence);
+    } else {
+      section.append(header, body);
+    }
+
+    return section;
   }
 
   function localizedDepths(levels) {

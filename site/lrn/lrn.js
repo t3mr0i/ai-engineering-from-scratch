@@ -889,7 +889,9 @@
       courseFormatLabel(course),
       course.status,
       course.source,
+      (course.outcomes || []).join(" "),
       (course.modules || []).join(" "),
+      course.learningContract ? JSON.stringify(course.learningContract) : "",
       (course.interests || []).join(" "),
       (course.dimensions || []).join(" "),
       (course.levels || []).join(" ")
@@ -978,8 +980,17 @@
       meta.appendChild(date);
     }
 
+    var outcome = null;
+    if (Array.isArray(course.outcomes) && course.outcomes.length) {
+      outcome = document.createElement("p");
+      outcome.className = "course-card__outcome";
+      var outcomeLabel = document.createElement("span");
+      outcomeLabel.textContent = i18n("course_card_outcome_label", "You will be able to");
+      outcome.append(outcomeLabel, document.createTextNode(course.outcomes[0]));
+    }
+
     var summary = null;
-    if (entry.searchMatch && course.summary) {
+    if (!outcome && entry.searchMatch && course.summary) {
       summary = document.createElement("p");
       summary.className = "course-card__summary";
       summary.textContent = course.summary;
@@ -997,6 +1008,7 @@
     foot.appendChild(open);
 
     card.append(head, code, h, meta);
+    if (outcome) card.appendChild(outcome);
     if (summary) card.appendChild(summary);
     card.appendChild(foot);
     return card;

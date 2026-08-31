@@ -1141,19 +1141,52 @@
           ]
         }
       ],
-      "format": "Code task lab, review checklist, guided tool practice",
-      "summary": "AI in daily development work, pair programming, AI app basics, architecture context, and responsible code use.",
+      "format": "Issue-to-PR project lab, guided Copilot practice, review checklist",
+      "summary": "Take a bounded engineering ticket from Copilot mode selection and repository context through a reviewed diff, passing tests, and a human-owned pull request.",
       "outcomes": [
         "Choose the appropriate GitHub Copilot interaction mode for a concrete engineering task",
-        "Provide task constraints, repository context, and explicit output expectations in prompts",
+        "Turn a project ticket into a bounded prompt with repository context, constraints, and acceptance checks",
         "Review AI-generated code for correctness, security, privacy, maintainability, and scope",
-        "Verify proposed changes with tests and a human-controlled pull-request workflow"
+        "Verify proposed changes with tests and a human-controlled pull-request workflow",
+        "Produce a review-ready evidence pack that another engineer can reproduce and approve"
       ],
       "modules": [
-        "Generative AI for Software Development",
-        "Get started with AI apps and agents on Azure",
-        "Integrating AI into the Product Architecture"
-      ]
+        "Copilot modes, context, and repository instructions",
+        "Project transfer lab: sanitized issue to bounded change",
+        "Diff review, security checks, tests, and pull-request evidence"
+      ],
+      "learningContract": {
+        "promise": "Complete the course with a repeatable workflow for turning one scoped project ticket into a tested, review-ready change without delegating engineering accountability.",
+        "projectScenario": {
+          "title": "LCAG-style project transfer: safe booking synchronization",
+          "description": "Start with a sanitized ticket from the learner's current project. The built-in fallback asks for idempotent retry handling in a booking synchronization service while preserving the public API and existing error semantics.",
+          "guardrail": "Use anonymized code, tickets, logs, and identifiers only; never send secrets, personal data, or restricted project material to an unapproved assistant."
+        },
+        "stages": [
+          {
+            "kind": "theory",
+            "title": "Understand the control model",
+            "description": "Learn the Copilot capability ladder, context sources, trust boundaries, and why task ambiguity determines blast radius."
+          },
+          {
+            "kind": "guided",
+            "title": "Trace a worked engineering case",
+            "description": "Turn the fallback ticket into a bounded brief, compare Copilot modes, and inspect a proposed change against explicit acceptance criteria."
+          },
+          {
+            "kind": "hands-on",
+            "title": "Transfer it to project work",
+            "description": "Repeat the workflow with an anonymized real ticket, review the diff, run the relevant checks, and prepare a human-owned pull-request handoff."
+          }
+        ],
+        "evidence": [
+          "A bounded task brief naming the goal, allowed files, forbidden changes, and acceptance checks",
+          "A repository-context packet with the relevant instructions, files, and sanitized ticket details",
+          "An annotated diff review covering correctness, security, privacy, maintainability, and scope",
+          "Captured test and verification output, including one deliberate failure or boundary case",
+          "A pull-request handoff that names the human owner, residual risks, and merge decision"
+        ]
+      }
     },
     {
       "id": "LRN-25",

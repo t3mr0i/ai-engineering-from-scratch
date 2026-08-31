@@ -1063,6 +1063,14 @@
       gap: 8px;
     }
 
+    .learning-objectives-intro {
+      margin: -4px 0 14px;
+      color: var(--ink-soft);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
     .learning-objectives ul { margin: 0; padding-left: 20px; }
     .learning-objectives li {
       margin-bottom: 6px;
@@ -3627,11 +3635,14 @@
                   break;
                 }
               }
-              out += '<div class="learning-objectives"><div class="learning-objectives-title">' + LUCIDE_TARGET + ' Learning Objectives</div><ul>';
+              var objectivesTitle = artifactText('lesson_outcomes_title', 'After this lesson, you can');
+              var objectivesIntro = artifactText('lesson_outcomes_intro', 'Use these outcomes as the checklist for your exercise and final evidence.');
+              out += '<section class="learning-objectives" aria-labelledby="' + slug2 + '"><h2 id="' + slug2 + '" class="learning-objectives-title">' + LUCIDE_TARGET + ' ' + escapeHtml(objectivesTitle) + '</h2>';
+              out += '<p class="learning-objectives-intro">' + escapeHtml(objectivesIntro) + '</p><ul>';
               for (var oi = 0; oi < objItems.length; oi++) {
                 out += '<li>' + inlineFormat(objItems[oi]) + '</li>';
               }
-              out += '</ul></div>';
+              out += '</ul></section>';
               i = lo - 1;
               continue;
             }

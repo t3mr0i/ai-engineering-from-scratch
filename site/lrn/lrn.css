@@ -2396,6 +2396,28 @@ i[class^="ph "] {
   line-height: 1.38;
 }
 
+.course-card__outcome {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  min-height: calc(3 * 1.38em);
+  margin: 0;
+  color: var(--text-secondary);
+  font-family: var(--font-text);
+  font-size: var(--fs-body-sm);
+  font-weight: var(--weight-regular);
+  line-height: 1.38;
+}
+
+.course-card__outcome span {
+  display: block;
+  margin-block-end: var(--space-1);
+  color: var(--text-muted);
+  font-size: var(--fs-caption);
+  font-weight: var(--weight-medium);
+}
+
 /* Footer pinned to the card bottom — progress bars align across the row. */
 .course-card__foot {
   display: flex;
@@ -2945,6 +2967,247 @@ i[class^="ph "] {
 .course-head__outcomes-item i {
   color: var(--action-primary);
   font-size: 1rem;
+}
+
+/* Learning contract: one concrete promise, one project case, then the
+   theory → guided example → hands-on evidence sequence. This stays a single
+   editorial surface rather than another grid of interchangeable cards. */
+.learning-contract {
+  display: grid;
+  gap: var(--space-6);
+  margin-block-start: var(--space-8);
+  padding: clamp(var(--space-5), 5vw, var(--space-7));
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-sunken);
+}
+
+.learning-contract__header {
+  display: grid;
+  gap: var(--space-2);
+  max-width: 52rem;
+}
+
+.learning-contract__eyebrow,
+.learning-contract__section-label {
+  margin: 0;
+  color: var(--action-accent-hover);
+  font-family: var(--font-text);
+  font-size: var(--fs-overline);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--ls-overline);
+  line-height: var(--lh-normal);
+  text-transform: uppercase;
+}
+
+.learning-contract__header h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-family: var(--font-head);
+  font-size: clamp(var(--fs-h3), 3vw, var(--fs-h2));
+  font-weight: var(--weight-medium);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-heading);
+  text-wrap: balance;
+}
+
+.learning-contract__promise {
+  max-width: 68ch;
+  margin: 0;
+  color: var(--text-secondary);
+  font-family: var(--font-text);
+  font-size: var(--fs-lead);
+  line-height: var(--lh-relaxed);
+  text-wrap: pretty;
+}
+
+.learning-contract__body {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: clamp(var(--space-5), 5vw, var(--space-7));
+  align-items: start;
+}
+
+.learning-contract__scenario {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.learning-contract__section-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.learning-contract__section-label i {
+  font-size: 1rem;
+}
+
+.learning-contract__scenario h3,
+.learning-contract__method > h3,
+.learning-contract__evidence h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-family: var(--font-head);
+  font-size: var(--fs-h4);
+  font-weight: var(--weight-medium);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-heading);
+}
+
+.learning-contract__scenario > p:not(.learning-contract__section-label):not(.learning-contract__guardrail) {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-body-sm);
+  line-height: var(--lh-relaxed);
+}
+
+.learning-contract__guardrail {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-2);
+  margin: var(--space-1) 0 0;
+  padding-block-start: var(--space-3);
+  border-block-start: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: var(--fs-caption);
+  line-height: var(--lh-normal);
+}
+
+.learning-contract__guardrail i {
+  color: var(--action-primary);
+  font-size: 1rem;
+}
+
+.learning-contract__method {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.learning-contract__stages {
+  position: relative;
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.learning-contract__stages::before {
+  content: "";
+  position: absolute;
+  inset: 1rem auto 1rem 1.05rem;
+  width: 1px;
+  background: var(--border-strong);
+}
+
+.learning-contract__stages li {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.learning-contract__stage-marker {
+  position: relative;
+  z-index: 1;
+  display: inline-grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-sunken);
+  color: var(--action-primary);
+  font-family: var(--font-text);
+  font-size: var(--fs-overline);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+.learning-contract__stages strong {
+  display: block;
+  margin-block-end: var(--space-1);
+  color: var(--text-primary);
+  font-family: var(--font-text);
+  font-size: var(--fs-body);
+  font-weight: var(--weight-medium);
+  line-height: var(--lh-snug);
+}
+
+.learning-contract__stages p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-body-sm);
+  line-height: var(--lh-normal);
+  text-wrap: pretty;
+}
+
+.learning-contract__evidence {
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.35fr) minmax(0, 0.65fr);
+  gap: var(--space-5);
+  padding-block-start: var(--space-5);
+  border-block-start: 1px solid var(--border-strong);
+}
+
+.learning-contract__evidence h3 {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.learning-contract__evidence h3 i {
+  color: var(--action-primary);
+  font-size: 1.2rem;
+}
+
+.learning-contract__evidence ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3) var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.learning-contract__evidence li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-2);
+  align-items: start;
+  color: var(--text-secondary);
+  font-size: var(--fs-body-sm);
+  line-height: var(--lh-normal);
+}
+
+.learning-contract__evidence li i {
+  color: var(--action-primary);
+  font-size: 1rem;
+}
+
+@media (max-width: 52rem) {
+  .learning-contract__body,
+  .learning-contract__evidence {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 40rem) {
+  .learning-contract {
+    padding: var(--space-5);
+    border-radius: var(--radius-md);
+  }
+
+  .learning-contract__evidence ul {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .academy-journey {
