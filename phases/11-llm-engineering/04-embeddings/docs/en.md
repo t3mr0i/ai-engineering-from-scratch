@@ -240,6 +240,10 @@ Call `chunk_text` from a small caller with tokens=["red","fox"]. Compare its res
 
 Hand off `outputs/prompt-embedding-advisor.md` with the command `npx tsx main.ts`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: Azure embeddings into AI Search
+
+In the CBP context embeddings come from the Azure OpenAI embeddings deployment and land in Azure AI Search, not in a local demo index. The Java service embeds the query, runs the vector query against the search index, and compares by cosine similarity exactly as this lesson shows. Choose the embedding model once per index and record it with the index definition: changing the model later means re-embedding the whole corpus. Evaluate with the retrieval metrics from this lesson on CBP documents before trusting a new model.
+
 ## Further Reading
 
 - Mikolov et al., "Efficient Estimation of Word Representations in Vector Space" (2013) -- the Word2Vec paper that started the embedding revolution with the king-queen analogy
