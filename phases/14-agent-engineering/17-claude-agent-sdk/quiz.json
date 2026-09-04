@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "After the parent run and its three spawned subagents finish, what is the parent's `context_tokens` value?",
+      "question": "A main assistant splits a big research task across three helpers. Each helper reads many pages, but the main assistant must keep its own working notes short. What helps the most?",
       "options": [
-        "11; subagent turns are isolated and do not add to the parent's context.",
-        "47; the parent absorbs all three subagent transcripts.",
-        "3; only the number of tool calls is retained.",
-        "0; spawning a subagent resets the parent run's context."
+        "Give each helper its own separate working notes, keep only their short summaries in the main notes, and save full transcripts elsewhere for debugging.",
+        "Paste every page each helper reads into the main notes.",
+        "Let helpers overwrite the main notes directly whenever they want.",
+        "Delete all transcripts so nothing can be reviewed later."
       ],
       "correct": 0,
-      "explanation": "The parent accumulates 11 tokens from its own prompt, tool result, and assistant output. Each subagent has its own `AgentRun`, so its 12-token context is not merged into the parent."
+      "explanation": "Delegating work while keeping notes separate is the prior habit. This lesson builds on it with a setup that runs helpers in isolation and keeps saved session records for review."
     },
     {
       "stage": "check",
