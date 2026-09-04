@@ -146,6 +146,10 @@ Call `setup_fixtures` from a small caller with the text "red fox". Compare its r
 
 Hand off `outputs/skill-agent-bundle.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: Azure DevOps commands in skills
+
+The release-notes skill in this lesson shells out to the GitHub CLI (`gh pr list`, `gh release create`). In the CBP context the same skill targets Azure DevOps: list merged pull requests with `az repos pr list`, cut releases through Azure Pipelines, and read work items from Boards instead of issues. When writing SKILL.md or AGENTS.md instructions for CBP repositories, name the Azure DevOps commands explicitly; an agent following GitHub-flavored instructions against Azure Repos fails on the first step. The tagging convention (`git tag vX.Y.Z`) is unchanged because it is plain Git.
+
 ## Further Reading
 
 - [Anthropic — Agent Skills announcement](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills) — October 2025 launch

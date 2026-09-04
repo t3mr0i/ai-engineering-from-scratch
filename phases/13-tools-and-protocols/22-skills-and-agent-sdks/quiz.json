@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does parse_frontmatter return for a well-formed SKILL.md?",
+      "question": "Your team keeps one shared how-to document, but three different AI assistants each need it in their own format, so the team maintains three copies. What goes wrong?",
       "options": [
-        "Only the first line of the file",
-        "A compiled Python module",
-        "a frontmatter dict plus the body",
-        "An empty dictionary whenever the body is nonempty"
+        "The copies drift apart and a fix lands in only some of them",
+        "Nothing; three copies stay in sync by themselves",
+        "The document gets shorter on its own",
+        "The assistants merge the copies automatically"
       ],
-      "correct": 2,
-      "explanation": "The parser requires --- delimiters, extracts colon-separated frontmatter fields, and returns the remaining body separately."
+      "correct": 0,
+      "explanation": "Duplicated know-how diverges with every edit. This lesson builds a single portable source (SKILL.md plus AGENTS.md) that every assistant reads instead."
     },
     {
       "stage": "check",
