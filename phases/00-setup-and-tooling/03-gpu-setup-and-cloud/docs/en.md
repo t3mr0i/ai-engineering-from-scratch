@@ -17,7 +17,9 @@
 
 ## Why this lesson exists
 
-The demo is deliberately safe on a machine without a GPU. `main.py` delegates to `gpu_check.py`; the script first tries to import PyTorch and, when that succeeds, checks `torch.cuda.is_available()`. A missing import prints a dependency message and returns with status 0; the no-GPU branch also exits without attempting CUDA allocations. The GPU branch prints the CUDA version, device name, total memory, compute capability, and a synchronized CPU/GPU matrix-multiplication comparison.
+The demo is deliberately safe on a machine without a GPU. `main.py` delegates to `gpu_check.py`; the script first tries to import PyTorch and, when that succeeds, checks `torch.cuda.is_available()`.
+
+A typical case: a developer requests a large cloud GPU for a first experiment before knowing whether the code even sees a device. The device report answers the cheaper question first. A missing import prints a dependency message and returns with status 0; the no-GPU branch also exits without attempting CUDA allocations. The GPU branch prints the CUDA version, device name, total memory, compute capability, and a synchronized CPU/GPU matrix-multiplication comparison.
 
 ```mermaid
 flowchart LR
@@ -47,6 +49,10 @@ Run `nvidia-smi` alongside the Python report when a local NVIDIA driver is prese
 ## Ship It
 
 [`outputs/artifact-card.md`](../outputs/artifact-card.md) is the handoff. Add the command, the branch taken, the device name and memory if available, the benchmark size, and the estimate formula. If no GPU is available, record that the benchmark and estimate were skipped rather than filling in a guessed value.
+
+## CBP context: consume models, do not train them locally
+
+In the CBP context LCAG provides compute and model endpoints, so requesting a personal training GPU is not the default path. CBP services call models through managed Azure endpoints instead of training locally. For this lesson that means the CPU-only branch is the normal outcome on a CBP machine: record it as a valid result, not a failure. Reserve real GPU capacity for an explicit training task and measure it with the same report before scaling up.
 
 ## Exercises
 
