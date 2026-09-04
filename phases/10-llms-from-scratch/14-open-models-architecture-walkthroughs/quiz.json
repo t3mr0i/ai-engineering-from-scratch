@@ -2,12 +2,12 @@
   "lesson": "14-open-models-architecture-walkthroughs",
   "title": "Open Models: Architecture Walkthroughs",
   "questions": [
-    {
+        {
       "stage": "pre",
-      "question": "What attention scheme does `attention_scheme` report for a model with 32 query heads and 8 KV heads?",
-      "options": ["MHA, because query and KV heads are always equal.", "MLA, regardless of the configuration.", "GQA (grouped-query attention).", "MQA, because there is only one query head."],
-      "correct": 2,
-      "explanation": "The function labels the case where query heads exceed KV heads but KV heads are greater than one as GQA."
+      "question": "You know how a small example model is organized, and you now face a published model with a settings file listing sizes, layer counts, and head counts. What can you do with that file before running anything?",
+      "options": ["Estimate the memory and compute the model will need and compare it against the available hardware.", "Delete the settings file because only the weights matter.", "Assume every published model has identical cost regardless of its settings.", "Rename the settings file to make the model run faster."],
+      "correct": 0,
+      "explanation": "Settings such as sizes and counts predict resource needs. This lesson builds the habit of reading those files field by field for several well-known open models."
     },
     {
       "stage": "check",
