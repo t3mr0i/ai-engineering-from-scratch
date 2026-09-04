@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What distinction does `run_trial(..., tom=...)` test?",
+      "question": "Several teammates must each pick a different open task without a central boss, and everyone can see what others picked recently. What simple strategy reduces duplicate picks compared to everyone choosing blindly?",
       "options": [
-        "Both policies choose the same fixed box, but ToM uses a larger grid.",
-        "ToM agents communicate by sending arbitrary messages while zeroth-order agents use a central planner.",
-        "Zeroth-order agents choose among remaining boxes without modeling peers; first-order ToM agents avoid boxes they infer peers are targeting.",
-        "Zeroth-order agents run a verifier, while ToM agents ignore observations."
+        "Everyone picks the same task so they can share the credit.",
+        "Everyone waits until all tasks expire and then picks at random.",
+        "Avoid tasks you recently saw others heading toward when other open tasks remain.",
+        "Ignore what others picked and always choose the task with the longest name."
       ],
       "correct": 2,
-      "explanation": "The `Agent.choose_target` branches on `tom`: false chooses uniformly from available boxes, true filters boxes inferred from recent observations when possible."
+      "explanation": "Seeing how watching peers reduces wasted overlap prepares you for this lesson, which compares blind choosing with choosing that accounts for what others seem to be targeting."
     },
     {
       "stage": "check",
