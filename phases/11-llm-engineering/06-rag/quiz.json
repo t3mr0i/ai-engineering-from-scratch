@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "With `chunk_size=4` and `overlap=1`, how does `chunk_text` advance after producing its first four-word chunk?",
+      "question": "You ask a language model about a company policy that changed last week and it confidently gives the old rule. What do you already know about the model from earlier lessons?",
       "options": [
-        "It advances by four words and starts the next chunk with no overlap",
-        "It advances by one word and creates four nearly identical chunks",
-        "It advances by three words, so the next chunk reuses the final overlapping word",
-        "It stops after the first chunk because overlap is reserved for query-time retrieval"
+        "The model answers from what it learned during training, so it can miss recent or private information",
+        "The model reads your private company files automatically on every question you ask",
+        "The model refuses to answer any question that mentions a company policy",
+        "The model always asks you for the correct answer before it responds to you"
       ],
-      "correct": 2,
-      "explanation": "The start index increases by `chunk_size - overlap`, which is 3 here. The next chunk therefore begins one word before the previous chunk ended."
+      "correct": 0,
+      "explanation": "Training knowledge goes stale and never includes private documents. This lesson builds on that limit by connecting the model to retrieved passages at question time."
     },
     {
       "stage": "check",
