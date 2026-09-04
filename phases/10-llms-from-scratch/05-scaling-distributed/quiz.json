@@ -2,12 +2,12 @@
   "lesson": "05-scaling-distributed",
   "title": "Scaling: Distributed Training, FSDP, DeepSpeed",
   "questions": [
-    {
+        {
       "stage": "pre",
-      "question": "In `simulate_data_parallelism`, what does each simulated GPU receive before its model call?",
-      "options": ["A data shard, with remainder rows assigned first.", "A different slice of the model's output columns.", "The full dataset plus a different tokenizer for every GPU.", "Only the final loss, with no input examples."],
+      "question": "You can train a small model on one graphics card, but a larger model runs out of memory on that card. What is the most reasonable way to think about using several cards?",
+      "options": ["Different cards can each handle part of the data or part of the model so the whole job fits together.", "Adding more cards automatically makes every program run faster with no code changes.", "Each card must run a completely unrelated training job with no communication.", "More cards remove the need to store the model weights anywhere."],
       "correct": 0,
-      "explanation": "The function partitions rows by GPU, assigning one extra row to the first `remainder` shards when the data size is not divisible by the GPU count."
+      "explanation": "Splitting data or model pieces across cards is the starting intuition. This lesson builds the standard splitting strategies and the memory math on top of it."
     },
     {
       "stage": "check",
