@@ -2,12 +2,12 @@
   "lesson": "22-async-hogwild-inference",
   "title": "Async and Hogwild! Inference",
   "questions": [
-    {
+        {
       "stage": "pre",
-      "question": "What shared state do the workers inspect in `run_hogwild` before choosing their next category?",
-      "options": ["A private cache copied once at startup.", "Only the target model's logits, with no token history.", "The same `SharedCache`, whose counts include earlier workers' category tokens.", "The scheduler's GPU-hour budget."],
-      "correct": 2,
-      "explanation": "Each worker calls `decide_next_category` with the shared cache, so it can see how many A, B, noise, and coordination tokens already exist."
+      "question": "You have a big task that splits into loosely related pieces, and waiting for workers to take turns is slow. What coordination style could finish faster?",
+      "options": ["Let several workers read and update one shared notes board as they go, so they can divide the remaining work on the fly.", "Give every worker a private notebook they never share and combine answers only by coin flip.", "Force all workers to wait for the slowest one before anyone writes anything.", "Run one worker and keep the rest idle as backups."],
+      "correct": 0,
+      "explanation": "Shared visible progress lets workers avoid duplicating each other without strict locking. This lesson builds a small simulator that shows when that loose coordination wins."
     },
     {
       "stage": "check",
