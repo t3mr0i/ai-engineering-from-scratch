@@ -2,12 +2,12 @@
   "lesson": "16-differential-attention-v2",
   "title": "Differential Attention (V2)",
   "questions": [
-    {
+        {
       "stage": "pre",
-      "question": "Which weight row does `diff_attention` apply to the value matrix?",
-      "options": ["The average of the two softmax rows.", "The second softmax row only.", "`softmax(Q1K1ᵀ) - lambda * softmax(Q2K2ᵀ)`.", "The first softmax row divided by lambda."],
-      "correct": 2,
-      "explanation": "The implementation computes two separately normalized rows and forms `a - lam * b` before the weighted value sum."
+      "question": "You know that attention spreads focus across many earlier words, and in long passages the focus on the one truly relevant word gets diluted. What general fix would you explore?",
+      "options": ["A way to subtract the shared background focus so the distinctive match stands out more clearly.", "A way to delete the whole passage and answer with no context.", "A way to give every word exactly equal focus regardless of relevance.", "A way to stop the model from looking at any earlier words."],
+      "correct": 0,
+      "explanation": "Removing the common background level sharpens the real signal. This lesson builds the two-branch attention method that puts that subtraction into practice."
     },
     {
       "stage": "check",
