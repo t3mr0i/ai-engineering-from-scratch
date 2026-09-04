@@ -466,6 +466,10 @@ Call `call` from a small caller with tokens=["red","fox"]. Compare its result wi
 
 Hand off `outputs/prompt-structured-extractor.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: Jackson validation behind the endpoint
+
+In the CBP context the validation layer from this lesson is Jackson plus Bean Validation in the Java service: request structured JSON from the Azure OpenAI deployment (`response_format` with a JSON schema), deserialize strictly, and reject anything that does not bind. On rejection, retry once with the validation errors appended, then fail the request loudly instead of guessing. Never parse model prose with regular expressions in production; the schema must be enforced by the endpoint and the deserializer together.
+
 ## Further Reading
 
 - [OpenAI Structured Outputs Guide](https://platform.openai.com/docs/guides/structured-outputs) -- official documentation for JSON Schema-based constrained decoding in the OpenAI API
