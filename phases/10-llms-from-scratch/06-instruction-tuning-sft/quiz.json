@@ -2,12 +2,12 @@
   "lesson": "06-instruction-tuning-sft",
   "title": "Instruction Tuning (SFT)",
   "questions": [
-    {
+        {
       "stage": "pre",
-      "question": "Which tokens contribute a nonzero weight in `create_loss_mask` for an instruction pair?",
-      "options": ["All prompt and response tokens equally.", "Only `INST_START` and `INST_END`.", "Response tokens after `RESP_START`.", "Padding tokens before the instruction."],
-      "correct": 2,
-      "explanation": "The mask stays zero through the prompt and separator, then switches to one for tokens in the response."
+      "question": "A model trained only to predict the next word in internet text is asked a direct question. What behavior should you expect from it?",
+      "options": ["It may simply continue the text in a similar style instead of giving a helpful answer.", "It will always refuse to respond to any question.", "It will always give a correct and helpful answer.", "It shuts down because questions are a different data type."],
+      "correct": 0,
+      "explanation": "Next-word prediction alone does not teach question answering. This lesson builds the fine-tuning step that turns such a base model into an instruction-following assistant."
     },
     {
       "stage": "check",
