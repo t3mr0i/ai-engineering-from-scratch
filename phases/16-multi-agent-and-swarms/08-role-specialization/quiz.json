@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which sequence describes the lesson's role-specialization pipeline?",
+      "question": "Your team writes a small function from a written description. One person drafts the description, another writes the code, a third reads the code, and a fourth runs concrete examples. Why does running concrete examples still matter after a careful reading?",
       "options": [
-        "Planner creates a spec, executor writes code, critic reviews it, and verifier runs deterministic tests.",
-        "Verifier writes the spec, planner executes it, and critic chooses a random winner.",
-        "Executor and planner share one prompt while critic replaces all tests.",
-        "Critic runs first and the verifier only formats the final transcript."
+        "Running examples takes longer, so it proves the team worked hard.",
+        "Reading can miss wrong behavior that only shows up when the code actually runs on examples.",
+        "Running examples replaces the need for any written description.",
+        "Running examples is only useful for checking spelling in comments."
       ],
-      "correct": 0,
-      "explanation": "`run_pipeline` calls `planner`, the selected executor, `critic`, and `verifier` in that order. The roles deliberately provide different checks."
+      "correct": 1,
+      "explanation": "Knowing that reading alone cannot replace running concrete checks prepares you for this lesson, which separates drafting, writing, reviewing, and independent testing into distinct roles."
     },
     {
       "stage": "check",
