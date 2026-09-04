@@ -629,6 +629,10 @@ Call `TestCase` from a small caller with the text "red fox". Compare its result 
 
 Hand off `outputs/prompt-eval-designer.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: eval sets in the repo, judges in the pipeline
+
+In the CBP context the evaluation dataset from this lesson lives in the service repository next to the prompts: versioned input/output pairs with rubrics and edge cases, executed by JUnit for deterministic checks and by a judge model in the Azure DevOps pipeline for quality checks. Gate merges on the eval score with a recorded threshold; a prompt or model change that drops the score fails the build like a failing test. Keep the dashboard from this lesson where the team already looks: next to the service metrics, not in a separate notebook.
+
 ## Further Reading
 
 - [Zheng et al., 2023 -- "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena"](https://arxiv.org/abs/2306.05685) -- the foundational paper on using LLMs to judge other LLMs.
