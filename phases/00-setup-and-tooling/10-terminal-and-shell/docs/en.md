@@ -19,6 +19,8 @@
 
 This lesson has no `code/main.*` program. Its executable artifact is [`code/shell_aliases.sh`](../code/shell_aliases.sh), which is meant to be sourced from Bash or zsh. It defines GPU queries (`gpu`, `gpuwatch`, `gpumem`, `gpuprocs`), environment helpers (`ae`, `de`, `mkvenv`, `uvvenv`), log filters, disk checks, tmux shortcuts, rsync wrappers, experiment-directory helpers, and process inspection functions.
 
+A typical case: a training job fails overnight and the morning starts with scrolling through thousands of log lines by hand. One reusable filter command would have shown the failing step immediately.
+
 ```mermaid
 flowchart TD
     S[Source shell_aliases.sh] --> G[GPU and environment aliases]
@@ -57,6 +59,10 @@ The `gpu` aliases query `nvidia-smi` and therefore report nothing useful on a ma
 ## Ship It
 
 [`outputs/artifact-card.md`](../outputs/artifact-card.md) is the handoff. Record the exact alias/function, the input log or remote path, the command output, and a safe rollback or cleanup path. Never put a broad `pkill` pattern or a private hostname in a shared profile without reviewing it.
+
+## CBP context: same habits against Azure
+
+In the CBP context the same shell habits apply against Azure tooling: filter `az` command output with pipes, watch deployment logs with bounded queries, and wrap recurring operations in reviewed functions rather than pasting long commands from memory. Long-running jobs still belong in named, detachable sessions, and every shared helper records its input, its output, and how to undo it.
 
 ## Exercises
 

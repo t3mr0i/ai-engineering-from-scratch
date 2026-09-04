@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the pipe in tail -f train.log | grep loss do?",
+      "question": "A job writes thousands of log lines per minute and you need to watch one value while it runs. What capability do you need?",
       "options": [
-        "It runs tail and grep on unrelated files in parallel",
-        "It appends the entire log to a new binary file",
-        "It pipes stdout into grep",
-        "It encrypts the log before displaying it"
+        "Reopen the whole file by hand every second and scan it visually",
+        "Print the entire file from the start on every check",
+        "Wait until the job ends, then read everything",
+        "Stream the growing file and filter it for that value"
       ],
-      "correct": 2,
-      "explanation": "The pipe connects standard output to standard input. tail follows new log lines and grep filters the stream for the requested text."
+      "correct": 3,
+      "explanation": "A growing log needs a streaming filter, not repeated full reads. This lesson builds that habit into reusable shell helpers for following training output."
     },
     {
       "stage": "check",
