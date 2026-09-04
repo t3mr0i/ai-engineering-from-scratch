@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For a window of length `context_length + 1`, what pair does `SlidingWindowDataset[i]` return?",
+      "question": "You have turned a long text into a stream of number IDs once, and you want many short training examples where the model guesses the next ID. What slicing idea from ordinary data preparation helps most?",
       "options": [
-        "The first half as input and the same first half as target",
-        "The whole window as input and a one-token label",
-        "The first `context_length` tokens as input and the window shifted one token as target",
-        "Two independent random samples of length `context_length`"
+        "Use the whole stream as a single example so the model sees everything at once.",
+        "Cut the stream into overlapping short chunks so each chunk gives many input and next-ID pairs.",
+        "Shuffle the IDs into random order to destroy all word order before training.",
+        "Convert the text to IDs again from scratch for every single example."
       ],
-      "correct": 2,
-      "explanation": "The dataset slices one next-token-training window, returning `window[:-1]` as input and `window[1:]` as target. Both tensors therefore have the context length."
+      "correct": 1,
+      "explanation": "Seeing a long ID stream as a source of many overlapping next-ID examples prepares you for this lesson, which turns that idea into a reusable dataset with controlled overlap and repeatable shuffling."
     },
     {
       "stage": "check",
