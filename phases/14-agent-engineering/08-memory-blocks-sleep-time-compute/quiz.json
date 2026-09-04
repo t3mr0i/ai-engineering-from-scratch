@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For a block with `limit=180`, when does the default `near_limit()` become true?",
+      "question": "A support chatbot talks with the same customer for weeks, but the model can only read a short recent window. What approach serves the customer best?",
       "options": [
-        "At 90 characters, because the default threshold is 0.5.",
-        "Only after the block exceeds 180 characters.",
-        "At 144 characters, because the default threshold is 0.8.",
-        "As soon as the block has any non-empty value."
+        "Forget everything after each message and start over every time.",
+        "Paste the entire multi-year history into every single reply.",
+        "Store notes once and never update or remove outdated ones.",
+        "Keep small editable notes about the customer plus a long-term archive, and tidy them between replies rather than while the customer waits."
       ],
-      "correct": 2,
-      "explanation": "`near_limit` compares length with `int(180 * 0.8)`, which is 144 characters."
+      "correct": 3,
+      "explanation": "Keeping short reusable notes and tidying them outside the live reply is the prior idea. This lesson builds on it with typed memory sections that a background pass consolidates between turns."
     },
     {
       "stage": "check",
