@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "After `python3 code/main.py` runs the review flow, what does the checklist report?",
+      "question": "Three review services check the same change by passing messages, and one of them sometimes crashes. What design keeps the whole review working?",
       "options": [
-        "Consensus is `False`, and one failed reviewer message is in the dead-letter queue.",
-        "Consensus is `True`, and the queue is empty because failed handlers are retried.",
-        "Consensus is `False`, but the crash stops all three review messages from running.",
-        "Consensus is `True`, with the crashed message delivered to the checklist instead."
+        "Run all reviewers inside one shared process so a single crash stops everything.",
+        "Let reviewers share memory directly with no messages at all.",
+        "Throw away all reviews whenever any single review fails.",
+        "Run each reviewer as an independent worker that talks only through messages, so a crash in one does not stop the others and the failure is recorded on its own."
       ],
-      "correct": 0,
-      "explanation": "The checklist receives the three review results and reaches `False`; the reviewer handling `crash_me` fails once, so that message is recorded as the single dead letter while the other messages continue."
+      "correct": 3,
+      "explanation": "Isolating workers that communicate only by messages is the prior idea. This lesson builds on it with a runtime where each agent runs independently and every interaction travels as a message."
     },
     {
       "stage": "check",
