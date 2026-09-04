@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which Docker storage choice keeps model files when an image is rebuilt?",
+      "question": "A program runs inside a throwaway sandbox that is deleted after each run. Files the next run still needs must survive. Where do they belong?",
       "options": [
-        "A named or bind-mounted volume outside the disposable container layer",
-        "A Dockerfile comment",
-        "A temporary container layer only",
-        "The image tag name"
+        "Inside the sandbox filesystem, which is deleted with it",
+        "In the memory of the finished process",
+        "In the log stream of the previous run",
+        "In persistent storage outside the sandbox"
       ],
-      "correct": 0,
-      "explanation": "The repository, dataset, and named model-cache mounts live outside the writable container layer. Rebuilding software does not recreate those stored files."
+      "correct": 3,
+      "explanation": "Anything inside a disposable sandbox disappears with it. This lesson shows the container version of that rule: keep model files and datasets on mounted storage outside the container layer."
     },
     {
       "stage": "check",

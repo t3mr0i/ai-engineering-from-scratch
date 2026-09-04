@@ -17,7 +17,9 @@
 
 ## What this lesson audits
 
-The Python entrypoint does not call Docker. `inspect_container_config()` reads the supplied `Dockerfile` and `docker-compose.yml` with `Path` and regular expressions, then returns a small JSON summary. This keeps the lesson runnable on a machine without Docker while making the configuration contract concrete. The files use only allowlisted Python packages (`numpy`, `safetensors`, and `torch==2.4.1`) if an image is actually built; the PyTorch previous-version instructions list that release with the CUDA 12.4 wheel index.
+The Python entrypoint does not call Docker. `inspect_container_config()` reads the supplied `Dockerfile` and `docker-compose.yml` with `Path` and regular expressions, then returns a small JSON summary. This keeps the lesson runnable on a machine without Docker while making the configuration contract concrete.
+
+A typical case: a rebuilt image silently loses the downloaded model files because they lived in the container layer. The volume declaration answers where persistent data lives before the rebuild happens. The files use only allowlisted Python packages (`numpy`, `safetensors`, and `torch==2.4.1`) if an image is actually built; the PyTorch previous-version instructions list that release with the CUDA 12.4 wheel index.
 
 ```mermaid
 flowchart LR
@@ -61,6 +63,10 @@ If Docker is already installed, `docker compose -f code/docker-compose.yml confi
 ## Ship It
 
 [`outputs/artifact-card.md`](../outputs/artifact-card.md) should include the JSON summary, the two configuration paths, and a table of mounts and their purpose. Add separate runtime acceptance lines for Compose syntax, image build, GPU visibility, and any service you add later; a green Python audit covers none of those external conditions.
+
+## CBP context: LCAG base images and Azure registry
+
+In the CBP context container images build on LCAG-approved base images and push to Azure Container Registry, not to a personal registry. The lesson's audit habit transfers directly: pin the base image tag the way this Dockerfile pins its CUDA tag, declare volumes and mounts explicitly, and keep the static configuration audit separate from the runtime proof on real infrastructure. A Java service image follows the same pattern with a versioned JRE base instead of the CUDA base used here.
 
 ## Exercises
 
