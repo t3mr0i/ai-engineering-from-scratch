@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which order does run_one use for a proposed paper?",
+      "question": "Your team runs programs that automatically propose ideas, run experiments, and revise their own code. What safeguard from ordinary software practice matters most before letting such a loop run on its own?",
       "options": [
-        "Idea, experiment, retry if needed, polish, writeup, internal review",
-        "Idea, writeup, then experiment only if the prose is accepted",
-        "Experiment, idea, polish, and no review",
-        "Idea, polish, publish immediately, then run a review"
+        "Let every run use unlimited time and full system access so nothing slows it down.",
+        "Keep no record of intermediate results so the disk stays empty.",
+        "Give every proposal an automatic pass with no further review.",
+        "Set clear spending and step limits, restrict permissions, and keep a way to roll back bad changes."
       ],
-      "correct": 0,
-      "explanation": "The simulator progresses from idea to experiment and possible recovery, then polish, writeup, and internal review before submission."
+      "correct": 3,
+      "explanation": "Thinking in budgets, restricted permissions, and rollback prepares you for this lesson, which models a fully automated research loop with explicit stopping rules and safety controls."
     },
     {
       "stage": "check",
