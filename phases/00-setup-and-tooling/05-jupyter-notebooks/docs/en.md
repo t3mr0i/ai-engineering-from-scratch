@@ -19,6 +19,8 @@
 
 Installing a notebook server is useful, but the important behavior is the kernel contract. The local demo implements that contract in a small standard-library class rather than depending on Jupyter. `NotebookKernel` keeps a namespace, executes Python with `ast` and `exec`, captures printed output, displays the last expression, and turns an exception into `CellResult(error_type, error_message)` without killing the kernel.
 
+A typical case: a cell that ran fine yesterday fails today because an earlier cell was changed and never rerun. Restart-and-run-all exposes the hidden dependency in one step.
+
 ```mermaid
 flowchart LR
     A[Cell source] --> B[NotebookKernel.execute]
@@ -60,6 +62,10 @@ The companion notebook documents real Jupyter actions such as `Shift+Enter`, `%t
 ## Ship It
 
 [`outputs/prompt-notebook-helper.md`](../outputs/prompt-notebook-helper.md) is the reusable troubleshooting artifact. It asks for the exact error, restart-and-run-all result, data shape, environment, and kernel executable before recommending a fix. Keep the diagnostic output separate from any private data loaded by a notebook.
+
+## CBP context: notebooks for exploration, IDE for services
+
+In the CBP context production code lives in Java services maintained in an IDE, not in notebooks. Use notebooks the way this lesson teaches them: short-lived exploration of data or model behavior on LCAG-provided compute, with restart-and-run-all before sharing any result. Anything that must survive longer than the experiment belongs in versioned source code, reviewed like any other change.
 
 ## Exercises
 
