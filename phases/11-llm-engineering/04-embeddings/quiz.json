@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "After `SimpleEmbedder.fit([\"refund policy\", \"refund timing\"])`, what does `embed(\"refund\")` contain?",
+      "question": "Your help-center search only matches exact words, so a query about a late parcel misses an article about delayed shipment. What does that failure show?",
       "options": [
-        "A probability distribution over the two documents, with one score per document",
-        "A fixed one-hot vector whose only nonzero entry is the word `refund`",
-        "A normalized TF-IDF vector over the fitted vocabulary",
-        "A binary vector produced by hashing the complete sentence into 64 bits"
+        "Matching exact words cannot recognize different words that mean the same thing",
+        "Search results are always stored in the wrong language for every user",
+        "The articles are too short to appear on a results page at all",
+        "Users type too quickly for any search system to keep up with them"
       ],
-      "correct": 2,
-      "explanation": "`SimpleEmbedder` builds a sorted vocabulary and IDF values during `fit`. `embed` then computes term frequency times IDF and L2-normalizes the resulting vocabulary-sized vector."
+      "correct": 0,
+      "explanation": "Word overlap misses paraphrases that share the same meaning. This lesson builds on that gap by turning texts into numerical representations that capture similarity of meaning."
     },
     {
       "stage": "check",
