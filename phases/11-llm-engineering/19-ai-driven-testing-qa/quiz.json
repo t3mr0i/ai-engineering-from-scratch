@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For `Scenario(\"billing calculation\", \"date logic and external dependency\", signals=(\"money impact\",), impact=3, uncertainty=2)`, what does `score_scenario` return?",
+      "question": "Two changes arrive together: fixing a help-text typo and changing how invoices are calculated. You have limited testing time. What guides where you spend the extra effort?",
       "options": [
-        "11, because the base is `3*2+2=8` and two matched signals add four points",
-        "8, because explicit signals are not counted when calculating risk",
-        "14, from base 8 plus two points for each of three matches",
-        "20, because every billing scenario is automatically a launch gate"
+        "The size of the harm if each change is wrong, and how uncertain you are about it",
+        "The number of words in each change description, with longer text tested first",
+        "The order the changes arrived in, with earlier changes always tested more",
+        "Testing both changes equally without considering what could go wrong"
       ],
-      "correct": 2,
-      "explanation": "`signal_matches` sees `money impact` in the explicit signals and the description contains `date logic` plus `external dependency`, so three signals match. The score is `impact*2 + uncertainty + 3*2 = 6 + 2 + 6 = 14`."
+      "correct": 0,
+      "explanation": "Risk and uncertainty tell you where testing pays off. This lesson builds on that judgment by turning vague ideas into structured test plans with fitting safeguards."
     },
     {
       "stage": "check",
