@@ -113,6 +113,10 @@ Call `main` from a small caller with the demo’s smallest built-in fixture. Com
 
 Hand off `outputs/skill-compliance-matrix.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: EU AI Act first
+
+In the CBP context the framework that bites first is the EU AI Act alongside GDPR: CBP services serve EU users from EU Azure regions, so data residency, inference-layer PII redaction, and the enforcement calendar in this lesson are operative requirements, not procurement hypotheticals. Map controls once in Microsoft Purview Compliance Manager and reuse the evidence across SOC 2 and ISO 42001 the way the lesson's cross-framework mapping prescribes.
+
 ## Further Reading
 
 - [OpenAI Security and Privacy](https://openai.com/security-and-privacy/) — reference compliance profile.

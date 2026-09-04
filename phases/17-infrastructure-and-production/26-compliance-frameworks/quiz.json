@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which mapping does CONTROL_MAP provide for access logging?",
+      "question": "An enterprise customer asks for proof covering security, privacy, and AI-specific obligations. Your team holds one certificate from last year. What is the gap?",
       "options": [
-        "Only PCI DSS Requirement 8",
-        "Only EU AI Act Article 43",
-        "Access logging maps to ISO, GDPR, HIPAA, SOC 2",
-        "No framework because logging is operational, not a control"
+        "One certificate covers every framework forever",
+        "Customers never actually verify the documents",
+        "A longer certificate title would satisfy procurement",
+        "Each framework needs current evidence, reused across frameworks through mapped shared controls"
       ],
-      "correct": 2,
-      "explanation": "The access logging entry spans those four frameworks, illustrating why a shared control can reduce audit duplication."
+      "correct": 3,
+      "explanation": "Procurement wants a living matrix, not a single old PDF. This lesson builds the cross-framework control mapping that produces it."
     },
     {
       "stage": "check",
