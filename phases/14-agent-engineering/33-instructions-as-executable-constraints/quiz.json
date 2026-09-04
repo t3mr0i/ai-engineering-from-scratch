@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which rule slugs does the seeded `agent-rules.md` parser produce?",
+      "question": "A team writes down working rules such as updating notes first, keeping tests green, asking when unsure, and getting approval for new tools. What makes those written rules actually work?",
       "options": [
-        "Only `startup/state-file-fresh` and `done/tests-pass`.",
-        "Five rules about tools, prompts, and model selection.",
-        "`startup/state-file-fresh`, `forbidden/no-release-script-edits`, `done/tests-pass`, `uncertainty/open-question-note`, and `approval/new-dependency`.",
-        "No rules, because headings with slashes are ignored."
+        "Keep the rules as vague suggestions that nobody ever checks.",
+        "Check each piece of work against the written rules automatically and show which rule passed or failed.",
+        "Enforce the rules from memory with no written record of results.",
+        "Change the rules silently with no visible history."
       ],
-      "correct": 2,
-      "explanation": "`parse_rules` reads the five seeded `##` blocks and extracts each heading as the slug, matching the list printed by the demo."
+      "correct": 1,
+      "explanation": "Checking work against written rules is the prior habit. This lesson builds on it by turning prose instructions into checks a program can score and reviewers can track over time."
     },
     {
       "stage": "check",
