@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the validator and executor return for the clean `search` call with query `agent engineering 2026`?",
+      "question": "An assistant reads web pages and then acts on what it read, such as searching or sending messages. One page contains hidden text telling the assistant to delete data. What defense helps the most?",
       "options": [
-        "Validation passes, then the executor returns `search hit for 'agent engineering 2026'`.",
-        "Validation fails because every retrieved query is treated as hostile.",
-        "The executor runs first and returns `error: no tool 'search'`.",
-        "The call is routed to `send_message` because search is sensitive."
+        "Treat page text as direct instructions from the user and obey it immediately.",
+        "Allow every possible action, including deletion, with no restrictions.",
+        "Act first and inspect the content only afterwards.",
+        "Treat page text as untrusted data, allow only known safe actions, and check content for hidden instructions before acting."
       ],
-      "correct": 0,
-      "explanation": "`search` is in the allowlist, its argument has no directive marker, and the only content is tagged `user_message`; the executor therefore returns the scripted search hit."
+      "correct": 3,
+      "explanation": "Treating outside text as data and checking before acting is the prior instinct. This lesson builds on it with a fast safety check placed before the main model commits to any action."
     },
     {
       "stage": "check",
