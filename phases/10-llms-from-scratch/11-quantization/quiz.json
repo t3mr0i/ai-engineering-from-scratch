@@ -2,12 +2,12 @@
   "lesson": "11-quantization",
   "title": "Quantization: Making Models Fit",
   "questions": [
-    {
+        {
       "stage": "pre",
-      "question": "For a nonzero tensor and `bits=8`, how does `quantize_symmetric` compute its scale?",
-      "options": ["`max(abs(x)) / (2**7 - 1)`.", "`mean(x) / 8`.", "`max(x) - min(x)` with no division.", "`2**8 / max(abs(x))`."],
+      "question": "A trained model uses a lot of memory because every weight is stored as a precise decimal number. What is the basic idea for shrinking it to fit on a smaller card?",
+      "options": ["Store each weight with fewer bits and accept a small loss in precision.", "Delete the model file and hope users do not notice.", "Print the weights on paper and retype them later.", "Add more decimal places to every weight so the file grows."],
       "correct": 0,
-      "explanation": "The symmetric range is -128 through 127; the implementation uses `absmax / qmax`, where qmax is `2**(bits-1)-1`."
+      "explanation": "Fewer bits per weight means a much smaller file at the cost of some precision. This lesson builds the rounding schemes and accuracy checks that make that trade-off safe."
     },
     {
       "stage": "check",
