@@ -2,12 +2,12 @@
   "lesson": "25-speculative-decoding",
   "title": "Speculative Decoding and EAGLE",
   "questions": [
-    {
+        {
       "stage": "pre",
-      "question": "How does `make_draft(target, alpha_hint, rng)` construct its starting draft distribution?",
-      "options": ["It blends target with a uniform distribution using `alpha_hint`, adds small multiplicative noise, and renormalizes.", "It copies only the target argmax.", "It draws a fresh uniform distribution and ignores target.", "It subtracts target probabilities from the vocabulary size."],
+      "question": "Your accurate model writes one word at a time and each step is expensive. You also have a cheaper model that is often right. How could you get the same quality faster?",
+      "options": ["Have the cheap model suggest a short run of words, then let the accurate model check them together and fix the first mistake.", "Always trust the cheap model and never consult the accurate model.", "Run the accurate model twice for every word to be extra slow.", "Generate words with no model at all by picking letters at random."],
       "correct": 0,
-      "explanation": "The helper forms `alpha_hint*target + (1-alpha_hint)*uniform`, perturbs entries by factors in [0.95, 1.05], and normalizes them."
+      "explanation": "Cheap guesses plus bulk checking preserve quality while skipping many slow steps. This lesson builds the verification loop and the speed estimate behind that partnership."
     },
     {
       "stage": "check",
