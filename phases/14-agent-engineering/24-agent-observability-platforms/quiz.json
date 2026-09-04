@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What score and verdict does the fixture for session `s002` receive?",
+      "question": "An assistant sometimes gives wrong answers after several tool calls. The raw events exist, but you cannot tell which prompt, tool result, or cost belonged to which user request. What helps the most?",
       "options": [
-        "1.0 and PASS",
-        "0.8 and PASS",
-        "0.2 and FAIL",
-        "0.5 and WARN"
+        "Keep events in one unsorted pile with no link to any session.",
+        "Group all events by user session so each request shows its prompts, tool calls, costs, and final reply together.",
+        "Delete the tool-call records to save space.",
+        "Review only the final reply with no history of how it was produced."
       ],
-      "correct": 2,
-      "explanation": "The judge subtracts points for the recorded error, missing final reference, and missing tool call; `s002` ends at 0.2, below the 0.5 WARN threshold, so it is FAIL."
+      "correct": 1,
+      "explanation": "Grouping events by session to judge quality is the prior skill. This lesson builds on it with platforms that turn those grouped traces into dashboards and evaluations."
     },
     {
       "stage": "check",
