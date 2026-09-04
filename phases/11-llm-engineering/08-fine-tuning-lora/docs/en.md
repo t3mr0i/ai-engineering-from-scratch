@@ -224,6 +224,10 @@ Call `LoRALayer` from a small caller with tokens=["red","fox"]. Compare its resu
 
 Hand off `outputs/prompt-lora-advisor.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: consume fine-tunes, do not train them
+
+In the CBP context no team trains LoRA adapters on local GPUs: when a use case genuinely needs a fine-tune rather than RAG, it becomes a custom Azure OpenAI deployment request through LCAG, evaluated like any other model swap. Understand this lesson so you can judge such requests — what an adapter changes, what it costs, when it beats retrieval — but default to the lesson's cheaper answer: retrieval for knowledge, prompting for tone, fine-tuning only with measured evidence that neither suffices. Every deployment switch re-runs the eval set from Phase 11 · 10.
+
 ## Further Reading
 
 - Hu et al., "LoRA: Low-Rank Adaptation of Large Language Models" (2021) -- the original paper introducing the low-rank decomposition method, tested on GPT-3 175B with rank as low as 4

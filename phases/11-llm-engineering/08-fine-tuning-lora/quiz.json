@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Immediately after constructing `LoRALayer(16, 8, rank=4, alpha=8)`, what is the adapter's contribution for any input?",
+      "question": "Retraining a whole large model for your company's tone costs a fortune in compute and goes stale with every documentation change. What cheaper direction exists?",
       "options": [
-        "It equals the frozen linear output because `A` is initialized as an identity matrix",
-        "It is a random projection with scale `8`, because both adapter matrices are random",
-        "It is zero, because `B` starts as an all-zero matrix even though `A` is random",
-        "It is undefined until `train_lora` has updated the optimizer state"
+        "Buy more GPUs and retrain from scratch monthly",
+        "Shrink the company documentation until retraining is cheap",
+        "Retrain everything but less carefully",
+        "Train only a small add-on layer and keep the base model frozen"
       ],
-      "correct": 2,
-      "explanation": "The forward path is `(x @ A @ B) * scaling`. `B` is initialized to zeros, so the low-rank update is zero at initialization and the wrapped layer initially behaves like its base linear layer."
+      "correct": 3,
+      "explanation": "A small trainable adapter on a frozen base captures the tone at a fraction of the cost. This lesson implements that idea as LoRA."
     },
     {
       "stage": "check",
