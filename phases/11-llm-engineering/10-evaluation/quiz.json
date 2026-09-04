@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What identifier does a `TestCase` create when no `id` is supplied?",
+      "question": "You improve a prompt and the demo answer looks better, but you worry other cases got worse. What testing habit from ordinary software work applies here?",
       "options": [
-        "A random UUID generated each time the test suite is built",
-        "The category name followed by the number of tags",
-        "The first eight characters of the MD5 hash of `input_text`",
-        "The SHA-256 hash of the reference output, truncated to 16 characters"
+        "Keep a fixed set of example inputs with expected answers and rerun them after every change",
+        "Delete all old test cases whenever you change the prompt for the better",
+        "Test only the single example you just improved and ignore all the rest",
+        "Ship the change without checking any previous example at all"
       ],
-      "correct": 2,
-      "explanation": "`TestCase.__post_init__` computes `hashlib.md5(self.input_text.encode()).hexdigest()[:8]` when `id` is empty. This gives repeated identical inputs a stable short identifier."
+      "correct": 0,
+      "explanation": "A saved set of cases catches regressions that one demo hides. This lesson builds on that habit by creating reusable evaluation sets and scoring rules for model behavior."
     },
     {
       "stage": "check",
