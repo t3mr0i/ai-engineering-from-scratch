@@ -19,6 +19,8 @@
 
 `code/main.py` is intentionally read-only. `environment_report()` resolves the active executable, `sys.prefix`, and `sys.base_prefix`; it reports `isolated = (prefix != base_prefix)` and includes the path to `pyvenv.cfg` only when that file exists. Running it does not create an environment, install packages, or inspect CUDA.
 
+A typical case: a demo fails with an import error on a machine where the package is installed, because the shell used a different interpreter than the one that owns the package. The report answers which interpreter actually ran.
+
 ```mermaid
 flowchart TD
     A[python3 code/main.py] --> B[sys.executable]
@@ -55,6 +57,10 @@ The script does not write `pyproject.toml` or a lockfile. A reproducible project
 ## Ship It
 
 [`outputs/artifact-card.md`](../outputs/artifact-card.md) should carry one baseline JSON report, the interpreter path used, and the command that reproduced it. Add a per-phase decision such as “shared lightweight environment for setup lessons; separate environment for incompatible framework requirements,” and link the actual project metadata when it exists.
+
+## CBP context: Python for demos, Maven for services
+
+In the CBP context CBP services build and test with Maven or Gradle; Python environments exist only to run the course demos. Create the disposable demo environment exactly as shown, outside the repository, and never install course packages into a service build or commit an environment directory. If a demo and a service disagree, check `sys.executable` first: the most common cause is running demo code with the wrong interpreter.
 
 ## Exercises
 
