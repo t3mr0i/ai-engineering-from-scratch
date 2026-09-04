@@ -133,6 +133,10 @@ Call `Problem` from a small caller with a graph with edges (0,1) and (1,2). Comp
 
 Hand off `outputs/skill-framework-picker.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: plain Java first
+
+In the CBP context the default answer to this lesson's map is plain Java code: a service method with a loop, explicit state, and tests beats a framework whose abstractions fight the problem shape. Add a framework only for a named reason from the lesson — checkpointed long runs, supervised multi-step workflows, audited human approvals — and record that reason in the architecture decision log. Revisit the choice when the problem shape changes; the framework serves the product, not the other way around.
+
 ## Further Reading
 
 - [LangGraph documentation](https://langchain-ai.github.io/langgraph/) — StateGraph, checkpointers, interrupts, time-travel.
