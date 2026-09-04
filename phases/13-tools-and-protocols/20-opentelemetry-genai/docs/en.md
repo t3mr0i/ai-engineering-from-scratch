@@ -123,6 +123,10 @@ Call `Span` from a small caller with the demo’s smallest built-in fixture. Com
 
 Hand off `outputs/skill-otel-genai-instrumentation.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: Application Insights as the backend
+
+In the CBP context traces land in Azure Monitor Application Insights rather than Jaeger or Langfuse. The span hierarchy and attribute discipline from this lesson transfer unchanged: the OpenTelemetry SDK exports the same GenAI spans through the Azure exporter, so per-model, per-tool, and per-tenant cost and latency stay attributable. Keep the redaction default: prompts and tool payloads stay out of the trace unless a tenant explicitly opts in, matching the data-protection posture of CBP services.
+
 ## Further Reading
 
 - [OpenTelemetry — GenAI semconv](https://opentelemetry.io/docs/specs/semconv/gen-ai/) — canonical conventions for GenAI spans, metrics, and events

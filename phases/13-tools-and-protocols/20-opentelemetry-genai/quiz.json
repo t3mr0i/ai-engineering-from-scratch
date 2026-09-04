@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How many spans does the default agent_loop create?",
+      "question": "Users report an assistant is sometimes slow, sometimes fast. Logs show each model call but not the tool calls between them. What is missing?",
       "options": [
-        "3: one span per city only",
-        "6: one span per model and city pair",
-        "9 spans",
-        "12: a root plus four spans for each city"
+        "Faster computers for the same blind setup",
+        "Longer timeouts so slow calls stop failing",
+        "More log files scattered across services",
+        "End-to-end tracing across model, tool, and sub-agent steps in one trace"
       ],
-      "correct": 2,
-      "explanation": "The loop creates 1 root invoke_agent span, 2 llm.chat spans, 3 tool.execute spans, and 3 nested mcp.call spans, for 9 total."
+      "correct": 3,
+      "explanation": "Per-call logs cannot show where time goes between calls. This lesson builds the span hierarchy that makes the whole chain visible in one trace."
     },
     {
       "stage": "check",
