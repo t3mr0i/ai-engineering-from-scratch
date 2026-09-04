@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the defining scheduling action in `run_swarm`?",
+      "question": "Your team has eight jobs of very different sizes and four teammates sharing one task list. Everyone takes the next job whenever they finish. Why does this usually finish faster than giving each person a fixed pile upfront?",
       "options": [
-        "Each worker repeatedly pulls the next task from one shared queue.",
-        "The main thread assigns every task permanently before workers start.",
-        "One worker executes the whole list while others only log.",
-        "Workers wait for a central LLM to choose a speaker after each task."
+        "Sharing a list means nobody sits idle while someone else is stuck with several long jobs.",
+        "A shared list lets the team skip the longest jobs entirely.",
+        "Fixed piles are faster because idle time helps computers cool down.",
+        "Taking the next job doubles the total amount of work to be done."
       ],
       "correct": 0,
-      "explanation": "`run_swarm` puts all tasks in a `queue.Queue`; each worker calls `get_nowait()` until empty, then marks completion with `task_done()`."
+      "explanation": "Understanding how a shared task list balances uneven work prepares you for this lesson, which implements that pattern and shows what logging is needed to debug it."
     },
     {
       "stage": "check",
