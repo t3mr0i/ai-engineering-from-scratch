@@ -19,6 +19,8 @@
 
 An API call has a small, inspectable contract: endpoint, authentication headers, JSON request body, and JSON response. `first_api_call.py` builds that contract with Python's standard library. It uses the stable local model label `lesson-fixture` for the exercise; this is a fixture, not a provider model claim.
 
+A typical case: a demo key pasted into source code gets committed and must then be revoked across environments. Keeping the key outside the code avoids the incident entirely.
+
 ```mermaid
 flowchart LR
     P[build_request] --> M{LIVE + key + model?}
@@ -59,6 +61,10 @@ It prints the same response shape without contacting a provider. `process.env` t
 ## Ship It
 
 [`outputs/prompt-api-troubleshooter.md`](../outputs/prompt-api-troubleshooter.md) is the reusable artifact. When adapting it, include the exact status/error text, whether the local fixture or raw-HTTP path was used, whether a key was present, and the next command that can confirm the diagnosis. Never paste the key itself.
+
+## CBP context: secrets from the platform, not from source
+
+In the CBP context secrets come from the platform's secret management (Azure Key Vault through LCAG configuration), never from committed files. The lesson's rule transfers directly to Java services: read the key from the environment or the configured vault binding, for example through externalized Spring configuration, and keep the local fixture path for offline tests. A correct handoff names where the key lived during the run; it never contains the key itself.
 
 ## Exercises
 

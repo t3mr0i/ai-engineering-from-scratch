@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Where should a live API key come from when the lesson starts?",
+      "question": "Your service needs a secret token to call an external system. Where does the token belong?",
       "options": [
-        "A string literal committed next to the prompt",
-        "The local response fixture",
-        "An environment variable such as ANTHROPIC_API_KEY",
-        "The URL of the Python interpreter"
+        "A string literal committed next to the calling code",
+        "Pasted into a chat message asking for debugging help",
+        "A public wiki page so every teammate can copy it",
+        "Outside the code, supplied at run time from the environment or a secret store"
       ],
-      "correct": 2,
-      "explanation": "The live path reads ANTHROPIC_API_KEY from the environment. The deterministic fixture needs no key and never makes a network request."
+      "correct": 3,
+      "explanation": "Secrets stay out of source, messages, and wikis so they cannot leak through history. This lesson shows the same rule for API keys: environment at run time, fixtures for offline tests."
     },
     {
       "stage": "check",
