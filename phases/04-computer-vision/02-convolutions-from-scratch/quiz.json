@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For a CHW input and an OCHW kernel in this lesson, what does each output value compute?",
+      "question": "You have a grayscale photo stored as a grid of numbers and you slide a small window across it to compute one number per position. What determines how many output positions you get?",
       "options": [
-        "A global average over every image channel",
-        "A dot product after rotating the kernel 180 degrees",
-        "A dot product over one local patch, without flipping the kernel",
-        "A maximum over the patch, as in max pooling"
+        "The size of the window, how far it moves each step, and how the edges are handled determine the count.",
+        "The file name of the image and the folder where it is stored determine the count.",
+        "The brightness setting of the monitor used to view the image determines the count.",
+        "The programming language used to write the loop determines the count."
       ],
-      "correct": 2,
-      "explanation": "The implementation is cross-correlation: it multiplies a local patch and kernel in their stored orientation, then sums over input channels and kernel positions."
+      "correct": 0,
+      "explanation": "Counting output positions from window size, step size, and edge handling is the prior skill this lesson builds on when it implements sliding-window feature extraction from scratch."
     },
     {
       "stage": "check",
