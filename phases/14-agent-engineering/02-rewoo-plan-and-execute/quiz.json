@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In the built ReWOO fixture, what does evidence `E3` contain after `round_million` processes `E2`?",
+      "question": "You need an answer that requires two slow lookups, and the second lookup needs a result from the first. What helps the most before you make any calls?",
       "options": [
-        "11 million",
-        "11.2 million metro",
-        "Paris",
-        "unknown"
+        "Write down all needed lookups first and note which earlier result each later lookup needs.",
+        "Start calling immediately with no written list and figure out each next step only when forced to.",
+        "Repeat the first lookup several times and ignore the second one.",
+        "Skip the lookups and guess the final answer from memory."
       ],
       "correct": 0,
-      "explanation": "`E2` is `11.2 million metro`; `rounded_million` extracts 11.2 and returns `11 million`."
+      "explanation": "Noticing which steps feed into later steps is the prior skill. This lesson builds on it by separating a full upfront plan from step-by-step tool use to save repeated model calls."
     },
     {
       "stage": "check",
