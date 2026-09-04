@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "`PRODUCT_SCHEMA` requires `product`, `price`, and `in_stock`. What should `validate_schema({\"product\": \"headphones\", \"price\": -2, \"in_stock\": true}, PRODUCT_SCHEMA)` report?",
+      "question": "Your program calls a language model and needs the answer as data it can use, such as a product name and a price. The model replies with a friendly paragraph instead. What is the core problem for your program?",
       "options": [
-        "A validation error because `price` violates the schema's minimum of zero",
-        "A valid object because numeric fields accept negative values unless they are integers",
-        "A validation error only when `categories` is present, because optional fields control all numeric checks",
-        "A valid object because schema validation checks required keys but not numeric bounds"
+        "The reply is free-form text, so the program cannot reliably read the individual fields from it",
+        "The reply is too short for a human reader to enjoy",
+        "The reply uses correct grammar, which programs are unable to process at all",
+        "The reply arrives too quickly for the program to store it anywhere"
       ],
       "correct": 0,
-      "explanation": "The product schema sets `minimum: 0` for `price`. The recursive validator reaches that field and rejects `-2`, even though all three required keys and their basic types are present."
+      "explanation": "Application code needs predictable fields it can parse and check. This lesson builds on that need by showing how to request and validate structured responses from a model."
     },
     {
       "stage": "check",
