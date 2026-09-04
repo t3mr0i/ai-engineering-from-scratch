@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the first execution of `craft_iron_pickaxe` fail on in the demo?",
+      "question": "Your team automates a game where the same multi-step chores repeat, such as gathering materials and building tools. What pays off the most over many sessions?",
       "options": [
-        "The crafting table is absent from the context.",
-        "The ore miner returns a non-numeric string.",
-        "The v1 skill has no `gather_sticks` dependency, so crafting reports that two sticks are missing.",
-        "The retriever cannot find a skill named `craft_iron_pickaxe`."
+        "Save each working procedure as a reusable recipe, look up the closest recipe for new chores, and repair recipes that fail.",
+        "Solve every chore from scratch and throw away each solution afterwards.",
+        "Keep saved recipes but never change one that fails.",
+        "Store recipes under random names with no descriptions so lookup is impossible."
       ],
-      "correct": 2,
-      "explanation": "v1 depends on `mine_ore` and `place_crafting_table` but not `gather_sticks`; the executor reaches the craft function with zero sticks."
+      "correct": 0,
+      "explanation": "Reusing and repairing saved procedures is the habit that matters here. This lesson builds on it with a growing library of coded skills that handles harder chores over time."
     },
     {
       "stage": "check",
