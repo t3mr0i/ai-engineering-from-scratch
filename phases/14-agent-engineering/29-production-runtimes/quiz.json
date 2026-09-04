@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does `request_response(\"list project files\")` return?",
+      "question": "Your service runs long jobs that sometimes fail, reacts to events like new orders, and does nightly cleanup. What setup handles all three needs?",
       "options": [
-        "`final: answered list project files`",
-        "The five intermediate steps joined with newline characters.",
-        "A generator that yields one step at a time.",
-        "`error: request runtime only supports streaming`"
+        "Use a job queue that retries failures and parks hopeless jobs aside, handlers that react to new events, and a scheduler for the nightly work.",
+        "Run everything once with no retries and drop failures silently.",
+        "React to events by manual guessing with no handlers in place.",
+        "Do the nightly work by hand with no scheduler."
       ],
       "correct": 0,
-      "explanation": "The synchronous wrapper materializes `_agent_fn` and returns only `steps[-1]`, the final answer string."
+      "explanation": "Separating one-off replies from queued, event-driven, and scheduled work is the prior idea. This lesson builds on it with runtime shapes that keep long tasks reliable and observable."
     },
     {
       "stage": "check",
