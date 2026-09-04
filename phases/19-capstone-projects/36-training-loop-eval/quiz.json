@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How are the targets formed in `make_batches` for a context window?",
+      "question": "Your team trains a small model in steps and wants to catch problems early without fooling yourselves. Which habit from ordinary model training helps most?",
       "options": [
-        "For source `[t0,...,tT]`, input is `[t1,...,tT]` and target is `[t0,...,t(T-1)]`.",
-        "The source window is used unchanged as both input and target.",
-        "For source `[t0,...,tT]`, input is `[t0,...,t(T-1)]` and target is `[t1,...,tT]`.",
-        "The final token `tT` is the only scalar target for the whole window."
+        "Train on all available data and never check anything separately.",
+        "Track loss on data the model is not trained on, save the loss history, and look at real samples during training.",
+        "Stop saving any history so the disk stays empty.",
+        "Judge training only by how fast each step runs, ignoring what the model produces."
       ],
-      "correct": 2,
-      "explanation": "The helper takes a window of `context_length + 1` tokens, returns `window[:-1]` as input and `window[1:]` as target. Thus the target at each position is the source token at the following index."
+      "correct": 1,
+      "explanation": "That habit of held-out checks plus saved histories and samples prepares you for this lesson, which assembles the full training loop with scheduled step sizes and regular evaluation."
     },
     {
       "stage": "check",
