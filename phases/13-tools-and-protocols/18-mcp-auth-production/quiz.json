@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which discovery properties does the authorization server publish for this client flow?",
+      "question": "A service validates access tokens with signing keys it downloaded once at startup. Months later every request suddenly fails after the identity provider rotates its keys. What was missing?",
       "options": [
-        "Only implicit grant and plain PKCE",
-        "A static client secret with no metadata",
-        "S256, CIMD, and registration",
-        "A JWKS endpoint but no authorization endpoint"
+        "A longer token lifetime so rotation never matters",
+        "Harder key names that are difficult to guess",
+        "A weekly service restart on a fixed schedule",
+        "Scheduled refresh of the cached keys before they expire, plus a fetch on cache miss"
       ],
-      "correct": 2,
-      "explanation": "The metadata advertises S256, CIMD support, and the dynamic registration endpoint alongside the normal authorization and token endpoints."
+      "correct": 3,
+      "explanation": "Keys rotate on someone else's schedule, so validation needs a cache with refresh and a fallback fetch. This lesson builds the production auth surface around that rule."
     },
     {
       "stage": "check",

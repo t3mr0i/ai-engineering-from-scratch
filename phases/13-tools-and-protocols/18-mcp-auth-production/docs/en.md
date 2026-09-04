@@ -314,6 +314,10 @@ Call `b64url` from a small caller with tokens=["red","fox"]. Compare its result 
 
 Hand off `outputs/skill-mcp-auth.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: Microsoft Entra ID as the authorization server
+
+In the CBP context the authorization server in these diagrams is Microsoft Entra ID managed by LCAG: key rotation, client enrollment, and conditional access arrive as platform behavior rather than code you operate. The lesson still matters because the MCP server side is yours: validate the audience claim against your canonical resource URL, refresh cached keys before they expire, and refuse tokens minted for another resource. Managed identity covers service-to-service calls inside Azure; the OAuth flow in this lesson covers the client-facing side where users and agents authenticate.
+
 ## Further Reading
 
 - [MCP — Authorization spec (2025-11-25)](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization) — the MCP auth profile this lesson implements
