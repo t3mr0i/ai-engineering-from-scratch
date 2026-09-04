@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does `prompt_chain` pass into the second template in the demo?",
+      "question": "A help desk gets refund requests, bug reports, and sales questions. Each type needs different handling, and some answers improve when several reviewers vote. What setup serves customers best?",
       "options": [
-        "The original input plus the first prompt text",
-        "A list containing every previous `(label, output)` pair",
-        "The output returned by the first `summarize` call",
-        "The classifier label produced by `route`"
+        "Handle every request with one identical free-form step and no specialist paths.",
+        "Send each request to the right specialist path, do simple steps in a fixed chain, and let reviewers vote side by side where it helps.",
+        "Send refund requests to sales and bug reports to refunds.",
+        "Ask a single reviewer once and ignore every other opinion."
       ],
-      "correct": 2,
-      "explanation": "The chain replaces `current` with each step's output, so the `title` template receives the summarizer's string."
+      "correct": 1,
+      "explanation": "Matching the shape of the work to a fixed chain, a route, or a parallel vote is the prior instinct. This lesson builds on it with a small set of named workflow shapes and guidance on when each beats a free-roaming agent."
     },
     {
       "stage": "check",
