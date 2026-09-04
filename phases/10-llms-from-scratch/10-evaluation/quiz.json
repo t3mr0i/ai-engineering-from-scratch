@@ -2,12 +2,12 @@
   "lesson": "10-evaluation",
   "title": "Evaluation: Benchmarks, Evals, LM Harness",
   "questions": [
-    {
+        {
       "stage": "pre",
-      "question": "How does `exact_match(' Yes ', 'yes')` score the two strings?",
-      "options": ["0.5, because one string contains spaces.", "0.0, because case must match.", "1.0 after strip/lowercase.", "It returns the token F1 instead."],
-      "correct": 2,
-      "explanation": "The function strips and lowercases both inputs before comparison, so these strings are an exact match and the intended score is 1.0."
+      "question": "Your team demoed a model that answers questions well in meetings, but customers report mixed results. What is the most reliable way to judge whether a new version is really better?",
+      "options": ["Score both versions on the same fixed set of representative tasks and compare the results.", "Ask the developer who trained the new version for a personal opinion.", "Count the number of files in the training folder.", "Pick whichever version finished training most recently."],
+      "correct": 0,
+      "explanation": "A shared fixed task set makes versions comparable. This lesson builds the scoring tools and benchmark habits that turn that comparison into a proper evaluation suite."
     },
     {
       "stage": "check",
