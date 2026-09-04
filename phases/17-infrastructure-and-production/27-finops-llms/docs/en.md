@@ -127,6 +127,10 @@ Call `TenantPolicy` from a small caller with tokens=["red","fox"]. Compare its r
 
 Hand off `outputs/skill-finops-plan.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: Cost Management and PTUs
+
+In the CBP context token spend runs through Azure: stamp user, task, and tenant IDs at the call site as this lesson prescribes, then read them back in Cost Management and Log Analytics rather than building a parallel billing pipeline. Compare Provisioned Throughput Units against pay-as-you-go with the lesson's unit metric (cost per resolved query), not dollars per million tokens. The enforcement ladder (rate limit, spend cap, kill switch) becomes APIM policies plus budget alerts on the subscription.
+
 ## Further Reading
 
 - [FinOps Foundation — FinOps for AI Overview](https://www.finops.org/wg/finops-for-ai-overview/)

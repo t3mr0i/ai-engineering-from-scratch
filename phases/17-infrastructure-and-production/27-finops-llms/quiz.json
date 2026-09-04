@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which three attribution dimensions does the lesson recommend instrumenting on day one?",
+      "question": "Your monthly model bill arrives as one large number with no breakdown by customer, feature, or user. What should have been in place from day one?",
       "options": [
-        "Region, GPU type, and kernel version",
-        "Prompt length, batch size, and cache TTL",
-        "user, task/route, tenant",
-        "Temperature, top-p, and stop sequence"
+        "A bigger budget approved in advance",
+        "A discount negotiated with the provider",
+        "Splitting the bill evenly across customers",
+        "Tagging every call with user, task, and tenant at the call site"
       ],
-      "correct": 2,
-      "explanation": "The lesson's unit-economics view tags per user, per task/route, and per tenant so spend can be tied to people, product surfaces, and contracts."
+      "correct": 3,
+      "explanation": "Attribution instrumented at request creation is the only kind that survives. This lesson designs the dimensions and the enforcement ladder on top of them."
     },
     {
       "stage": "check",
