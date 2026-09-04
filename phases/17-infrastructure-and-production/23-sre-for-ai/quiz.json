@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What root cause does log_agent return for an incident containing the word checkout?",
+      "question": "An alert fires at night. The responder finds logs, metrics, and deploy history in three different tools and spends 30 minutes correlating them by hand. What would shorten this?",
       "options": [
-        "A network partition in eu-west-1",
-        "A tokenizer version mismatch",
-        "vLLM KV-cache OOM",
-        "An expired TLS certificate"
+        "More dashboards covering the same data",
+        "Muting the alert until morning",
+        "Hiring more responders for the same manual work",
+        "Automated first-pass triage that gathers and correlates evidence before the human looks"
       ],
-      "correct": 2,
-      "explanation": "log_agent's checkout branch returns the vLLM KV-cache OOM hypothesis with 142 errors/min and pod-gpu-3 evidence."
+      "correct": 3,
+      "explanation": "Machines correlate faster than humans; humans judge better than machines. This lesson designs exactly that split: automated investigation, human approval."
     },
     {
       "stage": "check",

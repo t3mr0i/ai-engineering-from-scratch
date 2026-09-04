@@ -104,6 +104,10 @@ Call `AgentHypothesis` from a small caller with an 8x8 synthetic image. Compare 
 
 Hand off `outputs/skill-ai-sre-plan.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: Azure Monitor and narrow actuation
+
+In the CBP context the telemetry in these diagrams is Azure Monitor: metrics, Log Analytics, and Application Insights traces, with alerts paging through the team's existing on-call channel. The lesson's narrow-actuation rule maps to Azure practice: an approved runbook may restart a Container App revision or roll back a deployment slot, and anything wider needs a human. Persist the investigation memory the lesson describes in the team's runbook repository so it survives on-call rotations.
+
 ## Further Reading
 
 - [incident.io — AI SRE Complete Guide 2026](https://incident.io/blog/what-is-ai-sre-complete-guide-2026)
