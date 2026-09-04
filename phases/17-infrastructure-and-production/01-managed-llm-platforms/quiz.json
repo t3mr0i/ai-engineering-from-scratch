@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which entry in PLATFORMS has no PTU offering in the local comparator?",
+      "question": "You picked a model for your product. The bill grows and a second provider offers the same capability cheaper for your heaviest feature. What should you have prepared?",
       "options": [
-        "Vertex AI Gemini",
-        "Bedrock on-demand",
-        "Azure OpenAI",
-        "All three expose the same PTU field"
+        "A hardcoded dependency on the first provider",
+        "A bigger budget request for next quarter",
+        "Nothing; provider prices never change",
+        "A written comparison of catalogs, latency, and cost attribution plus an exit path"
       ],
-      "correct": 0,
-      "explanation": "Vertex AI Gemini stores ptu_hourly as None and ptu_tokens_per_hour as 0; Bedrock and Azure have PTU values."
+      "correct": 3,
+      "explanation": "Deciding with trade-offs written down keeps a cheaper alternative reachable. This lesson teaches the platform comparison that produces that document."
     },
     {
       "stage": "check",

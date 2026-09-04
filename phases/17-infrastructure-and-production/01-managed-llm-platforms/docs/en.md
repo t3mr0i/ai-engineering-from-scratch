@@ -92,6 +92,10 @@ Call `Platform` from a small caller with an 8x8 synthetic image. Compare its res
 
 Hand off `outputs/skill-managed-platform-picker.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: Azure OpenAI is the default
+
+In the CBP context the platform decision is pre-made: CBP services call models through Azure OpenAI provisioned by LCAG, which is also where Provisioned Throughput Units, data residency, and contractual coverage come from. Use this lesson's comparison the other way around: understand what Bedrock and Vertex would offer so you can judge vendor claims and design the exit path the lesson demands, but build and measure against the Azure endpoint. FinOps attribution (team, product, feature) maps to Azure scopes, resource groups, and cost-analysis tags.
+
 ## Further Reading
 
 - [AWS Bedrock Pricing](https://aws.amazon.com/bedrock/pricing/) — authoritative rate card and Provisioned Throughput pricing.
