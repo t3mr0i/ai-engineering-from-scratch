@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which command gives a reproducible first check of this lesson's Rust entrypoint?",
+      "question": "Your first program run fails with 'command not found'. What is the most useful first check?",
       "options": [
-        "rustc --edition 2021 code/main.rs -o /tmp/env-check && /tmp/env-check",
-        "python3 code/main.rs",
-        "cargo add torch",
-        "Run nvidia-smi and assume it validates every language runtime"
+        "Verify the tool is installed and reachable on the command path",
+        "Reinstall the operating system",
+        "Rewrite the program in a different language",
+        "Rerun the same command every hour until it works"
       ],
       "correct": 0,
-      "explanation": "The lesson is a standalone Rust program, so rustc compiles the file and the resulting binary runs the environment checks."
+      "explanation": "A missing executable is a different problem from broken code. This lesson builds an environment checker on exactly that distinction: name the missing tool before debugging the program."
     },
     {
       "stage": "check",

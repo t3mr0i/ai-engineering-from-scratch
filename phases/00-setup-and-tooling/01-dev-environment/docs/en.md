@@ -19,6 +19,8 @@
 
 Later lessons assume that a shell, Git, Python, Node.js, and Rust are reachable. A missing executable should be identified before an experiment fails halfway through. This lesson therefore builds a small Rust program that probes commands rather than installing anything for you.
 
+A typical case: a demo fails halfway with a library missing, and the team debates whether the machine or the code is at fault. The checker answers that question in seconds by naming the failing layer.
+
 The checker has four conceptual layers: the operating system, package managers, language runtimes, and libraries. The layers are useful for locating a failure, but `main.rs` only verifies command-line tools. It does not prove that CUDA, NumPy, or a model library is installed.
 
 ```mermaid
@@ -55,6 +57,17 @@ python3 phases/00-setup-and-tooling/01-dev-environment/code/verify.py
 ## Ship It
 
 The reusable artifact is [`outputs/prompt-env-check.md`](../outputs/prompt-env-check.md). Hand it to an assistant together with the exact failing line, the command that produced it, and whether the probe was required or optional. The prompt can guide a fix, but the verification command remains the acceptance check.
+
+## CBP context: Java toolchain and provided machines
+
+In the CBP context LCAG provides the developer machines and base images, so installing the operating system is out of scope. The checker in this lesson verifies the course-demo toolchain (Git, Python, Node.js, Rust); it does not verify the Java service toolchain. Check that separately:
+
+```text
+java -version
+mvn -version
+```
+
+Run the lesson checker to confirm the machine can run the course demos. Build and test CBP services with Maven or Gradle as usual; do not add course-demo packages to a service build.
 
 ## Exercises
 
