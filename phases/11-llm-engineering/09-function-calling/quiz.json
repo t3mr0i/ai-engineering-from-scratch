@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "After `register_all_tools()`, what does the `get_weather` definition require?",
+      "question": "Your code already gets structured data back from a model, such as a city name in a predictable field. You want the program to look up the weather for that city. What can your program do with that structured field?",
       "options": [
-        "A required city and optional Celsius/Fahrenheit units",
-        "A numeric city ID and a mandatory latitude/longitude object",
-        "Only `units`; the city is inferred from the user's message by the dispatcher",
-        "A complete weather response object supplied by the model before the function runs"
+        "Read the city value in code and call the weather lookup with it as the argument",
+        "Send the city value back to the user and stop without doing anything else",
+        "Delete the structured field because programs cannot act on model output",
+        "Ask the model to perform the network request inside its written answer"
       ],
       "correct": 0,
-      "explanation": "The registered JSON schema lists `city` in `required`. `units` has an enum with the two supported strings but is not required, so `get_weather` defaults to Celsius."
+      "explanation": "A predictable field lets ordinary code take the next action with the extracted value. This lesson builds on that pattern by letting the model request specific program actions through defined interfaces."
     },
     {
       "stage": "check",
