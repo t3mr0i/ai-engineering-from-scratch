@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "When `Runner` runs `build_graph()` on `the CLI crashes on ctrl-c, please fix`, what route and ticket are produced?",
+      "question": "A repair service handles jobs in several steps and sometimes must pause for a human approval, then continue after a crash without redoing finished steps. What design helps the most?",
       "options": [
-        "route `sales`, ticket `SAL-the CLI cras`",
-        "route `refund`, ticket `REF-the CLI cras`",
-        "route `bug`, ticket `BUG-the CLI cras`",
-        "route `bug`, ticket `BUG-the CLI crashes on ctrl-c, please fix`"
+        "Keep all progress only in memory and restart from zero after any pause or crash.",
+        "Skip saving progress to move faster and hope nothing crashes.",
+        "Save the full job state after each step so the run can pause and continue from the last saved point.",
+        "Let each step overwrite unrelated saved data with no record."
       ],
       "correct": 2,
-      "explanation": "The classifier detects `crash` and routes to `bug`; `_bug` prefixes the first 12 input characters with `BUG-`, yielding `BUG-the CLI cras`."
+      "explanation": "Saving progress after each step is the prior idea. This lesson builds on it by organizing steps as a graph with saved progress that survives pauses and restarts."
     },
     {
       "stage": "check",
