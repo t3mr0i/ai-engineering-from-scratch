@@ -19,6 +19,8 @@
 
 `code/main.py` constructs a sample mapping in which all five required keys are `True`: `format_on_save`, `type_checking`, `integrated_terminal`, `notebook_support`, and `remote_ssh`. `evaluate_editor` compares each value with `is True`, returns missing keys in checklist order, and computes `len(satisfied) / 5`. It does not inspect VS Code, install extensions, or connect over SSH.
 
+A typical case: a pull request mixes formatting noise with the real change because format-on-save was never enabled. The checklist catches the missing setting before the review starts.
+
 ```mermaid
 flowchart TD
     A[settings mapping] --> B[evaluate_editor]
@@ -54,6 +56,10 @@ The checked-in `vscode/extensions.json` recommends Python, Pylance, Jupyter, deb
 ## Ship It
 
 [`outputs/artifact-card.md`](../outputs/artifact-card.md) is the reusable checklist. Record the mapping passed to `evaluate_editor`, the JSON result, and which settings/extensions were actually installed. Keep Remote SSH validation separate: the checklist can say `remote_ssh: true` while an SSH connection still fails.
+
+## CBP context: IntelliJ for Java, VS Code files for demos
+
+In the CBP context Java services are maintained in IntelliJ IDEA; the checked-in VS Code files serve the Python course demos. Apply the same checklist discipline in both: format-on-save, static analysis, and test integration enabled, with the Azure DevOps integration for work items and pull requests where the team reviews. Record what is actually installed and working; a green checklist row is not proof that a remote session or a review pipeline succeeds.
 
 ## Exercises
 
