@@ -2,12 +2,12 @@
   "lesson": "13-building-complete-llm-pipeline",
   "title": "Building a Complete LLM Pipeline",
   "questions": [
-    {
+        {
       "stage": "pre",
-      "question": "Which prerequisite stages must complete before Stage 09 `cai_grpo_policy` can run in `STAGES`?",
-      "options": ["Both `reward_ppo_policy` (07) and `dpo_policy` (08).", "Only the tokenizer stages 01 and 02.", "Only the final inference server stage 12.", "No stages; Stage 09 is independent."],
+      "question": "Your project now has many steps where each step produces files the next step needs, and rerunning everything is expensive. What practice saves the most time and confusion?",
+      "options": ["Write down what each step needs and produces, save each result with a content label, and check results before passing them on.", "Rerun every step from scratch whenever any small detail changes.", "Pass files between steps with no names or version labels.", "Let each step silently overwrite the previous results with no record."],
       "correct": 0,
-      "explanation": "The DAG lists dependencies `['07_reward_ppo_policy', '08_dpo_policy']` for the Constitutional-AI/GRPO policy stage."
+      "explanation": "Clear step contracts plus labeled saved results make long workflows repeatable. This lesson builds the full pipeline organizer that applies that habit across all the prior stages."
     },
     {
       "stage": "check",
