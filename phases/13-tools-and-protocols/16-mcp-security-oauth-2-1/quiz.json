@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the authorization server verify before exchanging an OAuth code?",
+      "question": "A helper that reads a user's calendar and email asks for full access to everything on first launch. What is wrong with that?",
       "options": [
-        "Only the client's display name",
-        "That the redirect URI is localhost",
-        "resource + S256 PKCE match",
-        "That the requested scope is empty"
+        "Nothing; full access from the start is simplest",
+        "It should skip login entirely and trust the device",
+        "It should store the user's password for convenience",
+        "It should request the smallest scope first and ask for more only when an action needs it"
       ],
-      "correct": 2,
-      "explanation": "exchange pops the code and checks both its resource indicator and the SHA-256 PKCE challenge before issuing a token."
+      "correct": 3,
+      "explanation": "Least privilege plus asking for more scope only when needed limits what a compromised helper can do. This lesson implements exactly that pattern for MCP servers."
     },
     {
       "stage": "check",

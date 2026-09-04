@@ -127,6 +127,10 @@ Call `Token` from a small caller with the text "red fox". Compare its result wit
 
 Hand off `outputs/skill-oauth-scope-planner.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: Entra ID outside, managed identity inside
+
+In the CBP context user-facing MCP servers authenticate against Microsoft Entra ID with PKCE exactly as this lesson shows; the PKCE and resource-indicator mechanics do not change. Between CBP services inside Azure, prefer managed identity over the full authorization-code flow: no stored secret, no rotation job. Apply step-up authorization where the lesson applies it: a CBP assistant granted read access asks for write scope only for the action that needs it.
+
 ## Further Reading
 
 - [MCP — Authorization spec](https://modelcontextprotocol.io/specification/draft/basic/authorization) — canonical MCP OAuth profile
