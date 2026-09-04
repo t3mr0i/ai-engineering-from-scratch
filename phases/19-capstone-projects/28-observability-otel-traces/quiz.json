@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How long is the hexadecimal trace ID produced by `new_trace_id()`?",
+      "question": "Your team runs an assistant that calls several tools and you need to debug slow or failing runs after the fact. What basic record-keeping from ordinary backend work helps most?",
       "options": [
-        "32 hex characters",
-        "16 hex characters",
-        "8 decimal digits",
-        "64 bytes printed as text"
+        "Keep no logs at all so there is nothing confusing to read.",
+        "Save only the final answer with no note of which steps ran.",
+        "Keep a timeline of steps with start and finish times, error marks, and counts of how often each tool was used.",
+        "Restart the server to erase every trace of the failure."
       ],
-      "correct": 0,
-      "explanation": "The helper calls `secrets.token_hex(16)`, which represents 16 random bytes as 32 hexadecimal characters. Span IDs use a separate, shorter 8-byte helper."
+      "correct": 2,
+      "explanation": "Thinking in timed step records and tool-use counts prepares you for this lesson, which builds trace-style spans and metric summaries you can save and re-read."
     },
     {
       "stage": "check",
