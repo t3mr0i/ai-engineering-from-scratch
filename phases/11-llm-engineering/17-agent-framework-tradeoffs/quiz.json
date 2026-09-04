@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does `recommend(Problem(total_llm_calls=2))` return when all state, role, dialogue, fanout, resume, and human-interrupt flags are false?",
+      "question": "Your team must choose between plain code, a simple pipeline, or a full workflow engine for a new automation task. What is the sensible way to decide?",
       "options": [
-        "`plain python`, because two calls have no coordination signal",
-        "`langgraph`, because every multi-call task needs a checkpointer",
-        "`crewai`, because two calls are treated as a short role-driven pipeline",
-        "`agno`, because a low call count implies persistent session memory"
+        "Match the complexity of the solution to the coordination needs of the task",
+        "Always use the most complex framework for every task regardless of need",
+        "Always avoid every framework and rewrite everything from scratch each time",
+        "Choose the option based only on which name sounds most impressive"
       ],
       "correct": 0,
-      "explanation": "The first branch treats two or fewer calls with no other coordination needs as ordinary application code. It returns `plain python` before consulting the framework-specific branches."
+      "explanation": "Simple tasks do not need heavy machinery and complex tasks outgrow plain scripts. This lesson builds on that judgment by comparing agent frameworks against concrete task needs."
     },
     {
       "stage": "check",
