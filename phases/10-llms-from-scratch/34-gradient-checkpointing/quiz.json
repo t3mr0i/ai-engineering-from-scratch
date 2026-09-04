@@ -2,12 +2,12 @@
   "lesson": "34-gradient-checkpointing",
   "title": "Gradient Checkpointing and Activation Recomputation",
   "questions": [
-    {
+        {
       "stage": "pre",
-      "question": "What does `model_forward_checkpointed` keep instead of retaining every layer activation?",
-      "options": ["Only the final scalar loss.", "Every ReLU mask and no layer input.", "The initial input, selected segment-boundary inputs, and the final output.", "Only parameter gradients computed during the forward pass."],
-      "correct": 2,
-      "explanation": "The checkpointed forward stores the input and outputs at segment boundaries, then the backward pass recomputes the layers inside each segment."
+      "question": "Training a deep network runs out of memory because every intermediate result is saved for later, but recomputing a result is cheaper than storing all of them. What trade-off would you try?",
+      "options": ["Save only a few intermediate results and recompute the rest from the nearest saved one when they are needed.", "Save every intermediate result twice to use even more memory.", "Delete the model weights to free memory.", "Stop training after the first layer and ship that."],
+      "correct": 0,
+      "explanation": "Keeping a few anchors and rebuilding between them trades extra computation for much lower memory. This lesson builds the method that chooses those anchors and measures the cost."
     },
     {
       "stage": "check",
