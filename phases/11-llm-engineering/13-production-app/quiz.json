@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does `select_prompt(\"general_chat\", user_id, variables)` assign the 10% A/B variant?",
+      "question": "Your demo assistant works on your laptop but fails silently when the model service is down and nobody notices until users complain. What is missing compared to a real service?",
       "options": [
-        "It hashes `user_id` with the experiment name and chooses `v2` for buckets below 10",
-        "It alternates v1 and v2 on every request from the same user",
-        "It chooses v2 whenever the query contains the word `test`, regardless of the user",
-        "It samples a random number for each call, so a user can switch versions within one request"
+        "Health reporting, request logs, and a backup response path when a dependency fails",
+        "A larger demo script with more example questions hard-coded into it",
+        "A faster laptop so the demo runs without any error handling at all",
+        "Removing all logs so that failures leave no trace in production"
       ],
       "correct": 0,
-      "explanation": "The experiment bucket is `md5(f\"{user_id}:{exp_name}\").hexdigest()` interpreted as an integer modulo 100. Stable hashing keeps a user in the same control/variant bucket for the experiment."
+      "explanation": "Production services need visibility into failures and a plan for outages. This lesson builds on the earlier components by wiring them together with logging, health checks, and fallbacks."
     },
     {
       "stage": "check",
