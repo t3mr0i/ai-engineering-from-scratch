@@ -2,12 +2,12 @@
   "lesson": "17-native-sparse-attention",
   "title": "Native Sparse Attention (DeepSeek NSA)",
   "questions": [
-    {
+        {
       "stage": "pre",
-      "question": "How does `compress_mean(K, l)` form the compressed keys?",
-      "options": ["It averages each consecutive block of up to `l` rows.", "It keeps only the last `l` keys.", "It selects random individual rows.", "It concatenates every block into one longer vector."],
+      "question": "Attending to every earlier word gets very expensive in a very long document, yet most words are irrelevant to the current word. What strategy would you try first?",
+      "options": ["Summarize distant stretches briefly, look closely at a few promising stretches, and always keep the most recent words in view.", "Ignore the entire document and always output the same word.", "Compare the current word only to itself and nothing else.", "Copy the whole document twice to double-check every word."],
       "correct": 0,
-      "explanation": "The pedagogical compressed branch mean-pools each consecutive block, including a shorter final block when N is not divisible by l."
+      "explanation": "A rough overview plus focused detail plus recent context covers what matters at far lower cost. This lesson builds the three-part sparse method that combines those views."
     },
     {
       "stage": "check",
