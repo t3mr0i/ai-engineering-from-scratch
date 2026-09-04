@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What `ToolResult` does the registered `add` tool produce for `ToolCall(\"u01\", \"add\", {\"a\": 2, \"b\": 3})`?",
+      "question": "Your program lets a model request actions like booking or calculating by sending structured fields. What keeps those requests safe and correct?",
       "options": [
-        "`tool_use_id=\"u01\"`, `ok=True`, `content=\"5\"`",
-        "`tool_use_id=\"u01\"`, `ok=False`, `content=\"5\"`",
-        "`tool_use_id=\"add\"`, `ok=True`, `content=\"23\"`",
-        "`tool_use_id=\"u01\"`, `ok=False`, `content=\"missing required: a\"`"
+        "Run whatever arrives with no checks because checking slows things down.",
+        "Delete the descriptions of expected fields to save space.",
+        "Check each request against the expected fields and types before running anything.",
+        "Accept only requests that misspell the action name."
       ],
-      "correct": 0,
-      "explanation": "Validation accepts both integers, `add` returns `str(2 + 3)`, and the result preserves the call id `u01`."
+      "correct": 2,
+      "explanation": "Validating structured input before acting is the prior skill. This lesson builds on it with a registry that checks field shapes, adjusts simple type mismatches, and isolates each run."
     },
     {
       "stage": "check",
