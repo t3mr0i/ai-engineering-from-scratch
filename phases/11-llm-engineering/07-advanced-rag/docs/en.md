@@ -610,6 +610,10 @@ Call `call` from a small caller with the text "red fox". Compare its result with
 
 Hand off `outputs/prompt-advanced-rag-debugger.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: hybrid search and reranking on the platform
+
+In the CBP context hybrid search and semantic reranking are Azure AI Search features, not hand-built code: enable the vector plus full-text query, turn on the semantic reranker, and rewrite ambiguous queries in the service before retrieval. Diagnose failures with the lesson's taxonomy (wrong chunk, missing context, multi-hop breakdown) against logged queries and retrieved passage IDs. Tune chunking and the rerank threshold on a frozen CBP eval set; each change to the pipeline re-runs that set in the pipeline.
+
 ## Further Reading
 
 - Robertson & Zaragoza, "The Probabilistic Relevance Framework: BM25 and Beyond" (2009) -- the definitive reference for BM25, explaining the probabilistic foundations behind the formula

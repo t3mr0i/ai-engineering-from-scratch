@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does BM25 add to a semantic vector search over the Acme chunks?",
+      "question": "Your document search finds texts with similar words but misses the one document holding the actual figure, phrased differently. What capability is missing?",
       "options": [
-        "Length-normalized exact-term relevance from BM25",
-        "A second generative model that writes a hypothetical answer before any retrieval occurs",
-        "A parent-document lookup that discards every child chunk after the vector search",
-        "A fixed cosine threshold that makes every returned chunk equally relevant"
+        "A bigger generative model for answering",
+        "More documents in the index",
+        "A faster search backend",
+        "Exact-term matching alongside semantic similarity, so rare terms count"
       ],
-      "correct": 0,
-      "explanation": "`BM25.score` counts query-term occurrences, applies an IDF factor, and normalizes term frequency by document length using `k1` and `b`. It complements semantic similarity with lexical precision."
+      "correct": 3,
+      "explanation": "Meaning search alone misses precise terms; keyword search alone misses paraphrases. This lesson builds the hybrid pipeline plus reranking that combines both."
     },
     {
       "stage": "check",
