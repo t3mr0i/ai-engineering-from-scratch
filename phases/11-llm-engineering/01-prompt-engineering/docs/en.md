@@ -609,6 +609,10 @@ Call `call` from a small caller with the text "red fox". Compare its result with
 
 Hand off `outputs/prompt-prompt-optimizer.md` with the command `npx tsx main.ts`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: prompts as versioned Java resources
+
+In the CBP context prompts live in the Java service, not in a demo script: keep them as versioned resources (properties files or templates loaded at startup), never as string literals scattered through the code. Call the Azure OpenAI deployment provisioned by LCAG with a pinned model name and API version, and keep the testing harness from this lesson as JUnit input/output pairs in the same repository. A prompt change then goes through the same review and pipeline as any code change, with the eval set as the acceptance gate.
+
 ## Further Reading
 
 - [OpenAI Prompt Engineering Guide](https://platform.openai.com/docs/guides/prompt-engineering) -- official best practices from OpenAI covering system messages, few-shot, and chain-of-thought
