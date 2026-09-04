@@ -87,6 +87,10 @@ Call `Task` from a small caller with a graph with edges (0,1) and (1,2). Compare
 
 Hand off `outputs/skill-issue-to-pr.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: Boards work item to pull request
+
+In the CBP context the trigger is an Azure Boards work item rather than a GitHub issue, and the result is an Azure Repos pull request rather than a GitHub PR. The engineering challenges transfer unchanged: reproduce the Maven build in a clean sandbox, scope credentials to the single repository, enforce a per-day budget, and forbid force-pushes through branch policies instead of app permissions. Replace the GitHub App with a service connection holding minimal permissions and the webhook with a Boards service hook; the sandbox-verify-review loop stays the same.
+
 ## Further Reading
 
 - [AWS Remote SWE Agents](https://github.com/aws-samples/remote-swe-agents) — the canonical async cloud agent reference

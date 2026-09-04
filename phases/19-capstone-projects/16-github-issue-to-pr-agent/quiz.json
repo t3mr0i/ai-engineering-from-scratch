@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which policy decision is hard-coded into InstallationToken.can?",
+      "question": "Your team wants an automated helper that turns a tracked work item into a code-change proposal for human review. What must hold before the proposal reaches a reviewer?",
       "options": [
-        "It denies every pull_request.open action",
-        "It grants force_push when the token is less than one hour old",
-        "It denies force_push and any write:main action",
-        "It denies read-only issue access but permits writes to main"
+        "It was generated quickly, whatever the content",
+        "It touched as many files as possible at once",
+        "It pushed directly to the main branch",
+        "It built in a clean environment, tests pass, and its credentials were narrowly scoped"
       ],
-      "correct": 2,
-      "explanation": "can returns False for force_push and for actions beginning with write:main; ordinary scoped actions remain allowed by this local policy."
+      "correct": 3,
+      "explanation": "Sandbox verification, passing tests, and minimal credentials are what make an automated proposal reviewable. This lesson builds the loop that enforces all three before any pull request opens."
     },
     {
       "stage": "check",
