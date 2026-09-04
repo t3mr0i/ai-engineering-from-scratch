@@ -2,12 +2,12 @@
   "lesson": "15-speculative-decoding-eagle3",
   "title": "Speculative Decoding and EAGLE-3",
   "questions": [
-    {
+        {
       "stage": "pre",
-      "question": "In `spec_step`, how is a draft token `d` accepted at a verification position?",
-      "options": ["With probability `min(1, q[d] / p[d])`.", "Only when `q[d]` is exactly zero.", "With probability `p[d] / q[d]` without clipping.", "Always, because the draft is cheaper."],
+      "question": "Generating text one word at a time with a large model is slow, but you also have a small fast model that often guesses the same next words. How could the two work together to save time?",
+      "options": ["Let the small model propose several words, then check them all at once with the large model and keep the ones it agrees with.", "Run both models separately and always discard everything the large model produces.", "Use the small model only after the large model has already finished the whole answer.", "Alternate between the models at random with no checking step."],
       "correct": 0,
-      "explanation": "The Leviathan rule compares verifier probability q with draft probability p and clips the acceptance ratio at one."
+      "explanation": "Proposing cheaply and verifying in bulk keeps the final text faithful to the large model while doing fewer slow steps. This lesson builds the exact checking rule and speed math behind that idea."
     },
     {
       "stage": "check",
