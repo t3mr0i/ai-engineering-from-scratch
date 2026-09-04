@@ -518,6 +518,10 @@ Call `call` from a small caller with tokens=["red","fox"]. Compare its result wi
 
 Hand off `outputs/prompt-rag-architect.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: AI Search as the retriever
+
+In the CBP context the document store from this lesson is Azure AI Search over LCAG-managed storage: the Java service retrieves the top passages, cites their source IDs in the answer, and logs which passages grounded each response for audit. Prefer RAG over fine-tuning for company knowledge for the reasons this lesson gives — freshness, cost, attribution — and reindex on a schedule owned by the data pipeline, not by hand. Measure faithfulness on CBP documents; a fluent answer without a supporting passage is a defect.
+
 ## Further Reading
 
 - Lewis et al., "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks" (2020) -- the original RAG paper from Facebook AI Research that formalized the retrieve-then-generate pattern.
