@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the voice pipeline do with an empty `audio_chunk`?",
+      "question": "You build a phone helper that listens, understands, and speaks. Callers often go silent for a while or interrupt the helper mid-sentence. What behavior serves callers best?",
       "options": [
-        "It emits a transcript containing an empty string.",
-        "It invokes the LLM with the previous turn's text.",
-        "It marks `speech=False` and does not forward a `vad_speech` frame.",
-        "It sends one silent word through TTS."
+        "Treat every silence as a full new question that needs a full spoken reply.",
+        "Keep speaking over interruptions and never stop for the caller.",
+        "Push empty audio through the whole system as if it were speech.",
+        "Treat silence as no input so nothing moves forward, and let an interruption stop the current spoken reply."
       ],
-      "correct": 2,
-      "explanation": "The VAD reads the chunk's boolean speech payload; an empty/non-speech chunk becomes `speech=False`, so no downstream STT frame is emitted."
+      "correct": 3,
+      "explanation": "Handling silence and interruption sensibly is the prior instinct. This lesson builds on it with a staged voice pipeline and the timing choices that make conversation feel live."
     },
     {
       "stage": "check",
