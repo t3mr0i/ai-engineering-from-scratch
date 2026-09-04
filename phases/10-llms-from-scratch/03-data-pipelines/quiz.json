@@ -2,12 +2,12 @@
   "lesson": "03-data-pipelines",
   "title": "Data Pipelines for Pre-Training",
   "questions": [
-    {
+        {
       "stage": "pre",
-      "question": "In `pack_sequences`, what happens to positions added after a short final chunk reaches `seq_length`?",
-      "options": ["They are filled with `pad_id` and receive attention-mask value 0.", "They are repeated from the first document and receive mask value 1.", "They are dropped together with the entire final document.", "They are replaced by the EOS ID and receive mask value 1."],
+      "question": "You have a tokenizer that turns text into numbers, and a text collection far larger than your machine's memory. What is the most sensible way to prepare training examples from it?",
+      "options": ["Read and process the files as a stream, converting a small portion at a time and discarding what you already processed.", "Load every file into memory at once before doing anything else.", "Delete most of the files so that whatever remains fits in memory.", "Convert the text by hand one sentence at a time without writing any program."],
       "correct": 0,
-      "explanation": "The function pads a final chunk to the requested length and marks only its real token positions with 1 in the attention mask."
+      "explanation": "Processing a stream in small portions keeps memory use flat no matter how large the collection grows. This lesson builds a full training data pipeline on top of that idea, starting from your tokenizer output."
     },
     {
       "stage": "check",
