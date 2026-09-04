@@ -71,6 +71,10 @@ Call `Probe` from a small caller with the smallest valid record {"id": 1}. Compa
 
 Hand off `outputs/skill-init-script.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: init scripts in Azure Pipelines
+
+The idempotency rule in this lesson is what lets the script run in CI as well as locally. In the CBP context that CI is Azure Pipelines: the same script becomes a template step that runs before agent tasks, and the composite-actions reference in Further Reading maps to a Pipelines template with parameters. Java services add two probes to the table: the JDK and Maven versions, and the settings pointing at the LCAG artifact feed.
+
 ## Further Reading
 
 - [Anthropic, Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)

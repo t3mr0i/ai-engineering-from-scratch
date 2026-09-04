@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Every morning your team reruns slow environment checks before starting, even when nothing changed overnight. What improves this routine without missing real breakage?",
+      "question": "An assistant starts every session by re-checking versions, paths, and test commands from scratch, burning thousands of tokens before any real work. What fixes this?",
       "options": [
-        "Never check the environment and hope everything works.",
-        "Rerun every check before each single action with no saved result at all.",
-        "Run the full checks once, save a dated fingerprint of the result, and skip rechecking while that fingerprint is fresh and unchanged.",
-        "Skip checks silently whenever they fail."
+        "A longer system prompt asking it to hurry",
+        "Deleting the test suite so there is less to check",
+        "Restarting the session more often",
+        "One init script that probes once and writes the answers down for every later session"
       ],
-      "correct": 2,
-      "explanation": "Caching a fresh environment check is the prior trick. This lesson builds on it with a startup script that probes the machine, saves the result, and fails loudly when something is wrong."
+      "correct": 3,
+      "explanation": "Paying the startup tax once and persisting the report beats re-discovery every session. This lesson builds exactly that script."
     },
     {
       "stage": "check",
