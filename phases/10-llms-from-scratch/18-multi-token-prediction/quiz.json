@@ -2,12 +2,12 @@
   "lesson": "18-multi-token-prediction",
   "title": "Multi-Token Prediction (MTP)",
   "questions": [
-    {
+        {
       "stage": "pre",
-      "question": "How does `mtp_loss` combine per-depth losses when there are D modules and weight `lam`?",
-      "options": ["`D * lam + sum(per_depth)`.", "The maximum per-depth loss only.", "`(lam / D) * sum(per_depth)`.", "The loss of depth 1 divided by the vocabulary size."],
-      "correct": 2,
-      "explanation": "The implementation averages the D depth losses and multiplies the result by lambda: `(lam / D) * sum(per_depth)`."
+      "question": "A model trained to predict only the very next word sometimes plans poorly several words ahead. What training change would encourage better planning?",
+      "options": ["Ask the model during training to also guess the words two and three steps ahead, not just the immediate next word.", "Hide all future words and forbid the model from ever thinking about them.", "Train the model to repeat the same word forever.", "Delete the training text so there is nothing to predict."],
+      "correct": 0,
+      "explanation": "Predicting further ahead rewards representations that plan beyond one step. This lesson builds the extra prediction modules and joint training objective that implement that idea."
     },
     {
       "stage": "check",
