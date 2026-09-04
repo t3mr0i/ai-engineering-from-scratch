@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which sequence best describes a text-conditioned latent diffusion pipeline?",
+      "question": "You generate large photos and want to save memory by working on a smaller compressed version first and then enlarging it back. What is the main tradeoff you already understand from earlier work with images?",
       "options": [
-        "Conditioning, denoising/scheduling in latent space, decoding, then a safety decision",
-        "A detector box directly becomes a class label",
-        "A semantic mask is resized and no latent state is used",
-        "A GAN discriminator replaces both the scheduler and VAE"
+        "Smaller files are always better and detail never matters for the final picture.",
+        "A smaller working size saves memory and compute but must preserve enough detail to rebuild a good image.",
+        "Compression only changes the file name and has no effect on memory or quality.",
+        "Large images can only be made on machines with no memory limits."
       ],
-      "correct": 0,
-      "explanation": "A latent diffusion pipeline separates conditioning, latent denoising, the VAE image adapter, and an output policy check."
+      "correct": 1,
+      "explanation": "Understanding the tradeoff of compressed image features prepares you for this lesson, which builds a text-guided generator that cleans up noise in a compressed space before decoding."
     },
     {
       "stage": "check",
