@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does the demo's `T-001` verification report say `passed=False`?",
+      "question": "A team is ready to merge a change. Tests pass, but coverage dropped clearly below the agreed floor and the change touches files it should not. What should the merge check do?",
       "options": [
-        "Its acceptance command is missing from feedback.",
-        "Its scope report contains a forbidden write.",
-        "Its 0.84 coverage is one percentage point below 0.85, triggering the regression block.",
-        "Its rule report contains a failed `done/tests-pass` row."
+        "Merge anyway because the tests pass and nothing else matters.",
+        "Ignore coverage and file scope and approve silently.",
+        "Approve with no written report of what was checked.",
+        "Block the merge and report each failed check so the author knows what to fix."
       ],
-      "correct": 2,
-      "explanation": "`T-001` has a successful acceptance record, clean scope, and a passing rule; the report still emits `coverage.regression` for the 0.85 to 0.84 drop."
+      "correct": 3,
+      "explanation": "Refusing to advance work that fails agreed checks is the prior discipline. This lesson builds on it with a single gate that combines rule, scope, and test evidence into one verdict."
     },
     {
       "stage": "check",
