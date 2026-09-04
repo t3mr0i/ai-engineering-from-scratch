@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How many tools does gateway_tools_list expose to Alice and Bob in the fixture?",
+      "question": "Your company approves a few external data connectors, but every developer installs them directly in their own editor with their own credentials. What is the risk?",
       "options": [
-        "Both see all six backend tools",
-        "Alice sees two and Bob sees four",
-        "Alice sees four and Bob sees two",
-        "Neither sees tools until a call is made"
+        "The connectors run faster without a middleman",
+        "Developers learn more about the connectors",
+        "Nothing; direct installation scales well",
+        "No central control over who may access what, and no audit trail"
       ],
-      "correct": 2,
-      "explanation": "Alice's developer role can use notes search/create and all two GitHub tools, while Bob's auditor role gets notes search and GitHub list_issues: four versus two."
+      "correct": 3,
+      "explanation": "Direct installation means per-developer credentials and invisible usage. This lesson builds the gateway that restores central auth, scoping, and audit."
     },
     {
       "stage": "check",

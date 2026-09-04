@@ -414,6 +414,10 @@ Call `call` from a small caller with the smallest valid record {"id": 1}. Compar
 
 Hand off `outputs/skill-gateway-bootstrap.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: Azure API Management as the gateway
+
+In the CBP context the enterprise gateway is Azure API Management on LCAG infrastructure rather than one of the surveyed open-source gateways. The five responsibilities from this lesson map directly: Microsoft Entra ID for auth, RBAC roles for tool scoping, Diagnostic Settings for audit, rate-limit policies per subscription or tenant, and content-safety policy against tool poisoning. The `github.open_pr` tool in the fixture stands for any hosted-repo action; against Azure Repos the same call opens a pull request through a service connection. Keep the pinned-tool-hash manifest: approved tool versions belong in the gateway policy, not in each developer's IDE.
+
 ## Further Reading
 
 - [Official MCP Registry](https://registry.modelcontextprotocol.io/) — canonical upstream, namespace-verified
