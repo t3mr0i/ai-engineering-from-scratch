@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does `build_cot_prompt(question, examples, num_examples=3)` add before the new question?",
+      "question": "A new teammate keeps getting a classification task wrong when you only describe the rule in words. What usually helps them most?",
       "options": [
-        "Three independent model completions whose majority answer is inserted into the user message",
-        "A tree of candidate thoughts that are scored before the user question is appended",
-        "Three worked examples plus an answer-format instruction",
-        "A tool trace containing one `calculate` action for every example"
+        "Showing a few worked examples of inputs with the right answers alongside the description",
+        "Repeating the same description word for word with no examples at all",
+        "Removing the task description so they must guess the rule from nothing",
+        "Giving them only the final answer with no description of the task itself"
       ],
-      "correct": 2,
-      "explanation": "The helper selects the first `num_examples` demonstrations and formats each as a problem plus solution before appending the new question. It does not call a model or build a search tree itself."
+      "correct": 0,
+      "explanation": "Concrete examples clarify vague descriptions for people and for models alike. This lesson builds on that habit by showing how to use examples systematically with a language model."
     },
     {
       "stage": "check",
