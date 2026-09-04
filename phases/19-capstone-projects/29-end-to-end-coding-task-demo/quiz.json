@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which state sequence describes the policy after it observes failing tests and repairs `src/fizz.py`?",
+      "question": "Your team sketches a repair helper that may only read files, edit files, and run tests, with a strict limit on steps. After the first test run fails, what sensible next move do you already expect from ordinary debugging?",
       "options": [
-        "`SURVEY → RUN_TESTS → INSPECT → FIX → VERIFY → HALT`",
-        "`SURVEY → FIX → VERIFY → RUN_TESTS → HALT`",
-        "`RUN_TESTS → SURVEY → INSPECT → HALT`",
-        "`SURVEY → INSPECT → HALT`"
+        "Delete all tests so the next run cannot fail.",
+        "Declare victory immediately and stop without reading anything.",
+        "Read the failure message closely before changing any code, then run the tests again to confirm the fix.",
+        "Change random files without reading the failure message."
       ],
-      "correct": 0,
-      "explanation": "The policy surveys the repository, runs tests, inspects the failure, writes the fix, verifies it with another test run, and then reaches HALT."
+      "correct": 2,
+      "explanation": "That read-the-error-first habit is the prior skill this capstone builds on when it wires file reading, test runs, and edits into one budgeted repair loop with full tracing."
     },
     {
       "stage": "check",
