@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For `ContextBudget(max_tokens=1000, generation_reserve=200)`, how many estimated tokens are available to system text, tools, history, and retrieved documents?",
+      "question": "A support assistant sends the full conversation, retrieved documents, and tool definitions with every request, and answers get worse as conversations grow. What is the structural problem?",
       "options": [
-        "800, because the reserve is subtracted before component allocations",
-        "1,000, because the reserve is reported but not removed from the budget",
-        "200, because only the generation reserve may be allocated to context",
-        "1,200, because the reserve extends the context window"
+        "The model chosen is too small for any conversation",
+        "The network between user and model is too slow",
+        "Users write messages that are too long",
+        "The window fills with low-value content that crowds out what matters"
       ],
-      "correct": 0,
-      "explanation": "`ContextBudget.available` is `max_tokens - generation_reserve`, so the context side receives 800 estimated tokens and 200 remain protected for the model's response."
+      "correct": 3,
+      "explanation": "A window without budgeting or ordering buries the signal. This lesson builds the assembler that budgets, orders, and trims each component deliberately."
     },
     {
       "stage": "check",

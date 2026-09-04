@@ -636,6 +636,10 @@ Call `call` from a small caller with tokens=["red","fox"]. Compare its result wi
 
 Hand off `outputs/prompt-context-optimizer.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: budget the window in the service
+
+In the CBP context the context assembler from this lesson is a Java component in the service: it counts tokens per part (system prompt, tool definitions, history, retrieved documents), reserves the generation headroom first, and truncates or summarizes history before the call. Count with the tokenizer matching the deployed model and assert the total against the deployment's limit; an overflow must be a handled error with a trimmed retry, never a provider 400 surfacing to the user. Order retrieved content by relevance, not by arrival.
+
 ## Further Reading
 
 - [Liu et al., 2023 -- "Lost in the Middle: How Language Models Use Long Contexts"](https://arxiv.org/abs/2307.03172) -- the definitive study on position-dependent attention.
