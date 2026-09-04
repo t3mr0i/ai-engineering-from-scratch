@@ -2,12 +2,12 @@
   "lesson": "07-rlhf",
   "title": "RLHF: Reward Model + PPO",
   "questions": [
-    {
+        {
       "stage": "pre",
-      "question": "In `bradley_terry_loss`, which quantity is passed to the sigmoid for a preferred/rejected pair?",
-      "options": ["The preferred-minus-rejected reward.", "The rejected reward minus the preferred reward.", "The sum of the two rewards.", "The KL divergence between the two tokenizers."],
+      "question": "After instruction tuning, two answers can both follow the instruction but one is clearly more helpful. What information do you need to teach the model to prefer the better one?",
+      "options": ["Examples showing which of two answers people preferred for the same prompt.", "A larger vocabulary with no new examples.", "The exact wall-clock time each answer took to write.", "The file names where the prompts were stored."],
       "correct": 0,
-      "explanation": "The loss calls `sigmoid(preferred - rejected)`, so a larger preferred score lowers the negative log-likelihood."
+      "explanation": "Paired human preferences show what better means. This lesson builds a scoring step from those pairs and then trains the assistant against it."
     },
     {
       "stage": "check",
