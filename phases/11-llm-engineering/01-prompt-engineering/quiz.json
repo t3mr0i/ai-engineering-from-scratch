@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In `buildPrompt(\"persona\", variables)`, what happens if the `variables` object omits a required placeholder such as `task`?",
+      "question": "You give a language model the same factual question twice with very different wording and get very different answers. What does that tell you as a developer?",
       "options": [
-        "It throws a missing-variable error before returning a prompt",
-        "The placeholder stays in the user message as literal `{task}` text",
-        "The function silently chooses an empty string for the missing value",
-        "The model configuration supplies a default value for the missing variable"
+        "The wording of the input shapes what the model produces, so unclear inputs lead to unclear outputs",
+        "The model looks up every answer in a fixed table that changes between your two calls",
+        "The model ignores the input completely and always returns the same random text",
+        "The model can only answer questions that arrive with an attached spreadsheet"
       ],
       "correct": 0,
-      "explanation": "`buildPrompt` checks every variable listed by the selected pattern and throws `Missing template variable: ...` before rendering. A model call is never made with an unresolved required placeholder."
+      "explanation": "Models generate each response from the input text they receive, so wording matters. This lesson builds on that idea by showing repeatable patterns for writing clearer inputs."
     },
     {
       "stage": "check",
