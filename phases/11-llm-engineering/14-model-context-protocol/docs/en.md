@@ -480,6 +480,10 @@ Call `call` from a small caller with the text "red fox". Compare its result with
 
 Hand off `outputs/skill-mcp-server-designer.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: Spring AI MCP behind the gateway
+
+In the CBP context MCP servers and clients in Java build on the Spring AI MCP support: expose each CBP tool once as an MCP server with the schema discipline from Phase 11 · 09, and let every compliant host consume it without per-host glue. Put the server behind the API Management gateway from Phase 13 · 17 so auth, rate limits, and audit stay in policy rather than in each tool. Keep the N×M warning from this lesson as the review question for every new integration: shared protocol first, bespoke JSON last.
+
 ## Further Reading
 
 - [Model Context Protocol specification](https://modelcontextprotocol.io/specification) — canonical reference, versioned by date.
