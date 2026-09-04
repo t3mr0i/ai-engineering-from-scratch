@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "After the Python handler serves three requests for session `s001`, how many history entries does that session contain?",
+      "question": "You serve many chat users from one web server. Each user expects the server to remember their own conversation, but requests for different users must never mix. What helps the most?",
       "options": [
-        "6: each request appends one user turn and one assistant turn.",
-        "3: the handler stores only the assistant replies.",
-        "1: the fresh agent overwrites the session on every request.",
-        "9: each request also stores the workflow's three intermediate steps."
+        "Keep one shared conversation that mixes every user together.",
+        "Keep a separate conversation record for each user session and load only that record for each request.",
+        "Forget everything after each request and remember nothing.",
+        "Store every conversation inside the global server code with no separation."
       ],
-      "correct": 0,
-      "explanation": "`AgnoSession` appends the incoming prompt and the generated reply for every request, so three requests produce six strings in `s001` history."
+      "correct": 1,
+      "explanation": "Keeping per-user session records on a simple server is the prior skill. This lesson builds on it by comparing two production runtimes shaped for different language stacks."
     },
     {
       "stage": "check",
