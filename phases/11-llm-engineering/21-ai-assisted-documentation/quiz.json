@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does `normalize(\"API-doc  v2\")` produce before documentation signals are matched?",
+      "question": "Your team docs are out of date: setup steps are missing, screenshots are old, and nobody trusts the runbook. A teammate suggests letting a model rewrite everything unsupervised. What should worry you first?",
       "options": [
-        "`api doc v2`, after lowercasing and whitespace normalization",
-        "`API-doc v2`, because normalization changes spacing but preserves case and punctuation",
-        "A token list `['api', 'doc', 'v2']`, which is required by `signal_matches`",
-        "`api_doc_v2`, because hyphens become underscores for category lookup"
+        "Confident-sounding instructions could be wrong or unverified and cause real failures when followed",
+        "The rewritten docs would use complete sentences that take too long to read",
+        "The model would finish the rewrite too quickly for the team to celebrate it",
+        "Old screenshots look charming and should never be replaced at all"
       ],
       "correct": 0,
-      "explanation": "`normalize` calls `lower()`, replaces hyphens with spaces, and joins the result of `split()`. It returns a string rather than a token list."
+      "explanation": "Documentation failures cause real harm when people follow wrong steps. This lesson builds on that caution by showing how to plan documentation help with verification and ownership."
     },
     {
       "stage": "check",
