@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which order does Block.forward apply to each sub-layer?",
+      "question": "Your team stacks many identical neural blocks that each mix information across positions and then process each position separately. Training gets shaky as you add layers. Which stabilizing idea from earlier network lessons helps most?",
       "options": [
-        "It applies LayerNorm only after both residual additions",
-        "It normalizes the image once and skips normalization inside the blocks",
-        "It normalizes before attention and the FFN, then adds each residual: x+attn(ln1(x)); x+ffn(ln2(x))",
-        "It applies the FFN before attention and drops both residual paths"
+        "Remove all normalization and all shortcuts so the network is simpler.",
+        "Steady each block input before the heavy steps and add the original input back afterward so early signals survive.",
+        "Make the first block very deep and leave the remaining blocks empty.",
+        "Shuffle the order of the blocks randomly at every step."
       ],
-      "correct": 2,
-      "explanation": "Block.forward calls ln1 before self-attention and adds that result to x, then calls ln2 before the feed-forward layer and adds the second result. This is the local pre-LN wiring."
+      "correct": 1,
+      "explanation": "Remembering how steadying inputs and keeping shortcut paths stabilizes deep stacks prepares you for this lesson, which assembles those blocks into a full image encoder with a summary token."
     },
     {
       "stage": "check",
