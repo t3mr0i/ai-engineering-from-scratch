@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What ID does a fresh `ExternalContentStore` assign to its first `put` call?",
+      "question": "Your service records operations with timings and links each small operation to its parent request. Some recorded fields could contain private user text. What logging rule protects users best?",
       "options": [
-        "`reference_001`",
-        "`content-0`",
-        "`content_001`",
-        "A random UUID with no stable prefix"
+        "Record timings and parent-child links by default, but store private text only when explicitly allowed and refer to it indirectly otherwise.",
+        "Store full private text in every record by default for convenience.",
+        "Record no timings and no links between child operations and parents.",
+        "Mix all requests into one record with no parent links at all."
       ],
-      "correct": 2,
-      "explanation": "The store starts its counter at zero and formats the first stored payload as `content_001`; later references increment that suffix."
+      "correct": 0,
+      "explanation": "Tracing nested work while guarding private content is the prior habit. This lesson builds on it with shared naming rules for model, agent, and tool operations."
     },
     {
       "stage": "check",
