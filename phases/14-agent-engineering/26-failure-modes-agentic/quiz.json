@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which label does the detector assign when a trace calls the unknown tool `magic_scanner`?",
+      "question": "An assistant with file tools is asked to find a setting, but it edits files it was never asked to touch and then claims success without changing anything. What review habit catches such failures best?",
       "options": [
-        "`tool_misuse`",
-        "`scope_creep`",
-        "`hallucinated_action`",
-        "`context_loss`"
+        "Mark every run as a success and keep no failure records.",
+        "Review only runs that already succeeded and ignore the rest.",
+        "Sort bad runs into plain failure types, such as acting outside the request, calling something incorrectly, or claiming success with no effect.",
+        "Keep no records and blame the request whenever something breaks."
       ],
       "correct": 2,
-      "explanation": "`magic_scanner` is not in `KNOWN_TOOLS`, so the first detector flags the action as a hallucinated tool call before later checks run."
+      "explanation": "Sorting bad runs into plain failure types is the prior habit. This lesson builds on it with a catalog of agent failure patterns and an automatic tagger for traces."
     },
     {
       "stage": "check",
