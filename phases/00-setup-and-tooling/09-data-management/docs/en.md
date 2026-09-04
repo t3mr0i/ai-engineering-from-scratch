@@ -30,7 +30,9 @@ flowchart LR
     F --> C[output summary]
 ```
 
-Rows have the concrete schema `id`, `text`, and binary `label`. The loader rejects missing columns, malformed JSON, non-integer IDs/labels, and labels outside 0/1. `stream_dataset` requires a positive `max_rows`; zero and negative limits raise `ValueError` before the file is read. The fingerprint is a compact change detector, not proof that labels or sampling are semantically correct.
+Rows have the concrete schema `id`, `text`, and binary `label`. The loader rejects missing columns, malformed JSON, non-integer IDs/labels, and labels outside 0/1.
+
+A typical case: a training run consumes a file whose labels silently changed format, and the failure surfaces hours later as bad accuracy. Validating the schema on load moves that discovery to the first second. `stream_dataset` requires a positive `max_rows`; zero and negative limits raise `ValueError` before the file is read. The fingerprint is a compact change detector, not proof that labels or sampling are semantically correct.
 
 ## Build It
 
@@ -60,6 +62,10 @@ print([row["id"] for row in preview])  # [0, 1, 2]
 ## Ship It
 
 [`outputs/prompt-data-helper.md`](../outputs/prompt-data-helper.md) is the reusable artifact. Fill it with the fixture/source path, schema, row budget, format, seed, split counts, fingerprint, and output directory. If you replace the fixture with real data, document its provenance separately; this lesson does not fetch or verify an external dataset.
+
+## CBP context: data from Azure storage, not from the repository
+
+In the CBP context real datasets live in Azure Blob Storage or Data Lake storage provided through LCAG, never as large files in the repository. The fixture habit from this lesson still applies: validate schema and types on load, split with a recorded seed, fingerprint the input, and document provenance. Scale the same four steps from the 12-row fixture to the real source; only the storage path and the row budget change.
 
 ## Exercises
 

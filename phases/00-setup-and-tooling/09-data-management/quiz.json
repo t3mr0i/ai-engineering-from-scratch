@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the checked-in mini_reviews.jsonl loader validate before returning rows?",
+      "question": "You receive a small data file from another team for a trial. Before building on it, what do you check first?",
       "options": [
-        "Required id/text/label fields, integer id and binary label",
-        "That every review has the same number of characters",
-        "That the file came from a remote Hub revision",
-        "That each label has already been balanced across splits"
+        "Whether the file name looks modern",
+        "Whether the format and required fields are valid and typed as expected",
+        "Whether the file uses an elegant font when opened",
+        "Nothing; a received file can always be trusted"
       ],
-      "correct": 0,
-      "explanation": "_coerce_row requires the three columns, converts id and label to integers, and accepts only labels 0 and 1. It does not prove provenance or statistical balance."
+      "correct": 1,
+      "explanation": "Every downstream step assumes the schema holds, so validating fields and types first saves debugging later. This lesson builds the loader, splitter, and fingerprint checks on that habit."
     },
     {
       "stage": "check",
