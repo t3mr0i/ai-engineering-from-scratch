@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the demo's `initialize` request establish before discovery begins?",
+      "question": "Every time your team connects an assistant to a new data source, you write custom glue code that only works for that one source. What ordinary software problem does that resemble?",
       "options": [
-        "A database transaction that permanently registers every tool call",
-        "A model completion containing the first prompt to send to the host",
-        "Protocol, server, and capability metadata",
-        "A resource read that returns `config://app` before the server lists it"
+        "Every integration needs its own one-off connector instead of sharing one standard connection method",
+        "The data sources contain too little data to be worth connecting at all",
+        "The assistant types too slowly for users to wait for an answer",
+        "The team has too many standard connectors and needs more custom code"
       ],
-      "correct": 2,
-      "explanation": "`MCPServer.handle` returns `protocolVersion`, `serverInfo`, and capability maps for tools, resources, and prompts on `initialize`. Discovery methods are separate requests made afterward."
+      "correct": 0,
+      "explanation": "One-off connectors do not scale as tools multiply. This lesson builds on that pain by introducing a shared protocol for exposing tools and data to models."
     },
     {
       "stage": "check",
