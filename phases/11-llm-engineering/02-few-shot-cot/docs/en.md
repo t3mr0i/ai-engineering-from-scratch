@@ -561,6 +561,10 @@ Call `extract_answer` from a small caller with the text "red fox". Compare its r
 
 Hand off `outputs/prompt-reasoning-chain.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: reviewed examples, separated reasoning
+
+In the CBP context few-shot examples are reviewed fixtures: store them next to the prompt resources, review them like test data, and measure the accuracy delta the lesson describes before adopting them. For chain-of-thought in a Java service, keep the reasoning trace separate from the final answer — parse the structured output, log the trace for debugging, and return only the answer to the caller. The benchmark habit from this lesson becomes a scheduled pipeline run: zero-shot, few-shot, and CoT variants scored on the same frozen set.
+
 ## Further Reading
 
 - [Chain-of-Thought Prompting Elicits Reasoning in Large Language Models](https://arxiv.org/abs/2201.11903) -- Wei et al. 2022. The original CoT paper from Google Brain. Read sections 2-3 for the core results.
