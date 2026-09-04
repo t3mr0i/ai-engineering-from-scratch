@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In which order does SafetyPipeline.process run its observable safety layers?",
+      "question": "Your team adds safety checks around a helpful assistant for bank customers. Which approach from ordinary defensive programming gives the strongest starting point?",
       "options": [
-        "sanitize → nemo_rail → llama_guard_4 → x_guard → output_filter",
-        "llama_guard_4 → sanitize → output_filter → nemo_rail → x_guard",
-        "nemo_rail → x_guard → sanitize → target → llama_guard_4",
-        "sanitize → target → output_filter, with guards after the response"
+        "Trust every request completely and check nothing at all.",
+        "Check only the length of the request and ignore what it actually says.",
+        "Use several independent checks on the request and on the final answer, plus tests with both attacks and normal requests.",
+        "Block all normal customer questions so no attack can ever get through."
       ],
-      "correct": 0,
-      "explanation": "process normalizes the prompt, applies the banking off-domain rail, then llama_guard_4 and x_guard, and finally checks the stubbed response with output_filter."
+      "correct": 2,
+      "explanation": "Thinking in layered checks with attack and normal-case tests prepares you for this capstone, which assembles input cleaning, topic rules, content checks, and output review into one harness."
     },
     {
       "stage": "check",
