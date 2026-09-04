@@ -458,6 +458,10 @@ Call `GuardrailResult` from a small caller with the text "red fox". Compare its 
 
 Hand off `outputs/prompt-safety-auditor.md` with the command `npx tsx main.ts`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: Content Safety plus local layers
+
+In the CBP context the outer layer is Azure AI Content Safety in front of the model call: prompt-injection and toxicity screening with logged verdicts. Keep the lesson's inner layers in the service anyway — input validation, system-prompt hardening, and output checks for PII and policy violations — because platform filters are a baseline, not a proof for your threat model. Maintain the red-team prompt set from this lesson in the repository and run it in the pipeline; record false-positive and false-negative rates with every model or filter change.
+
 ## Further Reading
 
 - [Greshake et al., 2023 -- "Not What You Signed Up For: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection"](https://arxiv.org/abs/2302.12173) -- the foundational paper on indirect prompt injection.
