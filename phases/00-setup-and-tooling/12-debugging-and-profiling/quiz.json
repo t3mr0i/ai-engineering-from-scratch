@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does debug_print report that an ordinary print(tensor) often omits?",
+      "question": "A training run that worked yesterday now produces invalid numbers. What is the most informative first evidence?",
       "options": [
-        "The model's intended accuracy on the test set",
-        "The exact source-code line that created the tensor",
-        "Shape, dtype, device, range, mean, and NaN status",
-        "A guarantee that the next optimizer step will succeed"
+        "Rerun longer and hope the numbers fix themselves",
+        "Change the optimizer settings at random",
+        "Delete all checkpoints and start over",
+        "Find where values first turn invalid by checking shapes, ranges, and error flags"
       ],
-      "correct": 2,
-      "explanation": "debug_print makes the tensor properties that commonly cause silent AI failures visible. It is an observation tool, not a correctness proof or source tracer."
+      "correct": 3,
+      "explanation": "Guessing wastes runs; locating the first invalid value narrows the cause to one step. This lesson builds tensor summaries, shape checks, and NaN detectors for exactly that search."
     },
     {
       "stage": "check",

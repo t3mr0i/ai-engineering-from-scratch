@@ -18,7 +18,9 @@
 
 ## The toolkit
 
-The canonical entrypoint is `code/main.py`, which delegates to `debug_tools.py`. With PyTorch installed it runs ten demonstrations: tensor summaries, two matrix timings, `tracemalloc`, shape hooks through a three-layer MLP, normal and simulated NaN loss, device checks, gradient health, optional CUDA memory, logging, and a conditional `breakpoint()` pattern. Without PyTorch it runs a standard-library timer, `tracemalloc` over byte arrays, and structured logging, then exits 0 while clearly reporting that tensor demonstrations were skipped.
+The canonical entrypoint is `code/main.py`, which delegates to `debug_tools.py`. With PyTorch installed it runs ten demonstrations: tensor summaries, two matrix timings, `tracemalloc`, shape hooks through a three-layer MLP, normal and simulated NaN loss, device checks, gradient health, optional CUDA memory, logging, and a conditional `breakpoint()` pattern.
+
+A typical case: a model trains for hours and the loss turns invalid near the end, with no record of when the values first broke. A shape and NaN check after each stage would have pointed at the failing layer on the first run. Without PyTorch it runs a standard-library timer, `tracemalloc` over byte arrays, and structured logging, then exits 0 while clearly reporting that tensor demonstrations were skipped.
 
 ```mermaid
 flowchart TD
@@ -63,6 +65,10 @@ For a model, `check_shapes` installs hooks and removes them after the forward pa
 ## Ship It
 
 [`outputs/prompt-debug-ai-code.md`](../outputs/prompt-debug-ai-code.md) is the reusable diagnostic prompt. A useful handoff includes the exact tensor shape/dtype/device, the loss and step, gradient findings, timing label, and whether the issue reproduced after a clean run. Never paste credentials or an entire private dataset into the prompt.
+
+## CBP context: evidence first, in Java too
+
+In the CBP context the failing code is usually Java, but the diagnostic habit from this lesson is identical: capture shape and state first (request payloads, batch sizes, configuration), then narrow down where values first turn invalid. The Python tensor tools here serve the course demos; for CBP services use the Java equivalents such as structured logging, flight recordings, and Application Insights traces. In both worlds a useful handoff names the exact evidence and the command that reproduces it.
 
 ## Exercises
 
