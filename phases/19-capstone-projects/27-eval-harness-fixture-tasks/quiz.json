@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In this harness, what value does `pass_at_k(0.5, 2)` compute?",
+      "question": "Your team tests coding helpers on small repair jobs and wants results you can compare across weeks. What setup from ordinary testing practice helps most?",
       "options": [
-        "0.25",
-        "0.50",
-        "0.75",
-        "1.00"
+        "Let each tester invent a new job on the spot with no written goal or checker.",
+        "Judge every run by gut feeling with no recorded score.",
+        "Keep a fixed set of jobs where each job has a clear goal, a starting setup, and an automatic checker, with scores and costs recorded.",
+        "Run each job once and delete all records so nobody can disagree."
       ],
       "correct": 2,
-      "explanation": "The teaching helper uses `1 - (1 - p) ** k`, so `1 - 0.5 ** 2 = 0.75`. It clamps p to [0, 1] and returns zero for non-positive k."
+      "explanation": "Knowing how fixed tasks with automatic checkers enable fair comparison prepares you for this lesson, which builds reusable tasks and summary reports for tracking progress."
     },
     {
       "stage": "check",
