@@ -991,6 +991,10 @@ Call `call` from a small caller with tokens=["red","fox"]. Compare its result wi
 
 Hand off `outputs/prompt-architecture-reviewer.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: the Spring Boot shape
+
+In the CBP context the production service from this lesson is a Spring Boot application: a controller receiving the request, a service layer assembling context, calling the Azure OpenAI deployment, validating and returning the answer. Stream tokens over server-sent events, bound every call with timeouts, read secrets from Key Vault, and export metrics to Application Insights. Deploy through the team's pipeline into a staging slot with health checks, shift traffic gradually, and keep the provider-fallback strategy from this lesson as configuration, not code branches.
+
 ## Further Reading
 
 - [Eugene Yan, "Patterns for Building LLM-based Systems"](https://eugeneyan.com/writing/llm-patterns/) -- architectural patterns (guardrails, RAG, caching, routing) seen across production LLM deployments.
