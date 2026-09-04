@@ -771,6 +771,10 @@ Call `calculate_cost` from a small caller with tokens=["red","fox"]. Compare its
 
 Hand off `outputs/prompt-cost-optimizer.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: cache in layers, bill per tenant
+
+In the CBP context caching has two layers: the service cache (exact-match and semantic, backed by the platform cache) and provider prompt caching for stable prefixes. Route cheap, frequent queries to the smaller deployment and reserve the capable one for the hard cases, with per-tenant budgets enforced before the call, not reconciled after the invoice. Refresh the per-request cost model from current Azure pricing whenever the deployment or SKU changes; the numbers in any lesson go stale, the method does not.
+
 ## Further Reading
 
 - [Anthropic Prompt Caching Guide](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching) -- the official docs for Anthropic's explicit cache_control markers, pricing, and cache lifetime behavior.
