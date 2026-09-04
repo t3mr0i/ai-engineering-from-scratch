@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which gateway profile has the smallest fixed overhead in the Python comparator?",
+      "question": "Your product calls three model providers, each with its own SDK, error model, and rate limits, and every service handles failover differently. What is the structural fix?",
       "options": [
-        "LiteLLM at 10 ms",
-        "Portkey at 30 ms",
-        "Cloudflare at 2 ms",
-        "Kong at 5 ms"
+        "Copy the failover code into every service",
+        "Call the providers less often",
+        "Ignore rate limits and retry blindly",
+        "One gateway layer with routing, fallback, and shared credentials behind a single API"
       ],
-      "correct": 2,
-      "explanation": "GATEWAY_OVERHEAD assigns Cloudflare 2 ms, less than Kong 5, LiteLLM 10, and Portkey 30."
+      "correct": 3,
+      "explanation": "Consolidating provider differences behind one API stops every service from reinventing failover. This lesson maps the gateway options that provide that layer."
     },
     {
       "stage": "check",

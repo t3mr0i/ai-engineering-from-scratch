@@ -107,6 +107,10 @@ Call `Provider` from a small caller with the smallest valid record {"id": 1}. Co
 
 Hand off `outputs/skill-gateway-picker.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: Azure API Management in front
+
+In the CBP context the gateway layer is Azure API Management operated on LCAG infrastructure, not a self-hosted LiteLLM or Portkey instance. Routing, fallback, retries, per-tenant rate limits, secret references to Key Vault, and observability export become gateway policies rather than application code. Measure the same overhead the lesson's comparator measures: every policy adds latency, so keep the critical path minimal and re-measure on CBP traffic before adding guardrail policies.
+
 ## Further Reading
 
 - [Kong AI Gateway Benchmark](https://konghq.com/blog/engineering/ai-gateway-benchmark-kong-ai-gateway-portkey-litellm)
