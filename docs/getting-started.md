@@ -25,6 +25,10 @@ Run commands from the lesson directory unless a document explicitly says otherwi
 
 Canonical demos must terminate without credentials. Lessons that compare a hosted API either use a deterministic local simulation or print a clear skip message when the relevant key is absent. Never commit keys; provide them only through your shell or secret store.
 
+## Java developers
+
+Most lesson code is Python; CBP services are Java. Read [`java-track.md`](java-track.md) first: it maps the curriculum to Java daily work (what to run, what to skim, how to call Azure endpoints from Java, and which platform pieces replace the Python tooling).
+
 The browser lesson runner is a smaller execution path: it uses Pyodide for compatible Python snippets and cannot provide every native wheel, TypeScript, Rust, or Julia. Use the dev container for full fidelity.
 
 ## Troubleshooting
