@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Using `MODEL_PRICING`, what is the total cost for `gpt-4o` with 1,000 input tokens and 500 output tokens, with no cached input?",
+      "question": "Your assistant answers the same common questions many times a day through a paid model service. Each repeat call adds waiting time and a charge. What standard engineering idea addresses exactly this waste?",
       "options": [
-        "`$0.0075`: `$0.0025` for input plus `$0.0050` for output",
-        "`$0.00075`, because both prices are quoted per 100,000 tokens",
-        "`$0.0125`, because input and output rates are added before token scaling",
-        "`$7.50`, because the pricing table is already expressed per request"
+        "Store each answer and reuse it when the same question appears again",
+        "Send every repeat question to the most expensive option that is available",
+        "Delete all previous answers so every question starts from nothing",
+        "Make every request slower so that users ask fewer questions"
       ],
       "correct": 0,
-      "explanation": "`calculate_cost` divides each token count by 1,000,000: `1000 * 2.50 / 1e6 = 0.0025` and `500 * 10.00 / 1e6 = 0.005`. Their sum is `$0.0075`."
+      "explanation": "Reusing prior results saves time and money on repeated work. This lesson builds on that idea by adding similarity-aware reuse and spending controls for model calls."
     },
     {
       "stage": "check",
