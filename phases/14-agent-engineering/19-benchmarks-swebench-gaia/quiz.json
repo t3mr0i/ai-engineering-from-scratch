@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does `run_task` report for SWE-bench fixture `t001`?",
+      "question": "You fix a reported bug in a large project. How do you show the fix works and breaks nothing else?",
       "options": [
-        "Resolved: its one FAIL_TO_PASS test passes after the patch and its one PASS_TO_PASS test remains green.",
-        "Unresolved: any changed file automatically fails PASS_TO_PASS.",
-        "Resolved only when every test in the repository is listed in the task.",
-        "Unresolved because a patch may not change the copied task state."
+        "Show only that some files changed, with no test results.",
+        "Delete the failing test so there is nothing left to fail.",
+        "Show that the test which failed before the fix now passes, and that the tests which passed before still pass.",
+        "Run no tests and declare the fix correct."
       ],
-      "correct": 0,
-      "explanation": "The fixture's patch changes the copied state so the single FAIL_TO_PASS test passes while the single PASS_TO_PASS test does not break; `resolved` is therefore true."
+      "correct": 2,
+      "explanation": "Checking a fix against both new and old tests is the prior habit. This lesson builds on it with standard agent benchmarks that score proposed fixes and multi-step tasks the same careful way."
     },
     {
       "stage": "check",
