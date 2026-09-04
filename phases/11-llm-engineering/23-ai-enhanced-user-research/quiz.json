@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "A research `Scenario` contains `signals=(\"personal data\",)` and has `impact=4`, `uncertainty=3`. What does its score include?",
+      "question": "You interviewed three users and one asked for a big redesign. A teammate wants to rebuild the product around that single opinion. What research habit should slow that decision down?",
       "options": [
-        "Only the impact value, because signal names are labels for the report",
-        "A fixed score of 20, because personal data always triggers the maximum",
-        "Base risk plus two points per matched signal",
-        "The number of interview notes, because score is based on sample size"
+        "Check how many users share the need and what evidence supports it before acting",
+        "Rebuild immediately around every single request without further questions",
+        "Delete all interview notes so no opinion influences the product at all",
+        "Ask only the loudest user and ignore everyone else involved"
       ],
-      "correct": 2,
-      "explanation": "`score_scenario` starts at `4*2 + 3 = 11` and adds two points per match returned by `signal_matches`, capped at 20. The explicit signal tuple is included in the text used for matching."
+      "correct": 0,
+      "explanation": "One opinion is weak evidence for a broad change. This lesson builds on that caution by showing how to weigh supporting evidence and protect participant privacy before acting."
     },
     {
       "stage": "check",
