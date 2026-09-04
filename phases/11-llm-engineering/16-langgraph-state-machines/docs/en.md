@@ -241,6 +241,10 @@ Call `State` from a small caller with a graph with edges (0,1) and (1,2). Compar
 
 Hand off `outputs/skill-stategraph-designer.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: explicit state in Java, graphs only when needed
+
+In the CBP context most agent loops stay plain Java: a state object carried through explicit steps (think, act, observe) with persistence and a human-approval gate where the business demands it. Reach for a graph runtime only when the lesson's paid features are required — checkpointing long runs, pausing for approval mid-task, or rewinding to try another branch. Model the approval as a first-class step with an owner and a timeout, not as an afterthought; an agent that can refund without sign-off is a defect regardless of framework.
+
 ## Further Reading
 
 - [LangGraph documentation](https://langchain-ai.github.io/langgraph/) — canonical reference for StateGraph, reducers, checkpointers, and interrupts.
