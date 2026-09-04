@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is `State.messages` annotated with `add_messages` in the graph definition?",
+      "question": "Your assistant runs several steps that call tools and update a shared task record. A step fails halfway and you cannot tell what already happened or resume safely. What engineering concept is missing?",
       "options": [
-        "It encrypts messages before they are written to `MemorySaver`",
-        "It converts a list of messages into one string before the model sees it",
-        "It appends and reconciles new message updates instead of overwriting the conversation list",
-        "It routes every message directly to the `tools` node without consulting the agent"
+        "An explicit record of the current step and past updates that every step reads and writes",
+        "A longer instruction text with no record of progress between steps",
+        "Deleting the task record after each step so no history remains at all",
+        "Running all steps at once with no defined order or shared record"
       ],
-      "correct": 2,
-      "explanation": "LangGraph uses the field reducer to merge node updates. `add_messages` appends and reconciles message objects instead of overwriting earlier human, assistant, or tool messages; it does not perform tool routing."
+      "correct": 0,
+      "explanation": "Multi-step work needs visible shared progress to recover and continue. This lesson builds on that need by modeling agent workflows as explicit steps with saved progress."
     },
     {
       "stage": "check",
