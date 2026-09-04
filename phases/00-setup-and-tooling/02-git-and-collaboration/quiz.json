@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "You changed train.py and want the change on the shared remote. Which order is correct?",
+      "question": "Your team edits the same configuration file and one change breaks the service. What helps the team most in that situation?",
       "options": [
-        "git push, git commit, git add",
-        "git clone train.py, git push, git commit",
-        "Stage, commit, then push",
-        "git commit, git add, git push"
+        "A version history that shows who changed what and allows going back",
+        "Keeping a single copy of the file on a shared drive with no history",
+        "Renaming the file every day with the current date",
+        "Deleting the file and rewriting it from memory"
       ],
-      "correct": 2,
-      "explanation": "git add stages the file, git commit records a local snapshot, and git push sends that snapshot to the configured remote."
+      "correct": 0,
+      "explanation": "A recorded history with author and message lets the team compare versions and revert the breaking change. This lesson shows how Git provides exactly that history."
     },
     {
       "stage": "check",
@@ -43,12 +43,12 @@
       "question": "Which command shows a compact branch graph with commit decorations?",
       "options": [
         "git status --history --branches",
-        "A compact decorated commit graph",
+        "git log --oneline --decorate --graph",
         "git diff --remote --compact",
         "git branch --commit-files"
       ],
       "correct": 1,
-      "explanation": "git log accepts these options to show abbreviated commits, the parent graph, and names such as branches and tags."
+      "explanation": "git log --oneline --decorate --graph shows abbreviated commits, the parent graph, and names such as branches and tags."
     },
     {
       "stage": "post",

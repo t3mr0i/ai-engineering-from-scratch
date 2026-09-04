@@ -1179,10 +1179,20 @@
       letter-spacing: 0.16em;
       text-transform: uppercase;
       color: var(--blueprint);
-      margin: 0 0 18px;
+      margin: 0 0 6px;
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+
+    .quiz-subtitle {
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--ink-soft);
+      margin: 0 0 18px;
+      line-height: 1.5;
+      text-align: left;
     }
 
     .quiz-question {
@@ -4830,9 +4840,9 @@
         // quiz lands above "Next Activity" rather than below it.
         var aiPanels = article.querySelector('#aiPanels');
 
-        var preQuizHtml = buildQuizHtml(questions.filter(function (q) { return q.stage === 'pre'; }), 'pre', 'Pre-Lesson Check');
-        var checkQuizHtml = buildQuizHtml(questions.filter(function (q) { return q.stage === 'check'; }), 'check', 'Mid-Lesson Check');
-        var postQuizHtml = buildQuizHtml(questions.filter(function (q) { return q.stage === 'post'; }), 'post', 'Post-Lesson Quiz');
+        var preQuizHtml = buildQuizHtml(questions.filter(function (q) { return q.stage === 'pre'; }), 'pre', 'Pre-Lesson Check', 'A quick self-check of prior knowledge. It is not graded — a wrong answer here is normal and just shows what this lesson will cover.');
+        var checkQuizHtml = buildQuizHtml(questions.filter(function (q) { return q.stage === 'check'; }), 'check', 'Mid-Lesson Check', 'Checkpoint for the material above. Re-read the section if an answer feels unfamiliar.');
+        var postQuizHtml = buildQuizHtml(questions.filter(function (q) { return q.stage === 'post'; }), 'post', 'Post-Lesson Quiz', 'Review of what this lesson taught. All answers are covered above.');
 
         if (!preQuizHtml && !checkQuizHtml && !postQuizHtml) {
           var allHtml = buildQuizHtml(questions, 'all', 'Quiz');
@@ -4878,10 +4888,13 @@
         restoreQuizAnswers();
       }
 
-      function buildQuizHtml(questions, id, title) {
+      function buildQuizHtml(questions, id, title, subtitle) {
         if (!questions.length) return '';
         var html = '<div class="quiz-section" id="quiz-' + id + '">';
         html += '<div class="quiz-title">' + LUCIDE_CHECK_CIRCLE + escapeHtml(title) + '</div>';
+        if (subtitle) {
+          html += '<p class="quiz-subtitle">' + escapeHtml(subtitle) + '</p>';
+        }
         for (var qi = 0; qi < questions.length; qi++) {
           var q = questions[qi];
           var qid = id + '-q' + qi;

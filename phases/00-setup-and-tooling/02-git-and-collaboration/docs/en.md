@@ -19,6 +19,8 @@
 
 The course notebook is the lesson artifact here: there is no `code/main.*` entrypoint. The notebook walks through identity configuration, a daily add/commit/push cycle, and a branch named `experiment/new-optimizer`. It also includes a course-repository workflow that creates a personal progress branch. The exercises should be performed in a disposable repository or a branch you own, not by rewriting the course history.
 
+A concrete case from everyday development: you change one threshold or prompt text in a service and want to compare the old and new behavior side by side. That change belongs on an experiment branch as described below, so the comparison stays reversible and the review shows exactly one decision.
+
 ## The collaboration model
 
 ```mermaid
@@ -72,6 +74,27 @@ checkpoints/
 ```
 
 Check the rule with `git status --ignored`; keep code, configuration, and small evaluation fixtures visible. The notebook's daily sequence is `git status`, `git add`, `git commit`, and `git push origin <branch>`. `git checkout -b my-progress` creates an isolated progress branch; it does not publish it until a push is requested.
+
+## CBP context: Azure DevOps and Java
+
+In the CBP context LCAG provides the infrastructure, so the remote is an Azure Repos URL rather than a personal GitHub repository. The Git commands in this lesson are unchanged; only the hosting names differ.
+
+| This lesson says | In Azure DevOps it is called |
+|---|---|
+| Remote repository | Azure Repos repository |
+| Pull request | Pull request (reviewed in Azure Repos) |
+| Actions workflow | Azure Pipelines pipeline |
+| Issue | Boards work item |
+
+For Java services the same ignore principle applies as for Python checkpoints: keep generated build output out of version control. A Maven service typically ignores compiled classes and build directories:
+
+```text
+target/
+*.class
+*.jar
+```
+
+Check the rule the same way as above with `git status --ignored`, keeping source code, configuration, and small evaluation fixtures visible.
 
 ## Ship It
 
