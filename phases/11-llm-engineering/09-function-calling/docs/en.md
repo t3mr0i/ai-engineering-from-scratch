@@ -448,6 +448,10 @@ Call `register_tool` from a small caller with a graph with edges (0,1) and (1,2)
 
 Hand off `outputs/prompt-tool-designer.md` with the command `npx tsx main.ts`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: tool schemas over Java methods
+
+In the CBP context each tool schema from this lesson describes a Java method in the service: a name, a JSON parameter schema, and server-side validation of every argument before execution. The model proposes; the service disposes — never execute a call the schema did not declare, and cap the loop with a maximum iteration count plus a deadline. Log each proposed call with its arguments and result for audit. When a tool must be shared across services or hosts, graduate it to an MCP server as Phase 11 · 14 describes instead of copying the schema.
+
 ## Further Reading
 
 - [OpenAI Function Calling Guide](https://platform.openai.com/docs/guides/function-calling) -- the definitive reference for tool use with GPT-4o, including parallel calls, forced calling, and structured arguments
