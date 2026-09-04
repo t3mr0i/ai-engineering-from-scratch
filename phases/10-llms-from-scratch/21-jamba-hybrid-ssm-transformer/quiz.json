@@ -2,12 +2,12 @@
   "lesson": "21-jamba-hybrid-ssm-transformer",
   "title": "Jamba — Hybrid SSM-Transformer",
   "questions": [
-    {
+        {
       "stage": "pre",
-      "question": "Which factors multiply in `kv_cache_bytes` for a hybrid configuration?",
-      "options": ["2 for K/V, attention layers, KV heads, head dimension, context length, and bytes per element.", "Only total layers and hidden size.", "SSM layers, state size, and context length.", "Vocabulary size and number of query heads."],
+      "question": "You know attention memory grows with the length of the conversation, which hurts very long chats. You also know simple loops can update a fixed-size note as they read. What design would you consider?",
+      "options": ["Mix the two approaches: use attention layers for precise recall and looping layers with a fixed-size note to handle long stretches cheaply.", "Delete all memory and answer every question with the same sentence.", "Store the entire conversation twice to be extra safe.", "Refuse any conversation longer than one sentence."],
       "correct": 0,
-      "explanation": "The KV cache stores keys and values for each attention layer, KV head, head dimension, and context position at the selected element width."
+      "explanation": "Combining precise recall with cheap fixed-size memory balances quality and long-context cost. This lesson builds the accounting and trade-offs for that hybrid design."
     },
     {
       "stage": "check",
