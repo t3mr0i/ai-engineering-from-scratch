@@ -20,6 +20,12 @@
 
 This lesson has no `code/main.*` entrypoint. Its notebook and [`outputs/artifact-card.md`](../outputs/artifact-card.md) form a command-line runbook. Linux exposes one directory tree rooted at `/`; common locations in the notebook are `/home/<user>` for work, `/tmp` for disposable files, `/var/log` for service logs, `/mnt` or `/media` for mounted storage, and `/proc`/`/sys` for kernel and hardware views.
 
+A typical case: a cleanup command with an unexpanded wildcard deletes more than the intended cache because nobody checked the exact path first. Listing the path before deleting it prevents the incident.
+
+## CBP context: LCAG hosts are Linux
+
+In the CBP context the machines that build and run CBP services are Linux hosts provided by LCAG, so this runbook describes the production-adjacent environment, not an exotic special case. Developers on Windows use WSL2 for the same commands; developers on macOS translate package-manager and filesystem details as the lesson shows. The safety rule travels unchanged: check the exact path and the observed permission bits before any destructive command, on every host.
+
 ```mermaid
 flowchart TD
     R[/] --> H[/home/<user>]

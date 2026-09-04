@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In a Linux shell, what does cd ~ do?",
+      "question": "You must delete a generated directory but keep everything else on the machine. What is the safe order?",
       "options": [
-        "Changes to the current user's home directory",
-        "Changes to the filesystem root directory",
-        "Deletes temporary files from /tmp",
-        "Opens the last directory visited by another user"
+        "Delete first, then check what is missing",
+        "Inspect the exact path, verify it holds only generated files, then delete that path",
+        "Delete with a wildcard from the filesystem root",
+        "Ask someone else to guess the path for you"
       ],
-      "correct": 0,
-      "explanation": "The shell expands ~ to the current user's home directory. It is not the same as /, the filesystem root."
+      "correct": 1,
+      "explanation": "Destructive commands cannot be undone, so the path check comes before the deletion. This lesson builds the whole Linux runbook on that order: observe paths and permissions first, change second."
     },
     {
       "stage": "check",
