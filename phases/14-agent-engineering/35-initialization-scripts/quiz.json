@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What happens when `prereqs.lock` has a matching, fresh fingerprint?",
+      "question": "Every morning your team reruns slow environment checks before starting, even when nothing changed overnight. What improves this routine without missing real breakage?",
       "options": [
-        "It marks every probe failed because cached results are forbidden.",
-        "It deletes the lock and runs only the environment probe.",
-        "The script prints that the lock is fresh and skips the probes.",
-        "It launches the agent without checking the lock age."
+        "Never check the environment and hope everything works.",
+        "Rerun every check before each single action with no saved result at all.",
+        "Run the full checks once, save a dated fingerprint of the result, and skip rechecking while that fingerprint is fresh and unchanged.",
+        "Skip checks silently whenever they fail."
       ],
       "correct": 2,
-      "explanation": "`main` checks `lock_is_fresh()` before `run_probes`; a matching fingerprint younger than the 24-hour TTL prints the fresh-lock message and returns 0."
+      "explanation": "Caching a fresh environment check is the prior trick. This lesson builds on it with a startup script that probes the machine, saves the result, and fails loudly when something is wrong."
     },
     {
       "stage": "check",
