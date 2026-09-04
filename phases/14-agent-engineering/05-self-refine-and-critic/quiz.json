@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the first output produced by `generate(\"world facts\", [])`?",
+      "question": "You write a first draft of a short report that states several facts. What is the most reliable way to make the facts more accurate?",
       "options": [
-        "Three bullets, including `Paris is the capital of Germany` and `Mt Everest is in Europe`.",
-        "Three verified bullets about France, Asia, and sea-level boiling.",
-        "An empty string because a topic is required only after critique.",
-        "A single sentence saying that the facts could not be checked."
+        "Reread your own draft and keep whatever feels right without checking anything else.",
+        "Compare the draft against an independent trusted source and revise every part that disagrees.",
+        "Publish the first draft unchanged because revision rarely helps.",
+        "Change a few random sentences so the text looks edited."
       ],
-      "correct": 0,
-      "explanation": "With no history, `generate` returns the intentionally flawed three-bullet draft used to demonstrate refinement."
+      "correct": 1,
+      "explanation": "Comparing a draft against independent evidence is the habit that matters here. This lesson builds on it with repeated draft-and-check cycles that improve a result, especially when an outside source verifies the facts."
     },
     {
       "stage": "check",
