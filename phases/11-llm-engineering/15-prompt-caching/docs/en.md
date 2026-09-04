@@ -70,6 +70,10 @@ Call `Request` from a small caller with the text "red fox". Compare its result w
 
 Hand off `outputs/skill-prompt-caching-planner.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: stable prefix first, measured savings second
+
+In the CBP context prompt caching discounts the stable prefix of Azure OpenAI calls: keep system instructions and long-lived context first and byte-identical across requests, put the changing user content last, and verify the cache hit rate in Cost Management before claiming savings. The layout discipline is the same as context engineering from Phase 11 · 05 — caching rewards it, it does not replace it. Re-measure after every prompt restructure; a reordered prefix silently destroys the hit rate.
+
 ## Further Reading
 
 - [Anthropic — Prompt caching](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching) — `cache_control`, 1h TTL, break-even tables.

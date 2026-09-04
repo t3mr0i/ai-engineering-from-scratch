@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What do the three fields in `Request(prefix_tokens, suffix_tokens, prefix_key)` represent in the simulator?",
+      "question": "Every request resends the same long system instructions and pays full price for them each time. What mechanism removes that waste?",
       "options": [
-        "Reusable prefix tokens, suffix tokens, and a prefix key",
-        "The model's output length, cache TTL, and the provider's API key",
-        "Three alternative prices for one request, selected by the provider at runtime",
-        "The number of writes, reads, and misses that have already occurred"
+        "A longer context window for the same price",
+        "Resending the instructions in smaller pieces",
+        "Turning off request logging",
+        "Provider-side caching of the stable prefix at a fraction of the price"
       ],
-      "correct": 0,
-      "explanation": "The simulator treats `prefix_tokens` as cacheable, `suffix_tokens` as the changing user portion, and `prefix_key` as the equality key used by each provider's cache map."
+      "correct": 3,
+      "explanation": "A prefix the provider has already seen need not be billed in full again. This lesson covers how each provider caches it and what layout earns the discount."
     },
     {
       "stage": "check",
