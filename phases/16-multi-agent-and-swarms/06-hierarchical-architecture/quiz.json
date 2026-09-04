@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the hierarchy built by `build_hierarchy()`?",
+      "question": "A lead splits a product review between an engineering group and a legal group, then combines their summaries into one decision. Why is this grouping useful compared to sending every individual note straight to the lead?",
       "options": [
-        "A top manager delegates to engineering, legal, and finance sub-managers, which dispatch to leaf workers.",
-        "One worker calls every other worker directly with no managers.",
-        "Three unrelated top managers each write a final answer.",
-        "A flat queue where all leaves claim the same task."
+        "Each group condenses its own findings, so the lead reads a few summaries instead of every raw note.",
+        "It guarantees that no group can ever make a mistake in its summary.",
+        "It removes the need for anyone to write down what they checked.",
+        "It lets the lead skip reading all summaries and guess the final answer."
       ],
       "correct": 0,
-      "explanation": "The code creates `vp-eng` above `eng-manager`, `legal-manager`, and `finance-manager`; each sub-manager owns one or more workers."
+      "explanation": "Seeing how grouped summaries reduce the load on one coordinator prepares you for this lesson, which implements that hierarchy and shows how a mislabeled request can slip through."
     },
     {
       "stage": "check",
