@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the simulated frame cadence in `synth_call`?",
+      "question": "You are sketching a voice helper that listens, thinks, and speaks over an ongoing audio stream. A slow weather lookup takes a moment while the user waits. What behavior from ordinary phone assistants do you already expect to need?",
       "options": [
-        "One `Frame` every 20 ms",
-        "One `Frame` every 100 ms",
-        "One `Frame` per spoken word",
-        "A variable cadence chosen by the TTS stream"
+        "Stay completely silent until the answer is ready, even if it takes a long time.",
+        "End the call immediately whenever any lookup takes more than a blink.",
+        "Speak a short filler while waiting, plus a way to stop and listen again if the user interrupts.",
+        "Play loud static so the user knows the system is still turned on."
       ],
-      "correct": 0,
-      "explanation": "Each generated frame advances `t` by 20 milliseconds. Six initial frames therefore represent 120 ms of leading silence before the simulated utterance."
+      "correct": 2,
+      "explanation": "Recognizing fillers, turn-taking, and interruptions as requirements prepares you for this capstone, which wires listening, tool calls, and speech output into one timed session."
     },
     {
       "stage": "check",
