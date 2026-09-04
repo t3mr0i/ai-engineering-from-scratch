@@ -2,12 +2,12 @@
   "lesson": "08-dpo",
   "title": "DPO: Direct Preference Optimization",
   "questions": [
-    {
+        {
       "stage": "pre",
-      "question": "What is the scalar inside the sigmoid in `dpo_loss` for one preference pair?",
-      "options": ["The policy's preferred log-probability alone.", "The reference model's rejected log-probability alone.", "`beta * (preferred ratio - rejected ratio)`.", "The average token count of the two responses."],
-      "correct": 2,
-      "explanation": "DPO forms `pref_ratio = policy_pref - ref_pref` and `rej_ratio = policy_rej - ref_rej`, then uses `beta * (pref_ratio - rej_ratio)` as the logit."
+      "question": "You trained a system that uses a separate scoring model plus extra training to prefer better answers, and you found it complex and unstable to run. What simpler outcome would you wish for?",
+      "options": ["A way to teach the preference directly from the paired examples without running a separate scoring model.", "A way to delete all preference examples and guess randomly instead.", "A way to add two more scoring models on top of the first one.", "A way to freeze the model so it never changes at all."],
+      "correct": 0,
+      "explanation": "Learning straight from preference pairs without a middle scoring step is the motivation. This lesson builds the direct optimization method that does exactly that."
     },
     {
       "stage": "check",
