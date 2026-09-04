@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What happens when Scrubber.scrub sees the same sensitive value twice?",
+      "question": "A developer commits a file with a live API key, deletes it minutes later, and assumes the problem is gone. Why is it not?",
       "options": [
-        "It assigns a new placeholder each time",
-        "It removes the value without a placeholder",
-        "It reuses the stable placeholder stored in tokens",
-        "It raises a duplicate-value exception"
+        "Deleting a file also deletes the repository history",
+        "Keys expire automatically when deleted",
+        "Nobody ever reads commit history",
+        "The key stays in the repository history where anyone with access can find it"
       ],
-      "correct": 2,
-      "explanation": "_token_for first checks self.tokens, so repeated SSNs, emails, or phones receive the same kind-specific placeholder."
+      "correct": 3,
+      "explanation": "History keeps what the worktree forgets. This lesson builds the full practice around that fact: central vaults, rotation, and scanning on every commit."
     },
     {
       "stage": "check",

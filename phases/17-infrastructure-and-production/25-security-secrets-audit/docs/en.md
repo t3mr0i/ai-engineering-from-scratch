@@ -117,6 +117,10 @@ Call `Scrubber` from a small caller with tokens=["red","fox"]. Compare its resul
 
 Hand off `outputs/skill-llm-security-plan.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: Key Vault and short-lived credentials
+
+In the CBP context the vault is Azure Key Vault, access is Microsoft Entra ID (managed identity for services, short-lived tokens for pipelines), and rotation is a Key Vault rotation policy, not a chat thread. CI/CD credentials are OpenID Connect federated credentials for Azure DevOps service connections, never static secrets. Complement the lesson's scanners with secret scanning on Azure Repos; the committed `.env` file in The Problem is exactly what they prevent.
+
 ## Further Reading
 
 - [Doppler — Advanced LLM Security](https://www.doppler.com/blog/advanced-llm-security)
