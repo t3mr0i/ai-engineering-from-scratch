@@ -2,12 +2,12 @@
   "lesson": "09-constitutional-ai-self-improvement",
   "title": "Constitutional AI and Self-Improvement",
   "questions": [
-    {
+        {
       "stage": "pre",
-      "question": "What problem does `critique` report when a response starts with `I cannot` or `As an AI`?",
-      "options": ["An unwarranted refusal.", "A malformed JSON response.", "A missing numeric answer.", "A constant group advantage."],
+      "question": "Your assistant follows its training examples well, but you have no more human labels and you still see unhelpful or unsafe answers. What could help next?",
+      "options": ["Give the model a short list of written principles and ask it to review and rewrite its own answers against them.", "Delete the model and answer every user request by hand from now on.", "Repeat the exact same training data ten more times with no changes.", "Remove all guidelines so the model has nothing to check against."],
       "correct": 0,
-      "explanation": "The critique lowercases the response and flags those opening phrases as an unwarranted refusal under the selected principle."
+      "explanation": "Reviewing and rewriting against stated principles creates new training signal without new human labels. This lesson builds the two-stage loop that turns those revisions into improved behavior."
     },
     {
       "stage": "check",
