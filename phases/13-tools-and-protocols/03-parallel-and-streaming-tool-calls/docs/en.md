@@ -124,6 +124,10 @@ Call `executor_weather` from a small caller with the demo’s smallest built-in 
 
 Hand off `outputs/skill-parallel-call-safety-check.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: fan out reads, serialize writes
+
+In the CBP context the concurrent executors from this lesson are parallel calls inside the Java service — independent retrievals (for example several Azure AI Search queries) fanned out over virtual threads and joined by call id before the next model turn. Parallelize only independent read-only tools: state-changing calls stay sequential so ordering and audit stay intact. Stream progress to the user while the model streams, but never execute on partial arguments — wait for the provider's end-of-call signal, then parse and validate. Size the fan-out against the downstream rate limits enforced at the APIM gateway rather than against the model's willingness to emit calls.
+
 ## Further Reading
 
 - [OpenAI — Parallel function calling](https://platform.openai.com/docs/guides/function-calling#parallel-function-calling) — default behavior and the opt-out flag

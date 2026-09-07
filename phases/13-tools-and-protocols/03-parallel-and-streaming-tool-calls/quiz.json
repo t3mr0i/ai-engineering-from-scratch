@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For the three bundled weather calls, why is the parallel wall time near 800 ms instead of 1800 ms?",
+      "question": "An assistant looks up three independent records one after another, and the total wait is the sum of all three lookups. What is the fix?",
       "options": [
-        "The parallel wall time is set by the 800 ms maximum",
-        "The calls are cached and no executor runs",
-        "The code silently drops the 600 and 800 ms calls",
-        "Each call is changed to an 800 ms timeout in sequence"
+        "Ask the user to request only one record at a time",
+        "Make each lookup slower so the timing evens out",
+        "Cache the user's question and skip the lookups",
+        "Run the independent lookups concurrently and match each result to its request"
       ],
-      "correct": 0,
-      "explanation": "Sequential execution adds the city latencies to about 1800 ms; the thread pool overlaps them and therefore approaches the slowest 800 ms call."
+      "correct": 3,
+      "explanation": "Independent waits overlap instead of adding up. This lesson builds the parallel fan-out, plus the id matching that keeps results lined up."
     },
     {
       "stage": "check",
