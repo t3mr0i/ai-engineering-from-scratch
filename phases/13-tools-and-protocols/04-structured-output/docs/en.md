@@ -509,6 +509,10 @@ Reconstruct **Structured Output — JSON Schema, Pydantic, Zod, Constrained Deco
 
 Hand off `outputs/skill-structured-output-designer.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: strict schemas behind the endpoint
+
+In the CBP context structured output is requested from the Azure OpenAI deployment with a JSON schema (`response_format`) and enforced in the Java service with Jackson plus Bean Validation — never parsed out of model prose with regular expressions. Keep schemas inside the provider's strict subset so invalid shapes are rejected before tokens are emitted, and handle typed refusals as a normal branch, not an exception. On a validation failure retry once with the errors appended, then fail the request loudly instead of guessing; log the rejected payload into the eval set.
+
 ## Further Reading
 
 - [OpenAI — Structured outputs](https://platform.openai.com/docs/guides/structured-outputs) — strict mode, refusals, and schema requirements

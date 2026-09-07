@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which fields are required by INVOICE_SCHEMA at the root?",
+      "question": "A service asks the model for a price list in prose and extracts the numbers with regular expressions. The extraction breaks every few weeks. What is the structural fix?",
       "options": [
-        "customer, line_items, total_usd, and currency",
-        "customer and discount only",
-        "sku, qty, and unit_usd",
-        "currency plus a free-form metadata object is required"
+        "Write longer regular expressions to cover more phrasings",
+        "Ask the model to write the prices more carefully",
+        "Retry the same prompt until the regex matches",
+        "Request a defined JSON shape and validate it against a schema before use"
       ],
-      "correct": 0,
-      "explanation": "The root required list contains customer, line_items, total_usd, and currency; discount and metadata are not part of the schema."
+      "correct": 3,
+      "explanation": "Free prose has no machine contract. This lesson builds structured output: a declared schema the provider enforces and the service validates."
     },
     {
       "stage": "check",
