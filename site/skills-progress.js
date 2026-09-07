@@ -233,6 +233,8 @@
     function storedProfileId() {
       try {
         var saved = JSON.parse(window.localStorage.getItem(cockpitStore));
+        // Legacy migration: dissolved "Products & Value Streams" maps to Corporate Functions.
+        if (saved && saved.profileId === "pvs") saved.profileId = "corp";
         if (saved && (data.roles || []).some(function (role) { return role.id === saved.profileId; })) {
           return saved.profileId;
         }

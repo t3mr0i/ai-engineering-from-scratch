@@ -1,0 +1,397 @@
+{
+  "meta": {
+    "source": "INTERN_AI_Literacy_LHIND, Folie 7 Zielbild erreicht – nach Nachzug der Online-Kurse",
+    "stand": "2026-08",
+    "levels": {
+      "A": "Acquire",
+      "D": "Deepen",
+      "C": "Create"
+    },
+    "rule": "Zielbild-Level je Dimension = höchstes Level über die Fähigkeiten dieser Dimension"
+  },
+  "dimensions": [
+    {
+      "id": "foundation",
+      "name": "Foundation",
+      "capabilities": [
+        "Digital & AI Terminology",
+        "AI Concepts, Tool overviews",
+        "Data Literacy",
+        "Personal AI Productivity",
+        "Corporate Ethics & Compliance"
+      ]
+    },
+    {
+      "id": "engineering",
+      "name": "Engineering",
+      "capabilities": [
+        "AI Systems & Architecture",
+        "Agentic Software Development",
+        "AI-Driven Testing & QA",
+        "AI-Supported Code Modernization",
+        "AI-Assisted Documentation",
+        "Sustainable Software & Green Coding"
+      ]
+    },
+    {
+      "id": "product",
+      "name": "Product and Process",
+      "capabilities": [
+        "AI-Augmented Requirement Engineering",
+        "AI-Enhanced User Research"
+      ]
+    },
+    {
+      "id": "advisory",
+      "name": "Advisory and Business Consulting",
+      "capabilities": [
+        "AI & Automation Use Case Spotting",
+        "AI Cost & Value Economics",
+        "Consultative Prompting",
+        "AI Ecosystem Knowledge"
+      ]
+    },
+    {
+      "id": "leadership",
+      "name": "Leadership and Strategy",
+      "capabilities": [
+        "Managing AI Transformation",
+        "AI Workforce Strategy",
+        "Decision Making with AI"
+      ]
+    }
+  ],
+  "roles": [
+    {
+      "code": "BSC",
+      "name": "Business & Strategy Consulting",
+      "inAssessment": true,
+      "description": "Business Process Consulting · Business Strategy Consulting · Business Solutions",
+      "targets": {
+        "foundation": {
+          "target": "C",
+          "catalog": [
+            "A",
+            "D",
+            "C"
+          ],
+          "coverage": "gedeckt"
+        },
+        "engineering": {
+          "target": "D",
+          "catalog": [
+            "A",
+            "D"
+          ],
+          "coverage": "gedeckt"
+        },
+        "product": {
+          "target": "C",
+          "catalog": [
+            "A",
+            "D",
+            "C"
+          ],
+          "coverage": "gedeckt"
+        },
+        "advisory": {
+          "target": "C",
+          "catalog": [
+            "A",
+            "D",
+            "C"
+          ],
+          "coverage": "gedeckt"
+        },
+        "leadership": {
+          "target": "C",
+          "catalog": [
+            "A",
+            "D",
+            "C"
+          ],
+          "coverage": "gedeckt"
+        }
+      }
+    },
+    {
+      "code": "PVS",
+      "name": "Products & Value Streams",
+      "inAssessment": false,
+      "description": "nicht im Rollensystem des Self-Assessments",
+      "targets": {
+        "foundation": {
+          "target": "C",
+          "catalog": [],
+          "coverage": "nicht im Rollensystem"
+        },
+        "engineering": {
+          "target": "D",
+          "catalog": [],
+          "coverage": "nicht im Rollensystem"
+        },
+        "product": {
+          "target": "C",
+          "catalog": [],
+          "coverage": "nicht im Rollensystem"
+        },
+        "advisory": {
+          "target": "D",
+          "catalog": [],
+          "coverage": "nicht im Rollensystem"
+        },
+        "leadership": {
+          "target": "D",
+          "catalog": [],
+          "coverage": "nicht im Rollensystem"
+        }
+      }
+    },
+    {
+      "code": "TC",
+      "name": "Technology Consulting",
+      "inAssessment": true,
+      "description": "Technical Engineering · Software Engineering & Architecture",
+      "targets": {
+        "foundation": {
+          "target": "C",
+          "catalog": [
+            "A",
+            "D",
+            "C"
+          ],
+          "coverage": "gedeckt"
+        },
+        "engineering": {
+          "target": "C",
+          "catalog": [
+            "A",
+            "D",
+            "C"
+          ],
+          "coverage": "gedeckt"
+        },
+        "product": {
+          "target": "D",
+          "catalog": [
+            "A",
+            "D"
+          ],
+          "coverage": "gedeckt"
+        },
+        "advisory": {
+          "target": "C",
+          "catalog": [
+            "A",
+            "D",
+            "C"
+          ],
+          "coverage": "gedeckt"
+        },
+        "leadership": {
+          "target": "A",
+          "catalog": [
+            "A"
+          ],
+          "coverage": "gedeckt"
+        }
+      }
+    },
+    {
+      "code": "AM",
+      "name": "Application Management",
+      "inAssessment": true,
+      "description": "Service Technology · Service Management",
+      "targets": {
+        "foundation": {
+          "target": "C",
+          "catalog": [
+            "A",
+            "D",
+            "C"
+          ],
+          "coverage": "gedeckt"
+        },
+        "engineering": {
+          "target": "C",
+          "catalog": [
+            "A",
+            "D",
+            "C"
+          ],
+          "coverage": "gedeckt"
+        },
+        "product": {
+          "target": "A",
+          "catalog": [
+            "A",
+            "D",
+            "C"
+          ],
+          "coverage": "gedeckt"
+        },
+        "advisory": {
+          "target": "D",
+          "catalog": [
+            "A",
+            "D"
+          ],
+          "coverage": "gedeckt"
+        },
+        "leadership": {
+          "target": "A",
+          "catalog": [
+            "A"
+          ],
+          "coverage": "gedeckt"
+        }
+      }
+    },
+    {
+      "code": "PMA",
+      "name": "Project Management & Agility",
+      "inAssessment": true,
+      "description": "Project Management · Agility",
+      "targets": {
+        "foundation": {
+          "target": "C",
+          "catalog": [
+            "A",
+            "D",
+            "C"
+          ],
+          "coverage": "gedeckt"
+        },
+        "engineering": {
+          "target": null,
+          "catalog": [],
+          "coverage": "kein Zielbild"
+        },
+        "product": {
+          "target": "A",
+          "catalog": [
+            "A",
+            "D"
+          ],
+          "coverage": "gedeckt"
+        },
+        "advisory": {
+          "target": "C",
+          "catalog": [
+            "A",
+            "D",
+            "C"
+          ],
+          "coverage": "gedeckt"
+        },
+        "leadership": {
+          "target": "C",
+          "catalog": [
+            "A",
+            "D",
+            "C"
+          ],
+          "coverage": "gedeckt"
+        }
+      }
+    },
+    {
+      "code": "CF",
+      "name": "Corporate Functions",
+      "inAssessment": true,
+      "description": "Marketing, Support, Finance, HR, Legal, All Employees",
+      "targets": {
+        "foundation": {
+          "target": "D",
+          "catalog": [
+            "A",
+            "D"
+          ],
+          "coverage": "gedeckt"
+        },
+        "engineering": {
+          "target": "D",
+          "catalog": [
+            "A",
+            "D"
+          ],
+          "coverage": "gedeckt"
+        },
+        "product": {
+          "target": "A",
+          "catalog": [
+            "A"
+          ],
+          "coverage": "gedeckt"
+        },
+        "advisory": {
+          "target": "A",
+          "catalog": [
+            "A"
+          ],
+          "coverage": "gedeckt"
+        },
+        "leadership": {
+          "target": "C",
+          "catalog": [
+            "A",
+            "D",
+            "C"
+          ],
+          "coverage": "gedeckt"
+        }
+      }
+    },
+    {
+      "code": "L",
+      "name": "Leadership",
+      "inAssessment": true,
+      "description": "LHIND Business Manager · LHIND Top Management",
+      "targets": {
+        "foundation": {
+          "target": "C",
+          "catalog": [
+            "A",
+            "D",
+            "C"
+          ],
+          "coverage": "gedeckt"
+        },
+        "engineering": {
+          "target": "A",
+          "catalog": [
+            "A",
+            "D"
+          ],
+          "coverage": "gedeckt"
+        },
+        "product": {
+          "target": "A",
+          "catalog": [
+            "A",
+            "D"
+          ],
+          "coverage": "gedeckt"
+        },
+        "advisory": {
+          "target": "C",
+          "catalog": [
+            "A",
+            "D",
+            "C"
+          ],
+          "coverage": "gedeckt"
+        },
+        "leadership": {
+          "target": "C",
+          "catalog": [
+            "A",
+            "D",
+            "C"
+          ],
+          "coverage": "gedeckt"
+        }
+      }
+    }
+  ]
+}

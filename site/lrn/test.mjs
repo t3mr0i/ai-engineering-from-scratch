@@ -198,38 +198,40 @@ test("Harness Engineering course is scoped to the Technology Consulting role", (
   assert.ok(tc && tc.code === "R03-TC", "Technology Consulting role must retain code R03-TC");
 });
 
-test("the learner model exposes all seven AI Literacy roles", () => {
+test("the learner model exposes all six AI Literacy roles", () => {
   assert.deepEqual(
     [...data.roles.map((role) => role.id)],
-    ["bsc", "pvs", "tc", "am", "pma", "corp", "lead"],
+    ["bsc", "tc", "am", "pma", "corp", "lead"],
   );
-  assert.equal(new Set(data.roles.map((role) => role.code)).size, 7);
+  assert.equal(new Set(data.roles.map((role) => role.code)).size, 6);
 });
 
 test("capability targets match the supplied role-depth matrix", () => {
   const byId = new Map(data.capabilities.map((capability) => [capability.id, capability]));
-  const roles = ["bsc", "pvs", "tc", "am", "pma", "corp", "lead"];
+  // NOTE: "Products & Value Streams" was dissolved into "Corporate Functions"
+  // (max level wins). Role order follows catalog.json.
+  const roles = ["bsc", "tc", "am", "pma", "corp", "lead"];
   const na = "n. a.";
   const expected = {
-    1: ["Deepen", "Deepen", "Create", "Deepen", "Deepen", "Deepen", "Deepen"],
-    2: ["Create", "Create", "Create", "Deepen", "Deepen", "Deepen", "Deepen"],
-    3: ["Create", "Create", "Create", "Acquire", "Create", "Deepen", "Create"],
-    4: ["Deepen", "Deepen", "Create", "Create", "Deepen", "Deepen", "Create"],
-    5: [na, "Acquire", "Create", na, na, na, na],
-    6: ["Acquire", "Acquire", "Create", "Acquire", na, na, na],
-    7: [na, "Acquire", "Create", "Deepen", na, na, na],
-    8: ["Acquire", "Acquire", "Create", "Create", na, na, na],
-    9: ["Deepen", "Deepen", "Create", "Create", na, "Deepen", "Acquire"],
-    10: ["Deepen", "Deepen", "Deepen", "Acquire", na, na, "Acquire"],
-    11: ["Create", "Create", "Deepen", "Acquire", "Acquire", "Acquire", "Acquire"],
-    12: ["Create", "Create", "Acquire", na, "Acquire", "Acquire", "Acquire"],
-    13: ["Create", "Deepen", "Deepen", "Acquire", "Create", "Acquire", "Deepen"],
-    14: ["Create", "Deepen", "Deepen", "Acquire", "Deepen", "Acquire", "Create"],
-    15: ["Create", "Deepen", "Deepen", "Deepen", "Create", "Acquire", "Create"],
-    16: ["Create", "Deepen", "Create", "Acquire", "Acquire", "Acquire", "Deepen"],
-    17: ["Create", "Deepen", "Acquire", "Acquire", "Create", "Acquire", "Deepen"],
-    18: ["Deepen", "Acquire", "Acquire", "Acquire", "Acquire", "Create", "Create"],
-    19: ["Deepen", "Deepen", "Acquire", "Acquire", "Deepen", "Deepen", "Create"],
+    1: ["Deepen", "Create", "Deepen", "Deepen", "Deepen", "Deepen"],
+    2: ["Create", "Create", "Deepen", "Deepen", "Create", "Deepen"],
+    3: ["Create", "Create", "Acquire", "Create", "Create", "Create"],
+    4: ["Deepen", "Create", "Create", "Deepen", "Deepen", "Create"],
+    5: [na, "Create", na, na, "Acquire", na],
+    6: ["Acquire", "Create", "Acquire", na, "Acquire", na],
+    7: [na, "Create", "Deepen", na, "Acquire", na],
+    8: ["Acquire", "Create", "Create", na, "Acquire", na],
+    9: ["Deepen", "Create", "Create", na, "Deepen", "Acquire"],
+    10: ["Deepen", "Deepen", "Acquire", na, "Deepen", "Acquire"],
+    11: ["Create", "Deepen", "Acquire", "Acquire", "Create", "Acquire"],
+    12: ["Create", "Acquire", na, "Acquire", "Create", "Acquire"],
+    13: ["Create", "Deepen", "Acquire", "Create", "Deepen", "Deepen"],
+    14: ["Create", "Deepen", "Acquire", "Deepen", "Deepen", "Create"],
+    15: ["Create", "Deepen", "Deepen", "Create", "Deepen", "Create"],
+    16: ["Create", "Create", "Acquire", "Acquire", "Deepen", "Deepen"],
+    17: ["Create", "Acquire", "Acquire", "Create", "Deepen", "Deepen"],
+    18: ["Deepen", "Acquire", "Acquire", "Acquire", "Create", "Create"],
+    19: ["Deepen", "Acquire", "Acquire", "Deepen", "Deepen", "Create"],
   };
   for (const [id, row] of Object.entries(expected)) {
     assert.deepEqual(roles.map((role) => byId.get(Number(id)).targets[role]), row, `capability ${id} target row drifted`);
@@ -327,7 +329,6 @@ test("Academy paths separate shared foundations from explicit profile recommenda
 test("Academy recommendations stay focused to three ordered trainings per profile", () => {
   const expected = {
     bsc: ["AI-04", "AI-07", "AI-10"],
-    pvs: ["AI-04", "AI-07", "AI-10"],
     tc: ["AI-01", "AI-02", "AI-03"],
     am: ["AI-02", "AI-01"],
     pma: ["AI-04", "AI-07", "AI-08"],

@@ -169,20 +169,6 @@ window.LrnData = {
       }
     },
     {
-      "id": "pvs",
-      "code": "R02-PVS",
-      "label": "Products & Value Streams",
-      "segment": "PVS",
-      "description": "Product management, product sales, value streams, and product-adjacent consulting.",
-      "targets": {
-        "literacy": 2,
-        "prompting": 2,
-        "business": 2,
-        "data": 2,
-        "change": 2
-      }
-    },
-    {
       "id": "tc",
       "code": "R03-TC",
       "label": "Technology Consulting",
@@ -229,11 +215,11 @@ window.LrnData = {
       "code": "R06-CF",
       "label": "Corporate Functions",
       "segment": "CF",
-      "description": "HR, finance, legal, communications, procurement, and internal business functions.",
+      "description": "HR, finance, legal, communications, procurement, product management, value streams, and internal business functions.",
       "targets": {
         "literacy": 2,
         "prompting": 2,
-        "business": 1,
+        "business": 2,
         "data": 2,
         "change": 3
       }
@@ -414,7 +400,6 @@ window.LrnData = {
       "title": "Digital & AI Terminology, AI Concepts, Tool overviews",
       "targets": {
         "bsc": "Deepen",
-        "pvs": "Deepen",
         "tc": "Create",
         "am": "Deepen",
         "pma": "Deepen",
@@ -429,11 +414,10 @@ window.LrnData = {
       "title": "Data Literacy",
       "targets": {
         "bsc": "Create",
-        "pvs": "Create",
         "tc": "Create",
         "am": "Deepen",
         "pma": "Deepen",
-        "corp": "Deepen",
+        "corp": "Create",
         "lead": "Deepen",
         "all": "Acquire"
       }
@@ -444,11 +428,10 @@ window.LrnData = {
       "title": "Personal AI Productivity",
       "targets": {
         "bsc": "Create",
-        "pvs": "Create",
         "tc": "Create",
         "am": "Acquire",
         "pma": "Create",
-        "corp": "Deepen",
+        "corp": "Create",
         "lead": "Create",
         "all": "Acquire"
       }
@@ -459,7 +442,6 @@ window.LrnData = {
       "title": "Corporate Ethics & Compliance",
       "targets": {
         "bsc": "Deepen",
-        "pvs": "Deepen",
         "tc": "Create",
         "am": "Create",
         "pma": "Deepen",
@@ -474,11 +456,10 @@ window.LrnData = {
       "title": "AI Systems and Architecture",
       "targets": {
         "bsc": "n. a.",
-        "pvs": "Acquire",
         "tc": "Create",
         "am": "n. a.",
         "pma": "n. a.",
-        "corp": "n. a.",
+        "corp": "Acquire",
         "lead": "n. a.",
         "all": "n. a."
       }
@@ -489,11 +470,10 @@ window.LrnData = {
       "title": "Agentic Software Development",
       "targets": {
         "bsc": "Acquire",
-        "pvs": "Acquire",
         "tc": "Create",
         "am": "Acquire",
         "pma": "n. a.",
-        "corp": "n. a.",
+        "corp": "Acquire",
         "lead": "n. a.",
         "all": "n. a."
       }
@@ -504,11 +484,10 @@ window.LrnData = {
       "title": "AI-Driven Testing & QA",
       "targets": {
         "bsc": "n. a.",
-        "pvs": "Acquire",
         "tc": "Create",
         "am": "Deepen",
         "pma": "n. a.",
-        "corp": "n. a.",
+        "corp": "Acquire",
         "lead": "n. a.",
         "all": "n. a."
       }
@@ -519,11 +498,10 @@ window.LrnData = {
       "title": "AI-Supported Code Modernization",
       "targets": {
         "bsc": "Acquire",
-        "pvs": "Acquire",
         "tc": "Create",
         "am": "Create",
         "pma": "n. a.",
-        "corp": "n. a.",
+        "corp": "Acquire",
         "lead": "n. a.",
         "all": "n. a."
       }
@@ -534,7 +512,6 @@ window.LrnData = {
       "title": "AI-Assisted Documentation",
       "targets": {
         "bsc": "Deepen",
-        "pvs": "Deepen",
         "tc": "Create",
         "am": "Create",
         "pma": "n. a.",
@@ -549,11 +526,10 @@ window.LrnData = {
       "title": "Sustainable Software & Green Coding",
       "targets": {
         "bsc": "Deepen",
-        "pvs": "Deepen",
         "tc": "Deepen",
         "am": "Acquire",
         "pma": "n. a.",
-        "corp": "n. a.",
+        "corp": "Deepen",
         "lead": "Acquire",
         "all": "n. a."
       }
@@ -564,11 +540,10 @@ window.LrnData = {
       "title": "AI-Augmented Requirement Engineering",
       "targets": {
         "bsc": "Create",
-        "pvs": "Create",
         "tc": "Deepen",
         "am": "Acquire",
         "pma": "Acquire",
-        "corp": "Acquire",
+        "corp": "Create",
         "lead": "Acquire",
         "all": "n. a."
       }
@@ -579,11 +554,10 @@ window.LrnData = {
       "title": "AI-Enhanced User Research",
       "targets": {
         "bsc": "Create",
-        "pvs": "Create",
         "tc": "Acquire",
         "am": "n. a.",
         "pma": "Acquire",
-        "corp": "Acquire",
+        "corp": "Create",
         "lead": "Acquire",
         "all": "n. a."
       }
@@ -594,11 +568,10 @@ window.LrnData = {
       "title": "AI & Automation Use Case Spotting",
       "targets": {
         "bsc": "Create",
-        "pvs": "Deepen",
         "tc": "Deepen",
         "am": "Acquire",
         "pma": "Create",
-        "corp": "Acquire",
+        "corp": "Deepen",
         "lead": "Deepen",
         "all": "Acquire"
       }
@@ -609,11 +582,10 @@ window.LrnData = {
       "title": "AI Cost & Value Economics",
       "targets": {
         "bsc": "Create",
-        "pvs": "Deepen",
         "tc": "Deepen",
         "am": "Acquire",
         "pma": "Deepen",
-        "corp": "Acquire",
+        "corp": "Deepen",
         "lead": "Create",
         "all": "n. a."
       }
@@ -624,11 +596,10 @@ window.LrnData = {
       "title": "Consultative Prompting",
       "targets": {
         "bsc": "Create",
-        "pvs": "Deepen",
         "tc": "Deepen",
         "am": "Deepen",
         "pma": "Create",
-        "corp": "Acquire",
+        "corp": "Deepen",
         "lead": "Create",
         "all": "Acquire"
       }
@@ -639,11 +610,10 @@ window.LrnData = {
       "title": "AI Ecosystem Knowledge",
       "targets": {
         "bsc": "Create",
-        "pvs": "Deepen",
         "tc": "Create",
         "am": "Acquire",
         "pma": "Acquire",
-        "corp": "Acquire",
+        "corp": "Deepen",
         "lead": "Deepen",
         "all": "Acquire"
       }
@@ -654,11 +624,10 @@ window.LrnData = {
       "title": "Managing AI Transformations",
       "targets": {
         "bsc": "Create",
-        "pvs": "Deepen",
         "tc": "Acquire",
         "am": "Acquire",
         "pma": "Create",
-        "corp": "Acquire",
+        "corp": "Deepen",
         "lead": "Deepen",
         "all": "n. a."
       }
@@ -669,7 +638,6 @@ window.LrnData = {
       "title": "AI Workforce Strategy",
       "targets": {
         "bsc": "Deepen",
-        "pvs": "Acquire",
         "tc": "Acquire",
         "am": "Acquire",
         "pma": "Acquire",
@@ -684,7 +652,6 @@ window.LrnData = {
       "title": "Decision Making with AI",
       "targets": {
         "bsc": "Deepen",
-        "pvs": "Deepen",
         "tc": "Acquire",
         "am": "Acquire",
         "pma": "Deepen",
@@ -704,7 +671,6 @@ window.LrnData = {
       "roleIds": [
         "all",
         "bsc",
-        "pvs",
         "tc",
         "am",
         "pma",
@@ -779,7 +745,6 @@ window.LrnData = {
       "roleIds": [
         "all",
         "bsc",
-        "pvs",
         "tc",
         "am",
         "pma",
@@ -857,7 +822,6 @@ window.LrnData = {
       "roleIds": [
         "all",
         "bsc",
-        "pvs",
         "tc",
         "am",
         "pma",
@@ -944,7 +908,6 @@ window.LrnData = {
       "roleIds": [
         "all",
         "bsc",
-        "pvs",
         "tc",
         "am",
         "pma",
@@ -1025,7 +988,6 @@ window.LrnData = {
       "roleIds": [
         "all",
         "bsc",
-        "pvs",
         "tc",
         "am",
         "pma",
@@ -1073,7 +1035,7 @@ window.LrnData = {
       "source": "DOCX",
       "roleIds": [
         "bsc",
-        "pvs",
+        "corp",
         "pma",
         "lead",
         "tc"
@@ -1123,7 +1085,7 @@ window.LrnData = {
       "roleIds": [
         "tc",
         "am",
-        "pvs"
+        "corp"
       ],
       "dimensions": [
         "prompting",
@@ -1203,7 +1165,7 @@ window.LrnData = {
       "source": "trainings.xlsx",
       "roleIds": [
         "tc",
-        "pvs"
+        "corp"
       ],
       "dimensions": [
         "business",
@@ -1296,7 +1258,6 @@ window.LrnData = {
       "source": "DOCX/XLSX capability gap",
       "roleIds": [
         "bsc",
-        "pvs",
         "tc",
         "am",
         "pma",
@@ -1379,7 +1340,7 @@ window.LrnData = {
       "status": "New from capability gap",
       "source": "DOCX/XLSX capability gap",
       "roleIds": [
-        "pvs",
+        "corp",
         "tc",
         "am"
       ],
@@ -1428,7 +1389,7 @@ window.LrnData = {
       "source": "DOCX/XLSX capability gap",
       "roleIds": [
         "bsc",
-        "pvs",
+        "corp",
         "tc",
         "am"
       ],
@@ -1476,7 +1437,6 @@ window.LrnData = {
       "source": "DOCX/XLSX capability gap",
       "roleIds": [
         "bsc",
-        "pvs",
         "tc",
         "am",
         "corp",
@@ -1534,7 +1494,7 @@ window.LrnData = {
       "source": "DOCX/XLSX capability gap",
       "roleIds": [
         "bsc",
-        "pvs",
+        "corp",
         "tc",
         "am",
         "lead"
@@ -1583,7 +1543,6 @@ window.LrnData = {
       "source": "DOCX/XLSX capability gap",
       "roleIds": [
         "bsc",
-        "pvs",
         "tc",
         "pma",
         "corp",
@@ -1633,7 +1592,6 @@ window.LrnData = {
       "source": "DOCX/XLSX capability gap",
       "roleIds": [
         "bsc",
-        "pvs",
         "tc",
         "am",
         "pma",
@@ -1686,7 +1644,6 @@ window.LrnData = {
       "source": "DOCX/XLSX capability gap",
       "roleIds": [
         "bsc",
-        "pvs",
         "tc",
         "am",
         "pma",
@@ -1737,7 +1694,6 @@ window.LrnData = {
       "source": "DOCX/XLSX capability gap",
       "roleIds": [
         "bsc",
-        "pvs",
         "tc",
         "am",
         "pma",
@@ -1790,7 +1746,6 @@ window.LrnData = {
       "source": "DOCX/XLSX capability gap",
       "roleIds": [
         "bsc",
-        "pvs",
         "tc",
         "am",
         "pma",
@@ -1872,7 +1827,6 @@ window.LrnData = {
       "roleIds": [
         "tc",
         "bsc",
-        "pvs",
         "am",
         "pma",
         "corp",
@@ -1917,7 +1871,6 @@ window.LrnData = {
       "roleIds": [
         "tc",
         "bsc",
-        "pvs",
         "am",
         "pma",
         "corp",
@@ -1970,7 +1923,6 @@ window.LrnData = {
       "roleIds": [
         "all",
         "bsc",
-        "pvs",
         "tc",
         "am",
         "pma",
@@ -2029,7 +1981,6 @@ window.LrnData = {
       "status": "New from capability gap",
       "source": "DOCX/XLSX capability gap",
       "roleIds": [
-        "pvs",
         "tc",
         "am",
         "corp",
@@ -2086,7 +2037,6 @@ window.LrnData = {
       "roleIds": [
         "all",
         "bsc",
-        "pvs",
         "tc",
         "am",
         "pma",
@@ -2144,7 +2094,6 @@ window.LrnData = {
       "source": "DOCX/XLSX capability gap",
       "roleIds": [
         "bsc",
-        "pvs",
         "tc",
         "am",
         "pma",
@@ -2202,7 +2151,7 @@ window.LrnData = {
       "status": "New from capability gap",
       "source": "DOCX/XLSX capability gap",
       "roleIds": [
-        "pvs",
+        "corp",
         "tc",
         "am",
         "pma"
@@ -2301,7 +2250,6 @@ window.LrnData = {
       "roleIds": [
         "all",
         "bsc",
-        "pvs",
         "tc",
         "am",
         "pma",
@@ -2347,7 +2295,6 @@ window.LrnData = {
         "pma",
         "lead",
         "bsc",
-        "pvs",
         "corp",
         "tc",
         "am"
@@ -2455,7 +2402,6 @@ window.LrnData = {
       "source": "DOCX/XLSX capability gap",
       "roleIds": [
         "bsc",
-        "pvs",
         "pma",
         "am",
         "tc",
@@ -2565,7 +2511,6 @@ window.LrnData = {
       "roleIds": [
         "all",
         "bsc",
-        "pvs",
         "tc",
         "am",
         "pma",
@@ -2618,7 +2563,7 @@ window.LrnData = {
       "source": "DOCX/XLSX role gap",
       "roleIds": [
         "tc",
-        "pvs",
+        "corp",
         "am",
         "lead",
         "bsc",
@@ -2667,7 +2612,7 @@ window.LrnData = {
       "status": "New from product gap",
       "source": "DOCX/XLSX role gap",
       "roleIds": [
-        "pvs",
+        "corp",
         "pma",
         "bsc",
         "lead",
@@ -2717,7 +2662,6 @@ window.LrnData = {
       "roleIds": [
         "tc",
         "am",
-        "pvs",
         "corp"
       ],
       "dimensions": [
@@ -2762,7 +2706,6 @@ window.LrnData = {
       "source": "DOCX/XLSX role gap",
       "roleIds": [
         "bsc",
-        "pvs",
         "corp",
         "tc",
         "lead"
@@ -2812,7 +2755,7 @@ window.LrnData = {
       "roleIds": [
         "tc",
         "am",
-        "pvs",
+        "corp",
         "lead"
       ],
       "dimensions": [
@@ -2910,8 +2853,7 @@ window.LrnData = {
         "lead",
         "pma",
         "corp",
-        "bsc",
-        "pvs"
+        "bsc"
       ],
       "dimensions": [
         "change",
@@ -3030,8 +2972,7 @@ window.LrnData = {
         "tc",
         "corp",
         "lead",
-        "bsc",
-        "pvs"
+        "bsc"
       ],
       "dimensions": [
         "data",
@@ -3082,7 +3023,6 @@ window.LrnData = {
         "lead",
         "tc",
         "bsc",
-        "pvs",
         "pma"
       ],
       "dimensions": [
@@ -3189,7 +3129,7 @@ window.LrnData = {
       "roleIds": [
         "tc",
         "bsc",
-        "pvs",
+        "corp",
         "pma",
         "lead"
       ],
@@ -3232,7 +3172,7 @@ window.LrnData = {
       "roleIds": [
         "tc",
         "am",
-        "pvs"
+        "corp"
       ],
       "dimensions": [
         "literacy",
@@ -3296,7 +3236,6 @@ window.LrnData = {
       "roleIds": [
         "tc",
         "bsc",
-        "pvs",
         "pma",
         "lead",
         "corp"
@@ -3501,7 +3440,6 @@ window.LrnData = {
       "category": "role",
       "recommendationRanks": {
         "bsc": 1,
-        "pvs": 1,
         "pma": 1,
         "tc": 4
       },
@@ -3589,7 +3527,6 @@ window.LrnData = {
       "category": "role",
       "recommendationRanks": {
         "bsc": 2,
-        "pvs": 2,
         "pma": 2,
         "corp": 2,
         "lead": 2
@@ -3714,7 +3651,6 @@ window.LrnData = {
       "category": "role",
       "recommendationRanks": {
         "bsc": 3,
-        "pvs": 3,
         "pma": 4,
         "lead": 3
       },
@@ -3802,7 +3738,6 @@ window.LrnData = {
       "roleIds": [
         "all",
         "bsc",
-        "pvs",
         "tc",
         "am",
         "pma",
@@ -3847,7 +3782,7 @@ window.LrnData = {
       "label": "Consulting & Value Creation",
       "roleIds": [
         "bsc",
-        "pvs",
+        "corp",
         "pma"
       ],
       "stages": [

@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Literacy Zielbilder</title>
+</head>
+<body style="margin:0">
+<style>
+:root{
+  --navy:#05164D; --accent:#2D5FE4; --bg:#F9F8F8; --card:#FFFFFF; --sunken:#F1F0EF; --border:#E3E1DE;
+  --fg:#05164D; --heading:#05164D; --secondary:#52617C; --muted:#7A7673;
+  --acq:#2D5FE4; --dpn:#368089; --crt:#A82E61; --ok:#1B8A5A; --warn:#E2974B; --err:#E22743;
+  --chip-off:#E3E1DE; --chip-off-fg:#9A968F; --shadow:0 8px 24px rgba(5,22,77,.10);
+  --font-head:"LHG Head","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --font-serif:"LHG Serif",Georgia,"Times New Roman",serif;
+  --font-body:"LHG Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1630; --card:#151F3E; --sunken:#1B274A; --border:#2A3862; --fg:#E6EAF4; --heading:#FFFFFF;
+    --secondary:#AEB8D0; --muted:#8B95B0; --accent:#7A9CF5; --acq:#7A9CF5; --dpn:#5FB3BC; --crt:#E07AA8; --ok:#4FC28A;
+    --chip-off:#243258; --chip-off-fg:#6C7896; --shadow:0 8px 24px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1630; --card:#151F3E; --sunken:#1B274A; --border:#2A3862; --fg:#E6EAF4; --heading:#FFFFFF;
+  --secondary:#AEB8D0; --muted:#8B95B0; --accent:#7A9CF5; --acq:#7A9CF5; --dpn:#5FB3BC; --crt:#E07AA8; --ok:#4FC28A;
+  --chip-off:#243258; --chip-off-fg:#6C7896; --shadow:0 8px 24px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-weight:300;font-size:1.0625rem;line-height:1.6}
+h1,h2{font-family:var(--font-head);font-weight:300;color:var(--heading);margin:0;text-wrap:balance}
+h3{font-family:var(--font-serif);font-weight:400;color:var(--heading);margin:0;font-size:1.25rem}
+h4{font-family:var(--font-body);font-weight:700;color:var(--heading);margin:0;font-size:1rem}
+p{margin:0}
+strong{font-weight:700;color:var(--heading)}
+a{color:var(--accent)}
+.wrap{max-width:76rem;margin:0 auto;padding:0 1.5rem}
+.prose{max-width:38rem}
+.eyebrow{font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.sec{padding:4rem 0 3rem;border-top:1px solid var(--border)}
+.sec-head{display:flex;flex-direction:column;gap:.5rem;margin-bottom:2rem}
+.sec-head h2{font-size:2.25rem;line-height:1.1}
+.sec-head h2::after{content:"";display:block;width:6.5rem;height:2px;background:var(--accent);margin-top:1rem}
+.lede{color:var(--secondary);max-width:44rem}
+.small{font-size:.875rem;color:var(--secondary)}
+.tiny{font-size:.75rem;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:1.5rem}
+.card.elevated{border:none;box-shadow:var(--shadow)}
+.note{background:var(--sunken);border:1px solid var(--border);border-radius:12px;padding:1.5rem}
+.grid{display:grid;gap:1rem}
+.g2{grid-template-columns:repeat(auto-fit,minmax(18rem,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(13rem,1fr))}
+.g5{grid-template-columns:repeat(auto-fit,minmax(12rem,1fr))}
+.num{font-family:var(--font-head);font-weight:200;font-size:2.5rem;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums}
+.stat .lbl{font-weight:700;color:var(--heading);margin-top:.5rem}
+.stepno{color:var(--accent);font-weight:700;font-size:.875rem;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;border-radius:999px;padding:.125rem .625rem;font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#fff}
+.pill.acq{background:var(--acq)} .pill.dpn{background:var(--dpn)} .pill.crt{background:var(--crt)} .pill.none{background:var(--chip-off);color:var(--chip-off-fg)}
+.tag{display:inline-block;background:var(--sunken);border:1px solid var(--border);border-radius:999px;padding:.125rem .625rem;font-size:.75rem;color:var(--secondary)}
+.list{margin:0;padding-left:1.125rem}
+.list li{margin:.25rem 0}
+.rule-tbl{width:100%;border-collapse:collapse;font-size:.9375rem}
+.rule-tbl td,.rule-tbl th{padding:.625rem .5rem;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+.rule-tbl th{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--secondary);font-weight:700;background:var(--sunken)}
+.swatch{display:inline-block;width:.375rem;height:1rem;border-radius:2px;vertical-align:-.15rem;margin-right:.5rem}
+.sw-acq{background:var(--acq)}.sw-dpn{background:var(--dpn)}.sw-crt{background:var(--crt)}
+.dim-line{height:3px;width:2.5rem;border-radius:2px;margin-bottom:.75rem}
+.arrow{color:var(--accent)}
+.confid{display:inline-block;border:1px solid var(--warn);color:var(--warn);border-radius:999px;padding:.125rem .75rem;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+/* hero */
+.hero{padding:3rem 0 3rem}
+.hero .brand{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap;margin-bottom:3rem}
+.hero .brand .who{font-weight:700;color:var(--heading)}
+.hero h1{font-size:3.5rem;line-height:1.02;font-weight:200}
+.hero h1 span{display:block;color:var(--accent);font-weight:300}
+.hero .stats{display:flex;gap:3rem;flex-wrap:wrap;margin-top:2.5rem}
+/* nav */
+.nav{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--border)}
+.nav .wrap{display:flex;gap:.25rem;overflow-x:auto;padding-top:.5rem;padding-bottom:.5rem;scrollbar-width:thin}
+.nav a{white-space:nowrap;text-decoration:none;color:var(--secondary);font-size:.8125rem;padding:.375rem .75rem;border-radius:999px;font-weight:400}
+.nav a:hover,.nav a:focus-visible{background:var(--sunken);color:var(--heading);outline:none}
+.nav a.key{color:var(--accent);font-weight:700}
+/* bars */
+.bar{display:flex;align-items:center;gap:.75rem;font-size:.9375rem}
+.bar .lab{flex:0 0 17rem}
+.bar .trk{flex:1;height:.5rem;background:var(--sunken);border-radius:999px;overflow:hidden}
+.bar .fil{height:100%;background:var(--accent);border-radius:999px}
+.bar .val{flex:0 0 3rem;text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+/* ROLE CARDS */
+.role{display:flex;flex-direction:column;gap:1rem}
+.role.off{opacity:.55}
+.role .rh{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem}
+.role .code{font-family:var(--mono);font-size:.75rem;color:var(--accent);font-weight:700;letter-spacing:.06em}
+.role .rname{font-family:var(--font-serif);font-size:1.25rem;line-height:1.2;color:var(--heading)}
+.role .rdesc{font-size:.8125rem;color:var(--secondary);min-height:2.4em}
+.zrow{display:flex;flex-direction:column;gap:.375rem;padding:.625rem 0;border-top:1px solid var(--border)}
+.zrow .zl{display:flex;justify-content:space-between;align-items:center;gap:.75rem}
+.zrow .zd{font-size:.875rem;color:var(--heading)}
+.zrow .zd small{color:var(--muted);font-size:.6875rem;margin-left:.375rem}
+.steps{display:flex;gap:3px}
+.steps i{display:block;width:1.375rem;height:.5rem;border-radius:2px;background:var(--chip-off)}
+.steps i.on.acq{background:var(--acq)}.steps i.on.dpn{background:var(--dpn)}.steps i.on.crt{background:var(--crt)}
+.zrow .zt{font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.zt.acq{color:var(--acq)}.zt.dpn{color:var(--dpn)}.zt.crt{color:var(--crt)}.zt.none{color:var(--muted)}
+.role .rfoot{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);border-top:1px solid var(--border);padding-top:.75rem}
+/* MATRIX */
+.mx-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:20px;background:var(--card)}
+.mx{border-collapse:separate;border-spacing:0;min-width:64rem;width:100%;font-size:.8125rem}
+.mx th,.mx td{padding:.75rem .75rem;border-bottom:1px solid var(--border);vertical-align:top}
+.mx thead th{position:sticky;top:0;background:var(--sunken);text-align:left;font-size:.75rem;font-weight:700;color:var(--heading);z-index:1}
+.mx thead th .code{font-family:var(--mono);color:var(--accent);font-weight:700;letter-spacing:.06em;display:block;margin-bottom:.125rem}
+.mx thead th.off,.mx td.off{color:var(--muted)}
+.mx tbody th{text-align:left;font-weight:700;color:var(--heading);white-space:nowrap;background:var(--card);position:sticky;left:0;z-index:1;border-right:1px solid var(--border)}
+.mx tbody th small{display:block;font-weight:300;color:var(--muted);font-size:.6875rem;white-space:normal;max-width:12rem}
+.cell{display:flex;flex-direction:column;gap:.375rem;min-height:4.5rem}
+.chips{display:flex;gap:.25rem}
+.chips b{display:inline-flex;align-items:center;justify-content:center;width:1.5rem;height:1.25rem;border-radius:4px;font-size:.6875rem;font-weight:700;background:var(--navy);color:#fff}
+:root[data-theme="dark"] .chips b{background:#3E4F86}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .chips b{background:#3E4F86}}
+.chips b.off{background:var(--chip-off);color:var(--chip-off-fg)}
+.cell .ziel{font-size:.6875rem;color:var(--muted)}
+.cell .ziel b{font-size:.8125rem;letter-spacing:.06em;text-transform:uppercase;margin-left:.25rem}
+.cell .cov{font-size:.6875rem;font-weight:700}
+.cov.ok{color:var(--ok)}.cov.na{color:var(--muted);font-weight:300}
+/* legend */
+.legend{display:flex;gap:1.5rem;flex-wrap:wrap;font-size:.8125rem;color:var(--secondary);margin-top:1rem}
+.legend span{display:inline-flex;align-items:center;gap:.5rem}
+/* code */
+pre.code{background:var(--sunken);border:1px solid var(--border);border-radius:12px;padding:1rem 1.25rem;font-family:var(--mono);font-size:.75rem;line-height:1.5;overflow:auto;max-height:24rem;color:var(--fg);margin:0}
+.btn{appearance:none;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:999px;padding:.5rem 1.125rem;font:inherit;font-size:.875rem;font-weight:700;cursor:pointer}
+.btn:hover,.btn:focus-visible{background:var(--accent);color:#fff;outline:none}
+.toolbar{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem}
+.toolbar select,.toolbar input{font:inherit;font-size:.875rem;padding:.5rem .75rem;border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--fg)}
+.toolbar input{min-width:16rem}
+/* course table */
+.ct{width:100%;border-collapse:collapse;font-size:.875rem}
+.ct th,.ct td{padding:.5rem .5rem;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+.ct th{font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--secondary);font-weight:700;background:var(--sunken);position:sticky;top:0}
+.ct td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ct tr.grp td{background:var(--sunken);font-weight:700;color:var(--heading);padding-top:.75rem}
+.ct tr.grp td span{font-weight:300;color:var(--secondary)}
+.ct a{text-decoration:none;border-bottom:1px solid transparent}
+.ct a:hover{border-bottom-color:var(--accent)}
+footer{padding:3rem 0;border-top:1px solid var(--border);color:var(--muted);font-size:.8125rem}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (max-width:640px){.hero h1{font-size:2.5rem}.sec-head h2{font-size:1.75rem}.bar .lab{flex-basis:11rem}}
+</style>
+
+<nav class="nav" aria-label="Abschnitte"><div class="wrap">
+  <a href="#ziel">01 Ziel</a><a href="#bigpicture">02 Big Picture</a><a href="#prozess">03 Prozesslogik</a><a href="#unesco">04 UNESCO</a><a href="#capabilities">04 Capabilities</a><a class="key" href="#zielbilder">06 Zielbilder der Rollen</a><a href="#assessment">06 Self-Assessment</a><a href="#wirksamkeit">07 Wirksamkeit</a><a href="#online">05 Online-Kurse</a><a href="#anhang">Anhang Empfehlungsliste</a><a href="#dev">Entwicklung</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="brand"><span class="who">Lufthansa Industry Solutions · AI Literacy</span><span class="tiny">Intern · Stand 08/2026 · HTML-Fassung des Decks „INTERN_AI_Literacy_LHIND"</span></div>
+  <h1>AI Literacy.<span>AI-Lerninitiative</span></h1>
+  <p class="lede" style="margin-top:1.5rem">Vom Rollenprofil über das Self-Assessment zum passenden Training.</p>
+  <div class="stats">
+    <div class="stat"><div class="num">5</div><div class="lbl">Dimensionen</div></div>
+    <div class="stat"><div class="num">19</div><div class="lbl">Fähigkeiten</div></div>
+    <div class="stat"><div class="num">3</div><div class="lbl">Skill-Level</div></div>
+    <div class="stat"><div class="num">6</div><div class="lbl">Rollen</div></div>
+  </div>
+</div></header>
+
+<!-- 01 -->
+<section class="sec" id="ziel"><div class="wrap">
+  <div class="sec-head"><span class="eyebrow">01 · Ausgangspunkt</span><h2>Ziel und Warum?</h2></div>
+  <div class="grid g2" style="grid-template-columns:minmax(18rem,1.1fr) minmax(18rem,1fr)">
+    <div class="card elevated">
+      <h3>Ziel</h3>
+      <p style="margin-top:.75rem;font-size:1.125rem;line-height:1.5">Mitarbeitende kennen ihren AI-Kompetenzstand, das rollenspezifische Zielbild und die Trainings, mit denen sie die Lücke schließen – eigenverantwortlich und in Abstimmung mit der Führungskraft.</p>
+      <p class="small" style="margin-top:1.5rem">Anonym · freiwillig · 8–10 Minuten · keine Leistungskontrolle</p>
+    </div>
+    <div>
+      <div style="padding:.75rem 0;border-bottom:1px solid var(--border)"><span class="stepno">01</span> <strong>Weil die Digitalstrategie es verlangt.</strong><p class="small">Die AI-Lerninitiative stellt die Belegschaft für den Einsatz von AI zukunftsfähig auf – messbar, nicht als Absichtserklärung.</p></div>
+      <div style="padding:.75rem 0;border-bottom:1px solid var(--border)"><span class="stepno">02</span> <strong>Weil es Individualität bedingt.</strong><p class="small">Empfehlungen sind profilspezifisch: 7 Profile, 19 Fähigkeiten, 3 Level statt eines Kurskatalogs für alle.</p></div>
+      <div style="padding:.75rem 0"><span class="stepno">03</span> <strong>Weil Orientierung vor Reifegrad kommt.</strong><p class="small">Das Self-Assessment gibt eine Standortbestimmung des MA und lädt zum Dialog mit der Führungskraft ein, in welche Richtung es gehen kann.</p></div>
+    </div>
+  </div>
+  <p class="tiny" style="margin-top:1.5rem">Quelle: LHIND AI Self-Assessment – Fragebogen &amp; Schulungsempfehlung, Stand März 2026</p>
+</div></section>
+
+<!-- 02 -->
+<section class="sec" id="bigpicture"><div class="wrap">
+  <div class="sec-head"><span class="eyebrow">02 · Überblick</span><h2>Big Picture</h2></div>
+  <div class="grid g4">
+    <div class="card"><span class="stepno">01</span><h3 style="margin-top:.5rem">Rollenprofil</h3><p class="small" style="margin-top:.5rem">6 Profile, angelehnt an die Fokustypen in MyCompetence</p></div>
+    <div class="card"><span class="stepno">02</span><h3 style="margin-top:.5rem">Self-Assessment</h3><p class="small" style="margin-top:.5rem">10 Fragen · 5 Bereiche · Skala 1–5 · anonym, im SharePoint</p></div>
+    <div class="card"><span class="stepno">03</span><h3 style="margin-top:.5rem">Empfehlungsliste</h3><p class="small" style="margin-top:.5rem">GAP-Analyse IST vs. Zielbild plus passende Trainings</p></div>
+    <div class="card"><span class="stepno">04</span><h3 style="margin-top:.5rem">Zwei Lernpfade</h3><p class="small" style="margin-top:.5rem">Blended Learning über die LHIND-Academy oder direkter Online-Kurs</p></div>
+  </div>
+  <div class="grid g2" style="margin-top:1rem">
+    <div class="card"><h4>Blended Learning · LHIND Academy</h4><p class="small" style="margin-top:.5rem">AI-01 bis AI-11 – Online-Anteil plus Hands-on-Session, gehalten von internen Trainern der LHIND mit fachspezifischem Know-how.</p></div>
+    <div class="card"><h4>Online-Kurse · externe Plattformen</h4><p class="small" style="margin-top:.5rem">Coursera, LinkedIn Learning, Microsoft Learn, DeepLearning.AI, PMI, LHIND Trainingcamp – direkt möglich zu absolvieren.</p></div>
+  </div>
+  <div class="note" style="margin-top:1rem"><h4>Steuerung</h4><p class="small" style="margin-top:.25rem">AI Literacy Steering / Arbeitskreis – Kurspflege, Trainerpool, Beschaffung und Wirksamkeitsmessung.</p></div>
+  <p class="tiny" style="margin-top:1rem">Offen: Coursera ist kein offizieller Group-Lieferant – Wechsel auf Pluralsight in Prüfung.</p>
+</div></section>
+
+<!-- 03 -->
+<section class="sec" id="prozess"><div class="wrap">
+  <div class="sec-head"><span class="eyebrow">03 · Mechanik</span><h2>Prozesslogik</h2></div>
+  <div class="grid g5">
+    <div class="card"><span class="stepno">01</span><h3 style="margin-top:.5rem">Profil wählen</h3><p class="small" style="margin-top:.5rem">Mitarbeitende wählen das Profil, das ihrem Arbeitsalltag am nächsten kommt.</p></div>
+    <div class="card"><span class="stepno">02</span><h3 style="margin-top:.5rem">Fragen beantworten</h3><p class="small" style="margin-top:.5rem">Zwei Fragen je Bereich, Skala 1–5. „Nicht relevant" fließt nicht in den Mittelwert ein.</p></div>
+    <div class="card"><span class="stepno">03</span><h3 style="margin-top:.5rem">IST-Stand je Bereich</h3><p class="small" style="margin-top:.5rem">Der Mittelwert je Bereich wird zu einem Skill-Level verdichtet.</p></div>
+    <div class="card"><span class="stepno">04</span><h3 style="margin-top:.5rem">GAP gegen Zielbild</h3><p class="small" style="margin-top:.5rem">Das Zielbild ist profilabhängig. Aus dem Delta folgt der Hinweis.</p></div>
+    <div class="card"><span class="stepno">05</span><h3 style="margin-top:.5rem">Trainings buchen</h3><p class="small" style="margin-top:.5rem">Ausgabe der passenden Trainings – Blended Learning oder Online-Kurs.</p><p class="tiny" style="margin-top:.5rem">Online-Kurse sind Voraussetzung für LHIND-Academy-Kurse.</p></div>
+  </div>
+  <div class="grid g2" style="margin-top:2rem">
+    <div>
+      <h4>Skill-Level aus dem Mittelwert</h4>
+      <table class="rule-tbl" style="margin-top:.75rem">
+        <tr><td><span class="swatch sw-acq"></span><strong>Acquire</strong></td><td style="color:var(--accent);font-weight:700">1,0 – 2,9</td><td class="small">Grundlagen aufbauen</td></tr>
+        <tr><td><span class="swatch sw-dpn"></span><strong>Deepen</strong></td><td style="color:var(--accent);font-weight:700">3,0 – 4,2</td><td class="small">im Arbeitskontext vertiefen</td></tr>
+        <tr><td><span class="swatch sw-crt"></span><strong>Create</strong></td><td style="color:var(--accent);font-weight:700">4,3 – 5,0</td><td class="small">gestalten und weitergeben</td></tr>
+      </table>
+    </div>
+    <div>
+      <h4>Hinweis aus dem Delta IST zu Zielbild</h4>
+      <table class="rule-tbl" style="margin-top:.75rem">
+        <tr><td><strong>IST = Zielbild</strong></td><td class="arrow">→</td><td class="small">optionale Trainings</td></tr>
+        <tr><td><strong>IST &lt; Zielbild</strong></td><td class="arrow">→</td><td class="small">empfohlene Trainings beachten</td></tr>
+        <tr><td><strong>IST &gt; Zielbild</strong></td><td class="arrow">→</td><td class="small">keine Trainings notwendig</td></tr>
+      </table>
+    </div>
+  </div>
+  <p class="tiny" style="margin-top:1.5rem">Wiederholung nach 3–6 Monaten empfohlen – der Fortschritt fließt zurück in das Assessment.</p>
+</div></section>
+
+<!-- 04 UNESCO -->
+<section class="sec" id="unesco"><div class="wrap">
+  <div class="sec-head"><span class="eyebrow">04 · Fundament</span><h2>UNESCO AI Competency Framework</h2></div>
+  <p class="lede">UNESCO, September 2024 – der erste globale Referenzrahmen für AI-Kompetenz. Wir haben diese Progressionslogik übernommen und auf den LHIND-Kontext übertragen.</p>
+  <div class="grid g4" style="margin-top:2rem">
+    <div class="card">
+      <h3 style="color:var(--accent)">Aufbau</h3>
+      <p style="margin-top:.75rem"><strong>5 Dimensionen</strong><br><span class="small">Human-centred mindset · Ethics of AI · AI foundations and applications · AI pedagogy · AI for professional learning</span></p>
+      <p style="margin-top:.75rem"><strong>15 Kompetenzen</strong><br><span class="small">je Dimension ein Kompetenzblock pro Stufe</span></p>
+      <p style="margin-top:.75rem"><strong>3 Progressionsstufen</strong><br><span class="small">Acquire · Deepen · Create</span></p>
+    </div>
+    <div class="card"><div class="dim-line" style="background:var(--acq)"></div><h3>Acquire</h3><p class="small" style="margin-top:.5rem">Verstehen, was AI ist, wo sie hilft und wo ihre Grenzen liegen.</p><p class="tiny" style="margin-top:1rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700">Bei LHIND</p><p style="color:var(--accent);font-weight:700">1,0 – 2,9</p><p class="small">Grundlagenkurse, AI Literacy, Responsible AI</p></div>
+    <div class="card"><div class="dim-line" style="background:var(--dpn)"></div><h3>Deepen</h3><p class="small" style="margin-top:.5rem">AI reflektiert in die eigene Arbeit integrieren und Ergebnisse bewerten.</p><p class="tiny" style="margin-top:1rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700">Bei LHIND</p><p style="color:var(--accent);font-weight:700">3,0 – 4,2</p><p class="small">Praxisworkshops, rollenspez. Anwendungstrainings</p></div>
+    <div class="card"><div class="dim-line" style="background:var(--crt)"></div><h3>Create</h3><p class="small" style="margin-top:.5rem">Neue Lösungen gestalten, Wissen weitergeben, als Change Agent wirken.</p><p class="tiny" style="margin-top:1rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700">Bei LHIND</p><p style="color:var(--accent);font-weight:700">4,3 – 5,0</p><p class="small">Champion-Formate, Executive-Programme, Multiplikation</p><p class="tiny" style="margin-top:.5rem">Trainer-Potenzial</p></div>
+  </div>
+  <div class="note grid g2" style="margin-top:1rem">
+    <div><h4>Übernommen</h4><p class="small" style="margin-top:.25rem">Die dreistufige Progression Acquire → Deepen → Create, der Aufbau über Dimensionen mit einem Kompetenzblock je Stufe und der menschenzentrierte Ansatz – Ethik und Verantwortung als eigene Dimension, nicht als Anhang.</p></div>
+    <div><h4>Angepasst</h4><p class="small" style="margin-top:.25rem">Statt AI pedagogy und AI for professional learning stehen bei uns Engineering, Product and Process, Advisory sowie Leadership and Strategy. Ergebnis: 19 Fähigkeiten statt 15, zugeschnitten auf 7 LHIND-Rollen.</p></div>
+  </div>
+  <p class="tiny" style="margin-top:1rem">Quelle: UNESCO, AI competency framework for teachers, 2024 – 15 Kompetenzen in 5 Dimensionen, 3 Progressionsstufen · <a href="https://www.unesco.org/en/articles/ai-competency-framework-students">unesco.org</a></p>
+</div></section>
+
+<!-- 04 Capabilities -->
+<section class="sec" id="capabilities"><div class="wrap">
+  <div class="sec-head"><span class="eyebrow">04 · Kompetenzmodell</span><h2>AI Capabilities Overview</h2></div>
+  <div class="grid g5" id="dims"></div>
+  <div class="note" style="margin-top:1rem;display:flex;gap:3rem;flex-wrap:wrap">
+    <div><div style="font-size:1.25rem;color:var(--heading)">5 Dimensionen</div><div class="small">strukturierte Einteilung</div></div>
+    <div><div style="font-size:1.25rem;color:var(--heading)">19 Fähigkeiten</div><div class="small">zentrale AI-Kompetenzen</div></div>
+    <div><div style="font-size:1.25rem;color:var(--heading)">3 Skill-Level</div><div class="small">Acquire · Deepen · Create</div></div>
+    <div><div style="font-size:1.25rem;color:var(--heading)">6 Profile</div><div class="small">auf LHIND-Rollen zugeschnitten</div></div>
+  </div>
+  <p class="tiny" style="margin-top:1rem">Quelle: AI Fähigkeiten – Übersicht, 18.06.2026 (einsehbar in AI Literacy – LHIND SharePoint)</p>
+</div></section>
+
+<!-- 06 ZIELBILDER (Folie 7) -->
+<section class="sec" id="zielbilder"><div class="wrap">
+  <div class="sec-head"><span class="eyebrow">06 · Abdeckung · Folie 7</span><h2>Zielbild erreicht – nach Nachzug der Online-Kurse.</h2></div>
+  <p class="lede">Das Zielbild einer Rolle ist je Dimension das höchste Level, das über die Fähigkeiten dieser Dimension gefordert wird. Es ist die Referenz, gegen die das Self-Assessment den IST-Stand vergleicht – und die Basis, mit der der Learning-Katalog befüllt wird.</p>
+  <div style="display:flex;gap:3rem;flex-wrap:wrap;margin-top:2rem">
+    <div class="stat"><div class="num" style="color:var(--ok)">29</div><div class="lbl">Zielbild-Level</div><div class="small">durch Trainings gedeckt</div></div>
+    <div class="stat"><div class="num" style="color:var(--ok)">0</div><div class="lbl">nur teilweise gedeckt</div><div class="small">(Katalog unter Zielbild)</div></div>
+    <div class="stat"><div class="num" style="color:var(--ok)">0</div><div class="lbl">ohne jedes hinterlegte Training</div><div class="small">Trainingsinhalte der Online-Kurse vorliegend</div></div>
+  </div>
+
+  <h3 style="margin-top:3rem">Zielbilder je Rolle</h3>
+  <p class="small" style="margin-top:.25rem;max-width:44rem">Je Karte: die fünf Dimensionen mit dem geforderten Ziel-Level. Die Balken zeigen die Progression Acquire → Deepen → Create, gefüllt bis zum Zielbild. Rollen-Codes entsprechen der Auswahl im Self-Assessment.</p>
+  <div class="grid g3" id="roles" style="margin-top:1.5rem"></div>
+
+  <h3 style="margin-top:3rem">Matrix Dimension × Rolle</h3>
+  <p class="small" style="margin-top:.25rem">A / D / C = Training im Katalog hinterlegt für Acquire / Deepen / Create. Grau = kein Training auf dieser Stufe hinterlegt.</p>
+  <div class="mx-wrap" style="margin-top:1rem"><table class="mx" id="matrix"></table></div>
+  <div class="legend">
+    <span><i class="chips"><b>A</b></i> Training im Katalog hinterlegt</span>
+    <span><i class="chips"><b class="off">C</b></i> nicht hinterlegt</span>
+    <span><b class="cov ok">gedeckt</b> Zielbild-Level durch Trainings abgedeckt</span>
+    <span><b class="cov na">kein Zielbild / n. a.</b> Dimension für die Rolle nicht gefordert bzw. Rolle nicht im Rollensystem</span>
+  </div>
+  <div class="note" style="margin-top:1.5rem"><h4>Hinweise für die Einarbeitung</h4>
+    <ul class="list small" style="margin-top:.5rem">
+      <li><strong>Products &amp; Value Streams</strong> hat Zielbilder, ist aber nicht im Rollensystem des Self-Assessments – daher überall „nicht im Rollensystem". Im Deck erscheinen deshalb sowohl „6 Rollen" (Assessment) als auch „7 Profile" (Kompetenzmodell).</li>
+      <li><strong>Project Management &amp; Agility × Engineering</strong> ist die einzige Kombination ohne Zielbild („Ziel –"). Das Assessment zeigt hier keinen GAP-Hinweis.</li>
+      <li>Der Wert „gedeckt" bezieht sich auf das Ziel-Level: Es reicht, wenn bis einschließlich Ziel-Level Trainings hinterlegt sind (z. B. Corporate Functions × Foundation: Ziel Deepen, A und D hinterlegt, C nicht – trotzdem gedeckt).</li>
+      <li>Ergänzung aus der Folie: Wirksamkeitsmessung „Wie viel % der Kolleg*innen sind erreicht worden?" ist als offene Frage notiert.</li>
+    </ul>
+  </div>
+</div></section>
+
+<!-- 06 Self-Assessment -->
+<section class="sec" id="assessment"><div class="wrap">
+  <div class="sec-head"><span class="eyebrow">06 · Angebot</span><h2>Schaubild – AI Self Assessment</h2></div>
+  <div class="grid g3">
+    <div class="card"><span class="stepno">1</span><h3 style="margin-top:.5rem">Aktuelle MA-Rolle auswählen</h3><p class="small" style="margin-top:.5rem">Rollenauswahl (DE/EN). Sechs Profile mit Kurzbeschreibung, siehe Rollen-Codes unten.</p></div>
+    <div class="card"><span class="stepno">2</span><h3 style="margin-top:.5rem">KI-Wissen testen</h3><p class="small" style="margin-top:.5rem">Je Bereich zwei Fragen mit 5-Sterne-Skala, z. B. „How confident do you feel in explaining the difference between traditional software solutions and AI-based systems?"</p></div>
+    <div class="card"><span class="stepno">3</span><h3 style="margin-top:.5rem">Schulungsempfehlungen</h3><p class="small" style="margin-top:.5rem">Tabelle Dimension · Your Score · Your Skill Level · Target Skill Level, darunter LHIND-Academy-Trainings und Online-Kurs-Empfehlungen mit Anbieter-Link. Export als PDF.</p></div>
+  </div>
+  <table class="rule-tbl" style="margin-top:2rem" id="rolelist"><thead><tr><th>Code</th><th>Rolle</th><th>Zuordnung im Self-Assessment</th></tr></thead><tbody></tbody></table>
+</div></section>
+
+<!-- 07 -->
+<section class="sec" id="wirksamkeit"><div class="wrap">
+  <div class="sec-head"><span class="eyebrow">07 · Steuerung</span><h2>Wirksamkeitsmessung <span class="confid" style="vertical-align:middle;margin-left:.5rem">Confidential</span></h2></div>
+  <p class="lede">Das Self-Assessment ist anonym – es liefert bewusst keine personenbezogenen Ergebnisse. Der belastbare Messpunkt ist deshalb die Teilnahme an den Hands-on-Sessions der Kursmodule.</p>
+  <div class="grid g2" style="margin-top:2rem;grid-template-columns:minmax(18rem,1.3fr) minmax(18rem,1fr)">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap"><h3 style="color:var(--accent)">Heute: Teilnahme als Indikator</h3><strong>1.660 gebuchte Plätze gesamt</strong></div>
+      <p class="tiny" style="margin-top:.25rem">Gebuchte Plätze je Kursmodul – die Verteilung zeigt, in welchen Richtungen konkreter Bedarf besteht.</p>
+      <div id="bookings" style="display:flex;flex-direction:column;gap:.5rem;margin-top:1rem"></div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--accent)">Ausblick: vier weitere Messpunkte (in steering-review)</h3>
+      <div style="margin-top:.75rem"><span class="stepno">01</span> <strong>Klick-Tracking auf den Buchungslinks</strong><p class="small">Erfasst werden Kurs-ID, Rolle (nur Fortschritt, keine Antworten)</p></div>
+      <div style="margin-top:.75rem"><span class="stepno">02</span> <strong style="color:var(--err)">Anonymes Quiz nach Abschluss</strong><p class="small">Kurze Wissensabfrage nach Self-Assessment und Schulung – zeigt Lernwirkung statt nur Teilnahme.</p></div>
+      <div style="margin-top:.75rem"><span class="stepno">03</span> <strong style="color:var(--err)">Nutzung der AI Services</strong><p class="small">Aggregierte Plattform-Nutzung als Hinweis auf den Transfer in den Arbeitsalltag.</p></div>
+      <div style="margin-top:.75rem"><span class="stepno">04</span> <strong style="color:var(--err)">Anonymer Ergebnis-Datensatz</strong><p class="small">Aktuell: LHIND Academy Kursteilnahme wird ins Review der LHIND Academy gehen, um die Grundteilnahme zu reporten.</p></div>
+    </div>
+  </div>
+  <div class="note grid g3" style="margin-top:1rem">
+    <div><h4>Anonymität bleibt</h4><p class="small">Keine personenbezogenen Ergebnisse, keine Leistungs- oder Verhaltenskontrolle.</p></div>
+    <div><h4>Zwei Ebenen</h4><p class="small">Unternehmensebene wird aggregiert berichtet, die MA-Ebene bleibt bei der Person.</p></div>
+    <div><h4>Noch offen</h4><p class="small">Zeitpunkt und Format der Messpunkte und Wirksamkeiten zielgerichtet für fortschreitende Handlungsempfehlungen.</p></div>
+  </div>
+  <p class="tiny" style="margin-top:1rem">Basis: AI Literacy Steering / Arbeitskreis 07.2026 · <span style="color:var(--err)">Rot markiert: engerer Scope für die Auswahl eines Ansatzes für Wirksamkeitsmessung</span></p>
+</div></section>
+
+<!-- 05 Online -->
+<section class="sec" id="online"><div class="wrap">
+  <div class="sec-head"><span class="eyebrow">05 · Angebot</span><h2>Schulungsempfehlungen – Online-Kurse</h2></div>
+  <p class="lede">95 kuratierte Empfehlungen · 66 verschiedene Kurse · 9 Academy-Trainings · 6 Rollenprofile · Stand 08/2026</p>
+  <div class="grid g4" style="margin-top:2rem">
+    <div class="card stat"><div class="num">95</div><div class="lbl">Empfehlungen</div><div class="small">in der SharePoint-Liste</div></div>
+    <div class="card stat"><div class="num">296 h</div><div class="lbl">Lernvolumen</div><div class="small">208 h ohne Doppelungen</div></div>
+    <div class="card stat"><div class="num">9</div><div class="lbl">Anbieter</div><div class="small">extern und LHIND-intern</div></div>
+    <div class="card stat"><div class="num">85 / 10</div><div class="lbl">Blended / nur Online</div><div class="small">Kursformat</div></div>
+  </div>
+  <div class="grid g2" style="margin-top:2rem">
+    <div><h4>Anbieter</h4><div id="providers" style="display:flex;flex-direction:column;gap:.5rem;margin-top:1rem"></div></div>
+    <div><h4>Verteilung nach Skill-Level</h4>
+      <div style="display:flex;flex-direction:column;gap:.75rem;margin-top:1rem">
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem"><div><strong>Acquire</strong><div class="small">Grundlagen aufbauen</div></div><div class="num" style="font-size:2rem">37</div></div>
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem"><div><strong>Deepen</strong><div class="small">im eigenen Kontext anwenden</div></div><div class="num" style="font-size:2rem">35</div></div>
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem"><div><strong>Create</strong><div class="small">gestalten und weitergeben</div></div><div class="num" style="font-size:2rem">23</div></div>
+      </div>
+      <div class="note small" style="margin-top:.75rem">85 Empfehlungen sind zugleich Bestandteil eines Blended-Learning-Kurses der LHIND Academy, 10 stehen ausschließlich online zur Verfügung.</div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ANHANG -->
+<section class="sec" id="anhang"><div class="wrap">
+  <div class="sec-head"><span class="eyebrow">Anhang · 8 Seiten</span><h2>Empfehlungsliste Online-Kurse</h2></div>
+  <p class="lede">Alle Empfehlungen aus dem Anhang, gruppiert nach Academy-Training und Rolle. Kursnamen sind mit dem Anbieter-Deeplink hinterlegt.</p>
+  <div class="toolbar" style="margin-top:1.5rem">
+    <select id="fRole" aria-label="Rolle"><option value="">Alle Rollen</option></select>
+    <select id="fAcad" aria-label="Academy-Training"><option value="">Alle Academy-Trainings</option></select>
+    <select id="fLevel" aria-label="Level"><option value="">Alle Level</option><option>Acquire</option><option>Deepen</option><option>Create</option></select>
+    <input id="fQ" type="search" placeholder="Kurs oder Anbieter suchen" aria-label="Suche">
+    <span class="small" id="fCount"></span>
+  </div>
+  <div style="overflow-x:auto"><table class="ct" id="courses"><thead><tr><th>Level</th><th>Online-Kurs (verlinkt)</th><th>Anbieter</th><th style="text-align:right">Std.</th><th>Format</th></tr></thead><tbody></tbody></table></div>
+</div></section>
+
+<!-- DEV -->
+<section class="sec" id="dev"><div class="wrap">
+  <div class="sec-head"><span class="eyebrow">Entwicklung</span><h2>Datenmodell für den Learning-Katalog</h2></div>
+  <p class="lede">Die Zielbilder und die Kursliste liegen im Seitenquelltext als JSON vor (<code>window.AILIT</code>). Level-Codes: <code>A</code> = Acquire, <code>D</code> = Deepen, <code>C</code> = Create, <code>null</code> = kein Zielbild.</p>
+  <div class="grid g2" style="margin-top:1.5rem">
+    <div>
+      <div class="toolbar"><h4>zielbilder.json</h4><button class="btn" data-copy="zb">Kopieren</button></div>
+      <pre class="code" id="zb"></pre>
+    </div>
+    <div>
+      <div class="toolbar"><h4>kurse.json</h4><button class="btn" data-copy="ks">Kopieren</button></div>
+      <pre class="code" id="ks"></pre>
+    </div>
+  </div>
+</div></section>
+
+<footer><div class="wrap">Lufthansa Industry Solutions · AI Literacy · interne HTML-Fassung des Decks „INTERN_AI_Literacy_LHIND" (19 Seiten), erstellt 04.09.2026. Think digital. Act digital. Together.</div></footer>
+
+<script>
+const DIMS=[
+ {id:'foundation',n:1,name:'Foundation',color:'var(--acq)',caps:['Digital & AI Terminology','AI Concepts, Tool overviews','Data Literacy','Personal AI Productivity','Corporate Ethics & Compliance']},
+ {id:'engineering',n:2,name:'Engineering',color:'var(--dpn)',caps:['AI Systems & Architecture','Agentic Software Development','AI-Driven Testing & QA','AI-Supported Code Modernization','AI-Assisted Documentation','Sustainable Software & Green Coding']},
+ {id:'product',n:3,name:'Product and Process',color:'var(--crt)',caps:['AI-Augmented Requirement Engineering','AI-Enhanced User Research']},
+ {id:'advisory',n:4,name:'Advisory and Business Consulting',color:'#BC0A1D',caps:['AI & Automation Use Case Spotting','AI Cost & Value Economics','Consultative Prompting','AI Ecosystem Knowledge']},
+ {id:'leadership',n:5,name:'Leadership and Strategy',color:'#857461',caps:['Managing AI Transformation','AI Workforce Strategy','Decision Making with AI']}
+];
+const ROLES=[
+ {code:'BSC',name:'Business & Strategy Consulting',desc:'Business Process Consulting · Business Strategy Consulting · Business Solutions',inSystem:true},
+ {code:'PVS',name:'Products & Value Streams',desc:'nicht im Rollensystem des Self-Assessments',inSystem:false},
+ {code:'TC',name:'Technology Consulting',desc:'Technical Engineering · Software Engineering & Architecture',inSystem:true},
+ {code:'AM',name:'Application Management',desc:'Service Technology · Service Management',inSystem:true},
+ {code:'PMA',name:'Project Management & Agility',desc:'Project Management · Agility',inSystem:true},
+ {code:'CF',name:'Corporate Functions',desc:'Marketing, Support, Finance, HR, Legal, All Employees',inSystem:true},
+ {code:'L',name:'Leadership',desc:'LHIND Business Manager · LHIND Top Management',inSystem:true}
+];
+// target: A/D/C/null ; catalog: welche Stufen im Katalog hinterlegt sind
+const Z={
+ BSC:{foundation:['C','ADC'],engineering:['D','AD'],product:['C','ADC'],advisory:['C','ADC'],leadership:['C','ADC']},
+ PVS:{foundation:['C',''],engineering:['D',''],product:['C',''],advisory:['D',''],leadership:['D','']},
+ TC: {foundation:['C','ADC'],engineering:['C','ADC'],product:['D','AD'],advisory:['C','ADC'],leadership:['A','A']},
+ AM: {foundation:['C','ADC'],engineering:['C','ADC'],product:['A','ADC'],advisory:['D','AD'],leadership:['A','A']},
+ PMA:{foundation:['C','ADC'],engineering:[null,''],product:['A','AD'],advisory:['C','ADC'],leadership:['C','ADC']},
+ CF: {foundation:['D','AD'],engineering:['D','AD'],product:['A','A'],advisory:['A','A'],leadership:['C','ADC']},
+ L:  {foundation:['C','ADC'],engineering:['A','AD'],product:['A','AD'],advisory:['C','ADC'],leadership:['C','ADC']}
+};
+const LV={A:{k:'acq',t:'Acquire'},D:{k:'dpn',t:'Deepen'},C:{k:'crt',t:'Create'}};
+const ORDER=['A','D','C'];
+const COURSES=[{"academy": "AI-01", "academyTitle": "AI: Introduction to GitHub CoPilot", "role": "Application Management", "level": "Acquire", "course": "Introduction to GitHub Copilot App Modernization", "provider": "Microsoft Learn", "hours": "1", "url": "https://learn.microsoft.com/en-us/training/modules/intro-github-copilot-app-modernization/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-01", "academyTitle": "AI: Introduction to GitHub CoPilot", "role": "Application Management", "level": "Create", "course": "AI-Powered Software Development: Coding, Testing, and System Design", "provider": "LinkedIn Learning", "hours": "2", "url": "https://www.linkedin.com/learning/ai-powered-software-development-coding-testing-and-system-design?u=2197772", "format": "Online + Blended", "capability": ""}, {"academy": "AI-01", "academyTitle": "AI: Introduction to GitHub CoPilot", "role": "Application Management", "level": "Create", "course": "AI-Supported Code Modernization", "provider": "Microsoft Learn", "hours": "1", "url": "https://learn.microsoft.com/en-us/training/modules/intro-github-copilot-app-modernization/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-01", "academyTitle": "AI: Introduction to GitHub CoPilot", "role": "Technology Consulting", "level": "Acquire", "course": "AI Basics @ LHIND Learning Catalog", "provider": "LHIND Trainingcamp", "hours": "1.15", "url": "https://trainingcamp.lhind.app.lufthansa.com/lesson.html?path=llm-primer&course=PRIMER-01", "format": "Online + Blended", "capability": ""}, {"academy": "AI-01", "academyTitle": "AI: Introduction to GitHub CoPilot", "role": "Technology Consulting", "level": "Acquire", "course": "Get started with AI applications and agents on Azure", "provider": "Microsoft Learn", "hours": "5", "url": "https://learn.microsoft.com/en-us/training/paths/get-started-ai-apps-agents/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-01", "academyTitle": "AI: Introduction to GitHub CoPilot", "role": "Technology Consulting", "level": "Deepen", "course": "Architectures for AI", "provider": "LinkedIn Learning", "hours": "1.32", "url": "https://www.linkedin.com/learning/advanced-data-processing-batch-real-time-and-cloud-architectures-for-ai/architectures-for-ai?u=2197772", "format": "Online + Blended", "capability": ""}, {"academy": "AI-01", "academyTitle": "AI: Introduction to GitHub CoPilot", "role": "Technology Consulting", "level": "Deepen", "course": "Developing LLM Applications with LangChain", "provider": "DataCamp", "hours": "3", "url": "https://www.datacamp.com/courses/developing-llm-applications-with-langchain", "format": "Online + Blended", "capability": ""}, {"academy": "AI-01", "academyTitle": "AI: Introduction to GitHub CoPilot", "role": "Technology Consulting", "level": "Create", "course": "Data Strategy", "provider": "DataCamp", "hours": "4", "url": "https://www.datacamp.com/courses/data-strategy", "format": "Online + Blended", "capability": ""}, {"academy": "AI-01", "academyTitle": "AI: Introduction to GitHub CoPilot", "role": "Technology Consulting", "level": "Create", "course": "Govern AI-ready Infrastructure", "provider": "Microsoft Learn", "hours": "5", "url": "https://learn.microsoft.com/en-us/training/paths/govern-ai-ready-infrastructure/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-02", "academyTitle": "AI: Agentic Software Engineering", "role": "Leadership", "level": "Deepen", "course": "The Principles of Sustainable Software Engineering", "provider": "Microsoft Learn", "hours": "1", "url": "https://learn.microsoft.com/en-us/training/modules/sustainable-software-engineering-overview/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-02", "academyTitle": "AI: Agentic Software Engineering", "role": "Technology Consulting", "level": "Acquire", "course": "Agentic AI", "provider": "DeepLearning.AI", "hours": "6", "url": "https://www.deeplearning.ai/courses/agentic-ai", "format": "Online + Blended", "capability": ""}, {"academy": "AI-02", "academyTitle": "AI: Agentic Software Engineering", "role": "Technology Consulting", "level": "Acquire", "course": "Agentic AI Fundamentals: Architectures, Frameworks, and Applications", "provider": "LinkedIn Learning", "hours": "1.15", "url": "https://www.linkedin.com/learning/agentic-ai-fundamentals-architectures-frameworks-and-applications/agentic-ai-the-future-of-smart-ai-is-here?u=2197772", "format": "Online + Blended", "capability": ""}, {"academy": "AI-02", "academyTitle": "AI: Agentic Software Engineering", "role": "Technology Consulting", "level": "Acquire", "course": "Introduction to Model Context Protocol (MCP)", "provider": "Coursera", "hours": "2", "url": "https://www.coursera.org/learn/introduction-to-model-context-protocol", "format": "Online + Blended", "capability": ""}, {"academy": "AI-02", "academyTitle": "AI: Agentic Software Engineering", "role": "Technology Consulting", "level": "Acquire", "course": "MCP: Build Rich-Context AI Apps with Anthropic", "provider": "DeepLearning.AI", "hours": "2", "url": "https://www.deeplearning.ai/courses/mcp-build-rich-context-ai-apps-with-anthropic", "format": "Online + Blended", "capability": ""}, {"academy": "AI-02", "academyTitle": "AI: Agentic Software Engineering", "role": "Technology Consulting", "level": "Deepen", "course": "Foundation: Introduction to LangGraph - Python", "provider": "LangChain Academy", "hours": "6", "url": "https://academy.langchain.com/courses/intro-to-langgraph", "format": "Online + Blended", "capability": ""}, {"academy": "AI-02", "academyTitle": "AI: Agentic Software Engineering", "role": "Technology Consulting", "level": "Deepen", "course": "Introduction to LangChain - Python", "provider": "LangChain Academy", "hours": "1.5", "url": "https://academy.langchain.com/courses/foundation-introduction-to-langchain-python", "format": "Online + Blended", "capability": ""}, {"academy": "AI-02", "academyTitle": "AI: Agentic Software Engineering", "role": "Technology Consulting", "level": "Deepen", "course": "Understanding Artificial Intelligence", "provider": "DataCamp", "hours": "2", "url": "https://www.datacamp.com/courses/understanding-artificial-intelligence", "format": "Online + Blended", "capability": ""}, {"academy": "AI-02", "academyTitle": "AI: Agentic Software Engineering", "role": "Technology Consulting", "level": "Create", "course": "AI workload governance and DLP", "provider": "Microsoft Learn", "hours": "4", "url": "https://learn.microsoft.com/en-us/training/paths/ai-workloads-governance/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-02", "academyTitle": "AI: Agentic Software Engineering", "role": "Technology Consulting", "level": "Create", "course": "Govern AI-ready Infrastructure", "provider": "Microsoft Learn", "hours": "5", "url": "https://learn.microsoft.com/en-us/training/paths/govern-ai-ready-infrastructure/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-03", "academyTitle": "AI: Introduction to Architecture for AI-Systems", "role": "Technology Consulting", "level": "Acquire", "course": "Artificial Intelligence on Microsoft Azure", "provider": "Coursera", "hours": "4", "url": "https://www.coursera.org/learn/artificial-intelligence-microsoft-azure", "format": "Online + Blended", "capability": ""}, {"academy": "AI-03", "academyTitle": "AI: Introduction to Architecture for AI-Systems", "role": "Technology Consulting", "level": "Acquire", "course": "Generative AI Architecture and Application Development", "provider": "Coursera", "hours": "10", "url": "https://www.coursera.org/learn/generative-ai-architecture-and-application-development", "format": "Online + Blended", "capability": ""}, {"academy": "AI-03", "academyTitle": "AI: Introduction to Architecture for AI-Systems", "role": "Technology Consulting", "level": "Acquire", "course": "Introduction to Cost Management for AI Workloads", "provider": "Microsoft Learn", "hours": "1", "url": "https://learn.microsoft.com/en-us/training/modules/understand-cost-management-ai/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-03", "academyTitle": "AI: Introduction to Architecture for AI-Systems", "role": "Technology Consulting", "level": "Deepen", "course": "Architecture of AI Solutions - Scalable GenAI Systems", "provider": "Coursera", "hours": "6", "url": "https://www.coursera.org/learn/packt-architecting-ai-solutions-scalable-genai-systems-btzcm", "format": "Online + Blended", "capability": ""}, {"academy": "AI-03", "academyTitle": "AI: Introduction to Architecture for AI-Systems", "role": "Technology Consulting", "level": "Deepen", "course": "Generative AI and Large Language Models: Architecture and Data Preparation", "provider": "Coursera", "hours": "6", "url": "https://www.coursera.org/learn/generative-ai-llm-architecture-data-preparation", "format": "Online + Blended", "capability": ""}, {"academy": "AI-03", "academyTitle": "AI: Introduction to Architecture for AI-Systems", "role": "Technology Consulting", "level": "Deepen", "course": "Transform your business with AI", "provider": "Microsoft Learn", "hours": "4", "url": "https://learn.microsoft.com/en-us/training/paths/transform-your-business-with-microsoft-ai/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-03", "academyTitle": "AI: Introduction to Architecture for AI-Systems", "role": "Technology Consulting", "level": "Create", "course": "Comparing AI Research Tools: ChatGPT, Claude, Gemini, and Perplexity", "provider": "LinkedIn Learning", "hours": "1", "url": "https://www.linkedin.com/learning/comparing-ai-research-tools-chatgpt-claude-gemini-and-perplexity?u=2197772", "format": "Online + Blended", "capability": ""}, {"academy": "AI-03", "academyTitle": "AI: Introduction to Architecture for AI-Systems", "role": "Technology Consulting", "level": "Create", "course": "The AI Ecosystem for Developers: Models, Datasets, and APIs", "provider": "LinkedIn Learning", "hours": "1.5", "url": "https://www.linkedin.com/learning/the-ai-ecosystem-for-developers-models-datasets-and-apis?u=2197772", "format": "Online + Blended", "capability": ""}, {"academy": "AI-04", "academyTitle": "AI: Requirement Engineering with AI", "role": "Application Management", "level": "Create", "course": "AI workload governance and DLP", "provider": "Microsoft Learn", "hours": "4", "url": "https://learn.microsoft.com/en-us/training/paths/ai-workloads-governance/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-04", "academyTitle": "AI: Requirement Engineering with AI", "role": "Business & Strategy Consulting", "level": "Acquire", "course": "AI Basics @ LHIND Learning Catalog", "provider": "LHIND Trainingcamp", "hours": "1.15", "url": "https://trainingcamp.lhind.app.lufthansa.com/lesson.html?path=llm-primer&course=PRIMER-01", "format": "Online + Blended", "capability": ""}, {"academy": "AI-04", "academyTitle": "AI: Requirement Engineering with AI", "role": "Business & Strategy Consulting", "level": "Acquire", "course": "AI for Managers", "provider": "LinkedIn Learning", "hours": "5", "url": "https://www.linkedin.com/learning/paths/ai-for-managers-by-microsoft-and-linkedin?u=2197772", "format": "Online + Blended", "capability": ""}, {"academy": "AI-04", "academyTitle": "AI: Requirement Engineering with AI", "role": "Business & Strategy Consulting", "level": "Deepen", "course": "AI Strategy for Business Leaders", "provider": "Coursera", "hours": "10", "url": "https://www.coursera.org/learn/packt-ai-strategy-for-business-leaders-with-chatgpt-ml-dl-uel66", "format": "Online + Blended", "capability": ""}, {"academy": "AI-04", "academyTitle": "AI: Requirement Engineering with AI", "role": "Business & Strategy Consulting", "level": "Deepen", "course": "AI fluency: Explore responsible AI", "provider": "Microsoft Learn", "hours": "1", "url": "https://learn.microsoft.com/en-us/training/modules/responsible-ai/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-04", "academyTitle": "AI: Requirement Engineering with AI", "role": "Business & Strategy Consulting", "level": "Deepen", "course": "Advanced Prompt Engineering Techniques", "provider": "LinkedIn Learning", "hours": "1", "url": "https://www.linkedin.com/learning/advanced-prompt-engineering-techniques", "format": "Online + Blended", "capability": ""}, {"academy": "AI-04", "academyTitle": "AI: Requirement Engineering with AI", "role": "Business & Strategy Consulting", "level": "Deepen", "course": "Implementing AI Solutions in Business", "provider": "DataCamp", "hours": "2", "url": "https://www.datacamp.com/courses/implementing-ai-solutions-in-business", "format": "Online + Blended", "capability": ""}, {"academy": "AI-04", "academyTitle": "AI: Requirement Engineering with AI", "role": "Business & Strategy Consulting", "level": "Deepen", "course": "Implementing AI Solutions in Business", "provider": "DataCamp", "hours": "2", "url": "https://www.datacamp.com/courses/implementing-ai-solutions-in-business", "format": "Online + Blended", "capability": ""}, {"academy": "AI-04", "academyTitle": "AI: Requirement Engineering with AI", "role": "Business & Strategy Consulting", "level": "Deepen", "course": "Integrating Generative AI into Business Strategy", "provider": "LinkedIn Learning", "hours": "1.5", "url": "https://www.linkedin.com/learning/integrating-generative-ai-into-business-strategy/why-a-strategic-framework-is-essential-for-ai-adoption", "format": "Online + Blended", "capability": ""}, {"academy": "AI-04", "academyTitle": "AI: Requirement Engineering with AI", "role": "Business & Strategy Consulting", "level": "Deepen", "course": "The Principles of Sustainable Software Engineering", "provider": "Microsoft Learn", "hours": "1", "url": "https://learn.microsoft.com/en-us/training/modules/sustainable-software-engineering-overview/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-04", "academyTitle": "AI: Requirement Engineering with AI", "role": "Business & Strategy Consulting", "level": "Create", "course": "Agentic AI for Business Analysis", "provider": "LinkedIn Learning", "hours": "1.5", "url": "https://www.linkedin.com/learning/agentic-ai-for-business-analysis?u=2197772", "format": "Online + Blended", "capability": ""}, {"academy": "AI-04", "academyTitle": "AI: Requirement Engineering with AI", "role": "Business & Strategy Consulting", "level": "Create", "course": "Artificial Intelligence (AI) Strategy", "provider": "DataCamp", "hours": "3", "url": "https://www.datacamp.com/courses/artificial-intelligence-ai-strategy", "format": "Online + Blended", "capability": ""}, {"academy": "AI-04", "academyTitle": "AI: Requirement Engineering with AI", "role": "Business & Strategy Consulting", "level": "Create", "course": "Data Strategy", "provider": "DataCamp", "hours": "4", "url": "https://www.datacamp.com/courses/data-strategy", "format": "Online + Blended", "capability": ""}, {"academy": "AI-04", "academyTitle": "AI: Requirement Engineering with AI", "role": "Leadership", "level": "Acquire", "course": "Learning AI for Business Analysis", "provider": "LinkedIn Learning", "hours": "1.5", "url": "https://www.linkedin.com/learning/learning-ai-for-business-analysis", "format": "Online + Blended", "capability": ""}, {"academy": "AI-04", "academyTitle": "AI: Requirement Engineering with AI", "role": "Project Management & Agility", "level": "Deepen", "course": "Project Leadership in the Age of AI", "provider": "LinkedIn Learning", "hours": "1", "url": "https://www.linkedin.com/learning/project-leadership-in-the-age-of-ai/leading-projects-in-the-ai-era?u=2197772", "format": "Online + Blended", "capability": ""}, {"academy": "AI-04", "academyTitle": "AI: Requirement Engineering with AI", "role": "Technology Consulting", "level": "Acquire", "course": "Learning AI for Business Analysis", "provider": "LinkedIn Learning", "hours": "1.5", "url": "https://www.linkedin.com/learning/learning-ai-for-business-analysis", "format": "Online + Blended", "capability": ""}, {"academy": "AI-04", "academyTitle": "AI: Requirement Engineering with AI", "role": "Technology Consulting", "level": "Deepen", "course": "Agentic AI for Business Analysis", "provider": "LinkedIn Learning", "hours": "1.5", "url": "https://www.linkedin.com/learning/agentic-ai-for-business-analysis", "format": "Online + Blended", "capability": ""}, {"academy": "AI-05", "academyTitle": "AI: AI for Project Managers and Product Owners", "role": "Application Management", "level": "Acquire", "course": "Implementing AI Solutions in Business", "provider": "DataCamp", "hours": "2", "url": "https://www.datacamp.com/courses/implementing-ai-solutions-in-business", "format": "Online + Blended", "capability": ""}, {"academy": "AI-05", "academyTitle": "AI: AI for Project Managers and Product Owners", "role": "Application Management", "level": "Acquire", "course": "Transform your business with AI", "provider": "Microsoft Learn", "hours": "4", "url": "https://learn.microsoft.com/en-us/training/paths/transform-your-business-with-microsoft-ai/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-05", "academyTitle": "AI: AI for Project Managers and Product Owners", "role": "Application Management", "level": "Deepen", "course": "Applied AI for IT Operations (AIOps)", "provider": "LinkedIn Learning", "hours": "1.5", "url": "https://www.linkedin.com/learning/applied-ai-for-it-operations-aiops?u=2197772", "format": "Online + Blended", "capability": ""}, {"academy": "AI-05", "academyTitle": "AI: AI for Project Managers and Product Owners", "role": "Application Management", "level": "Create", "course": "Agentic AI for Business Analysis", "provider": "Microsoft Learn", "hours": "4", "url": "https://learn.microsoft.com/en-us/training/paths/enhance-autonomous-agents/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-05", "academyTitle": "AI: AI for Project Managers and Product Owners", "role": "Corporate Functions", "level": "Acquire", "course": "Artificial Intelligence (AI) Strategy", "provider": "DataCamp", "hours": "3", "url": "https://www.datacamp.com/courses/artificial-intelligence-ai-strategy", "format": "Online + Blended", "capability": ""}, {"academy": "AI-05", "academyTitle": "AI: AI for Project Managers and Product Owners", "role": "Corporate Functions", "level": "Create", "course": "Drive AI transformation in your organization", "provider": "Microsoft Learn", "hours": "8", "url": "https://learn.microsoft.com/en-us/training/courses/ab-731t00", "format": "Online + Blended", "capability": ""}, {"academy": "AI-05", "academyTitle": "AI: AI for Project Managers and Product Owners", "role": "Project Management & Agility", "level": "Acquire", "course": "Generative AI Overview for PMs", "provider": "PMI", "hours": "3", "url": "https://www.pmi.org/shop/p-/elearning/generative-ai-overview-for-project-managers/el083", "format": "Online + Blended", "capability": ""}, {"academy": "AI-05", "academyTitle": "AI: AI for Project Managers and Product Owners", "role": "Project Management & Agility", "level": "Acquire", "course": "Talking to AI: Prompt Engineering for Project Managers", "provider": "PMI", "hours": "1", "url": "https://www.pmi.org/shop/p-/elearning/talking-to-ai-prompt-engineering-for-project-managers/el128", "format": "Online + Blended", "capability": ""}, {"academy": "AI-05", "academyTitle": "AI: AI for Project Managers and Product Owners", "role": "Project Management & Agility", "level": "Acquire", "course": "Transform your business with AI", "provider": "Microsoft Learn", "hours": "4", "url": "https://learn.microsoft.com/en-us/training/paths/transform-your-business-with-microsoft-ai/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-05", "academyTitle": "AI: AI for Project Managers and Product Owners", "role": "Project Management & Agility", "level": "Deepen", "course": "AI for Project Management: Boosting Collaboration with Generative AI", "provider": "LinkedIn Learning", "hours": "1.5", "url": "https://www.linkedin.com/learning/ai-for-project-management-boosting-collaboration-with-generative-ai?u=2197772", "format": "Online + Blended", "capability": ""}, {"academy": "AI-05", "academyTitle": "AI: AI for Project Managers and Product Owners", "role": "Project Management & Agility", "level": "Deepen", "course": "AI for Project Managers and Scrum Masters", "provider": "Coursera", "hours": "2", "url": "https://www.coursera.org/learn/ai-for-project-managers-and-scrum-masters", "format": "Online + Blended", "capability": ""}, {"academy": "AI-05", "academyTitle": "AI: AI for Project Managers and Product Owners", "role": "Project Management & Agility", "level": "Deepen", "course": "Transforming Project Management with AI Agents", "provider": "LinkedIn Learning", "hours": "1.5", "url": "https://www.linkedin.com/learning/transforming-project-management-with-ai-agents-43161052?u=2197772", "format": "Online + Blended", "capability": ""}, {"academy": "AI-05", "academyTitle": "AI: AI for Project Managers and Product Owners", "role": "Project Management & Agility", "level": "Create", "course": "Implementing AI Solutions in Business", "provider": "DataCamp", "hours": "3", "url": "https://www.datacamp.com/courses/implementing-ai-solutions-in-business", "format": "Online + Blended", "capability": ""}, {"academy": "AI-05", "academyTitle": "AI: AI for Project Managers and Product Owners", "role": "Project Management & Agility", "level": "Create", "course": "Prompting with Agentic Techniques", "provider": "LinkedIn Learning", "hours": "1", "url": "https://www.linkedin.com/learning/prompting-with-agentic-techniques?u=2197772", "format": "Online + Blended", "capability": ""}, {"academy": "AI-06", "academyTitle": "AI: Introduction to Concepts and Tools for Personal Productivity", "role": "Application Management", "level": "Deepen", "course": "Advanced Prompt Engineering Techniques", "provider": "LinkedIn Learning", "hours": "1", "url": "https://www.linkedin.com/learning/advanced-prompt-engineering-techniques", "format": "Online + Blended", "capability": ""}, {"academy": "AI-06", "academyTitle": "AI: Introduction to Concepts and Tools for Personal Productivity", "role": "Corporate Functions", "level": "Acquire", "course": "AI for Business Users", "provider": "Microsoft Learn", "hours": "4", "url": "https://learn.microsoft.com/de-de/training/paths/ai-fluency/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-06", "academyTitle": "AI: Introduction to Concepts and Tools for Personal Productivity", "role": "Corporate Functions", "level": "Acquire", "course": "Fundamentals of AI", "provider": "Coursera", "hours": "3", "url": "https://www.coursera.org/learn/google-ai-fundamentals", "format": "Online + Blended", "capability": ""}, {"academy": "AI-06", "academyTitle": "AI: Introduction to Concepts and Tools for Personal Productivity", "role": "Corporate Functions", "level": "Deepen", "course": "Empower your workforce with Microsoft 365 Copilot Use Cases", "provider": "Microsoft Learn", "hours": "5", "url": "https://learn.microsoft.com/en-us/training/paths/empower-workforce-copilot-use-cases/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-07", "academyTitle": "AI: Introduction to Data-driven Decision Making", "role": "Application Management", "level": "Deepen", "course": "Building AI Products: Understanding the Workflow Professional Certificate by LinkedIn Learning", "provider": "LinkedIn Learning", "hours": "7.46", "url": "https://www.linkedin.com/learning/paths/building-ai-products-understanding-the-workflow-professional-certificate-by-linkedin-learning", "format": "nur Online", "capability": ""}, {"academy": "AI-07", "academyTitle": "AI: Introduction to Data-driven Decision Making", "role": "Application Management", "level": "Deepen", "course": "Data-Driven Decision Making for Business", "provider": "DataCamp", "hours": "2", "url": "https://www.datacamp.com/courses/data-driven-decision-making-for-business", "format": "Online + Blended", "capability": ""}, {"academy": "AI-07", "academyTitle": "AI: Introduction to Data-driven Decision Making", "role": "Application Management", "level": "Deepen", "course": "Generative AI for Customer Service Automation", "provider": "Coursera", "hours": "10", "url": "https://www.coursera.org/learn/generative-ai-for-customer-service-automation", "format": "nur Online", "capability": ""}, {"academy": "AI-07", "academyTitle": "AI: Introduction to Data-driven Decision Making", "role": "Application Management", "level": "Deepen", "course": "IT Service Management Foundations: Measures and Metrics", "provider": "LinkedIn Learning", "hours": "1.36", "url": "https://www.linkedin.com/learning/it-service-management-foundations-measures-and-metrics", "format": "nur Online", "capability": ""}, {"academy": "AI-07", "academyTitle": "AI: Introduction to Data-driven Decision Making", "role": "Corporate Functions", "level": "Deepen", "course": "Data-Driven Decision Making for Business", "provider": "DataCamp", "hours": "2", "url": "https://www.datacamp.com/courses/data-driven-decision-making-for-business", "format": "Online + Blended", "capability": ""}, {"academy": "AI-07", "academyTitle": "AI: Introduction to Data-driven Decision Making", "role": "Leadership", "level": "Acquire", "course": "AI Basics @ LHIND Learning Catalog", "provider": "LHIND Trainingcamp", "hours": "1.15", "url": "https://trainingcamp.lhind.app.lufthansa.com/lesson.html?path=llm-primer&course=PRIMER-01", "format": "nur Online", "capability": ""}, {"academy": "AI-07", "academyTitle": "AI: Introduction to Data-driven Decision Making", "role": "Leadership", "level": "Deepen", "course": "AI Powered Decision Making", "provider": "DataCamp", "hours": "2", "url": "https://www.datacamp.com/courses/data-driven-decision-making-for-business", "format": "nur Online", "capability": ""}, {"academy": "AI-07", "academyTitle": "AI: Introduction to Data-driven Decision Making", "role": "Leadership", "level": "Deepen", "course": "AI-Augmented Decision-Making for Business Leaders", "provider": "Coursera", "hours": "4", "url": "https://www.coursera.org/learn/ai-augmented-decision-making-for-business-leaders", "format": "nur Online", "capability": ""}, {"academy": "AI-07", "academyTitle": "AI: Introduction to Data-driven Decision Making", "role": "Leadership", "level": "Deepen", "course": "Agentic AI for Business Analysis", "provider": "LinkedIn Learning", "hours": "1.5", "url": "https://www.linkedin.com/learning/agentic-ai-for-business-analysis", "format": "Online + Blended", "capability": ""}, {"academy": "AI-07", "academyTitle": "AI: Introduction to Data-driven Decision Making", "role": "Leadership", "level": "Deepen", "course": "Drive AI transformation in your organization", "provider": "Microsoft Learn", "hours": "8", "url": "https://learn.microsoft.com/en-us/training/courses/ab-731t00#course-syllabus", "format": "nur Online", "capability": ""}, {"academy": "AI-07", "academyTitle": "AI: Introduction to Data-driven Decision Making", "role": "Leadership", "level": "Create", "course": "AI Ethics", "provider": "DataCamp", "hours": "2", "url": "https://www.datacamp.com/courses/ai-ethics", "format": "Online + Blended", "capability": ""}, {"academy": "AI-07", "academyTitle": "AI: Introduction to Data-driven Decision Making", "role": "Leadership", "level": "Create", "course": "Create agents in Microsoft Copilot Studio", "provider": "Microsoft Learn", "hours": "5", "url": "https://learn.microsoft.com/en-us/training/paths/create-extend-custom-copilots-microsoft-copilot-studio/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-07", "academyTitle": "AI: Introduction to Data-driven Decision Making", "role": "Leadership", "level": "Create", "course": "Introduction to Cost Management for AI Workloads", "provider": "Microsoft Learn", "hours": "1", "url": "https://learn.microsoft.com/en-us/training/modules/understand-cost-management-ai/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-07", "academyTitle": "AI: Introduction to Data-driven Decision Making", "role": "Technology Consulting", "level": "Acquire", "course": "Transform your business with AI", "provider": "Microsoft Learn", "hours": "4", "url": "https://learn.microsoft.com/en-us/training/paths/transform-your-business-with-microsoft-ai/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-08", "academyTitle": "AI: AI for Leaders", "role": "Business & Strategy Consulting", "level": "Create", "course": "Drive AI transformation in your organization", "provider": "Microsoft Learn", "hours": "8", "url": "https://learn.microsoft.com/en-us/training/courses/ab-731t00", "format": "Online + Blended", "capability": ""}, {"academy": "AI-08", "academyTitle": "AI: AI for Leaders", "role": "Leadership", "level": "Acquire", "course": "Introduction to GenAI for Executives", "provider": "Coursera", "hours": "3", "url": "https://www.coursera.org/learn/generative-ai-for-executives-business-leaders-introduction?utm_medium=institutions&utm_source=ibm-skills-network&utm_campaign=TrainingBlogGenAIExecctives", "format": "Online + Blended", "capability": ""}, {"academy": "AI-08", "academyTitle": "AI: AI for Leaders", "role": "Leadership", "level": "Acquire", "course": "Microsoft: AI Foundations for Business Leaders", "provider": "edX", "hours": "3", "url": "https://www.edx.org/learn/computer-science/microsoft-learning-path-introduction-to-ai-for-business-users", "format": "Online + Blended", "capability": ""}, {"academy": "AI-08", "academyTitle": "AI: AI for Leaders", "role": "Leadership", "level": "Acquire", "course": "Transform your business with A", "provider": "Microsoft Learn", "hours": "4", "url": "https://learn.microsoft.com/en-us/training/paths/transform-your-business-with-microsoft-ai/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-08", "academyTitle": "AI: AI for Leaders", "role": "Leadership", "level": "Deepen", "course": "AI Fluency", "provider": "Microsoft Learn", "hours": "3", "url": "https://learn.microsoft.com/en-us/training/paths/ai-fluency/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-08", "academyTitle": "AI: AI for Leaders", "role": "Leadership", "level": "Deepen", "course": "Strategic AI Prompting for Managers", "provider": "LinkedIn Learning", "hours": "1", "url": "https://www.linkedin.com/learning/strategic-ai-prompting-for-managers-leading-smarter-with-generative-ai", "format": "Online + Blended", "capability": ""}, {"academy": "AI-08", "academyTitle": "AI: AI for Leaders", "role": "Leadership", "level": "Create", "course": "Artificial Intelligence (AI) Strategy", "provider": "DataCamp", "hours": "3", "url": "https://www.datacamp.com/courses/artificial-intelligence-ai-strategy", "format": "Online + Blended", "capability": ""}, {"academy": "AI-08", "academyTitle": "AI: AI for Leaders", "role": "Leadership", "level": "Create", "course": "Drive AI transformation in your organization", "provider": "Microsoft Learn", "hours": "8", "url": "https://learn.microsoft.com/en-us/training/courses/ab-731t00", "format": "Online + Blended", "capability": ""}, {"academy": "AI-08", "academyTitle": "AI: AI for Leaders", "role": "Project Management & Agility", "level": "Create", "course": "Drive AI transformation in your organization", "provider": "Microsoft Learn", "hours": "8", "url": "https://learn.microsoft.com/en-us/training/courses/ab-731t00", "format": "Online + Blended", "capability": ""}, {"academy": "AI-09", "academyTitle": "AI Fundamentals / AI for Everyone", "role": "Application Management", "level": "Acquire", "course": "AI Basics @ LHIND Learning Catalog", "provider": "LHIND Trainingcamp", "hours": "1.15", "url": "https://trainingcamp.lhind.app.lufthansa.com/lesson.html?path=llm-primer&course=PRIMER-01", "format": "nur Online", "capability": ""}, {"academy": "AI-09", "academyTitle": "AI Fundamentals / AI for Everyone", "role": "Application Management", "level": "Acquire", "course": "AI for Product Owner", "provider": "Coursera", "hours": "6", "url": "https://www.coursera.org/learn/ai-for-product-owners", "format": "nur Online", "capability": ""}, {"academy": "AI-09", "academyTitle": "AI Fundamentals / AI for Everyone", "role": "Application Management", "level": "Acquire", "course": "Understanding Artificial Intelligence", "provider": "DataCamp", "hours": "2", "url": "https://www.datacamp.com/courses/understanding-artificial-intelligence", "format": "Online + Blended", "capability": ""}, {"academy": "AI-09", "academyTitle": "AI Fundamentals / AI for Everyone", "role": "Business & Strategy Consulting", "level": "Acquire", "course": "Generative AI for Business Leaders (2025)", "provider": "LinkedIn Learning", "hours": "1", "url": "https://www.linkedin.com/learning/generative-ai-for-business-leaders-2025?u=2197772", "format": "Online + Blended", "capability": ""}, {"academy": "AI-09", "academyTitle": "AI Fundamentals / AI for Everyone", "role": "Business & Strategy Consulting", "level": "Acquire", "course": "Learning AI for Business Analysis", "provider": "LinkedIn Learning", "hours": "1.5", "url": "https://www.linkedin.com/learning/learning-ai-for-business-analysis", "format": "Online + Blended", "capability": ""}, {"academy": "AI-09", "academyTitle": "AI Fundamentals / AI for Everyone", "role": "Corporate Functions", "level": "Acquire", "course": "AI Basics @ LHIND Learning Catalog", "provider": "LHIND Trainingcamp", "hours": "1.15", "url": "https://trainingcamp.lhind.app.lufthansa.com/lesson.html?path=llm-primer&course=PRIMER-01", "format": "Online + Blended", "capability": ""}, {"academy": "AI-09", "academyTitle": "AI Fundamentals / AI for Everyone", "role": "Corporate Functions", "level": "Acquire", "course": "AI for Everyone", "provider": "Microsoft Learn", "hours": "1", "url": "https://learn.microsoft.com/en-us/training/paths/get-started-with-microsoft-365-copilot/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-09", "academyTitle": "AI Fundamentals / AI for Everyone", "role": "Corporate Functions", "level": "Acquire", "course": "Get started with Microsoft 365 Copilot", "provider": "Microsoft Learn", "hours": "1.5", "url": "https://learn.microsoft.com/en-us/training/paths/get-started-with-microsoft-365-copilot/", "format": "nur Online", "capability": ""}, {"academy": "AI-09", "academyTitle": "AI Fundamentals / AI for Everyone", "role": "Corporate Functions", "level": "Acquire", "course": "Transform your business with AI", "provider": "Microsoft Learn", "hours": "4", "url": "https://learn.microsoft.com/en-us/training/paths/transform-your-business-with-microsoft-ai/", "format": "Online + Blended", "capability": ""}, {"academy": "AI-09", "academyTitle": "AI Fundamentals / AI for Everyone", "role": "Project Management & Agility", "level": "Acquire", "course": "AI Basics @ LHIND Learning Catalog", "provider": "LHIND Trainingcamp", "hours": "1.15", "url": "https://trainingcamp.lhind.app.lufthansa.com/lesson.html?path=llm-primer&course=PRIMER-01", "format": "Online + Blended", "capability": ""}, {"academy": "AI-01", "academyTitle": "Engineering (Nachtrag Foundation-Fähigkeit 9)", "role": "Corporate Functions", "level": "Acquire", "course": "Learning Microsoft 365 Copilot for Work", "provider": "LinkedIn Learning", "hours": "2", "url": "https://www.linkedin.com/learning/learning-microsoft-365-copilot-for-work-26545077", "format": "", "capability": "AI-Assisted Documentation"}, {"academy": "AI-01", "academyTitle": "Engineering (Nachtrag Foundation-Fähigkeit 9)", "role": "Corporate Functions", "level": "Deepen", "course": "How to Research and Write Using Generative AI Tools", "provider": "LinkedIn Learning", "hours": "1", "url": "https://www.linkedin.com/learning/how-to-research-and-write-using-generative-ai-tools-29670569", "format": "", "capability": "AI-Assisted Documentation"}];
+const ACADEMY={'AI-01':'Introduction to GitHub CoPilot','AI-02':'Agentic Software Engineering','AI-03':'Introduction to Architecture for AI-Systems','AI-04':'Requirement Engineering with AI','AI-05':'AI for Project Managers and Product Owners','AI-06':'Introduction to Concepts and Tools for Personal Productivity','AI-07':'Introduction to Data-driven Decision Making','AI-08':'AI for Leaders','AI-09':'AI Fundamentals / AI for Everyone'};
+
+function coverage(role,dim){const [t,cat]=Z[role.code][dim.id];if(!role.inSystem)return{cls:'na',txt:'nicht im Rollensystem'};if(!t)return{cls:'na',txt:'kein Zielbild'};const need=ORDER.slice(0,ORDER.indexOf(t)+1);return need.every(l=>cat.includes(l))?{cls:'ok',txt:'gedeckt'}:{cls:'warn',txt:'teilweise'};}
+
+// dims
+document.getElementById('dims').innerHTML=DIMS.map(d=>`<div class="card"><div style="display:flex;justify-content:space-between"><div class="dim-line" style="background:${d.color}"></div><span class="small">${d.n}</span></div><h3>${d.name}</h3><ul class="list small" style="margin-top:.75rem">${d.caps.map(c=>`<li>${c}</li>`).join('')}</ul></div>`).join('');
+
+// role cards
+document.getElementById('roles').innerHTML=ROLES.map(r=>{
+ const rows=DIMS.map(d=>{const [t]=Z[r.code][d.id];const idx=t?ORDER.indexOf(t):-1;const k=t?LV[t].k:'none';
+  return `<div class="zrow"><div class="zd">${d.name}<small>${d.caps.length} Fähigkeiten</small></div><div class="zl"><span class="steps">${ORDER.map((l,i)=>`<i class="${i<=idx?'on '+k:''}"></i>`).join('')}</span><span class="zt ${k}">${t?LV[t].t:'kein Zielbild'}</span></div></div>`;}).join('');
+ const n=DIMS.filter(d=>coverage(r,d).cls==='ok').length;
+ return `<div class="card role${r.inSystem?'':' off'}"><div class="rh"><div><div class="code">${r.code}</div><div class="rname">${r.name}</div></div>${r.inSystem?'':'<span class="tag">nicht im Rollensystem</span>'}</div><div class="rdesc">${r.desc}</div><div>${rows}</div><div class="rfoot"><span>${r.inSystem?n+' von 5 Zielbildern gedeckt':'Zielbilder definiert, ohne Assessment'}</span><span>Ziel = höchstes Level je Dimension</span></div></div>`;}).join('');
+
+// matrix
+const mx=document.getElementById('matrix');
+mx.innerHTML=`<thead><tr><th></th>${ROLES.map(r=>`<th class="${r.inSystem?'':'off'}"><span class="code">${r.code}</span>${r.name}</th>`).join('')}</tr></thead><tbody>${DIMS.map(d=>`<tr><th>${d.name}<small>${d.caps.join(' · ')}</small></th>${ROLES.map(r=>{const [t,cat]=Z[r.code][d.id];const cv=coverage(r,d);const off=!r.inSystem;
+ return `<td class="${off?'off':''}"><div class="cell"><div class="chips">${ORDER.map(l=>`<b class="${cat.includes(l)?'':'off'}">${l}</b>`).join('')}</div><div class="ziel">Ziel<b class="${t&&!off?'zt '+LV[t].k:''}">${t?LV[t].t:'–'}</b></div><div class="cov ${cv.cls}">${cv.txt}</div></div></td>`;}).join('')}</tr>`).join('')}</tbody>`;
+
+// role list
+document.querySelector('#rolelist tbody').innerHTML=ROLES.filter(r=>r.inSystem).map(r=>`<tr><td><span class="code" style="font-family:var(--mono);color:var(--accent);font-weight:700">${r.code}</span></td><td><strong>${r.name}</strong></td><td class="small">${r.desc}</td></tr>`).join('');
+
+// bars
+function bars(el,data,max){document.getElementById(el).innerHTML=data.map(([id,l,v,note])=>`<div class="bar">${id?`<span style="flex:0 0 3rem;font-weight:700;font-size:.8125rem">${id}</span>`:''}<span class="lab small">${l}</span><span class="trk"><span class="fil" style="width:${v/max*100}%"></span></span><span class="val">${note||v.toLocaleString('de-DE')}</span></div>`).join('');}
+bars('bookings',[['AI-06','Concepts & Tools for Personal Productivity',1000],['AI-04','Requirement Engineering with AI',200],['AI-01','GitHub CoPilot',140],['AI-09','Fundamentals / AI for Everyone',140],['AI-08','AI for Leaders',80],['AI-02','Agentic Software Engineering',60],['AI-03','Architecture for AI-Systems',40],['AI-05','Project Managers & Product Owners',0,'0 · in Konzeption'],['AI-07','Data-driven Decision Making',0,'0 · in Konzeption']],1000);
+bars('providers',[['', 'Microsoft Learn',30],['','LinkedIn Learning',24],['','DataCamp',16],['','Coursera',12],['','LHIND Trainingcamp',6],['','DeepLearning.AI',2],['','LangChain Academy',2],['','PMI',2],['','edX',1]],30);
+
+// courses
+const roleSel=document.getElementById('fRole'),acadSel=document.getElementById('fAcad');
+ROLES.filter(r=>r.inSystem).forEach(r=>roleSel.add(new Option(r.name,r.name)));
+Object.keys(ACADEMY).forEach(k=>acadSel.add(new Option(k+' · '+ACADEMY[k],k)));
+function renderCourses(){
+ const role=roleSel.value,ac=acadSel.value,lv=document.getElementById('fLevel').value,q=document.getElementById('fQ').value.toLowerCase();
+ const rows=COURSES.filter(c=>(!role||c.role===role)&&(!ac||c.academy===ac)&&(!lv||c.level===lv)&&(!q||(c.course+' '+c.provider).toLowerCase().includes(q)));
+ let html='',last='';
+ rows.forEach(c=>{const g=c.academy+'|'+c.role;if(g!==last){last=g;html+=`<tr class="grp"><td colspan="5"><span style="color:var(--accent);font-weight:700">${c.academy}</span> · ${c.academyTitle} <span>— ${c.role}</span></td></tr>`;}
+  html+=`<tr><td><span class="pill ${LV[c.level[0]].k}">${c.level}</span></td><td><a href="${c.url}" target="_blank" rel="noopener">${c.course}</a></td><td>${c.provider}</td><td class="n">${c.hours.replace('.',',')}</td><td class="small">${c.format}${c.capability?' · '+c.capability:''}</td></tr>`;});
+ document.querySelector('#courses tbody').innerHTML=html||'<tr><td colspan="5" class="small">Keine Treffer.</td></tr>';
+ document.getElementById('fCount').textContent=rows.length+' von '+COURSES.length+' Empfehlungen';
+}
+['fRole','fAcad','fLevel'].forEach(id=>document.getElementById(id).addEventListener('change',renderCourses));
+document.getElementById('fQ').addEventListener('input',renderCourses);
+renderCourses();
+
+// export
+const zielbilder={meta:{source:'INTERN_AI_Literacy_LHIND.pdf, Folie 7 „Zielbild erreicht – nach Nachzug der Online-Kurse"',stand:'2026-08',levels:{A:'Acquire',D:'Deepen',C:'Create'},rule:'Zielbild-Level je Dimension = höchstes Level über die Fähigkeiten dieser Dimension'},
+ dimensions:DIMS.map(d=>({id:d.id,name:d.name,capabilities:d.caps})),
+ roles:ROLES.map(r=>({code:r.code,name:r.name,inAssessment:r.inSystem,description:r.desc,targets:Object.fromEntries(DIMS.map(d=>{const [t,cat]=Z[r.code][d.id];return [d.id,{target:t,catalog:cat.split(''),coverage:coverage(r,d).txt}];}))}))};
+window.AILIT={zielbilder,courses:COURSES};
+document.getElementById('zb').textContent=JSON.stringify(zielbilder,null,1);
+document.getElementById('ks').textContent=JSON.stringify(COURSES,null,1);
+document.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(document.getElementById(b.dataset.copy).textContent);b.textContent='Kopiert';setTimeout(()=>b.textContent='Kopieren',1500);}catch(e){b.textContent='Kopieren nicht möglich';}}));
+</script>
+
+</body>
+</html>

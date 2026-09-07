@@ -101,6 +101,8 @@
 
     try {
       var saved = JSON.parse(localStorage.getItem(STORE));
+      // Legacy migration: "Products & Value Streams" was merged into Corporate Functions.
+      if (saved && saved.profileId === "pvs") saved.profileId = "corp";
       if (!saved || !roleById[saved.profileId]) return fallback;
       return {
         profileId: saved.profileId,
@@ -1241,6 +1243,10 @@
 
   function resolveRole(rawRole) {
     var normalized = String(rawRole).trim().toLowerCase();
+    // Legacy alias: dissolved "Products & Value Streams" profile maps to Corporate Functions.
+    if (normalized === "pvs" || normalized === "products-value-streams" || normalized === "products & value streams") {
+      return roleById.corp ? "corp" : null;
+    }
     if (roleById[normalized]) return normalized;
     var match = data.roles.find(function (role) {
       return role.segment.toLowerCase() === normalized ||

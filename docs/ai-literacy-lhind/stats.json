@@ -1,0 +1,95 @@
+{
+  "bookings": [
+    [
+      "AI-06",
+      "Concepts & Tools for Personal Productivity",
+      1000
+    ],
+    [
+      "AI-04",
+      "Requirement Engineering with AI",
+      200
+    ],
+    [
+      "AI-01",
+      "GitHub CoPilot",
+      140
+    ],
+    [
+      "AI-09",
+      "Fundamentals / AI for Everyone",
+      140
+    ],
+    [
+      "AI-08",
+      "AI for Leaders",
+      80
+    ],
+    [
+      "AI-02",
+      "Agentic Software Engineering",
+      60
+    ],
+    [
+      "AI-03",
+      "Architecture for AI-Systems",
+      40
+    ],
+    [
+      "AI-05",
+      "Project Managers & Product Owners",
+      0
+    ],
+    [
+      "AI-07",
+      "Data-driven Decision Making",
+      0
+    ]
+  ],
+  "providers": [
+    [
+      "Microsoft Learn",
+      30
+    ],
+    [
+      "LinkedIn Learning",
+      24
+    ],
+    [
+      "DataCamp",
+      16
+    ],
+    [
+      "Coursera",
+      12
+    ],
+    [
+      "LHIND Trainingcamp",
+      6
+    ],
+    [
+      "DeepLearning.AI",
+      2
+    ],
+    [
+      "LangChain Academy",
+      2
+    ],
+    [
+      "PMI",
+      2
+    ],
+    [
+      "edX",
+      1
+    ]
+  ],
+  "totals": {
+    "empfehlungen": 97,
+    "levels": {
+      "Acquire": 38,
+      "Deepen": 36,
+      "Create": 23
+    }
+  }
+}

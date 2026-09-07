@@ -284,6 +284,8 @@
 
       var state = { role: '', ratings: {} }; // ratings: capId -> 'None'|'Basic'|'Advanced'|'Expert'
       try { var s = JSON.parse(localStorage.getItem(STORE)); if (s) state = s; } catch (e) {}
+      // Legacy migration: dissolved "Products & Value Streams" maps to Corporate Functions.
+      if (state.role === 'Products & Value Streams') state.role = 'Corporate Functions';
       function save() { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} }
 
       function showStep(id) {

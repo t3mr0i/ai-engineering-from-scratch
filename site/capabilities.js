@@ -301,30 +301,6 @@ const ROLES = [
     }
   },
   {
-    "name": "Products & Value Streams",
-    "targets": {
-      "1": "Advanced",
-      "2": "Expert",
-      "3": "Expert",
-      "4": "Advanced",
-      "5": "Basic",
-      "6": "Basic",
-      "7": "Basic",
-      "8": "Basic",
-      "9": "Advanced",
-      "10": "Advanced",
-      "11": "Expert",
-      "12": "Expert",
-      "13": "Advanced",
-      "14": "Advanced",
-      "15": "Advanced",
-      "16": "Advanced",
-      "17": "Advanced",
-      "18": "Basic",
-      "19": "Advanced"
-    }
-  },
-  {
     "name": "Technology Consulting",
     "targets": {
       "1": "Expert",
@@ -392,17 +368,22 @@ const ROLES = [
     "name": "Corporate Functions",
     "targets": {
       "1": "Advanced",
-      "2": "Advanced",
-      "3": "Advanced",
+      "2": "Expert",
+      "3": "Expert",
       "4": "Advanced",
+      "5": "Basic",
+      "6": "Basic",
+      "7": "Basic",
+      "8": "Basic",
       "9": "Advanced",
-      "11": "Basic",
-      "12": "Basic",
-      "13": "Basic",
-      "14": "Basic",
-      "15": "Basic",
-      "16": "Basic",
-      "17": "Basic",
+      "10": "Advanced",
+      "11": "Expert",
+      "12": "Expert",
+      "13": "Advanced",
+      "14": "Advanced",
+      "15": "Advanced",
+      "16": "Advanced",
+      "17": "Advanced",
       "18": "Expert",
       "19": "Advanced"
     }
