@@ -175,6 +175,10 @@ Reconstruct **Tool Schema Design — Naming, Descriptions, Parameter Constraints
 
 Hand off `outputs/skill-tool-schema-linter.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: tool names are API design
+
+In the CBP context each tool is a Java service method exposed to the model, so the naming and description rules from this lesson are API design: snake_case verb-noun names, the "Use when / Do not use for" description pattern, and atomic tools instead of one `do_everything` method with an action string. Enum every closed set, keep required fields minimal, and version by adding new tool names rather than renaming. Write validation errors for the model — expected shape plus example — because the error text returns to the model as the next prompt. Review the registry like a public API: every vague description is a future wrong-tool call in production.
+
 ## Further Reading
 
 - [Composio — How to build tools for AI agents: field guide](https://composio.dev/blog/how-to-build-tools-for-ai-agents-a-field-guide) — naming, descriptions, and measured accuracy lifts

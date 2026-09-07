@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which registry passes the lesson's naming and description guidance?",
+      "question": "An assistant has two lookups that both say 'look up people' and keeps calling the wrong one. What is the cheapest fix?",
       "options": [
-        "GOOD_REGISTRY",
-        "BAD_REGISTRY, because one DoEverything tool is easier to discover",
-        "BAD_REGISTRY, because duplicate names improve cross-server routing",
-        "GOOD_REGISTRY, because notes_search accepts every possible parameter"
+        "Use a bigger model that guesses better",
+        "Merge both lookups into one tool with more options",
+        "Remove both tools and answer from training data",
+        "Rewrite the descriptions so each states when to use it and when not to"
       ],
-      "correct": 0,
-      "explanation": "The good registry contains focused notes_list, notes_search, and notes_create definitions with clear usage boundaries."
+      "correct": 3,
+      "explanation": "Ambiguous descriptions force the model to guess. This lesson teaches the description pattern and atomic-tool split that make selection reliable."
     },
     {
       "stage": "check",
