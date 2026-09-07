@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In the lesson registry, which input is required by get_weather?",
+      "question": "A chat assistant answers questions about current prices and availability from its training data, and is often confidently wrong. What is the structural gap?",
       "options": [
-        "city (units defaults to celsius)",
-        "timezone is required and city is inferred from it",
-        "a and b are required numeric operands",
-        "get_weather accepts no arguments"
+        "The model needs a bigger context window for longer chats",
+        "The network connection to the user is too slow",
+        "Users should ask shorter questions",
+        "Text generation alone cannot fetch live data or take actions"
       ],
-      "correct": 0,
-      "explanation": "The weather schema requires city and gives units a default of celsius, with celsius and fahrenheit as its allowed values."
+      "correct": 3,
+      "explanation": "A model that can only emit tokens cannot reach live systems. This lesson builds the tool interface that lets it request actions and observe results."
     },
     {
       "stage": "check",

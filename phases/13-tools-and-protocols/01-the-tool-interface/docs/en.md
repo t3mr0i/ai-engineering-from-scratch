@@ -431,6 +431,10 @@ Call `call` from a small caller with the text "red fox". Compare its result with
 
 Hand off `outputs/skill-tool-interface-reviewer.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: the host is a Java service method
+
+In the CBP context the host running this loop is a Java service calling the Azure OpenAI deployment: describe maps to the tool list sent with the request, decide happens in the model, execute is a service method, and observe feeds the serialized result back into the next call. Declare each tool as a name plus JSON Schema and enforce it with Jackson and Bean Validation on the way in, exactly as the validation step shows. Keep the pure/consequential split as an authorization boundary: read-only tools run freely, state-changing tools require approval and audit. Bound the loop with a max-turn count so a stuck model cannot burn budget overnight.
+
 ## Further Reading
 
 - [OpenAI — Function calling guide](https://platform.openai.com/docs/guides/function-calling) — canonical reference for OpenAI-style tool declarations and call shapes
