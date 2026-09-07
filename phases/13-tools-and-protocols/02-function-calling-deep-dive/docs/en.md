@@ -635,6 +635,10 @@ Reconstruct **Function Calling Deep Dive — OpenAI, Anthropic, Gemini** by foll
 
 Hand off `outputs/skill-provider-portability-audit.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: one dialect in production, three on the reading list
+
+In the CBP context services speak a single dialect: the Azure OpenAI function-calling shape (OpenAI-compatible `tools` in, `tool_calls` with JSON-string `arguments` out) against the deployment provisioned by LCAG. Parse that string into an object and validate it with Jackson before dispatching, exactly as the normalize step shows. Learn the Anthropic and Gemini shapes from this lesson as reading knowledge — enough to judge vendor claims and keep the exit path the lesson demands — but build, test, and measure only against the Azure endpoint, staying inside the strict-mode schema subset so calls validate.
+
 ## Further Reading
 
 - [OpenAI — Function calling guide](https://platform.openai.com/docs/guides/function-calling) — canonical reference including strict mode and parallel calls

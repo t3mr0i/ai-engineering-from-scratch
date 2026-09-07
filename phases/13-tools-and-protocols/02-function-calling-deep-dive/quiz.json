@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What shape does to_openai produce for the WEATHER definition?",
+      "question": "Your assistant works against one model vendor. The team wants to trial a second vendor for cost reasons, but the tool-call handling is woven through the code in that vendor's exact shape. What is the problem?",
       "options": [
-        "type=function with parameters and strict",
-        "A flat object with input_schema and no function wrapper",
-        "A functionDeclarations array with an upper-case type field",
-        "A JSON string containing only the weather arguments"
+        "Trying a second vendor is never worth it",
+        "The team should rewrite the assistant from scratch",
+        "The model needs more training data first",
+        "Provider shapes differ, so calls need one normalized form behind a boundary"
       ],
-      "correct": 0,
-      "explanation": "The OpenAI adapter wraps the definition as type=function and places the schema and strict flag under function."
+      "correct": 3,
+      "explanation": "Each vendor encodes the same call differently. This lesson compares the three shapes so you can normalize once and swap vendors without rewriting the assistant."
     },
     {
       "stage": "check",
