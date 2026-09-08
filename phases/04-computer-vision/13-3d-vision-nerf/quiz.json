@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "A point has three coordinates. What is the last dimension after positional_encoding(points, levels=2)?",
+      "question": "A 3D scene must be described so a model can learn fine detail at every position. What representation helps?",
       "options": [
-        "3",
-        "12",
-        "6",
-        "4"
+        "A single average color for the scene",
+        "Only the camera brand name",
+        "Random pixels with no positions",
+        "Position-encoded rays sampled through the volume"
       ],
-      "correct": 1,
-      "explanation": "Each coordinate gets sine and cosine features at two frequencies, so the final width is 3 * 2 * 2 = 12."
+      "correct": 3,
+      "explanation": "Detail needs positioned samples. This lesson marches encoded rays through 3D volumes."
     },
     {
       "stage": "check",

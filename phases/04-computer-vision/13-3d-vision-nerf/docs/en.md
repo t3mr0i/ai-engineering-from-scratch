@@ -50,6 +50,10 @@ depth = sum_i(weight_i * t_i)
 
 The local implementation uses the final interval length again as a finite terminal segment and can add a background color for the remaining opacity. It requires nonnegative density, RGB in `[0,1]`, and strictly increasing depths. This avoids an implicit infinite-distance convention while retaining the front-to-back reasoning.
 
+## CBP context: vocabulary for digital-twin conversations
+
+In the CBP context NeRF mechanics — rays, positional encodings, volumetric accumulation — are vocabulary for digital-twin and inspection contexts, not code to write. Know what a ray-march costs and why high frequencies need encoding; leave rendering to specialized services. Read for the words; spend engineering effort where CBP images actually flow.
+
 ## Build It
 
 Run from `code/`:
