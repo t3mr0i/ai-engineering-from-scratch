@@ -19,6 +19,10 @@
 
 `code/naive_bayes.py` uses NumPy only. `MultinomialNB.fit` adds `alpha` to every class/feature count, then stores log feature probabilities and class log priors. It requires finite, non-negative, non-empty 2-D counts and strictly positive `alpha`. `GaussianNB.fit` stores one mean and variance per class/feature and adds strictly positive `var_smoothing` to avoid zero variance. Both models validate feature width, finite numeric labels when labels are numeric, and reject prediction before fitting; probability methods reject non-finite normalization rather than returning NaNs.
 
+## CBP context: log-space baselines for text routing
+
+In the CBP context Naive Bayes is the cheap text-routing baseline — spam, language, coarse triage — scored in log space for stability, with the shared evidence term dropped when comparing classes. Keep it as the baseline every LLM classifier must beat on cost-adjusted quality; a frontier model that barely beats log-probabilities on a simple queue bought little. Simple, fast, explainable — retire it only with measured cause.
+
 ## Build It
 
 Run `python3 main.py` for generated 200-feature text and four-feature continuous fixtures. The text fixture has two classes with different word-rate blocks; the continuous fixture has three Gaussian-like classes and preserves the requested `n_samples`, distributing any remainder across the first classes. `predict_log_proba` is an unnormalized class score, while `predict_proba` subtracts each row’s maximum before exponentiating and dividing, so each row is finite and sums to one.
