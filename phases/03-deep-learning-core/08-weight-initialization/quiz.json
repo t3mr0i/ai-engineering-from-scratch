@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What shape does xavier_init(4, 3, rng) return in this lesson?",
+      "question": "Two training runs with different seeds reach different results, and identical starting weights never diversify. What explains both?",
       "options": [
-        "Three rows, each containing four weights",
-        "Four rows, each containing three biases",
-        "One vector containing seven values",
-        "A 4x4 square matrix"
+        "Hardware differences between runs",
+        "The dataset changing overnight",
+        "Luck with no structure",
+        "Starts matter: scale, symmetry-breaking, and seeds"
       ],
-      "correct": 0,
-      "explanation": "The implementation stores one row per output neuron, so fan_out=3 gives three rows and fan_in=4 gives four entries per row."
+      "correct": 3,
+      "explanation": "Initialization shapes the whole trajectory. This lesson scales starts and breaks symmetry deliberately."
     },
     {
       "stage": "check",

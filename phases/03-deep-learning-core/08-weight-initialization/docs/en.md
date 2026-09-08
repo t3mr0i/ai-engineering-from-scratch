@@ -51,6 +51,10 @@ flowchart LR
     A -->|ReLU-like| H[Kaiming variance]
 ```
 
+## CBP context: seeds matter because starts matter
+
+In the CBP context initialization explains two production facts: why evals fix random seeds (different starts wander differently), and why symmetry must break (identical weights learn identically forever). Scale initial weights to layer width or signals vanish or explode before training begins. Read for the seed discipline; frameworks own the distributions.
+
 ## Build It
 
 From `code/`, run:
