@@ -141,6 +141,10 @@ Call `RiskTier` from a small caller with the demo’s smallest built-in fixture.
 
 Hand off `outputs/skill-use-case-triage.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: minimum viable triage, signable artifact
+
+In the CBP context use-case triage rules out the bad fast — exception-heavy processes, ownerless ideas, unquantifiable value — and surfaces two or three buildable candidates with a sponsor-signable artifact from a single meeting. Neither loudest-voice selection nor twelve-criteria paralysis; the minimum triage that prevents both autopsies. The artifact names owner, value, and the first verifiable milestone.
+
 ## Further Reading
 
 - [EU AI Act — Official text and annexes](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689) — the authoritative source for risk tiers and conformity assessment requirements.
