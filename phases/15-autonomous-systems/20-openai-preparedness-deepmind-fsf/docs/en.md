@@ -71,6 +71,10 @@ If a model sandbags on evaluations, every framework's capability thresholds are 
 
 
 
+## CBP context: tracked capabilities update threat models
+
+In the CBP context frontier framework labels (tracked versus research across cyber, bio, autonomy) update CBP threat models when capabilities move tiers: a newly-tracked automation capability re-opens the agent threat review. Know the frameworks' vocabulary to read vendor safety reports critically; the labels that matter are the ones touching deployed CBP surfaces. Tracked means watchlisted, not handled.
+
 ## Build It
 
 Reconstruct **OpenAI Preparedness Framework and DeepMind Frontier Safety Framework** by following `Policy` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does the local OpenAI PF v2 table label rnd_automation?",
+      "question": "A new automation capability moves from research to tracked status. What should that trigger?",
       "options": [
-        "Research",
-        "Missing from the table",
-        "Tracked",
-        "Hardcoded prohibition"
+        "Nothing; labels are decorative",
+        "Immediate panic and shutdowns",
+        "Trust that tracking equals handling",
+        "Re-opening the threat review for affected surfaces"
       ],
-      "correct": 2,
-      "explanation": "The OpenAI table in this lesson marks rnd_automation, cyber_uplift, and bio_uplift as Tracked, while several other capabilities are Research."
+      "correct": 3,
+      "explanation": "Tier moves change risk posture. This lesson reads preparedness frameworks for action triggers."
     },
     {
       "stage": "check",
