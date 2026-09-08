@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What output does forward_d return for a discriminator input x?",
+      "question": "Synthetic data looks real but silently misses whole varieties. What dynamic causes that, and what checks it?",
       "options": [
-        "A sigmoid probability, the hidden activations, the hidden preactivations, and the output logit",
-        "Only the raw input x and a sampled noise vector",
-        "A two-class softmax vector and the generator's latent code",
-        "A scalar loss with no intermediate activations"
+        "Too much training data diversity",
+        "Overly careful evaluation",
+        "Slow training hardware",
+        "Adversarial collapse; diversity measurement alongside realism"
       ],
-      "correct": 0,
-      "explanation": "forward_d returns sigmoid(pre2[0]), h, pre1, and pre2[0], exposing the probability and values needed by update_d and update_g."
+      "correct": 3,
+      "explanation": "Realism without diversity misleads. This lesson pits generator against discriminator explicitly."
     },
     {
       "stage": "check",

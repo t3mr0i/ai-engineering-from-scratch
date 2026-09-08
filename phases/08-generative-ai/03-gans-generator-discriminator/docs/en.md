@@ -63,6 +63,10 @@ In 2026 GANs are no longer the SOTA generator (diffusion and flow matching ate t
 
 
 
+## CBP context: adversaries sharpen, collapse warns
+
+In the CBP context the GAN dynamic (generator versus discriminator, both with explicit losses and updates) teaches coupled training — and its warning: mode collapse produces sharp samples missing whole varieties. Any synthetic data pipeline needs diversity measurement alongside realism, or downstream models learn a confident subset of reality. Expose intermediates when debugging; coupled losses hide faults otherwise.
+
 ## Build It
 
 Reconstruct **GANs — Generator vs Discriminator** by following `sigmoid` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
