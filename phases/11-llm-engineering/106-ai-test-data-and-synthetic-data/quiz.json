@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which check takes precedence in classify_leakage when an evaluation record's fingerprint is in the training corpus?",
+      "question": "Eval data comes from production logs with user data and from public benchmarks the model may have memorized. What policy fixes both?",
       "options": [
-        "The record is CLEAN because synthetic text cannot leak",
-        "The record is NGRAM_FLAG only when at least 30% of tokens overlap",
-        "The record is EXACT_MATCH with contamination_score=1.0",
-        "The record is discarded without a verdict because hashes are advisory"
+        "Use both sources as-is for speed",
+        "Trust public benchmarks blindly",
+        "Skip evals when data is inconvenient",
+        "Origin controls, anonymization, and leakage detection"
       ],
-      "correct": 2,
-      "explanation": "classify_leakage checks the SHA-256 fingerprint first. A matching fingerprint immediately produces EXACT_MATCH and score 1.0, before any 13-gram calculation."
+      "correct": 3,
+      "explanation": "Convenient data leaks privacy; public data leaks answers. This lesson governs both before eval numbers mean anything."
     },
     {
       "stage": "check",

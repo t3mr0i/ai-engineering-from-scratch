@@ -105,6 +105,10 @@ Call `Label` from a small caller with the text "red fox". Compare its result wit
 
 Hand off `outputs/skill-synthetic-test-data-governance.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: representative, private, uncontaminated
+
+In the CBP context test data policy pulls three levers: origin controls (no production PII in harnesses — GDPR purpose limitation applies to test logs too), anonymization or synthesis for representativeness, and leakage detection (fingerprints first, n-grams second) so memorization never poses as reasoning. Skip any lever and the eval numbers lie: convenient data leaks privacy, public data leaks answers.
+
 ## Further Reading
 
 - [EU AI Act — Official text, Annex IV](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689) — Article 10 (data governance) and Annex IV (technical documentation requirements).
