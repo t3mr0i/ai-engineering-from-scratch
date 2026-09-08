@@ -440,6 +440,10 @@ python3 -m pytest code/tests/ -v
 
 The demo prints the EvalReport in JSON, including pass@1, pass@5, mean latency, and per-task breakdown. The exit code is zero. The tests cover the verifier functions, the pass@k math, fixture loading, and the harness end-to-end against the bundled reference candidate.
 
+## CBP context: frozen tasks, comparable weeks
+
+In the CBP context the eval harness is the pipeline gate from lesson 14/30: a frozen set of CBP fixture tasks with clear pass criteria, run on every model and prompt change, results comparable across weeks. Add a task for every production failure shape; delete nothing that still guards a regression. Gut feeling is not a metric and a deleted record is not a pass.
+
 ## Build It
 
 Reconstruct **Eval Harness with Fixture Tasks** by following `call` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
