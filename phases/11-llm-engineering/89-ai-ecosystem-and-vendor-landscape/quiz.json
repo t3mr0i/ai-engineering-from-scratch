@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does score_platform eliminate some vendors before computing a weighted score?",
+      "question": "A flagship model wins procurement on benchmark quality, then costs 11x for two locked-in years. What would have prevented that?",
       "options": [
-        "Weighted scores are only valid for open-weight models",
-        "The cheapest vendor must always win a procurement decision",
-        "Residency, open-weights, and latency requirements are hard feasibility gates, not trade-off points",
-        "Exit cost is too subjective to include in a scorecard"
+        "A bigger benchmark number",
+        "Trust in flagship tiers generally",
+        "Faster procurement with less review",
+        "Feasibility gates plus year-two cost and exit modeling"
       ],
-      "correct": 2,
-      "explanation": "The scorer first removes platforms that cannot satisfy the workload's residency, open-weight, or latency constraints. Only feasible options receive the five-axis score."
+      "correct": 3,
+      "explanation": "Quality signals are not procurement decisions. This lesson gates on feasibility, then scores total cost including exit."
     },
     {
       "stage": "check",

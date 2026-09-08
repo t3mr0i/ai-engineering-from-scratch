@@ -138,6 +138,10 @@ Call `DataResidency` from a small caller with the demo’s smallest built-in fix
 
 Hand off `outputs/skill-vendor-selection-scorecard.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: gates first, then scores — and mind the three traps
+
+In the CBP context vendor selection gates on residency, latency, and hard constraints before any weighted scoring, and watches the three failure shapes: flagship-default lock-in, fine-tune data hostage, missing audit trail. The gateway layer, eval-backed selection, and exit path from lessons 11/27 and 13/17 are the standing answers. Procurement models what the demo does not: year-two costs, migration friction, and regulator questions.
+
 ## Further Reading
 
 - [Anthropic API documentation](https://docs.claude.com) — model catalog, pricing, data residency, DPA information, and Claude model family overview.
