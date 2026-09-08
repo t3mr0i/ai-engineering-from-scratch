@@ -99,6 +99,10 @@ Large-v3-turbo (2024) cut the decoder from 32 layers to 4. 8× faster decoding w
 
 
 
+## CBP context: frames price transcription
+
+In the CBP context audio transformers price transcription by frames: seconds times frame rate sets the encoder load behind every speech service call. Log-mel framing plus transformer encoding is the stack consumed via platform speech APIs (lesson 06/05); configure language and task per call there. Frame counts explain audio latency the way token counts explain text latency.
+
 ## Build It
 
 Reconstruct **Audio Transformers — Whisper Architecture** by following `sine_wave` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

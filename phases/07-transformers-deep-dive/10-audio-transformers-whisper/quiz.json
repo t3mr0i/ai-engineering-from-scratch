@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For a 1-second signal at 16 kHz, frame_size=400, and hop=160, how many frames does frame_signal create?",
+      "question": "Speech must become text with attention over time, like text over positions. What frames that input?",
       "options": [
-        "400",
-        "100",
-        "98",
-        "1,600"
+        "Raw waveforms fed sample by sample",
+        "Text transcripts of the same audio",
+        "Speaker names as tokens",
+        "Log-mel frames encoded transformer-style"
       ],
-      "correct": 2,
-      "explanation": "The starts run through 15,600 inclusive in steps of 160, so floor((16,000-400)/160)+1 = 98 frames."
+      "correct": 3,
+      "explanation": "Audio needs framed features first. This lesson encodes log-mel frames for transformer speech."
     },
     {
       "stage": "check",
