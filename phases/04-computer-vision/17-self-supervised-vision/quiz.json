@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For z1 and z2 shaped (16,32), how many rows are in the similarity matrix inside info_nce?",
+      "question": "Only hundreds of labels exist but millions of unlabeled images. How do modern backbones learn from the unlabeled mass?",
       "options": [
-        "32",
-        "16",
-        "64",
-        "2"
+        "They cannot; labels are mandatory",
+        "By memorizing file names",
+        "By ignoring unlabeled data",
+        "By pulling augmented view-pairs together contrastively"
       ],
-      "correct": 0,
-      "explanation": "info_nce concatenates the two views along the batch axis, so z has 2N=32 rows and sim is 32 by 32."
+      "correct": 3,
+      "explanation": "Pairs are cheap, labels are dear. This lesson learns features without labels via contrast."
     },
     {
       "stage": "check",

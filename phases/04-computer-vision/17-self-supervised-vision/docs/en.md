@@ -20,6 +20,10 @@
 
 Self-supervised methods replace human labels with a relation that can be generated from an image: two views should agree, a teacher should provide a stable target, or masked patches should be reconstructed. The names SimCLR, DINO, and MAE describe families; this lesson implements only the numerical seams that can be checked without a dataset or checkpoint.
 
+## CBP context: labels are expensive, pairs are cheap
+
+In the CBP context self-supervised backbones (DINO, MAE, SimCLR lineage) are consumed pretrained and fine-tuned on small CBP label sets — labels are the scarce resource, augmented view-pairs are nearly free. Contrastive training pulls same-source views together and pushes the rest apart; that is the whole trick behind label-free features. Prefer SSL backbones over supervised ones when CBP labels number in the hundreds.
+
 ## Build It
 
 The NumPy Build-It path exposes the same seams as `numpy_info_nce`, `numpy_mask_indices`, `numpy_dino_teacher`, and `numpy_update_centre`. `numpy_info_nce` takes two finite `(N,D)` arrays with `N >= 2`, normalizes each row with a scale-stable norm, concatenates them into `2N` rows, masks the diagonal, and targets row `i` at `i+N` (and vice versa). `tau` must be finite and strictly positive, the temperature-scaled similarities must be representable, and the final loss must remain finite; otherwise the helper raises `ValueError`. `numpy_update_centre` computes column means with scaling so repeated `1e308` logits do not overflow. `numpy_mask_indices(196, 0.75, seed=0)` returns 49 sorted visible indices and 147 sorted masked indices, with no overlap and deterministic replay.
