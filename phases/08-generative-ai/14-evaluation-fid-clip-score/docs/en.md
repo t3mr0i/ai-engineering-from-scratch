@@ -89,6 +89,10 @@ Any single metric is a lie. Three corroborating metrics + qualitative review are
 
 
 
+## CBP context: distribution plus adherence, never realism alone
+
+In the CBP context generated assets evaluate on two axes: distribution quality (FID-style distance to real references) and prompt adherence (CLIP-style alignment with the brief) — realism without adherence misses the assignment, adherence without quality embarrasses the brand. Coordinate-wise means over feature vectors keep the math honest; human review keeps the verdict honest. Both axes gate release.
+
 ## Build It
 
 Reconstruct **Evaluation — FID, CLIP Score, Human Preference** by following `mean_vec` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

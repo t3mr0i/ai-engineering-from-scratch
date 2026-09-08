@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does mean_vec(vectors) return for a collection of d-dimensional feature vectors?",
+      "question": "Generated images look realistic but ignore the brief. Which evaluation axis catches that?",
       "options": [
-        "A covariance matrix with d rows and d columns",
-        "A scalar equal to the largest feature coordinate",
-        "The coordinate-wise arithmetic mean, a vector of length d",
-        "One random feature vector chosen from the collection"
+        "Realism scores alone",
+        "Pixel count per image",
+        "Generation speed only",
+        "Prompt adherence alongside distribution quality"
       ],
-      "correct": 2,
-      "explanation": "The function averages `v[i]` over all vectors independently for each coordinate i."
+      "correct": 3,
+      "explanation": "Realism without adherence misses assignments. This lesson evaluates both axes together."
     },
     {
       "stage": "check",
