@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the per-shard .partial.json state let StreamingDownloader verify before resuming?",
+      "question": "A multi-gigabyte download interrupts halfway. What must happen before resuming from the partial file?",
       "options": [
-        "That the remote server supports every compression format before opening the cache.",
-        "That the on-disk partial has exactly verified_bytes and the recorded SHA-256 prefix before it sends a Range request.",
-        "That all other shards have completed, so a failed shard can be skipped.",
-        "That the JSONL tokenizer has already consumed the shard and can discard the compressed bytes."
+        "Append blindly and hope the bytes align",
+        "Restart from zero every time",
+        "Skip the failed part silently",
+        "Verify size and hash prefix, discard on mismatch"
       ],
-      "correct": 1,
-      "explanation": "_verify_partial compares the file size with verified_bytes and recomputes the prefix hash. A mismatch causes the partial and checkpoint to be discarded rather than appended blindly."
+      "correct": 3,
+      "explanation": "Blind resumes corrupt silently. This lesson verifies partials before continuing the stream."
     },
     {
       "stage": "check",

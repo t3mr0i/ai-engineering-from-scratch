@@ -62,6 +62,10 @@ The downloader's only durable output is the manifest. The manifest holds, per sh
 
 
 
+## CBP context: verify before resuming, never append blindly
+
+In the CBP context large artifact downloads — datasets, model files, index snapshots — resume with verification: byte counts plus hash prefixes checked before any Range request continues the stream. A mismatched partial is discarded, not appended; silent corruption downstream costs more than a re-download. The same receipt discipline covers pipeline artifacts: every large file carries its checksum beside it.
+
 ## Build It
 
 Reconstruct **Large Corpus Downloader** by following `ShardPlan` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
