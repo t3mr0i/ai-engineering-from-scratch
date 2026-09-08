@@ -83,6 +83,10 @@ A resume that snaps to the start of the next epoch wastes anywhere from minutes 
 
 
 
+## CBP context: resume needs the full state, everywhere
+
+In the CBP context the checkpoint rule generalizes beyond training: resuming anything — a training job, an agent run (lesson 14/13), a migration — requires the complete state (weights plus optimizer, scheduler, counters, RNG), or the resumed trajectory silently diverges. Save atomically so a crash mid-write never leaves half a checkpoint; validate on load so corruption fails loudly at restore time, not mysteriously three hours later.
+
 ## Build It
 
 Reconstruct **Checkpoint Save and Resume** by following `TrainState` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which set best describes a complete training checkpoint?",
+      "question": "A resumed run diverges from the original trajectory though the weights match. What is missing from the checkpoint?",
       "options": [
-        "Model weights only",
-        "Just the loss history",
-        "Model state, optimizer state, scheduler state, step counters, loss history, and RNG state for python, numpy, torch CPU, torch CUDA",
-        "Any Python object is sufficient even if it omits optimizer and RNG state"
+        "Nothing; weights alone always suffice",
+        "A longer run name",
+        "More log messages",
+        "Optimizer, scheduler, counters, and RNG state"
       ],
-      "correct": 2,
-      "explanation": "Resume must walk the same trajectory. Without optimizer moments, scheduler position, and RNG state the resumed loss is a different curve."
+      "correct": 3,
+      "explanation": "Weights are only part of the trajectory. This lesson checkpoints the full state so resume walks the same path."
     },
     {
       "stage": "check",
