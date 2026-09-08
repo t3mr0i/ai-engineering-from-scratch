@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For a full SVD of A with shape (3, 2), which shapes are valid for U, Sigma, and V^T?",
+      "question": "A huge matrix is well approximated by two small factors multiplied together. What does that enable?",
       "options": [
-        "U (3,3), Sigma (3,2), V^T (2,2)",
-        "U (2,2), Sigma (3,3), V^T (3,2)",
-        "U (3,2), Sigma (3,3), V^T (2,3)",
-        "U (2,3), Sigma (2,2), V^T (3,3)"
+        "Nothing; sizes are fixed forever",
+        "Bigger matrices for the same cost",
+        "Deleting the matrix entirely",
+        "Compression and low-rank adaptation of large weights"
       ],
-      "correct": 0,
-      "explanation": "The full factors preserve the output and input bases: U is m by m, Sigma is m by n, and V^T is n by n."
+      "correct": 3,
+      "explanation": "Low-rank structure concentrates essence. This lesson decomposes matrices into their essential factors."
     },
     {
       "stage": "check",

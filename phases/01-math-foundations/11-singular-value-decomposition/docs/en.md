@@ -21,6 +21,10 @@ For `A` with shape `(m,n)`, a full factorization has `U` `(m,m)`, `Sigma` `(m,n)
 
 Power iteration estimates the largest eigenvector of the residual `A.T @ A`. After each singular triplet, the residual subtracts `sigma * outer(u,v)`. NumPy's `linalg.svd` is retained as a local reference for truncation and pseudoinverse operations; no external ML package is needed.
 
+## CBP context: low rank is why adapters work
+
+In the CBP context SVD explains the most practical fine-tuning trick you consume: LoRA works because weight updates live in a low-rank subspace — a big matrix well approximated by small factors. The same idea compresses embeddings and denoises retrieval indices. Read for that single insight (large structure, small essence), run the demo if factors feel abstract, and port nothing.
+
 ## Build It
 
 Run either canonical entry point:
