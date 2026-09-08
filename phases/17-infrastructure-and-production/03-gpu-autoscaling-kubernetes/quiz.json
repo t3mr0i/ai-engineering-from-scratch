@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which signal does the QUEUE_DEPTH strategy inspect when deciding to add replicas?",
+      "question": "GPU utilization sits at 100% for hours and the autoscaler never adds capacity, yet adding a replica by hand fixes latency. What is wrong?",
       "options": [
-        "The number of requests waiting in queue",
-        "DCGM GPU utilization only",
-        "The number of completed tokens yesterday",
-        "The model's parameter count"
+        "The GPUs are too fast for the workload",
+        "Users should send fewer requests",
+        "The cluster has too many nodes already",
+        "The scaling signal measures fullness, not the waiting queue"
       ],
-      "correct": 0,
-      "explanation": "The strategy reads len(queue), adding capacity when the actual request backlog exceeds its threshold."
+      "correct": 3,
+      "explanation": "Utilization reads full exactly when you are starving. This lesson composes the three autoscaling layers around honest signals."
     },
     {
       "stage": "check",

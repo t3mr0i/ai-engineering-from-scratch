@@ -108,6 +108,10 @@ Call `Request` from a small caller with the reported device check on CPU. Compar
 
 Hand off `outputs/skill-gpu-autoscaler-plan.md` with the command `python3 main.py`, the accepted input shape (the reported device check on CPU), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: LCAG scales the nodes, you scale the sense
+
+In the CBP context LCAG operates the Kubernetes layers — node provisioning, gang scheduling, GPU-aware autoscaling — and your job is to read them correctly: autoscale on application signals (queue depth, TTFT, pending requests), never on GPU utilization alone, which sits at 100% precisely when you are starving. Know the three failure modes from this lesson so a 2 AM latency spike reads as a provisioning, scheduling, or signal problem before anyone pages the platform team with the wrong theory.
+
 ## Further Reading
 
 - [KAI Scheduler GitHub](https://github.com/kai-scheduler/KAI-Scheduler) — design docs and configuration examples.
