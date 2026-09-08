@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is fixed in simulate_copy_accuracy even when seq_len changes?",
+      "question": "Long documents compressed into one fixed vector lose what generation later needs. What architecture fixes that?",
       "options": [
-        "The encoder context dimension, which defaults to 8",
-        "The number of tokens in every generated sequence",
-        "The number of vocabulary symbols, which becomes one",
-        "The decoder's attention window over all encoder states"
+        "Bigger fixed vectors forever",
+        "No encoding at all",
+        "Shorter documents by truncation",
+        "Attention over source states, then retrieval"
       ],
-      "correct": 0,
-      "explanation": "The context list has context_dim entries, so longer sequences must be compressed into the same eight values."
+      "correct": 3,
+      "explanation": "Fixed bottlenecks discard information. This lesson builds seq2seq to motivate attention and retrieval."
     },
     {
       "stage": "check",

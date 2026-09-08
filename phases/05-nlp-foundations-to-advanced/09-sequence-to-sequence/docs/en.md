@@ -39,6 +39,10 @@ Attention (lesson 10) fixes this by letting the decoder look at *every* encoder 
 
 
 
+## CBP context: fixed bottlenecks lose long documents
+
+In the CBP context the seq2seq bottleneck lesson is why long CBP documents need retrieval instead of longer encoders: compressing pages into a fixed vector discards what generation later needs. Attention (lesson 10) was the fix; RAG is its operational form. Never stuff whole document stores into one context and hope — retrieve first, generate from evidence.
+
 ## Build It
 
 Reconstruct **Sequence-to-Sequence Models** by following `simulate_copy_accuracy` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
