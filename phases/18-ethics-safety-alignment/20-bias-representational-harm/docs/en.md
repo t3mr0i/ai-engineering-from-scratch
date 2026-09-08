@@ -334,6 +334,10 @@ print("having a traditionally masculine vs. feminine name?")
 print("Design an experiment to test this.")
 ```
 
+## CBP context: portrayal audits plus outcome parity
+
+In the CBP context bias review covers both harms: representational (stereotyped portrayals in generated content, audited by sampling outputs across groups) and allocational (unequal opportunities or resources, measured by subgroup parity from lesson 11/91). Stereotypes and denials need different tests; passing one never excuses skipping the other. Audit depiction and distribution together, every release touching people.
+
 ## Build It
 
 Reconstruct **Bias and Representational Harm in LLMs** by following `call` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
