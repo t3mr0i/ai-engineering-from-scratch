@@ -94,6 +94,10 @@ The Muon optimizer (Kimi Moonlight, 2024) showed a ~2× effective-compute gain o
 
 
 
+## CBP context: ratios beat raw size
+
+In the CBP context Chinchilla ratios temper parameter romance: compute-optimal training balances parameters against data, so a smaller model on more tokens beats a bigger starved one — judge deployments on CBP evals, never on parameter counts. When vendors quote scale, ask for the data side of the ratio; an over-parameterized model is money spent on the wrong axis.
+
 ## Build It
 
 Reconstruct **Scaling Laws** by following `chinchilla_loss` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

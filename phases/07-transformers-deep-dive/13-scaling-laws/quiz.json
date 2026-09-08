@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which expression does chinchilla_loss(N, D) evaluate?",
+      "question": "Two models cost the same to train: one huge on little data, one smaller on much data. Which does scaling law favor?",
       "options": [
-        "A/N^alpha + B/D^beta + E",
-        "A*N^alpha + B*D^beta - E",
-        "6*N*D + A + B + E",
-        "log(N+D) divided by the compute budget"
+        "Always the biggest parameters",
+        "Always the smallest model",
+        "Whichever trains fastest",
+        "The balanced one matching compute-optimal ratios"
       ],
-      "correct": 0,
-      "explanation": "The implementation returns A / N**alpha + B / D**beta + E, using the fitted constants as defaults."
+      "correct": 3,
+      "explanation": "Size without data starves. This lesson balances parameters against tokens optimally."
     },
     {
       "stage": "check",
