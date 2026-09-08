@@ -19,6 +19,10 @@
 
 `code/bias_variance.py` uses NumPy and no plotting package. `generate_data` samples `x` uniformly in `(-3, 3)`, adds Gaussian noise with default standard deviation `0.5`, and `bias_variance_decomposition` evaluates predictions on 100 points in `[-2.5, 2.5]`. Positive sample/bootstrap/test counts and a finite non-negative noise standard deviation are required. It uses a seeded sequence of bootstrap training sets, so the same arguments reproduce the same table.
 
+## CBP context: error patterns prescribe the fix
+
+In the CBP context train-versus-validation error patterns diagnose before anyone tunes: high both means underfitting (add capacity or features), low train with high validation means overfitting (regularize, add data, simplify). Random tuning without the diagnosis burns eval budget on the wrong lever. Read the curves first; the pattern names the remedy.
+
 ## Build It
 
 Run `python3 main.py`. The compact entry point compares polynomial degrees 1, 3, and 8 over 24 bootstrap fits and prints `bias_sq`, `variance`, and `total_error` for each degree. For a hand check, fitting `y = 2x + 1` at `x = [-1, 0, 1]` with degree 1 gives two weights and predictions equal to the observations. `fit_polynomial(..., lam=10)` leaves the intercept unpenalized but shrinks the other coefficients relative to the unregularized fit.
