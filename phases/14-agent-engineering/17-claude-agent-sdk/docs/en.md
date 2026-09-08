@@ -432,6 +432,10 @@ Call `call` from a small caller with the text "red fox". Compare its result with
 
 Hand off `outputs/skill-claude-agent-scaffold.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: subagents for fan-out, session store for continuity
+
+In the CBP context subagents are how a big CBP job fans out without bloating the main context: each helper reads its own pages (Boards items, log bundles, specs) while the coordinator keeps only the digests. Persist sessions in the platform store so a crashed run resumes with history intact, and propagate traces across the spawn boundary — a subagent whose work never appears in the trace never happened for audit purposes. Gate the built-in tools (shell, file write, fetch) per tenant exactly as the lesson gates them per session.
+
 ## Further Reading
 
 - [Claude Agent SDK overview](https://platform.claude.com/docs/en/agent-sdk/overview) — the library form of Claude Code
