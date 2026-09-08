@@ -4,10 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does patchify_video return besides the token array?",
-      "options": ["A class label", "The token grid (T_tokens, H_tokens, W_tokens)", "A camera calibration matrix", "A random seed only"],
-      "correct": 1,
-      "explanation": "The grid records how temporal and spatial patches map back to the original video axes."
+      "question": "Planning needs to imagine how a scene evolves over time, not just label one frame. What representation supports that?",
+      "options": [
+        "A single still image",
+        "A class label per video",
+        "The video file name",
+        "Joint space-time tokens with their grid"
+      ],
+      "correct": 3,
+      "explanation": "Prediction needs time as a dimension. This lesson patches video jointly across space and time."
     },
     {
       "stage": "check",

@@ -15,6 +15,10 @@
 - Roll a finite linear state model forward from actions with a declared transition.
 - Separate a local dynamics fixture from a trained video-diffusion world model.
 
+## CBP context: frontier vocabulary, platform delivery
+
+In the CBP context world models and video diffusion are frontier vocabulary for simulation-backed planning contexts — read for the token-grid intuition (time and space patched jointly), deliver through platform media services when they mature. No CBP team trains video diffusion; every CBP team should recognize what the capability means when a vendor demo shows it. Vocabulary in, training out.
+
 ## Build It
 
 `patchify_video` groups `(patch_t,patch_h,patch_w)` consecutive values and returns
