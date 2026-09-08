@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What DFT coefficients result from the constant signal [1,1,1,1]?",
+      "question": "Audio features come from a frequency view of the waveform, not the raw samples. What transform produces that view?",
       "options": [
-        "X[0]=4 and X[1]=X[2]=X[3]=0",
-        "All four coefficients equal 1",
-        "X[0]=0 and X[1]=4",
-        "Every coefficient has magnitude 4"
+        "Sorting samples by size",
+        "Averaging all samples together",
+        "Decomposing the signal into frequency components",
+        "Deleting every second sample"
       ],
-      "correct": 0,
-      "explanation": "The zero-frequency coefficient sums all samples. The rotating factors cancel at nonzero frequencies for a constant signal."
+      "correct": 2,
+      "explanation": "Frequency decomposition reveals structure time samples hide. This lesson builds the Fourier view behind audio features."
     },
     {
       "stage": "check",

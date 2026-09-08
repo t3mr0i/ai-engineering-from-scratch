@@ -16,6 +16,10 @@
 - Use zero-padded spectral multiplication to reproduce linear convolution.
 - Relate sinusoidal positional encodings to frequency-indexed phases.
 
+## CBP context: frequency view for audio work
+
+In the CBP context the Fourier view matters for audio: waveforms become spectrograms (phase 06) through exactly this transform, and "the constant part" versus "the changing parts" is the DC-versus-detail split behind mel features and codecs. Read for the one intuition (signals as sums of frequencies), run the demo if the coefficients feel abstract, and port nothing — libraries compute transforms.
+
 ## Build It
 
 Run the standard-library implementation:
