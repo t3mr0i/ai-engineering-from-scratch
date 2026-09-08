@@ -155,6 +155,10 @@ The queue is finite. When it is empty the orchestrator can either widen the seed
 
 Lesson fifty produces the queue. Lesson fifty-one takes the head of the queue and runs a literature search to confirm or refute it. Lesson fifty-two takes the same head and runs an actual experiment. Lesson fifty-three reads both outputs and writes a verdict. The four lessons compose into a research loop with no human in it; a human can step in at any boundary.
 
+## CBP context: ranked options with a next on failure
+
+In the CBP context ranked hypothesis queues fit vendor comparisons and remediation planning: propose several options scored on the same criteria, try the best, pop the next when it fails — never stall on a single dead idea. The queue depth is a budget decision (each option costs investigation), and the ranking criteria belong in the ADR so the choice reads as engineering. One hypothesis is a bet; a ranked queue is a plan.
+
 ## Build It
 
 Reconstruct **Hypothesis Generator** by following `Hypothesis` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
