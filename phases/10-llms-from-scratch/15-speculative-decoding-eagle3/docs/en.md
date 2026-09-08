@@ -76,6 +76,10 @@ In 2026 production: vLLM and SGLang default to EAGLE-3 when available, EAGLE-2 o
 
 
 
+## CBP context: draft-verify as platform flag
+
+In the CBP context EAGLE-style speculative decoding arrives as the platform flag from lessons 07/16 and 17/05: small-model drafts batched through the large verifier, enabled only where CBP traffic proves acceptance. Same mechanism, same measurement rule, newer draft heads. Understand once here; apply at every serving layer that offers the flag.
+
 ## Build It
 
 Reconstruct **Speculative Decoding and EAGLE-3** by following `sample` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
