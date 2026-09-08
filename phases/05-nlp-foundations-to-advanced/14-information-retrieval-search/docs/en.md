@@ -38,6 +38,10 @@ Three-way retrieval (BM25 + dense + learned-sparse like SPLADE) outperforms two-
 
 
 
+## CBP context: rare terms carry the signal
+
+In the CBP context BM25 IDF is why ticket ids and error codes retrieve: terms appearing in few documents weigh most, exactly inverting naive frequency counting. The lexical leg of hybrid AI Search runs on this principle — rare CBP identifiers outrank common words by design. Understand IDF once and every sparse-retrieval behavior (including its failures on synonyms) reads clearly.
+
 ## Build It
 
 Reconstruct **Information Retrieval and Search** by following `tokenize` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
