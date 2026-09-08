@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does clip_global_l2_norm do when the pre-clip norm is already below max_norm?",
+      "question": "One giant gradient step throws training off a cliff while normal steps are fine. What bounds the step without harming healthy ones?",
       "options": [
-        "It leaves gradients unchanged and returns equal pre- and post-clip norms.",
-        "It rescales every gradient upward until the norm equals max_norm.",
-        "It discards the batch because clipping is only valid for large tensors.",
-        "It replaces the gradients with their elementwise signs."
+        "Delete all large gradients",
+        "Cap the global norm, leaving small steps untouched",
+        "Halve every gradient always",
+        "Restart training after each big step"
       ],
-      "correct": 0,
-      "explanation": "The helper computes the global Euclidean norm and returns (pre_clip, pre_clip) when the limit is not exceeded. Scaling happens only when pre_clip > max_norm."
+      "correct": 1,
+      "explanation": "Outlier steps need a ceiling, not a rewrite. This lesson clips the global norm only when it exceeds the max."
     },
     {
       "stage": "check",

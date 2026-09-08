@@ -61,6 +61,10 @@ The scaling factor is the GradScaler's internal state. Every step the lesson rea
 
 
 
+## CBP context: stability knobs you read, not turn
+
+In the CBP context clipping and mixed precision are provider-side stability knobs — but their failure signatures reach you: exploding updates mean a fine-tune that diverges mid-job, precision artifacts mean answers that degrade on specific inputs. Clipping caps the step without touching healthy gradients; mixed precision buys memory without buying error, until it does. When a consumed training job misbehaves, these two are on the checklist before the data is blamed.
+
 ## Build It
 
 Reconstruct **Gradient Clipping and Mixed Precision** by following `StepLog` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
