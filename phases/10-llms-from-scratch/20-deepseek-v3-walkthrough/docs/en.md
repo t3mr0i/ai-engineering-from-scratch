@@ -141,6 +141,10 @@ DeepSeek-V4 (if it ships) is expected to keep MLA + MoE + MTP and add DSA (DeepS
 
 
 
+## CBP context: stored versus running parameters
+
+In the CBP context the DeepSeek-V3 walkthrough teaches deployment-card literacy: total stored parameters versus active-per-token parameters with the memory each implies, plus the auxiliary tricks (multi-token prediction, load balancing) that make the giant affordable. Ask both numbers plus evals before any MoE deployment decision; giant totals impress, active counts bill.
+
 ## Build It
 
 Reconstruct **DeepSeek-V3 Architecture Walkthrough** by following `ComponentParams` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
