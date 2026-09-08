@@ -89,6 +89,10 @@ Call `Block` from a small caller with the demo’s smallest built-in fixture. Co
 
 Hand off `outputs/skill-memory-blocks.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: fixed blocks plus a nightly pipeline
+
+In the CBP context memory blocks map to always-on prompt sections: tenant and service identity, applicable policy, and the current session task — small, structured, and tenant-scoped. Move consolidation off the critical path into a scheduled pipeline job that prunes contradictions and summarizes sessions while nobody waits, exactly as sleep-time compute prescribes. Never reconcile memory while the user watches the spinner; tail latency is a feature decision. Version the block schemas so a consolidation change rolls out like any other config change.
+
 ## Further Reading
 
 - [Letta, Memory Blocks blog](https://www.letta.com/blog/memory-blocks) — the block pattern
