@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Where does the point [1, 0] go under a counterclockwise 90-degree rotation?",
+      "question": "A search score is described as projecting the query onto a document direction. What does projection mean geometrically?",
       "options": [
-        "[0, 1]",
-        "[0, -1]",
-        "[-1, 0]",
-        "[1, 1]"
+        "Deleting both vectors",
+        "Sorting vector elements by size",
+        "Measuring one vector's shadow along another's direction",
+        "Adding the vectors end to end"
       ],
-      "correct": 0,
-      "explanation": "The rotation matrix [[0,-1],[1,0]] maps [x,y] to [-y,x], so [1,0] becomes [0,1]."
+      "correct": 2,
+      "explanation": "Projection is directional shadowing. This lesson builds the geometric feel behind similarity scores."
     },
     {
       "stage": "check",

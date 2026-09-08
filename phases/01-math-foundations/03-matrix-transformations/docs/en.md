@@ -15,6 +15,10 @@
 - Interpret determinant sign and magnitude as orientation and area scaling.
 - Connect the largest covariance eigenvalue to a principal direction without treating PCA as magic.
 
+## CBP context: read for the geometric feel
+
+In the CBP context transformations are read-only intuition: rotations, projections, and eigen-directions explain what embedding operations do geometrically — projection onto a direction is similarity, dominant directions are topics. Run the demo if the pictures feel abstract, then stop: no service code transforms matrices by hand. The feel for "what a projection means" pays off every time retrieval behaves unexpectedly.
+
 ## Build It
 
 The Python implementation is in `transformations.py`; `main.py` delegates to it, and `main.jl` runs the Julia counterpart. Start with:
