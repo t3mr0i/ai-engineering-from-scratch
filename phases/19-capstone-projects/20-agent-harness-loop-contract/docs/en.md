@@ -251,6 +251,10 @@ for step in plan:
 
 Read `main.py` top to bottom. Then read `code/tests/test_loop.py`. The tests pin every transition and every hook firing order.
 
+## CBP context: the contract the Java loop honors
+
+In the CBP context this loop contract is what the Java service implements: deterministic states with explicit transitions, lifecycle hooks where policy, telemetry, and guardrails plug in, per-session budgets that stop without leaking partial state, and a typed event stream the UI and tracers subscribe to. Write the contract down before the model: swapping models, tools, or policies then becomes registration, not refactor. An unlogged forty-turn session is not autonomy; it is an unaudited process.
+
 ## Going further
 
 The hardest part of building a harness in production is not the state machine. It is making the contract enforceable. The contract has to survive a hot reload of the planner. It has to survive a tool that returns malformed JSON. It has to survive a hook that raises in `before_tool_call` two-thirds of the way through a forty-turn session. The tests in this lesson exercise those failure modes. Run them. Break them. Add cases.

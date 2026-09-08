@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which state must HarnessLoop.run see before it begins planning?",
+      "question": "An agent loop with no defined states, no hooks, and no budgets runs forty turns unattended. What is missing?",
       "options": [
-        "IDLE",
-        "PLANNING",
-        "AWAITING_TOOL",
-        "DONE"
+        "A faster model for the loop",
+        "More turns without limits",
+        "Blind trust in long runs",
+        "Explicit states, hook points, and budget envelopes"
       ],
-      "correct": 0,
-      "explanation": "run rejects any state other than IDLE, emits session.start, and then transitions through PLANNING before executing the plan."
+      "correct": 3,
+      "explanation": "Unattended loops need an inspectable contract. This lesson freezes it: states, hooks, pull points, budgets, events."
     },
     {
       "stage": "check",
