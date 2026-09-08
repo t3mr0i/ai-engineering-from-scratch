@@ -111,6 +111,10 @@ The reference run should leave a small receipt: python3 main.py, its captured ou
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
+## CBP context: value must land in operations metrics
+
+In the CBP context the business case counts only what operations metrics show: adoption rate, review cost, integration spend, and measured time saved — never model-call price alone. A cheap call with low adoption and full human review is an expensive hobby; track benefits per tenant in FinOps the same way costs are tracked. Kill or fix use cases whose value never materializes instead of funding Anmutung.
+
 ## Further Reading
 
 ### Recommended trainings (LHIND AI Literacy)
