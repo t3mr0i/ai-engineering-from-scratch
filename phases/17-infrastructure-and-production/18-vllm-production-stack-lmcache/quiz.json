@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does the workload convert a prompt length into KV blocks?",
+      "question": "GPUs sit at full memory, requests get evicted and re-prefill the same prompts repeatedly. What is the structural fix?",
       "options": [
-        "prompt_tokens × 16 blocks",
-        "output_tokens / 900 blocks",
-        "(prompt_tokens + 16 - 1) // 16",
-        "It stores one block for every engine"
+        "Buy GPUs linearly forever",
+        "Shorter answers by truncation",
+        "Evict more aggressively",
+        "Offload warm cache to cheap memory and share prefixes"
       ],
-      "correct": 2,
-      "explanation": "The code uses integer ceiling division: (prompt_tokens + KV_BLOCK_TOKENS - 1) // KV_BLOCK_TOKENS, equivalent to ceil(prompt_tokens / 16)."
+      "correct": 3,
+      "explanation": "HBM is fixed and precious; DRAM is cheap. This lesson stages KV cache across tiers instead of re-prefilling."
     },
     {
       "stage": "check",

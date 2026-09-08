@@ -96,6 +96,10 @@ Call `Request` from a small caller with x=0.5 with the demo defaults. Compare it
 
 Hand off `outputs/skill-vllm-stack-decider.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: platform stack, tenant-visible symptoms
+
+In the CBP context the production stack with KV offloading is LCAG-operated; your service reads its symptoms. HBM saturation with preemption events means size the request mix or ask for capacity — not a bigger prompt. Repeated prefixes across engines should hit shared cache; when every repeat pays full prefill, the offload path is broken and the evidence (request ids, timestamps, prefix hashes) goes into the platform ticket. Know the stack shape well enough to file that ticket with data instead of vibes.
+
 ## Further Reading
 
 - [vLLM Blog — KV Offloading Connector (Jan 2026)](https://blog.vllm.ai/2026/01/08/kv-offloading-connector.html)
