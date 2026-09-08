@@ -80,6 +80,10 @@ Not an ML technique — a manifest format. Audio files carry cryptographically s
 
 
 
+## CBP context: liveness for auth, provenance for synthesis
+
+In the CBP context voice authentication pairs verification with anti-spoofing (replay and synthesis detection), and every synthetic voice carries a watermark proving its origin (lesson 06/08). Spectral analysis backs both; thresholds calibrate on CBP voices with attack samples included. Unwatermarked synthetic audio in production is an unattributed liability.
+
 ## Build It
 
 Reconstruct **Voice Anti-Spoofing & Audio Watermarking — ASVspoof 5, AudioSeal, WaveVerify** by following `with` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

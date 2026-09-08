@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "With n_fft=64, how many values does magnitude_spectrum return?",
+      "question": "Recorded voices fool verification and synthetic voices circulate unattributed. What two defenses pair up?",
       "options": [
-        "32",
-        "64",
-        "33",
-        "128"
+        "Louder enrollment recordings",
+        "More verification attempts",
+        "Trust in familiar voices",
+        "Spoof detection plus synthetic watermarking"
       ],
-      "correct": 2,
-      "explanation": "The function allocates n_fft//2 + 1 values, so a 64-point transform returns 33 nonnegative-frequency bins."
+      "correct": 3,
+      "explanation": "Verification alone trusts recordings. This lesson adds liveness and provenance."
     },
     {
       "stage": "check",
