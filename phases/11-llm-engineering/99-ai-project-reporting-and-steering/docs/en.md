@@ -105,6 +105,10 @@ Call `SignalTier` from a small caller with the demo’s smallest built-in fixtur
 
 Hand off `outputs/skill-steering-pack-quality-gates.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: decision questions first, staleness labeled
+
+In the CBP context each steering-pack section answers a governing decision question with traceable sources and labeled freshness — no evidence-free indicators, no raw dumps without a question. Stale signals carry their age; sections carry acceptance criteria like any LLM output. The meeting decides; the pack's job is making the decision possible in the room.
+
 ## Further Reading
 
 - [Anthropic — Prompt engineering overview](https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview) — canonical guidance on structured extraction and output validation prompts.

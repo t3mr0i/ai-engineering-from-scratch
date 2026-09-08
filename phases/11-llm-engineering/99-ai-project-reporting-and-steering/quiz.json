@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "A T4 signal is five days old. Is it admissible under STALENESS_THRESHOLD_DAYS?",
+      "question": "A status indicator appears with no source, and the meeting burns half an hour triangulating facts. What prevents that?",
       "options": [
-        "Yes, because T4 signals remain admissible for up to 14 days",
-        "No, because every steering signal must be younger than one day",
-        "No, because T4 is qualitative and can never support a pack",
-        "Yes, but only if it is also marked as a blocker"
+        "Bigger indicators on the cover slide",
+        "More raw data dumps per section",
+        "Trust in confident narratives",
+        "Traceable sources plus freshness labels per section"
       ],
-      "correct": 0,
-      "explanation": "T4 has the widest threshold in the table: 14 days. A five-day-old proxy is therefore admissible, although it cannot by itself support status confirmation without T1/T2 evidence."
+      "correct": 3,
+      "explanation": "Evidence-free status wastes the room. This lesson traces every signal and labels its age."
     },
     {
       "stage": "check",
