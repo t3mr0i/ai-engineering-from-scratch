@@ -85,6 +85,10 @@ This is the shape a CI smoke test takes. The pipeline runs offline, fast, determ
 
 
 
+## CBP context: same qrels from components to pipeline
+
+In the CBP context the assembled RAG pipeline — chunking, retrieval, reranking, generation, scoring — evaluates against the same CBP qrels as its component comparisons, because only the end-to-end run exposes interface failures between stages that each pass alone. A pipeline whose stages all pass in isolation but fails composed has a contract bug at a seam; the shared qrels make that visible. Ship the composed eval in the pipeline, not just the component ones.
+
 ## Build It
 
 Reconstruct **End-to-End RAG System** by following `tokenize` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
