@@ -89,6 +89,10 @@ Call `Message` from a small caller with the text "red fox". Compare its result w
 
 Hand off `outputs/skill-virtual-memory.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: memory per tenant, never across
+
+In the CBP context agent memory is a data-protection boundary first and a capability second: each tenant's facts, history, and preferences live in that tenant's store, and no retrieval path may cross it. Handle the lesson's three failures deliberately — page overflow into summarized external memory instead of dropping it, keep always-on context (tenant, service, policy) small so attention stays dense, and persist across sessions in a store the team owns rather than in the prompt. A memory that leaks across tenants is a breach; a memory that forgets the tenant's last decision is a bug. Test both.
+
 ## Further Reading
 
 - [Packer et al., MemGPT (arXiv:2310.08560)](https://arxiv.org/abs/2310.08560) — OS-inspired virtual context paper

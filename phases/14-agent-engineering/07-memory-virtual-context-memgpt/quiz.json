@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "With `MainContext(max_messages=3)`, what happens when a fourth message is appended?",
+      "question": "An assistant handles long conversations, but old turns vanish, the context fills with noise, and every new session starts blank. What is missing?",
       "options": [
-        "The oldest message moves to `evicted`, leaving three current messages.",
-        "The newest message is discarded and the old three remain.",
-        "All messages are copied into `core` and the list is cleared.",
-        "The append raises `MemoryError` before changing the context."
+        "A bigger context window alone",
+        "Shorter answers from the model",
+        "Fewer conversations per user",
+        "External memory with paging, focus, and persistence"
       ],
-      "correct": 0,
-      "explanation": "`append` adds the message and pops index 0 while the list exceeds `max_messages`, recording the removed message in `evicted`."
+      "correct": 3,
+      "explanation": "Windows overflow, dilute, and reset. This lesson builds virtual-context memory: page out, keep the core dense, persist across sessions."
     },
     {
       "stage": "check",
