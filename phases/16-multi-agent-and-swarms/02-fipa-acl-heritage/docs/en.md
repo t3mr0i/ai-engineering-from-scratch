@@ -154,6 +154,10 @@ Reading the table top to bottom, the pattern is: keep the structural primitive, 
 
 
 
+## CBP context: intent on the envelope
+
+In the CBP context agent messages carry intent plus routing metadata — sender, receiver, content, conversation id — the FIPA heritage inside modern MCP and A2A envelopes. Explicit performatives (request versus inform versus confirm) prevent the misreading that free-text handoffs invite. Contracts on the envelope; content inside it.
+
 ## Build It
 
 Reconstruct **Heritage of FIPA-ACL and Speech Acts** by following `ACLMessage` on a 160-sample 16 kHz waveform. Run `python3 main.py` and verify that the duration/frame count is zero or the documented validation path is used; no plausible speech label should be fabricated.
