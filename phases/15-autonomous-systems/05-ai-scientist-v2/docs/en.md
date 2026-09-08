@@ -72,6 +72,10 @@ v2 has the weakest automatic evaluator of the three, the widest output surface, 
 
 
 
+## CBP context: sandbox, budget, and review before loops
+
+In the CBP context programs that propose ideas, run experiments, and revise their own code run sandboxed with spend ceilings and human review of consequential changes — the ordinary software safeguards from this lesson's pre-check, applied before the loop starts rather than after the incident. Self-revision without containment is an unreviewed contributor with root access. Contain first, then marvel.
+
 ## Build It
 
 Reconstruct **AI Scientist v2 — Workshop-Level Autonomous Research** by following `LoopConfig` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
