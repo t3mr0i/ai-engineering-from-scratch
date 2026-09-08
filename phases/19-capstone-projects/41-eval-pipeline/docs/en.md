@@ -154,6 +154,10 @@ The JSON dump uses stable keys so a CI dashboard can plot trend lines across ver
 
 The implementation gives you the four evals, the aggregator, and the report. Real evaluation pipelines layer many more dimensions on top; the pattern stays the same: one function per eval, one aggregator, one report.
 
+## CBP context: task evals over perplexity, always
+
+In the CBP context no steering deck ever shows perplexity: the eval pipeline measures task completion on CBP cases — resolved tickets, faithful answers, passing builds — because a fluent model with low perplexity still fails the invoice test. Keep perplexity where it belongs (a training diagnostic) and gate releases on task metrics with judges in the pipeline. "Perplexity 4.2" answers nothing the business asked.
+
 ## Build It
 
 Reconstruct **Capstone Lesson 41: Full Evaluation Pipeline** by following `InstructionTokenizer` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
