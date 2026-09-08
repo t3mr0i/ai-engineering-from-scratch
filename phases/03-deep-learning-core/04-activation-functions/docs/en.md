@@ -31,6 +31,10 @@ flowchart LR
 
 `gradient_scan` counts derivative values whose absolute magnitude is below `0.01`; that is a diagnostic threshold used by this fixture, not a universal definition of a dead neuron. `dead_neuron_detector` counts units that never fire over its generated sample set.
 
+## CBP context: nonlinearity is what makes depth matter
+
+In the CBP context the activation lesson is one sentence: without nonlinearity, stacked layers collapse into one linear map, so ReLU, GELU, and friends are what make depth meaningful. Know the names to read architecture notes (transformers use GELU variants); know ReLU clips negatives to read sparsity claims. Nothing here changes service code — it changes how you read model cards.
+
 ## Build It
 
 Run `python3 main.py` from `code/`. It prints values at `-2,0,2`, the normalized `softmax([2,1,0])`, a seeded dead-neuron summary, and the first/last MSE for a 30-epoch ReLU circle run. `julia main.jl` provides the parallel standard-library experiment. The network accepts exactly two finite features and binary targets.

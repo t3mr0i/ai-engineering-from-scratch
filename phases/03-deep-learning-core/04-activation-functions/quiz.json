@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the scratch ReLU function return for x=-2?",
+      "question": "Stacked linear layers collapse into a single linear map. What prevents that collapse?",
       "options": [
-        "-2",
-        "0.01",
-        "0",
-        "0.5"
+        "More linear layers",
+        "Bigger weight values",
+        "Faster hardware",
+        "Nonlinear activations between layers"
       ],
-      "correct": 2,
-      "explanation": "ReLU is max(0,x), so a negative input is clipped to zero."
+      "correct": 3,
+      "explanation": "Linearity composes into linearity. This lesson inserts the bends that make depth powerful."
     },
     {
       "stage": "check",
