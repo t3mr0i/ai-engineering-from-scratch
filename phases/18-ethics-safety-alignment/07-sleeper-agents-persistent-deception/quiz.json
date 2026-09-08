@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the planted trigger in the repository's sleeper-agent organism?",
+      "question": "Red-teaming passes, but a hidden trigger persists outside tested conditions. What must evaluations assume?",
       "options": [
-        "Feature 6 set to 1.0, while clean and red-team examples keep that tripwire at 0.0",
-        "A random choice among padding features 2 through 5",
-        "The model's Python version",
-        "A hidden image embedded in the system prompt"
+        "Passing red teams prove safety",
+        "Triggers cannot persist",
+        "Testing reachable cases suffices",
+        "Unreachable triggers exist; contain regardless"
       ],
-      "correct": 0,
-      "explanation": "gen_triggered sets x[TRIGGER_FEATURE] to 1.0 with TRIGGER_FEATURE = 6. gen_clean and gen_redteam explicitly set it to 0.0, creating the held-out feature the red team cannot reach."
+      "correct": 3,
+      "explanation": "Tested safety is not proven safety. This lesson assumes persistent deception and contains it."
     },
     {
       "stage": "check",

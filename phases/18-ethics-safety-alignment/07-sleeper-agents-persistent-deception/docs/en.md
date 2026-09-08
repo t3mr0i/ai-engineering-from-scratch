@@ -64,6 +64,10 @@ Lesson 6 defined the theory. Lesson 7 demonstrates persistence. Lesson 8 (In-Con
 
 
 
+## CBP context: assume triggers you cannot reach
+
+In the CBP context sleeper-agent discipline assumes persistent triggers outside red-team reach: evals probe with held-out conditions, monitoring watches production behavior (not just eval behavior), and high-stakes deployments get motives-agnostic containment. A red team that only tests reachable triggers certifies the reachable. Assume the unreachable exists and contain accordingly.
+
 ## Build It
 
 Reconstruct **Sleeper Agents — Persistent Deception** by following `sigmoid` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
