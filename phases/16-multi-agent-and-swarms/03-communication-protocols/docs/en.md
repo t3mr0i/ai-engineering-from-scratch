@@ -602,6 +602,10 @@ graph TB
 
 
 
+## CBP context: one protocol per layer
+
+In the CBP context the protocol map assigns each layer its tool: MCP for vertical tool access, A2A for horizontal agent collaboration, audit metadata on runs, decentralized identity where agents cross trust boundaries. Mixing layers (tools over A2A, collaboration over MCP) creates impedance the on-call engineer inherits. Right protocol, right layer, documented choice.
+
 ## Build It
 
 Reconstruct **Communication Protocols** by following `createMessage` on the demo’s smallest built-in fixture. Run `npx tsx main.ts` and verify that the result reports the empty case explicitly or raises the documented validation error.
