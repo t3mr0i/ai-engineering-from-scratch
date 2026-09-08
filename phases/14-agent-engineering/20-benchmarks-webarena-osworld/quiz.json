@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does `ShoppingApp.checkout()` return when the cart is empty?",
+      "question": "An assistant claims it can complete multi-step tasks in a web app. How do you check that claim honestly?",
       "options": [
-        "`ord-001` with total 0",
-        "`success: empty cart`",
-        "`error: empty cart`",
-        "`error: unknown sku`"
+        "Ask it to describe the task in words",
+        "Count how fast it answers",
+        "Check whether the task's end state holds in a pinned, reproducible app",
+        "Trust the demo video on its website"
       ],
-      "correct": 2,
-      "explanation": "The checkout guard checks the cart before calculating a total; with no items it returns the explicit `error: empty cart` result."
+      "correct": 3,
+      "explanation": "Task claims need execution-based checks on reproducible targets. This lesson covers the benchmarks that do exactly that."
     },
     {
       "stage": "check",

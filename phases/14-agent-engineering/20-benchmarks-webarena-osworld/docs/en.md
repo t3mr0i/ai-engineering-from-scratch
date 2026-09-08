@@ -76,6 +76,10 @@ Call `ShoppingApp` from a small caller with a graph with edges (0,1) and (1,2). 
 
 Hand off `outputs/skill-web-desktop-harness.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: pin the target, measure task completion
+
+In the CBP context browser and OS agents are judged the way WebArena judges: pinned, reproducible targets with execution-based checks — was the ticket updated, was the record created — never screenshots that "look right." Self-host the target apps for the eval set so results reproduce in the pipeline. A UI agent that passes on a live site nobody controls proves nothing twice; one that completes tasks on pinned CBP fixtures proves the workflow ships.
+
 ## Further Reading
 
 - [Zhou et al., WebArena (arXiv:2307.13854)](https://arxiv.org/abs/2307.13854) — four-app web benchmark
