@@ -81,6 +81,10 @@ External evaluation matters because internal labs have incentives to optimize me
 
 
 
+## CBP context: horizons measured on log time
+
+In the CBP context external-evaluation discipline measures agent task horizons on log-scaled time: success probability fit against task duration reveals how far capabilities reach, not just whether demos pass. Commission or run independent evals on CBP-shaped tasks before trusting vendor horizon claims; self-graded horizons flatter. Log time fits the curve reality lives on.
+
 ## Build It
 
 Reconstruct **METR Time Horizons and External Capability Evaluation** by following `synth_tasks` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

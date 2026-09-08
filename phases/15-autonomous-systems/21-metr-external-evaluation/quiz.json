@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which input transformation does fit use for task duration?",
+      "question": "Vendor demos pass short tasks while real work needs hours-long reliability. What measures true reach?",
       "options": [
-        "The raw duration in seconds",
-        "The square root of duration",
-        "log(t), so the logistic curve is fit over task time on a log scale",
-        "A binary short/long flag"
+        "Demo counts",
+        "Marketing horizon claims",
+        "Self-graded evals",
+        "Independent success-vs-duration curves"
       ],
-      "correct": 2,
-      "explanation": "fit computes sigmoid(w * log(t) + b), matching the synthetic generator's log-duration model."
+      "correct": 3,
+      "explanation": "Reach needs measured curves. This lesson fits success against log-scaled task time."
     },
     {
       "stage": "check",
