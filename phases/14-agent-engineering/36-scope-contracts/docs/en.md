@@ -105,6 +105,10 @@ Call `ScopeContract` from a small caller with the demo’s smallest built-in fix
 
 Hand off `outputs/skill-scope-contract.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: the contract is the review boundary
+
+In the CBP context the scope contract is what the reviewer approves: allowed paths, forbidden zones (release scripts, infrastructure, other tenants' code), and the acceptance commands that must pass. The agent's final diff is checked against the promise on disk, not against its narration — narration creeps, contracts do not. Merge project-wide defaults with per-task additions by intersection, review the contract in the same pull request as the task, and fail the run when the diff leaves the boundary, however plausible each step felt.
+
 ## Further Reading
 
 - [LangGraph human-in-the-loop interrupts](https://langchain-ai.github.io/langgraph/concepts/human_in_the_loop/)

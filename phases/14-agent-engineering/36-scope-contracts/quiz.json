@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which files remain allowed after merging the project and task contracts in the demo?",
+      "question": "An agent asked to fix a login bug also rewrites the email helper, the database driver, and the release script. What prevents that?",
       "options": [
-        "Every project-wide path plus every task-specific path.",
-        "Only documentation paths, because code files are always hard-blocked.",
-        "The intersection: `app.py` and `test_app.py`.",
-        "Only `scripts/release.sh`, because the project contract owns releases."
+        "Asking the agent to be more careful",
+        "A longer chat history with more context",
+        "Trusting the agent's narration of each step",
+        "A written scope contract checked against the final diff"
       ],
-      "correct": 2,
-      "explanation": "`merge_contracts` intersects the two `allowed_files` sets. Both contracts permit `app.py` and `test_app.py`, so those are the effective allowed paths."
+      "correct": 3,
+      "explanation": "Good-faith narration still creeps. This lesson puts the promise on disk and checks the diff against it."
     },
     {
       "stage": "check",
