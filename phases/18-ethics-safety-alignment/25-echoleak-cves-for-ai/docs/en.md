@@ -70,6 +70,10 @@ Lesson 15 is the attack class in the abstract. Lesson 25 is the concrete CVE lay
 
 
 
+## CBP context: chains cross boundaries, review them whole
+
+In the CBP context EchoLeak-style chains (retrieval to private scope to signed-domain output) are reviewed whole, not per link: each boundary crossing — untrusted content in, private data touched, trusted-domain URL out — needs its own control, and the composition needs one more. CVE discipline applies to AI integrations exactly as to libraries: track, patch, verify. Links reviewed separately miss the chain that matters.
+
 ## Build It
 
 Reconstruct **EchoLeak and the Emergence of CVEs for AI** by following `State` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

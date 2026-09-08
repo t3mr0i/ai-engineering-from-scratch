@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What sequence does naive_copilot follow for the EchoLeak fixture?",
+      "question": "An email's hidden instruction reaches private data and exfiltrates via a trusted-domain image. Where did review fail?",
       "options": [
-        "It retrieves an untrusted email, reads the private MFA inbox, and puts the code in a signed-domain image URL",
-        "It trains a new model on the email and deletes the inbox",
-        "It blocks retrieval before the model sees any email",
-        "It sends the user's prompt to an unrelated public search engine"
+        "Nowhere; chains cannot be reviewed",
+        "Only at the email server",
+        "Only at the image renderer",
+        "At every boundary the chain crossed"
       ],
-      "correct": 0,
-      "explanation": "The hidden instruction in ATTACKER_EMAIL triggers a lookup in INBOX_PRIVATE, then naive_copilot builds a render_image URL under signed.microsoft.com and places it in rendered_output. The chain crosses retrieval, scope, and output boundaries."
+      "correct": 3,
+      "explanation": "Chains fail at crossings. This lesson reviews retrieval, scope, and output boundaries together."
     },
     {
       "stage": "check",
