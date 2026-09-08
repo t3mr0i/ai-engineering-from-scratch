@@ -107,6 +107,10 @@ Call `Request` from a small caller with tokens=["red","fox"]. Compare its result
 
 Hand off `outputs/skill-vllm-scheduler-reader.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: know the scheduler to read the symptoms
+
+In the CBP context LCAG runs the serving stack, but the failure modes surface in your service: padding waste shows as cost without throughput, a frozen decode stream points at an unchunked long prefill ahead of you, and queue growth under load is the scheduler telling you the batch is full of real work. Understand PagedAttention, continuous batching, and chunked prefill well enough to distinguish "the model is slow" from "the scheduler is saturated" — the first pages nobody, the second pages capacity.
+
 ## Further Reading
 
 - [vLLM documentation — Speculative Decoding](https://docs.vllm.ai/en/latest/features/spec_decode/) — official source on chunked-prefill and speculative-decoding compatibility.

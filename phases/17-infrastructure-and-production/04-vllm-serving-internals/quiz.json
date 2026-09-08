@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Request.blocks_needed() uses which block size in the toy scheduler?",
+      "question": "One hundred users queue behind a server that handles one request at a time with padding for the longest prompt. What are the fixes?",
       "options": [
-        "16 tokens per KV block",
-        "32 tokens per KV block",
-        "256 tokens per KV block",
-        "512 tokens per KV block"
+        "A longer queue and more patience",
+        "Bigger padding for every request",
+        "One user at a time, strictly",
+        "Pack memory in pages, batch continuously, and slice long prefills"
       ],
-      "correct": 0,
-      "explanation": "KV_BLOCK_SIZE is 16, and blocks_needed computes ceil((prompt_len + output_len) / 16)."
+      "correct": 3,
+      "explanation": "Static batching wastes memory and stalls fast requests. This lesson builds the three serving fixes: paging, continuous batching, chunked prefill."
     },
     {
       "stage": "check",
