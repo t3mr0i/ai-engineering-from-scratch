@@ -31,6 +31,10 @@ flowchart LR
 
 Inflating a 2D kernel `(out,in,H,W)` to `(out,in,K_t,H,W)` repeats the spatial kernel over time and divides by `K_t`. Summing the temporal slices therefore recovers the original kernel. `conv2plus1d_parameter_count` reports the two-factor parameter formula for a spatial convolution followed by a temporal one; it does not instantiate a framework layer.
 
+## CBP context: sample deliberately, cite timestamps
+
+In the CBP context video pipelines sample deliberately — uniform coverage for overviews, dense clips for action — and every answer cites frame timestamps a reviewer can open (lesson 19/12). Short sequences repeat their last frame rather than breaking length contracts; sampling policy is documented per feature. The temporal geometry here is the evidence discipline there.
+
 ## Build It
 
 Run from `code/`:
