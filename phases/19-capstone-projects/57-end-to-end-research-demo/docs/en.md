@@ -105,6 +105,10 @@ Three extensions worth wiring once the demo is green. First, persistent state: e
 
 The demo's job is to prove that composition is the architecture. Five lessons, four imports, one report. The next time you add a stage, the wiring grows by exactly one line.
 
+## CBP context: compose with imports, not frameworks
+
+In the CBP context the end-to-end research demo is the composition proof: hypotheses, retrieval, experiments, evaluation, and writing wired through plain imports with no framework — the same lesson as 14/50. Adopt a framework only when its seams beat these measured joints. The demo that future CBP teams copy is the composed one, because every seam stays readable when it breaks at 3 AM.
+
 ## Build It
 
 Reconstruct **End-to-End Research Demo** by following `NoTriggerError` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
