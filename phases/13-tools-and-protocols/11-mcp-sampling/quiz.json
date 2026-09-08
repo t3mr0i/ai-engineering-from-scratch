@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How many sampling requests does summarize_repo_tool make?",
+      "question": "A shared helper needs model reasoning in the middle of its workflow, but giving every copy of the helper its own model key is expensive and hard to audit. What is the cleaner shape?",
       "options": [
-        "Exactly two: one to pick files and one to summarize them",
-        "Exactly three, one per selected file",
-        "Exactly one, because the repository is already indexed",
-        "Five, because SamplingBudget starts at five"
+        "Each copy keeps its own key hidden in its config",
+        "Remove all reasoning from the helper",
+        "Let users paste their own keys into the helper",
+        "The helper asks the caller's model and keeps only the workflow logic itself"
       ],
-      "correct": 0,
-      "explanation": "The tool first asks the model to pick files, then asks it to summarize the combined content, for two samples total."
+      "correct": 3,
+      "explanation": "Reasoning can be borrowed from the caller while the workflow stays on the helper. This lesson builds sampling: the server-side request for a client-side completion."
     },
     {
       "stage": "check",

@@ -136,6 +136,10 @@ Call `dispatch` from a small caller with the text "red fox". Compare its result 
 
 Hand off `outputs/skill-sampling-loop-designer.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: the model stays on the client side
+
+In the CBP context sampling is the reason an MCP server never holds a model key: the server sends `sampling/createMessage` and the Java client answers from its own Azure OpenAI deployment with the tenant's budget and audit attached. Keep the split strict — algorithm on the server, billing and model choice on the client — and cap sampling passes per call so a chatty server cannot burn the tenant's budget. Secrets stay in Key Vault on the client side; the server authenticates to nothing but the gateway.
+
 ## Further Reading
 
 - [MCP — Concepts: Sampling](https://modelcontextprotocol.io/docs/concepts/sampling) — high-level overview of sampling
