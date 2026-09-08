@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What error code does serve emit for a malformed JSON line such as {not json?",
+      "question": "Two processes must exchange requests and errors over pipes. What is the minimal robust shape?",
       "options": [
-        "-32700 parse error",
-        "-32600 invalid request",
-        "-32601 method not found",
-        "-32603 internal error"
+        "Free-form text with no structure",
+        "Binary blobs with secret encodings",
+        "One process shouting, the other guessing",
+        "One JSON object per line with standard error envelopes"
       ],
-      "correct": 0,
-      "explanation": "json.loads raises JSONDecodeError, and serve writes an error envelope with ERR_PARSE=-32700 and a parse-error message."
+      "correct": 3,
+      "explanation": "Pipes need framing and typed errors. This lesson builds JSON-RPC over stdio: ids, methods, standard codes."
     },
     {
       "stage": "check",

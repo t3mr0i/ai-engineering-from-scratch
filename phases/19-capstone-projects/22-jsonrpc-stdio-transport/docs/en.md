@@ -97,6 +97,10 @@ The lesson implements one outbound notification helper, `write_notification`. Th
 
 `code/tests/test_transport.py` covers the five error codes, notifications (no response written), batches (array in, array out, notifications skipped), broken JSON (parse error then continue), and the asymmetric flow where a handler writes a notification mid-call.
 
+## CBP context: stdio locally, errors by the book
+
+In the CBP context newline-delimited JSON-RPC over stdio is the local-development transport: spawn the server beside the client, one object per line, standard error codes (-32700 parse, -32600 invalid, -32601 unknown method, -32603 internal). Production traffic rides Streamable HTTP behind the gateway (lesson 13/09); the stdio contract matters because the same envelopes flow there. Malformed input gets an error envelope, never silence and never a crash.
+
 ## Going further
 
 This transport is enough for the lessons that follow. Production transports add three things. A correlation id field that survives forwarding (your `id` is already this, but in a mesh you need an outer trace id too). A cancellation channel (a notification like `$/cancelRequest` with the id of the in-flight call). And a content-type negotiation handshake so the same socket can speak JSON-RPC and Streamable HTTP. None of those change the wire. They add metadata.
