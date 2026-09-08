@@ -85,6 +85,10 @@ MoBA (Moonshot, arXiv:2502.13189) was concurrently published and takes a similar
 
 
 
+## CBP context: compress, select, keep recent
+
+In the CBP context native sparse attention is the cost story for very long CBP contexts: compress distant stretches, inspect promising ones closely, always keep recent tokens in view. Deployments using it price long documents below dense-attention equivalents — verify the savings hold on CBP long-doc evals before committing length-sensitive features to them.
+
 ## Build It
 
 Reconstruct **Native Sparse Attention (DeepSeek NSA)** by following `dot` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
