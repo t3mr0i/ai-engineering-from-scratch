@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which fields does one JSONL Example carry in this harness?",
+      "question": "Eval cases live as bare prompts with grading reinvented per run. What record shape fixes that?",
       "options": [
-        "id, prompt, targets, metric, plus optional extras for metric-specific data such as io_pairs.",
-        "task_name, model_weights, and one scalar score produced before generation.",
-        "Only a prompt and one target string; metrics are selected by the filename.",
-        "id, prompt, and a precomputed latency; the adapter never sees targets."
+        "Prompts alone are sufficient",
+        "Grades decided fresh each time by feel",
+        "One global score for the whole suite",
+        "Id, prompt, targets, and metric carried per case"
       ],
-      "correct": 0,
-      "explanation": "load_task_jsonl builds Example from those fields. targets support multiple references, while extras carries side inputs needed by code_exec."
+      "correct": 3,
+      "explanation": "Gradable evals need complete records. This lesson builds the harness: each case carries its own grading."
     },
     {
       "stage": "check",

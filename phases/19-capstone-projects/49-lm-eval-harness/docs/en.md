@@ -149,6 +149,10 @@ flowchart LR
 
 
 
+## CBP context: every case carries its own grading
+
+In the CBP context each eval case in the repo carries its id, prompt, targets, and metric — the harness shape that lets CBP evals run in the pipeline without human grading per case. Metric-specific extras ride along the same record so judges, exact-match, and execution checks share one runner. A case without a metric is a demo, not an eval; a metric without a case is an opinion.
+
 ## Build It
 
 Reconstruct **Language Model Evaluation Harness** by following `Example` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
