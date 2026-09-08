@@ -84,6 +84,10 @@ Call `SpecPoint` from a small caller with the text "red fox". Compare its result
 
 Hand off `outputs/skill-eagle3-rollout.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: measure alpha on your traffic before enabling
+
+In the CBP context speculative decoding is a platform flag LCAG may offer, not code you write — but enabling it blindly can worsen tail latency instead of improving it. The decision rule from this lesson transfers directly: measure the acceptance rate on your real CBP traffic first, enable only where alpha earns it, and keep measuring after every model change. A draft distribution that diverges from your workload's target is deceleration with extra steps.
+
 ## Further Reading
 
 - [vLLM — Speculative Decoding docs](https://docs.vllm.ai/en/latest/features/spec_decode/) — authoritative source on `speculative_config` and chunked-prefill compatibility in V1.

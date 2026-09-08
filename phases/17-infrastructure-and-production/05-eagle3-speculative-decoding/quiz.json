@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In SpecPoint, what does alpha measure?",
+      "question": "Decode is slow because each token reads the full weights from memory while compute idles. What is the structural fix?",
       "options": [
-        "Accepted draft-token fraction",
-        "The number of target-model layers",
-        "The GPU memory capacity in GB",
-        "The probability of a provider timeout"
+        "Bigger weights in slower memory",
+        "Fewer tokens per answer by truncation",
+        "A second full model run per token",
+        "Draft cheap candidates, verify many in one target pass"
       ],
-      "correct": 0,
-      "explanation": "alpha is documented as the acceptance rate; expected tokens per target forward are 1 + k*alpha."
+      "correct": 3,
+      "explanation": "Decode is memory-bound, not compute-bound. This lesson exploits the gap: cheap drafts plus batched verification."
     },
     {
       "stage": "check",
