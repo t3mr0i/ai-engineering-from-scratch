@@ -16,6 +16,10 @@
 - Use condition numbers and residuals to judge whether a numerical answer is trustworthy.
 - Recognize the symmetric positive-definite contract required by conjugate gradient.
 
+## CBP context: read for regression intuition
+
+In the CBP context linear systems matter once, as the engine inside linear regression (phase 02): fitting weights solves Ax=b in the least-squares sense. Read for that single connection — predictions as solved systems — and run the demo if elimination feels abstract. No service solves linear systems directly; libraries own that. Intuition in, implementation out.
+
 ## Build It
 
 The implementation in `code/linear_systems.py` is a NumPy-backed collection of small solvers. The canonical command is:
