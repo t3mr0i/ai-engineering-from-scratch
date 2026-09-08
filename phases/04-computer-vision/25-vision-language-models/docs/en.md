@@ -15,6 +15,10 @@
 - Concatenate same-grid intermediate features as a DeepStack-style seam.
 - Gate high-confidence, low-similarity image/text pairs with a reproducible CMER fixture.
 
+## CBP context: the bridge behind multimodal assistants
+
+In the CBP context the ViT-MLP-LLM bridge is the architecture inside every multimodal assistant the team consumes: visual tokens projected into language space, batch and patch axes preserved, answers grounded in both. When a vision answer drifts from its image, the bridge (projection quality, token budget, ordering) is on the suspect list beside the prompt. Know the three letters; operate the assistant.
+
 ## Build It
 
 `project_visual_tokens` creates a deterministic seeded linear bridge. For `(N,P,32)` tokens and

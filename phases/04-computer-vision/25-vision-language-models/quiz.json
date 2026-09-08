@@ -4,10 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What shape does project_visual_tokens produce from tokens shaped (N, P, 32) with output_dim=64?",
-      "options": ["(N, 32, P)", "(N, P, 64)", "(64, N, P)", "(N, P, 32, 64)"],
-      "correct": 1,
-      "explanation": "The seeded affine bridge changes only the last feature width; batch and patch axes remain N and P."
+      "question": "An assistant must answer questions about images in words. What connects the visual and language sides?",
+      "options": [
+        "Separate models that never interact",
+        "Images converted to file names",
+        "Text converted to pixels",
+        "A projection bridging visual tokens into language space"
+      ],
+      "correct": 3,
+      "explanation": "Modalities need a learned bridge. This lesson projects vision into language for joint reasoning."
     },
     {
       "stage": "check",
