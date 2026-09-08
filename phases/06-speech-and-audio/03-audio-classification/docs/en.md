@@ -59,6 +59,10 @@ ESC-50: 50 classes, 40 clips each — balanced, easy. UrbanSound8K: 10 classes, 
 
 
 
+## CBP context: summarize clips, evaluate on CBP audio
+
+In the CBP context audio classification triages clips — speech versus noise versus alarm — with mean-plus-variance summaries over frame features and evals on CBP recordings (real rooms, real devices, real noise). Lab-clean accuracy transfers poorly to field audio; collect the ugly samples deliberately. A classifier proven on studio clips meets the factory floor unprepared.
+
 ## Build It
 
 Reconstruct **Audio Classification — From k-NN on MFCCs to AST and BEATs** by following `dataset` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

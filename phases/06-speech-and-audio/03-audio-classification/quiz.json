@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the feature length returned by summarize for 13 MFCC coefficients per frame?",
+      "question": "A sound classifier trained on clean clips fails on factory-floor audio. What was missing from evaluation?",
       "options": [
-        "26",
-        "13",
-        "40",
-        "52"
+        "Bigger clean datasets",
+        "Faster inference hardware",
+        "Trust in lab accuracy",
+        "Field recordings with real noise and devices"
       ],
-      "correct": 0,
-      "explanation": "summarize concatenates a 13-value mean with a 13-value variance vector."
+      "correct": 3,
+      "explanation": "Clean evals hide field reality. This lesson classifies audio with field-grade discipline."
     },
     {
       "stage": "check",
