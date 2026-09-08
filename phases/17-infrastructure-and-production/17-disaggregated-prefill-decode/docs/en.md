@@ -119,6 +119,10 @@ Call `PREFILL_TOK_PER_MS` from a small caller with the text "red fox". Compare i
 
 Hand off `outputs/skill-disaggregation-decider.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: read the pool split in your latency
+
+In the CBP context disaggregation is platform architecture you read, not code you write: prefill and decode pools sized to their different bottlenecks, KV cache shipped between them on fast interconnect. What reaches your service is lower, more predictable latency per workload shape — verify it per feature (long-prompt RAG versus long-output drafting behave differently) rather than assuming one pool fits all. When TTFT and TPOT diverge oddly under mixed load, the pool balance is the first suspect, not the model.
+
 ## Further Reading
 
 - [NVIDIA — Introducing Dynamo](https://developer.nvidia.com/blog/introducing-nvidia-dynamo-a-low-latency-distributed-inference-framework-for-scaling-reasoning-ai-models/)

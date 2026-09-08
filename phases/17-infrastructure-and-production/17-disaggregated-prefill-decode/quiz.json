@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which expression supplies prefill time in ms_colocated and ms_disaggregated?",
+      "question": "GPUs idle during decode after spending everything on prefill, wasting a fifth of GPU time on the wrong resource. What fixes that?",
       "options": [
-        "output × DECODE_TOK_PER_MS_DECODE_GPU",
-        "KV_BYTES_PER_TOKEN_70B_FP8 / prompt",
-        "prompt / PREFILL_TOK_PER_MS",
-        "prompt × NIXL_TCP_GB_S"
+        "Bigger GPUs for both phases",
+        "No batching at all",
+        "Shorter prompts by truncation",
+        "Split prefill and decode onto pools sized per bottleneck"
       ],
-      "correct": 2,
-      "explanation": "Both functions compute prefill_ms as prompt / PREFILL_TOK_PER_MS, using the 40 tokens/ms constant."
+      "correct": 3,
+      "explanation": "Colocated phases over-provision both. This lesson disaggregates: compute pool for prefill, bandwidth pool for decode."
     },
     {
       "stage": "check",
