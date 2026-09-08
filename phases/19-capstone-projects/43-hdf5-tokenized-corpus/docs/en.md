@@ -59,6 +59,10 @@ The dataloader is the only stage that knows about training-sequence length. It p
 
 
 
+## CBP context: chunked stores for large eval corpora
+
+In the CBP context tokenized corpora and large eval sets live in chunked, resizable stores — not in JSONL text — so pipelines append, slice, and stream without rewriting the world. Version the store with the code that reads it; an eval corpus that silently changes shape invalidates every comparison against last month. JSONL is for interchange, chunked binary is for work.
+
 ## Build It
 
 Reconstruct **HDF5 Tokenized Corpus** by following `ShardWriteResult` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
