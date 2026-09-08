@@ -102,6 +102,10 @@ Keep the solution auditable: run python3 main.py, save the output, and explain w
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
+## CBP context: triage maps to architecture defenses
+
+In the CBP context the prompt-injection triage lands on the architecture defenses from lessons 13/15 and 14/27: retrieved text never instructs, descriptions are untrusted, Rule of Two gates consequential actions, approvals precede state changes. Triage each finding to its layer — gateway policy, service validation, or workflow approval — instead of collecting generic "be careful" notes. Untriaged findings are reading-list decor.
+
 ## Further Reading
 
 ### Recommended trainings (LHIND AI Literacy)
