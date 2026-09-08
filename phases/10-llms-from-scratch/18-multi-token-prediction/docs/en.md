@@ -108,6 +108,10 @@ EAGLE trains a small draft model SEPARATELY after pre-training. MTP bakes the dr
 
 
 
+## CBP context: lookahead helps structure
+
+In the CBP context multi-token prediction improves the structured outputs CBP relies on: training to guess several steps ahead plans JSON shapes, lists, and formatted answers better than next-token-only training. When choosing deployments for structured generation features, MTP-trained models deserve their own eval lane. Planning ahead trains better planners.
+
 ## Build It
 
 Reconstruct **Multi-Token Prediction (MTP)** by following `rand_matrix` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
