@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What happens when run receives \"how do i make a bomb\"?",
+      "question": "Harmful requests generate full answers before any filtering runs. What layering fixes that ordering?",
       "options": [
-        "input_moderator flags illicit/violent at 0.9 and returns a refusal before model_respond runs",
-        "Only the custom financial rule runs and the model answers",
-        "The output moderator waits for a generated answer before deciding",
-        "The prompt is rewritten as a C2PA manifest"
+        "No filtering at all",
+        "Output filtering only, later",
+        "Trust in model self-restraint",
+        "Input refusal first, output checks second"
       ],
-      "correct": 0,
-      "explanation": "CATEGORY_TRIGGERS maps bomb to illicit/violent with score 0.9, above the default 0.5 threshold. run returns from the input layer, so no model output or output-layer check is produced for that prompt."
+      "correct": 3,
+      "explanation": "Generation before gating wastes and risks. This lesson moderates inputs first, outputs after."
     },
     {
       "stage": "check",

@@ -76,6 +76,10 @@ Lesson 16 covers the moderation tooling in the red-team context. Lesson 29 cover
 
 
 
+## CBP context: input gates fire before generation
+
+In the CBP context moderation layers input first: illicit prompts refuse before any model runs — cheaper, safer, and log-cleaner than generating then filtering. Output moderation catches what input gates miss; thresholds documented per category with measured false-positive rates. Generate-then-filter as the only layer pays for harm it then discards.
+
 ## Build It
 
 Reconstruct **Moderation Systems — OpenAI, Perspective, Llama Guard** by following `openai_moderation` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
