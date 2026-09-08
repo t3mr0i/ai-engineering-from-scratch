@@ -64,6 +64,10 @@ In 2026 the PPO step is mostly replaced by DPO (Phase 10 · 08) because it is ch
 
 
 
+## CBP context: preferences become the reward signal
+
+In the CBP context reward modeling turns pairwise CBP judgments (which answer better serves the ticket?) into the training signal behind preference-tuned assistants (lessons 10/07, 19/40): good-versus-bad vocabularies learned from comparisons, not from absolute scores. Collect preferences on CBP outputs with the same care as evals — rater disagreement is signal about the task, not noise to average away blindly.
+
 ## Build It
 
 Reconstruct **Reward Modeling & RLHF** by following `bag` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

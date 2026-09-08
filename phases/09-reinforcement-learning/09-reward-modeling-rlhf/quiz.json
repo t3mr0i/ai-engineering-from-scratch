@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How many distinct tokens are in VOCAB for this reward-model demo?",
+      "question": "No absolute quality score exists, but reviewers can compare pairs of answers. What training signal does that yield?",
       "options": [
-        "12: six GOOD tokens plus six BAD tokens",
-        "3: one token for each prompt",
-        "6: only the GOOD vocabulary is retained",
-        "24: every token appears once for each pair position"
+        "Nothing usable for training",
+        "Random scores per answer",
+        "A single fixed threshold",
+        "Preference rankings converted to rewards"
       ],
-      "correct": 0,
-      "explanation": "GOOD and BAD are disjoint six-token tuples, and VOCAB is the sorted set of their concatenation, giving 12 entries."
+      "correct": 3,
+      "explanation": "Comparisons train where scores cannot. This lesson models rewards from pairwise preferences."
     },
     {
       "stage": "check",
