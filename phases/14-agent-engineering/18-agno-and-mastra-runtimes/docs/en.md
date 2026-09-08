@@ -77,6 +77,10 @@ Call `AgnoAgent` from a small caller with the demo’s smallest built-in fixture
 
 Hand off `outputs/skill-runtime-picker.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: stateless agents, state in the platform
+
+In the CBP context the production shape is stateless agents over platform state: each request starts fresh, session memory lives in the tenant-scoped store, and the Java service stays the runtime rather than a Python sidecar. Keep per-user conversations isolated by construction — session id on every read and write — and measure the runtime's overhead per request the way the lesson measures instantiation cost. Speed never excuses mixed sessions; a fast agent that answers user A with user B's history is a breach at velocity.
+
 ## Further Reading
 
 - [Agno Agent Framework docs](https://www.agno.com/agent-framework) — performance targets, FastAPI integration
