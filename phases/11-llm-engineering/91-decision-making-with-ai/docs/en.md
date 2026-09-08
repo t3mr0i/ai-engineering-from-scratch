@@ -147,6 +147,10 @@ Call `DecisionType` from a small caller with the demo’s smallest built-in fixt
 
 Hand off `outputs/skill-decision-quality-checklist.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: four gates, no compensation
+
+In the CBP context model-supported decisions clear a conjunctive gateway — calibration, uncertainty quantification, subgroup parity, named accountability — where no gate compensates for another: 91% aggregate accuracy with a 71% subgroup is a blocked decision, not a passing one. Audit trails link outputs to approvals so complaint patterns surface in weeks, not quarters. Aggregate dashboards hide exactly what the gateway must catch.
+
 ## Further Reading
 
 - [NIST AI Risk Management Framework (AI RMF 1.0)](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf) — the US federal framework for govern, map, measure, manage; the basis for most enterprise AI governance programs.

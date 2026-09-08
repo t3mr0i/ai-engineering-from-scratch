@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What must score_decision verify before a model output can clear the decision gateway?",
+      "question": "A model shows 91% accuracy overall but only 71% on one customer subgroup, and outputs auto-approve. What is missing?",
       "options": [
-        "Only the point estimate, because a confident model is already calibrated",
-        "A named approver and a passing aggregate score, with no per-metric limits",
-        "Calibration, uncertainty, subgroup parity, and accountability gates that all pass",
-        "A human approval only for irreversible decisions"
+        "A bigger test set with the same mix",
+        "More confidence in the aggregate number",
+        "Faster auto-approvals for efficiency",
+        "Subgroup parity and accountability gates before clearing"
       ],
-      "correct": 2,
-      "explanation": "The gateway is a conjunction of four gates. A good point estimate or a named approver cannot compensate for a failed ECE, prediction-set, or subgroup-parity check."
+      "correct": 3,
+      "explanation": "Aggregate accuracy hides subgroup harm. This lesson gates decisions on calibration, uncertainty, parity, and accountability."
     },
     {
       "stage": "check",
