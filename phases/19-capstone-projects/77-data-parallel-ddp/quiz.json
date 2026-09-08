@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What parameter synchronization happens when the lesson's DistributedDataParallel wrapper is constructed?",
+      "question": "Replicas start from different random weights and only sync gradients later. What goes wrong first?",
       "options": [
-        "Rank 0 broadcasts its parameters to every other rank",
-        "Each rank keeps its random initialization and only syncs after step 1",
-        "Only gradients are broadcast; parameters are never synchronized",
-        "The wrapper averages parameters independently on each rank"
+        "Nothing; different starts converge anyway",
+        "Training runs faster with diversity",
+        "Gradients become more accurate",
+        "Averaging gradients of different models is meaningless"
       ],
-      "correct": 0,
-      "explanation": "The constructor broadcasts every parameter from rank 0, giving all replicas the same starting model before local microbatches are processed."
+      "correct": 3,
+      "explanation": "Sync must start at construction. This lesson broadcasts first, then averages gradients every step."
     },
     {
       "stage": "check",

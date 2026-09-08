@@ -62,6 +62,10 @@ Every rank must call `torch.manual_seed(seed + rank)` for shuffling but `torch.m
 
 
 
+## CBP context: sync construction, sync gradients
+
+In the CBP context the DDP rule is the same invariant as lesson 19/48 with the construction made explicit: broadcast parameters at wrapper construction so all replicas start identical, then average gradients after every backward pass. Any training job — provider-run or otherwise — that skips either half diverges by construction, not by bad luck. Ask for the sync evidence before debugging data or schedules.
+
 ## Build It
 
 Reconstruct **Data Parallel DDP From Scratch** by following `MiniMLP` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
