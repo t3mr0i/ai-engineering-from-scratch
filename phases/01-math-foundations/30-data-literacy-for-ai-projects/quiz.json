@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which structured observation derives the stale data signal?",
+      "question": "A project picks a model first and discovers stale, ownerless, sensitive data only in production. What order prevents that?",
       "options": [
-        "freshness_days=45",
-        "source_owner='analytics'",
-        "quality_rate=0.99",
-        "sensitive_fields=()"
+        "Model first, data later as usual",
+        "Bigger models need less data care",
+        "Skip readiness when deadlines press",
+        "Readiness evidence before model choice"
       ],
-      "correct": 0,
-      "explanation": "The local contract treats a refresh age greater than 30 days as stale data. A named owner, a quality rate above the floor, and an empty sensitive-field list do not trigger that finding."
+      "correct": 3,
+      "explanation": "Data paperwork precedes model paperwork. This lesson makes ownership, freshness, and privacy visible first."
     },
     {
       "stage": "check",

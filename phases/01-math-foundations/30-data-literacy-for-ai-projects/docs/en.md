@@ -15,6 +15,10 @@
 - Map each finding to its own category, control set, and evidence request.
 - Produce a sorted triage handoff without presenting it as a data-quality certificate.
 
+## CBP context: readiness visible before model choice
+
+In the CBP context data readiness — ownership, freshness, quality, privacy, evaluation evidence — is made visible before any model is chosen, the same gate as lesson 11/92. Stale refresh ages, missing owners, and unlisted sensitive fields block the project the way a failed test blocks a merge. Literacy here means reading the data's paperwork, not its rows.
+
 ## Build It
 
 Run the offline standard-library worksheet:
