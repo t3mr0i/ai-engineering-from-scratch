@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the shape and encoding of features((2, 1)) in the 4x4 policy-gradient demo?",
+      "question": "Policy updates swing wildly between episodes with identical settings. What causes that variance?",
       "options": [
-        "A four-element vector with the action logits",
-        "A scalar equal to 2*1",
-        "A length-16 one-hot state vector with its 1 at index 9",
-        "A length-100 vector for the rollout horizon"
+        "Too much training data",
+        "Overly precise rewards",
+        "Deterministic environments",
+        "Whole-episode returns varying per rollout"
       ],
-      "correct": 2,
-      "explanation": "features uses r*GRID+c as the active coordinate in a GRID*GRID vector, so (2,1) activates index 9 of 16."
+      "correct": 3,
+      "explanation": "Direct gradients inherit episode noise. This lesson optimizes policies with variance in view."
     },
     {
       "stage": "check",

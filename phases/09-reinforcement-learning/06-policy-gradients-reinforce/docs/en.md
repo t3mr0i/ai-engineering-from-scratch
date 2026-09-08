@@ -62,6 +62,10 @@ i.e., score of the taken action minus its expected value under the policy.
 
 
 
+## CBP context: variance is the price of directness
+
+In the CBP context REINFORCE teaches why raw policy gradients need help: episode returns vary wildly, so updates swing — baselines and critics exist to tame exactly this variance. When a training report mentions high-variance updates, this lesson names the cause and the standard cures. Direct optimization is simple; stable optimization is engineered.
+
 ## Build It
 
 Reconstruct **Policy Gradient — REINFORCE from Scratch** by following `reset` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
