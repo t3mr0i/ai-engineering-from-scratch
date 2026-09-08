@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does synthetic_cifar(4, 3, 8, seed=0) create?",
+      "question": "A damage classifier trained on clean lab photos meets dirty field captures. What breaks first?",
       "options": [
-        "Four downloaded CIFAR batches with 10,000 classes",
-        "A single CHW image and a scalar loss",
-        "12 local NHWC images of shape (8,8,3) and integer labels for three classes",
-        "12 grayscale images with shape (3,8,8) and floating labels"
+        "The label vocabulary",
+        "The training framework",
+        "Nothing; lab equals field",
+        "Generalization to real lighting and dirt"
       ],
-      "correct": 2,
-      "explanation": "The helper creates num_per_class*num_classes local color/texture fixtures in NHWC [0,1] format; its name does not imply a dataset download."
+      "correct": 3,
+      "explanation": "Lab fixtures teach loops, not robustness. This lesson classifies whole images with eval discipline."
     },
     {
       "stage": "check",

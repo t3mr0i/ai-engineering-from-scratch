@@ -32,6 +32,10 @@ flowchart LR
     E --> F["stable CE / report"]
 ```
 
+## CBP context: whole-image labels with eval discipline
+
+In the CBP context image classification covers triage-grade tasks — damage present or not, document type, defect class — with the standard eval discipline: held-out CBP images, confusion counts, no accuracy-only reporting on skewed classes. Synthetic fixtures teach the loop; production proves it on real captures with real lighting and real dirt. A classifier evaluated on clean lab images meets the field unprepared.
+
 ## Build It
 
 Run:
