@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What kind of mention does extract_mentions create for the token \"He\"?",
+      "question": "A user says \"it still fails\" after discussing three systems. What must happen before any tool call?",
       "options": [
-        "A nominal mention with head company",
-        "An organization mention with plural features",
-        "A pronoun mention with masculine singular features",
-        "No mention because pronouns are ignored"
+        "Act on all three systems",
+        "Pick one system at random",
+        "Ignore the pronoun entirely",
+        "Resolve which system \"it\" means, ask if ambiguous"
       ],
-      "correct": 2,
-      "explanation": "PRONOUNS maps he to gender m, number sg, and type prp."
+      "correct": 3,
+      "explanation": "Pronouns need antecedents. This lesson resolves mentions before actions consume them."
     },
     {
       "stage": "check",

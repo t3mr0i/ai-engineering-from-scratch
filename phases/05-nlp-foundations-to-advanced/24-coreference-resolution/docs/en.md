@@ -60,6 +60,10 @@ Why it matters in 2026:
 
 
 
+## CBP context: resolve "it" before acting on it
+
+In the CBP context support conversations run on pronouns — "it still fails", "that report", "they approved" — and acting on the wrong antecedent acts on the wrong ticket. Resolve mentions with gender/number/type agreement before tool calls consume them; ask back when agreement leaves ambiguity. A pronoun resolved wrong is a correct action on the wrong object.
+
 ## Build It
 
 Reconstruct **Coreference Resolution** by following `extract_mentions` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
