@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does tools_call return when generate_report includes _meta.task.required?",
+      "question": "A lookup takes three minutes, so the client holds its connection open until the gateway times out. What is the better shape?",
       "options": [
-        "An immediate three-second report only",
-        "A transport error because tasks are unsupported",
-        "task id + working + ttl=900000",
-        "A completed result with no task metadata"
+        "Hold the connection open even longer",
+        "Return a placeholder and never deliver the result",
+        "Fire and forget with no result at all",
+        "Return a task id immediately and let the client poll for the result"
       ],
-      "correct": 2,
-      "explanation": "The task-aware branch starts a daemon worker and immediately returns _meta.task with the task id, working state, and ttl."
+      "correct": 3,
+      "explanation": "Long work outlives connections. This lesson builds task augmentation: acknowledge now, fetch the result later."
     },
     {
       "stage": "check",

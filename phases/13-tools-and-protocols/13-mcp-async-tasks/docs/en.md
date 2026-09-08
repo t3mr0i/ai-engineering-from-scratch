@@ -123,6 +123,10 @@ Call `Task` from a small caller with the demo’s smallest built-in fixture. Com
 
 Hand off `outputs/skill-task-store-designer.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: long runs are tasks, not open connections
+
+In the CBP context anything over seconds — report generation, index rebuilds, batch eval runs — is a task: the Java client sends the call, stores the task id, and polls `tasks/get` instead of holding a connection open through the gateway. Size the TTL to the job plus a margin and make workers survive restarts, because the gateway and the pod will not wait. Short reads stay synchronous; reaching for tasks on a millisecond lookup only adds polling overhead.
+
 ## Further Reading
 
 - [MCP — GitHub SEP-1686 issue](https://github.com/modelcontextprotocol/modelcontextprotocol/issues/1686) — the originating proposal and full discussion
