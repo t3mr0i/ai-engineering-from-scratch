@@ -192,6 +192,10 @@ graph TD
 
 
 
+## CBP context: prompts plus demos are production SFT
+
+In the CBP context instruction-following comes from versioned system prompts plus reviewed demonstration pairs (lesson 19/39), not from weight updates: the base predicts text, the contract teaches answers. Curate demos like training data — reviewed, versioned, decontaminated — and gate prompt changes on evals. A base model without the contract continues text; with it, it serves tickets.
+
 ## Build It
 
 Reconstruct **Instruction Tuning (SFT)** by following `tokenize_instruction_pair` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
