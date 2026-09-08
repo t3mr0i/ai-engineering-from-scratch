@@ -439,6 +439,10 @@ Call `call` from a small caller with the smallest valid record {"id": 1}. Compar
 
 Hand off `outputs/skill-reviewer-agent.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: the builder never grades itself
+
+In the CBP context builder and reviewer are separate by policy: the agent that wrote the diff never signs it off. The reviewer scores problem fit, scope, assumptions, and handoff state against the rubric in the repo and files its report as JSON the pipeline reads. A green gate plus a failed review still blocks the merge — acceptance says the work ran, the reviewer says it was the right work. Rotate reviewer prompts with the same review discipline as any other production prompt.
+
 ## Further Reading
 
 - [OpenAI Agents SDK, Orchestration and handoffs](https://developers.openai.com/api/docs/guides/agents/orchestration)

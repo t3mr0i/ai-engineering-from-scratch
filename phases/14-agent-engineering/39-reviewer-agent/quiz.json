@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What verdict does the reviewer assign to the demo's wrong `T-002` artifact?",
+      "question": "A fix passes all tests, but it solved the wrong half of the bug. What catches that?",
       "options": [
-        "`hard_fail`, because its problem-fit dimension scores zero.",
-        "`pass`, because its feedback exit code is zero.",
-        "`soft_fail`, because the total is exactly 5.",
-        "`pass`, because an off-scope warning is not a block."
+        "Running the same tests once more",
+        "A longer success message from the builder",
+        "Merging faster before anyone notices",
+        "A separate reviewer asking whether it was the right problem"
       ],
-      "correct": 0,
-      "explanation": "The wrong case totals 5 but has a zero problem-fit score; `review` makes any zero a `hard_fail`, regardless of the total threshold."
+      "correct": 3,
+      "explanation": "Acceptance is necessary but not sufficient. This lesson separates builder from marker: an independent review against a rubric."
     },
     {
       "stage": "check",
