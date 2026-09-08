@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does state_features((2, 1)) contain when GRID=4?",
+      "question": "State spaces grow beyond any table while similar states should behave similarly. What generalizes?",
       "options": [
-        "A length-16 one-hot vector with its 1 at index 2*4+1=9",
-        "A length-4 vector containing the row and column twice",
-        "The four Q values computed by the network",
-        "A random feature vector whose length changes with the state"
+        "Bigger lookup tables",
+        "Memorizing every state",
+        "Ignoring unseen states",
+        "Function approximation sharing learning across states"
       ],
-      "correct": 0,
-      "explanation": "state_features allocates GRID*GRID zeros and sets feat[r*GRID+c] to 1.0, so (2,1) maps to index 9."
+      "correct": 3,
+      "explanation": "Tables memorize; networks generalize. This lesson approximates values for unseen states."
     },
     {
       "stage": "check",

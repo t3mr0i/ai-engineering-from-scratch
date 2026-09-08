@@ -55,6 +55,10 @@ Drop-in replacement, consistently better. Use it by default.
 
 
 
+## CBP context: tables stop scaling, networks generalize
+
+In the CBP context DQN marks where tabular methods end: state spaces beyond grids need function approximation that generalizes to unseen states — the same reason language agents use networks, not lookup tables. One-hot state features scale catastrophically; learned representations transfer. Read for the scaling argument behind every modern agent; the gridworld never leaves the lesson.
+
 ## Build It
 
 Reconstruct **Deep Q-Networks (DQN)** by following `reset` on a graph with edges (0,1) and (1,2). Run `python3 main.py` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.
