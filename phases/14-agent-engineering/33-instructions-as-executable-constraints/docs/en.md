@@ -95,6 +95,10 @@ Call `on` from a small caller with x=0.5 with the demo defaults. Compare its res
 
 Hand off `outputs/skill-rule-set-builder.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: rules a checker can score
+
+In the CBP context every working rule (tests green before push, ask when unsure, approval for new tools, notes before code) ships with a check the pipeline or reviewer can score — otherwise it is aspiration the agent silently drops. Keep rules operational and few, version them with the repo, and let the reviewer agent (lesson 39) mark violations against the run. "Be careful" is not a rule; "no push with red JUnit" is.
+
 ## Further Reading
 
 - [OpenAI Agents SDK, Guardrails and approvals](https://developers.openai.com/api/docs/guides/agents/guardrails-approvals)
