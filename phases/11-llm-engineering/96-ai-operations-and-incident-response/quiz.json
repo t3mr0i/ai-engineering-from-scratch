@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "A MetricDeltas sample has safety_classifier_score=0.72, a cost spike, and a quality drop. Which classification does classify_incident return?",
+      "question": "Latency, errors, and throughput are clean, but satisfaction drops because outputs silently got shorter. What was missing?",
       "options": [
-        "SAFETY with P1 severity, because the safety threshold overrides the other buckets",
-        "COST with P2 severity, because spend is the most actionable signal",
-        "QUALITY with P2 severity, because the judge score changed",
-        "TOOL_USE with P1 severity, because every mixed incident is treated as agentic"
+        "A faster model version",
+        "More throughput capacity",
+        "Trust in unchanged dashboards",
+        "Content-level panels owned per feature"
       ],
-      "correct": 0,
-      "explanation": "The safety gate runs first and fires at 0.70 or above. It returns Category.SAFETY and Severity.P1 without letting cost or quality signals change the category."
+      "correct": 3,
+      "explanation": "L1 dashboards cannot see content drift. This lesson wires L3 output panels with runbooks behind them."
     },
     {
       "stage": "check",

@@ -158,6 +158,10 @@ Call `Category` from a small caller with the demo’s smallest built-in fixture.
 
 Hand off `outputs/skill-ai-incident-triage.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: L3 panels, five-minute classification, validated rollback
+
+In the CBP context every AI feature ships with L3 output panels (length, refusal rate, format drift) beside the L1 SRE dashboard, because provider-side regressions arrive silently under unchanged aliases. Classify within five minutes — safety overrides cost and quality signals — reach for the category runbook, and roll back on the pre-validated path. The panel nobody owned is the outage nobody caught.
+
 ## Further Reading
 
 - [Google SRE Book — Chapter 14: Managing Incidents](https://sre.google/sre-book/managing-incidents/) — the foundation incident management model this lesson adapts for AI.
