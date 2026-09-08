@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the first timestamp returned by uniform_sample(duration=10.0, n=8)?",
+      "question": "A video answer references \"the relevant part\" with no timestamp. What makes it checkable?",
       "options": [
-        "1.25 seconds, because each sample spans two bins",
-        "0.0 seconds, because sampling begins at the left boundary",
-        "0.625 seconds, the midpoint of the first 10/8-second bin",
-        "10.0 seconds, because duration is repeated for every frame"
+        "Longer video descriptions",
+        "Trust in the model's memory",
+        "More videos per answer",
+        "Sampled timestamps cited per claim"
       ],
-      "correct": 2,
-      "explanation": "The function uses step=duration/n=1.25 and samples at step*(i+0.5). For i=0 the first timestamp is 0.625 seconds."
+      "correct": 3,
+      "explanation": "Moments need addresses. This lesson grounds video answers at sampled timestamps."
     },
     {
       "stage": "check",

@@ -107,6 +107,10 @@ For video VLMs in 2026:
 
 
 
+## CBP context: answers carry timestamps
+
+In the CBP context video answers cite the moment, not just the video: uniform sampling with documented bin policy (midpoints, boundaries stated) grounds every claim at an openable timestamp. "Around the middle" is not a citation; seconds with frames are. Evaluate temporal grounding on CBP footage where the answer's moment decides the action.
+
 ## Build It
 
 Reconstruct **Video-Language Models: Temporal Tokens and Grounding** by following `uniform_sample` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
