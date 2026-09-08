@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What must hold for `MultiHeadSelfAttention(d_model, n_heads)` to construct valid heads?",
+      "question": "Every token must weigh every other token, but different relations matter at once. What structure handles that?",
       "options": [
-        "`d_model` must be prime.",
-        "`n_heads` must equal the sequence length.",
-        "`d_model` must be divisible by `n_heads`.",
-        "The vocabulary must equal `d_model`."
+        "One fixed averaging weights for all",
+        "No weighting; treat tokens independently",
+        "Process tokens strictly one at a time",
+        "Parallel heads, each learning its own relations"
       ],
-      "correct": 2,
-      "explanation": "Each head uses `d_head = d_model // n_heads`, so the module rejects configurations whose model width cannot be evenly split among heads."
+      "correct": 3,
+      "explanation": "Single averaging cannot track several relations. This lesson splits attention into parallel heads."
     },
     {
       "stage": "check",

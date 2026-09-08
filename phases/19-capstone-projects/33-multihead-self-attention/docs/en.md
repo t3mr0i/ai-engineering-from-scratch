@@ -109,6 +109,10 @@ It does not implement KV cache for inference. Caching keys and values across for
 
 Run the demo. Then increase `n_heads` from 4 to 8 (keeping `d_model=32`, so `d_head=4`) and watch the heatmap change.
 
+## CBP context: quadratic cost explains the bill
+
+In the CBP context attention's quadratic cost in sequence length is why long prompts are expensive and why stable prefixes, caching, and relevance ordering (lessons 11/05, 17/06, 17/14) are FinOps levers, not trivia. Multiple heads let the model track different relations at once — the intuition behind why frontier models use context better than small ones. Build the mechanism here; budget its cost there on every feature.
+
 ## Build It
 
 Reconstruct **Multi-Head Self-Attention** by following `MultiHeadSelfAttention` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
