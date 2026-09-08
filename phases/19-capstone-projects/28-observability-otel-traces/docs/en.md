@@ -97,6 +97,10 @@ python3 -m pytest code/tests/ -v
 
 The demo emits a `traces.jsonl` in the lesson's working dir (cleaned up at the end), then prints a sample of three spans, then prints the Prometheus exposition for the counters and histograms. The tests verify that spans serialise round-trip, that the canonical GenAI attributes are present, that counters increment correctly, and that the histogram exposition contains the expected bucket counts.
 
+## CBP context: timelines into Application Insights
+
+In the CBP context the step timeline with start and finish times exports as GenAI spans into Application Insights with the tenant id on every span — the same conventions as lessons 13/20 and 14/23. Slow or failing runs debug from the trace, not from chat memory: which tool, which prompt version, which cost. Keep prompts and payloads out of traces by default; the timeline shows shape, not secrets.
+
 ## Build It
 
 Reconstruct **Observability with OTel GenAI Spans and Prometheus Metrics** by following `SpanEvent` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
