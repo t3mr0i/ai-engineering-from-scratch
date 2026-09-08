@@ -93,6 +93,10 @@ The bet InternVL3 makes: the alignment debt is worse than the reuse loss. The be
 
 
 
+## CBP context: balanced training, consumed models
+
+In the CBP context natively multimodal models are consumed, with the training-mix intuition guiding selection: balanced text, image, and video shares produce even capabilities; skewed mixes produce lopsided assistants. Ask vendors for modality shares the way you ask for evals — a "multimodal" model trained 95% on text answers images poorly. Mixes shape behavior before prompts do.
+
 ## Build It
 
 Reconstruct **InternVL3: Native Multimodal Pretraining** by following `CorpusMix` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.

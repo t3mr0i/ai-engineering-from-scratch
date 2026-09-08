@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "After CorpusMix(40,35,20,5).normalize(), what text percentage does steps(500000) use?",
+      "question": "A \"multimodal\" assistant answers images poorly despite strong text skills. What likely skewed it?",
       "options": [
-        "40.00%, because the four inputs already sum to 100",
-        "36.36%, because the original 40 is divided by a 110-point total",
-        "44.44%, because text is divided by the non-video total",
-        "4.00%, because text is treated as the smallest modality"
+        "Too many evals on images",
+        "Overly balanced training",
+        "Excessive image resolution",
+        "A text-dominated training mix"
       ],
-      "correct": 0,
-      "explanation": "The inputs sum to exactly 100, so normalize leaves text_pct at 0.40. The text share is therefore 40% of the training steps."
+      "correct": 3,
+      "explanation": "Mixes shape capabilities. This lesson balances modalities natively from pretraining."
     },
     {
       "stage": "check",
