@@ -15,6 +15,10 @@
 - Compute a small DFT and recover its input with the inverse transform.
 - Connect unit-magnitude complex multiplication to pairwise rotations in RoPE-like encodings.
 
+## CBP context: vocabulary for rotary positions
+
+In the CBP context complex numbers pay off in exactly one place: rotary position embeddings (phase 07/10), which rotate query and key vectors by position using complex exponentials. Read this lesson as vocabulary acquisition for that mechanism — magnitude, phase, Euler's formula — and nothing more. No Java service does complex arithmetic; every transformer position scheme assumes you recognize it.
+
 ## Build It
 
 The implementation is a standard-library `Complex` class plus DFT helpers. Run the canonical demo:

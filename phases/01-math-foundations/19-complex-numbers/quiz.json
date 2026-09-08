@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is (2+3i) + (1-4i)?",
+      "question": "Position schemes rotate vectors by angle using compact exponential notation. Which number system makes that natural?",
       "options": [
-        "1+7i",
-        "3+7i",
-        "3-i",
-        "1-i"
+        "Integers alone",
+        "Fractions alone",
+        "Only very large numbers",
+        "Complex numbers with magnitude and phase"
       ],
-      "correct": 2,
-      "explanation": "Add real and imaginary parts separately: (2+1) + (3-4)i = 3-i."
+      "correct": 3,
+      "explanation": "Rotation is native to complex arithmetic. This lesson builds the vocabulary behind rotary positions."
     },
     {
       "stage": "check",
