@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For exponential sampling with lambda=1 and U=0.5, what does the inverse-CDF formula -ln(U)/lambda return?",
+      "question": "The same prompt yields different answers on each call, and evals never reproduce. What controls that randomness?",
       "options": [
-        "0.5",
-        "1.0",
-        "About 0.693",
-        "About 1.693"
+        "Nothing; randomness is uncontrollable",
+        "Bigger models are always deterministic",
+        "Fewer eval runs for stability",
+        "Sampling policy: temperature, seeds, and sample counts"
       ],
-      "correct": 2,
-      "explanation": "-ln(0.5) = ln(2), approximately 0.693. The code's uniform draw is transformed to the exponential tail by this inverse CDF."
+      "correct": 3,
+      "explanation": "Generation randomness is a configured policy. This lesson builds sampling from uniform draws upward."
     },
     {
       "stage": "check",

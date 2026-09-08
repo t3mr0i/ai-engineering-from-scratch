@@ -27,6 +27,10 @@ These public helpers reject malformed sampling requests with `ValueError`: logit
 
 The reparameterization helpers return `(z, epsilon)` and `(1, epsilon)`, making the random draw an external value while retaining derivatives with respect to `mu` and `sigma`. Gumbel-softmax produces a probability vector; the straight-through helper also returns a one-hot forward vector.
 
+## CBP context: temperature is sampling policy
+
+In the CBP context sampling methods explain the temperature knob on every generation call: low temperature concentrates probability (deterministic answers), high temperature spreads it (creative variance). Eval sampling likewise needs declared seeds and sample counts, or results do not reproduce. Understand transforms from uniform draws here; set temperatures and seeds deliberately there.
+
 ## Build It
 
 Run the text-only canonical demo:
