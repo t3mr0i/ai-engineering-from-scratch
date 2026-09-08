@@ -103,6 +103,10 @@ Keep the solution auditable: run python3 main.py, save the output, and explain w
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
+## CBP context: audience, claim, sensitivity, owner
+
+In the CBP context every AI-assisted communication passes the gate — audience, claim strength, sensitivity, owner — before publishing, with approvals recorded for sensitive topics. Polish never substitutes for sourcing: each claim traces to evidence, tone is checked against audience, and the owner signs. An unapproved publish is an incident, not a shortcut.
+
 ## Further Reading
 
 ### Recommended trainings (LHIND AI Literacy)
