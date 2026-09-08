@@ -393,6 +393,10 @@ Call `call` from a small caller with tokens=["red","fox"]. Compare its result wi
 
 Hand off `outputs/skill-rewoo-planner.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: plan the runbook, then execute it
+
+In the CBP context plan-and-execute fits multi-step operations work: the planner turns "restore this service" into a DAG (fetch alerts, query Boards, pull logs, draft the update), workers run the independent evidence steps in parallel against MCP servers, and the solver composes the final answer. The static plan is a feature here — it is reviewable, auditable, and cost-predictable per tenant before a single tool runs. Re-plan only on failure, and log plan plus evidence together so the run reads like the runbook it followed.
+
 ## Further Reading
 
 - [Xu et al., ReWOO: Decoupling Reasoning from Observations (arXiv:2305.18323)](https://arxiv.org/abs/2305.18323) — the canonical paper
