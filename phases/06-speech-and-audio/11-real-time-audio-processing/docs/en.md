@@ -58,6 +58,10 @@ Moshi (Kyutai, 2024) clocked 200 ms full-duplex. GPT-4o-realtime (2024) clocks ~
 
 
 
+## CBP context: bounded chunks, bounded buffers
+
+In the CBP context real-time audio means bounded everything: fixed chunk sizes (20ms at 16kHz), bounded buffers, deadlines per stage — a pipeline that allocates per chunk eventually stalls under load. Size buffers for worst-case jitter, drop or compress late frames by policy (never by accident), and measure end-to-end latency per stage. Real-time is a budget, not a hope.
+
 ## Build It
 
 Reconstruct **Real-Time Audio Processing** by following `rms_dbfs` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

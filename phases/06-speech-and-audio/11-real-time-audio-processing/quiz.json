@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How many samples does simulate_chunk(True, rng) create with the default 20 ms chunk and 16 kHz rate?",
+      "question": "A real-time pipeline allocates per chunk and stalls under load. What bounds it?",
       "options": [
-        "320",
-        "20",
-        "16000",
-        "3200"
+        "Bigger allocations per chunk",
+        "Hope that load stays low",
+        "No chunks, one giant buffer",
+        "Fixed chunks with bounded buffers and per-stage deadlines"
       ],
-      "correct": 0,
-      "explanation": "The code uses int(0.001*20*16000)=320 samples."
+      "correct": 3,
+      "explanation": "Real-time needs budgets everywhere. This lesson chunks audio with bounded latency."
     },
     {
       "stage": "check",
