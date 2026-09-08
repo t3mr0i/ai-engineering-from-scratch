@@ -109,6 +109,10 @@ Call `LabelAccuracy` from a small caller with the demo’s smallest built-in fix
 
 Hand off `outputs/skill-data-readiness-assessment.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: five dimensions per source, every source
+
+In the CBP context the data-readiness gate runs per source across quality, freshness, sensitivity, provenance, and evaluation coverage — each dimension able to kill a deployment independently. "It is all there" answers row counts, not readiness; a fresh licensed clean dataset with 61% labels still fails a 95% task. Gate every source, not just the primary one, before the pilot builds on it.
+
 ## Further Reading
 
 - [EU AI Act — Article 53 (Obligations for providers of general-purpose AI models)](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689) — the binding training-data documentation requirements for general-purpose AI models under EU law.

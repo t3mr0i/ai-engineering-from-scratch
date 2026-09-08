@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which dimensions does score_source combine into its 0-to-10 data-readiness total?",
+      "question": "A client dataset is complete in row count but labels come from a dead process and access rights were never audited. Can the pilot build on it?",
       "options": [
-        "Label quality, freshness, sensitivity, provenance, and evaluation coverage",
-        "Only label accuracy and the number of records",
-        "Latency, model size, prompt length, and vendor price",
-        "Provenance and freshness only, because sensitivity is handled after training"
+        "Yes, row count is sufficient",
+        "Yes, quality issues resolve themselves",
+        "Only if the demo works on a sample",
+        "No, readiness needs quality, freshness, sensitivity, provenance, and evals"
       ],
-      "correct": 0,
-      "explanation": "The engine scores five dimensions at 0, 1, or 2: label accuracy, freshness lag, sensitivity, provenance, and held-out evaluation coverage."
+      "correct": 3,
+      "explanation": "Complete rows can still be systematically wrong. This lesson gates every source on five readiness dimensions."
     },
     {
       "stage": "check",
