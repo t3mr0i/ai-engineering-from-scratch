@@ -71,6 +71,10 @@ Concurrent write to one file via `O_APPEND` works on POSIX for byte-aligned writ
 
 
 
+## CBP context: manifest last, always
+
+In the CBP context the sharded-checkpoint rule governs every multi-file publish — model artifacts, search indexes, eval corpora, releases: write and fsync the shards first, atomically replace the manifest last, so a visible manifest never describes incomplete files. A reader that sees the manifest sees the whole artifact; a crash mid-publish leaves the previous manifest intact. Publish order is a correctness property, not a style choice.
+
 ## Build It
 
 Reconstruct **Sharded Checkpoint and Atomic Resume** by following `ShardEntry` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.

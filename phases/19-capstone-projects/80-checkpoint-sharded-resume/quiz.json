@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In what order does save_sharded publish a checkpoint?",
+      "question": "A multi-file artifact publishes while readers watch, and some readers see half-written files. What ordering fixes that?",
       "options": [
-        "It writes directly to the manifest and then fills shard files",
-        "It deletes the old checkpoint before any temporary file is synced",
-        "It fsyncs temporary shards, replaces shard files, then atomically replaces the manifest last",
-        "It writes only rank 0's shard and derives other paths during load"
+        "Publish the manifest first, files later",
+        "Delete old files before writing new ones",
+        "Let readers retry until files look complete",
+        "Write and sync shards first, replace the manifest last"
       ],
-      "correct": 2,
-      "explanation": "Each rank first writes and fsyncs a .tmp shard. After replacement, the manifest is written, fsynced, and os.replace publishes it last, so a visible manifest describes completed shard files."
+      "correct": 3,
+      "explanation": "Readers trust the manifest. This lesson publishes shards first and swaps the manifest atomically last."
     },
     {
       "stage": "check",
