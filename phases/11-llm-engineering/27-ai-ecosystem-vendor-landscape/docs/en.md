@@ -112,6 +112,10 @@ Keep the solution auditable: run python3 main.py, save the output, and explain w
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
+## CBP context: layers first, brands second
+
+In the CBP context vendor discussions start from the layer map — model, gateway, tools, data, operations — and place each brand on its layer with evidence, never from demo charisma. Azure OpenAI is the default layer occupant; challengers win a layer with measured evals on CBP workloads plus an exit-path plan, not with a pilot that never touches production data. Brand-driven architecture is procurement by keynote.
+
 ## Further Reading
 
 ### Recommended trainings (LHIND AI Literacy)
