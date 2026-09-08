@@ -114,6 +114,10 @@ Call `Pattern` from a small caller with the text "red fox". Compare its result w
 
 Hand off `outputs/skill-prompt-pattern-picker.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: prompts as reviewed infrastructure
+
+In the CBP context prompts are versioned resources with specified output shapes, documented intent, and automated contract checks (lesson 11/01) — never clever strings one developer babysits. Review prompt changes like code, test them against the eval set, and design graceful degradation for task variants and model changes. A prompt nobody can hand off, adapt, or QA is a demo with a commit history.
+
 ## Further Reading
 
 - [Anthropic — Prompt engineering guide](https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview) — the canonical reference for Claude-family prompt anatomy, XML tags, and structured output.
