@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which slot follows the 32,000-token text BPE range in build_vocab?",
+      "question": "One assistant streams text, voice, and vision in a single session. What keeps modalities from colliding?",
       "options": [
-        "Speech L0, starting at 36,096",
-        "Music, starting at 40,192",
-        "The image SEED slot, starting at 32,000",
-        "The <image> delimiter, starting at 32,000 with size 1"
+        "Mixing all tokens randomly",
+        "One modality at a time only",
+        "Trust that collisions resolve",
+        "Reserved vocab slots plus per-modality budgets"
       ],
-      "correct": 2,
-      "explanation": "build_vocab starts the text slot at cursor 0 with size 32,000. The next slot is image SEED, which begins at 32,000; the delimiter comes much later."
+      "correct": 3,
+      "explanation": "Shared streams need structure. This lesson slots modalities with delimiters and budgets."
     },
     {
       "stage": "check",

@@ -113,6 +113,10 @@ These are open research problems. Qwen3-Omni (Lesson 12.20) is the most advanced
 
 
 
+## CBP context: one stream, budgeted modalities
+
+In the CBP context any-to-any streaming serves voice, vision, and text through one session with explicit per-modality token budgets: speech slots, image slots, and text ranges accounted separately so one modality never starves the others. Delimiters structure the stream; budgets price it. Unified sessions simplify UX; explicit slots keep them affordable.
+
 ## Build It
 
 Reconstruct **MIO and Any-to-Any Streaming Multimodal Models** by following `VocabSlot` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
