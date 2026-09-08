@@ -97,6 +97,10 @@ It does not handle multiple documents. The corpus is treated as one continuous i
 
 Run the demo. Then change the context length from 16 to 32 and watch how the number of examples per epoch falls. That number is your steps-per-epoch budget.
 
+## CBP context: pipeline hygiene transfers to eval sets
+
+In the CBP context nobody trains on sliding windows, but the data discipline transfers whole: deduplicate, decontaminate against evals, slice reproducibly, and version the dataset with the code that consumes it. The eval sets from lesson 11/10 deserve exactly this hygiene — a leaked eval is a flattering lie, and an unversioned dataset is irreproducible evidence.
+
 ## Build It
 
 Reconstruct **Tokenized Dataset with Sliding Window** by following `MiniBPE` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
