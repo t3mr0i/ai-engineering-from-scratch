@@ -42,6 +42,10 @@ max(logit, 0) - logit * target + log1p(exp(-abs(logit)))
 
 instead of taking a logarithm of a saturated sigmoid. `mask_iou` compares two already-pasted boolean masks; an empty-vs-empty comparison is defined as `1.0` for this local report.
 
+## CBP context: count instances, not just area
+
+In the CBP context instance masks answer "how many" where semantic masks answer "how much": distinct parts, separate defects, individual items — each with its own mask and box. Two same-class objects sharing one mask undercount silently; the instance head exists precisely for that failure. Choose instance over semantic whenever the business counts things.
+
 ## Build It
 
 Run from the lesson's `code/` directory:
