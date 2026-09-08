@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What structural and evidentiary gates does the final RAG pass apply?",
+      "question": "The retriever confidently returns a stale, duplicated, out-of-scope document and the answer goes out. What would have caught it?",
       "options": [
-        "Permission filtering, supersedure filtering, content-hash deduplication, and faithfulness checking",
-        "A larger embedding model, a higher temperature, and a longer context window",
-        "Only a human review after the answer has been sent",
-        "A single cosine-similarity threshold with no source metadata"
+        "A bigger embedding model",
+        "Higher temperature for creativity",
+        "Trust in high similarity scores",
+        "Freshness, authority, scope, and agreement gates before answering"
       ],
-      "correct": 0,
-      "explanation": "The final pass applies pre-filter, supersedure, content deduplication, and then faithfulness checking. Together they catch stale, mis-tagged, and over-extrapolated answers."
+      "correct": 3,
+      "explanation": "Confident retrieval of the wrong document is the expensive failure. This lesson gates chunks before they become answers."
     },
     {
       "stage": "check",

@@ -148,6 +148,10 @@ Call `Chunk` from a small caller with the text "red fox". Compare its result wit
 
 Hand off `outputs/skill-rag-source-governance.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: chunk metadata decides before embedding
+
+In the CBP context every indexed chunk carries freshness, source authority, scope match, and agreement signals so the runtime detects wrong-but-similar retrievals before they become user-facing answers — the failure this lesson names as the expensive one. Design those properties in before the first document is embedded; retrofitting after a compliance incident costs multiples. Retrieval wins on the wrong document are losses with good scores.
+
 ## Further Reading
 
 - [Anthropic — Claude for RAG workflows](https://docs.claude.com/en/docs/build-with-claude/retrieval-augmented-generation) — current guidance on chunk construction, citation prompting, and faithfulness evaluation with Claude 4.x models.
