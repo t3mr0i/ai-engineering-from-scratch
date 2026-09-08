@@ -138,6 +138,10 @@ Call `uri_in_roots` from a small caller with the demo’s smallest built-in fixt
 
 Hand off `outputs/skill-elicitation-form-designer.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: scope to the repo, ask before destroying
+
+In the CBP context roots are the repository scope: a server working on Azure Repos touches only the declared repo paths, and anything outside is rejected before execution. Elicitation is the approval habit for ambiguous destructive calls — deleting one of three matching notes, closing the wrong work item — where guessing is the worst option. Wire elicitation into the same human-approval path the Java service uses for consequential tools, with audit attached. A scoped, asking server survives contact with production; an unscoped, guessing one does not.
+
 ## Further Reading
 
 - [MCP — Client roots spec](https://modelcontextprotocol.io/specification/draft/client/roots) — canonical roots reference

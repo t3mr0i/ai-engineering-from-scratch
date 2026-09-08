@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does uri_in_roots classify the lesson's two example locations?",
+      "question": "A helper is told to delete an item by name, but three items share that name. What should it do?",
       "options": [
-        "Notes is inside; /tmp is outside",
-        "Both are outside because roots accept only HTTP URLs",
-        "Both are inside because the check ignores path prefixes",
-        "Only the Scratch URI is inside Notes"
+        "Delete all three to be safe",
+        "Pick the oldest one without asking",
+        "Pretend it succeeded and change nothing",
+        "Stop and ask which one is meant before touching anything"
       ],
-      "correct": 0,
-      "explanation": "The declared Notes and Scratch file URI prefixes allow matching descendants but do not include the unrelated /tmp path."
+      "correct": 3,
+      "explanation": "Ambiguous destructive actions must pause for the user. This lesson builds the two guards: roots that bound where a server may act, and elicitation that asks mid-flight."
     },
     {
       "stage": "check",
