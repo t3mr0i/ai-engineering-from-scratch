@@ -98,6 +98,10 @@ Call `Attempt` from a small caller with the text "red fox". Compare its result w
 
 Hand off `outputs/skill-refine-loop.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: verify with the build, not with the model
+
+In the CBP context the verifier is never the model alone: generated code must pass the Maven build and JUnit suite, generated claims must match retrieved CBP documents, and generated numbers must recompute. The service loops generate-verify-refine and stops when the external check passes — or escalates to a human after a fixed number of rounds. Never let the model grade its own facts; self-verification on hard facts is the failure mode this lesson names. Log every round so the refinement history reads as evidence, not as vibes.
+
 ## Further Reading
 
 - [Madaan et al., Self-Refine (arXiv:2303.17651)](https://arxiv.org/abs/2303.17651) — the canonical paper
