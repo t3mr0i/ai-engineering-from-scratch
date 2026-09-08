@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does `Page.embed_patches` create for a page?",
+      "question": "Answers about scanned documents quote no page or region, so nobody can check them. What is missing?",
       "options": [
-        "One vector for the whole document",
-        "A sparse BM25 row with no image representation",
-        "One 16-dimensional patch vector for each content token",
-        "A single vector only for the page title"
+        "Longer answers with more detail",
+        "Trust in fluent model output",
+        "Fewer documents to search",
+        "Grounded answers citing the exact page region"
       ],
-      "correct": 2,
-      "explanation": "The scaffold treats each token in `content_tokens` as a patch and calls `hash_embed` on it. The resulting list preserves multi-vector page evidence rather than pooling it immediately."
+      "correct": 3,
+      "explanation": "Ungrounded document answers cannot be checked. This capstone builds vision-first QA: patches, retrieval, cited regions."
     },
     {
       "stage": "check",

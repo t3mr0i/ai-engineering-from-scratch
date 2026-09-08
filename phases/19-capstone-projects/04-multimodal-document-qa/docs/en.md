@@ -81,6 +81,10 @@ Call `tokenize` from a small caller with an 8x8 synthetic image. Compare its res
 
 Hand off `outputs/skill-doc-qa.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: vision-first over CBP documents
+
+In the CBP context vision-first QA targets contracts, invoices, and scanned forms: page patches embedded multi-vector, answers citing page and region, faithfulness measured on CBP documents before any rollout. Prefer the platform's document services where they cover the format and reserve the custom VLM pipeline for layouts they cannot read. A fluent answer without a supporting region is a defect, same as in text RAG.
+
 ## Further Reading
 
 - [ColPali (Illuin Tech) repository](https://github.com/illuin-tech/colpali) — reference late-interaction doc retrieval
