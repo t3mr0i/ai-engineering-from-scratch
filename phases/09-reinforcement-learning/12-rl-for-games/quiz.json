@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For QUESTIONS[0], which answer index does verify(0, answer) reward?",
+      "question": "Training needs rewards that cannot be gamed by fluent wrong answers. Which tasks qualify best?",
       "options": [
-        "Index 0, because every prompt's first answer is correct",
-        "Index 1, the answer to 'what is 1+2'",
-        "Index 2, the third answer entry for 'what is 1+2'",
-        "Index 3, because verify uses one-based answer numbering"
+        "Open-ended essays judged by vibe",
+        "Creative stories with no criteria",
+        "Politeness rated subjectively",
+        "Math and code with checkable answers"
       ],
-      "correct": 2,
-      "explanation": "The first toy question stores `correct: 2`; verify returns 1.0 exactly when the sampled answer equals that zero-based index."
+      "correct": 3,
+      "explanation": "Verifiable rewards resist hacking. This lesson trains on games with decidable outcomes."
     },
     {
       "stage": "check",

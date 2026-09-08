@@ -90,6 +90,10 @@ The result matches o1 on AIME and MATH-500 at open weights, and is small enough 
 
 
 
+## CBP context: verifiable answers train reliably
+
+In the CBP context game-style verifiable rewards (math with checkable answers, code with passing tests) are the cleanest RL training signal — correctness decided by rules, not judges. Prefer checkable-answer tasks for any preference or RL training on CBP work; subjective grading invites reward hacking (lesson 18/02 territory). Verifiable rewards keep optimization honest.
+
 ## Build It
 
 Reconstruct **RL for Games — AlphaZero, MuZero, and the LLM-Reasoning Era** by following `softmax` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
