@@ -105,6 +105,10 @@ The reference run should leave a small receipt: python3 main.py, its captured ou
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
+## CBP context: role map, review point, adoption metric
+
+In the CBP context every AI workflow ships with its integration kit: who is accountable, where human review sits, which adoption metric proves behavior changed, and how exceptions route. A technically perfect pilot without these stalls after the early adopters — the missing piece is never more model quality. Measure adoption in operations metrics, not in launch announcements.
+
 ## Further Reading
 
 ### Recommended trainings (LHIND AI Literacy)
