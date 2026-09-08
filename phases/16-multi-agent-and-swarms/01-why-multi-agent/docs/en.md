@@ -237,6 +237,10 @@ This lesson produces a reusable prompt for deciding when to go multi-agent. See 
 | Fan-out / fan-in | "Map-reduce for agents" | Splitting a task across parallel agents (fan-out), then combining their results (fan-in). |
 | Message passing | "Agents talk to each other" | The communication mechanism between agents: structured data sent from one agent to another, replacing shared context windows. |
 
+## CBP context: three reasons, one cost warning
+
+In the CBP context additional agents need one of three justifications — context overflow, genuinely mixed expertise, or parallelizable work — with coordination cost budgeted alongside: every added agent multiplies traces, spend, and failure surfaces. Single-agent first (lesson 14/12); multi-agent on evidence. Cost and coordination rise with every member; capability must rise faster.
+
 ## Build It
 
 Reconstruct **Why Multi-Agent?** by following `fakeLLMCall` on the text "red fox". Run `run main.text` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
