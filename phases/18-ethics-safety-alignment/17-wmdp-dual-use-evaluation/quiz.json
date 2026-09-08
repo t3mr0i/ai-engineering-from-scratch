@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the toy WMDP harness measure without asking the model to emit a harmful procedure?",
+      "question": "Hazardous capability must be measured without teaching anyone harmful procedures. How?",
       "options": [
-        "Per-domain multiple-choice accuracy for biosecurity, cybersecurity, and chemistry",
-        "The model's willingness to follow an unsafe system prompt",
-        "The number of weapons present in the training corpus",
-        "The size of the model's tokenizer"
+        "Ask for procedures directly",
+        "Skip dual-use evaluation",
+        "Trust vendor assurances",
+        "Knowledge probes that never request operations"
       ],
-      "correct": 0,
-      "explanation": "evaluate samples Bernoulli outcomes from per-domain accuracy values and reports scores. A WMDP-style capability number can therefore probe knowledge without requesting operational output."
+      "correct": 3,
+      "explanation": "Evals must not exfiltrate. This lesson probes capability without eliciting procedures."
     },
     {
       "stage": "check",

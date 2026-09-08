@@ -69,6 +69,10 @@ Lessons 12-16 are attack and defense tooling on model outputs. Lesson 17 is the 
 
 
 
+## CBP context: probe knowledge, never elicit procedures
+
+In the CBP context dual-use evaluation measures hazardous capability with multiple-choice knowledge probes — biosecurity, cyber, chemistry — without ever asking models to emit operational procedures. Capability numbers inform deployment tiers and access controls; the eval itself must not become the exfiltration vector. Probe what models know; never harvest how.
+
 ## Build It
 
 Reconstruct **WMDP and Dual-Use Capability Evaluation** by following `evaluate` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
