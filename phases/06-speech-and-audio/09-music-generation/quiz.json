@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What chord sequence does chord_progression(\"C\", \"pop\", bars=8) return?",
+      "question": "Generated hold music ships without rights clearance. What was skipped?",
       "options": [
-        "C, G, Am, F, C, G, Am, F",
-        "C, Dm, Em, F, G, Am, Bdim, C",
-        "G, D, Em, C, G, D, Em, C",
-        "C, F, G, C only"
+        "Longer musical intros",
+        "Louder background mixes",
+        "More musical genres",
+        "Licensing before deployment"
       ],
-      "correct": 0,
-      "explanation": "The pop pattern is [1,5,6,4], mapped through the C major scale and repeated for eight bars."
+      "correct": 3,
+      "explanation": "Generated audio still needs rights. This lesson builds musical structure with licensed delivery."
     },
     {
       "stage": "check",

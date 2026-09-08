@@ -78,6 +78,10 @@ Safe-to-ship patterns:
 
 
 
+## CBP context: licensed services, cleared rights
+
+In the CBP context generated music serves hold loops, intros, and ambient branding through licensed generation services — rights cleared before deployment, never after a complaint. Chord and structure intuition from this lesson helps brief and evaluate outputs; training or hosting generative music models is not CBP work. A jingle without a license is an invoice waiting for a lawyer.
+
 ## Build It
 
 Reconstruct **Music Generation — MusicGen, Stable Audio, Suno, and the Licensing Earthquake** by following `chord_progression` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
