@@ -78,6 +78,10 @@ Lessons 6-9 describe the threat (deception is possible). Lesson 10 describes the
 
 
 
+## CBP context: protocols over trust for strong agents
+
+In the CBP context powerful agents run under control protocols, not trust: untrusted-strong execution checked by trusted-weaker verification with bounded human escalation budgets. Give up on certifying the strong model's intentions; instead prove the protocol contains its failures. Trust scales poorly with capability; protocols scale with design.
+
 ## Build It
 
 Reconstruct **AI Control — Safety Despite Subversion** by following `u_produce` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
