@@ -111,6 +111,10 @@ A complete handoff records python3 main.py, the observed output, and the reasoni
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
+## CBP context: the human owns the decision, the log owns the trace
+
+In the CBP context AI-supported decisions keep the accountability boundary explicit: the model briefs (options, evidence, gaps), the accountable human decides, and the decision log records both plus what was unknown. Budget ownership, political constraints, and incomplete evidence stay human judgments — delegating them to a confident paragraph is a governance failure with a transcript. Review the log, not just the outcome.
+
 ## Further Reading
 
 ### Recommended trainings (LHIND AI Literacy)
