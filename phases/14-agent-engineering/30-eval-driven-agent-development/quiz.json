@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What verdict does the demo's aggregate evaluation receive?",
+      "question": "An agent passes its demo but fails in production in ways the demo never showed. What development habit catches that?",
       "options": [
-        "All four cases pass, producing a 100% pass rate and an ALLOW CI gate.",
-        "Only the benchmark cases pass; the online guardrail blocks the merge.",
-        "The first round of every case fails, so the aggregate is 0%.",
-        "The gate warns because 100% is above the 95% baseline."
+        "More impressive demos",
+        "A bigger launch announcement",
+        "Removing the failing features",
+        "Layered evals running continuously with every rule mapped to a case"
       ],
-      "correct": 0,
-      "explanation": "Each proposer/optimizer case eventually satisfies its judge in two rounds. The four passing results yield 100%, which is above the 95% baseline, so CI allows the merge."
+      "correct": 3,
+      "explanation": "Demos cannot predict production failures. This lesson builds eval-driven development: benchmarks, offline evals, and online guardrails as CI gates."
     },
     {
       "stage": "check",

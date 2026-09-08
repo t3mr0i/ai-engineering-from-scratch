@@ -74,6 +74,10 @@ Call `EvalCase` from a small caller with x=0.5 with the demo defaults. Compare i
 
 Hand off `outputs/skill-eval-suite.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: every rule maps to an eval case in CI
+
+In the CBP context eval-driven development is the pipeline gate: benchmarks for cross-model comparison, custom offline evals from CBP tickets for product shape, and online guardrails for the live tail — with every guardrail and learned rule mapped to an eval case that runs before merge. A rule without a case rots; a case without a gate is decoration. Name the exact benchmark and audit status when quoting numbers, and block the merge when the gate fails, not after the incident review.
+
 ## Further Reading
 
 - [Anthropic, Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) — "start simple, optimize with evals"
