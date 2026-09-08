@@ -119,6 +119,10 @@ Call `AudienceLevel` from a small caller with the text "red fox". Compare its re
 
 Hand off `outputs/skill-consultative-prompt-designer.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: brief the model like a partner briefing
+
+In the CBP context consultative prompts separate context from question: audience with belief state, hypothesis to stress-test, output format matching the decision — never thin framing, never unstructured dumps. Skeptical senior audiences get the adversarial shape: their strongest objection stated with the evidence that would change it. The analytical work happens before the prompt opens, not inside it.
+
 ## Further Reading
 
 - [Anthropic — Prompt engineering guide](https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview) — official current reference for Claude-family prompt patterns, including role prompting and output formatting.

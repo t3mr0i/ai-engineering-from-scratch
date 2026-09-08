@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which prompt template does route_prompt use for a skeptical senior-management audience?",
+      "question": "A consultant asks for transformation risks with no audience, hypothesis, or format, and gets generic bullets. What was missing?",
       "options": [
-        "ADVERSARIAL, so the prompt states the counter-position and evidence needed to change it",
-        "BOARD, because all senior audiences need a 90-second brief",
-        "OPERATIONAL, because skepticism calls for more implementation detail",
-        "SENIOR_MGMT, because belief state is ignored after audience level is read"
+        "A smarter model for generic questions",
+        "More bullet points in the answer",
+        "Trust that generic fits every client",
+        "Audience, hypothesis to test, and decision-ready format"
       ],
-      "correct": 0,
-      "explanation": "Skepticism combined with SENIOR_MGMT or BOARD is checked first. The adversarial template makes the audience's strongest objection explicit before trying to persuade."
+      "correct": 3,
+      "explanation": "Thin framing yields plausible generalities. This lesson briefs audience, hypothesis, and format before asking."
     },
     {
       "stage": "check",
