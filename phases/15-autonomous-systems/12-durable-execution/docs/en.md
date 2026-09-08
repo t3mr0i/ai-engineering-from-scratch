@@ -73,6 +73,10 @@ METR observed that every agent class measured shows reliability decay beyond ~35
 
 
 
+## CBP context: completed work never re-executes
+
+In the CBP context long CBP runs survive restarts through event sourcing: completed activities return cached results on replay instead of re-executing — no double charges, no duplicate tickets, no repeated sends. The event log is the run's memory and its audit trail; idempotent activities plus durable log equals crash-safe automation. Restart recovery is designed, not improvised.
+
 ## Build It
 
 Reconstruct **Long-Running Background Agents: Durable Execution** by following `EventLog` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.

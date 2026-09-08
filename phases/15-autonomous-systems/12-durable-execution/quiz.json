@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does an activity-decorated call do when EventLog.lookup finds a completed result for the same name and arguments?",
+      "question": "A crashed run restarts and re-sends completed notifications, double-charging the tenant. What prevents re-execution?",
       "options": [
-        "It appends a second started event",
-        "It deletes the old result",
-        "It returns the cached result without executing the function again",
-        "It resets the entire log"
+        "Faster restarts to outrun duplicates",
+        "Hope crashes never happen",
+        "Manual cleanup after every crash",
+        "Event-sourced replay returning cached completions"
       ],
-      "correct": 2,
-      "explanation": "The decorator checks for a status='done' matching event and returns its stored result, which is the replay mechanism."
+      "correct": 3,
+      "explanation": "Restarts must not redo work. This lesson replays from durable event logs."
     },
     {
       "stage": "check",
