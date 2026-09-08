@@ -69,6 +69,10 @@ Lesson 12 is the automated-attack foundation. Lesson 13 (Many-Shot Jailbreaking)
 
 
 
+## CBP context: budgeted trials, measured ASR
+
+In the CBP context red-teaming runs budgeted attacker trials in the pipeline with attack-success rates measured — never single hand-written anecdotes. Stochastic targets need sampled evidence; one jailbreak proves possibility, thirty trials prove rate. The harness from lesson 19/15 executes; the ASR trend gates releases. Anecdotes alarm; measurements govern.
+
 ## Build It
 
 Reconstruct **Red-Teaming: PAIR and Automated Attacks** by following `keyword_filter_target` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
