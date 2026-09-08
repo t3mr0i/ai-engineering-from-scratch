@@ -113,6 +113,10 @@ No standard benchmark spans all modalities. Most papers evaluate on domain-speci
 
 
 
+## CBP context: score per modality, fuse with weights
+
+In the CBP context cross-modal RAG scores each modality on its own scale — text relevance, audio fit, visual match — then fuses with documented weights instead of averaging blindly. A quiet-room query scores audio by decibel-derived fit while text carries semantics; the fusion weights belong in reviewed configuration. Single-modality scores mislead; fused honestly, they complement.
+
 ## Build It
 
 Reconstruct **Multimodal RAG and Cross-Modal Retrieval** by following `Restaurant` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What audio_retrieve score does the quiet query assign to Sunday Plant Bistro (r1, 38dB)?",
+      "question": "A query constrains ambience (quiet) while others constrain text meaning. How should retrieval score that?",
       "options": [
-        "0.38, using the raw decibel value",
-        "1.00, because every quiet restaurant has perfect relevance",
-        "0.525, from max(0, 1 - 38/80)",
-        "0.80, because the denominator is the number of corpus items"
+        "Text scores only, ambience ignored",
+        "Audio scores only, meaning ignored",
+        "One blended score with no breakdown",
+        "Per-modality scores fused with documented weights"
       ],
-      "correct": 2,
-      "explanation": "For a query containing quiet, audio_retrieve computes max(0, 1 - ambient_db/80). For r1 this is 1 - 38/80 = 0.525."
+      "correct": 3,
+      "explanation": "Modalities constrain differently. This lesson scores each and fuses transparently."
     },
     {
       "stage": "check",
