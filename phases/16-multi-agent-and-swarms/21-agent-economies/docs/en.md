@@ -101,6 +101,10 @@ In closed corporate systems, economics gives way to simpler allocation (managers
 
 
 
+## CBP context: attribute cost, route by reputation
+
+In the CBP context agent economies price internal work: Shapley-style contribution attribution per agent, second-price allocation for contested resources, reputation-weighted routing toward proven performers. Chargeback needs all three — unattributed multi-agent spend is a shared bill nobody owns. Economies align incentives; flat budgets invite free-riding.
+
 ## Build It
 
 Reconstruct **Agent Economies, Token Incentives, Reputation** by following `shapley_exact` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

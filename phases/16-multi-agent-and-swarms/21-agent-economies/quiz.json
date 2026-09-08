@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which economic mechanisms are implemented in this lesson?",
+      "question": "Multi-agent spend grows with no attribution per agent and no routing by track record. What aligns incentives?",
       "options": [
-        "A Byzantine quorum and a circuit breaker with no payments.",
-        "Only a fixed salary table; no attribution or routing.",
-        "Shapley contribution attribution, second-price auctions, and reputation-weighted routing.",
-        "PSO particles bidding on a shared grid without agent identities."
+        "Flat budgets with no accounting",
+        "Trust that costs balance out",
+        "One bill nobody itemizes",
+        "Contribution attribution plus reputation routing"
       ],
-      "correct": 2,
-      "explanation": "The module has exact/sampled Shapley functions, `second_price`, and a `Reputation` class used to route 100 tasks."
+      "correct": 3,
+      "explanation": "Unattributed spend invites free-riding. This lesson prices contributions and routes by reputation."
     },
     {
       "stage": "check",
