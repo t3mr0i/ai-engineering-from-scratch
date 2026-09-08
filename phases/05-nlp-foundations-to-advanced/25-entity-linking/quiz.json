@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does disambiguate return for a mention absent from ALIAS_INDEX?",
+      "question": "A mention matches no known customer or product record. What should linking return?",
       "options": [
-        "(None, 0.0)",
-        "The first entity in KB_DESC",
-        "(mention, 1.0)",
-        "A random candidate and its prior"
+        "The closest record regardless",
+        "A random record for continuity",
+        "The first record alphabetically",
+        "Explicit unknown with zero confidence"
       ],
-      "correct": 0,
-      "explanation": "The function checks candidates and immediately returns None, 0.0 when the alias is unknown."
+      "correct": 3,
+      "explanation": "Guessed links corrupt silently. This lesson links with confidence or admits unknown."
     },
     {
       "stage": "check",

@@ -55,6 +55,10 @@ Both steps are learnable. Both are benchmarked. The combined pipeline has been s
 
 
 
+## CBP context: link to master data or say unknown
+
+In the CBP context extracted mentions link to master data — customers, products, tickets — with confidence, and unknown aliases return explicit none rather than best guesses. A wrong link corrupts downstream actions silently; an explicit unknown triggers the search-or-ask path. Alias indexes stay curated per tenant; shared indexes leak across boundaries.
+
 ## Build It
 
 Reconstruct **Entity Linking & Disambiguation** by following `tokenize` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
