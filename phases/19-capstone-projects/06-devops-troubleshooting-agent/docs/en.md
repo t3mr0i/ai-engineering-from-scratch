@@ -86,6 +86,10 @@ Call `Node` from a small caller with a graph with edges (0,1) and (1,2). Compare
 
 Hand off `outputs/skill-devops-agent.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: narrow actuation on Azure Monitor
+
+In the CBP context the troubleshooting agent reads Azure Monitor — metrics, Log Analytics, Application Insights traces — scores hypotheses with telemetry citations, and actuates narrowly: restart a Container App revision or roll back a deployment slot per the approved runbook, anything wider needs a human. Persist the investigation memory in the team's runbook repository so it survives on-call rotations. Hypotheses without citations are guesses with formatting.
+
 ## Further Reading
 
 - [AWS DevOps Agent GA](https://aws.amazon.com/blogs/aws/aws-devops-agent-helps-you-accelerate-incident-response-and-improve-system-reliability-preview/) — the canonical 2026 reference

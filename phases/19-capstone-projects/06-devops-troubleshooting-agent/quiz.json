@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For the sample checkout-api rollout, which score does root_cause assign to the bad-rollout hypothesis?",
+      "question": "An alert fires and three causes are plausible. How should the troubleshooter rank them?",
       "options": [
-        "0.500, because all hypotheses receive the same starting score",
-        "0.090, because only the DNS hypothesis has a numeric score",
-        "0.735, using the recent revision, two telemetry citations, specificity 0.82, and path length 0",
-        "0.140, because the Prometheus error rate is 0.14"
+        "Pick the cause with the scariest name",
+        "Blame the most recent deployment always",
+        "Restart everything at once and see",
+        "Score each by recency, telemetry citations, and specificity"
       ],
-      "correct": 2,
-      "explanation": "The sample scoring function combines recency, specificity, capped citation count, and path weight; the printed bad-rollout score is 0.735."
+      "correct": 3,
+      "explanation": "Uncited hypotheses are formatted guesses. This capstone scores causes against telemetry before actuating."
     },
     {
       "stage": "check",
