@@ -86,6 +86,10 @@ Call `MsgKind` from a small caller with a graph with edges (0,1) and (1,2). Comp
 
 Hand off `outputs/skill-multi-agent-team.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: planner, builder, reviewer — never builder alone
+
+In the CBP context the software team maps to planner, builder, and an independent reviewer (lesson 14/39) with human approval before merge: the planner decomposes against the Boards work item, the builder implements inside the scope contract, the reviewer scores problem fit without grading its own work. Track cost per run per tenant — a team of agents without a meter is a budget meeting waiting to happen. Multi-agent collaboration earns its complexity only with the audit trail to prove it.
+
 ## Further Reading
 
 - [SWE-AF factory architecture](https://github.com/Agent-Field/SWE-AF) — the reference 2026 multi-agent factory

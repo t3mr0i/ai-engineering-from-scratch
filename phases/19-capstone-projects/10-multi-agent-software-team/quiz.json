@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How many implementation subtasks does architect_plan create for the sample software project?",
+      "question": "One agent plans, codes, and approves its own work with no separate review. What is missing?",
       "options": [
-        "Two: architecture and testing",
-        "Three: parser, API, and deployment",
-        "Four: parser, cache, API, and migration",
-        "Seven: one for each team member"
+        "A faster single agent",
+        "More tasks for the same agent",
+        "Blind trust in self-approval",
+        "Planner, builder, and an independent reviewer"
       ],
-      "correct": 2,
-      "explanation": "The planner emits four named tasks—parser, cache, API, and migration—before the coder and reviewer messages begin."
+      "correct": 3,
+      "explanation": "Self-approved work skips the very check that catches wrong-half fixes. This capstone separates the roles with handoffs between them."
     },
     {
       "stage": "check",
