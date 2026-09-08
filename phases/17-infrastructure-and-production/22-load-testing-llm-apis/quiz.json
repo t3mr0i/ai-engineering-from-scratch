@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What prompt distribution does make_uniform_workload create?",
+      "question": "Load tests pass with identical prompts, but real mixed traffic topples the service. What did the test get wrong?",
       "options": [
-        "Gaussian prompt lengths with 80 random prefixes",
-        "A mixture of 50–8,000-token prompts",
-        "500 × (2,000, single_prefix)",
-        "One unique prefix for every request"
+        "Too few virtual users",
+        "The test server was too fast",
+        "Real users should send identical prompts",
+        "Uniform synthetic load flatters caches and hides token latency"
       ],
-      "correct": 2,
-      "explanation": "The uniform fixture returns Request(2000, \"single_prefix\") for every one of its n requests."
+      "correct": 3,
+      "explanation": "Identical prompts test the cache, not the service. This lesson tests with real distributions and token-aware measurement."
     },
     {
       "stage": "check",

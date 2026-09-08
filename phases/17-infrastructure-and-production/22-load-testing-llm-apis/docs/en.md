@@ -96,6 +96,10 @@ Call `Request` from a small caller with tokens=["red","fox"]. Compare its result
 
 Hand off `outputs/skill-load-test-plan.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: test with your distribution, watch the tokens
+
+In the CBP context load tests replay the tenant's real prompt distribution — mixed lengths, mixed prefixes, streaming token arrival — never 500 identical prompts that flatter the cache. Track inter-token latency as the user experiences it, and distrust harness-side numbers when the tokenizer runs under the client's own constraints. A test that passes on uniform synthetic load and fails on Tuesday traffic tested the wrong thing; re-record the distribution quarterly.
+
 ## Further Reading
 
 - [TianPan — Load Testing LLM Applications](https://tianpan.co/blog/2026-03-19-load-testing-llm-applications)
