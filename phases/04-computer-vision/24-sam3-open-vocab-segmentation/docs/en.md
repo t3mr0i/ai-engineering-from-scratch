@@ -15,6 +15,10 @@
 - Use a backend interface so a deterministic local stub and a model have the same handoff.
 - Reject malformed masks, boxes, scores, and image shapes before serialization.
 
+## CBP context: segment by naming, mind the phrases
+
+In the CBP context open-vocabulary segmentation answers "segment the yellow school bus" on CBP images with no per-concept training — phrases stay whole concepts, split only on explicit separators. Evaluate phrase handling on CBP vocabularies (compound equipment names, multi-word defects) before trusting generic claims; a splitter that mangles domain phrases segments the wrong things confidently. Name it, get its mask, verify on your words.
+
 ## Build It
 
 `split_concepts` treats commas, semicolon, `and`, `or`, and `&` as explicit separators. It does not

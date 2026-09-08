@@ -4,10 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does split_concepts treat the phrase 'yellow school bus'?",
-      "options": ["It returns three concepts", "It keeps the whole phrase as one concept", "It rejects every phrase with spaces", "It converts every word to an instance ID"],
-      "correct": 1,
-      "explanation": "Whitespace is not a separator. The helper only splits explicit comma, semicolon, and/or, or ampersand separators."
+      "question": "A team needs masks for new defect types weekly without retraining per type. What capability fits?",
+      "options": [
+        "Retrain a classifier per defect",
+        "Manual masking of every image",
+        "Ignore new defect types",
+        "Text-prompted segmentation with evaluated phrase handling"
+      ],
+      "correct": 3,
+      "explanation": "Per-type training cannot keep weekly pace. This lesson segments by naming concepts in words."
     },
     {
       "stage": "check",
