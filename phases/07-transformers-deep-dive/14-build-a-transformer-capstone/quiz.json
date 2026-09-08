@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which model component ties the language-model head to the token embedding weights in the capstone?",
+      "question": "Architecture walkthroughs mention tied weights, pre-norms, and gated FFNs rapidly. What makes those readable?",
       "options": [
-        "CausalSelfAttention shares its mask with the classifier",
-        "The positional embedding is copied into the final norm",
-        "GPT sets `self.lm_head.weight = self.tok_emb.weight`",
-        "SwiGLUFFN reuses the vocabulary tensor as W1"
+        "Memorizing every paper abstract",
+        "Trusting vendor summaries blindly",
+        "Skipping architecture details",
+        "Having assembled one transformer end to end"
       ],
-      "correct": 2,
-      "explanation": "The GPT constructor explicitly assigns the output linear weight to the token embedding weight, so the tied head adds no separate weight matrix."
+      "correct": 3,
+      "explanation": "Built knowledge reads fast. This capstone assembles every piece into one working model."
     },
     {
       "stage": "check",

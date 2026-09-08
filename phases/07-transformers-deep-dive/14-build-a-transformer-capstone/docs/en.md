@@ -85,6 +85,10 @@ On a Mac M2 laptop, a 4-layer, 4-head, d_model=128 GPT trained for 2,000 steps o
 
 
 
+## CBP context: assembled understanding reads architectures
+
+In the CBP context the assembled transformer — embeddings tied to heads, blocks stacked, norms placed — is the reading lens for every architecture walkthrough (lesson 10/20): weight tying, pre-norm, and SwiGLU variants on model cards parse instantly after building one. Build it once here; read everything faster forever. Assembled knowledge compounds like assembled models.
+
 ## Build It
 
 Reconstruct **Build a Transformer from Scratch — The Capstone** by following `param_count` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
