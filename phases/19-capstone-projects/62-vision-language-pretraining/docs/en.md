@@ -104,6 +104,10 @@ python3 -m unittest code/test_main.py
 | LM loss | Standard next-token cross-entropy on the captioning side |
 | Joint embedding space | The shared space where image and text vectors live after projection |
 
+## CBP context: one system, two evals
+
+In the CBP context a vision-language system serves two jobs — finding (ranking the right image or page) and telling (writing the answer) — and each needs its own eval: retrieval metrics for ranking, faithfulness and correctness for generation. A system that ranks well but hallucinates descriptions fails the second job; one that writes beautifully over wrong pages fails the first. Contract both capabilities separately before the rollout.
+
 ## Build It
 
 Reconstruct **Vision-Language Pretraining** by following `PretrainConfig` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
