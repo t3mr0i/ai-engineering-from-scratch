@@ -105,6 +105,10 @@ Call `Zone` from a small caller with a graph with edges (0,1) and (1,2). Compare
 
 Hand off `outputs/skill-service-desk-ai-triage.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: audit classes before automating
+
+In the CBP context each recurring ticket class is audited for knowledge quality and resolution determinism before any automation: documented procedure plus deterministic steps earn automation, everything else earns a better runbook first. Automating prematurely produces confident wrong answers; the prioritized backlog of knowledge gaps is the deliverable that pays. Detection of runbook drift is an owned process, not a hope.
+
 ## Further Reading
 
 - [ITIL 4 Practice Guides — Knowledge Management](https://www.axelos.com/certifications/itil-service-management/itil-4-foundation) — the ITIL framework underpins most enterprise ITSM; knowledge management is a defined practice with maturity levels.

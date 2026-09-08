@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which zone does classify_ticket assign to T-001, the documented Active Directory unlock with a deterministic procedure?",
+      "question": "Thousands of monthly tickets are fixed from memory while procedures stay unwritten. What precedes any automation?",
       "options": [
-        "Zone C, because account unlock still needs documentation",
-        "Zone B, because a knowledge base article cannot support automation",
-        "Zone A, because both knowledge and determinism signals are present",
-        "Zone D, because identity tickets always require L2"
+        "A chatbot over undocumented memory",
+        "Trust that analysts never leave",
+        "Automating the loudest ticket class first",
+        "Auditing each class for knowledge and determinism"
       ],
-      "correct": 2,
-      "explanation": "T-001 contains a step-by-step KB article signal and an account-unlock signal. Both classes are high, so classify_ticket returns Zone.A for automation."
+      "correct": 3,
+      "explanation": "Undocumented memory cannot automate safely. This lesson audits classes into zones before touching automation."
     },
     {
       "stage": "check",
