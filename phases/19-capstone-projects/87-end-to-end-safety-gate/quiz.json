@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does SafetyGate.handle do when the pre-generation detector is non-benign with confidence >= block_confidence (0.85)?",
+      "question": "Detector, rules, classifier, and refusal text each work alone but never meet. What protects production?",
       "options": [
-        "It returns block immediately with refusal text and no post-generation verdict",
-        "It streams the full response and relies only on the output classifier",
-        "It downgrades the request to a low-severity warning",
-        "It runs the rules fixer before deciding whether to block"
+        "The strongest single layer alone",
+        "Fewer layers for simplicity",
+        "Trust in the base model instead",
+        "All layers composed with a trace per request"
       ],
-      "correct": 0,
-      "explanation": "The early branch returns a RequestTrace with final_action=block, refusal text, zero during chunks, and post_gen=None. This is an immediate pre-generation decision, not a universal safety guarantee."
+      "correct": 3,
+      "explanation": "No single layer is the guarantee. This capstone composes detector, rules, classifier, and verdict into one gate."
     },
     {
       "stage": "check",

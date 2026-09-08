@@ -57,6 +57,10 @@ The mock LLM has two behaviors keyed off the prompt: it refuses recognizable att
 
 
 
+## CBP context: the gate around every CBP assistant
+
+In the CBP context the composed safety gate — pre-generation detector with block threshold, constitutional rules, content classifier, refusal text, post-generation verdict, full request trace — wraps every CBP assistant in production, with high-confidence threats blocked before a token streams. No single layer is the guarantee; the composition with its trace is. Re-run attack and normal suites in the pipeline on every change, and treat either-direction regressions as release blockers.
+
 ## Build It
 
 Reconstruct **Capstone 87 — End-to-End Safety Gate** by following `load_fixtures` on a graph with edges (0,1) and (1,2). Run `python3 main.py` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.
