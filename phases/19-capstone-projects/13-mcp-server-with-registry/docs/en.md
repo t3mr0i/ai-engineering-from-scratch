@@ -88,6 +88,10 @@ Call `ToolSchema` from a small caller with a graph with edges (0,1) and (1,2). C
 
 Hand off `outputs/skill-mcp-server.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: Boards items behind the registry, approvals for writes
+
+In the CBP context the registry governs CBP tools — Boards work items, Repos pull requests, Search queries — with pinned versions, scoped credentials, and fresh human approval on destructive calls: scope alone never suffices for a write. The Jira shape in the demo maps one-to-one onto Boards; the governance (registry, policy decision, audit entry per denial) is the deliverable. An unregistered server is an unreviewed dependency.
+
 ## Further Reading
 
 - [Model Context Protocol 2026 Roadmap](https://blog.modelcontextprotocol.io/posts/2026-mcp-roadmap/) — StreamableHTTP, capability metadata, registry

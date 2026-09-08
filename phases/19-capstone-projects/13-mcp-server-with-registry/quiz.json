@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does dispatch return when jira.create has its write scope but no fresh human approval?",
+      "question": "A tool holds the right access scope but no fresh human approval for a destructive write. Should it run?",
       "options": [
-        "An error object with code 403 and the destructive-approval reason",
-        "A successful PROJ-99 issue because the scope is sufficient",
-        "An error object with code 500 from the Jira handler",
-        "The request is queued without an audit entry"
+        "Yes, scope alone is sufficient",
+        "Yes, and skip the audit entry too",
+        "No, but retry silently until approved",
+        "No, deny with an audit entry until approval arrives"
       ],
-      "correct": 0,
-      "explanation": "policy_decide checks fresh_approval for destructive tools after checking scope; dispatch records the denial and returns error code 403 before invoking the handler."
+      "correct": 3,
+      "explanation": "Scope is not consent for destruction. This capstone gates destructive tools on fresh approval with denials audited."
     },
     {
       "stage": "check",
