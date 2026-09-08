@@ -88,6 +88,10 @@ Call `signup` from a small caller with the text "red fox". Compare its result wi
 
 Hand off `outputs/skill-workbench-benchmark.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: prove it on a real-feeling repo
+
+In the CBP context the workbench earns its place with a before/after report on realistic work: same task through the prompt-only pipeline and the workbench pipeline, measured on failures, reverts, evidence quality, and handoff usability. Run that comparison on a CBP-shaped repo — real build, real tests, real scope rules — and hand the report to the skeptic. Toy demos convince nobody; a measured drop in reverts convinces the team that owns the pager.
+
 ## Further Reading
 
 - [LangChain, The Anatomy of an Agent Harness](https://blog.langchain.com/the-anatomy-of-an-agent-harness/) — Terminal Bench Top-30 to Top-5 receipt

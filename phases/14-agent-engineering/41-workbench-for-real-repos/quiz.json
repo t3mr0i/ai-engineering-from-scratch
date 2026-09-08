@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What outcome does run_prompt_only report for the sample signup task?",
+      "question": "A toy demo shows the workbench working, but the team does not believe it helps real work. What convinces them?",
       "options": [
-        "tests_actually_run=False and acceptance_met=False",
-        "tests_actually_run=True and acceptance_met=False",
-        "tests_actually_run=False and acceptance_met=True",
-        "tests_actually_run=True and acceptance_met=True"
+        "A bigger toy demo",
+        "Louder claims in the announcement",
+        "Removing the skeptics from the review",
+        "The same task through both pipelines, measured on failures and reverts"
       ],
-      "correct": 0,
-      "explanation": "The prompt-only fixture only claims completion: it does not run tests and does not establish the requested short-password behavior."
+      "correct": 3,
+      "explanation": "Demos do not transfer trust; measurements do. This lesson runs prompt-only against workbench-guided on a real-feeling repo."
     },
     {
       "stage": "check",
