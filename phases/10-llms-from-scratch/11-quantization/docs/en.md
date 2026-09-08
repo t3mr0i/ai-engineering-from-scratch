@@ -222,6 +222,10 @@ FP16 to INT2: 8x memory reduction, 5-15% quality loss. Only viable for specific 
 
 
 
+## CBP context: fewer bits with measured quality
+
+In the CBP context quantization fits deployments to available hardware: fewer bits per weight with quality re-measured on CBP evals after every precision change (lesson 17/09). Match the format to the serving stack and keep the full-precision baseline for regression comparison. Memory saved counts only when answers still pass.
+
 ## Build It
 
 Reconstruct **Quantization: Making Models Fit** by following `float_to_fp32_bits` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
