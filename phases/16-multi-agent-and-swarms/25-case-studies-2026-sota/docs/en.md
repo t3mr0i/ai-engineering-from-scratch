@@ -128,6 +128,10 @@ Where the field is in April 2026:
 
 
 
+## CBP context: match patterns to engagements
+
+In the CBP context case studies transfer by design attributes — task type, agent count, verification need, runtime, role distinctness, user-facing exposure — matched against the engagement at hand, never by vendor logo or headline score. A case with matching attributes predicts; a famous case without them entertains. Map before adopting, then verify locally anyway.
+
 ## Build It
 
 Reconstruct **Case Studies and the 2026 State of the Art** by following `Design` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

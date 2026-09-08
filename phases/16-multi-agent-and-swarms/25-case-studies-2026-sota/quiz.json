@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which inputs does `Design` give the case-study mapper?",
+      "question": "Teams copy famous case studies that match nothing about their engagement. What makes a case transferable?",
       "options": [
-        "A raw transcript with no structured design attributes.",
-        "Only the model vendor and a temperature value.",
-        "Task type, expected agent count, verification need, runtime duration, role distinctness, and whether the product is user-facing/networked.",
-        "The benchmark score and the number of SQLite rows."
+        "Vendor fame and headline scores",
+        "The year the case was published",
+        "Longer case write-ups",
+        "Matching design attributes to the task at hand"
       ],
-      "correct": 2,
-      "explanation": "The dataclass contains `task_type`, `n_agents_expected`, `verification_required`, `runtime_duration_hours`, `roles_distinct`, and `user_facing_network` alongside the design name."
+      "correct": 3,
+      "explanation": "Fame does not transfer; fit does. This lesson maps cases by design attributes."
     },
     {
       "stage": "check",
