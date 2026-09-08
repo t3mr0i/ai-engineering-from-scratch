@@ -98,6 +98,10 @@ The value grows with context length. At 4k tokens the noise floor is small enoug
 
 
 
+## CBP context: sharpen focus for long documents
+
+In the CBP context differential attention matters for long CBP documents where the decisive passage drowns in background: subtracting shared focus lets distinctive matches stand out. When evaluating long-context deployments, probe decisive-fact retrieval at depth (lesson 05/28) rather than trusting architecture names. Focus quality decides long-doc quality.
+
 ## Build It
 
 Reconstruct **Differential Attention (V2)** by following `dot` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
