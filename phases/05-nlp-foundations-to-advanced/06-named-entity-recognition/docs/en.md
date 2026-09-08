@@ -54,6 +54,10 @@ The architecture progression:
 
 
 
+## CBP context: entities route and redact
+
+In the CBP context NER extracts the actionable spans — products, places, organizations, plus PII (names, IBANs, phone numbers) for redaction before any model sees the text. Gazetteers bootstrap fast; evaluated models generalize. Entity extraction routes tickets, fills forms, and guards privacy; unextracted PII in a prompt is a breach with a paper trail.
+
 ## Build It
 
 Reconstruct **Named Entity Recognition** by following `word_shape` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

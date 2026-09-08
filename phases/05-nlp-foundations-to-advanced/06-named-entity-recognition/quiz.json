@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What labels does rule_based_ner assign to [\"Apple\", \"visited\", \"iPhone\", \"in\", \"US\"]?",
+      "question": "Customer text contains names and account numbers that must never reach the model. What extraction step protects them?",
       "options": [
-        "[\"B-PERSON\", \"O\", \"B-ORG\", \"O\", \"B-ORG\"]",
-        "[\"O\", \"O\", \"O\", \"O\", \"O\"]",
-        "[\"B-ORG\", \"O\", \"B-PRODUCT\", \"O\", \"B-GPE\"]",
-        "[\"I-ORG\", \"O\", \"I-PRODUCT\", \"O\", \"I-GPE\"]"
+        "Trust the model to ignore them",
+        "Delete the entire customer text",
+        "Hope reviewers catch every leak",
+        "Recognize entities and redact before modeling"
       ],
-      "correct": 2,
-      "explanation": "Apple, iPhone, and US are in the corresponding gazetteers; the other token is outside an entity."
+      "correct": 3,
+      "explanation": "PII needs explicit extraction. This lesson recognizes named entities for routing and redaction."
     },
     {
       "stage": "check",
