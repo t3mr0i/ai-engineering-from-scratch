@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "With a 14-hour baseline and a 7-month doubling time, what horizon does horizon_at report at month 14?",
+      "question": "Agent capabilities on long tasks keep growing, but plans assume far more than demonstrated. What grounds scoping?",
       "options": [
-        "56 hours",
-        "28 hours",
-        "42 hours",
-        "98 hours"
+        "Roadmap hopes for next year",
+        "Vendor marketing claims",
+        "The longest demo ever recorded",
+        "Measured task horizons with matched budgets"
       ],
-      "correct": 0,
-      "explanation": "Two doubling intervals have elapsed, so 14 * 2^(14/7) = 14 * 4 = 56 hours."
+      "correct": 3,
+      "explanation": "Horizons measure demonstrated reach. This lesson scopes long-horizon work to evidence."
     },
     {
       "stage": "check",

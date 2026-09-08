@@ -68,6 +68,10 @@ Every row becomes a lesson in this phase.
 
 
 
+## CBP context: scope tasks to measured horizons
+
+In the CBP context agent task horizons double on a steady cadence — scope CBP agent work to demonstrated horizons with budgets to match, not to roadmap hopes. A task beyond the measured horizon needs decomposition into horizon-sized pieces with human checkpoints between them. Horizons describe demonstrated capability; plans that ignore them describe wishes.
+
 ## Build It
 
 Reconstruct **The Shift from Chatbots to Long-Horizon Agents** by following `HorizonConfig` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.
