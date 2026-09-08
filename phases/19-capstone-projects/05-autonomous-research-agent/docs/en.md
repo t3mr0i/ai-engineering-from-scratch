@@ -91,6 +91,10 @@ Call `Node` from a small caller with a graph with edges (0,1) and (1,2). Compare
 
 Hand off `outputs/skill-ai-scientist.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: research loops need budgets, not just curiosity
+
+In the CBP context autonomous research is off the delivery path (see the roadmap note), but its loop discipline transfers: novelty-plus-quality scoring, hypothesis-test cycles, and hard budget stops suit codebase exploration and vendor comparisons. Never run open-ended research on the tenant's meter without a spend ceiling and a human-readable trail of what was tried. Curiosity without a budget is an incident.
+
 ## Further Reading
 
 - [Sakana AI-Scientist-v2 repository](https://github.com/SakanaAI/AI-Scientist-v2) — the reference production research agent

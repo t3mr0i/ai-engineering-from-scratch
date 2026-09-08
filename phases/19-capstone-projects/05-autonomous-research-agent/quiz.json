@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "A node has novelty 0.6, quality 0.8, and $5 remaining in the budget. What score does Node.score(5) return?",
+      "question": "A research agent explores freely with no budget, no scoring, and no trail of tried ideas. What bounds it?",
       "options": [
-        "0.69: 0.6×0.4 + 0.8×0.5 + 0.5×0.1",
-        "0.85: novelty and quality are averaged before adding budget",
-        "0.64: the budget term is ignored below $10",
-        "0.53: quality is multiplied by the remaining dollars"
+        "Nothing; free exploration always pays off",
+        "A bigger model with more curiosity",
+        "More time without limits",
+        "Novelty-quality scoring plus a hard spend ceiling"
       ],
-      "correct": 0,
-      "explanation": "score uses min(1, remaining_budget/10), so $5 contributes 0.05; the weighted sum is 0.24 + 0.40 + 0.05 = 0.69."
+      "correct": 3,
+      "explanation": "Unguided exploration burns budget without a trail. This capstone scores ideas and stops spending on schedule."
     },
     {
       "stage": "check",
