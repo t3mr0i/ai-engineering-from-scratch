@@ -84,6 +84,10 @@ Call `TodoItem` from a small caller with a graph with edges (0,1) and (1,2). Com
 
 Hand off `outputs/skill-terminal-coding-agent.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: Boards in, Repos pull request out
+
+In the CBP context this capstone's shape transfers to the issue-to-PR agent (lesson 16): trigger on an Azure Boards work item, reproduce the Maven build in a clean sandbox, enforce per-day budgets and turn ceilings, and open an Azure Repos pull request through branch policies — never a force-push. Build the terminal harness here for the craft (tool loop, sandbox, cost ceiling); deliver the Boards-to-PR flow there for the engagement.
+
 ## Further Reading
 
 - [Claude Code documentation](https://docs.anthropic.com/en/docs/claude-code) — reference harness from Anthropic

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What hard turn ceiling does the default Budget enforce?",
+      "question": "A coding agent runs fifty turns with no ceiling, no sandbox, and direct push access. What are the three risks?",
       "options": [
-        "50 turns",
-        "200,000 turns",
-        "3 turns, because SCRIPT has three entries",
-        "30 seconds"
+        "Slow typing, small fonts, dim colors",
+        "Too many passing tests",
+        "Excessive documentation",
+        "Runaway cost, destructive writes, unreviewed pushes"
       ],
-      "correct": 0,
-      "explanation": "Budget.max_turns defaults to 50. The three entries in SCRIPT describe the deterministic stub model, not the production-style loop ceiling."
+      "correct": 3,
+      "explanation": "Unbounded agents burn budget and break repos. This capstone builds the harness craft: loop, sandbox, and ceiling."
     },
     {
       "stage": "check",
