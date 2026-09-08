@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does load_safetensors need a pretrained-to-local name map?",
+      "question": "A checkpoint's layer names differ from your code's layer names. What must happen before the weights can load?",
       "options": [
-        "Published GPT-2 keys such as wte and h.0.attn.c_attn must be translated to local names such as tok_embed and blocks.0.attn.qkv.",
-        "The map decrypts the safetensors payload before PyTorch can read it.",
-        "The map changes the model vocabulary to match the checkpoint automatically.",
-        "The map chooses a random seed for each transformer block."
+        "Load anyway and hope the order matches",
+        "Rename all layers randomly",
+        "Skip loading and train from scratch",
+        "Translate each published name to the local name explicitly"
       ],
-      "correct": 0,
-      "explanation": "make_pretrained_to_local is a literal mapping between the checkpoint naming convention and the parameter names returned by the local model."
+      "correct": 3,
+      "explanation": "Mismatched names mean scrambled weights. This lesson maps every published key to its local counterpart before loading."
     },
     {
       "stage": "check",

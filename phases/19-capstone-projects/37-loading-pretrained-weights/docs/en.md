@@ -110,6 +110,10 @@ Real GPT-2 weights are 0.5 GB. The demo does not download them; it generates a s
 | Weight tying alias | "Shared LM head" | Setting model.lm_head.weight = model.tok_embed.weight so the head and embedding share storage; the head is not in the file because of this |
 | Load report | "Coverage summary" | A small dataclass that tracks loaded, missing, unexpected, and shape_mismatch lists; printing it is how you tell whether the load succeeded |
 
+## CBP context: verify the artifact before trusting it
+
+In the CBP context pretrained weights arrive as provider deployments and versioned artifacts, not files you wire by hand — but the verification habit transfers whole: check hashes, confirm the vocabulary and config match the serving code, and confirm the license covers the use. A name map that silently misaligns is a model that answers confidently from scrambled weights; the loading lesson teaches exactly which mismatch to fear. Trust artifacts with receipts, not with hope.
+
 ## Build It
 
 Reconstruct **Loading Pretrained Weights** by following `ModelConfig` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
