@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In the demo's goodput function, when is one RequestTrace counted as good?",
+      "question": "Throughput reads 15,000 tokens per second, but users abandon sessions because many requests blow past two seconds. What metric is missing?",
       "options": [
-        "All three SLOs pass",
-        "When aggregate throughput exceeds the target",
-        "When its mean TPOT is below the limit, regardless of E2E",
-        "When at least one of the three latency limits passes"
+        "An even bigger throughput number",
+        "Fewer users on the platform",
+        "Longer timeouts so nothing ever fails",
+        "Per-request SLO attainment across latency axes"
       ],
-      "correct": 0,
-      "explanation": "goodput increments only when all three comparisons use <=: ttft_ms, tpot_genaiperf(), and e2e_ms must each satisfy the supplied SLO."
+      "correct": 3,
+      "explanation": "Throughput cannot see abandoned sessions. This lesson defines TTFT, TPOT, percentiles, and goodput: did the user get what was expected."
     },
     {
       "stage": "check",

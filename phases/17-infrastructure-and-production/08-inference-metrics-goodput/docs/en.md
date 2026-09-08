@@ -114,6 +114,10 @@ Call `RequestTrace` from a small caller with x=0.5 with the demo defaults. Compa
 
 Hand off `outputs/skill-slo-goodput-gate.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: SLOs per tenant, goodput per feature
+
+In the CBP context TTFT, TPOT, and end-to-end SLOs are set per feature and measured per tenant in Application Insights — throughput alone never certifies a CBP assistant. Alert on P99, not the mean: the mean hides the abandoned sessions. Goodput (requests meeting every SLO) is the number that goes into the steering deck; when it drops, the breakdown by queue, prefill, decode, and network says which layer to scale before the next status meeting.
+
 ## Further Reading
 
 - [NVIDIA NIM — LLM Benchmarking Metrics](https://docs.nvidia.com/nim/benchmarking/llm/latest/metrics.html) — canonical definition of TTFT, ITL, TPOT.
