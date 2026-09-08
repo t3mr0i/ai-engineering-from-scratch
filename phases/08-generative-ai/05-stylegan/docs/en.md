@@ -57,6 +57,10 @@ In 2026 StyleGAN3 remains the default for (a) narrow-domain photorealism at high
 
 
 
+## CBP context: control style per channel
+
+In the CBP context StyleGAN's lesson is controllable generation: normalize features, then re-inject style per channel — coarse styles early (layout), fine styles late (texture). The same separation applies to prompt-driven image services (composition versus detail guidance). Disentangled controls beat monolithic prompts when outputs must vary along specific axes for review.
+
 ## Build It
 
 Reconstruct **StyleGAN** by following `leaky` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

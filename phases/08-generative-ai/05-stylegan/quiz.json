@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does adain(features, scale, bias) normalize before applying style?",
+      "question": "Outputs must vary layout and texture independently for review. What control structure enables that?",
       "options": [
-        "It standardizes the feature vector with its mean and standard deviation, then returns scale*(f-m)/s + bias",
-        "It softmaxes features and adds the raw latent vector",
-        "It clips each feature to [-1,1] without changing its mean",
-        "It replaces every feature with the same scale value"
+        "One entangled latent for everything",
+        "Random outputs with no controls",
+        "Retraining per variation",
+        "Per-channel style injection at multiple scales"
       ],
-      "correct": 0,
-      "explanation": "adain calls mean_std and applies an affine transform to normalized features, letting a style-derived scale and bias control the channel statistics."
+      "correct": 3,
+      "explanation": "Independent axes need separate controls. This lesson injects style per channel per scale."
     },
     {
       "stage": "check",
