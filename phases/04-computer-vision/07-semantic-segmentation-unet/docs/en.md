@@ -35,6 +35,10 @@ Dice is calculated per class and averaged. The epsilon is positive and finite, s
 
 This lesson does not train a PyTorch U-Net. `double_conv` is a shape-preserving NumPy analogue made of two edge-padded local mean filters and ReLUs. `unet_shape_trace` records encoder downsampling, a bottleneck, and decoder resolutions. It requires height and width divisible by `2**levels`; a real implementation must choose an explicit crop/interpolation policy for other sizes.
 
+## CBP context: per-pixel labels for region work
+
+In the CBP context segmentation masks regions that boxes cannot: corrosion area, crack paths, document zones — every pixel labeled, with the class axis contracted explicitly. Evaluate on boundary quality (IoU per class on CBP images), not just pixel accuracy, because background pixels dominate and flatter lazy models. Masks are evidence with geometry; store them with the image they describe.
+
 ## Build It
 
 Run:

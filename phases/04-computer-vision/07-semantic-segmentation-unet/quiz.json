@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which pair of shapes does pixel_cross_entropy expect?",
+      "question": "A defect's area and path matter, not just its bounding box. What output shape captures that?",
       "options": [
-        "Logits (N,C,H,W) and integer targets (N,H,W)",
-        "Logits (N,H,W,C) and one scalar label per image",
-        "One-hot logits (N,H,W) and RGB targets (N,H,W,3)",
-        "Boxes (N,4) and class scores (N,C)"
+        "A single image-wide class label",
+        "A bounding box only",
+        "The image file name",
+        "A per-pixel class mask"
       ],
-      "correct": 0,
-      "explanation": "The class axis stays in NCHW logits while each target pixel stores one integer class ID in NHW."
+      "correct": 3,
+      "explanation": "Regions need pixel answers. This lesson labels every pixel through U-Net structure."
     },
     {
       "stage": "check",
