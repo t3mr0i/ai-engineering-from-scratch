@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which response does rule_based_respond(\"My name is Alex\") produce?",
+      "question": "A password reset flow and an open-ended advice chat need different bot shapes. How should they split?",
       "options": [
-        "Nice to meet you, Alex.",
-        "Hello. How can I help?",
-        "Why do you name Alex?",
-        "Tell me more about that."
+        "One big model for everything",
+        "Rules for everything including advice",
+        "No bot at all for either",
+        "Deterministic rules for fixed flows, models for open ones"
       ],
-      "correct": 0,
-      "explanation": "The first matching RulePattern captures the name and formats it into the greeting template."
+      "correct": 3,
+      "explanation": "Flow shape decides the tool. This lesson traces chatbots from rules to neural handoffs."
     },
     {
       "stage": "check",

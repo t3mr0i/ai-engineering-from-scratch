@@ -39,6 +39,10 @@ The four paradigms are not sequential replacements. A 2026 production chatbot ro
 
 
 
+## CBP context: rules for fixed flows, models for open ones
+
+In the CBP context the chatbot lineage prescribes a split still valid today: deterministic rules for fixed flows (password resets, status checks, slot filling with validation), models for open-ended conversation — with explicit handoff between them. Rules never hallucinate and never generalize; models generalize and sometimes invent. Route by flow shape, not by fashion.
+
 ## Build It
 
 Reconstruct **Chatbots — Rule-Based to Neural to LLM Agents** by following `RulePattern` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.
