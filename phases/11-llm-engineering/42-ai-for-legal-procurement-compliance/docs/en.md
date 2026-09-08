@@ -68,6 +68,10 @@ The template in `outputs/sheet-legal-procurement-ai-review.md` can be used befor
 The demo's first case is **vendor terms review**: Vendor clause with obligation risk and missing evidence. Treat the labels confidential term, obligation risk, vendor clause, missing evidence as evidence to inspect, not as an automatic approval. The implementation's signal matcher looks for those terms in the scenario name, description, and explicit signal list; then the scorer combines impact, uncertainty, and two points per matched signal (capped at 20). The priority function maps that score to a control level: launch gate at 16 or above, guided pilot at 11–15, team practice at 7–10, and awareness below 7.
 
 Run the case and check which of the controls — confidentiality check, clause register, legal reviewer, decision record — appear in the returned row. Ask three questions: Which signal is supported by an observable source? Which control has an owner who can act this week? What evidence would move the case to a different priority? Then change one signal or impact value and rerun it. If the priority changes, explain whether the change came from the score, the matching rule, or both. The score is a triage aid; it does not replace domain approval, privacy review, or a pilot metric. Keep that distinction in the artifact and in the handoff.
+## CBP context: preparation yes, judgment never
+
+In the CBP context AI structures legal and procurement material — summaries, term comparisons, review notes — while interpretation, risk acceptance, and negotiation stay with accountable humans. Confidential material stays inside tenant boundaries; generated summaries never leave the matter without review. A missed obligation in a polished summary is malpractice with formatting.
+
 ## Key Takeaways
 
 - AI can prepare legal and procurement work, not own it.
