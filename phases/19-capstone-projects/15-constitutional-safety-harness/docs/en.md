@@ -95,6 +95,10 @@ Call `sanitize` from a small caller with a graph with edges (0,1) and (1,2). Com
 
 Hand off `outputs/skill-safety-harness.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: layered checks with attack and normal tests
+
+In the CBP context the safety harness layers input cleaning, topic rules, content classification, and output review around every CBP assistant — each layer independently tested with both attacks and normal requests so safety never means refusing legitimate banking questions. Ship the harness with the red-team range from this capstone, re-run both suites in the pipeline, and treat a regression in either direction (missed attack or new false refusal) as a release blocker.
+
 ## Further Reading
 
 - [Anthropic Constitutional Classifiers](https://www.anthropic.com/research/constitutional-classifiers) — training-time reference
