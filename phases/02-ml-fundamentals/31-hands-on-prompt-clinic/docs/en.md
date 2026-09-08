@@ -47,6 +47,10 @@ priority_for labels 16–20 launch gate required, 11–15 guided pilot, 7–10 t
 practice, and 0–6 awareness only. build_plan sorts by descending score and then
 scenario name for a repeatable handoff.
 
+## CBP context: vague targets get signals, not work
+
+In the CBP context requests like "predict churn" with no audience receive clinic signals — vague target, missing audience, leakage risk, missing split, undefined metric, no acceptance test — before any modeling starts. Unknown or duplicate entries are rejected the way the planner rejects them here: explicitly. A request that cannot pass the clinic cannot pass review either.
+
 ## Build It
 
 From code/, run python3 main.py. The JSON plan contains support-ticket triage,
