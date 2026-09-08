@@ -4,10 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which entries are suppressed by the causal mask in `MiniGPT.forward` for a sequence of length 4?",
-      "options": ["Scores from a position to every earlier key.", "Only the diagonal score at each position.", "Scores from a position to later keys.", "All scores in the final transformer block."],
-      "correct": 2,
-      "explanation": "`np.triu(-1e9, k=1)` fills positions above the diagonal, preventing token position i from attending to future positions j > i."
+      "question": "A base model writes fluently but follows no instructions and answers from memory. What did pretraining buy?",
+      "options": [
+        "A finished assistant product",
+        "Instruction following for free",
+        "Factual reliability guarantees",
+        "Fluent general language ability, nothing more"
+      ],
+      "correct": 3,
+      "explanation": "Pretraining buys fluency, not obedience. This lesson trains the base that tuning later contracts."
     },
     {
       "stage": "check",

@@ -223,6 +223,10 @@ The output projection (logits head) shares weights with the token embedding matr
 
 
 
+## CBP context: pretraining buys the base, nothing more
+
+In the CBP context pretraining is what provider base models already did: next-token prediction with causal masking over web-scale text, producing fluent generalists with no instruction contract (lesson 19/39). Consume bases; never pretrain. Understand the causal mask deeply — it is why models cannot see the future and why prompts order matters — and leave the compute bills to providers.
+
 ## Build It
 
 Reconstruct **Pre-Training a Mini GPT (124M Parameters)** by following `Embedding` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
