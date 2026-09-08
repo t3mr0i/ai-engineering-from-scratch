@@ -77,6 +77,10 @@ CUDA is the production target, but the same code paths exist on CPU. `gloo` is t
 
 
 
+## CBP context: the invariant behind platform training
+
+In the CBP context distributed training is platform territory nobody hand-rolls — but its core invariant matters whenever training is discussed: every worker starts from the same broadcast weights and gradients average across workers, or the replicas silently diverge into different models. When a provider training job misbehaves, "did all workers stay in sync" is the first question, before data or schedule. Build the collectives here; audit the invariant there.
+
 ## Build It
 
 Reconstruct **Distributed Data Parallel and FSDP from Scratch** by following `RankResult` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.

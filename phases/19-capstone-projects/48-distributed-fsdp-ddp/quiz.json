@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which collectives maintain the core invariant of MinimalDDP?",
+      "question": "Several workers train copies of one model in parallel. What keeps them from silently becoming different models?",
       "options": [
-        "An all_gather of activations followed by reduce_scatter of labels.",
-        "Only broadcast at the end of training, because gradients are local.",
-        "A barrier before every layer and a point-to-point send after every batch.",
-        "broadcast at construction and averaged all_reduce of gradients after backward."
+        "Each worker trains fully independently",
+        "Sync once at the very end only",
+        "Different data per worker is enough",
+        "Same starting weights plus averaged gradients"
       ],
       "correct": 3,
-      "explanation": "MinimalDDP broadcasts parameters from rank 0 when constructed. The trainer then calls sync_grads, which sums each gradient across ranks and divides by world_size before stepping."
+      "explanation": "Parallel training needs a sync invariant. This lesson builds it: broadcast, then averaged gradient reduction."
     },
     {
       "stage": "check",
