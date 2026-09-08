@@ -48,6 +48,10 @@ GQA is the modern default because it cuts KV-cache memory by a factor of `N/G` w
 
 
 
+## CBP context: heads split relations, sharing saves memory
+
+In the CBP context head counts on model cards (plus GQA/MQA variants) are serving-economics levers: more heads capture more relation types at the same parameter count, while shared key-value projections cut the KV cache that prices long contexts. When comparing deployments for CBP workloads, heads and sharing schemes belong beside context length in the evaluation — same quality, smaller cache, cheaper long documents.
+
 ## Build It
 
 Reconstruct **Multi-Head Attention** by following `carries` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

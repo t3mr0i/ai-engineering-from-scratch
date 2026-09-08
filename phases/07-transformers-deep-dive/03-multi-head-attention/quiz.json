@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For the Python demo's 6 tokens, d_model=8, and two heads, what shape does multi_head_attention return?",
+      "question": "One attention distribution smears syntax, reference, and discourse relations together. What structure separates them?",
       "options": [
-        "A 6×8 output matrix, plus one 6×6 weight matrix per head",
-        "A 2×6 output matrix, plus one 8×8 weight matrix",
-        "A 6×4 output matrix with no per-head weights",
-        "An 8×8 output matrix, plus one scalar per token"
+        "A single bigger attention matrix",
+        "No attention at all",
+        "One head with more parameters",
+        "Parallel heads in smaller subspaces, concatenated"
       ],
-      "correct": 0,
-      "explanation": "Each head has width 4 but the two head outputs are concatenated back to width 8; every head attends over the six token positions."
+      "correct": 3,
+      "explanation": "Single heads smear relations. This lesson runs parallel heads per relation type."
     },
     {
       "stage": "check",
