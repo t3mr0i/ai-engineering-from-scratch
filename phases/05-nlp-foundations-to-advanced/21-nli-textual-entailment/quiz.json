@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What label does predict_nli assign to premise \"A cat is sleeping on the couch.\" and hypothesis \"There is a cat in the room.\"?",
+      "question": "An answer sounds supported but adds claims the sources never state. What relation is missing?",
       "options": [
-        "entailment",
-        "contradiction",
-        "neutral",
-        "unsupported because the words are not identical"
+        "Longer source passages",
+        "More citations per answer",
+        "Trust in fluent answers",
+        "Entailment of each claim by cited evidence"
       ],
-      "correct": 0,
-      "explanation": "The hypothesis content has 50% lexical overlap with the premise and no negation mismatch, meeting the entailment rule."
+      "correct": 3,
+      "explanation": "Support is a logical relation, not a vibe. This lesson judges entailment, contradiction, and neutrality."
     },
     {
       "stage": "check",

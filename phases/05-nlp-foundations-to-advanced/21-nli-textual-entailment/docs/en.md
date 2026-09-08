@@ -56,6 +56,10 @@ One task, three production uses. This is why every RAG evaluation framework ship
 
 
 
+## CBP context: entailment checks faithfulness
+
+In the CBP context NLI is the faithfulness engine: does the answer follow from the cited passages (entailment), contradict them, or stray beyond them (neutral)? RAG evals and guardrails run entailment checks per claim; contradiction with sources fails the response no matter how fluent. Overlap plus negation handling beats similarity alone for grounding verdicts.
+
 ## Build It
 
 Reconstruct **Natural Language Inference — Textual Entailment** by following `tokenize` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
