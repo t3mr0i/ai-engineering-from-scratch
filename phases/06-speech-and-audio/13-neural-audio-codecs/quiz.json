@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "With n_codebooks=4, what does rvq_encode return as its first result?",
+      "question": "Streaming voice needs audio as tokens with tunable quality cost. What structure provides that?",
       "options": [
-        "Four lists of codebook indices, one list per residual stage",
-        "One floating-point centroid for the whole signal",
-        "A single list containing four waveform samples",
-        "Four reconstructed waveforms with different sample rates"
+        "Raw waveforms at full rate always",
+        "Text transcripts only, no audio",
+        "One fixed bitrate for everything",
+        "Residual codebooks stacking fidelity per stage"
       ],
-      "correct": 0,
-      "explanation": "rvq_encode appends one index list after each quantize_with_codebook call, so four stages produce four lists."
+      "correct": 3,
+      "explanation": "Quality costs tokens per stage. This lesson quantizes audio residually into tokens."
     },
     {
       "stage": "check",

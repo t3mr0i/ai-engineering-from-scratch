@@ -84,6 +84,10 @@ Traditional codecs like Opus still win per bit on perceptual quality. Neural cod
 
 
 
+## CBP context: tokens price voice transport
+
+In the CBP context neural codecs turn audio into tokens for audio LLMs — codebooks per frame setting the bitrate-quality tradeoff behind streaming voice (lesson 06/15). More codebooks mean better fidelity at higher token cost; the choice prices every minute of voice traffic. Understand residual quantization here; configure bitrate against quality evals there.
+
 ## Build It
 
 Reconstruct **Neural Audio Codecs — EnCodec, SNAC, Mimi, DAC and the Semantic-Acoustic Split** by following `generate_signal` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
