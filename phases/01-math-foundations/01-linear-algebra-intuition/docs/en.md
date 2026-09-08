@@ -18,6 +18,10 @@
 
 An embedding, a gradient, and a row of network weights are all vectors. A weight matrix turns one vector space into another. The names change across papers, but the operations in this lesson do not. The two runnable implementations keep the arithmetic visible: `vectors.py` uses Python lists and `vectors.jl` uses Julia arrays with `LinearAlgebra`.
 
+## CBP context: dot products rank your searches
+
+In the CBP context this lesson's one load-bearing intuition is the dot product: normalized, it is the cosine similarity that ranks every AI Search result your service returns. Vectors are embeddings, matrices are weight maps — the names change across papers, the operations do not. Read for that intuition, run the demo if the arithmetic feels abstract, and port nothing: no Java service ever hand-rolls a dot product outside a library.
+
 ## Build It
 
 Run both canonical entry points from `code/`:

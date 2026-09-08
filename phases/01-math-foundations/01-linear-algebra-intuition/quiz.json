@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the dot product of [3, 2] and [1, -1]?",
+      "question": "Search results are ranked by comparing a query vector against document vectors. What operation compares two vectors as one number?",
       "options": [
-        "1",
-        "5",
-        "-1",
-        "7"
+        "Sorting the vectors alphabetically",
+        "Counting the elements in each",
+        "Combining aligned components into a scalar",
+        "Concatenating them end to end"
       ],
-      "correct": 0,
-      "explanation": "Compute 3*1 + 2*(-1) = 1. The dot product combines aligned components into one scalar."
+      "correct": 2,
+      "explanation": "Similarity starts from component-wise combination. This lesson builds the dot product behind every ranking."
     },
     {
       "stage": "check",
