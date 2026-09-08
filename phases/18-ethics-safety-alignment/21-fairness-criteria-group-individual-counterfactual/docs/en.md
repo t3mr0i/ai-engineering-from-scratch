@@ -62,6 +62,10 @@ Lesson 20 is bias measurement. Lesson 21 is fairness definition. Lesson 22 is pr
 
 
 
+## CBP context: choose the criterion with stakeholders
+
+In the CBP context fairness criteria are chosen per decision with stakeholders — demographic parity, equalized odds, or individual similarity — knowing no system satisfies all at once. Document which criterion governs each CBP decision and why; the choice encodes values, not math. Unchosen criteria still get measured and reported, so tradeoffs stay visible instead of hidden.
+
 ## Build It
 
 Reconstruct **Fairness Criteria — Group, Individual, Counterfactual** by following `gen` on a graph with edges (0,1) and (1,2). Run `python3 main.py` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.
