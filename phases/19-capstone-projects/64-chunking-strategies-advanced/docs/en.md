@@ -70,6 +70,10 @@ A gold-labeled query carries the exact character offsets of the answer span insi
 
 
 
+## CBP context: chunk by structure, measure retrieval first
+
+In the CBP context chunking bounds everything downstream: split CBP documents by structure (headers, sections, ticket boundaries) so no candidate loses coherent answer evidence, then measure retrieval quality before touching rankers or models. A bad split cannot be compensated downstream — no reranker restores evidence that was never a candidate. Compare strategies on CBP queries with precision, recall, and faithfulness, not with vibes.
+
 ## Build It
 
 Reconstruct **Chunking Strategies, Compared** by following `Chunk` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
