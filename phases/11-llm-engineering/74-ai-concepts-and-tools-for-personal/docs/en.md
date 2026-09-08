@@ -128,6 +128,10 @@ Call `TaskType` from a small caller with the demo’s smallest built-in fixture.
 
 Hand off `outputs/skill-ai-tool-selection-guide.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: match tool to task, verify to consequence
+
+In the CBP context daily work routes by task type — drafting to assistants, regulated data to approved internal processes, code to the reviewed pipelines — with verification proportional to consequence: a spot-check for prose, expert review for contract clauses and complaint themes. Client data never enters unapproved training pipelines; the mismatch stays invisible until it detonates, so the routing rule is written down, not assumed.
+
 ## Further Reading
 
 - [Anthropic — Claude model overview and capabilities](https://docs.claude.com/en/docs/about-claude/models/overview) — current model lineup, context windows, and capability descriptions.

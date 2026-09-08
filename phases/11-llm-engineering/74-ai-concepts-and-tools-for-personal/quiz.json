@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does route_task handle a regulated-data summary?",
+      "question": "One assistant handles everything including regulated client data. What is the safer shape?",
       "options": [
-        "It routes to HUMAN_ONLY and marks the decision blocked for external AI use",
-        "It routes to a chat assistant after removing only the document title",
-        "It routes to document intelligence because summaries are lower risk than decisions",
-        "It routes to internal RAG and marks the task safe for every use"
+        "Keep everything in the one assistant",
+        "Remove only document titles before pasting",
+        "Trust summaries as lower-risk by default",
+        "Match task type to approved tool, keeping regulated data internal"
       ],
-      "correct": 0,
-      "explanation": "The regulated-data rule runs first and returns HUMAN_ONLY with blocked=True. The task must remain in an approved human or internal process rather than an external tool."
+      "correct": 3,
+      "explanation": "Single-tool defaults leak across boundaries. This lesson routes by task type with regulated data fenced inside."
     },
     {
       "stage": "check",
