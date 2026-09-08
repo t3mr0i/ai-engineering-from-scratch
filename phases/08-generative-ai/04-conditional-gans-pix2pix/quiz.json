@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does g_forward inject class c into the generator input?",
+      "question": "Generated outputs must obey a label or source image, not just look plausible. What input enforces that?",
       "options": [
-        "It replaces z with a one-hot vector and discards noise",
-        "It adds c as a scalar to every generated output after the second layer",
-        "It concatenates z with one_hot(c, num_classes) before the first matrix multiply",
-        "It conditions only the discriminator, leaving G independent of c"
+        "More random noise",
+        "No inputs at all",
+        "Bigger models unconditionally",
+        "Conditioning signals alongside the noise"
       ],
-      "correct": 2,
-      "explanation": "g_forward forms `inp = z + one_hot(c, num_classes)`, so the generator receives both stochastic noise and a class code."
+      "correct": 3,
+      "explanation": "Control needs conditioning. This lesson injects class and image conditions into generation."
     },
     {
       "stage": "check",

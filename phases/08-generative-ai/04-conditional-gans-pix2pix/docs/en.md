@@ -50,6 +50,10 @@ In 2026, unpaired image-to-image is mostly done via diffusion (ControlNet, IP-Ad
 
 
 
+## CBP context: condition every generation
+
+In the CBP context unconditional generation is rarely the product — outputs answer to labels, maps, masks, or source images. Conditioning (class codes concatenated with noise, image-to-image translation pairs) turns sampling into controlled transformation: redacted fills, style transfers, paired conversions. Always feed the condition alongside the randomness; noise alone is a slot machine.
+
 ## Build It
 
 Reconstruct **Conditional GANs & Pix2Pix** by following `sigmoid` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
