@@ -87,6 +87,10 @@ Show-o, Janus-Pro, and InternVL-U all build on or challenge this thesis. Chinese
 
 
 
+## CBP context: image tokens multiply fast
+
+In the CBP context next-token image generation bills by spatial tokens — thousands per image at production resolutions — so image-gen features budget tokens like text features budget context. A 512px image at 4,096 tokens costs real money per generation; resolution choice is a pricing decision reviewed against the brief. Count spatial tokens before promising unlimited generations.
+
 ## Build It
 
 Reconstruct **Emu3: Next-Token Prediction for Image and Video Generation** by following `TokCost` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

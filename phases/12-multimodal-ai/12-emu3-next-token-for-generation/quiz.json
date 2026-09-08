@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How many image tokens does TokCost('image 512x512', 512, 8) compute?",
+      "question": "Image generation bills thousands of tokens per image at production resolutions. What must pricing account for?",
       "options": [
-        "4,096, from a 64x64 spatial grid after reduction",
-        "512, because reduction is applied only to width",
-        "65,536, because the original pixels are all retained",
-        "8, because the reduction factor is the token count"
+        "Text tokens only",
+        "A flat fee per image regardless",
+        "Nothing; images are free",
+        "Spatial token counts per resolution"
       ],
-      "correct": 0,
-      "explanation": "TokCost computes (resolution//reduction)^2. For 512 and 8, that is 64^2 = 4,096 spatial tokens."
+      "correct": 3,
+      "explanation": "Images tokenize densely. This lesson generates images as next-token sequences."
     },
     {
       "stage": "check",
