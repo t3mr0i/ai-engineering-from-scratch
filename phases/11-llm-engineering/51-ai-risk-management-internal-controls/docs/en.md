@@ -69,6 +69,10 @@ The template in `outputs/register-ai-risk-controls.md` can be used before an AI 
 The demo's first case is **customer-data assistant**: High impact AI use with policy exception and missing audit evidence. Treat the labels control owner, audit evidence, policy exception, high impact as evidence to inspect, not as an automatic approval. The implementation's signal matcher looks for those terms in the scenario name, description, and explicit signal list; then the scorer combines impact, uncertainty, and two points per matched signal (capped at 20). The priority function maps that score to a control level: launch gate at 16 or above, guided pilot at 11–15, team practice at 7–10, and awareness below 7.
 
 Run the case and check which of the controls — risk register, control test, audit trail, approval owner — appear in the returned row. Ask three questions: Which signal is supported by an observable source? Which control has an owner who can act this week? What evidence would move the case to a different priority? Then change one signal or impact value and rerun it. If the priority changes, explain whether the change came from the score, the matching rule, or both. The score is a triage aid; it does not replace domain approval, privacy review, or a pilot metric. Keep that distinction in the artifact and in the handoff.
+## CBP context: controls with evidence, not statements
+
+In the CBP context every AI use case carries owner, risk register entry, tested control, audit trail, and approval — policy statements alone prove nothing. Control tests run on schedule with findings tracked like defects; exceptions expire instead of lingering. An auditor asks for evidence; hand them the register, not the policy PDF.
+
 ## Key Takeaways
 
 - AI governance needs named control ownership.
