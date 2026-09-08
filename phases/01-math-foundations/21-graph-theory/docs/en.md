@@ -15,6 +15,10 @@
 - Aggregate node features with one normalized message-passing round.
 - Use a Fiedler-vector split, spectral clustering, and PageRank without a graph package.
 
+## CBP context: graphs model connected work
+
+In the CBP context graph vocabulary — nodes, edges, degrees, paths — describes knowledge graphs behind hybrid retrieval, ticket-citation networks, and agent topologies (lessons 14/28, 19/51). Degrees flag hubs (over-cited documents, overloaded reviewers), paths trace provenance. Read for the vocabulary; reach for a graph library only when relations, not rows, are the question.
+
 ## Build It
 
 Run the NumPy implementation:
