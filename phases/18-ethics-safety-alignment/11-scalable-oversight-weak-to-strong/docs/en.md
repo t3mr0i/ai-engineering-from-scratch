@@ -71,6 +71,10 @@ Lessons 6-10 describe the threat and the defensive paradigm under the assumption
 
 
 
+## CBP context: small judges plus human spots
+
+In the CBP context oversight scales by combining small-model judges over everything with human spot review on samples and escalations: weak supervision elicits strong behavior affordably, humans verify where stakes concentrate. Measure judge quality against human labels continuously; a drifting judge supervises nothing. Scale the oversight, not just the model.
+
 ## Build It
 
 Reconstruct **Scalable Oversight and Weak-to-Strong Generalization** by following `gen` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
