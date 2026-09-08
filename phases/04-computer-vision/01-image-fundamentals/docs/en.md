@@ -32,6 +32,10 @@ flowchart LR
 
 `rgb_to_grayscale` uses the BT.601 weights `0.299, 0.587, 0.114`; it is not an unweighted channel mean. `rgb_to_ycbcr` keeps luma `Y` on the RGB-like scale and offsets the two chroma channels by 128, which is convenient for an 8-bit video-style representation. `rgb_to_hsv` returns hue in degrees `[0, 360]` and saturation/value in `[0, 1]`. At black, hue and saturation are defined as zero because hue is not observable. These functions reject nonfinite values and shapes other than non-empty HWC RGB.
 
+## CBP context: shapes and channels before APIs
+
+In the CBP context image fundamentals prevent the classic vision-integration bug: height-width-channel versus channel-first ordering, missing batch axes, and unnormalized pixel ranges sent to document and vision APIs. Check shape, dtype, and range at the boundary the way text pipelines check encoding — a CHW image fed to an HWC endpoint fails silently into garbage scores. Libraries transform; your code verifies.
+
 ## Build It
 
 From this lesson's `code/` directory run:

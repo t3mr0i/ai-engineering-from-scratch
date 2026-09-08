@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What shape does synthetic_image(5, 7, seed=4) return?",
+      "question": "An image API returns garbage scores for valid pictures. The array layout was never checked. What should have been verified?",
       "options": [
-        "(5, 7, 3) HWC",
-        "(3, 5, 7) CHW",
-        "(5, 3, 7) channel-middle",
-        "(1, 5, 7, 3) batched NHWC"
+        "The image file name length",
+        "The folder the image came from",
+        "Nothing; APIs accept anything",
+        "Shape order, channels, dtype, and value range"
       ],
-      "correct": 0,
-      "explanation": "The fixture is one uint8 RGB image in height-width-channel order, so its shape is (H,W,3) without a batch axis."
+      "correct": 3,
+      "explanation": "Layout mismatches fail silently. This lesson builds pixels, channels, and shapes as boundary contracts."
     },
     {
       "stage": "check",
