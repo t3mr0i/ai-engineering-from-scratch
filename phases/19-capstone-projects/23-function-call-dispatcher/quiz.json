@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What happens before fetch_user's handler can run when id is the string \"x\"?",
+      "question": "A call fails. Sometimes retrying helps (timeout), sometimes it cannot (wrong argument type). How should the dispatcher tell them apart?",
       "options": [
-        "The handler receives id=x and returns a fallback user",
-        "The call waits for the timeout before validating",
-        "Dispatch returns kind=schema with attempts=0",
-        "The call is retried three times as a transient failure"
+        "Retry everything three times",
+        "Never retry anything ever",
+        "Ask the user after every failure",
+        "Validate schema first, retry only transient failures"
       ],
-      "correct": 2,
-      "explanation": "Dispatcher validates registry schema before entering the semaphore or retry loop; the integer mismatch becomes a schema DispatchError with zero attempts."
+      "correct": 3,
+      "explanation": "Schema errors never heal by retrying. This lesson validates before dispatch and retries only what can recover."
     },
     {
       "stage": "check",

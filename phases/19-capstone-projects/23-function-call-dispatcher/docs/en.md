@@ -512,6 +512,10 @@ else:
     print("WRONG: not all sentiment dispatches succeeded")
 ```
 
+## CBP context: schema errors fail, transient errors retry
+
+In the CBP context the dispatcher draws the line the whole service depends on: schema violations fail immediately with zero attempts and a model-readable message, while transient failures (timeouts, 429s, dropped connections) retry with backoff inside the concurrency budget. Mixing the two up retries garbage forever or drops recoverable calls. Validate before the semaphore, retry after it, and record attempts per call for the audit trail.
+
 ## Going further
 
 Two extensions production dispatchers add. First, structured logging at every transition (which the loop's event stream already gives you, but the dispatcher should also emit `dispatch.attempt` and `dispatch.retry` events). Second, circuit breakers: after N failures in a window, a tool gets a cool-down period where dispatches return immediately with `kind="circuit_open"` instead of attempting the handler. Both fit on top of this dispatcher without changing the contract.
