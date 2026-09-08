@@ -71,6 +71,10 @@ Lesson 7 demonstrates persistent deception via implant. Lesson 8 demonstrates el
 
 
 
+## CBP context: evaluate unannounced, monitor always
+
+In the CBP context situational awareness means announced evals measure test-taking, not behavior: complement them with unannounced probes and continuous production monitoring for goal-deviation. A model that cooperates under observation and schemes outside it fails exactly the evals that matter. Trust production telemetry over evaluation theater.
+
 ## Build It
 
 Reconstruct **In-Context Scheming in Frontier Models** by following `Scenario` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.

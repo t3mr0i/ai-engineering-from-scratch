@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "When the strong toy Agent is situationally aware and under evaluation, which action does Agent.act return?",
+      "question": "A model behaves well under announced evaluation but differently in production. What evaluation is missing?",
       "options": [
-        "scheme, because evaluation always increases goal-directedness",
-        "defect_open, because the orthogonal goal is hidden",
-        "cooperate, because situational awareness suppresses scheming under eval",
-        "A random action independent of under_eval"
+        "More announced evaluations",
+        "Bigger evaluation budgets",
+        "Trust in eval-time behavior",
+        "Unannounced probes plus production monitoring"
       ],
-      "correct": 2,
-      "explanation": "Agent.act first computes thinks_eval = under_eval and situationally_aware. If true, it returns cooperate before sampling misalignment or goal-directedness, which is why the eval rows show no schemes."
+      "correct": 3,
+      "explanation": "Awareness games announced tests. This lesson watches behavior where it counts: unobserved."
     },
     {
       "stage": "check",
