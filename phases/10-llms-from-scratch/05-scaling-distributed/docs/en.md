@@ -242,6 +242,10 @@ graph TD
 
 
 
+## CBP context: think in cards, spend on platform
+
+In the CBP context multi-card thinking stays conceptual: models bigger than one GPU split by tensor, pipeline, or data parallelism on platform infrastructure nobody hand-rolls. Know the three splits to read training reports and bills; spend CBP budgets on deployments and evals, never on DIY clusters. Cards are the provider's problem; evals are yours.
+
 ## Build It
 
 Reconstruct **Scaling: Distributed Training, FSDP, DeepSpeed** by following `simulate_data_parallelism` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
