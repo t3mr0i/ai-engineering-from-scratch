@@ -128,6 +128,10 @@ Training cost for stage 2: ~20 hours on 8xA100. This is the key number — one d
 
 
 
+## CBP context: project, then instruct
+
+In the CBP context visual instruction tuning has two stages with separate evals: the projector aligning vision to language dimensions, then instruction tuning teaching visual question-answering on CBP images. Evaluate the bridge (retrieval hit quality) before the behavior (answer faithfulness); a misaligned projector poisons every downstream answer. Project first, instruct second, measure both.
+
 ## Build It
 
 Reconstruct **LLaVA and Visual Instruction Tuning** by following `vec` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

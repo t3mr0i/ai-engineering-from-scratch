@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What dimensions does the toy MLPProjector use in demo_projector?",
+      "question": "A language model must answer questions about images it was never wired to. What two stages connect them?",
       "options": [
-        "16 -> 32 -> 24, mapping each ViT patch to the toy LLM dimension",
-        "24 -> 16 -> 32, because the LLM is the input tower",
-        "16 -> 24 with no hidden layer",
-        "32 -> 16 -> 24, because HIDDEN_DIM is the patch size"
+        "Bigger text prompts alone",
+        "No connection; guess from text",
+        "Retrain everything jointly at once",
+        "Project vision to language dims, then instruct-tune"
       ],
-      "correct": 0,
-      "explanation": "PATCH_DIM is 16, HIDDEN_DIM is 32, and LLM_DIM is 24. MLPProjector.forward applies W1/GELU and then W2, giving 16 -> 32 -> 24."
+      "correct": 3,
+      "explanation": "Bridges precede behaviors. This lesson projects patches then teaches visual QA."
     },
     {
       "stage": "check",
