@@ -80,6 +80,10 @@ All four are variations on the same recipe: generator plus evaluator, loop. The 
 
 
 
+## CBP context: holdouts judge, never select
+
+In the CBP context evolutionary search over code keeps train and holdout strictly separated: selection optimizes the train signal while an independent holdout judges — never the reverse. Direct optimization on final tests is leakage wearing a lab coat. The same separation governs CBP evals everywhere: tune on one set, certify on another, mix them never.
+
 ## Build It
 
 Reconstruct **AlphaEvolve — Evolutionary Coding Agents** by following `the` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.

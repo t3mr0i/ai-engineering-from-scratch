@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does run_loop keep a separate test set when use_holdout=True?",
+      "question": "Search optimizes directly on the final test examples and reports brilliant scores. What is wrong?",
       "options": [
-        "To select candidates without optimizing directly on the final test examples",
-        "To make every expression have the same depth",
-        "To replace the training set after every mutation",
-        "To guarantee that a random leaf is mathematically correct"
+        "Nothing; high scores are high scores",
+        "Search ran too few iterations",
+        "The test set was too small",
+        "Selection leaked into judgment; holdouts must stay separate"
       ],
-      "correct": 0,
-      "explanation": "The train score guides search while the holdout score is used as an independent signal, reducing direct test leakage."
+      "correct": 3,
+      "explanation": "Optimizing the judge corrupts the verdict. This lesson separates selection signals from holdout judgment."
     },
     {
       "stage": "check",
