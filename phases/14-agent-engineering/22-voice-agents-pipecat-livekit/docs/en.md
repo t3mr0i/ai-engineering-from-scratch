@@ -87,6 +87,10 @@ Call `Frame` from a small caller with a 160-sample 16 kHz waveform. Compare its 
 
 Hand off `outputs/skill-voice-pipeline.md` with the command `python3 main.py`, the accepted input shape (a 160-sample 16 kHz waveform), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: voice is a pipeline with a latency budget
+
+In the CBP context a voice assistant is a frame pipeline with a ~600ms budget end to end: partial audio in, turn detection as a model, barge-in as a first-class event, never a text loop with TTS bolted on. Treat silence and interruption as normal input — callers pause and cut in — and audit voice-handled actions exactly like typed ones, with transcripts attached. Route the pipeline through the same gateway auth and tenant scoping as every other client; a phone call is just another transport into the same service.
+
 ## Further Reading
 
 - [Pipecat docs](https://docs.pipecat.ai/getting-started/introduction) — frame-based pipeline, processors, transports
