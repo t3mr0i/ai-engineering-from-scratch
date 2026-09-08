@@ -53,6 +53,10 @@ The detector is not the safety gate. It is one signal among many that the gate w
 
 
 
+## CBP context: normalize, then detect, at ingestion
+
+In the CBP context injection detection runs at ingestion for high-risk content (lesson 14/27): strip zero-width characters, map homoglyphs, decode layered encodings, translate leetspeak — then match detector rules against the exposed text. Obfuscation that survives normalization is rare; obfuscation that is never normalized always works. Log every detection with the tenant id and route the content to quarantine, never to the model.
+
 ## Build It
 
 Reconstruct **Capstone 83 — Prompt Injection Detector** by following `that` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.

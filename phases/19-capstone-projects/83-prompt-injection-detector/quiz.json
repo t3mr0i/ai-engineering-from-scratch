@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In what order does normalize expose obfuscated prompt content to the detector rules?",
+      "question": "An attack hides inside zero-width characters and encoded text that detectors read as harmless. What exposes it?",
       "options": [
-        "Remove zero-width characters, map homoglyphs, decode base64/hex, translate leetspeak, then try ROT13",
-        "Run ROT13 first, then reject every non-ASCII character",
-        "Only lowercase the original text; encoded content is intentionally ignored",
-        "Decode every word as base64 and discard the original prompt"
+        "Longer blocklists of plain words",
+        "Trust in encoded content",
+        "Ignoring non-ASCII text entirely",
+        "Layered normalization before rule matching"
       ],
-      "correct": 0,
-      "explanation": "normalize applies the layered transformations in that order. The returned text retains the original context while adding decodable content where the guarded decoders succeed."
+      "correct": 3,
+      "explanation": "Obfuscation defeats raw matching. This lesson normalizes layer by layer, then detects."
     },
     {
       "stage": "check",
