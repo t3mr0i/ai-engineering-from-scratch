@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Given text with two fenced code blocks, which block does extract_code return?",
+      "question": "Generated code looks similar to a reference solution but may not compile or pass tests. How should it be scored?",
       "options": [
-        "The last fenced block, because later code overrides earlier code",
-        "All fenced blocks concatenated with a newline",
-        "The first matching fenced block, without its opening and closing fences",
-        "None, because the extractor requires a language name"
+        "By text similarity to the reference",
+        "By length of the generated code",
+        "By how confident the model sounds",
+        "By extracting, executing, and checking behavior"
       ],
-      "correct": 2,
-      "explanation": "CODE_BLOCK_RE uses search rather than findall, so extract_code returns the contents of the first matching triple-backtick block. The language tag is optional in the pattern."
+      "correct": 3,
+      "explanation": "Similarity is not correctness. This lesson scores code by running it: extract, execute, compare behavior."
     },
     {
       "stage": "check",

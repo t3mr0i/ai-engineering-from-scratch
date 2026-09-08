@@ -143,6 +143,10 @@ Read `main.py` top to bottom. The runner template is the load-bearing piece. Sta
 
 Once the subprocess shape works, the next concern is portability. Different Python versions handle SIGKILL differently on Windows. The cleanest fix is to put the runner in a Docker image. The next thing after that is replacing assertion strings with real unit test files so the eval matches what production CI does. Stop calling assertion strings tests at that point; they are toy tests and they have toy failure modes.
 
+## CBP context: the build is the metric
+
+In the CBP context code-generating assistants are scored by execution — Maven build plus JUnit suite on CBP tasks — not by overlap with reference code. Extract the code, run it in the sandbox, compare behavior; text similarity to a gold patch proves nothing about compiling, passing code. Execution metrics cost sandbox time and pay back in honesty.
+
 ## Build It
 
 Reconstruct **Code Exec Metric** by following `ExecResult` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
