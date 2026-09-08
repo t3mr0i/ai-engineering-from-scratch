@@ -104,6 +104,10 @@ Your solution is complete when it records python3 main.py, the captured output, 
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
+## CBP context: evidence to action, never narrative to applause
+
+In the CBP context status reports carry source snapshots, RAG status, risk owners, and one clear steering question — AI drafts, evidence decides. Stale data and hidden dependencies must surface as risks, not dissolve into confident narrative. A steering group that cannot act on the report received a story, not a status.
+
 ## Further Reading
 
 ### Recommended trainings (LHIND AI Literacy)
