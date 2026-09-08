@@ -67,6 +67,10 @@ Pick N from the eval curve plus the latency budget. The cross-encoder cannot rai
 
 
 
+## CBP context: cheap recall, precise rerank
+
+In the CBP context reranking sits between hybrid retrieval and generation: cheap bi-encoder recall over the corpus, precise cross-encoder scoring on the top candidates, generation only from the rescored best. Bound the rerank depth by latency budget — full attention per pair is expensive — and measure the precision gain on CBP queries before paying it. Recall finds; rerank decides; generation speaks.
+
 ## Build It
 
 Reconstruct **Cross-Encoder Reranker** by following `tokenize_pair` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
