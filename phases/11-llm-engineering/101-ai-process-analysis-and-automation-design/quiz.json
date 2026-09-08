@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What verdict does gate return for a low-sensitivity process with exception_coverage=0.75, no volume profile, and a measured manual baseline?",
+      "question": "A demo automates twenty curated cases, but production fails on the unexamined 8% with no fallback and cut manual capacity. What was skipped?",
       "options": [
-        "FAIL, because exception coverage and the missing volume profile are two failed checks",
-        "CONDITIONAL, because only the coverage threshold is missed",
-        "PASS, because the manual baseline is the most important check",
-        "FAIL, because low sensitivity is itself an automation blocker"
+        "A bigger demo with more cases",
+        "Faster model selection",
+        "Trust in curated success",
+        "Honest analysis: error modes, exceptions, sensitivity, cost"
       ],
-      "correct": 0,
-      "explanation": "Coverage below 80% and the absent historical volume profile each add a failure. Two failed checks produce GateVerdict.FAIL even though the process is low sensitivity and has a baseline."
+      "correct": 3,
+      "explanation": "Curated demos hide exception distributions. This lesson gates automation on documented analysis, not demo success."
     },
     {
       "stage": "check",

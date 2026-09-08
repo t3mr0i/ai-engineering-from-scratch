@@ -115,6 +115,10 @@ Call `Sensitivity` from a small caller with the demo’s smallest built-in fixtu
 
 Hand off `outputs/skill-process-automation-readiness.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: four inputs or no recommendation
+
+In the CBP context automation recommendations document four inputs — manual error modes, exception distribution, downstream sensitivity, cost structure — or they are not recommendations but guesses. The gate verdict (pass, conditional, fail) is written down with its evidence; silent 8% exception rates and missing fallbacks fail loudly here instead of in production week two. Curated-demo success proves nothing about the uncovered cases.
+
 ## Further Reading
 
 - [ISO/IEC 42001:2023 — AI Management System standard](https://www.iso.org/standard/81230.html) — the international standard covering AI risk assessment processes, including pre-deployment impact analysis.
