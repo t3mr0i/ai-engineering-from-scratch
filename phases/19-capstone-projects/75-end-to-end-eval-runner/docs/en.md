@@ -166,6 +166,10 @@ This runner is the floor. A production eval system adds: a results cache keyed b
 
 Add an adapter for a real provider after you have the mocks working. Pick one with a free tier, write thirty lines of glue, watch the leaderboard light up. Then add the second provider and let the harness do the work.
 
+## CBP context: one adapter per deployment
+
+In the CBP context the eval runner talks to every Azure deployment through one adapter interface — render prompt, generate, score — so swapping deployments never rewrites evals. Add a deployment by writing an adapter, not by forking the harness; the task set and metrics stay fixed while models come and go. The runner is the constant; deployments are the variable.
+
 ## Build It
 
 Reconstruct **End-to-End Eval Runner** by following `Generation` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

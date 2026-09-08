@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What method must a ModelAdapter provide for run_eval to obtain a generation?",
+      "question": "Each new model needs its own rewritten eval harness. What interface removes that rewrite?",
       "options": [
-        "generate(prompt, task) returning a Generation",
-        "score(task) returning a leaderboard row",
-        "render(task) returning a calibration bin",
-        "aggregate(results) returning a token count"
+        "A separate harness per model forever",
+        "No harness; grade by hand each time",
+        "Hardcoded model names in every test",
+        "One adapter interface every deployment implements"
       ],
-      "correct": 0,
-      "explanation": "The runner renders a task prompt and calls each adapter's generate method. The returned Generation carries text and optional confidence or token statistics for scoring."
+      "correct": 3,
+      "explanation": "Per-model harnesses rot apart. This lesson fixes the runner and varies only the adapter."
     },
     {
       "stage": "check",
