@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What capabilities does handle_initialize advertise for this notes server?",
+      "question": "A team wants its customer lookup available to every assistant in the company. What is the first structural decision?",
       "options": [
-        "tools, resources, prompts",
-        "sampling only, because servers cannot expose tools",
-        "roots with subscribe true and no tools",
-        "a UI resource with no protocol capabilities"
+        "Which assistant host to hardcode it into first",
+        "What color the lookup button should be",
+        "How many copies to maintain per team",
+        "Expose it once as a server on the shared contract, then connect each host"
       ],
-      "correct": 0,
-      "explanation": "The initializer reports the three implemented MCP primitives and sets their listChanged flags to false."
+      "correct": 3,
+      "explanation": "One server on the shared contract serves every host. This lesson builds that server: capabilities, dispatch, and tool handlers."
     },
     {
       "stage": "check",

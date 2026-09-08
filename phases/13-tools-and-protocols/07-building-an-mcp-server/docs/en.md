@@ -638,6 +638,10 @@ Reconstruct **Building an MCP Server — Python + TypeScript SDKs** by following
 
 Hand off `outputs/skill-mcp-server-scaffolder.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: wrap a CBP system, host behind the gateway
+
+In the CBP context the notes demo stands for a real system: wrap Azure Boards, Azure Repos, or AI Search the same way — one tool per operation, strict schemas, and notifications answered with silence exactly as the dispatch loop shows. Host the server on LCAG infrastructure behind the APIM gateway with Entra ID rather than on a developer laptop, and register it where clients discover it (see lesson 17). The SDK mechanics from this lesson transfer unchanged; the platform adds auth, audit, and rate limits around them.
+
 ## Further Reading
 
 - [Model Context Protocol — Python SDK](https://github.com/modelcontextprotocol/python-sdk) — the reference Python implementation
