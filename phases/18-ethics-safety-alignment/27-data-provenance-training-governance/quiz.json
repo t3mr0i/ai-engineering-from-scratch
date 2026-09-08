@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How many fields does the code's AB_2013_FIELDS list emit for Section 3111(a)?",
+      "question": "Training data arrives with no record of sources, rights, or dates. What must precede any training run?",
       "options": [
-        "12 fields, including sources, purpose, size, content types, rights, processing, dates, and synthetic-data use",
-        "3 fields: owner, license, and model size",
-        "7 fields copied unchanged from a model card",
-        "30 fields including every internal training hyperparameter"
+        "Train first, document later",
+        "Trust the data provider blindly",
+        "Skip documentation for speed",
+        "A disclosure summary reviewed before use"
       ],
-      "correct": 0,
-      "explanation": "AB_2013_FIELDS contains twelve disclosure names. render_markdown iterates through that list, so the output is a dataset summary rather than a model card or a full internal training log."
+      "correct": 3,
+      "explanation": "Undocumented data trains unaccountable models. This lesson discloses provenance before training."
     },
     {
       "stage": "check",

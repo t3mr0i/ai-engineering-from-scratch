@@ -73,6 +73,10 @@ Lesson 26 is model-level documentation. Lesson 27 is dataset-level governance. T
 
 
 
+## CBP context: twelve fields before training data
+
+In the CBP context training and eval datasets carry disclosure summaries — sources, purpose, size, content types, rights, processing, dates, synthetic use — reviewed before any training run touches them. Rights and dates decide legality; purpose bounds legitimacy. Undocumented data trains unaccountable models; provenance paperwork is the difference.
+
 ## Build It
 
 Reconstruct **Data Provenance and Training-Data Governance** by following `flag_followups` on a graph with edges (0,1) and (1,2). Run `python3 main.py` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.
