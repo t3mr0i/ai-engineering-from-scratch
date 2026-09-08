@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which output description is classified as CRITICAL by classify_risk?",
+      "question": "Outputs are acted on immediately with no gate, or a reviewer rubber-stamps in five seconds. What distinguishes a real gate?",
       "options": [
-        "An internal reversible meeting summary with no downstream action",
-        "A reversible customer notification draft awaiting a send decision",
-        "A safety-facing recommendation, even before considering model confidence",
-        "A reversible internal data lookup with no recipient"
+        "Any reviewer notification counts",
+        "Speed of approval above all",
+        "Trust in accurate early demos",
+        "Consequence-based trigger with surface, fallback, and measured quality"
       ],
-      "correct": 2,
-      "explanation": "The classifier treats audience='safety' or downstream_action='safety_system' as CRITICAL. The gate is driven by consequence and reversibility, not by a confidence percentage."
+      "correct": 3,
+      "explanation": "Gates in name only absorb liability without signal. This lesson designs gates by consequence with measured effect."
     },
     {
       "stage": "check",

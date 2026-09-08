@@ -121,6 +121,10 @@ Call `RiskTier` from a small caller with the smallest valid record {"id": 1}. Co
 
 Hand off `outputs/skill-hitl-gate-designer.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: gates by consequence, quality measured
+
+In the CBP context review gates trigger on consequence and reversibility — safety-facing outputs gate regardless of model confidence — with decision surface, reviewer, time budget, fallback, and quality measurement defined per gate. Rubber-stamp approvals absorb liability without signal; measure whether the gate improves outputs or remove the theater. The gate that cannot show its value is process drag.
+
 ## Further Reading
 
 - [ISO/IEC 42001:2023 — AI Management Systems](https://www.iso.org/standard/81230.html) — the international standard for human oversight requirements in AI deployments; the compliance anchor for Tier 3/4 gates.
