@@ -27,6 +27,10 @@ JAX is a separate array and transformation library, but it is not in this reposi
 | Shape discipline | `shape_checked` | every row has the declared width |
 | Explicit randomness | `split_seed`, `random_vector` | the same integer seed gives the same tuple |
 
+## CBP context: read JAX, ship PyTorch shapes
+
+In the CBP context JAX is read-only vocabulary for research code you may encounter — pure functions plus grad, jit, and vmap transforms — while production thinking stays in PyTorch shapes and Java services. The functional discipline (no hidden state, transformations over functions) is worth absorbing; the framework itself never enters a CBP build. Recognize it, do not adopt it.
+
 ## Build It
 
 ### 1. Inspect the parameter contract

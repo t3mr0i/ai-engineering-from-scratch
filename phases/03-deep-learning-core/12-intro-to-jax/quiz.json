@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For params={\"w\": (2, -1), \"b\": 0.5} and x=(3, 4), what does linear(params, x) return?",
+      "question": "Research code transforms pure functions with grad and jit while production stays elsewhere. What is worth taking from it?",
       "options": [
-        "2.5",
-        "-2.5",
-        "6.5",
-        "4.5"
+        "The whole framework into every build",
+        "Nothing at all, ignore it",
+        "Only the version numbers",
+        "The functional discipline; recognize, do not adopt"
       ],
-      "correct": 0,
-      "explanation": "The affine calculation is 2*3 + (-1)*4 + 0.5 = 2.5, with one weight consumed for each validated feature."
+      "correct": 3,
+      "explanation": "Ideas transfer, dependencies do not. This lesson teaches JAX shapes as readable vocabulary."
     },
     {
       "stage": "check",
