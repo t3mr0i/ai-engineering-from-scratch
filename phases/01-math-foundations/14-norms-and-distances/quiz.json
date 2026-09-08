@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For v=[3,-4], what are its L1 and L2 norms?",
+      "question": "Long documents outrank short relevant ones in vector search. What normalization fixes that?",
       "options": [
-        "L1=5 and L2=7",
-        "L1=1 and L2=25",
-        "L1=7 and L2=5",
-        "L1=12 and L2=12"
+        "Truncate all documents equally",
+        "Boost long documents further",
+        "Ignore document length entirely",
+        "Compare directions via normalized similarity"
       ],
-      "correct": 2,
-      "explanation": "L1 sums absolute values: 3+4=7. L2 is sqrt(3^2+(-4)^2)=sqrt(25)=5."
+      "correct": 3,
+      "explanation": "Magnitude confounds meaning. This lesson separates norms from directions for honest comparison."
     },
     {
       "stage": "check",

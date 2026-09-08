@@ -23,6 +23,10 @@ For sets, Jaccard similarity is intersection divided by union and the empty/empt
 
 Mahalanobis distance computes `(x-y)^T C^-1 (x-y)`, using the local Gauss-Jordan `invert_matrix`. The covariance matrix must be non-empty, square, dimension-matched, and nonsingular. `compute_covariance` additionally requires at least two non-empty, equal-width rows.
 
+## CBP context: cosine for meaning, chosen deliberately
+
+In the CBP context embedding comparison uses cosine similarity — the normalized dot product — because meaning lives in direction, not magnitude. Choose the distance deliberately per task (cosine for semantic search, Euclidean where magnitude matters) and normalize vectors before indexing, or longer documents win by length instead of relevance. The norm is not a detail; it is the ranking.
+
 ## Build It
 
 Run the standard-library demo:
