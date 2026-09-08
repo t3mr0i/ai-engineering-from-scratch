@@ -65,6 +65,10 @@ Keep a standard unconditional diffusion model. At each reverse step, resample �
 
 
 
+## CBP context: masks decide what changes
+
+In the CBP context inpainting edits exactly the masked regions — redacted fills, defect previews, background swaps — while clean pixels pass through every step untouched. The mask is the contract: True regenerates, False preserves, and review checks the boundary between them. Outpainting extends scenes under the same rule. Unmasked edits are uncontrolled edits.
+
 ## Build It
 
 Reconstruct **Inpainting, Outpainting & Image Editing** by following `sin_embed` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
