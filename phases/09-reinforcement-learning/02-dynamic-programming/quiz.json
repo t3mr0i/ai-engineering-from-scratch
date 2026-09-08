@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What do the probabilities in transitions(state, action) sum to for a nonterminal state?",
+      "question": "Workflow step costs are known and measured. Should the optimal path be learned or computed?",
       "options": [
-        "0.9, because the intended move is the only reliable outcome",
-        "0.1, the value of SLIP",
-        "1.0, with 0.9 on the intended move and 0.05 on each perpendicular move",
-        "4.0, one unit for each action name"
+        "Always learned through trial and error",
+        "Guessed by the biggest model",
+        "Left to operator intuition",
+        "Computed with dynamic programming on known costs"
       ],
-      "correct": 2,
-      "explanation": "SLIP is 0.1, so the intended outcome gets 0.9 and the two perpendicular outcomes get 0.05 each."
+      "correct": 3,
+      "explanation": "Known models compute; unknown ones learn. This lesson plans optimally with full models."
     },
     {
       "stage": "check",

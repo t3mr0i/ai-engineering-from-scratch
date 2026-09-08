@@ -48,6 +48,10 @@ Repeat until `max_s |V_{new}(s) - V(s)| < ε`. Extract the policy at the end by 
 
 
 
+## CBP context: plan with known costs where possible
+
+In the CBP context dynamic programming covers the plannable corner: where transition costs are known (API latencies, token prices, approval waits), optimal workflows compute rather than learn. Probabilities must sum to one — sloppy models plan on fiction. Use DP thinking for workflow optimization with measured costs; reserve learning for genuinely unknown dynamics.
+
 ## Build It
 
 Reconstruct **Dynamic Programming — Policy Iteration & Value Iteration** by following `states` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.
