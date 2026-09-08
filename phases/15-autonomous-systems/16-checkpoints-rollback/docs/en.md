@@ -91,6 +91,10 @@ Mitigation: persist an "in-flight" intent before execution, execute with an idem
 
 
 
+## CBP context: preconditions before side effects
+
+In the CBP context state-changing operations check preconditions before acting — balance suffices, approvals exist, scope allows — and record aborted attempts with reasons instead of failing silently. Checkpoints capture restorable state so rollback returns to known-good, never to imagined-good. Side effects without preconditions are incidents with timestamps.
+
 ## Build It
 
 Reconstruct **Checkpoints and Rollback** by following `persist_transfer` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

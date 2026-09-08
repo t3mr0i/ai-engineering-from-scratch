@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "When does run_transfer reject a transfer before persist_transfer?",
+      "question": "A transfer executes before checking whether the source balance suffices. What ordering prevents that?",
       "options": [
-        "When the transaction id hashes to fewer than 12 characters",
-        "When balance_B is larger than balance_A",
-        "When balance_A minus amount would fall below min_balance",
-        "When the checkpoint file already exists"
+        "Execute first, check later",
+        "Skip balance checks for speed",
+        "Trust all transfer requests",
+        "Preconditions checked before any side effect"
       ],
-      "correct": 2,
-      "explanation": "The precondition is evaluated on the source account before the side effect; failure saves aborted-precondition and returns without changing DB."
+      "correct": 3,
+      "explanation": "Effects precede checks only in incidents. This lesson gates actions on preconditions."
     },
     {
       "stage": "check",
