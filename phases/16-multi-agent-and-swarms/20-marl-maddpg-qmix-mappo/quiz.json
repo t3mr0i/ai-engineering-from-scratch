@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What coordination problem does the 4×4 MARL fixture expose?",
+      "question": "Two agents chase the same target independently while another target sits free. What fixes the duplication?",
       "options": [
-        "Four agents negotiate prices on an unbounded grid.",
-        "One agent must classify 200 images with no shared reward.",
-        "Two agents must collect two pellets; independent nearest-pellet choices can duplicate effort, while CTDE-style policies assign work.",
-        "The environment contains one pellet and no collisions."
+        "Faster independent chasing",
+        "More agents on the same target",
+        "No coordination, hope suffices",
+        "Centrally trained distinct assignments"
       ],
-      "correct": 2,
-      "explanation": "`Env.new` creates two agents and two pellets on a 4×4 grid. The independent runner does not know the other target, while the scripted CTDE variants assign distinct pellets."
+      "correct": 3,
+      "explanation": "Independence duplicates. This lesson assigns work with centralized training."
     },
     {
       "stage": "check",

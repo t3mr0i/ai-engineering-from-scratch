@@ -107,6 +107,10 @@ Training actual networks is a Phase 09 topic. This lesson builds scripted-policy
 
 
 
+## CBP context: train together, execute apart
+
+In the CBP context centralized-training-decentralized-execution maps to reviewed policies deployed to autonomous agents: train assignments with full information, execute with local observations only. Independent nearest-goal choices duplicate effort; assigned distinct targets divide it. Coordination is designed at training time, not hoped at runtime.
+
 ## Build It
 
 Reconstruct **MARL — MADDPG, QMIX, MAPPO** by following `Env` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
