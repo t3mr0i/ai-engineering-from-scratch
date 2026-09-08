@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does sentence_split divide \"First fact. Second fact!\"?",
+      "question": "Meeting summaries read well but invent decisions nobody made. What constraint prevents that?",
       "options": [
-        "[\"First\", \"fact\", \"Second\", \"fact\"]",
-        "[\"First fact. Second fact!\"]",
-        "[\"First fact.\", \"Second fact!\"]",
-        "[\"First fact\", \"Second fact\"] without punctuation"
+        "Longer summaries with more detail",
+        "Prettier formatting and fonts",
+        "Faster generation per meeting",
+        "Sentence-grounded claims traceable to sources"
       ],
-      "correct": 2,
-      "explanation": "The regex splits after ., !, or ? followed by whitespace and keeps each sentence ending punctuation."
+      "correct": 3,
+      "explanation": "Fluency without grounding invents. This lesson summarizes from extractable, citable sentences."
     },
     {
       "stage": "check",

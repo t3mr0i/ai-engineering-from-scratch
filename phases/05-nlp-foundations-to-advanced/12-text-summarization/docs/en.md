@@ -37,6 +37,10 @@ Evaluation with **ROUGE** (Recall-Oriented Understudy for Gisting Evaluation). R
 
 
 
+## CBP context: sentences survive, claims need sources
+
+In the CBP context summarization splits on sentence boundaries (punctuation kept) and every summary claim traces to source sentences — ticket digests, meeting notes, report abstracts all carry their evidence. Abstractive fluency without extractive grounding hallucinates politely; evaluate faithfulness per summary, not readability. A summary nobody can verify is a rumor with formatting.
+
 ## Build It
 
 Reconstruct **Text Summarization** by following `sentence_split` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
