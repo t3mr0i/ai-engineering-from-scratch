@@ -15,6 +15,10 @@
 - Derive `x=(u-cx)z/fx` and `y=(v-cy)z/fy` for a pinhole camera.
 - Export a finite `(H,W,3)` point cloud without an image or mesh dependency.
 
+## CBP context: relative error on CBP scenes
+
+In the CBP context monocular depth serves inspection and robotics contexts with per-pixel relative error measured on CBP scenes — absolute error misleads across near and far ranges. Evaluate against ground truth where it exists, against consistency where it does not. Depth without a measured error distribution is a rendering, not a measurement.
+
 ## Build It
 
 `abs_rel_error(pred,target)` computes the mean `|pred-target|/target`; both arrays must be equal,

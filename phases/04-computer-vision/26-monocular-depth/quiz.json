@@ -4,10 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does abs_rel_error average for each valid pixel?",
-      "options": ["|prediction-target|/target", "prediction/target only", "squared target", "the raw depth value"],
-      "correct": 0,
-      "explanation": "AbsRel is the mean absolute error divided by the positive target depth at each selected pixel."
+      "question": "Depth estimates err more in absolute terms far away than near. Which error notion stays fair across ranges?",
+      "options": [
+        "Absolute error in meters",
+        "The largest single error",
+        "Error divided by true depth per pixel",
+        "The model's confidence score"
+      ],
+      "correct": 2,
+      "explanation": "Relative error normalizes by distance. This lesson measures depth fairly across ranges."
     },
     {
       "stage": "check",
