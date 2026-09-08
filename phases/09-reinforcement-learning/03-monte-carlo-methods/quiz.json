@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For a two-step trajectory with rewards [-1.0, -1.0] and gamma=0.99, what does returns_from compute for the first state?",
+      "question": "Agent quality is judged per step while whole runs succeed or fail. What evaluation matches the goal?",
       "options": [
-        "-1.99",
-        "-1.00",
-        "-0.99",
-        "0.99"
+        "Single-step scores only",
+        "The first step of each run",
+        "Random step sampling",
+        "Discounted returns over complete episodes"
       ],
-      "correct": 0,
-      "explanation": "The first return is -1.0 + 0.99 * (-1.0) = -1.99; returns_from works backward and then restores trajectory order."
+      "correct": 3,
+      "explanation": "Episodes succeed, not steps. This lesson scores full trajectories with discounting."
     },
     {
       "stage": "check",

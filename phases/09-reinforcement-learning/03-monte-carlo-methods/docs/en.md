@@ -54,6 +54,10 @@ Converges to `Q*` and `π*` with probability 1 under mild conditions (every pair
 
 
 
+## CBP context: score complete runs, discount the future
+
+In the CBP context Monte Carlo is episodic evaluation: score complete agent runs with discounted returns — early mistakes weigh more than late ones — instead of judging isolated steps. Full-episode returns need no model of the world, just logged trajectories; the discount factor encodes how much the future matters to the tenant. Evaluate runs whole before optimizing steps.
+
 ## Build It
 
 Reconstruct **Monte Carlo Methods — Learning from Complete Episodes** by following `reset` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
