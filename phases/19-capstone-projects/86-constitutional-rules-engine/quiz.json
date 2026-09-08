@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which fields and severity values are required for every rule loaded by Engine?",
+      "question": "Safety rules live as scattered chat messages nobody versions or validates. What makes them enforceable?",
       "options": [
-        "Only name and a boolean must field",
-        "A numeric score and a model ID",
-        "name, explanation, must, and severity in low/medium/high",
-        "A regex string and a fixed priority from 1 to 10"
+        "Longer chat messages",
+        "More rules in more places",
+        "Trust that everyone remembers them",
+        "Named, validated, severity-ordered rules in version control"
       ],
-      "correct": 2,
-      "explanation": "Engine validates that each rule has name, explanation, and must, and that severity belongs to SEVERITY_ORDER = (low, medium, high). Optional applies_when and fix fields add behavior but do not replace these requirements."
+      "correct": 3,
+      "explanation": "Unversioned rules rot silently. This lesson loads validated rules with severity ordering from configuration."
     },
     {
       "stage": "check",

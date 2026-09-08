@@ -61,6 +61,10 @@ The diff is computed against the original and the revised. It is a list of `Chan
 
 
 
+## CBP context: rules as reviewed configuration
+
+In the CBP context constitutional rules are reviewed configuration in the repo: named, explained, severity-ordered, versioned — changed through pull requests, never through chat. The engine validates every rule on load and refuses to start on a broken set; a safety system that silently drops malformed rules is unguarded with extra steps. Severity orders enforcement when rules collide, and the collision log is audit evidence.
+
 ## Build It
 
 Reconstruct **Capstone 86 — Constitutional Rules Engine** by following `Violation` on a graph with edges (0,1) and (1,2). Run `python3 main.py` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.
