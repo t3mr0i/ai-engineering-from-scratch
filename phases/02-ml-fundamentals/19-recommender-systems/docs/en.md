@@ -58,6 +58,10 @@ relevant hit at rank 2 less than one at rank 1. These metrics require a stated
 split and candidate policy. They do not measure diversity, safety, latency, or
 catalog coverage.
 
+## CBP context: clicks are votes, ratings are statements
+
+In the CBP context implicit signals (clicks, views, dwell) are abundant but weak votes, explicit signals (ratings, approvals) are scarce but strong statements — recommendation quality needs both, weighted by what each actually evidences. Clicks without context mislead (rage clicks are engagement too); design the signal mix before the algorithm. Measure on held-out future behavior, never on shuffled past.
+
 ## Build It
 
 From code/, run python3 main.py. It prints leave-one-out Recall@3 and NDCG@3
