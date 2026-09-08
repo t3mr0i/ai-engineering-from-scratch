@@ -86,6 +86,10 @@ The core architecture hasn't changed much since GPT-2. Everything interesting ha
 
 
 
+## CBP context: the engine inside assistants
+
+In the CBP context causal decoders are the engine inside every assistant deployment: prefix-only attention generating token by token, the property streaming depends on. What the model cannot see (future tokens) it cannot use — prompt order and recency effects follow directly. Consume decoders for generation; reach for encoders for judgment. The mask is the product behavior.
+
 ## Build It
 
 Reconstruct **GPT — Causal Language Modeling** by following `softmax` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

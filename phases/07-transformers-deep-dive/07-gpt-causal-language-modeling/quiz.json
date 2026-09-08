@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In causal_mask(4), which positions remain finite in row i=2?",
+      "question": "Streaming generation emits tokens one by one without revising earlier ones. What constraint makes that possible?",
       "options": [
-        "Columns 0, 1, and 2",
-        "Only column 2",
-        "Columns 2 and 3",
-        "All four columns"
+        "Seeing all future tokens at once",
+        "No attention mechanism at all",
+        "Infinite context windows",
+        "Prefix-only attention per position"
       ],
-      "correct": 0,
-      "explanation": "The mask sets 0.0 when j<=i and -inf otherwise, so row 2 can attend to its prefix through column 2."
+      "correct": 3,
+      "explanation": "Causality enables streaming. This lesson masks futures for autoregressive generation."
     },
     {
       "stage": "check",
