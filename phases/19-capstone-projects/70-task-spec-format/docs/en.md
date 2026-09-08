@@ -151,6 +151,10 @@ Read `main.py` top to bottom. Then read `code/tests/test_spec.py`. The tests pin
 
 Real eval suites grow categories the way schemas grow columns. The sober move is to refuse to add a category without also adding a metric, a post-process rule, and at least one fixture task. Treat the spec like a database migration. Every change is reviewed, versioned, and accompanied by tests. The validator in this lesson is the gate.
 
+## CBP context: frozen schemas for eval records
+
+In the CBP context task record schemas freeze before scoring code is written, so metrics, runners, and post-processors agree on field names across teams and months. The schema lives versioned in the repo with the eval cases; adding fields is a reviewed migration, not a silent edit. Unfrozen eval formats rot into incompatible dialects that no two quarters can compare.
+
 ## Build It
 
 Reconstruct **Task Spec Format** by following `ValidationError` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
