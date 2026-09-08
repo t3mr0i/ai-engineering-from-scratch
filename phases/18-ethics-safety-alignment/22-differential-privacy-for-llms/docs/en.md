@@ -72,6 +72,10 @@ Lessons 20-21 are bias/fairness. Lesson 22 is privacy. Lesson 23 is provenance v
 
 
 
+## CBP context: budgets bound individual influence
+
+In the CBP context differential privacy bounds how much one person's data can sway analytics over personal records: epsilon-delta guarantees with tracked privacy budgets per dataset and purpose. DP promises limited influence, not zero memorization or free utility — state the guarantee honestly in privacy reviews. Spend budgets like money; exhausted budgets retire the dataset, not the scruples.
+
 ## Build It
 
 Reconstruct **Differential Privacy for LLMs** by following `sigmoid` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
