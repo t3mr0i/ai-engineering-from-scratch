@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does cosine(normalize([3, 4]), normalize([0, 1])) return?",
+      "question": "Images must be searchable by text with no per-class training. What training shape enables that?",
       "options": [
-        "0.8, because [3,4] normalizes to [0.6,0.8]",
-        "1.0, because cosine compares only vector lengths",
-        "4.0, because the second vector selects the last coordinate",
-        "0.6, because the first coordinate is the surviving match"
+        "A classifier retrained per query",
+        "Manual tags on every image",
+        "Separate models never interacting",
+        "Normalized pairs pulled together contrastively"
       ],
-      "correct": 0,
-      "explanation": "normalize([3,4]) gives [0.6,0.8], while [0,1] is unchanged. Their dot product is therefore 0.8."
+      "correct": 3,
+      "explanation": "Shared space removes per-class training. This lesson aligns images and text with contrast."
     },
     {
       "stage": "check",

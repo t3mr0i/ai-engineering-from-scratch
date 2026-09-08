@@ -107,6 +107,10 @@ CLIP-class models cap around 76% ImageNet zero-shot (CLIP-G, OpenCLIP-G). Beyond
 
 
 
+## CBP context: pairs teach cross-modal search
+
+In the CBP context contrastive image-text pairs are what make "find this photo with words" work without per-class training (lesson 04/18): normalized embeddings, matched pairs pulled together, the rest pushed apart. Evaluate hit quality on CBP vocabularies — domain jargon retrieves poorly until proven otherwise. Pairs teach; normalization makes scores comparable.
+
 ## Build It
 
 Reconstruct **CLIP and Contrastive Vision-Language Pretraining** by following `normalize` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
