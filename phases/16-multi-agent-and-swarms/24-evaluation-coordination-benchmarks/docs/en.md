@@ -98,6 +98,10 @@ Building your own internal benchmark for the axis you actually care about is oft
 
 
 
+## CBP context: held-out, costed, contamination-checked
+
+In the CBP context coordination benchmarks report seen versus held accuracy with milestone completion, cost per task and per milestone, random-baseline deltas, and contamination signals — the full scorecard discipline from every eval lesson, applied to multi-agent systems. Raw task accuracy alone certifies nothing about generalization, cost, or leakage. Scorecards gate adoption; single numbers gate nothing.
+
 ## Build It
 
 Reconstruct **Evaluation and Coordination Benchmarks** by following `SystemSim` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the benchmark scorecard measure beyond raw task accuracy?",
+      "question": "A coordination benchmark reports raw accuracy only, hiding cost, leakage, and generalization. What completes it?",
       "options": [
-        "Whether a task used Python or TypeScript, with no cost metric.",
-        "Only the model name and the number of prompts.",
-        "Seen/held accuracy, milestone completion, cost per task, cost per held milestone, random baseline delta, and contamination signals.",
-        "A single subjective rating from the system's own manager."
+        "Bigger accuracy numbers",
+        "Faster benchmark runs",
+        "Single-number reporting",
+        "Held-out splits, costs, baselines, contamination signals"
       ],
-      "correct": 2,
-      "explanation": "`run_bench` computes seen/held accuracy and milestone rates plus cost metrics; `format_scorecard` adds the random baseline and a seen–held contamination delta."
+      "correct": 3,
+      "explanation": "Accuracy alone certifies nothing. This lesson scorecards coordination completely."
     },
     {
       "stage": "check",
