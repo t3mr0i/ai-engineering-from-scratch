@@ -66,6 +66,10 @@ Zhuge et al. ("Mindstorms in Natural Language-Based Societies of Mind," arXiv:23
 
 
 
+## CBP context: weight by confidence, converge by rule
+
+In the CBP context debate updates follow explicit rules — confidence-weighted averaging, dissent recorded, convergence declared by criterion not fatigue (lesson 14/25). Unruled debate loops forever or anchors on the loudest; ruled debate converges with minority views preserved in the log. Rules make disagreement productive instead of merely expensive.
+
 ## Build It
 
 Reconstruct **Society of Mind and Multi-Agent Debate** by following `DebateAgent` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.

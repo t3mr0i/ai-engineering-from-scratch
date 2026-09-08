@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What update rule drives the scripted debate?",
+      "question": "Several reviewers hold different answers with different confidences. How should they converge?",
       "options": [
-        "Each agent replaces its answer with a confidence-weighted average of its own and the other agents' answers.",
-        "The first agent to speak becomes an immutable leader.",
-        "Agents discard numerical answers and vote only on confidence.",
-        "Each round samples a fresh random truth without reading peers."
+        "The first speaker decides immutably",
+        "Discard answers, vote confidence only",
+        "Fresh random answers each round",
+        "Confidence-weighted updates with recorded dissent"
       ],
-      "correct": 0,
-      "explanation": "`DebateAgent.revise` combines the current answer and the other agents' answers using their confidence weights, then records the revised value."
+      "correct": 3,
+      "explanation": "Unruled debate anchors or loops. This lesson converges by weighted rule with dissent logged."
     },
     {
       "stage": "check",
