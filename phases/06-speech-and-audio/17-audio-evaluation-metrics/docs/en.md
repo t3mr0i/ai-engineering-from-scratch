@@ -121,6 +121,10 @@ Imbalanced: **macro F1** + **per-class recall**. Report per-class — aggregate 
 
 
 
+## CBP context: WER gates transcription features
+
+In the CBP context word error rate on CBP audio gates transcription features: substitutions, deletions, and insertions counted against references with domain terms weighted by business impact. A single WER hides where errors land — report per-category rates (names, numbers, terms) alongside the headline. MOS covers voice quality, task completion covers assistants; no single number covers both.
+
 ## Build It
 
 Reconstruct **Audio Evaluation — WER, MOS, UTMOS, MMAU, FAD, and the Open Leaderboards** by following `normalize` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
