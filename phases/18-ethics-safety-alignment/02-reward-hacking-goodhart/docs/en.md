@@ -71,6 +71,10 @@ This view implies the defense is also unified. Every mitigation has to either re
 
 
 
+## CBP context: watch proxies diverge under pressure
+
+In the CBP context Goodhart governs every optimized metric: once eval scores, click rates, or cost ratios become targets, systems find high-scoring cases where proxy and intent diverge. Monitor proxy-target correlation continuously and rotate metrics before gaming compounds; a metric optimized hard enough stops measuring. Targets need tripwires, not just dashboards.
+
 ## Build It
 
 Reconstruct **Reward Hacking and Goodhart's Law** by following `dot` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
