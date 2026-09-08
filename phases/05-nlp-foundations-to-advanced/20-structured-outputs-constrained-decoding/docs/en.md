@@ -393,6 +393,10 @@ except json_lib.JSONDecodeError as e:
     print(f"Error: {e}")
 ```
 
+## CBP context: guarantees beat retries
+
+In the CBP context constrained decoding (grammars, FSMs, schemas enforced during generation) guarantees machine-readable output where prompt-and-retry merely hopes — phone formats, invoice fields, ticket codes arrive valid by construction. Prefer provider structured-output modes (lessons 11/03, 13/04) over regex repair of prose; the guarantee compounds across thousands of calls while retries multiply cost and latency.
+
 ## Build It
 
 Reconstruct **Structured Outputs & Constrained Decoding** by following `call` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.

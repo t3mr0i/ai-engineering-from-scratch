@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What format does PhoneFSM accept?",
+      "question": "Phone numbers and invoice fields must arrive machine-valid, but prose generation keeps breaking formats. What guarantees shape?",
       "options": [
-        "Any twelve characters from the alphabet",
-        "A phone number with two digits in every group",
-        "Three digits, a hyphen, three digits, a hyphen, and four digits",
-        "Only a sequence of hyphens with no digits"
+        "Longer prompts begging for format",
+        "Post-hoc regex repair of prose",
+        "Manual correction of every output",
+        "Constrained decoding enforcing the grammar during generation"
       ],
-      "correct": 2,
-      "explanation": "The states encode the pattern \\\\d{3}-\\\\d{3}-\\\\d{4}, reaching accept_state 12 after ten digits and two hyphens."
+      "correct": 3,
+      "explanation": "Hoping for shape scales poorly. This lesson constrains generation to valid outputs by construction."
     },
     {
       "stage": "check",
