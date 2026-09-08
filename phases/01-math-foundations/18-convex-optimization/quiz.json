@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which quick one-dimensional test proves f(x)=x^2 is convex?",
+      "question": "One optimizer reliably finds the global best while another gets stuck in local valleys. What property separates them?",
       "options": [
-        "Its first derivative is zero everywhere",
-        "It has a negative value for x<0",
-        "Its second derivative is f''(x)=2, which is nonnegative everywhere",
-        "It has exactly one plotted sample"
+        "The number of parameters",
+        "The size of the dataset",
+        "The speed of the hardware",
+        "Convexity of the objective"
       ],
-      "correct": 2,
-      "explanation": "A twice-differentiable one-dimensional function is convex when its second derivative is nonnegative throughout its domain."
+      "correct": 3,
+      "explanation": "Shape decides guarantees. This lesson builds convexity as the line between reliable and negotiated optima."
     },
     {
       "stage": "check",

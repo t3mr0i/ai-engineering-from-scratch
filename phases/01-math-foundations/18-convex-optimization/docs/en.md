@@ -15,6 +15,10 @@
 - Solve a simple equality-constrained problem with the local Lagrange loop.
 - Explain why convexity removes spurious local minima without promising fast convergence.
 
+## CBP context: convex converges, deep nets negotiate
+
+In the CBP context convexity is the dividing line: convex problems converge to the global optimum reliably (schedules, resource allocation, linear models), while deep networks are non-convex — which is why training needs schedules, restarts, and eval gates instead of a single confident run. When someone promises "optimal" for a neural system, this lesson is the reason to ask what they mean. Convexity is a guarantee; everything else is engineering.
+
 ## Build It
 
 The standard-library implementation is in `code/convex.py`. Run the deterministic demonstration with:
