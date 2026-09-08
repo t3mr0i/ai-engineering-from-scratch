@@ -55,6 +55,10 @@ Per-row weights may be zero when a caller intentionally masks a row, but their
 finite total must be positive. A zero total would make both the gradient and the
 reported weighted loss look valid while learning from no evidence.
 
+## CBP context: accuracy lies on imbalanced tasks
+
+In the CBP context imbalanced tasks (fraud, incidents, escalations) never report accuracy: a 99%-accurate always-normal classifier catches zero fraud. Report recall and precision per error costs (lesson 02/09), resample or reweight deliberately, and stratify eval splits so the minority class is actually measured. Accuracy on a 990/10 split is a participation trophy.
+
 ## Build It
 
 From code/, run python3 main.py. The output compares the majority baseline,

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "A test set has 990 normal cases and 10 fraud cases. What accuracy does an always-normal classifier achieve?",
+      "question": "A fraud classifier reports 99% accuracy but catches zero fraud cases. What is wrong with the metric?",
       "options": [
-        "99%",
-        "1%",
-        "50%",
-        "0%"
+        "Nothing; 99% is excellent",
+        "The test set needs more normal cases",
+        "Accuracy needs more decimal places",
+        "Accuracy hides total minority failure"
       ],
-      "correct": 0,
-      "explanation": "It predicts the 990 normal cases correctly and misses all 10 fraud cases, so accuracy is 990/1000=99%."
+      "correct": 3,
+      "explanation": "Majority accuracy masks minority blindness. This lesson measures what accuracy hides."
     },
     {
       "stage": "check",
