@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What status does loss_health((1.0, 1.0, 1.0, 1.0)) return?",
+      "question": "A training curve goes flat while the team debates data versus model. What should they check first?",
       "options": [
-        "HEALTHY, because four points are enough to certify a model",
-        "NOT_DECREASING, because a constant short trace supplies no downward evidence",
-        "NAN_OR_INF, because constant values are invalid",
-        "NOT_ENOUGH_DATA, because only traces of 20 points are accepted"
+        "Collect more theories in meetings",
+        "Blame the dataset immediately",
+        "Restart with a bigger model",
+        "Loss health: decreasing, flat, NaN, or too-short-to-judge"
       ],
-      "correct": 1,
-      "explanation": "For fewer than 20 points, loss_health compares the last value with the first; equality meets the 0.99 non-decrease rule, so a constant short trace is not called healthy."
+      "correct": 3,
+      "explanation": "Curves carry fingerprints. This lesson triages training health from loss traces before theorizing."
     },
     {
       "stage": "check",

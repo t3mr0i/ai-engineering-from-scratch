@@ -30,6 +30,10 @@ The implementation in `code/main.py` is intentionally independent of a deep-lear
 
 These are diagnostic labels for this fixture, not universal scientific cutoffs. A real project should choose thresholds from its model, dtype, and measurement scale.
 
+## CBP context: triage curves before blaming data
+
+In the CBP context loss-health checks triage consumed training jobs: decreasing (learning), flat (stuck — rate, capacity, or data), NaN/Inf (stability guards from lesson 01/13), too-short-to-judge (collect more steps first). Run the checklist in order before theorizing; most "broken model" reports are learning-rate or stability issues with loss-curve fingerprints. Curves first, theories second.
+
 ## Build It
 
 ### 1. Check finiteness first
