@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What prior mastery does a new concept receive from the default BKTParams?",
+      "question": "Every learner gets the same lesson sequence regardless of what they already know. What is the adaptive alternative?",
       "options": [
-        "p_init=0.2",
-        "p_init=0.5",
-        "p_init=0.85",
-        "p_init=0.12"
+        "Longer identical sequences for all",
+        "No lessons at all, only tests",
+        "Random lesson order per learner",
+        "Track mastery per topic and teach to the gap"
       ],
-      "correct": 0,
-      "explanation": "BKTParams initializes p_init to 0.2; p_learn=0.12 is the later learning transition, not the prior mastery."
+      "correct": 3,
+      "explanation": "Uniform sequences bore the skilled and lose the struggling. This capstone adapts: calibrated priors, evidence updates, gap teaching."
     },
     {
       "stage": "check",

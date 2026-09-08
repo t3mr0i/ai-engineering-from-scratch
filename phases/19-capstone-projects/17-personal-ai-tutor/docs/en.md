@@ -94,6 +94,10 @@ Call `BKTParams` from a small caller with a graph with edges (0,1) and (1,2). Co
 
 Hand off `outputs/skill-ai-tutor.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: adaptive onboarding with learner data protected
+
+In the CBP context adaptive tutoring fits onboarding onto CBP tooling: track mastery per topic, teach to the gap, advance on evidence — and protect learner data like any other personal data, tenant-scoped with explicit retention. Start new concepts at a calibrated prior, update on observed performance, and never mistake fluency for mastery in compliance topics. A tutor that cannot show what the learner can do has built engagement, not competence.
+
 ## Further Reading
 
 - [Khanmigo (Khan Academy)](https://www.khanmigo.ai) — reference consumer K-12 tutor
