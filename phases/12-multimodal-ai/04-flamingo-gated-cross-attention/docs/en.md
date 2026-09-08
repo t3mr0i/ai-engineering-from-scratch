@@ -110,6 +110,10 @@ Pick BLIP-2 for single-image VQA on a budget. Pick Flamingo/Idefics2 for interle
 
 
 
+## CBP context: start closed, open with training
+
+In the CBP context gated conditioning (alpha at zero means pure language model) is the safe adaptation pattern: new modalities arrive closed, open only as training earns them — never degrading the base on day one. The gate value is the audit trail of how much vision influences each output. Start closed, measure the opening, ship the measured blend.
+
 ## Build It
 
 Reconstruct **Flamingo and Gated Cross-Attention for Few-Shot VLMs** by following `vec` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

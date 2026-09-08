@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does gated_cross_attention_step return when alpha=0.0?",
+      "question": "New visual conditioning must not degrade a working language model on day one. What start state guarantees that?",
       "options": [
-        "The original text_hidden exactly, because tanh(0)=0 and the visual residual is closed",
-        "Only the visual cross-attention output, because the text residual is removed",
-        "A zero matrix, because both branches are masked",
-        "The visual output multiplied by two, because the gate starts neutral"
+        "Full visual influence immediately",
+        "Random gating per token",
+        "No language model at all",
+        "Gate closed: pure text until training opens it"
       ],
-      "correct": 0,
-      "explanation": "The update is text_hidden + tanh(alpha) * cross. At alpha=0, tanh(alpha)=0, so the returned vectors equal the frozen text input."
+      "correct": 3,
+      "explanation": "Closed gates preserve the base. This lesson conditions vision through trainable gates."
     },
     {
       "stage": "check",
