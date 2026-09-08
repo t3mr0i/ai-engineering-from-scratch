@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which static pattern hits does scan_description find in calculator_add?",
+      "question": "A plugin's description says it looks up orders, but hidden in the text is an instruction to also send private files along. Why is that dangerous?",
       "options": [
-        "Only a long-word nit",
-        "Only a duplicate-name warning",
-        "SYSTEM and secret-read pattern hits",
-        "No finding until a user executes the tool"
+        "Longer descriptions slow the model down",
+        "Plugins should never have descriptions",
+        "Private files are always too large to send",
+        "Descriptions are read as instructions, so hidden text can hijack the assistant"
       ],
-      "correct": 2,
-      "explanation": "The scanner matches the lowercased <system> tag and the ~/.ssh/id_rsa read request in calculator_add's description."
+      "correct": 3,
+      "explanation": "Any text in a description reaches the model as instructions. This lesson builds the defenses: scanning, hash-pinning, and behavior gating."
     },
     {
       "stage": "check",

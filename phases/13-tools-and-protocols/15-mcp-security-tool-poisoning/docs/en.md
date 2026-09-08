@@ -107,6 +107,10 @@ Call `Finding` from a small caller with the smallest valid record {"id": 1}. Com
 
 Hand off `outputs/skill-mcp-threat-model.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: pin, scan, and gate at the gateway
+
+In the CBP context tool descriptions arrive from servers the tenant did not write, so every description is untrusted input: scan at install time, pin the approved tool hashes in the gateway policy, and force re-approval on any mutation — a rug pull must look like a new server, not a silent update. Stack the lesson's defenses at the APIM layer (content-safety policy against poisoning, per-tenant rate limits) and in the Java service (Rule of Two: never combine untrusted input, sensitive data, and consequential action in one turn). Log every rejected description; the rejection log is the audit trail.
+
 ## Further Reading
 
 - [Invariant Labs — MCP security: tool poisoning attacks](https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks) — canonical tool-poisoning writeup
