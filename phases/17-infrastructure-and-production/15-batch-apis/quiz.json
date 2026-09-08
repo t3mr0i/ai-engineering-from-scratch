@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What status does BatchDispatcher.openBatch assign before any jobs are processed?",
+      "question": "A nightly pipeline runs synchronously in four hours at full price, though nobody needs the result before morning. What is the cheapest lever?",
       "options": [
-        "completed",
-        "failed",
-        "queued",
-        "in_progress"
+        "A bigger synchronous cluster",
+        "Fewer nights per week",
+        "Shorter documents by truncation",
+        "Batch APIs plus shared-prefix caching"
       ],
-      "correct": 2,
-      "explanation": "openBatch stores a Batch with status queued; addJob is allowed only while that status remains queued."
+      "correct": 3,
+      "explanation": "Latency nobody needs is money left on the table. This lesson stacks batch discounts with caching for a fraction of the bill."
     },
     {
       "stage": "check",

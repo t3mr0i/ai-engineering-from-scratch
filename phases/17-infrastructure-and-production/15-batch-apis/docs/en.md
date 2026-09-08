@@ -93,6 +93,10 @@ Call `cost_sync` from a small caller with the smallest valid record {"id": 1}. C
 
 Hand off `outputs/skill-batch-triager.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: batch everything with a morning SLA
+
+In the CBP context every workload whose SLA is "by morning" runs as batch: nightly reports, eval-set refreshes, bulk summaries, embedding backfills — 50% off for admitting latency nobody needed. Stack batch with prefix caching on the shared system prompt for the double win, and keep the synchronous path for interactive features only. Audit the queue quarterly: each workload that grew a real-time habit without a real-time requirement is bill waiting to be cut.
+
 ## Further Reading
 
 - [OpenAI Batch API](https://platform.openai.com/docs/guides/batch) — JSONL format and `/v1/batches` semantics.
