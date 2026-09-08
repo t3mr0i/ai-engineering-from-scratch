@@ -33,6 +33,10 @@ flowchart LR
 
 `residual_add(main, shortcut)` represents the addition after a residual branch. Both arrays must be finite, non-empty, and have the same complete `(N,C,H,W)` shape. If the branch changes channel count or stride, a real ResNet uses a projection; this local function rejects mismatched shapes rather than hiding that architectural decision. `model_parameter_counts` applies explicit kernel and bias formulas to small named configurations so a reviewer can check how a head change affects only the final terms.
 
+## CBP context: residuals again, depth with a purpose
+
+In the CBP context the CNN lineage (LeNet to ResNet) teaches the same residual lesson as lesson 01/34 in a new modality: skip connections let depth train, and each era's architecture solved the previous era's gradient problem. Read vendor vision-model cards with this lineage — "ResNet backbone" tells you training stability and feature quality in two words. Consume pretrained backbones; never train one for a CBP task.
+
 ## Build It
 
 Run:

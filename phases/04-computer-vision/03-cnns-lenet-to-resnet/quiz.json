@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "After the first valid 5x5 convolution in lenet_shape_trace((1,1,32,32)), what is the tensor shape?",
+      "question": "Deeper vision networks train worse until skip connections appear. What do the skips fix?",
       "options": [
-        "(1, 6, 28, 28)",
-        "(1, 1, 27, 27)",
-        "(1, 5, 32, 32)",
-        "(6, 1, 28, 28)"
+        "Slow inference on edge devices",
+        "Large model download sizes",
+        "Poor color saturation in outputs",
+        "Vanishing gradients across depth"
       ],
-      "correct": 0,
-      "explanation": "A valid 5x5 operation removes four pixels from each spatial dimension and uses six output channels in the LeNet trace."
+      "correct": 3,
+      "explanation": "Depth needs gradient highways. This lesson traces CNNs from LeNet to residual networks."
     },
     {
       "stage": "check",
