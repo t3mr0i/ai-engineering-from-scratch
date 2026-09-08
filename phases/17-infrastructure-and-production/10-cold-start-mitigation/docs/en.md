@@ -99,6 +99,10 @@ Call `Phase` from a small caller with tokens=["red","fox"]. Compare its result w
 
 Hand off `outputs/skill-cold-start-planner.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: warm where it matters, scale-to-zero elsewhere
+
+In the CBP context cold starts are LCAG's platform problem and your SLO problem: keep a warm pool only on the latency-critical path (morning traffic, interactive assistants) and let batch and overnight workloads scale to zero. Price both sides — idle GPU-hours per month against SLA breach cost — before choosing `min_workers`. A product that pays 3,600 idle GPU-hours to protect a 2s SLA nobody measured is burning budget on an unowned requirement.
+
 ## Further Reading
 
 - [Modal — Cold start performance](https://modal.com/docs/guide/cold-start) — Modal's published benchmarks and checkpoint architecture.

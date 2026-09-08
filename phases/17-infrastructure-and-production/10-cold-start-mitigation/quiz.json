@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What raw cold-start total does total_for_stack compute for the five PHASES_70B entries?",
+      "question": "A serverless endpoint scales to zero overnight, and the first morning request waits minutes while nodes, images, and weights load. What is the tradeoff?",
       "options": [
-        "328 seconds",
-        "180 seconds",
-        "75 seconds",
-        "50 seconds"
+        "Accept minutes of latency every morning",
+        "Keep every replica warm forever regardless of cost",
+        "Remove the morning traffic",
+        "Warm the critical path and price idle hours against the SLA"
       ],
-      "correct": 0,
-      "explanation": "The RAW path sums 50 + 180 + 75 + 20 + 3 = 328 seconds across node, image, HBM load, engine init, and first forward."
+      "correct": 3,
+      "explanation": "Cold starts trade latency for cost. This lesson prices both sides: warm pools where the SLA needs them, scale-to-zero elsewhere."
     },
     {
       "stage": "check",
