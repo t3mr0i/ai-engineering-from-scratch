@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Where does the demo route the input `Please refund invoice 42`?",
+      "question": "One assistant handles refunds, support, and engineering questions in a single prompt, and answers keep mixing the three areas. What is the structural fix?",
       "options": [
-        "The triage agent hands it to `billing`, whose final output starts `billing handled:`.",
-        "The triage agent hands it to `support`, whose output starts `support handled:`.",
-        "The input guardrail rejects it because every number is treated as PII.",
-        "The runner returns the default `i'm not sure` response without a handoff."
+        "A longer single prompt covering everything",
+        "No checks, to keep responses fast",
+        "One shared inbox with no routing",
+        "Specialist agents with clean handoffs and guardrails between them"
       ],
-      "correct": 0,
-      "explanation": "`_triage_policy` maps `refund` and `invoice` to the billing handoff; the billing agent then produces its `billing handled:` response."
+      "correct": 3,
+      "explanation": "One prompt for everything mixes every concern. This lesson builds delegation: handoffs to specialists plus guardrails on input, output, and tools."
     },
     {
       "stage": "check",

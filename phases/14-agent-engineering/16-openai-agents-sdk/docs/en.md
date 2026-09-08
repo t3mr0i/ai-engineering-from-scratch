@@ -447,6 +447,10 @@ Call `call` from a small caller with the text "red fox". Compare its result with
 
 Hand off `outputs/skill-agents-sdk-scaffold.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: handoffs with guardrails on both sides
+
+In the CBP context handoffs route between specialist agents (triage to billing, support to engineering) with guardrails that transfer unchanged: input validation on the first agent, output validation on the last, PII and policy checks on every tool invocation between them. Represent each handoff as an auditable transfer — who handed what to whom and why — and trace the whole chain into Application Insights with the tenant id. A handoff without a trace is a dropped call the on-call engineer cannot find.
+
 ## Further Reading
 
 - [OpenAI Agents SDK docs](https://openai.github.io/openai-agents-python/) — primitives, handoffs, guardrails, tracing
