@@ -120,6 +120,10 @@ Call `BlastRadius` from a small caller with the text "red fox". Compare its resu
 
 Hand off `outputs/skill-agentic-task-design.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: scaffold over model, confirmation over blast radius
+
+In the CBP context production agents get the engineered loop — explicit state, reversibility checks, verification gates, tool contracts — because frontier reasoning without scaffolding makes globally wrong local decisions. Decomposition follows blast radius: confirmation-gated human-in-the-loop before reflection, parallelism, or planners whenever the operator demands it or the radius reads HIGH or CRITICAL. The scaffold is the product; the model is the engine.
+
 ## Further Reading
 
 - [Anthropic — Building effective agents](https://docs.claude.com/en/docs/build-with-claude/agents) — canonical loop patterns, tool use, and multi-agent design from the model provider.

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which condition makes route_decomposition choose human-in-the-loop before other patterns?",
+      "question": "An agent deletes the right file in the wrong directory with no structure to catch it. What was missing?",
       "options": [
-        "The task has fewer than 20 steps and independent subtasks",
-        "The quality gate is enabled for a low-risk draft",
-        "The operator requires confirmation or the blast radius is HIGH or CRITICAL",
-        "The task can be parallelised without touching external state"
+        "A bigger model with more reasoning",
+        "More tools for the agent",
+        "Faster execution of each step",
+        "Explicit state, reversibility, gates, and blast-radius routing"
       ],
-      "correct": 2,
-      "explanation": "The function checks operator confirmation and blast radius first. That safety branch returns HITL before reflection, parallelism, planner-executor, or sequential routing."
+      "correct": 3,
+      "explanation": "Demo loops fail globally-plausible locally. This lesson engineers the scaffold: state, checks, gates, confirmation."
     },
     {
       "stage": "check",
