@@ -19,6 +19,10 @@
 
 `make_mixed_data` returns one-dimensional NumPy arrays under keys `age`, `income`, `score`, `city`, `plan`, and `target`. Numeric columns contain occasional `NaN`; categories are strings; the target is `0/1`. `train_test_split_dict` returns two dictionaries with the same keys and non-empty partitions. The scratch pipeline uses NumPy only and deliberately does not imitate a dataframe or estimator framework.
 
+## CBP context: fit on train, never on eval
+
+In the CBP context pipeline hygiene is eval hygiene: scalers, vocabularies, and imputations fit on training rows only — statistics learned from held-out rows leak the evaluation distribution into the model. The same rule governs prompts and few-shot examples: nothing derived from the test set may shape the system under test. Leakage flatters every metric it touches.
+
 ## Build It
 
 `MedianImputer.fit` stores one `nanmedian` per numeric column, `StandardScaler.fit` stores `nanmean` and `nanstd` (replacing a zero standard deviation with `1.0`), and `OneHotEncoder.fit` stores sorted categories per column. All three reject transform-before-fit, shape mismatches, and all-NaN training columns. `FullPipeline.fit` transforms numeric and categorical blocks, horizontally joins them, and fits the supplied model. `predict` reuses those stored values; it never refits.
