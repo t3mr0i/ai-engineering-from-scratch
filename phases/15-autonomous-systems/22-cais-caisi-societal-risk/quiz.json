@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which tags does tag(high) assign to the frontier deployment in main?",
+      "question": "Deployments launch with no recorded view of misuse, pressure, controls, or autonomy. What makes risk reviewable?",
       "options": [
-        "Only organizational_risks",
-        "No tags because the deployment is not public",
-        "malicious_use, ai_races, organizational_risks, and rogue_ais",
-        "Only rogue_ais"
+        "General philosophical statements",
+        "Trust in deployer intentions",
+        "Post-launch incident reviews only",
+        "Per-deployment risk tags reviewed pre-launch"
       ],
-      "correct": 2,
-      "explanation": "The high deployment is public and handles harmful capabilities, faces competitive pressure, lacks all three organizational controls, and has 48 hours of autonomy."
+      "correct": 3,
+      "explanation": "Untagged deployments evade review. This lesson tags risk surfaces for governance."
     },
     {
       "stage": "check",

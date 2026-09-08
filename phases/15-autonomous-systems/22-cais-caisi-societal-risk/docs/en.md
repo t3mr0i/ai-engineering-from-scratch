@@ -86,6 +86,10 @@ This is the final synthesis for the phase: every previous lesson is one layer in
 
 
 
+## CBP context: tag deployments for governance review
+
+In the CBP context each deployment carries risk tags — misuse potential, competitive pressure, organizational controls present or missing, autonomy granted — reviewed before launch and on capability changes. Frontier tags (public, harmful-capable, uncontrolled, autonomous) escalate to governance boards; missing controls block, they do not defer. Tags make societal risk reviewable per deployment instead of philosophical in general.
+
 ## Build It
 
 Reconstruct **CAIS, CAISI, and Societal-Scale Risk** by following `Deployment` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
