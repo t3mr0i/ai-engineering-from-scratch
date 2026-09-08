@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In demo_graph, what route does verify choose until the artifact contains tests and validation?",
+      "question": "Research, code, verification, security review, and approval need different owners and paths. When is a graph the right shape?",
       "options": [
-        "fail",
-        "pass",
-        "approved",
-        "default"
+        "Always; graphs beat loops everywhere",
+        "Never; one loop handles every handoff",
+        "Only when the diagram looks impressive",
+        "When explicit owned handoffs beat a single loop, costs counted"
       ],
-      "correct": 0,
-      "explanation": "verify marks review='fail' and routes to fail while either tests or validation is missing; that edge returns to implement."
+      "correct": 3,
+      "explanation": "Graphs cost coordination and state. This lesson grows the loop into a graph only where owned handoffs earn that cost."
     },
     {
       "stage": "check",

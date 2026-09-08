@@ -68,6 +68,10 @@ Hand off `outputs/skill-workflow-graph.md` with the command `python3 main.py`, t
 - Compare this graph with the loop from Project 07 by counting checkpoints and
   human decisions, not only runtime.
 
+## CBP context: the delivery graph with a human node
+
+In the CBP context the workflow graph is the delivery system: research, implement, verify, security review, human approval, rollback — each with its owner and path, each handoff visible. The human approval node is load-bearing, not decorative: consequential steps wait on it with state intact. Count state and coordination cost in the design decision; a graph is better only when its explicit handoffs beat a loop's simplicity, measured in incidents avoided and minutes to diagnose.
+
 ## Further reading
 
 - [Phase 14 · 44 — Graph Engineering](../../44-graph-engineering/docs/en.md)
