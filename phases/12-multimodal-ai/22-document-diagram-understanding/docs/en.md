@@ -129,6 +129,10 @@ For a new document-AI project:
 
 
 
+## CBP context: fields with positions, verified
+
+In the CBP context invoice and diagram understanding extracts positioned tokens — vendor, lines, totals with coordinates — verified field-by-field against sources before entering workflows. Eight tokens with positions beat eighty without: layout-attached extraction preserves tables, totals, and signatures that plain text loses. Evaluate extraction per field on CBP documents, not per page.
+
 ## Build It
 
 Reconstruct **Document and Diagram Understanding** by following `Token` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.

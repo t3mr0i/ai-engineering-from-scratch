@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How many Token records does mock_page return for the synthetic invoice?",
+      "question": "Invoice totals must be extracted with proof of where each value came from. What must extraction preserve?",
       "options": [
-        "16, because the default patch grid has 16 rows",
-        "4, one record per invoice section",
-        "8, including the vendor, line fields, and total values",
-        "256, one record per LayoutLM patch"
+        "Only the plain text stream",
+        "The file name and size",
+        "Nothing beyond the total",
+        "Tokens with positions per field"
       ],
-      "correct": 2,
-      "explanation": "mock_page explicitly lists eight tokens: INVOICE, ACME Co., Item, Widget A, Price, $120.00, Total, and $1,245.00."
+      "correct": 3,
+      "explanation": "Fields need locations as evidence. This lesson extracts positioned document tokens."
     },
     {
       "stage": "check",
