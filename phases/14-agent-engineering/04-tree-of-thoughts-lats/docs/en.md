@@ -454,6 +454,10 @@ Call `call` from a small caller with tokens=["red","fox"]. Compare its result wi
 
 Hand off `outputs/skill-search-policy.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: search the plan, not the chat
+
+In the CBP context deliberate search belongs around high-stakes plans, not everyday chats: propose several remediation or migration plans, score them against the same criteria, keep the best trace, and backtrack on dead ends. Budget the search explicitly — every branch costs model calls on the tenant's meter — and cap breadth and depth before running. Log the winning trace with its scores; "the model picked plan B" is not auditable, but "plan B scored highest on blast radius, reversibility, and cost" is.
+
 ## Further Reading
 
 - [Yao et al., Tree of Thoughts (arXiv:2305.10601)](https://arxiv.org/abs/2305.10601) — the canonical paper

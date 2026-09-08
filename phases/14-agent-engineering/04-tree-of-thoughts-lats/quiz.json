@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What root state does the demo create for `NUMBERS = [4, 6, 4, 1]`?",
+      "question": "An assistant reasons step by step toward a plan, but its first step is wrong, so every later step builds on a bad premise. What is the fix?",
       "options": [
-        "`(6, 4, 4, 1)`",
-        "`(1, 4, 4, 6)`",
-        "`(4, 6, 4, 1)`",
-        "`(24,)`"
+        "Let it walk further in the same wrong direction",
+        "Ask it to write the wrong plan more confidently",
+        "Remove all intermediate steps and guess the answer",
+        "Propose several candidate steps, score them, and backtrack from dead ends"
       ],
-      "correct": 0,
-      "explanation": "Both searches start from `tuple(sorted(NUMBERS, reverse=True))`, which is `(6, 4, 4, 1)`."
+      "correct": 3,
+      "explanation": "A linear walk cannot recover from an early mistake. This lesson builds deliberate search: branch, evaluate, and backtrack."
     },
     {
       "stage": "check",
