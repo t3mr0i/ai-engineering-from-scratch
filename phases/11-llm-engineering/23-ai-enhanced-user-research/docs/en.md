@@ -76,6 +76,10 @@ Research synthesis canvas with evidence strength and follow-up questions.
 
 The output template in `outputs/canvas-ai-research-synthesis.md` can be copied into a project kickoff, enablement workshop, or team retro. Keep the artifact short enough that teams actually use it.
 
+## CBP context: anonymize first, preserve disagreement
+
+In the CBP context interview notes are stripped of personal data before any model sees them, samples are checked for power-user bias, and generated personas must preserve disagreement rather than flatten it. One loud opinion never justifies a rebuild — triangulation across sources does. Research artifacts that leak PII or erase dissent fail review no matter how polished the segments look.
+
 ## Key Takeaways
 
 - The course is about operational judgment, not generic AI enthusiasm.
