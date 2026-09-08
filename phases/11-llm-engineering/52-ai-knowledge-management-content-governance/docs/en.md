@@ -70,6 +70,10 @@ The template in `outputs/checklist-knowledge-source-governance.md` can be used b
 The demo's first case is **policy assistant source**: Stale content and unclear source create duplicate answer risk. Treat the labels stale content, duplicate answer, unclear source, access risk as evidence to inspect, not as an automatic approval. The implementation's signal matcher looks for those terms in the scenario name, description, and explicit signal list; then the scorer combines impact, uncertainty, and two points per matched signal (capped at 20). The priority function maps that score to a control level: launch gate at 16 or above, guided pilot at 11–15, team practice at 7–10, and awareness below 7.
 
 Run the case and check which of the controls — content owner, freshness check, source rank, access rule — appear in the returned row. Ask three questions: Which signal is supported by an observable source? Which control has an owner who can act this week? What evidence would move the case to a different priority? Then change one signal or impact value and rerun it. If the priority changes, explain whether the change came from the score, the matching rule, or both. The score is a triage aid; it does not replace domain approval, privacy review, or a pilot metric. Keep that distinction in the artifact and in the handoff.
+## CBP context: govern sources before serving answers
+
+In the CBP context knowledge sources get owners, freshness checks, authority ranking, and verified access rules before any assistant reads them — the same four artifacts as lesson 11/36, enforced as preconditions. Stale, duplicated, or over-permissioned sources are fixed or excluded; retrieval must never crown the wrong source authoritative. Governance first, chat box second.
+
 ## Key Takeaways
 
 - Retrieval quality depends on source quality.
