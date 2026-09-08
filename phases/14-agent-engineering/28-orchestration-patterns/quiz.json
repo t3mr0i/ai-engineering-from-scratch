@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What trace does the supervisor produce for `I need a refund for invoice 4711`?",
+      "question": "Requests arrive for refunds, bug reports, and sales questions, each needing different handling. What is the simplest robust shape?",
       "options": [
-        "It classifies `refund`, then calls the refund specialist, which returns `refund handled: I need a refund for invoice 47`.",
-        "It starts with sales and hands off twice before reaching refund.",
-        "It asks all three specialists to vote before producing a response.",
-        "It routes the request to `bug` because invoice work is an error path."
+        "One prompt that handles everything at once",
+        "Three separate products with three logins",
+        "No routing; answer everything with the same template",
+        "A router that classifies each request and hands it to a specialist"
       ],
-      "correct": 0,
-      "explanation": "`classify` checks `refund` first; `supervisor_worker` records the supervisor route and then invokes the refund function, which truncates the input to 30 characters."
+      "correct": 3,
+      "explanation": "Mixed concerns need explicit routing, not a bigger single prompt. This lesson names the topologies — supervisor, swarm, hierarchical — for that job."
     },
     {
       "stage": "check",

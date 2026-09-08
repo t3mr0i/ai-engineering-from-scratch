@@ -94,6 +94,10 @@ Call `classify` from a small caller with an 8x8 synthetic image. Compare its res
 
 Hand off `outputs/skill-orchestration-picker.md` with the command `python3 main.py`, the accepted input shape (an 8x8 synthetic image), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: name the topology or skip it
+
+In the CBP context most deliveries need no topology at all — a supervisor routing refunds, bugs, and sales questions to specialists covers the common case as plain code. Reach for swarm only when peers must genuinely coordinate, and hierarchical only when the org chart demands nested ownership; each pattern adds a failure surface the on-call engineer inherits. Whatever the shape, every handoff is traced with the tenant id and every specialist stays independently testable. An unnamed topology is an unowned outage.
+
 ## Further Reading
 
 - [Anthropic, Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) — five patterns + agent vs workflow
