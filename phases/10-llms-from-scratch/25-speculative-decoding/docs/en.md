@@ -124,6 +124,10 @@ Production shops typically report 2-3× wall-clock speedup on chat, 3-5× on cod
 
 
 
+## CBP context: the original draft-verify contract
+
+In the CBP context this is the founding paper behind the platform flag (lessons 07/16, 10/15, 17/05): cheap drafts, batched verification, exact distribution preserved — 2-4x faster at identical quality. The accept/reject rule is what makes speed free of quality loss; without it, drafts are just a faster wrong model. Same flag discipline applies: measured alpha on CBP traffic before enabling.
+
 ## Build It
 
 Reconstruct **Speculative Decoding and EAGLE** by following `make_target` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
