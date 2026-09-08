@@ -146,6 +146,10 @@ Without the mask, the loss treats instruction tokens as targets. The model learn
 
 The implementation gives you the format contract, the mask, and the loop. The objective change from base model to instruction follower is one collate function.
 
+## CBP context: system prompts are production SFT
+
+In the CBP context the instruction-following contract is built with versioned system prompts and reviewed demonstration pairs, not with weight updates: the base model already knows Paris, it needs the format contract (answer the question, cite the source, refuse outside scope). Curate the demonstration set like training data — reviewed, versioned, decontaminated from evals — because for the deployed assistant, the prompt resource IS the tuning. Change it through review with evals as the gate.
+
 ## Build It
 
 Reconstruct **Capstone Lesson 39: Instruction Tuning by Supervised Fine-Tuning** by following `that` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
