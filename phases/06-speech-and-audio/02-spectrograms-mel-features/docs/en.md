@@ -43,6 +43,10 @@ Mel spectrograms push further. Humans perceive pitch logarithmically: 100 Hz vs 
 
 
 
+## CBP context: features behind every audio model
+
+In the CBP context spectrograms and mel features are the preprocessing every audio model assumes: frame the signal with documented length and hop, map frequencies to mel scale, and keep the parameters versioned with the model that consumes them. Feature mismatches (wrong hop, wrong mel count) degrade silently — verify the feature recipe matches the model's expectations before debugging accuracy. Frames first, models second.
+
 ## Build It
 
 Reconstruct **Spectrograms, Mel Scale & Audio Features** by following `sine` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

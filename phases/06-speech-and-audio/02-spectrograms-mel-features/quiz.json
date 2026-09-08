@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How many frames does frame_signal produce for a 100-sample signal with frame_len=20 and hop=10?",
+      "question": "An audio model underperforms after a preprocessing change nobody versioned. What should have been fixed?",
       "options": [
-        "8",
-        "10",
-        "9",
-        "20"
+        "The model weights only",
+        "The UI displaying results",
+        "Nothing; preprocessing never matters",
+        "The feature recipe versioned with its model"
       ],
-      "correct": 2,
-      "explanation": "The formula is 1+(100-20)//10 = 9 complete frames."
+      "correct": 3,
+      "explanation": "Features and models are one unit. This lesson builds frames and mel features as contracts."
     },
     {
       "stage": "check",
