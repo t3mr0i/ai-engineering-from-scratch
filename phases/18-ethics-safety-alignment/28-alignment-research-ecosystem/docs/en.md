@@ -73,6 +73,10 @@ Lessons 7-11 reference Redwood and Apollo work; Lesson 18 references METR's fram
 
 
 
+## CBP context: read claims by source method
+
+In the CBP context safety claims sort by producer method — talent programs, control research, scheming evals, task evals, welfare work — each with different evidence standards and failure modes. Cross-check claims across method types; a control result does not validate a welfare premise. Lumping all "alignment research" into one credibility bucket misreads every paper in it.
+
 ## Build It
 
 Reconstruct **Alignment Research Ecosystem — MATS, Redwood, Apollo, METR** by following `main` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

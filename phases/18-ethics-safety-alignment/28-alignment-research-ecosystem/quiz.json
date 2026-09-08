@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How many organisations does the local ECOSYSTEM map contain, and why does that matter?",
+      "question": "Safety papers arrive from labs with different methods and evidence standards. How should they be read?",
       "options": [
-        "One: all alignment work is produced by a single lab",
-        "Two: only MATS and Redwood are included",
-        "Five: it separates talent development, control, scheming evaluation, task evaluation, and welfare work",
-        "Ten: every regulator is listed as a research organisation"
+        "All as identical evidence",
+        "By author fame alone",
+        "Newest paper wins always",
+        "By producer method with cross-checking"
       ],
-      "correct": 2,
-      "explanation": "The code maps MATS, Redwood, Apollo, METR, and Eleos. Distinguishing their methods makes a safety claim easier to cross-check than treating every external paper as the same kind of evidence."
+      "correct": 3,
+      "explanation": "Methods differ, so credibility differs. This lesson maps the ecosystem by approach."
     },
     {
       "stage": "check",
