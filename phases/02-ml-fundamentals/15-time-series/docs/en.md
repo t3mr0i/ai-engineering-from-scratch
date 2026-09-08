@@ -51,6 +51,10 @@ MAE is in the target's units. MSE weights large misses more heavily. MAPE skips
 zero targets and rejects an evaluation set containing only zeros, because a
 percentage error has no denominator there.
 
+## CBP context: the future never trains the past
+
+In the CBP context forecast evals respect time order strictly: train on earlier periods, test on later ones, never shuffle — and July's target never features June's prediction. Backtests that leak the future report fantasy accuracy; production collects the difference. Any evaluation touching time gets its split reviewed like a security boundary.
+
 ## Build It
 
 From code/, run python3 main.py. The output prints a stationarity comparison,
