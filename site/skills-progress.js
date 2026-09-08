@@ -149,6 +149,7 @@
     var progressState = options.progressState || { lessons: {} };
     var profileId = options.profileId || "tc";
     var assessmentImport = normalizeAssessmentImport(options.assessmentImport);
+    if (assessmentImport && String(assessmentImport.profileId).toLowerCase() !== profileId) assessmentImport = null;
 
     (options.courses || []).forEach(function (course) {
       courseById[course.id] = course;
@@ -262,14 +263,6 @@
     var showAll = false;
     var activeCluster = "";
     var cockpitStore = "lhind:lrn-cockpit:v3";
-
-    function importedMatchesProfile(record, profileId) {
-      if (!record || !record.profileId) return true;
-      var normalized = String(record.profileId).toLowerCase().trim();
-      var role = (data.roles || []).find(function (entry) { return entry.id === profileId; });
-      return [profileId, role && role.label, role && role.segment].filter(Boolean)
-        .some(function (value) { return String(value).toLowerCase().trim() === normalized; });
-    }
 
     function i18n(key, fallback, vars) {
       var dict = (typeof window !== "undefined" && window.SITE_I18N) || {};
@@ -562,6 +555,11 @@
         icon.appendChild(glyph);
         var copy = element("span", "capability-group__copy");
         copy.appendChild(element("strong", "", lang === "de" ? group.labelDe : group.label));
+        var baseline = importedBaselineForCluster(group.cluster, model.assessmentImport);
+        if (baseline) copy.appendChild(element("span", "capability-group__baseline", i18n(
+          "assessment_group_baseline", "Self-assessment: {current} · Target: {target}",
+          { current: baseline.currentLevel, target: baseline.targetLevel }
+        )));
         copy.appendChild(element("span", "", lang === "de" ? group.descriptionDe : group.description));
         copy.appendChild(element("small", "", i18n("capability_groups_count", "{count} capabilities", { count: counts[group.cluster] || 0 })));
         button.append(icon, copy);
@@ -576,7 +574,6 @@
     }
 
     function render() {
-      if (assessmentImport && !importedMatchesProfile(assessmentImport, currentProfileId())) assessmentImport = null;
       var model = createModel({
         catalogCapabilities: data.capabilities || [],
         detailedCapabilities: detailed,
@@ -587,6 +584,10 @@
         profileId: currentProfileId(),
         assessmentImport: assessmentImport
       });
+      var summaryLabel = doc.querySelector('.skills-progress__summary [data-i18n="skills_progress_towards_target"]');
+      if (summaryLabel) summaryLabel.textContent = model.assessmentImport
+        ? i18n("assessment_course_progress", "Course progress towards your role target")
+        : i18n("skills_progress_towards_target", "towards your role target");
       if (!model.items.length) {
         section.hidden = true;
         return;
@@ -631,7 +632,7 @@
     doc.addEventListener("sitelang:change", render);
     doc.addEventListener("assessment-import:change", function (event) {
       assessmentImport = event && event.detail || null;
-      if (assessmentImport && importedMatchesProfile(assessmentImport, currentProfileId())) {
+      if (assessmentImport) {
         var importedRole = (data.roles || []).find(function (role) {
           return [role.id, role.label, role.segment].filter(Boolean).some(function (value) {
             return String(value).toLowerCase().trim() === String(assessmentImport.profileId).toLowerCase().trim();

@@ -33,6 +33,15 @@
   var previousFocus = null;
   var messages = [];
 
+  function importedAssessment() {
+    var importer = root.AIFSAssessmentImport || root.AssessmentImport;
+    if (!importer && typeof require === "function") {
+      try { importer = require("./assessment-import.js"); } catch (_) {}
+    }
+    if (!importer || typeof importer.load !== "function") return null;
+    try { return importer.load() || null; } catch (_) { return null; }
+  }
+
   var COPY = {
     en: {
       open: "Open Learning Navigator",
@@ -209,6 +218,8 @@
     var progress = courseProgressSnapshot();
     var context = currentContext();
     var profileId = bounded(cockpit.profileId || plan.profileId, 40);
+    var assessmentBaseline = importedAssessment();
+    if (assessmentBaseline && assessmentBaseline.profileId !== profileId) assessmentBaseline = null;
     var progressState = root.AIFSProgress && typeof root.AIFSProgress.getState === "function" ? root.AIFSProgress.getState() : { lessons: {} };
     var mastery = root.LrnMastery ? root.LrnMastery.summarize({ progressState: progressState, curriculumMap: root.LrnCurriculumMap || {} }) : { courses: [], dueReviews: [] };
     var assignmentState = readJson(ASSIGNMENT_KEY, { assignments: [] });
@@ -224,7 +235,8 @@
       goal: bounded(plan.goal, 500),
       completedCourses: progress.completedCourseIds.slice(0, 60),
       inProgressCourses: progress.inProgressCourseIds.slice(0, 60),
-      assessmentGaps: assessmentGaps(profileId),
+      assessmentGaps: assessmentBaseline ? [] : assessmentGaps(profileId),
+      assessmentBaseline: assessmentBaseline,
       currentCourseId: context.currentCourseId,
       currentLessonPath: context.currentLessonPath,
       plannedCourses: Array.isArray(plan.steps) ? plan.steps.map(function (step) { return step.courseId; }).filter(Boolean).slice(0, 20) : [],

@@ -192,3 +192,11 @@ test("exposes imported baseline separately from lesson evidence", () => {
   assert.equal(item.importedBaseline.targetLevel, "Deepen");
   assert.equal(item.importedBaseline.gap, 1);
 });
+
+test('a different selected role does not inherit the imported dimension baseline', () => {
+  const imported = { profileId: 'bsc', dimensions: { Foundation: { currentLevel: 'Create', targetLevel: 'Create', score: 5 } } };
+  const model = skills.createModel({ catalogCapabilities: [{ id: 1, title: 'Basics', cluster: 'Foundation', targets: { tc: 'Create' } }],
+    profileId: 'tc', assessmentImport: imported });
+  assert.equal(model.assessmentImport, null);
+  assert.equal(model.items[0].importedBaseline, null);
+});

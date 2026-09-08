@@ -2,8 +2,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { deflateSync } from 'node:zlib';
 import vm from 'node:vm';
+
+const require = createRequire(import.meta.url);
 
 function load() {
   const values = new Map();
@@ -20,6 +23,27 @@ function load() {
   vm.createContext(sandbox);
   vm.runInContext(readFileSync('site/assessment-import.js', 'utf8'), sandbox, { filename: 'assessment-import.js' });
   return { api: sandbox.window.AIFSAssessmentImport, values, localStorage };
+}
+
+function shippedCourseContext() {
+  const sandbox = { window: {} };
+  vm.createContext(sandbox);
+  vm.runInContext(readFileSync('site/lrn/data.js', 'utf8'), sandbox, { filename: 'lrn/data.js' });
+  vm.runInContext(`${readFileSync('site/capabilities.js', 'utf8')}\nglobalThis.__capabilities = CAPABILITIES;`, sandbox, { filename: 'capabilities.js' });
+  const evidence = require('./skills-progress-evidence.js');
+  return {
+    capabilities: sandbox.__capabilities,
+    evidence,
+    course(id) { return sandbox.window.LrnData.courses.find((item) => item.id === id); },
+  };
+}
+
+function compressedPdf(operators) {
+  const compressed = deflateSync(Buffer.from(operators, 'latin1'));
+  return new Uint8Array(Buffer.concat([
+    Buffer.from('%PDF-1.3\n/Filter /FlateDecode\nstream\n', 'latin1'), compressed,
+    Buffer.from('\nendstream\n%%EOF', 'latin1'),
+  ]));
 }
 
 const RESULTS = `Results by Dimension
@@ -41,12 +65,25 @@ test('parses the five dimension results and infers Technology Consulting', () =>
 test('supports a compressed text PDF without a third-party dependency', async () => {
   const { api } = load();
   const operators = RESULTS.split('\n').map((line) => `(${line}) Tj`).join('\n');
-  const compressed = deflateSync(Buffer.from(operators, 'latin1'));
-  const before = Buffer.from('%PDF-1.3\n/Filter /FlateDecode\nstream\n', 'latin1');
-  const after = Buffer.from('\nendstream\n%%EOF', 'latin1');
-  const pdf = new Uint8Array(Buffer.concat([before, compressed, after]));
-  const record = await api.parsePdfBytes(pdf, '2026-09-07T12:00:00.000Z');
+  const record = await api.parsePdfBytes(compressedPdf(operators), '2026-09-07T12:00:00.000Z');
   assert.equal(record.profileId, 'tc');
+  assert.equal(record.dimensions['Leadership Strategy'].score, 2.5);
+});
+
+test('keeps mixed Tj and fragmented TJ strings in PDF operator order', async () => {
+  const { api } = load();
+  const operators = [
+    '[(Results) -300 (by Dimension)] TJ',
+    '(Foundation) Tj', '[(5.) 0 (00)] TJ', '(CREATE) Tj', '(CREATE) Tj',
+    '[(Engineering) 0 ( Literacy)] TJ', '(4.00) Tj', '(DEEPEN) Tj', '(CREATE) Tj',
+    '(Product and Process Literacy) Tj', '(2.00) Tj', '(ACQUIRE) Tj', '(DEEPEN) Tj',
+    '(Advisory and Biz Literacy) Tj', '(2.00) Tj', '(ACQUIRE) Tj', '(DEEPEN) Tj',
+    '(Leadership Strategy) Tj', '[(2.) 0 (50)] TJ', '(ACQUIRE) Tj', '(ACQUIRE) Tj',
+  ].join('\n');
+  const text = await api.extractPdfText(compressedPdf(operators));
+  assert.match(text, /Results by Dimension\nFoundation\n5\.00\nCREATE\nCREATE/);
+  const record = await api.parsePdfBytes(compressedPdf(operators), '2026-09-07T12:00:00.000Z');
+  assert.equal(record.dimensions['Engineering Literacy'].score, 4);
   assert.equal(record.dimensions['Leadership Strategy'].score, 2.5);
 });
 
@@ -162,4 +199,64 @@ test('maps the existing curriculum clusters to imported assessment dimensions', 
   assert.equal(api.dimensionForCluster('Advisory and Business Consulting'), 'Advisory and Biz Literacy');
   assert.equal(api.dimensionForCluster('Leadership and Strategy'), 'Leadership Strategy');
   assert.equal(api.dimensionForCluster('Unknown'), null);
+});
+
+test('uses explicit capability evidence before broad course interests', () => {
+  const { api } = load();
+  const context = shippedCourseContext();
+  const record = api.parseAssessmentText(RESULTS);
+  const placement = api.coursePlacement(context.course('LRN-02'), record, {
+    profileId: 'tc', capabilities: context.capabilities, evidence: context.evidence,
+  });
+  assert.equal(placement.mapped, true);
+  assert.equal(placement.needsLearning, false, 'Foundation Acquire is already attained');
+  assert.deepEqual(JSON.parse(JSON.stringify(placement.focusLevels)), []);
+  const dimensions = placement.matches.map((match) => match.dimension);
+  assert.ok(dimensions.includes('Foundation'));
+  assert.ok(!dimensions.includes('Product and Process Literacy'), 'the productivity interest is not treated as depth evidence');
+  assert.ok(placement.matches.every((match) => match.source === 'capability-matrix'));
+});
+
+test('places shipped courses at the explicit imported gaps', () => {
+  const { api } = load();
+  const context = shippedCourseContext();
+  const record = api.parseAssessmentText(RESULTS);
+  function placement(id) {
+    return api.coursePlacement(context.course(id), record, {
+      profileId: 'tc', capabilities: context.capabilities, evidence: context.evidence,
+    });
+  }
+  const engineering = placement('LRN-42');
+  assert.equal(engineering.needsLearning, true);
+  assert.deepEqual(JSON.parse(JSON.stringify(engineering.focusLevels)), ['Create']);
+  assert.ok(engineering.matches.some((match) => match.dimension === 'Engineering Literacy' && match.levels.includes('Create')));
+
+  const product = placement('LRN-30');
+  assert.deepEqual(JSON.parse(JSON.stringify(product.focusLevels)), ['Deepen']);
+  assert.ok(product.matches.some((match) => match.dimension === 'Product and Process Literacy' && match.levels.includes('Deepen')));
+
+  const advisory = placement('LRN-33');
+  assert.deepEqual(JSON.parse(JSON.stringify(advisory.focusLevels)), ['Deepen']);
+  assert.ok(advisory.matches.some((match) => match.dimension === 'Advisory and Biz Literacy' && match.levels.includes('Deepen')));
+});
+
+test('does not place courses for the wrong role, attained targets, or unknown courses', () => {
+  const { api } = load();
+  const context = shippedCourseContext();
+  const record = api.parseAssessmentText(RESULTS);
+  const options = { capabilities: context.capabilities, evidence: context.evidence };
+  assert.deepEqual(JSON.parse(JSON.stringify(api.coursePlacement(context.course('LRN-42'), record, { ...options, profileId: 'bsc' }))), {
+    mapped: false, needsLearning: false, focusLevels: [], matches: [],
+  });
+
+  const attained = api.parseAssessmentText(RESULTS);
+  Object.values(attained.dimensions).forEach((dimension) => { dimension.currentLevel = dimension.targetLevel; });
+  const allAttained = api.coursePlacement(context.course('LRN-42'), attained, { ...options, profileId: 'tc' });
+  assert.equal(allAttained.mapped, true);
+  assert.equal(allAttained.needsLearning, false);
+  assert.deepEqual(JSON.parse(JSON.stringify(allAttained.focusLevels)), []);
+
+  assert.deepEqual(JSON.parse(JSON.stringify(api.coursePlacement({ id: 'UNKNOWN-COURSE' }, record, { ...options, profileId: 'tc' }))), {
+    mapped: false, needsLearning: false, focusLevels: [], matches: [],
+  });
 });

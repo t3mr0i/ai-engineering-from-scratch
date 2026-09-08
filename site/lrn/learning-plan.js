@@ -6,10 +6,14 @@
  * are not present in the manifest and are therefore never estimated here.
  */
 (function (root, factory) {
-  var api = factory();
+  var placementApi = root && root.AIFSAssessmentImport;
+  if (!placementApi && typeof require === "function") {
+    try { placementApi = require("../assessment-import.js"); } catch (error) {}
+  }
+  var api = factory(placementApi);
   if (typeof module === "object" && module.exports) module.exports = api;
   else root.LrnLearningPlan = api;
-})(typeof globalThis !== "undefined" ? globalThis : this, function () {
+})(typeof globalThis !== "undefined" ? globalThis : this, function (placementApi) {
   "use strict";
 
   var SCHEMA_VERSION = 1;
@@ -138,24 +142,18 @@
       };
     });
     if (!Object.keys(dimensions).length) return null;
-    return { profileId: record.profileId == null ? null : String(record.profileId), dimensions: dimensions };
+    return { profileId: record.profileId == null ? null : String(record.profileId).toLowerCase(), dimensions: dimensions };
   }
 
-  function importedDimensionForCourse(course, assessmentImport) {
+  function importedDimensionForCourse(course, assessmentImport, placementContext) {
     var imported = normalizeAssessmentImport(assessmentImport);
-    if (!imported) return [];
-    var interests = stringSet(course && course.interests);
-    return Object.keys(imported.dimensions).filter(function (cluster) {
-      var hints = CLUSTER_HINTS[cleanText(cluster)] || { interests: [] };
-      var baseline = imported.dimensions[cluster];
-      var levels = toArray(course && course.levels).map(function (value) {
-        return levelRank(value, "course " + course.id + " level");
-      });
-      return baseline.gap > 0 && levels.some(function (level) {
-        return level > baseline.currentRank && level <= baseline.targetRank;
-      }) && hints.interests.some(function (interest) { return interests[interest]; });
-    }).map(function (cluster) {
-      return { dimension: cluster, baseline: imported.dimensions[cluster] };
+    if (!imported || !placementApi || !placementApi.coursePlacement) return [];
+    var placement = placementApi.coursePlacement(course, imported, placementContext || {
+      profileId: imported.profileId, capabilities: [], evidence: {}
+    });
+    return placement.matches.filter(function (match) { return match.levels.length; }).map(function (match) {
+      var dimension = IMPORT_DIMENSIONS[cleanText(match.dimension).trim()] || match.dimension;
+      return { dimension: dimension, baseline: imported.dimensions[dimension], levels: match.levels };
     });
   }
 
@@ -554,6 +552,11 @@
     if (goal.length > 500) throw new RangeError("learner.goal must be at most 500 characters");
     var currentLevel = levelRank(learner.currentLevel, "learner.currentLevel");
     var importedRecord = normalizeAssessmentImport(learner.assessmentImport);
+    var placementContext = {
+      profileId: roleId,
+      capabilities: toArray(catalog.capabilities),
+      evidence: input.capabilityEvidence || {}
+    };
     if (importedRecord && importedRecord.profileId && roleId) {
       var selectedRole = roles.filter(function (role) { return role && role.id === roleId; })[0];
       var roleNames = [roleId, selectedRole && selectedRole.label, selectedRole && selectedRole.segment]
@@ -563,15 +566,22 @@
     var progress = readProgress(learner, catalogIds);
     var mastery = readMastery(learner, catalogIds);
     var assignments = readAssignments(learner, catalogIds);
-    var gaps = computeAssessmentGaps(catalog, learner, roleId);
+    var gaps = importedRecord ? [] : computeAssessmentGaps(catalog, learner, roleId);
     var goalTokens = tokens(goal);
     var ranked = [];
     var roleExcluded = [];
+    var assessmentExcluded = [];
 
     catalog.courses.forEach(function (course) {
       if (progress.completed[course.id]) return;
       if (!roleEligible(course, roleId)) {
         roleExcluded.push(course.id);
+        return;
+      }
+      var placement = placementApi && importedRecord ? placementApi.coursePlacement(course, importedRecord, placementContext) : null;
+      var observedNeed = mastery.courses[course.id] && mastery.courses[course.id].evidenceCount > 0 && mastery.courses[course.id].probability < 0.8;
+      if (placement && placement.mapped && !placement.needsLearning && !progress.inProgress[course.id] && !assignments[course.id] && !observedNeed) {
+        assessmentExcluded.push(course.id);
         return;
       }
       var document = courseDocument(course);
@@ -606,9 +616,9 @@
       var goalMatch = goalSignal(course, document, goal, goalTokens);
       if (goalMatch) signals.push(goalMatch);
       signals = signals.concat(assessmentSignals(course, document, gaps));
-      var levelMatch = levelSignal(course, currentLevel);
+      var levelMatch = importedRecord ? null : levelSignal(course, currentLevel);
       if (levelMatch) signals.push(levelMatch);
-      importedDimensionForCourse(course, importedRecord).forEach(function (match) {
+      importedDimensionForCourse(course, importedRecord, placementContext).forEach(function (match) {
         var baseline = match.baseline;
         if (!baseline.gap) return;
         signals.push({
@@ -687,6 +697,7 @@
         assessmentGaps: gaps,
         excludedCompletedCourseIds: Object.keys(progress.completed).sort(),
         excludedRoleCourseIds: roleExcluded.sort(),
+        excludedAssessmentCourseIds: assessmentExcluded.sort(),
         tieBreak: ["rankScore desc", "course sequence asc", "course id asc"],
       },
       reviewQueue: mastery.dueReviews,

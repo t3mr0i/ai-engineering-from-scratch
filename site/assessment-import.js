@@ -62,15 +62,36 @@
   }
   function textOperators(content) {
     var parts = [];
-    var matcher = /\((?:\\.|[^\\)])*\)\s*Tj\b/g;
+    // Preserve PDF operator order. A prior two-pass implementation collected
+    // all `Tj` strings before all `TJ` arrays, which could scramble a table
+    // when a producer mixed the two forms.
+    var matcher = /\((?:\\.|[^\\)])*\)\s*Tj\b|\[(?:\\.|[^\]])*\]\s*TJ\b/g;
     var match;
-    while ((match = matcher.exec(content))) parts.push(decodePdfString(match[0].replace(/\)\s*Tj\b$/, '').slice(1)));
-    // Some producers use an array of text fragments before the TJ operator.
-    var arrays = /\[([^\]]*)\]\s*TJ\b/g;
-    while ((match = arrays.exec(content))) {
-      var fragmentMatcher = /\((?:\\.|[^\\)])*\)/g;
+    while ((match = matcher.exec(content))) {
+      var operator = match[0];
+      if (/\)\s*Tj\b$/.test(operator)) {
+        parts.push(decodePdfString(operator.replace(/\)\s*Tj\b$/, '').slice(1)));
+        continue;
+      }
+      var array = operator.replace(/\]\s*TJ\b$/, '').slice(1);
+      var fragments = [];
+      var fragmentMatcher = /\((?:\\.|[^\\)])*\)|(-?\d+(?:\.\d+)?)/g;
       var fragment;
-      while ((fragment = fragmentMatcher.exec(match[1]))) parts.push(decodePdfString(fragment[0].slice(1, -1)));
+      var pendingSpace = false;
+      while ((fragment = fragmentMatcher.exec(array))) {
+        if (fragment[1] != null) {
+          // A sufficiently negative TJ adjustment advances the cursor and is
+          // commonly used by generated PDFs in place of a literal space.
+          if (Number(fragment[1]) <= -250) pendingSpace = true;
+          continue;
+        }
+        var text = decodePdfString(fragment[0].slice(1, -1));
+        var previous = fragments.length ? fragments[fragments.length - 1] : '';
+        if (pendingSpace && previous && text && !/\s$/.test(previous) && !/^\s/.test(text)) fragments.push(' ');
+        fragments.push(text);
+        pendingSpace = false;
+      }
+      parts.push(fragments.join(''));
     }
     return parts.join('\n');
   }

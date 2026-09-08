@@ -183,6 +183,29 @@ test("allowlists and canonicalizes the learner snapshot", () => {
   assert.doesNotMatch(serialized, /private notes|private answer|private-id|privateNote|forged/);
 });
 
+test("accepts only a validated, role-matched imported assessment baseline", () => {
+  const baseline = {
+    schemaVersion: 1,
+    source: "external-pdf",
+    importedAt: "2026-09-08T12:00:00.000Z",
+    profileId: "tc",
+    dimensions: {
+      Foundation: { score: 5, currentLevel: "Create", targetLevel: "Create" },
+      "Engineering Literacy": { score: 4, currentLevel: "Deepen", targetLevel: "Create" },
+      "Product and Process Literacy": { score: 2, currentLevel: "Acquire", targetLevel: "Deepen" },
+      "Advisory and Biz Literacy": { score: 2, currentLevel: "Acquire", targetLevel: "Deepen" },
+      "Leadership Strategy": { score: 2.5, currentLevel: "Acquire", targetLevel: "Acquire" },
+    },
+  };
+  const input = normalizeInput(validPayload({ learner: { ...validPayload().learner, assessmentBaseline: baseline } }), fixture.inventory);
+  assert.equal(input.learner.assessmentBaseline.profileId, "tc");
+  assert.equal(normalizeInput(validPayload({ learner: { ...validPayload().learner, profileId: "bsc", assessmentBaseline: baseline } }), fixture.inventory).learner.assessmentBaseline, null);
+  assert.throws(
+    () => normalizeInput(validPayload({ learner: { ...validPayload().learner, assessmentBaseline: { ...baseline, importedAt: "bad" } } }), fixture.inventory),
+    (error) => error instanceof LearnerAiError && error.code === "ai.snapshot.invalid",
+  );
+});
+
 test("retrieval is deterministic and ranks current, in-progress, query-matching records first", () => {
   const input = normalizeInput(validPayload(), fixture.inventory);
   const first = rankCurriculum(fixture.inventory, input);
@@ -349,4 +372,29 @@ test("maps upstream failures and invalid envelopes to stable learner AI errors",
     invalid.run(validPayload()),
     (error) => error instanceof LearnerAiError && error.code === "ai.response.invalid" && error.status === 502,
   );
+});
+
+test("Navigator ranks actual remaining depths above attained courses and preserves continuation", () => {
+  const inventory = loadCurriculum(path.join(__dirname, '..', '..', 'site'));
+  const importer = require('../../site/assessment-import.js');
+  const baseline = importer.parseAssessmentText(`Results by Dimension
+Foundation 5.00 CREATE CREATE
+Engineering Literacy 4.00 DEEPEN CREATE
+Product and Process Literacy 2.00 ACQUIRE DEEPEN
+Advisory and Biz Literacy 2.00 ACQUIRE DEEPEN
+Leadership Strategy 2.50 ACQUIRE ACQUIRE`);
+  const payload = { message: 'What should I learn next?', locale: 'en', history: [],
+    learner: { profileId: 'tc', currentLevel: 'Acquire', assessmentBaseline: baseline,
+      assessmentGaps: [{ capabilityId: 1, currentLevel: 'None', targetLevel: 'Create' }] } };
+  const input = normalizeInput(payload, inventory);
+  assert.equal(input.learner.currentLevel, '');
+  assert.deepEqual(input.learner.assessmentGaps, []);
+  const ranked = rankCurriculum(inventory, input);
+  assert.ok(ranked.courses.length > 0);
+  ranked.courses.forEach(course => assert.ok(importer.coursePlacement(inventory.courseById[course.id], baseline, {
+    profileId: 'tc', capabilities: inventory.capabilities, evidence: inventory.capabilityEvidence
+  }).needsLearning, course.id));
+  const continuing = normalizeInput({ ...payload, learner: { ...payload.learner, inProgressCourses: ['LRN-02'] } }, inventory);
+  assert.equal(rankCurriculum(inventory, continuing).courses[0].id, 'LRN-02');
+  assert.match(buildMessages(input, ranked)[1].content, /assessmentBaseline/);
 });

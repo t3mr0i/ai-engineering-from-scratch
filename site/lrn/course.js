@@ -91,6 +91,46 @@
     });
   }
 
+  function activeProfileId() {
+    try {
+      var saved = JSON.parse(localStorage.getItem(STORE));
+      return saved && saved.profileId ? saved.profileId : "";
+    } catch (error) {
+      return "";
+    }
+  }
+
+  function importedAssessment() {
+    var importer = window.AIFSAssessmentImport || window.AssessmentImport;
+    if (!importer || typeof importer.load !== "function") return null;
+    try {
+      var record = importer.load();
+      return record && record.profileId === activeProfileId() ? record : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function importedPlacement(courseItem, record) {
+    var importer = window.AIFSAssessmentImport || window.AssessmentImport;
+    if (!record || !importer || typeof importer.coursePlacement !== "function") return null;
+    return importer.coursePlacement(courseItem, record, {
+      profileId: activeProfileId(),
+      capabilities: data.capabilities || [],
+      evidence: window.AIFSCapabilityEvidence || {}
+    });
+  }
+
+  // An imported baseline can explain why an untouched course is not the next
+  // learning step. It is not completion evidence: once a learner has opened a
+  // course, their real progress remains the source of truth.
+  function assessmentAttainedCourse(courseItem, record, stats) {
+    stats = stats || courseProgress(courseItem);
+    if (stats.percent !== 0 || stats.visitedLessons > 0) return false;
+    var placement = importedPlacement(courseItem, record);
+    return Boolean(placement && placement.mapped && !placement.needsLearning);
+  }
+
   function render() {
     if (academyPath) {
       renderAcademyPath(academyPath);
@@ -319,10 +359,15 @@
     document.title = path.title + " · LHIND AI Learning Catalog";
     var pathSaved = persistAcademyPath(path);
 
+    var assessment = importedAssessment();
     var stats = academyPathStats(path);
     var nextCourse = stats.courses.find(function (item) {
-      return courseProgress(item).percent < 100;
+      var courseStats = courseProgress(item);
+      return courseStats.percent < 100 && !assessmentAttainedCourse(item, assessment, courseStats);
     });
+    var nextPlacement = nextCourse ? importedPlacement(nextCourse, assessment) : null;
+    var hasUnfinishedCourses = stats.courses.some(function (item) { return courseProgress(item).percent < 100; });
+    var noOpenAssessmentGap = !nextCourse && hasUnfinishedCourses;
 
     var intro = document.createElement("section");
     intro.className = "course-intro";
@@ -369,10 +414,16 @@
     var nextLabel = document.createElement("span");
     nextLabel.textContent = nextCourse
       ? i18n("my_path_next_label", "Your next step")
+      : noOpenAssessmentGap
+        ? i18n("assessment_no_gap", "No open assessment gap")
       : i18n("my_path_complete_label", "Path complete");
     var nextTitle = document.createElement("strong");
     nextTitle.textContent = nextCourse
-      ? nextCourse.title
+      ? nextCourse.title + (nextPlacement && nextPlacement.focusLevels.length
+        ? " · " + localizedDepths(nextPlacement.focusLevels)
+        : "")
+      : noOpenAssessmentGap
+        ? i18n("assessment_no_gap", "No open assessment gap")
       : i18n("my_path_complete_title", "You completed this learning path");
     nextSummary.append(nextLabel, nextTitle);
 
@@ -383,6 +434,9 @@
       var actionLabel = document.createElement("span");
       actionLabel.textContent = i18n("my_path_open_next", "Open next course");
       action.append(actionLabel, lucideIcon("arrow-right"));
+    } else if (noOpenAssessmentGap) {
+      action.href = "../skills.html";
+      action.append(lucideIcon("chart-bar"), document.createTextNode(i18n("my_path_view_capabilities", "View capability progress")));
     } else {
       action.href = "#";
       action.setAttribute("aria-disabled", "true");
@@ -455,7 +509,7 @@
     var journeyList = document.createElement("ol");
     journeyList.className = "academy-journey";
     journeyList.setAttribute("aria-label", i18n("my_path_route_label", "Learning path stages"));
-    academyStageStats(path).forEach(function (stage) {
+    academyStageStats(path, assessment).forEach(function (stage) {
       var item = document.createElement("li");
       item.dataset.state = stage.state;
       if (stage.state === "current") item.setAttribute("aria-current", "step");
@@ -468,7 +522,9 @@
       var stageTitle = document.createElement("strong");
       stageTitle.textContent = localizedStage(stage.label);
       var stageFocus = document.createElement("span");
-      stageFocus.textContent = stage.focus;
+      stageFocus.textContent = stage.assessmentGapClosed
+        ? i18n("assessment_no_gap", "No open assessment gap")
+        : stage.focus;
       var stageMeta = document.createElement("small");
       stageMeta.textContent = i18nFmt(
         "my_path_stage_meta",
@@ -488,7 +544,7 @@
     syllabusTitle.textContent = i18n("academy_path_courses_title", "Supporting courses");
     children.push(syllabusTitle);
     (path.stages || []).forEach(function (stage, index) {
-      children.push(academyStageBlock(stage, index));
+      children.push(academyStageBlock(stage, index, assessment));
     });
 
     replaceChildren(root, children);
@@ -518,7 +574,7 @@
     return Boolean(confirmed && confirmed.academyCourse === path.academyCourse);
   }
 
-  function academyStageStats(path) {
+  function academyStageStats(path, assessment) {
     var firstOpen = -1;
     var stages = (path.stages || []).map(function (stage, index) {
       var courses = uniqueValues(stage.courses || []).map(function (id) { return courseById[id]; }).filter(Boolean);
@@ -527,23 +583,28 @@
       var percent = courseStats.length
         ? Math.round(courseStats.reduce(function (sum, entry) { return sum + entry.percent; }, 0) / courseStats.length)
         : 0;
-      if (firstOpen === -1 && percent < 100) firstOpen = index;
+      var assessmentGapClosed = courses.length > 0 && courseStats.some(function (entry) { return entry.percent < 100; }) &&
+        courses.every(function (courseItem, courseIndex) {
+          return courseStats[courseIndex].percent === 100 || assessmentAttainedCourse(courseItem, assessment, courseStats[courseIndex]);
+        });
+      if (firstOpen === -1 && percent < 100 && !assessmentGapClosed) firstOpen = index;
       return {
         label: stage.label,
         focus: stage.focus,
         percent: percent,
         completedCourses: completedCourses,
         courseCount: courses.length,
+        assessmentGapClosed: assessmentGapClosed,
         state: "upcoming"
       };
     });
     stages.forEach(function (stage, index) {
-      stage.state = stage.percent === 100 ? "complete" : index === firstOpen ? "current" : "upcoming";
+      stage.state = stage.percent === 100 ? "complete" : stage.assessmentGapClosed ? "assessment" : index === firstOpen ? "current" : "upcoming";
     });
     return stages;
   }
 
-  function academyStageBlock(stage, index) {
+  function academyStageBlock(stage, index, assessment) {
     var courses = uniqueValues(stage.courses || []).map(function (id) { return courseById[id]; }).filter(Boolean);
     var lessonPathsForStage = uniqueValues(courses.reduce(function (all, item) {
       return all.concat(lessonPaths(item.id));
@@ -582,23 +643,31 @@
       note.textContent = stage.focus;
       block.appendChild(note);
     }
+    if (courses.length && courses.every(function (item) { return courseProgress(item).percent === 100 || assessmentAttainedCourse(item, assessment); })) {
+      var assessmentNote = document.createElement("p");
+      assessmentNote.className = "unit-block__note";
+      assessmentNote.dataset.state = "assessment";
+      assessmentNote.textContent = i18n("assessment_no_gap", "No open assessment gap");
+      block.appendChild(assessmentNote);
+    }
     var list = document.createElement("div");
     list.className = "activity-list";
-    courses.forEach(function (item) { list.appendChild(academyCourseLink(item)); });
+    courses.forEach(function (item) { list.appendChild(academyCourseLink(item, assessment)); });
     block.appendChild(list);
     return block;
   }
 
-  function academyCourseLink(courseItem) {
+  function academyCourseLink(courseItem, assessment) {
     var stats = courseProgress(courseItem);
     var state = stats.percent === 100 ? "completed" : stats.visitedLessons > 0 ? "visited" : "open";
+    var assessmentAttained = state === "open" && assessmentAttainedCourse(courseItem, assessment, stats);
     var link = document.createElement("a");
     link.className = "interactive-surface activity-link academy-course-link";
     link.href = courseDetailHref(courseItem.id);
     link.title = courseItem.id + " · " + courseItem.title;
     var dot = document.createElement("span");
     dot.className = "activity-link__dot";
-    dot.dataset.state = state;
+    dot.dataset.state = assessmentAttained ? "assessment" : state;
     dot.setAttribute("aria-hidden", "true");
     dot.appendChild(lucideIcon(state === "completed" ? "check-circle" : state === "visited" ? "dot" : "circle"));
     var icon = lucideIcon(courseFormat(courseItem).icon);
@@ -608,7 +677,12 @@
     var type = document.createElement("small");
     type.textContent = courseItem.id + " · " + activityCountLabel(stats.lessonCount);
     link.append(dot, icon, label, type);
-    if (state !== "open") {
+    if (assessmentAttained) {
+      var assessmentStatus = document.createElement("em");
+      assessmentStatus.dataset.state = "assessment";
+      assessmentStatus.textContent = i18n("assessment_no_gap", "No open assessment gap");
+      link.appendChild(assessmentStatus);
+    } else if (state !== "open") {
       var status = document.createElement("em");
       status.dataset.state = state;
       status.textContent = i18nFmt("academy_path_course_progress", { percent: stats.percent }, "{percent}% complete");

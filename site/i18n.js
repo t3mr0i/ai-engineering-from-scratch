@@ -480,5 +480,11 @@ window.SITE_I18N = {
 
   // index.html footer — added alongside the new footer so about.html and
   // assessment.html become reachable (see nav gap in the plan's §6).
-  nav_assessment: { en: "Self-Assessment", de: "Selbsteinschätzung" }
+  nav_assessment: { en: "Self-Assessment", de: "Selbsteinschätzung" },
+  lrn_depth_from_assessment: { en: "From assessment", de: "Aus dem Assessment" },
+  assessment_no_gap: { en: "No open assessment gap", de: "Kein offener Assessment-Lernbedarf" },
+  assessment_path_met: { en: "No additional courses needed for this assessment target", de: "Für dieses Assessment-Ziel sind keine weiteren Kurse nötig" },
+  assessment_next_reason: { en: "Based on your assessment: {dimension}, {current} → {next}.", de: "Aus deinem Assessment: {dimension}, {current} → {next}." },
+  assessment_group_baseline: { en: "Self-assessment: {current} · Target: {target}", de: "Self-Assessment: {current} · Ziel: {target}" },
+  assessment_course_progress: { en: "Course progress towards your role target", de: "Kursfortschritt zum Rollenziel" }
 };

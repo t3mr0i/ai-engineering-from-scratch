@@ -25,6 +25,7 @@
   var sessionsSelect = null;
   var output = null;
   var status = null;
+  var updateAssessmentEvidence = null;
 
   var COPY = {
     en: {
@@ -66,7 +67,8 @@
       reviewTitle: "Review due now",
       reviewIntro: "These quiz concepts are scheduled before new material.",
       reviewOpen: "Review lesson",
-      adapted: "Plan updated from your latest quiz evidence and progress.",
+      adapted: "Plan updated from your current assessment, quiz evidence, and progress.",
+      assessmentChanged: "Assessment changed. Rebuild this draft to use your new starting levels.",
       undoAdapt: "Undo automatic update",
       save: "Save plan",
       clear: "Clear plan",
@@ -118,6 +120,7 @@
       reviewIntro: "Diese Quiz-Konzepte sind vor neuem Stoff fällig.",
       reviewOpen: "Lektion wiederholen",
       adapted: "Plan anhand deiner neuesten Quiz-Evidenz und deines Fortschritts aktualisiert.",
+      assessmentChanged: "Assessment geändert. Erstelle diesen Entwurf neu, um deine neuen Ausgangslevel zu verwenden.",
       undoAdapt: "Automatische Aktualisierung rückgängig machen",
       save: "Plan speichern",
       clear: "Plan löschen",
@@ -195,6 +198,7 @@
       goal: String(goal || "").trim().slice(0, 500),
       assessment: { ratings: assessment.ratings || {} },
       assessmentImport: loadAssessmentImport(),
+      capabilityEvidence: root.AIFSCapabilityEvidence || {},
       progress: progressSnapshot(),
       mastery: { courses: mastery.courses || [], dueReviews: mastery.dueReviews || [] },
       assignments: Array.isArray(assignmentState.assignments) ? assignmentState.assignments : []
@@ -212,6 +216,8 @@
     var importer = root.AIFSAssessmentImport || root.AssessmentImport;
     var imported = null;
     try { imported = importer && importer.load ? importer.load() : null; } catch (_) {}
+    var cockpit = read(COCKPIT_STORE, {});
+    if (imported && imported.profileId !== (cockpit.profileId || "tc")) imported = null;
     return Boolean((assessment.ratings && Object.keys(assessment.ratings).length > 0) ||
       (imported && imported.dimensions && Object.keys(imported.dimensions).length));
   }
@@ -393,6 +399,7 @@
     try {
       draft = root.LrnLearningPlan.buildPlan({
         catalog: root.LrnData,
+        capabilityEvidence: root.AIFSCapabilityEvidence || {},
         learner: learnerSnapshot(goalInput.value),
         durationWeeks: Number(weeksSelect.value),
         sessionsPerWeek: Number(sessionsSelect.value)
@@ -452,12 +459,13 @@
     try {
       var next = root.LrnLearningPlan.adaptPlan(current, {
         catalog: root.LrnData,
+        capabilityEvidence: root.AIFSCapabilityEvidence || {},
         learner: learnerSnapshot(current.learner && current.learner.goal),
         durationWeeks: current.cadence.durationWeeks,
         sessionsPerWeek: current.cadence.sessionsPerWeek,
       });
-      var currentShape = JSON.stringify({ steps: current.steps.map(function (step) { return step.courseId; }), reviews: current.reviewQueue || [] });
-      var nextShape = JSON.stringify({ steps: next.steps.map(function (step) { return step.courseId; }), reviews: next.reviewQueue || [] });
+      var currentShape = JSON.stringify({ steps: current.steps.map(function (step) { return step.courseId; }), reviews: current.reviewQueue || [], assessmentImport: current.learner && current.learner.assessmentImport || null });
+      var nextShape = JSON.stringify({ steps: next.steps.map(function (step) { return step.courseId; }), reviews: next.reviewQueue || [], assessmentImport: next.learner && next.learner.assessmentImport || null });
       if (currentShape === nextShape) return;
       root.localStorage.setItem(PREVIOUS_PLAN_STORE, JSON.stringify(current));
       root.localStorage.setItem(STORE, JSON.stringify(next));
@@ -533,7 +541,7 @@
       }
     }
     renderEvidence();
-    root.document.addEventListener("assessment-import:change", function () { renderEvidence(); });
+    updateAssessmentEvidence = renderEvidence;
     status = create("p", "personal-plan__status");
     status.setAttribute("role", "status");
     output = create("div", "personal-plan__output");
@@ -572,6 +580,20 @@
     if (!root.document) return;
     function run() {
       buildUi();
+      function refreshAssessment() {
+        if (updateAssessmentEvidence) updateAssessmentEvidence();
+        if (draft && status && status.dataset.state !== "saved") {
+          setStatus(t("assessmentChanged"), "draft");
+          return;
+        }
+        adaptSavedPlan();
+      }
+      root.document.addEventListener("assessment-import:change", refreshAssessment);
+      var incoming = loadAssessmentImport();
+      var cockpit = read(COCKPIT_STORE, {});
+      if (incoming && incoming.profileId !== (cockpit.profileId || "tc")) incoming = null;
+      var normalized = root.LrnLearningPlan && root.LrnLearningPlan.normalizeAssessmentImport(incoming);
+      if (saved && JSON.stringify(saved.learner && saved.learner.assessmentImport || null) !== JSON.stringify(normalized || null)) refreshAssessment();
       if (root.AIFSProgress && root.AIFSProgress.onChange) root.AIFSProgress.onChange(adaptSavedPlan);
       root.addEventListener("aifs:team-assignment-change", adaptSavedPlan);
       root.document.addEventListener("sitelang:change", renderLocale);

@@ -107,7 +107,7 @@ test("normalizes the imported five-dimension baseline without inventing progress
     "Advisory and Biz Literacy": { score: 2, currentLevel: "Acquire", targetLevel: "Deepen" },
     "Leadership Strategy": { score: 2.5, currentLevel: "Acquire", targetLevel: "Acquire" }
   }});
-  assert.equal(imported.profileId, "TC");
+  assert.equal(imported.profileId, "tc");
   assert.equal(imported.dimensions.Engineering.targetLevel, "Create");
   assert.equal(imported.dimensions.Engineering.gap, 1);
   assert.equal(imported.dimensions.Foundation.gap, 0);
@@ -285,4 +285,36 @@ test("adaptPlan records an auditable revision", () => {
   assert.equal(next.createdAt, 12);
   assert.equal(next.revision.reason, "mastery-and-progress-update");
   assert.ok(Array.isArray(next.revision.addedCourseIds));
+});
+
+test("real catalog plans respect the imported matrix and keep assessment exclusions separate", () => {
+  const box = { window: {} };
+  vm.runInNewContext(readFileSync('site/lrn/data.js', 'utf8'), box);
+  const data = JSON.parse(JSON.stringify(box.window.LrnData));
+  const importer = require('../assessment-import.js');
+  const evidence = require('../skills-progress-evidence.js');
+  const assessment = importer.parseAssessmentText(`Results by Dimension
+Foundation 5.00 CREATE CREATE
+Engineering Literacy 4.00 DEEPEN CREATE
+Product and Process Literacy 2.00 ACQUIRE DEEPEN
+Advisory and Biz Literacy 2.00 ACQUIRE DEEPEN
+Leadership Strategy 2.50 ACQUIRE ACQUIRE`);
+  const input = { catalog: data, capabilityEvidence: evidence,
+    learner: { roleId: 'tc', currentLevel: 'Acquire', assessmentImport: assessment },
+    durationWeeks: 8, sessionsPerWeek: 2 };
+  const plan = buildPlan(input);
+  assert.ok(plan.steps.length > 0);
+  for (const step of plan.steps) {
+    const course = data.courses.find(item => item.id === step.courseId);
+    assert.ok(importer.coursePlacement(course, assessment, { profileId: 'tc', capabilities: data.capabilities, evidence }).needsLearning, step.courseId);
+  }
+  assert.ok(plan.evidence.excludedAssessmentCourseIds.includes('LRN-02'));
+  assert.deepEqual(plan.evidence.excludedCompletedCourseIds, []);
+  const continuing = buildPlan({ ...input, learner: { ...input.learner, progress: { inProgressCourseIds: ['LRN-02'] } } });
+  assert.ok(continuing.steps.some(step => step.courseId === 'LRN-02' && step.status === 'in_progress'));
+  const attained = structuredClone(assessment);
+  Object.values(attained.dimensions).forEach(row => { row.currentLevel = row.targetLevel; });
+  const full = buildPlan({ ...input, learner: { ...input.learner, assessmentImport: attained } });
+  assert.equal(full.steps.length, 0);
+  assert.deepEqual(full.evidence.excludedCompletedCourseIds, []);
 });

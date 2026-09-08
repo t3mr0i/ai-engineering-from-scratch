@@ -22,54 +22,15 @@
     try { return importer.load() || null; } catch (error) { return null; }
   }
 
-  function normalizeImportedDimension(name) {
-    return {
-      "foundation": "Foundation",
-      "engineering literacy": "Engineering",
-      "product and process literacy": "Product and Process",
-      "advisory and biz literacy": "Advisory and Business Consulting",
-      "leadership strategy": "Leadership and Strategy",
-      "engineering": "Engineering",
-      "product and process": "Product and Process",
-      "advisory and business consulting": "Advisory and Business Consulting",
-      "leadership and strategy": "Leadership and Strategy"
-    }[String(name || "").toLowerCase().trim()] || "";
-  }
-
   function importedGapForCourse(course, record) {
-    if (!record || !record.dimensions || !course) return 0;
-    if (record.profileId && resolveRole(record.profileId) !== state.profileId) return 0;
-    var interests = course.interests || [];
-    var maxGap = 0;
-    Object.keys(record.dimensions).forEach(function (name) {
-      var cluster = normalizeImportedDimension(name);
-      var row = record.dimensions[name] || {};
-      var hints = {
-        Foundation: ["foundation", "governance", "productivity"],
-        Engineering: ["engineering"],
-        "Product and Process": ["consulting", "productivity"],
-        "Advisory and Business Consulting": ["consulting"],
-        "Leadership and Strategy": ["leadership"]
-      }[cluster] || [];
-      var evidence = window.AIFSCapabilityEvidence || {};
-      var explicit = (data.capabilities || []).some(function (capability) {
-        if (!capability || String(capability.cluster || "").indexOf(cluster) < 0) return false;
-        var rows = evidence[capability.id] || {};
-        return Object.keys(rows).some(function (stage) { return (rows[stage] || []).indexOf(course.id) >= 0; });
-      });
-      if (!explicit && !hints.some(function (interest) { return interests.indexOf(interest) >= 0; })) return;
-      var current = Number({ Acquire: 1, Deepen: 2, Create: 3 }[row.currentLevel] || row.currentLevel || 0);
-      var target = Number({ Acquire: 1, Deepen: 2, Create: 3 }[row.targetLevel] || row.targetLevel || 0);
-      if (!Number.isFinite(current)) current = 0;
-      if (!Number.isFinite(target)) target = 0;
-      var ranks = (course.levels || []).map(function (level) {
-        return Number({ Acquire: 1, Deepen: 2, Create: 3 }[level] || level || 0);
-      });
-      if (target > current && ranks.some(function (rank) { return rank > current && rank <= target; })) {
-        maxGap = Math.max(maxGap, target - current);
-      }
+    var importer = window.AIFSAssessmentImport || window.AssessmentImport;
+    if (!importer || typeof importer.coursePlacement !== "function") return 0;
+    var placement = importer.coursePlacement(course, record, {
+      profileId: state.profileId,
+      capabilities: data.capabilities || [],
+      evidence: window.AIFSCapabilityEvidence || {}
     });
-    return maxGap;
+    return placement.matches.reduce(function (max, match) { return match.levels.length ? Math.max(max, match.gap || 0) : max; }, 0);
   }
 
   function syncImportedProfile(record) {
@@ -295,6 +256,7 @@
       state.keyAreaId = null;
       state.specializationId = null;
       saveState();
+      renderControls();
       render();
       announce(i18n("lrn_announce_profile_set").replace("{profile}", role.label));
     });
@@ -426,6 +388,7 @@
       return option;
     });
     var imported = assessmentImport();
+    if (imported && imported.profileId !== state.profileId) imported = null;
     if (imported && imported.profileId && resolveRole(imported.profileId) === state.profileId) {
       var importedOption = document.createElement("option");
       importedOption.value = "imported";
@@ -477,6 +440,7 @@
     var profileId = computed && computed.profile && computed.profile.id || state.profileId;
     var allPaths = data.academyPaths || [];
     var imported = assessmentImport();
+    if (imported && imported.profileId !== profileId) imported = null;
     function pathSupportsImported(path) {
       return imported && (path.stages || []).some(function (stage) {
         return (stage.courses || []).some(function (courseId) {
@@ -485,11 +449,11 @@
       });
     }
     var levelPaths = allPaths.filter(function (path) {
-      return academyPathSupportsLevel(path, activeLevel) || pathSupportsImported(path);
+      return imported ? pathSupportsImported(path) : academyPathSupportsLevel(path, activeLevel);
     });
     var recommendedPaths = levelPaths.filter(function (path) {
       return path.category !== "foundation" && academyRecommendationRank(path, profileId) !== null &&
-        (academyPathSupportsLevel(path, activeLevel) || pathSupportsImported(path));
+        (!imported || pathSupportsImported(path));
     }).sort(function (a, b) {
       var importedScore = function (path) {
         return (path.stages || []).reduce(function (total, stage) {
@@ -624,7 +588,7 @@
       stageCopy.className = "my-learning-path__stage-copy";
       var stageName = document.createElement("strong");
       stageName.textContent = i18n("lrn_depth_" + stage.label.toLowerCase(), stage.label) +
-        (stage.assessed ? " · " + i18n("lrn_depth_from_assessment", "From assessment") : "");
+        (stage.assessed ? " · " + i18n("assessment_no_gap", "No open assessment gap") : "");
       var stageMeta = document.createElement("small");
       stageMeta.textContent = i18n("my_path_stage_meta", "{percent}% · {completed}/{total} courses")
         .replace("{percent}", String(stage.percent))
@@ -646,16 +610,24 @@
     nextLabel.className = "my-learning-path__next-label";
     nextLabel.textContent = stats.nextCourse
       ? i18n("my_path_next_label", "Your next step")
-      : i18n("my_path_complete_label", "Path complete");
+      : stats.percent < 100 ? i18n("assessment_no_gap", "No open assessment gap") : i18n("my_path_complete_label", "Path complete");
     var nextTitle = document.createElement("h3");
     nextTitle.textContent = stats.nextCourse
       ? stats.nextCourse.title
-      : i18n("my_path_complete_title", "You completed this learning path");
+      : stats.percent < 100 ? i18n("assessment_path_met", "Your assessment covers the required starting levels") : i18n("my_path_complete_title", "You completed this learning path");
     var nextDetail = document.createElement("p");
     nextDetail.textContent = stats.nextCourse
       ? i18n("my_path_next_detail", "Continue with {stage}. Your progress is saved automatically.")
           .replace("{stage}", i18n("lrn_depth_" + stats.nextStage.toLowerCase(), stats.nextStage))
       : i18n("my_path_complete_detail", "Review your capability progress and choose what to deepen next.");
+    var importApi = window.AIFSAssessmentImport;
+    if (stats.nextCourse && importApi) {
+      var baseline = importApi.coursePlacement(stats.nextCourse, assessmentImport(), {
+        profileId: context.profileId, capabilities: data.capabilities || [], evidence: window.AIFSCapabilityEvidence || {}
+      }).matches.find(function (match) { return match.levels.length; });
+      if (baseline) nextDetail.textContent = i18n("assessment_next_reason", "Based on your assessment: {dimension}, {current} → {next}.")
+        .replace("{dimension}", baseline.dimension).replace("{current}", baseline.currentLevel).replace("{next}", stats.nextStage);
+    }
     var action = document.createElement("a");
     action.className = "primary-cta my-learning-path__cta";
     action.href = stats.nextCourse ? courseHref(stats.nextCourse.id) : "skills.html";
@@ -690,23 +662,14 @@
   function academyPathProgress(path) {
     var imported = assessmentImport();
     function attainedByImportedBaseline(course) {
-      if (!imported || !course || !imported.dimensions) return false;
-      var interests = course.interests || [];
-      return Object.keys(imported.dimensions).some(function (name) {
-        var cluster = normalizeImportedDimension(name);
-        var row = imported.dimensions[name] || {};
-        var hints = {
-          Foundation: ["foundation", "governance", "productivity"],
-          Engineering: ["engineering"],
-          "Product and Process": ["consulting", "productivity"],
-          "Advisory and Business Consulting": ["consulting"],
-          "Leadership and Strategy": ["leadership"]
-        }[cluster] || [];
-        var current = Number({ Acquire: 1, Deepen: 2, Create: 3 }[row.currentLevel] || row.currentLevel || 0);
-        var target = Number({ Acquire: 1, Deepen: 2, Create: 3 }[row.targetLevel] || row.targetLevel || 0);
-        return hints.some(function (interest) { return interests.indexOf(interest) >= 0; }) &&
-          target <= current;
+      var importer = window.AIFSAssessmentImport || window.AssessmentImport;
+      if (!importer || typeof importer.coursePlacement !== "function") return false;
+      var placement = importer.coursePlacement(course, imported, {
+        profileId: state.profileId,
+        capabilities: data.capabilities || [],
+        evidence: window.AIFSCapabilityEvidence || {}
       });
+      return placement.mapped && !placement.needsLearning;
     }
     var firstOpenStage = -1;
     var nextCourse = null;
@@ -714,7 +677,7 @@
     var stages = (path.stages || []).map(function (stage, index) {
       var courses = uniqueValues(stage.courses || []).map(function (id) { return courseById[id]; }).filter(Boolean);
       var progress = courses.map(courseProgress);
-      var assessedCourses = courses.filter(attainedByImportedBaseline);
+      var assessedCourses = courses.filter(function (course, index) { return progress[index].percent === 0 && progress[index].visitedLessons === 0 && attainedByImportedBaseline(course); });
       var completedCourses = progress.filter(function (entry) { return entry.percent === 100; }).length;
       var percent = progress.length
         ? Math.round(progress.reduce(function (sum, entry) { return sum + entry.percent; }, 0) / progress.length)
@@ -724,11 +687,14 @@
       if (firstOpenStage === -1 && percent < 100 && !assessedStage) firstOpenStage = index;
       if (!nextCourse) {
         var openIndex = progress.findIndex(function (entry, courseIndex) {
-          return entry.percent < 100 && !attainedByImportedBaseline(courses[courseIndex]);
+          return entry.percent < 100 && (entry.percent > 0 || entry.visitedLessons > 0 || !attainedByImportedBaseline(courses[courseIndex]));
         });
         if (openIndex !== -1) {
           nextCourse = courses[openIndex];
-          nextStage = stage.label;
+          var placement = window.AIFSAssessmentImport && window.AIFSAssessmentImport.coursePlacement(nextCourse, imported, {
+            profileId: state.profileId, capabilities: data.capabilities || [], evidence: window.AIFSCapabilityEvidence || {}
+          });
+          nextStage = placement && placement.focusLevels[0] || stage.label;
         }
       }
       return {
@@ -845,7 +811,9 @@
   }
 
   function academyPathCard(path, context) {
-    var activeLevel = context.activeLevel;
+    var pathStats = academyPathProgress(path);
+    var imported = assessmentImport();
+    var activeLevel = imported && imported.profileId === context.profileId && pathStats.nextCourse ? pathStats.nextStage : context.activeLevel;
     var link = document.createElement("a");
     link.className = "interactive-surface interactive-card academy-card";
     link.dataset.pathId = path.id;
@@ -1176,11 +1144,14 @@
     // this role/level if it sits in a track serving the role, in a stage
     // matching the external level's focus (Acquire/Deepen/Create).
     var stageCoursesForLevel = curatedCourseIds(role, level.focusLevels);
+    var imported = assessmentImport();
+    if (imported && imported.profileId !== role.id) imported = null;
 
     var entries = data.courses.filter(function (course) {
       return course.roleIds.indexOf(role.id) !== -1;
     }).map(function (course) {
-      var onPath = stageCoursesForLevel.indexOf(course.id) !== -1;
+      var importedGap = importedGapForCourse(course, imported);
+      var onPath = imported ? importedGap > 0 : stageCoursesForLevel.indexOf(course.id) !== -1;
       var roleTargetMatch = course.dimensions.some(function (dimensionId) {
         return Number(role.targets[dimensionId] || 0) > 0;
       });
@@ -1193,7 +1164,6 @@
         }))
       );
       var progress = courseProgress(course);
-      var importedGap = importedGapForCourse(course, assessmentImport());
       // Sharpness score decides which of the relevant courses survive the cap.
       var score = 10;
       if (onPath) score += 60;
@@ -1221,7 +1191,7 @@
     // otherwise leave the Recommended tab empty — fall back to showing
     // everything relevant instead.
     var hasStrict = entries.some(function (entry) { return entry.kind === "recommended"; });
-    if (!hasStrict) {
+    if (!hasStrict && !imported) {
       entries.forEach(function (entry) { entry.kind = "recommended"; });
     }
 
