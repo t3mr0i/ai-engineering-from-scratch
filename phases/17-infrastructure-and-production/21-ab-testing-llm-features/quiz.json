@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which expression is the treatment effect used by z_statistic?",
+      "question": "A hand-tuned prompt feels better, ships to everyone, and conversion wiggles by noise. What was skipped?",
       "options": [
-        "p_a minus p_b",
-        "p_a plus p_b",
-        "p_b minus p_a",
-        "The pooled success count divided by n_total"
+        "More hand-tuning by feel",
+        "A bigger launch to drown the noise",
+        "Blaming the metric for not moving",
+        "A powered online experiment against the user metric"
       ],
-      "correct": 2,
-      "explanation": "z_statistic returns (p_b - p_a) / se, so a positive result means the observed B rate exceeds A."
+      "correct": 3,
+      "explanation": "Feelings are not user preference. This lesson runs the controlled experiment: power, randomization, corrected comparisons."
     },
     {
       "stage": "check",

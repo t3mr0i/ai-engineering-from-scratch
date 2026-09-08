@@ -104,6 +104,10 @@ Call `z_statistic` from a small caller with the text "red fox". Compare its resu
 
 Hand off `outputs/skill-ab-plan.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: evals say can, A/B says users prefer
+
+In the CBP context prompt and model changes ship behind GrowthBook or Statsig experiments on the tenant's traffic: evals gate whether the variant may run, the A/B decides whether users prefer it, with power analysis before launch and multiple-comparison correction after. A hand-tuned prompt that "feels better" ships to 5% first — conversion moves or it does not, and noise is not a result. Non-determinism goes into the experiment design, not into the excuses.
+
 ## Further Reading
 
 - [GrowthBook — How to A/B Test AI](https://blog.growthbook.io/how-to-a-b-test-ai-a-practical-guide/)
