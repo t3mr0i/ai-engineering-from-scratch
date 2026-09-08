@@ -126,6 +126,10 @@ This is standard for long-running stateful systems; the 2026 adaptation is that 
 
 
 
+## CBP context: key steps, replace idempotently
+
+In the CBP context durable multi-agent runs checkpoint per (thread, super-step) with serialized state — restarts resume exactly, retries replace idempotently, queues drain in order. The key design (identity plus step, never timestamps alone) is what makes resume correct; random keys lose history, missing payloads lose work. Scale queues and checkpoints together or neither survives load.
+
 ## Build It
 
 Reconstruct **Production Scaling — Queues, Checkpoints, Durability** by following `CheckpointStore` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

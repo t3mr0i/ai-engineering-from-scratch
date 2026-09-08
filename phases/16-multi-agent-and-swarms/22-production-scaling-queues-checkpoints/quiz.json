@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What durable key does `CheckpointStore` use for a saved super-step?",
+      "question": "Crashed multi-agent runs lose their place and redo completed steps. What keying makes resume correct?",
       "options": [
-        "A random timestamp and a binary model checkpoint.",
-        "Only the Python object id; thread identity is not stored.",
-        "The SQLite primary key is `(thread_id, super_step)`, with serialized state in `state_json`.",
-        "The agent name and queue length, with no state payload."
+        "Random keys per restart",
+        "No keys; replay everything",
+        "Timestamps alone as identity",
+        "Thread-plus-step keys with serialized state"
       ],
-      "correct": 2,
-      "explanation": "The table declares `thread_id`, `super_step`, and `state_json`, and its primary key combines the first two so a step can be replaced idempotently."
+      "correct": 3,
+      "explanation": "Resume needs addressable history. This lesson checkpoints steps for exact recovery."
     },
     {
       "stage": "check",
