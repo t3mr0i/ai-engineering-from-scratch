@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which boundary tokens does train_bigrams add to every sentence?",
+      "question": "Early generators continued text from local word statistics but never understood it. What could they not do?",
       "options": [
-        "<BOS> at both ends",
-        "A period at the start and a comma at the end",
-        "<s> at the start and </s> at the end",
-        "No boundary tokens; it counts only interior words"
+        "Produce fluent short continuations",
+        "Count word frequencies",
+        "Mark sentence boundaries",
+        "Track meaning across long context"
       ],
-      "correct": 2,
-      "explanation": "The padded sequence is [\"<s>\"] + sentence + [\"</s>\"], so starts and stops receive bigram counts."
+      "correct": 3,
+      "explanation": "Local statistics have no memory of meaning. This lesson builds n-gram generation to motivate transformers."
     },
     {
       "stage": "check",

@@ -54,6 +54,10 @@ perplexity = exp(- (1/N) * Σ log P(w_i | context_i))
 
 
 
+## CBP context: history explaining the present
+
+In the CBP context n-gram generation is history that explains transformer dominance: local statistics with boundary markers could continue text but never understand it. Know what bigrams cannot do to appreciate what attention bought — and to recognize Markov-style shallow patterns when vendors dress them as intelligence. Read for the lineage, build nothing here.
+
 ## Build It
 
 Reconstruct **Text Generation Before Transformers — N-gram Language Models** by following `tokenize` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
