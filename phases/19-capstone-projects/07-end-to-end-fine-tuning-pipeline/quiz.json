@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which artifact order does the demo pipeline use after data preparation?",
+      "question": "A fine-tune scores brilliantly, but its eval set leaked into training. What is that score worth?",
       "options": [
-        "data → contamination → SFT → DPO → quantize → serve → eval → model card",
-        "data → DPO → SFT → serve → quantize → eval → model card",
-        "data → quantize → contamination → SFT → DPO → eval → serve → model card",
-        "data → SFT → model card → contamination → DPO → quantize → serve → eval"
+        "Full value; high scores are always real",
+        "Nothing without a bigger model",
+        "Double value for beating the benchmark",
+        "Nothing; contaminated evals measure memorization"
       ],
-      "correct": 0,
-      "explanation": "The orchestrator registers stages in the reproducibility order data, contamination, SFT, DPO, quantization, serving, evaluation, and finally the model card."
+      "correct": 3,
+      "explanation": "Leaked evals flatter every pipeline stage after them. This capstone orders contamination checks before any training."
     },
     {
       "stage": "check",

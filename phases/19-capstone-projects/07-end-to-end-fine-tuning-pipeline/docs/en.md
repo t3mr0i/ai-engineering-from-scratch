@@ -88,6 +88,10 @@ Call `Artifact` from a small caller with a graph with edges (0,1) and (1,2). Com
 
 Hand off `outputs/skill-finetuning-pipeline.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: consume fine-tunes, own the eval
+
+In the CBP context the team consumes fine-tunes rather than training them (lesson 11/08): the pipeline discipline that transfers is data preparation, contamination checks, staged SFT-then-preference ordering, quantization, serving, evaluation, and the model card. Own the eval set and the contamination gate even when the weights come from a provider — a fine-tune evaluated on leaked data is marketing, not engineering. Re-run the evals on every provider update, not just on yours.
+
 ## Further Reading
 
 - [Axolotl documentation](https://axolotl-ai-cloud.github.io/axolotl/) — the reference SFT / DPO trainer
