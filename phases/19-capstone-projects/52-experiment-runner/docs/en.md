@@ -150,6 +150,10 @@ The evaluator reads `metrics` and `terminal` first. If terminal is anything othe
 
 Lesson fifty generates the hypothesis. Lesson fifty-one filters out anything the literature already settled. Lesson fifty-two runs the experiment for what is left. Lesson fifty-three reads the result, runs the significance test, and writes the verdict the orchestrator stores against the hypothesis id.
 
+## CBP context: isolate what you execute
+
+In the CBP context agent-executed code runs isolated with a kill handle — separate process, timeouts, memory limits — so a runaway experiment dies without taking the orchestrator down. The same rule as the sandbox (lesson 19/26) at the experiment layer: crashes stay inside the boundary, the runner records the outcome, and the next experiment starts clean. In-process execution of untrusted code is not faster; it is uncontained.
+
 ## Build It
 
 Reconstruct **Experiment Runner** by following `ExperimentSpec` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
