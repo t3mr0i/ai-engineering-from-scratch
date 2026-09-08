@@ -21,6 +21,10 @@ The scratch implementation expects labels -1 and 1. Its objective is average hin
 
 Kernel helpers expose the comparisons used by a kernel method: linear_kernel is a dot product, polynomial_kernel(x,z)=(x·z+c)^degree, and rbf_kernel is exp(-gamma*||x-z||²). compute_kernel_matrix fills a symmetric matrix. The Julia entry point is a standard-library parallel path.
 
+## CBP context: margins measure decision confidence
+
+In the CBP context the margin idea transfers to every classifier the service runs: confident decisions sit far from the boundary, near-boundary cases route to human review. Hinge loss penalizes closeness, not just wrongness — the same spirit as confidence-gated triage. Read for the margin intuition; libraries fit the actual machines.
+
 ## Build It
 
 Run python3 main.py from code/. The command prints a hinge-loss table, fits the seeded linear fixture, and shows kernel values. For the direct calculation, hinge_loss([[2]], [1], [1], 0) is zero because the signed margin is 2; hinge_loss([[0.5]], [1], [1], 0) is 0.5.

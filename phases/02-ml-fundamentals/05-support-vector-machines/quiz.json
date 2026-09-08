@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For hinge loss max(0, 1 - y f(x)), what is the loss when y=1 and f(x)=0.5?",
+      "question": "A classifier is right but barely — the case sits almost on the decision boundary. Should that count as confident?",
       "options": [
-        "0.5",
-        "1.5",
-        "0",
-        "-0.5"
+        "Yes, correct is correct",
+        "Yes, boundaries do not matter",
+        "No classifier can express doubt",
+        "No, narrow margins deserve review, not trust"
       ],
-      "correct": 0,
-      "explanation": "The signed margin is 0.5, so max(0, 1 - 0.5) equals 0.5."
+      "correct": 3,
+      "explanation": "Margins measure decision confidence. This lesson penalizes closeness through hinge loss."
     },
     {
       "stage": "check",
