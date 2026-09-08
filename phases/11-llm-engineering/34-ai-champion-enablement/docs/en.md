@@ -104,3 +104,10 @@ A useful submission records python3 main.py, the observed output, and the conclu
 - one concrete update to outputs/backlog-ai-champion-enablement.md that applies “Define quality controls for shared AI enablement materials” without hiding uncertainty.
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
+
+## Further Reading
+
+### Recommended trainings (LHIND AI Literacy)
+
+- [Drive AI transformation in your organization](https://learn.microsoft.com/en-us/training/courses/ab-731t00) — Microsoft Learn · Create · 8 h · Rollen: Corporate Functions, Business & Strategy Consulting, Leadership, Project Management & Agility (Academy AI-05, AI-08)
+- [Drive AI transformation in your organization](https://learn.microsoft.com/en-us/training/courses/ab-731t00#course-syllabus) — Microsoft Learn · Deepen · 8 h · Rollen: Leadership (Academy AI-07)

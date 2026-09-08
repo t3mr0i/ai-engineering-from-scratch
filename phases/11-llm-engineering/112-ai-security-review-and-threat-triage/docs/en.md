@@ -112,6 +112,11 @@ Hand off `outputs/skill-ai-threat-triage.md` with the command `python3 main.py`,
 - [Anthropic — Claude's approach to trust and safety](https://trust.anthropic.com/) — documentation on Anthropic's model-level controls, relevant when assessing which mitigations can be delegated to the model vs. which must be architectural.
 - [PortSwigger Web Security Academy — Prompt Injection](https://portswigger.net/web-security/llm-attacks) — technical lab environment for understanding prompt injection attack shapes; recommended for technical team members reviewing the triage findings.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [AI workload governance and DLP](https://learn.microsoft.com/en-us/training/paths/ai-workloads-governance/) — Microsoft Learn · Create · 4 h · Rollen: Technology Consulting, Application Management (Academy AI-02, AI-04)
+- [Govern AI-ready Infrastructure](https://learn.microsoft.com/en-us/training/paths/govern-ai-ready-infrastructure/) — Microsoft Learn · Create · 5 h · Rollen: Technology Consulting (Academy AI-01, AI-02)
+
 ## Exercises
 
 Begin with a control run and leave a short receipt: input, output, and the reasoning that connects them to the objective.

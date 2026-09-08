@@ -103,3 +103,10 @@ The reference run should leave a small receipt: python3 main.py, its captured ou
 - one concrete update to outputs/template-ai-architecture-decision-record.md that applies “Choose when to create a design note, ADR, or architecture review” without hiding uncertainty.
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
+
+## Further Reading
+
+### Recommended trainings (LHIND AI Literacy)
+
+- [AI workload governance and DLP](https://learn.microsoft.com/en-us/training/paths/ai-workloads-governance/) — Microsoft Learn · Create · 4 h · Rollen: Technology Consulting, Application Management (Academy AI-02, AI-04)
+- [Govern AI-ready Infrastructure](https://learn.microsoft.com/en-us/training/paths/govern-ai-ready-infrastructure/) — Microsoft Learn · Create · 5 h · Rollen: Technology Consulting (Academy AI-01, AI-02)

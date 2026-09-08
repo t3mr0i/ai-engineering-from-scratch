@@ -490,6 +490,11 @@ In the CBP context MCP servers and clients in Java build on the Spring AI MCP su
 - [Anthropic — Introducing MCP (Nov 2024)](https://www.anthropic.com/news/model-context-protocol) — launch post with design rationale.
 - [Security considerations for MCP](https://modelcontextprotocol.io/docs/concepts/security) — roots, destructive hints, tool poisoning.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Introduction to Model Context Protocol (MCP)](https://www.coursera.org/learn/introduction-to-model-context-protocol) — Coursera · Acquire · 2 h · Rollen: Technology Consulting (Academy AI-02)
+- [MCP: Build Rich-Context AI Apps with Anthropic](https://www.deeplearning.ai/courses/mcp-build-rich-context-ai-apps-with-anthropic) — DeepLearning.AI · Acquire · 2 h · Rollen: Technology Consulting (Academy AI-02)
+
 ## Exercises
 
 Begin with a control run and leave a short receipt: input, output, and the reasoning that connects them to the objective.

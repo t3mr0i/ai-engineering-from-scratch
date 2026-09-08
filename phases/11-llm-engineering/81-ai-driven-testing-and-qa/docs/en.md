@@ -123,6 +123,10 @@ Hand off `outputs/skill-qa-gate-designer.md` with the command `python3 main.py`,
 - [NIST AI Risk Management Framework 1.0](https://airc.nist.gov/Home) — a voluntary governance framework that names evaluation as a core control (the MEASURE function); Chapter 4 covers MEASURE.
 - [Braintrust — Evaluations guide](https://www.braintrust.dev/docs/guides/evals) — dataset management, experiment tracking, and scoring; useful reference for hosted eval architecture patterns.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [AI-Powered Software Development: Coding, Testing, and System Design](https://www.linkedin.com/learning/ai-powered-software-development-coding-testing-and-system-design?u=2197772) — LinkedIn Learning · Create · 2 h · Rollen: Application Management (Academy AI-01)
+
 ## Exercises
 
 Start with the smallest reproducible run. Keep the input, output, and interpretation together so another reader can repeat the check.

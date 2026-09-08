@@ -110,3 +110,11 @@ A complete handoff records python3 main.py, the observed output, and the reasoni
 - one concrete update to outputs/memo-ai-supported-decision.md that applies “Use the generated worksheet as a reusable starting point for team enablement” without hiding uncertainty.
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
+
+## Further Reading
+
+### Recommended trainings (LHIND AI Literacy)
+
+- [AI Powered Decision Making](https://www.datacamp.com/courses/data-driven-decision-making-for-business) — DataCamp · Deepen · 2 h · Rollen: Leadership (Academy AI-07)
+- [AI-Augmented Decision-Making for Business Leaders](https://www.coursera.org/learn/ai-augmented-decision-making-for-business-leaders) — Coursera · Deepen · 4 h · Rollen: Leadership (Academy AI-07)
+- [Data-Driven Decision Making for Business](https://www.datacamp.com/courses/data-driven-decision-making-for-business) — DataCamp · Deepen · 2 h · Rollen: Application Management, Corporate Functions (Academy AI-07)

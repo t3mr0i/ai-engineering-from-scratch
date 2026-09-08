@@ -25,6 +25,7 @@
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/light/style.css">
   <link rel="stylesheet" href="lrn/lrn.css?v=20260825d">
+  <link rel="stylesheet" href="assessment-import.css?v=20260908a">
 </head>
 <body>
   <a class="skip-link" href="#main" data-i18n="skip_content">Skip to content</a>
@@ -121,6 +122,8 @@
       <div class="capability-groups__list" id="capabilityGroupList"></div>
     </section>
 
+    <section id="assessmentImport" data-assessment-import></section>
+
     <section class="skills-progress skills-progress--standalone" id="skillsProgress" aria-label="Capability progress details" data-i18n-aria-label="skills_progress_details_label">
       <div class="skills-progress__toolbar">
         <div class="skills-progress__legend" aria-label="Capability levels" data-i18n-aria-label="skills_progress_levels_label">
@@ -147,6 +150,8 @@
   </main>
 
   <noscript><p class="noscript-note">JavaScript is required to calculate your local learning progress.</p></noscript>
+  <script src="assessment-import.js?v=20260908a"></script>
+  <script src="assessment-import-ui.js?v=20260908a"></script>
   <script src="progress.js"></script>
   <script src="capabilities.js"></script>
   <script src="lrn/data.js?v=20260825a"></script>

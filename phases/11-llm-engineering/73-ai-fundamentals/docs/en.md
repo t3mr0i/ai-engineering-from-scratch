@@ -162,6 +162,19 @@ Hand off `outputs/skill-ai-system-type-classifier.md` with the command `python3 
 - [Anthropic — Claude's model specification](https://www.anthropic.com/news/claudes-constitution) — how Anthropic frames model values and constraints; useful for explaining responsible AI design to clients.
 - [arXiv — "A Survey of Large Language Models" (Zhao et al.)](https://arxiv.org/abs/2303.18223) — the canonical academic survey of LLM architecture, training, and capabilities; well-maintained with updates.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [AI for Everyone](https://learn.microsoft.com/en-us/training/paths/get-started-with-microsoft-365-copilot/) — Microsoft Learn · Acquire · 1 h · Rollen: Corporate Functions (Academy AI-09)
+- [Understanding Artificial Intelligence](https://www.datacamp.com/courses/understanding-artificial-intelligence) — DataCamp · Acquire, Deepen · 2 h · Rollen: Application Management, Technology Consulting (Academy AI-02, AI-09)
+- [Fundamentals of AI](https://www.coursera.org/learn/google-ai-fundamentals) — Coursera · Acquire · 3 h · Rollen: Corporate Functions (Academy AI-06)
+- [AI Basics @ LHIND Learning Catalog](https://trainingcamp.lhind.app.lufthansa.com/lesson.html?path=llm-primer&course=PRIMER-01) — LHIND Trainingcamp · Acquire · 1,15 h · Rollen: Application Management, Business & Strategy Consulting, Corporate Functions, Leadership, Project Management & Agility, Technology Consulting (Academy AI-01, AI-04, AI-07, AI-09)
+- [Transform your business with AI](https://learn.microsoft.com/en-us/training/paths/transform-your-business-with-microsoft-ai/) — Microsoft Learn · Acquire, Deepen · 4 h · Rollen: Application Management, Corporate Functions, Project Management & Agility, Technology Consulting (Academy AI-03, AI-05, AI-07, AI-09)
+- [Generative AI for Business Leaders (2025)](https://www.linkedin.com/learning/generative-ai-for-business-leaders-2025?u=2197772) — LinkedIn Learning · Acquire · 1 h · Rollen: Business & Strategy Consulting (Academy AI-09)
+- [Introduction to GenAI for Executives](https://www.coursera.org/learn/generative-ai-for-executives-business-leaders-introduction?utm_medium=institutions&utm_source=ibm-skills-network&utm_campaign=TrainingBlogGenAIExecctives) — Coursera · Acquire · 3 h · Rollen: Leadership (Academy AI-08)
+- [Microsoft: AI Foundations for Business Leaders](https://www.edx.org/learn/computer-science/microsoft-learning-path-introduction-to-ai-for-business-users) — edX · Acquire · 3 h · Rollen: Leadership (Academy AI-08)
+- [AI Fluency](https://learn.microsoft.com/en-us/training/paths/ai-fluency/) — Microsoft Learn · Deepen · 3 h · Rollen: Leadership (Academy AI-08)
+- [AI for Managers](https://www.linkedin.com/learning/paths/ai-for-managers-by-microsoft-and-linkedin?u=2197772) — LinkedIn Learning · Acquire · 5 h · Rollen: Business & Strategy Consulting (Academy AI-04)
+
 ## Exercises
 
 Make the experiment auditable. Save the input, output, and one sentence explaining how the result bears on the claim.

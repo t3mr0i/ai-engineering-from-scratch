@@ -103,3 +103,10 @@ The reference run should leave a small receipt: python3 main.py, its captured ou
 - one concrete update to outputs/checklist-service-ai-readiness.md that applies “Choose controls for support automation and service handoff” without hiding uncertainty.
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
+
+## Further Reading
+
+### Recommended trainings (LHIND AI Literacy)
+
+- [Generative AI for Customer Service Automation](https://www.coursera.org/learn/generative-ai-for-customer-service-automation) — Coursera · Deepen · 10 h · Rollen: Application Management (Academy AI-07)
+- [IT Service Management Foundations: Measures and Metrics](https://www.linkedin.com/learning/it-service-management-foundations-measures-and-metrics) — LinkedIn Learning · Deepen · 1,36 h · Rollen: Application Management (Academy AI-07)

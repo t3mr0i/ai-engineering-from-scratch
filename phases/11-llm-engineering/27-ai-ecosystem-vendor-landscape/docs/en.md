@@ -111,3 +111,10 @@ Keep the solution auditable: run python3 main.py, save the output, and explain w
 - one concrete update to outputs/matrix-ai-vendor-evaluation.md that applies “Use the generated worksheet as a reusable starting point for team enablement” without hiding uncertainty.
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
+
+## Further Reading
+
+### Recommended trainings (LHIND AI Literacy)
+
+- [The AI Ecosystem for Developers: Models, Datasets, and APIs](https://www.linkedin.com/learning/the-ai-ecosystem-for-developers-models-datasets-and-apis?u=2197772) — LinkedIn Learning · Create · 1,5 h · Rollen: Technology Consulting (Academy AI-03)
+- [Comparing AI Research Tools: ChatGPT, Claude, Gemini, and Perplexity](https://www.linkedin.com/learning/comparing-ai-research-tools-chatgpt-claude-gemini-and-perplexity?u=2197772) — LinkedIn Learning · Create · 1 h · Rollen: Technology Consulting (Academy AI-03)

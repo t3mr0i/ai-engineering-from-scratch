@@ -122,6 +122,11 @@ Hand off `outputs/skill-prompt-pattern-picker.md` with the command `python3 main
 - [Anthropic — Claude model overview and system prompt best practices](https://docs.claude.com/en/docs/about-claude/models/overview) — current model list, context windows, and recommended prompt structures per model.
 - [Wei et al., "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models" (NeurIPS 2022)](https://arxiv.org/abs/2201.11903) — the original CoT paper; the core finding still holds on 2026 models.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Advanced Prompt Engineering Techniques](https://www.linkedin.com/learning/advanced-prompt-engineering-techniques) — LinkedIn Learning · Deepen · 1 h · Rollen: Business & Strategy Consulting, Application Management (Academy AI-04, AI-06)
+- [Talking to AI: Prompt Engineering for Project Managers](https://www.pmi.org/shop/p-/elearning/talking-to-ai-prompt-engineering-for-project-managers/el128) — PMI · Acquire · 1 h · Rollen: Project Management & Agility (Academy AI-05)
+
 ## Exercises
 
 Start with the smallest reproducible run. Keep the input, output, and interpretation together so another reader can repeat the check.

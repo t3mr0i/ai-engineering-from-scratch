@@ -194,15 +194,26 @@
       currentLevel: Number(cockpit.externalLevel || 1),
       goal: String(goal || "").trim().slice(0, 500),
       assessment: { ratings: assessment.ratings || {} },
+      assessmentImport: loadAssessmentImport(),
       progress: progressSnapshot(),
       mastery: { courses: mastery.courses || [], dueReviews: mastery.dueReviews || [] },
       assignments: Array.isArray(assignmentState.assignments) ? assignmentState.assignments : []
     };
   }
 
+  function loadAssessmentImport() {
+    var importer = root.AIFSAssessmentImport || root.AssessmentImport;
+    if (!importer || typeof importer.load !== "function") return null;
+    try { return importer.load() || null; } catch (_) { return null; }
+  }
+
   function assessmentAvailable() {
     var assessment = read(ASSESSMENT_STORE, {});
-    return assessment.ratings && Object.keys(assessment.ratings).length > 0;
+    var importer = root.AIFSAssessmentImport || root.AssessmentImport;
+    var imported = null;
+    try { imported = importer && importer.load ? importer.load() : null; } catch (_) {}
+    return Boolean((assessment.ratings && Object.keys(assessment.ratings).length > 0) ||
+      (imported && imported.dimensions && Object.keys(imported.dimensions).length));
   }
 
   function create(tag, className, text) {
@@ -239,6 +250,7 @@
     var signals = Array.isArray(step.signals) ? step.signals : [];
     var signal = signals.find(function (item) { return item.type === "progress"; }) ||
       signals.find(function (item) { return item.type === "goal_match"; }) ||
+      signals.find(function (item) { return item.type === "imported_dimension_gap"; }) ||
       signals.find(function (item) { return item.type === "assessment_gap"; }) ||
       signals.find(function (item) { return item.type === "level_match"; }) ||
       signals.find(function (item) { return item.type === "role_match"; });
@@ -247,6 +259,7 @@
     if (signal.type === "mastery_gap") return t("masteryReason");
     if (signal.type === "team_assignment") return t("assignmentReason");
     if (signal.type === "goal_match") return t("goalReason", { terms: (signal.terms || []).join(", ") });
+    if (signal.type === "imported_dimension_gap") return t("gapReason", { current: signal.currentLevel, target: signal.targetLevel });
     if (signal.type === "assessment_gap") return t("gapReason", { current: signal.currentLevel, target: signal.targetLevel });
     if (signal.type === "level_match") return t("levelReason");
     return t("roleReason");
@@ -509,13 +522,18 @@
     form.addEventListener("submit", buildPlan);
 
     var evidence = create("div", "personal-plan__evidence");
-    if (assessmentAvailable()) evidence.append(icon("check-circle"), root.document.createTextNode(t("assessmentUsed")));
-    else {
-      evidence.append(icon("info"), root.document.createTextNode(t("assessmentMissing") + " · "));
-      var assessmentLink = create("a", "", t("assessmentLink"));
-      assessmentLink.href = "assessment.html";
-      evidence.appendChild(assessmentLink);
+    function renderEvidence() {
+      evidence.textContent = "";
+      if (assessmentAvailable()) evidence.append(icon("check-circle"), root.document.createTextNode(t("assessmentUsed")));
+      else {
+        evidence.append(icon("info"), root.document.createTextNode(t("assessmentMissing") + " · "));
+        var assessmentLink = create("a", "", t("assessmentLink"));
+        assessmentLink.href = "assessment.html";
+        evidence.appendChild(assessmentLink);
+      }
     }
+    renderEvidence();
+    root.document.addEventListener("assessment-import:change", function () { renderEvidence(); });
     status = create("p", "personal-plan__status");
     status.setAttribute("role", "status");
     output = create("div", "personal-plan__output");

@@ -111,3 +111,9 @@ Keep the solution auditable: run python3 main.py, save the output, and explain w
 - one concrete update to outputs/checklist-ai-documentation-review.md that applies “Use the generated worksheet as a reusable starting point for team enablement” without hiding uncertainty.
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
+
+## Further Reading
+
+### Recommended trainings (LHIND AI Literacy)
+
+- [How to Research and Write Using Generative AI Tools](https://www.linkedin.com/learning/how-to-research-and-write-using-generative-ai-tools-29670569) — LinkedIn Learning · Deepen · 1 h · Rollen: Corporate Functions (Academy AI-01)

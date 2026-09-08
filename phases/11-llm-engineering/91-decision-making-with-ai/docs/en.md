@@ -155,6 +155,12 @@ Hand off `outputs/skill-decision-quality-checklist.md` with the command `python3
 - [Guo et al. — On Calibration of Modern Neural Networks (ICML 2017)](https://arxiv.org/abs/1706.04599) — the paper that established ECE and the reliability diagram as the standard calibration diagnostics.
 - [NIST SP 1270 — Towards a Standard for Identifying and Managing Bias in Artificial Intelligence](https://doi.org/10.6028/NIST.SP.1270) — bias taxonomy and measurement guidance aligned with AI RMF; the companion document for Phase 18 · 20.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [AI Powered Decision Making](https://www.datacamp.com/courses/data-driven-decision-making-for-business) — DataCamp · Deepen · 2 h · Rollen: Leadership (Academy AI-07)
+- [AI-Augmented Decision-Making for Business Leaders](https://www.coursera.org/learn/ai-augmented-decision-making-for-business-leaders) — Coursera · Deepen · 4 h · Rollen: Leadership (Academy AI-07)
+- [Data-Driven Decision Making for Business](https://www.datacamp.com/courses/data-driven-decision-making-for-business) — DataCamp · Deepen · 2 h · Rollen: Application Management, Corporate Functions (Academy AI-07)
+
 ## Consultant field notes
 
 Six patterns a senior consultant recognises by name. Each has shown up in more than one engagement; the names are informal but they travel.

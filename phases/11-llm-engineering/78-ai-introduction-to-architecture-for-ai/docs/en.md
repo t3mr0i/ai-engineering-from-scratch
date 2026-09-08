@@ -136,6 +136,15 @@ Hand off `outputs/skill-ai-system-architecture-picker.md` with the command `pyth
 - [Ragas — RAG evaluation framework](https://docs.ragas.io/) — automated groundedness, faithfulness, and relevance metrics for RAG systems.
 - [NIST AI RMF](https://www.nist.gov/itl/ai-risk-management-framework) — the risk management framework referenced in most enterprise AI governance conversations.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Architecture of AI Solutions - Scalable GenAI Systems](https://www.coursera.org/learn/packt-architecting-ai-solutions-scalable-genai-systems-btzcm) — Coursera · Deepen · 6 h · Rollen: Technology Consulting (Academy AI-03)
+- [Architectures for AI](https://www.linkedin.com/learning/advanced-data-processing-batch-real-time-and-cloud-architectures-for-ai/architectures-for-ai?u=2197772) — LinkedIn Learning · Deepen · 1,32 h · Rollen: Technology Consulting (Academy AI-01)
+- [Generative AI Architecture and Application Development](https://www.coursera.org/learn/generative-ai-architecture-and-application-development) — Coursera · Acquire · 10 h · Rollen: Technology Consulting (Academy AI-03)
+- [Generative AI and Large Language Models: Architecture and Data Preparation](https://www.coursera.org/learn/generative-ai-llm-architecture-data-preparation) — Coursera · Deepen · 6 h · Rollen: Technology Consulting (Academy AI-03)
+- [Artificial Intelligence on Microsoft Azure](https://www.coursera.org/learn/artificial-intelligence-microsoft-azure) — Coursera · Acquire · 4 h · Rollen: Technology Consulting (Academy AI-03)
+- [Get started with AI applications and agents on Azure](https://learn.microsoft.com/en-us/training/paths/get-started-ai-apps-agents/) — Microsoft Learn · Acquire · 5 h · Rollen: Technology Consulting (Academy AI-01)
+
 ## Exercises
 
 Make the experiment auditable. Save the input, output, and one sentence explaining how the result bears on the claim.

@@ -139,6 +139,12 @@ Hand off `outputs/skill-coe-operating-model.md` with the command `python3 main.p
 - [NIST AI Risk Management Framework (AI RMF 1.0)](https://www.nist.gov/artificial-intelligence) — a voluntary framework, not a binding federal standard, but the one most enterprises reference when writing their AI security baseline.
 - [Linux Foundation — MLOps Maturity Model](https://github.com/cdfoundation/sig-mlops/blob/main/roadmap/2020/MLOpsRoadmap2020.md) — the engineering-side maturity reference that complements the organizational CoE model.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Drive AI transformation in your organization](https://learn.microsoft.com/en-us/training/courses/ab-731t00) — Microsoft Learn · Create · 8 h · Rollen: Corporate Functions, Business & Strategy Consulting, Leadership, Project Management & Agility (Academy AI-05, AI-08)
+- [Drive AI transformation in your organization](https://learn.microsoft.com/en-us/training/courses/ab-731t00#course-syllabus) — Microsoft Learn · Deepen · 8 h · Rollen: Leadership (Academy AI-07)
+- [Transform your business with A](https://learn.microsoft.com/en-us/training/paths/transform-your-business-with-microsoft-ai/) — Microsoft Learn · Acquire · 4 h · Rollen: Leadership (Academy AI-08)
+
 ## Exercises
 
 Use the demo as evidence, not as a ceremony: record what went in, what came out, and why that observation supports the objective.

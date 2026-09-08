@@ -99,6 +99,11 @@ Hand off `outputs/skill-legacy-refactor-slice-planner.md` with the command `pyth
 - [Anthropic — Claude model documentation](https://docs.claude.com/en/docs/about-claude/models) — current model capabilities, context window sizes, and structured output support for the four-pass audit.
 - [NIST SP 800-218 (Secure Software Development Framework)](https://csrc.nist.gov/publications/detail/sp/800-218/final) — the security-smells pass maps to SSDF practices PW.1 and PW.4; useful when the modernization scope includes a compliance mandate.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [AI-Supported Code Modernization](https://learn.microsoft.com/en-us/training/modules/intro-github-copilot-app-modernization/) — Microsoft Learn · Create · 1 h · Rollen: Application Management (Academy AI-01)
+- [Introduction to GitHub Copilot App Modernization](https://learn.microsoft.com/en-us/training/modules/intro-github-copilot-app-modernization/) — Microsoft Learn · Acquire · 1 h · Rollen: Application Management (Academy AI-01)
+
 ## Exercises
 
 Use the demo as evidence, not as a ceremony: record what went in, what came out, and why that observation supports the objective.

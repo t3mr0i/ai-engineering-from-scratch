@@ -110,3 +110,10 @@ A useful submission records python3 main.py, the observed output, and the conclu
 - one concrete update to outputs/prompt-pack-consultative-prompting.md that applies “Use the generated worksheet as a reusable starting point for team enablement” without hiding uncertainty.
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
+
+## Further Reading
+
+### Recommended trainings (LHIND AI Literacy)
+
+- [Advanced Prompt Engineering Techniques](https://www.linkedin.com/learning/advanced-prompt-engineering-techniques) — LinkedIn Learning · Deepen · 1 h · Rollen: Business & Strategy Consulting, Application Management (Academy AI-04, AI-06)
+- [Strategic AI Prompting for Managers](https://www.linkedin.com/learning/strategic-ai-prompting-for-managers-leading-smarter-with-generative-ai) — LinkedIn Learning · Deepen · 1 h · Rollen: Leadership (Academy AI-08)

@@ -9,7 +9,7 @@ import { readFileSync } from "node:fs";
 import vm from "node:vm";
 
 const require = createRequire(import.meta.url);
-const { buildPlan, adaptPlan } = require("./learning-plan.js");
+const { buildPlan, adaptPlan, normalizeAssessmentImport } = require("./learning-plan.js");
 
 function course(id, sequence, title, overrides = {}) {
   return {
@@ -97,6 +97,55 @@ test("goal terms materially change ranking and remain explainable", () => {
   const goalSignal = goalPlan.steps[0].signals.find((signal) => signal.type === "goal_match");
   assert.deepEqual(goalSignal.terms, ["governance", "privacy"]);
   assert.ok(goalPlan.steps[0].sources.some((source) => source.type === "learner_goal"));
+});
+
+test("normalizes the imported five-dimension baseline without inventing progress", () => {
+  const imported = normalizeAssessmentImport({ profileId: "TC", dimensions: {
+    Foundation: { score: 5, currentLevel: "Create", targetLevel: "Create" },
+    "Engineering Literacy": { score: 4, currentLevel: "Deepen", targetLevel: "Create" },
+    "Product and Process Literacy": { score: 2, currentLevel: "Acquire", targetLevel: "Deepen" },
+    "Advisory and Biz Literacy": { score: 2, currentLevel: "Acquire", targetLevel: "Deepen" },
+    "Leadership Strategy": { score: 2.5, currentLevel: "Acquire", targetLevel: "Acquire" }
+  }});
+  assert.equal(imported.profileId, "TC");
+  assert.equal(imported.dimensions.Engineering.targetLevel, "Create");
+  assert.equal(imported.dimensions.Engineering.gap, 1);
+  assert.equal(imported.dimensions.Foundation.gap, 0);
+});
+
+test("imported dimension gaps raise matching courses and preserve completion semantics", () => {
+  const courses = [
+    course("FOUNDATION", 1, "Foundation", { interests: ["foundation"] }),
+    course("ENGINEERING", 2, "Engineering", { interests: ["engineering"] })
+  ];
+  const plan = planFor(courses, { roleId: "tc", assessmentImport: {
+    profileId: "TC", dimensions: {
+      Foundation: { currentLevel: "Create", targetLevel: "Create", score: 5 },
+      "Engineering Literacy": { currentLevel: "Acquire", targetLevel: "Create", score: 4 }
+    }
+  }});
+  assert.equal(plan.steps[0].courseId, "ENGINEERING");
+  assert.equal(plan.steps[0].signals[0].type, "imported_dimension_gap");
+  assert.equal(plan.steps[0].sources.some((source) => source.type === "assessment_import"), true);
+  assert.deepEqual(plan.evidence.excludedCompletedCourseIds, []);
+});
+
+test("imported gaps use the remaining depth range and ignore attained dimensions or other roles", () => {
+  const courses = [
+    course("ENGINEERING-DEEPEN", 1, "Engineering practice", { interests: ["engineering"], levels: ["Deepen"] }),
+    course("ENGINEERING-CREATE", 2, "Engineering creation", { interests: ["engineering"], levels: ["Create"] }),
+    course("FOUNDATION-ACQUIRE", 3, "Foundation basics", { interests: ["foundation"], levels: ["Acquire"] })
+  ];
+  const imported = { profileId: "tc", dimensions: {
+    Foundation: { currentLevel: "Create", targetLevel: "Create" },
+    "Engineering Literacy": { currentLevel: "Deepen", targetLevel: "Create" }
+  }};
+  const matched = planFor(courses, { roleId: "tc", assessmentImport: imported });
+  assert.equal(matched.steps[0].courseId, "ENGINEERING-CREATE");
+  assert.equal(matched.steps.some((step) => step.courseId === "FOUNDATION-ACQUIRE" &&
+    step.signals.some((signal) => signal.type === "imported_dimension_gap")), false);
+  const mismatched = planFor(courses, { roleId: "bsc", assessmentImport: imported });
+  assert.equal(mismatched.steps.some((step) => step.signals.some((signal) => signal.type === "imported_dimension_gap")), false);
 });
 
 test("a role-specific assessment gap raises a relevant course", () => {

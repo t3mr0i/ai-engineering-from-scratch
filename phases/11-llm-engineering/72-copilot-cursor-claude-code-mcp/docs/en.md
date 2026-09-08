@@ -100,6 +100,12 @@ Hand off `outputs/skill-mcp-ide-wiring.md` with the command `python3 main.py`, t
 - [Cursor — Docs](https://docs.cursor.com/) — editor-native context indexing and MCP support.
 - [Anthropic — Indirect prompt injection guidance](https://www.anthropic.com/research) — the trust boundary MCP introduces.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Introduction to Model Context Protocol (MCP)](https://www.coursera.org/learn/introduction-to-model-context-protocol) — Coursera · Acquire · 2 h · Rollen: Technology Consulting (Academy AI-02)
+- [MCP: Build Rich-Context AI Apps with Anthropic](https://www.deeplearning.ai/courses/mcp-build-rich-context-ai-apps-with-anthropic) — DeepLearning.AI · Acquire · 2 h · Rollen: Technology Consulting (Academy AI-02)
+- [Introduction to GitHub Copilot App Modernization](https://learn.microsoft.com/en-us/training/modules/intro-github-copilot-app-modernization/) — Microsoft Learn · Acquire · 1 h · Rollen: Application Management (Academy AI-01)
+
 ## Exercises
 
 Use the demo as evidence, not as a ceremony: record what went in, what came out, and why that observation supports the objective.

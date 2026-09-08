@@ -61,6 +61,17 @@
       interests: ["leadership"],
     },
   };
+  var IMPORT_DIMENSIONS = {
+    "foundation": "Foundation",
+    "engineering literacy": "Engineering",
+    "product and process literacy": "Product and Process",
+    "advisory and biz literacy": "Advisory and Business Consulting",
+    "leadership strategy": "Leadership and Strategy",
+    "engineering": "Engineering",
+    "product and process": "Product and Process",
+    "advisory and business consulting": "Advisory and Business Consulting",
+    "leadership and strategy": "Leadership and Strategy",
+  };
 
   function cleanText(value) {
     var text = String(value == null ? "" : value).toLowerCase();
@@ -104,6 +115,48 @@
       throw new RangeError(fieldName + " must be Acquire/Deepen/Create or 1/2/3");
     }
     return rank;
+  }
+
+  function normalizeAssessmentImport(record) {
+    if (!record || typeof record !== "object" || !record.dimensions || typeof record.dimensions !== "object") return null;
+    var dimensions = {};
+    Object.keys(record.dimensions).forEach(function (name) {
+      var canonical = IMPORT_DIMENSIONS[cleanText(name).trim()];
+      var row = record.dimensions[name];
+      if (!canonical || !row || typeof row !== "object") return;
+      var current = levelRank(firstDefined(row.currentLevel, row.current), "assessment import current level");
+      var target = levelRank(firstDefined(row.targetLevel, row.target), "assessment import target level");
+      if (!target) return;
+      var score = Number(row.score);
+      dimensions[canonical] = {
+        currentLevel: current ? LEVEL_LABEL[current] : "None",
+        targetLevel: LEVEL_LABEL[target],
+        currentRank: current,
+        targetRank: target,
+        score: Number.isFinite(score) ? score : null,
+        gap: Math.max(0, target - current),
+      };
+    });
+    if (!Object.keys(dimensions).length) return null;
+    return { profileId: record.profileId == null ? null : String(record.profileId), dimensions: dimensions };
+  }
+
+  function importedDimensionForCourse(course, assessmentImport) {
+    var imported = normalizeAssessmentImport(assessmentImport);
+    if (!imported) return [];
+    var interests = stringSet(course && course.interests);
+    return Object.keys(imported.dimensions).filter(function (cluster) {
+      var hints = CLUSTER_HINTS[cleanText(cluster)] || { interests: [] };
+      var baseline = imported.dimensions[cluster];
+      var levels = toArray(course && course.levels).map(function (value) {
+        return levelRank(value, "course " + course.id + " level");
+      });
+      return baseline.gap > 0 && levels.some(function (level) {
+        return level > baseline.currentRank && level <= baseline.targetRank;
+      }) && hints.interests.some(function (interest) { return interests[interest]; });
+    }).map(function (cluster) {
+      return { dimension: cluster, baseline: imported.dimensions[cluster] };
+    });
   }
 
   function positiveInteger(value, fieldName, minimum, maximum) {
@@ -450,6 +503,12 @@
           targetLevel: signal.targetLevel,
         });
       }
+      if (signal.type === "imported_dimension_gap") sources.push({
+        type: "assessment_import",
+        dimension: signal.dimension,
+        currentLevel: signal.currentLevel,
+        targetLevel: signal.targetLevel,
+      });
       if (signal.type === "role_match") sources.push({ type: "learner_role", roleId: roleId });
       if (signal.type === "level_match") sources.push({ type: "learner_level", level: signal.level });
       if (signal.type === "mastery_gap") sources.push({ type: "quiz_mastery", courseId: course.id, evidenceCount: signal.evidenceCount });
@@ -459,7 +518,7 @@
   }
 
   function rationaleFor(signals) {
-    var preferred = ["team_assignment", "mastery_gap", "progress", "goal_match", "assessment_gap", "level_match", "role_match"];
+    var preferred = ["team_assignment", "mastery_gap", "progress", "goal_match", "imported_dimension_gap", "assessment_gap", "level_match", "role_match"];
     var details = [];
     preferred.forEach(function (type) {
       signals.forEach(function (signal) {
@@ -494,6 +553,13 @@
     var goal = (learner.goal || "").trim();
     if (goal.length > 500) throw new RangeError("learner.goal must be at most 500 characters");
     var currentLevel = levelRank(learner.currentLevel, "learner.currentLevel");
+    var importedRecord = normalizeAssessmentImport(learner.assessmentImport);
+    if (importedRecord && importedRecord.profileId && roleId) {
+      var selectedRole = roles.filter(function (role) { return role && role.id === roleId; })[0];
+      var roleNames = [roleId, selectedRole && selectedRole.label, selectedRole && selectedRole.segment]
+        .filter(Boolean).map(cleanText);
+      if (roleNames.indexOf(cleanText(importedRecord.profileId)) < 0) importedRecord = null;
+    }
     var progress = readProgress(learner, catalogIds);
     var mastery = readMastery(learner, catalogIds);
     var assignments = readAssignments(learner, catalogIds);
@@ -542,6 +608,19 @@
       signals = signals.concat(assessmentSignals(course, document, gaps));
       var levelMatch = levelSignal(course, currentLevel);
       if (levelMatch) signals.push(levelMatch);
+      importedDimensionForCourse(course, importedRecord).forEach(function (match) {
+        var baseline = match.baseline;
+        if (!baseline.gap) return;
+        signals.push({
+          type: "imported_dimension_gap",
+          score: Math.min(54, baseline.gap * 18),
+          dimension: match.dimension,
+          currentLevel: baseline.currentLevel,
+          targetLevel: baseline.targetLevel,
+          gap: baseline.gap,
+          detail: "Addresses the imported baseline gap in " + match.dimension + ".",
+        });
+      });
       if (roleId) {
         signals.push({
           type: "role_match",
@@ -589,6 +668,7 @@
         roleId: roleId || null,
         currentLevel: currentLevel ? LEVEL_LABEL[currentLevel] : null,
         goal: goal,
+        assessmentImport: importedRecord,
       },
       cadence: {
         durationWeeks: durationWeeks,
@@ -637,5 +717,7 @@
     buildPlan: buildPlan,
     adaptPlan: adaptPlan,
     tokenize: tokens,
+    normalizeAssessmentImport: normalizeAssessmentImport,
+    importedDimensionForCourse: importedDimensionForCourse,
   };
 });

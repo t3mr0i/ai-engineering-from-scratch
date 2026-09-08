@@ -577,6 +577,10 @@ In the CBP context few-shot examples are reviewed fixtures: store them next to t
 - [Lightman et al., "Let's Verify Step by Step" (2023)](https://arxiv.org/abs/2305.20050) -- process reward models (PRM) that grade each step of a chain; the reasoning supervision signal that supersedes outcome-only rewards.
 - [Snell et al., "Scaling LLM Test-Time Compute Optimally" (2024)](https://arxiv.org/abs/2408.03314) -- systematic study of CoT length, self-consistency sampling, and MCTS; where "think step by step" goes when accuracy matters more than latency.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Advanced Prompt Engineering Techniques](https://www.linkedin.com/learning/advanced-prompt-engineering-techniques) — LinkedIn Learning · Deepen · 1 h · Rollen: Business & Strategy Consulting, Application Management (Academy AI-04, AI-06)
+
 ## Exercises
 
 Use the demo as evidence, not as a ceremony: record what went in, what came out, and why that observation supports the objective.

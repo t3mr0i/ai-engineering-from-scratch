@@ -181,3 +181,14 @@ test("a real foundation lesson no longer fans out into unrelated capabilities", 
 
   assert.deepEqual(moved, [1]);
 });
+
+test("exposes imported baseline separately from lesson evidence", () => {
+  const result = model({ assessmentImport: { profileId: "TC", dimensions: {
+    "Product and Process Literacy": { score: 2, currentLevel: "Acquire", targetLevel: "Deepen" }
+  } } });
+  const item = result.items[0];
+  assert.equal(item.percent, 0, "imported baseline must not fake lesson progress");
+  assert.equal(item.importedBaseline.currentLevel, "Acquire");
+  assert.equal(item.importedBaseline.targetLevel, "Deepen");
+  assert.equal(item.importedBaseline.gap, 1);
+});

@@ -624,6 +624,13 @@ In the CBP context prompts live in the Java service, not in a demo script: keep 
 - [DAIR.AI Prompt Engineering Guide](https://www.promptingguide.ai/) -- exhaustive catalogue of prompt techniques with examples (zero-shot, few-shot, CoT, ReAct, self-consistency); the reference practitioners use for the broader "Prompt engineering" surface.
 - [Anthropic prompt library](https://docs.anthropic.com/en/prompt-library) -- curated, known-good prompts by use case; shows the structural patterns that ship in production.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Advanced Prompt Engineering Techniques](https://www.linkedin.com/learning/advanced-prompt-engineering-techniques) — LinkedIn Learning · Deepen · 1 h · Rollen: Business & Strategy Consulting, Application Management (Academy AI-04, AI-06)
+- [Talking to AI: Prompt Engineering for Project Managers](https://www.pmi.org/shop/p-/elearning/talking-to-ai-prompt-engineering-for-project-managers/el128) — PMI · Acquire · 1 h · Rollen: Project Management & Agility (Academy AI-05)
+- [Prompting with Agentic Techniques](https://www.linkedin.com/learning/prompting-with-agentic-techniques?u=2197772) — LinkedIn Learning · Create · 1 h · Rollen: Project Management & Agility (Academy AI-05)
+- [Strategic AI Prompting for Managers](https://www.linkedin.com/learning/strategic-ai-prompting-for-managers-leading-smarter-with-generative-ai) — LinkedIn Learning · Deepen · 1 h · Rollen: Leadership (Academy AI-08)
+
 ## Exercises
 
 Start with the smallest reproducible run. Keep the input, output, and interpretation together so another reader can repeat the check.

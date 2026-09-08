@@ -136,6 +136,15 @@ Hand off `outputs/skill-ai-tool-selection-guide.md` with the command `python3 ma
 - [EU AI Act — Official text and guidance](https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai) — binding EU regulation; risk tiers and obligations that affect how organizations classify and deploy AI tools, phasing in from 2025 through 2028 (high-risk obligations from 2 December 2027 per Regulation (EU) 2026/1744).
 - [Papers With Code — Retrieval-Augmented Generation survey](https://paperswithcode.com/task/retrieval-augmented-generation) — living benchmark index for RAG approaches; useful for evaluating internal RAG toolchain claims.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [AI for Business Users](https://learn.microsoft.com/de-de/training/paths/ai-fluency/) — Microsoft Learn · Acquire · 4 h · Rollen: Corporate Functions (Academy AI-06)
+- [Get started with Microsoft 365 Copilot](https://learn.microsoft.com/en-us/training/paths/get-started-with-microsoft-365-copilot/) — Microsoft Learn · Acquire · 1,5 h · Rollen: Corporate Functions (Academy AI-09)
+- [Learning Microsoft 365 Copilot for Work](https://www.linkedin.com/learning/learning-microsoft-365-copilot-for-work-26545077) — LinkedIn Learning · Acquire · 2 h · Rollen: Corporate Functions (Academy AI-01)
+- [Empower your workforce with Microsoft 365 Copilot Use Cases](https://learn.microsoft.com/en-us/training/paths/empower-workforce-copilot-use-cases/) — Microsoft Learn · Deepen · 5 h · Rollen: Corporate Functions (Academy AI-06)
+- [Comparing AI Research Tools: ChatGPT, Claude, Gemini, and Perplexity](https://www.linkedin.com/learning/comparing-ai-research-tools-chatgpt-claude-gemini-and-perplexity?u=2197772) — LinkedIn Learning · Create · 1 h · Rollen: Technology Consulting (Academy AI-03)
+- [How to Research and Write Using Generative AI Tools](https://www.linkedin.com/learning/how-to-research-and-write-using-generative-ai-tools-29670569) — LinkedIn Learning · Deepen · 1 h · Rollen: Corporate Functions (Academy AI-01)
+
 ## Exercises
 
 Begin with a control run and leave a short receipt: input, output, and the reasoning that connects them to the objective.

@@ -145,3 +145,11 @@ Keep the solution auditable: run python3 main.py, save the output, and explain w
 - one concrete update to outputs/skill-cloud-data-iot-boundary-mapper.md that applies “Identify failure modes and define a safe rollback or review path” without hiding uncertainty.
 
 Use classify_boundaries(), select_pattern(), run_boundary_classification() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
+
+## Further Reading
+
+### Recommended trainings (LHIND AI Literacy)
+
+- [Artificial Intelligence on Microsoft Azure](https://www.coursera.org/learn/artificial-intelligence-microsoft-azure) — Coursera · Acquire · 4 h · Rollen: Technology Consulting (Academy AI-03)
+- [Get started with AI applications and agents on Azure](https://learn.microsoft.com/en-us/training/paths/get-started-ai-apps-agents/) — Microsoft Learn · Acquire · 5 h · Rollen: Technology Consulting (Academy AI-01)
+- [Govern AI-ready Infrastructure](https://learn.microsoft.com/en-us/training/paths/govern-ai-ready-infrastructure/) — Microsoft Learn · Create · 5 h · Rollen: Technology Consulting (Academy AI-01, AI-02)

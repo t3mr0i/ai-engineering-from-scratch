@@ -127,6 +127,10 @@ Hand off `outputs/skill-doc-grounding-checklist.md` with the command `python3 ma
 - [Model Context Protocol — MCP Resources](https://modelcontextprotocol.io/docs/concepts/resources) — how MCP servers expose retrievable artifacts to models; the plumbing for automated source injection.
 - [Anthropic — Claude model documentation](https://docs.claude.com/en/docs/about-claude/models/overview) — current model capabilities and context window sizes; use this, not training-data recall, for model selection.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [How to Research and Write Using Generative AI Tools](https://www.linkedin.com/learning/how-to-research-and-write-using-generative-ai-tools-29670569) — LinkedIn Learning · Deepen · 1 h · Rollen: Corporate Functions (Academy AI-01)
+
 ## Exercises
 
 Make the experiment auditable. Save the input, output, and one sentence explaining how the result bears on the claim.

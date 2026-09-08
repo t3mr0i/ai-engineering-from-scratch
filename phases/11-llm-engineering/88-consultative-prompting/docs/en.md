@@ -127,6 +127,11 @@ Hand off `outputs/skill-consultative-prompt-designer.md` with the command `pytho
 - [SCQA framework — McKinsey communication standard](https://www.mckinsey.com/capabilities/mckinsey-design/our-insights/the-art-of-structured-communication) — Situation/Complication/Question/Answer; a direct mapping exists between SCQA and the four-layer prompt structure.
 - [Anthropic — Claude model overview and capabilities](https://docs.claude.com/en/docs/about-claude/models/overview) — current model family (Sonnet 4.x, Opus 4.x, Haiku 4.x); the prompt patterns here apply to all tiers.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Advanced Prompt Engineering Techniques](https://www.linkedin.com/learning/advanced-prompt-engineering-techniques) — LinkedIn Learning · Deepen · 1 h · Rollen: Business & Strategy Consulting, Application Management (Academy AI-04, AI-06)
+- [Strategic AI Prompting for Managers](https://www.linkedin.com/learning/strategic-ai-prompting-for-managers-leading-smarter-with-generative-ai) — LinkedIn Learning · Deepen · 1 h · Rollen: Leadership (Academy AI-08)
+
 ## Exercises
 
 Make the experiment auditable. Save the input, output, and one sentence explaining how the result bears on the claim.

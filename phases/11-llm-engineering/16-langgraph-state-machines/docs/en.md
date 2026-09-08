@@ -257,6 +257,10 @@ In the CBP context most agent loops stay plain Java: a state object carried thro
 - Phase 11 · 14 (Model Context Protocol) — external tool discovery that plugs into a LangGraph `ToolNode` via the MCP adapter.
 - Phase 11 · 17 (Agent framework tradeoffs) — when to pick LangGraph over CrewAI, AutoGen, or Agno.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Foundation: Introduction to LangGraph - Python](https://academy.langchain.com/courses/intro-to-langgraph) — LangChain Academy · Deepen · 6 h · Rollen: Technology Consulting (Academy AI-02)
+
 ## Exercises
 
 Start with the smallest reproducible run. Keep the input, output, and interpretation together so another reader can repeat the check.

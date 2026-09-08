@@ -128,6 +128,14 @@ Hand off `outputs/skill-agentic-task-design.md` with the command `python3 main.p
 - [Model Context Protocol specification](https://modelcontextprotocol.io/specification) — the open standard for tool integration; agents consume MCP servers without custom glue code.
 - [Anthropic — Prompt engineering guide (tool use)](https://docs.claude.com/en/docs/build-with-claude/tool-use) — tool design patterns, error handling, and idempotency guidance.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Agentic AI](https://www.deeplearning.ai/courses/agentic-ai) — DeepLearning.AI · Acquire · 6 h · Rollen: Technology Consulting (Academy AI-02)
+- [Agentic AI Fundamentals: Architectures, Frameworks, and Applications](https://www.linkedin.com/learning/agentic-ai-fundamentals-architectures-frameworks-and-applications/agentic-ai-the-future-of-smart-ai-is-here?u=2197772) — LinkedIn Learning · Acquire · 1,15 h · Rollen: Technology Consulting (Academy AI-02)
+- [Foundation: Introduction to LangGraph - Python](https://academy.langchain.com/courses/intro-to-langgraph) — LangChain Academy · Deepen · 6 h · Rollen: Technology Consulting (Academy AI-02)
+- [Introduction to LangChain - Python](https://academy.langchain.com/courses/foundation-introduction-to-langchain-python) — LangChain Academy · Deepen · 1,5 h · Rollen: Technology Consulting (Academy AI-02)
+- [Developing LLM Applications with LangChain](https://www.datacamp.com/courses/developing-llm-applications-with-langchain) — DataCamp · Deepen · 3 h · Rollen: Technology Consulting (Academy AI-01)
+
 ## Exercises
 
 Begin with a control run and leave a short receipt: input, output, and the reasoning that connects them to the objective.

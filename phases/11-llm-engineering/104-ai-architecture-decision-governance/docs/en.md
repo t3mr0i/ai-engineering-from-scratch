@@ -120,6 +120,11 @@ Hand off `outputs/skill-ai-adr-governance.md` with the command `python3 main.py`
 - [EU AI Act — Official text](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689) — the regulation that makes AI decision traceability a legal obligation for high-risk systems in the EU.
 - [NIST AI Risk Management Framework (AI RMF 1.0)](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf) — the US federal framework for AI governance; Govern and Map functions align directly with the ADR practice described here.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [AI workload governance and DLP](https://learn.microsoft.com/en-us/training/paths/ai-workloads-governance/) — Microsoft Learn · Create · 4 h · Rollen: Technology Consulting, Application Management (Academy AI-02, AI-04)
+- [Govern AI-ready Infrastructure](https://learn.microsoft.com/en-us/training/paths/govern-ai-ready-infrastructure/) — Microsoft Learn · Create · 5 h · Rollen: Technology Consulting (Academy AI-01, AI-02)
+
 ## Exercises
 
 Treat this as a lab exercise. Preserve the setup and result, then explain which observation is doing the evidentiary work.

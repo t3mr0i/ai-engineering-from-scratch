@@ -102,3 +102,9 @@ Keep the solution auditable: run python3 main.py, save the output, and explain w
 - one concrete update to outputs/checklist-ai-security-triage.md that applies “Choose when an AI workflow needs team practice, a guided pilot, or a launch gate” without hiding uncertainty.
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
+
+## Further Reading
+
+### Recommended trainings (LHIND AI Literacy)
+
+- [AI workload governance and DLP](https://learn.microsoft.com/en-us/training/paths/ai-workloads-governance/) — Microsoft Learn · Create · 4 h · Rollen: Technology Consulting, Application Management (Academy AI-02, AI-04)

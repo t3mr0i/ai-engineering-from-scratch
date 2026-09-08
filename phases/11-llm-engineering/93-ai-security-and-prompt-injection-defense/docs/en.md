@@ -150,6 +150,10 @@ Hand off `outputs/skill-ai-security-triage.md` with the command `python3 main.py
 - [Simon Willison — Prompt injection explained](https://simonwillison.net/2022/Sep/12/prompt-injection/) — the clearest public explanation of why structural defenses alone cannot fully solve indirect injection; updated commentary through 2025.
 - [EU AI Act — Official text](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689) — Article 9 (risk management) and Annex III (high-risk systems) define the audit and logging obligations, in force from 2 December 2027 per Regulation (EU) 2026/1744.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [AI workload governance and DLP](https://learn.microsoft.com/en-us/training/paths/ai-workloads-governance/) — Microsoft Learn · Create · 4 h · Rollen: Technology Consulting, Application Management (Academy AI-02, AI-04)
+
 ## Exercises
 
 Make the experiment auditable. Save the input, output, and one sentence explaining how the result bears on the claim.

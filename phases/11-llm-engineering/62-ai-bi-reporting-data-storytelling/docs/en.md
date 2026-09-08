@@ -103,3 +103,10 @@ Your solution is complete when it records python3 main.py, the captured output, 
 - one concrete update to outputs/sheet-bi-reporting-narrative-review.md that applies “Select metric definition, chart check, causality warning, and decision-context controls” without hiding uncertainty.
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
+
+## Further Reading
+
+### Recommended trainings (LHIND AI Literacy)
+
+- [Data-Driven Decision Making for Business](https://www.datacamp.com/courses/data-driven-decision-making-for-business) — DataCamp · Deepen · 2 h · Rollen: Application Management, Corporate Functions (Academy AI-07)
+- [IT Service Management Foundations: Measures and Metrics](https://www.linkedin.com/learning/it-service-management-foundations-measures-and-metrics) — LinkedIn Learning · Deepen · 1,36 h · Rollen: Application Management (Academy AI-07)

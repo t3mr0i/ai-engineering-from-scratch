@@ -96,6 +96,11 @@ Hand off `outputs/skill-pr-reviewability-checklist.md` with the command `python3
 - [GitHub Changelog — Copilot](https://github.blog/changelog/label/copilot/) — the reliable currency source; these surfaces change monthly.
 - [Google Engineering Practices — Code Review](https://google.github.io/eng-practices/review/) — the human-review discipline the AI surfaces inherit.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Introduction to GitHub Copilot App Modernization](https://learn.microsoft.com/en-us/training/modules/intro-github-copilot-app-modernization/) — Microsoft Learn · Acquire · 1 h · Rollen: Application Management (Academy AI-01)
+- [AI-Powered Software Development: Coding, Testing, and System Design](https://www.linkedin.com/learning/ai-powered-software-development-coding-testing-and-system-design?u=2197772) — LinkedIn Learning · Create · 2 h · Rollen: Application Management (Academy AI-01)
+
 ## Exercises
 
 Start with the smallest reproducible run. Keep the input, output, and interpretation together so another reader can repeat the check.

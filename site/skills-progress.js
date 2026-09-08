@@ -32,6 +32,50 @@
     "Advisory and Business Consulting": "briefcase",
     "Leadership and Strategy": "users-three"
   };
+  var IMPORT_DIMENSION_NAMES = {
+    "foundation": "Foundation",
+    "engineering literacy": "Engineering",
+    "product and process literacy": "Product and Process",
+    "advisory and biz literacy": "Advisory and Business Consulting",
+    "leadership strategy": "Leadership and Strategy",
+    "engineering": "Engineering",
+    "product and process": "Product and Process",
+    "advisory and business consulting": "Advisory and Business Consulting",
+    "leadership and strategy": "Leadership and Strategy"
+  };
+
+  function normalizeAssessmentImport(record) {
+    if (!record || typeof record !== "object" || !record.dimensions || typeof record.dimensions !== "object") return null;
+    var dimensions = {};
+    Object.keys(record.dimensions).forEach(function (name) {
+      var canonical = IMPORT_DIMENSION_NAMES[String(name).toLowerCase().trim()];
+      var row = record.dimensions[name];
+      if (!canonical || !row || typeof row !== "object") return;
+      var levels = { Acquire: 1, Deepen: 2, Create: 3 };
+      var current = levels[row.currentLevel] || Number(row.currentLevel) || 0;
+      var target = levels[row.targetLevel] || Number(row.targetLevel) || 0;
+      if (!target) return;
+      dimensions[canonical] = {
+        currentLevel: current ? [null, "Acquire", "Deepen", "Create"][current] : "None",
+        targetLevel: [null, "Acquire", "Deepen", "Create"][target],
+        currentRank: current,
+        targetRank: target,
+        score: Number.isFinite(Number(row.score)) ? Number(row.score) : null,
+        gap: Math.max(0, target - current)
+      };
+    });
+    return Object.keys(dimensions).length ? { profileId: record.profileId == null ? null : String(record.profileId), dimensions: dimensions } : null;
+  }
+
+  function importedBaselineForCluster(cluster, assessmentImport) {
+    var imported = normalizeAssessmentImport(assessmentImport);
+    if (!imported) return null;
+    var names = String(cluster || "").split(" / ");
+    for (var i = 0; i < names.length; i += 1) {
+      if (imported.dimensions[names[i]]) return imported.dimensions[names[i]];
+    }
+    return null;
+  }
 
   function unique(values) {
     var seen = {};
@@ -104,6 +148,7 @@
     var courseMaps = options.courseMaps || {};
     var progressState = options.progressState || { lessons: {} };
     var profileId = options.profileId || "tc";
+    var assessmentImport = normalizeAssessmentImport(options.assessmentImport);
 
     (options.courses || []).forEach(function (course) {
       courseById[course.id] = course;
@@ -169,7 +214,8 @@
         percent: average(targetStages.map(function (stage) { return stage.percent; })),
         tracked: targetStages.some(function (stage) { return stage.hasEvidence; }),
         fullyMapped: targetStages.every(function (stage) { return stage.hasEvidence; }),
-        targetCourseCount: targetCourses.length
+        targetCourseCount: targetCourses.length,
+        importedBaseline: importedBaselineForCluster(capability.cluster, assessmentImport)
       };
     });
 
@@ -177,7 +223,8 @@
       items: items,
       totalPercent: average(items.map(function (item) { return item.percent; })),
       trackedCount: items.filter(function (item) { return item.fullyMapped; }).length,
-      unmappedCount: items.filter(function (item) { return !item.fullyMapped; }).length
+      unmappedCount: items.filter(function (item) { return !item.fullyMapped; }).length,
+      assessmentImport: assessmentImport
     };
   }
 
@@ -198,6 +245,9 @@
     var data = (typeof window !== "undefined" && window.LrnData) || {};
     var curriculum = (typeof window !== "undefined" && window.LrnCurriculumMap) || {};
     var evidence = (typeof window !== "undefined" && window.AIFSCapabilityEvidence) || {};
+    var assessmentImporter = (typeof window !== "undefined" && (window.AIFSAssessmentImport || window.AssessmentImport)) || null;
+    var assessmentImport = null;
+    try { assessmentImport = assessmentImporter && assessmentImporter.load ? assessmentImporter.load() : null; } catch (error) {}
     var progressApi = (typeof window !== "undefined" && window.AIFSProgress) || null;
     var detailed = typeof CAPABILITIES !== "undefined" ? CAPABILITIES : [];
     var list = doc.getElementById("skillsProgressList");
@@ -212,6 +262,14 @@
     var showAll = false;
     var activeCluster = "";
     var cockpitStore = "lhind:lrn-cockpit:v3";
+
+    function importedMatchesProfile(record, profileId) {
+      if (!record || !record.profileId) return true;
+      var normalized = String(record.profileId).toLowerCase().trim();
+      var role = (data.roles || []).find(function (entry) { return entry.id === profileId; });
+      return [profileId, role && role.label, role && role.segment].filter(Boolean)
+        .some(function (value) { return String(value).toLowerCase().trim() === normalized; });
+    }
 
     function i18n(key, fallback, vars) {
       var dict = (typeof window !== "undefined" && window.SITE_I18N) || {};
@@ -518,6 +576,7 @@
     }
 
     function render() {
+      if (assessmentImport && !importedMatchesProfile(assessmentImport, currentProfileId())) assessmentImport = null;
       var model = createModel({
         catalogCapabilities: data.capabilities || [],
         detailedCapabilities: detailed,
@@ -525,7 +584,8 @@
         courses: data.courses || [],
         courseMaps: curriculum.courseMaps || {},
         progressState: progressApi && progressApi.getState ? progressApi.getState() : { lessons: {} },
-        profileId: currentProfileId()
+        profileId: currentProfileId(),
+        assessmentImport: assessmentImport
       });
       if (!model.items.length) {
         section.hidden = true;
@@ -569,12 +629,29 @@
       showAllButton.focus();
     });
     doc.addEventListener("sitelang:change", render);
+    doc.addEventListener("assessment-import:change", function (event) {
+      assessmentImport = event && event.detail || null;
+      if (assessmentImport && importedMatchesProfile(assessmentImport, currentProfileId())) {
+        var importedRole = (data.roles || []).find(function (role) {
+          return [role.id, role.label, role.segment].filter(Boolean).some(function (value) {
+            return String(value).toLowerCase().trim() === String(assessmentImport.profileId).toLowerCase().trim();
+          });
+        });
+        if (importedRole && profileSelect) {
+          profileSelect.value = importedRole.id;
+          saveProfileId(importedRole.id);
+        }
+      }
+      render();
+    });
     if (progressApi && progressApi.onChange) progressApi.onChange(render);
     render();
   }
 
   return {
     createModel: createModel,
-    mount: mount
+    mount: mount,
+    normalizeAssessmentImport: normalizeAssessmentImport,
+    importedBaselineForCluster: importedBaselineForCluster
   };
 });

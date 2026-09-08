@@ -110,3 +110,9 @@ The reference run should leave a small receipt: python3 main.py, its captured ou
 - one concrete update to outputs/calculator-ai-value-case.md that applies “Use the generated worksheet as a reusable starting point for team enablement” without hiding uncertainty.
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
+
+## Further Reading
+
+### Recommended trainings (LHIND AI Literacy)
+
+- [Introduction to Cost Management for AI Workloads](https://learn.microsoft.com/en-us/training/modules/understand-cost-management-ai/) — Microsoft Learn · Acquire, Create · 1 h · Rollen: Technology Consulting, Leadership (Academy AI-03, AI-07)

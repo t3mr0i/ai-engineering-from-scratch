@@ -131,6 +131,7 @@
       .score-card { grid-template-columns: 1fr; text-align: left; }
     }
   </style>
+  <link rel="stylesheet" href="assessment-import.css?v=20260908a">
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
@@ -194,6 +195,8 @@
     </div>
 
     <!-- Step 1: role -->
+    <section id="assessmentImport" data-assessment-import></section>
+
     <section class="assess-step active" id="step-role">
       <label class="field-label" for="roleSelect" data-i18n="assess_role_label">Your role</label>
       <select id="roleSelect" class="role-select" aria-label="Select your role"></select>
@@ -233,6 +236,8 @@
     </section>
   </main>
 
+  <script src="assessment-import.js?v=20260908a"></script>
+  <script src="assessment-import-ui.js?v=20260908a"></script>
   <script src="data.js?v=20260525a"></script>
   <script src="capabilities.js?v=20260525a"></script>
   <script src="learning-visuals.js?v=20260831b"></script>

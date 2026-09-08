@@ -124,6 +124,11 @@ Hand off `outputs/skill-backlog-scoring-decision-record.md` with the command `py
 - [Anthropic — Structured outputs guide](https://docs.claude.com/en/docs/build-with-claude/structured-outputs) — how to use Claude's structured output mode to populate scoring templates reliably.
 - [McKinsey Digital — The state of AI in product management (2025)](https://www.mckinsey.com/capabilities/mckinsey-digital/our-insights) — survey data on AI-assisted prioritization adoption and outcomes.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [AI for Product Owner](https://www.coursera.org/learn/ai-for-product-owners) — Coursera · Acquire · 6 h · Rollen: Application Management (Academy AI-09)
+- [Building AI Products: Understanding the Workflow Professional Certificate by LinkedIn Learning](https://www.linkedin.com/learning/paths/building-ai-products-understanding-the-workflow-professional-certificate-by-linkedin-learning) — LinkedIn Learning · Deepen · 7,46 h · Rollen: Application Management (Academy AI-07)
+
 ## Exercises
 
 Start with the smallest reproducible run. Keep the input, output, and interpretation together so another reader can repeat the check.

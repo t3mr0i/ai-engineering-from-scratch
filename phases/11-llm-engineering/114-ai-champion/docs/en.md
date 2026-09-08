@@ -99,6 +99,11 @@ Hand off `outputs/skill-ai-champion-triage.md` with the command `python3 main.py
 - [DORA Research — Accelerate: The Science of Lean Software and DevOps](https://dora.dev/research/) — the quantitative playbook for measuring whether an enablement intervention actually moves team velocity; the methods transfer directly to AI Champion success metrics.
 - [Anthropic — Responsible scaling policy](https://www.anthropic.com/rsp) — the framework Anthropic uses to gate its own capability releases; useful as a reference model when designing the three-gate pilot process.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Drive AI transformation in your organization](https://learn.microsoft.com/en-us/training/courses/ab-731t00) — Microsoft Learn · Create · 8 h · Rollen: Corporate Functions, Business & Strategy Consulting, Leadership, Project Management & Agility (Academy AI-05, AI-08)
+- [Drive AI transformation in your organization](https://learn.microsoft.com/en-us/training/courses/ab-731t00#course-syllabus) — Microsoft Learn · Deepen · 8 h · Rollen: Leadership (Academy AI-07)
+
 ## Exercises
 
 Start with the smallest reproducible run. Keep the input, output, and interpretation together so another reader can repeat the check.

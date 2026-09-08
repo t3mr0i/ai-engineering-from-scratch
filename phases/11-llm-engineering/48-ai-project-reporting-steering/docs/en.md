@@ -103,3 +103,15 @@ Your solution is complete when it records python3 main.py, the captured output, 
 - one concrete update to outputs/sheet-project-reporting-steering.md that applies “Select reporting controls before steering material is shared” without hiding uncertainty.
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
+
+## Further Reading
+
+### Recommended trainings (LHIND AI Literacy)
+
+- [Talking to AI: Prompt Engineering for Project Managers](https://www.pmi.org/shop/p-/elearning/talking-to-ai-prompt-engineering-for-project-managers/el128) — PMI · Acquire · 1 h · Rollen: Project Management & Agility (Academy AI-05)
+- [Prompting with Agentic Techniques](https://www.linkedin.com/learning/prompting-with-agentic-techniques?u=2197772) — LinkedIn Learning · Create · 1 h · Rollen: Project Management & Agility (Academy AI-05)
+- [AI for Project Management: Boosting Collaboration with Generative AI](https://www.linkedin.com/learning/ai-for-project-management-boosting-collaboration-with-generative-ai?u=2197772) — LinkedIn Learning · Deepen · 1,5 h · Rollen: Project Management & Agility (Academy AI-05)
+- [AI for Project Managers and Scrum Masters](https://www.coursera.org/learn/ai-for-project-managers-and-scrum-masters) — Coursera · Deepen · 2 h · Rollen: Project Management & Agility (Academy AI-05)
+- [Generative AI Overview for PMs](https://www.pmi.org/shop/p-/elearning/generative-ai-overview-for-project-managers/el083) — PMI · Acquire · 3 h · Rollen: Project Management & Agility (Academy AI-05)
+- [Project Leadership in the Age of AI](https://www.linkedin.com/learning/project-leadership-in-the-age-of-ai/leading-projects-in-the-ai-era?u=2197772) — LinkedIn Learning · Deepen · 1 h · Rollen: Project Management & Agility (Academy AI-04)
+- [Transforming Project Management with AI Agents](https://www.linkedin.com/learning/transforming-project-management-with-ai-agents-43161052?u=2197772) — LinkedIn Learning · Deepen · 1,5 h · Rollen: Project Management & Agility (Academy AI-05)

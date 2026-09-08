@@ -119,6 +119,10 @@ Hand off `outputs/skill-ai-workforce-gap-mapper.md` with the command `python3 ma
 - [NIST AI RMF Playbook — Govern function](https://airc.nist.gov/) — the US federal framework for AI governance roles and responsibilities; the Govern function maps directly to the accountability and audit competency categories.
 - [Anthropic — Model release notes](https://www.anthropic.com/news) — the authoritative source for capability changes between model versions; essential input to the enablement backlog refresh cycle.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Empower your workforce with Microsoft 365 Copilot Use Cases](https://learn.microsoft.com/en-us/training/paths/empower-workforce-copilot-use-cases/) — Microsoft Learn · Deepen · 5 h · Rollen: Corporate Functions (Academy AI-06)
+
 ## Exercises
 
 Treat this as a lab exercise. Preserve the setup and result, then explain which observation is doing the evidentiary work.

@@ -104,3 +104,10 @@ The reference run should leave a small receipt: python3 main.py, its captured ou
 - one concrete update to outputs/runbook-ai-incident-response.md that applies “Define runbook steps for support and escalation” without hiding uncertainty.
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
+
+## Further Reading
+
+### Recommended trainings (LHIND AI Literacy)
+
+- [Applied AI for IT Operations (AIOps)](https://www.linkedin.com/learning/applied-ai-for-it-operations-aiops?u=2197772) — LinkedIn Learning · Deepen · 1,5 h · Rollen: Application Management (Academy AI-05)
+- [IT Service Management Foundations: Measures and Metrics](https://www.linkedin.com/learning/it-service-management-foundations-measures-and-metrics) — LinkedIn Learning · Deepen · 1,36 h · Rollen: Application Management (Academy AI-07)

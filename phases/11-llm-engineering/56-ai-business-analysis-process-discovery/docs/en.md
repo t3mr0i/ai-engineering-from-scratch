@@ -103,3 +103,13 @@ A useful submission records python3 main.py, the observed output, and the conclu
 - one concrete update to outputs/canvas-business-analysis-discovery.md that applies “Select interview, mapping, assumption, and evidence controls” without hiding uncertainty.
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
+
+## Further Reading
+
+### Recommended trainings (LHIND AI Literacy)
+
+- [Learning AI for Business Analysis](https://www.linkedin.com/learning/learning-ai-for-business-analysis) — LinkedIn Learning · Acquire · 1,5 h · Rollen: Leadership, Technology Consulting, Business & Strategy Consulting (Academy AI-04, AI-09)
+- [Agentic AI for Business Analysis](https://www.linkedin.com/learning/agentic-ai-for-business-analysis?u=2197772) — LinkedIn Learning · Create · 1,5 h · Rollen: Business & Strategy Consulting (Academy AI-04)
+- [Agentic AI for Business Analysis](https://www.linkedin.com/learning/agentic-ai-for-business-analysis) — LinkedIn Learning · Deepen · 1,5 h · Rollen: Technology Consulting, Leadership (Academy AI-04, AI-07)
+- [Agentic AI for Business Analysis](https://learn.microsoft.com/en-us/training/paths/enhance-autonomous-agents/) — Microsoft Learn · Create · 4 h · Rollen: Application Management (Academy AI-05)
+- [Implementing AI Solutions in Business](https://www.datacamp.com/courses/implementing-ai-solutions-in-business) — DataCamp · Acquire · Deepen · Create · 2–3 h · Rollen: Business & Strategy Consulting, Application Management, Project Management & Agility (Academy AI-04, AI-05)

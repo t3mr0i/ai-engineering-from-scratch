@@ -110,3 +110,9 @@ A useful submission records python3 main.py, the observed output, and the conclu
 - one concrete update to outputs/template-ai-qa-matrix.md that applies “Use the generated worksheet as a reusable starting point for team enablement” without hiding uncertainty.
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
+
+## Further Reading
+
+### Recommended trainings (LHIND AI Literacy)
+
+- [AI-Powered Software Development: Coding, Testing, and System Design](https://www.linkedin.com/learning/ai-powered-software-development-coding-testing-and-system-design?u=2197772) — LinkedIn Learning · Create · 2 h · Rollen: Application Management (Academy AI-01)

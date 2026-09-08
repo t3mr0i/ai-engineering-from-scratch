@@ -156,6 +156,11 @@ Hand off `outputs/skill-responsible-ai-compliance-checklist.md` with the command
 - [ICO Guidance on AI and data protection](https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/artificial-intelligence/) — the UK regulator's practical guidance on DPIAs for AI and bias auditing.
 - [NIST AI Risk Management Framework (AI RMF 1.0)](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf) — the US voluntary framework; maps cleanly against the AI Act risk tiers for organisations operating in both jurisdictions.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [AI Ethics](https://www.datacamp.com/courses/ai-ethics) — DataCamp · Create · 2 h · Rollen: Leadership (Academy AI-07)
+- [AI fluency: Explore responsible AI](https://learn.microsoft.com/en-us/training/modules/responsible-ai/) — Microsoft Learn · Deepen · 1 h · Rollen: Business & Strategy Consulting (Academy AI-04)
+
 ## Exercises
 
 Treat this as a lab exercise. Preserve the setup and result, then explain which observation is doing the evidentiary work.

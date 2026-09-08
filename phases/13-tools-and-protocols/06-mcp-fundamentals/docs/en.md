@@ -569,6 +569,11 @@ Hand off `outputs/skill-mcp-handshake-tracer.md` with the command `python3 main.
 - [MCP blog — First MCP anniversary](https://blog.modelcontextprotocol.io/posts/2025-11-25-first-mcp-anniversary/) — one-year retrospective and the 2025-11-25 spec changes
 - [WorkOS — MCP 2025-11-25 spec update](https://workos.com/blog/mcp-2025-11-25-spec-update) — summary of SEP-1686, 1036, 1577, 835, and 1724
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Introduction to Model Context Protocol (MCP)](https://www.coursera.org/learn/introduction-to-model-context-protocol) — Coursera · Acquire · 2 h · Rollen: Technology Consulting (Academy AI-02)
+- [MCP: Build Rich-Context AI Apps with Anthropic](https://www.deeplearning.ai/courses/mcp-build-rich-context-ai-apps-with-anthropic) — DeepLearning.AI · Acquire · 2 h · Rollen: Technology Consulting (Academy AI-02)
+
 ## Exercises
 
 Work from the smallest fixture that the MCP Fundamentals — Primitives, Lifecycle, JSON-RPC Base demo already understands, then make one deliberate change and record what moved.

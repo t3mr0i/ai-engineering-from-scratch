@@ -113,6 +113,12 @@ Hand off `outputs/skill-service-desk-ai-triage.md` with the command `python3 mai
 - [CISA — Incident Response Playbooks](https://www.cisa.gov/sites/default/files/publications/Federal_Government_Cybersecurity_Incident_and_Vulnerability_Response_Playbooks_508C.pdf) — federal-standard runbook format; the pre/post-condition structure maps directly to the machine-readable step extraction workflow.
 - [Hugging Face — MTEB Leaderboard](https://huggingface.co/spaces/mteb/leaderboard) — the authoritative benchmark for text embedding models; use to select the right embedding model for your ticket clustering step.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Generative AI for Customer Service Automation](https://www.coursera.org/learn/generative-ai-for-customer-service-automation) — Coursera · Deepen · 10 h · Rollen: Application Management (Academy AI-07)
+- [IT Service Management Foundations: Measures and Metrics](https://www.linkedin.com/learning/it-service-management-foundations-measures-and-metrics) — LinkedIn Learning · Deepen · 1,36 h · Rollen: Application Management (Academy AI-07)
+- [Create agents in Microsoft Copilot Studio](https://learn.microsoft.com/en-us/training/paths/create-extend-custom-copilots-microsoft-copilot-studio/) — Microsoft Learn · Create · 5 h · Rollen: Leadership (Academy AI-07)
+
 ## Exercises
 
 Make the experiment auditable. Save the input, output, and one sentence explaining how the result bears on the claim.

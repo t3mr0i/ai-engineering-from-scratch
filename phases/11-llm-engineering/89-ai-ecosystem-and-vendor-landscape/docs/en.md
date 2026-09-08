@@ -147,6 +147,11 @@ Hand off `outputs/skill-vendor-selection-scorecard.md` with the command `python3
 - [Google Vertex AI model garden](https://cloud.google.com/vertex-ai/generative-ai/docs/model-garden/explore-models) — Gemini model lineup, third-party models, and region-by-region availability for EU data residency.
 - [GDPR Article 28 — Processor obligations](https://gdpr-info.eu/art-28-gdpr/) — the contractual instrument a DPA implements, and the legal basis for the compliance gate in Step 1 of the scorecard.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [The AI Ecosystem for Developers: Models, Datasets, and APIs](https://www.linkedin.com/learning/the-ai-ecosystem-for-developers-models-datasets-and-apis?u=2197772) — LinkedIn Learning · Create · 1,5 h · Rollen: Technology Consulting (Academy AI-03)
+- [Comparing AI Research Tools: ChatGPT, Claude, Gemini, and Perplexity](https://www.linkedin.com/learning/comparing-ai-research-tools-chatgpt-claude-gemini-and-perplexity?u=2197772) — LinkedIn Learning · Create · 1 h · Rollen: Technology Consulting (Academy AI-03)
+
 ## Exercises
 
 Begin with a control run and leave a short receipt: input, output, and the reasoning that connects them to the objective.

@@ -110,6 +110,10 @@ Hand off `outputs/skill-ai-cost-value-decision-aid.md` with the command `python3
 - [Martin Fowler — Cost of software](https://martinfowler.com/articles/is-quality-worth-cost.html) — the broader argument for cost-of-quality accounting; the reasoning applies directly to "invest in prompt engineering to reduce output tokens."
 - [OpenAI — Latency optimization](https://platform.openai.com/docs/guides/latency-optimization) — model-agnostic guidance on the same cache/route/trim levers; useful as a cross-vendor reference for the same structural decisions.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Introduction to Cost Management for AI Workloads](https://learn.microsoft.com/en-us/training/modules/understand-cost-management-ai/) — Microsoft Learn · Acquire, Create · 1 h · Rollen: Technology Consulting, Leadership (Academy AI-03, AI-07)
+
 ## Exercises
 
 Use the demo as evidence, not as a ceremony: record what went in, what came out, and why that observation supports the objective.

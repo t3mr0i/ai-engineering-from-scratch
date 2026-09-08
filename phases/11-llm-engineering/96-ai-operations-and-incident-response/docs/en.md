@@ -166,6 +166,11 @@ Hand off `outputs/skill-ai-incident-triage.md` with the command `python3 main.py
 - [NIST AI Risk Management Framework (AI RMF 1.0)](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf) — the US federal framework for AI risk management; the GOVERN function maps directly to incident ownership and escalation tree design.
 - [PagerDuty — Incident Response Docs](https://response.pagerduty.com/) — the operational incident response playbook this lesson's severity table and runbook structure are adapted from.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Applied AI for IT Operations (AIOps)](https://www.linkedin.com/learning/applied-ai-for-it-operations-aiops?u=2197772) — LinkedIn Learning · Deepen · 1,5 h · Rollen: Application Management (Academy AI-05)
+- [IT Service Management Foundations: Measures and Metrics](https://www.linkedin.com/learning/it-service-management-foundations-measures-and-metrics) — LinkedIn Learning · Deepen · 1,36 h · Rollen: Application Management (Academy AI-07)
+
 ## Exercises
 
 Start with the smallest reproducible run. Keep the input, output, and interpretation together so another reader can repeat the check.

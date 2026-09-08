@@ -114,6 +114,10 @@ Hand off `outputs/skill-green-ai-checklist.md` with the command `python3 main.py
 - [Luccioni et al., "Power Hungry Processing: Watts Driving the Cost of AI Deployment?" (2023)](https://arxiv.org/abs/2311.16863) — the most-cited empirical benchmark of per-task energy consumption across model sizes and task types.
 - [MLCommons — MLPerf Power benchmark](https://mlcommons.org/en/training-normal-10/) — standardized methodology for measuring energy efficiency of ML inference systems across hardware.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [The Principles of Sustainable Software Engineering](https://learn.microsoft.com/en-us/training/modules/sustainable-software-engineering-overview/) — Microsoft Learn · Deepen · 1 h · Rollen: Leadership, Business & Strategy Consulting (Academy AI-02, AI-04)
+
 ## Exercises
 
 Begin with a control run and leave a short receipt: input, output, and the reasoning that connects them to the objective.

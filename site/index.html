@@ -35,6 +35,7 @@
   <link rel="stylesheet" href="badges.css?v=20260713a">
   <link rel="stylesheet" href="pan.css?v=20260830a">
   <link rel="stylesheet" href="home.css?v=20260831b">
+  <link rel="stylesheet" href="assessment-import.css?v=20260908a">
 </head>
 <body>
   <a class="skip-link" href="#myLearningPath" data-i18n="skip_learning_home">Skip to your learning</a>
@@ -104,7 +105,7 @@
       <div class="hero__inner">
         <div class="hero__copy">
           <h1 id="heroTitle">Ready to continue?</h1>
-          <p data-i18n="home_hero_intro">Continue your current course or choose one clear next step below.</p>
+          <p id="homeHeroIntro">Continue your current course or choose one clear next step below.</p>
         </div>
         <a id="resumeButton" href="#academyPathsTitle" class="resume-button">
           <span class="button-text" id="resumeButtonText" data-i18n="home_explore_recommendations">Explore recommendations</span>
@@ -114,6 +115,8 @@
     </section>
 
     <section class="cockpit" id="cockpit" aria-label="Learning dashboard" data-i18n-aria-label="home_dashboard_label">
+      <section id="assessmentImport" data-assessment-import></section>
+
       <section class="my-learning-path" id="myLearningPath" aria-labelledby="myLearningPathTitle">
         <div class="my-learning-path__heading">
           <div>
@@ -242,6 +245,8 @@
 
   <div class="sr-status" id="srStatus" aria-live="polite"></div>
 
+  <script src="assessment-import.js?v=20260908a"></script>
+  <script src="assessment-import-ui.js?v=20260908a"></script>
   <script src="progress.js?v=20260830a"></script>
   <script src="badges.js?v=20260713a"></script>
   <script src="lrn/data.js?v=20260831d"></script>
@@ -320,6 +325,13 @@
         } else {
           greeting = de ? 'Guten Nachmittag!' : 'Good afternoon!';
         }
+        const imported = window.AIFSAssessmentImport && window.AIFSAssessmentImport.load();
+        const intro = document.getElementById('homeHeroIntro');
+        if (intro) intro.textContent = lessonName
+          ? (de ? 'Setze deinen aktuellen Kurs fort oder wähle unten deinen nächsten Schritt.' : 'Continue your current course or choose your next step below.')
+          : imported
+            ? (de ? 'Deine Empfehlungen setzen bei deinem Self-Assessment an. Wähle deinen nächsten Schritt.' : 'Your recommendations start from your self-assessment. Choose your next step.')
+            : (de ? 'Verbinde dein Self-Assessment und finde Trainings, die zu deinem Kenntnisstand passen.' : 'Connect your self-assessment to find training that fits your existing knowledge.');
         if (lessonName) {
           heroTitle.textContent = greeting + (de ? ' Bereit weiterzumachen?' : ' Ready to continue?');
           resumeButtonText.textContent = de ? `${lessonName} fortsetzen` : `Continue ${lessonName}`;
@@ -327,12 +339,16 @@
           resumeButton.setAttribute('aria-label', resumeButtonText.textContent);
         } else {
           heroTitle.textContent = greeting + (de ? ' Was möchtest du lernen?' : ' What do you want to learn?');
+          resumeButtonText.removeAttribute('data-i18n');
+          resumeButtonText.textContent = imported ? (de ? 'Empfehlungen ansehen' : 'Explore recommendations') : (de ? 'Self-Assessment verbinden' : 'Connect self-assessment');
+          resumeButton.href = imported ? '#academyPathsTitle' : '#assessmentImport';
         }
       }
 
       resumeButton.href = lessonName ? resumeHref : '#academyPathsTitle';
       render();
       document.addEventListener('sitelang:change', render);
+      document.addEventListener('assessment-import:change', render);
     });
   </script>
 </body>

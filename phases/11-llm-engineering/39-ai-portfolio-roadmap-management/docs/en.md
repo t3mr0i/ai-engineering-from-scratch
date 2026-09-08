@@ -104,3 +104,11 @@ A useful submission records python3 main.py, the observed output, and the conclu
 - one concrete update to outputs/board-ai-portfolio-roadmap.md that applies “Choose controls for portfolio review and steering” without hiding uncertainty.
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
+
+## Further Reading
+
+### Recommended trainings (LHIND AI Literacy)
+
+- [AI Strategy for Business Leaders](https://www.coursera.org/learn/packt-ai-strategy-for-business-leaders-with-chatgpt-ml-dl-uel66) — Coursera · Deepen · 10 h · Rollen: Business & Strategy Consulting (Academy AI-04)
+- [Integrating Generative AI into Business Strategy](https://www.linkedin.com/learning/integrating-generative-ai-into-business-strategy/why-a-strategic-framework-is-essential-for-ai-adoption) — LinkedIn Learning · Deepen · 1,5 h · Rollen: Business & Strategy Consulting (Academy AI-04)
+- [Artificial Intelligence (AI) Strategy](https://www.datacamp.com/courses/artificial-intelligence-ai-strategy) — DataCamp · Acquire, Create · 3 h · Rollen: Business & Strategy Consulting, Corporate Functions, Leadership (Academy AI-04, AI-05, AI-08)

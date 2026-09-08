@@ -122,6 +122,11 @@ Hand off `outputs/skill-service-ai-pipeline.md` with the command `python3 main.p
 - [NIST SP 800-61r3 — Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile](https://csrc.nist.gov/pubs/sp/800/61/r3/final) — authoritative incident handoff structure; r3 replaced the older phase model with an organization around the NIST CSF 2.0 functions (Govern, Identify, Protect, Detect, Respond, Recover), and the six-field template in this lesson maps to the Detect and Respond functions.
 - [RAG survey — "Retrieval-Augmented Generation for Large Language Models" (Gao et al., 2023, arXiv:2312.10997)](https://arxiv.org/abs/2312.10997) — the foundation for understanding retrieval quality metrics used in Phase 11 · 36 and referenced here.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Generative AI for Customer Service Automation](https://www.coursera.org/learn/generative-ai-for-customer-service-automation) — Coursera · Deepen · 10 h · Rollen: Application Management (Academy AI-07)
+- [IT Service Management Foundations: Measures and Metrics](https://www.linkedin.com/learning/it-service-management-foundations-measures-and-metrics) — LinkedIn Learning · Deepen · 1,36 h · Rollen: Application Management (Academy AI-07)
+
 ## Exercises
 
 Use the demo as evidence, not as a ceremony: record what went in, what came out, and why that observation supports the objective.

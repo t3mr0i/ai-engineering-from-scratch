@@ -109,6 +109,11 @@ Hand off `outputs/skill-ai-use-case-intake.md` with the command `python3 main.py
 - [NIST AI Risk Management Framework 1.0](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf) — the US complement to the EU Act; adopted as a baseline reference in the AI governance policies of most large multinational enterprises our teams encounter, typically alongside the EU framework.
 - [ISO/IEC 42001:2023 — AI Management System standard](https://www.iso.org/standard/81230.html) — the international management-system standard for AI; increasingly required in enterprise procurement and audit.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [AI fluency: Explore responsible AI](https://learn.microsoft.com/en-us/training/modules/responsible-ai/) — Microsoft Learn · Deepen · 1 h · Rollen: Business & Strategy Consulting (Academy AI-04)
+- [AI Ethics](https://www.datacamp.com/courses/ai-ethics) — DataCamp · Create · 2 h · Rollen: Leadership (Academy AI-07)
+
 ## Exercises
 
 Treat this as a lab exercise. Preserve the setup and result, then explain which observation is doing the evidentiary work.

@@ -137,6 +137,10 @@ Hand off `outputs/skill-prompt-library-governance.md` with the command `python3 
 - [LangSmith prompt hub](https://docs.smith.langchain.com/prompt-hub) — one commercial implementation of a prompt registry; useful as a comparison point for your internal design.
 - [NIST AI RMF 1.0](https://airc.nist.gov/) — the risk-management framework that underpins governance requirements in regulated industries; prompt governance is an application of its GOVERN and MANAGE functions.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Advanced Prompt Engineering Techniques](https://www.linkedin.com/learning/advanced-prompt-engineering-techniques) — LinkedIn Learning · Deepen · 1 h · Rollen: Business & Strategy Consulting, Application Management (Academy AI-04, AI-06)
+
 ## Exercises
 
 Treat this as a lab exercise. Preserve the setup and result, then explain which observation is doing the evidentiary work.

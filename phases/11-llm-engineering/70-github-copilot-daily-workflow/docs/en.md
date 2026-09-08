@@ -106,6 +106,13 @@ Use `outputs/skill-copilot-task-router.md` as the project handoff template. Ship
 - [GitHub Docs — Copilot code review](https://docs.github.com/en/copilot/using-github-copilot/code-review) — what the automated reviewer does and does not own.
 - [GitHub Changelog](https://github.blog/changelog/label/copilot/) — the only reliable currency source; Copilot's surface changes monthly.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Introduction to GitHub Copilot App Modernization](https://learn.microsoft.com/en-us/training/modules/intro-github-copilot-app-modernization/) — Microsoft Learn · Acquire · 1 h · Rollen: Application Management (Academy AI-01)
+- [AI Basics @ LHIND Learning Catalog](https://trainingcamp.lhind.app.lufthansa.com/lesson.html?path=llm-primer&course=PRIMER-01) — LHIND Trainingcamp · Acquire · 1,15 h · Rollen: Technology Consulting, Business & Strategy Consulting, Leadership, Application Management, Corporate Functions, Project Management & Agility (Academy AI-01, AI-04, AI-07, AI-09)
+- [Get started with Microsoft 365 Copilot](https://learn.microsoft.com/en-us/training/paths/get-started-with-microsoft-365-copilot/) — Microsoft Learn · Acquire · 1,5 h · Rollen: Corporate Functions (Academy AI-09)
+- [Learning Microsoft 365 Copilot for Work](https://www.linkedin.com/learning/learning-microsoft-365-copilot-for-work-26545077) — LinkedIn Learning · Acquire · 2 h · Rollen: Corporate Functions (Academy AI-01)
+
 ## Exercises
 
 Treat this as a project lab. Preserve the input, decision, output, and interpretation together so another engineer can reproduce the work.

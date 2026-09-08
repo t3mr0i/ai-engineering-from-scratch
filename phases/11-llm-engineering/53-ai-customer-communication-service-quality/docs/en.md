@@ -103,3 +103,9 @@ Your solution is complete when it records python3 main.py, the captured output, 
 - one concrete update to outputs/checklist-customer-response-quality.md that applies “Select response controls before AI-assisted service messages are sent” without hiding uncertainty.
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
+
+## Further Reading
+
+### Recommended trainings (LHIND AI Literacy)
+
+- [Generative AI for Customer Service Automation](https://www.coursera.org/learn/generative-ai-for-customer-service-automation) — Coursera · Deepen · 10 h · Rollen: Application Management (Academy AI-07)
