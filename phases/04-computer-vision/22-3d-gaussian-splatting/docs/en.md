@@ -15,6 +15,10 @@
 - Evaluate degree-three real spherical-harmonic basis functions for view-dependent color.
 - State which guarantees belong to this small NumPy fixture and which require a production renderer.
 
+## CBP context: real-time 3D vocabulary, same rule
+
+In the CBP context Gaussian splatting is the real-time counterpart to NeRF vocabulary (lesson 04/13): explicit 3D blobs projected and composited for inspection views, with degenerate geometry (zero depth divisions) rejected before rendering. Read for the words — splats, sorting, compositing — and route actual 3D work to specialized services. Same rule as NeRF: vocabulary in, implementation out.
+
 ## Build It
 
 `code/main.py` is an offline, NumPy-first slice of the representation. `project_gaussian` accepts

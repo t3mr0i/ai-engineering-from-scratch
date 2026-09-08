@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does project_gaussian reject a mean whose camera-space z coordinate is zero?",
+      "question": "A 3D view must render in real time from explicit scene blobs. What must the projection guard first?",
       "options": [
-        "The pinhole equations divide by z, so the image position is undefined",
-        "The covariance would become diagonal automatically",
-        "Spherical harmonics require a positive RGB value",
-        "Alpha compositing cannot sort an integer depth"
+        "The color palette size",
+        "The file format version",
+        "The number of Azure regions",
+        "Degenerate geometry like zero-depth divisions"
       ],
-      "correct": 0,
-      "explanation": "Both image coordinates and the projection Jacobian contain 1/z. The implementation rejects z <= 0 before that division."
+      "correct": 3,
+      "explanation": "Projection math breaks on degenerate inputs. This lesson splats guarded Gaussians in real time."
     },
     {
       "stage": "check",
