@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What interval is the feasible zone of possible agreement (ZOPA) in `BargainState`?",
+      "question": "Two sides haggle without knowing each other's walk-away bounds. What defines whether any deal exists?",
       "options": [
-        "Prices below `seller_min` and above `buyer_max` simultaneously.",
-        "Only prices above both reservation values.",
-        "Prices from `seller_min` through `buyer_max`, provided `seller_min <= buyer_max`.",
-        "The interval is empty whenever either party makes an offer."
+        "The loudest opening offer",
+        "The longest negotiation time",
+        "Trust that overlap always exists",
+        "Overlapping reservation intervals"
       ],
-      "correct": 2,
-      "explanation": "A trade is feasible when the seller's minimum is no greater than the buyer's maximum. The implementation checks the standing price against both reservations before setting `deal=True`."
+      "correct": 3,
+      "explanation": "Deals live in overlapping bounds. This lesson bargains within feasible zones."
     },
     {
       "stage": "check",

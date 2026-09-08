@@ -112,6 +112,10 @@ If the offer needs to be a number (price, ETA, quantity), generate it determinis
 
 
 
+## CBP context: know bounds before conceding
+
+In the CBP context negotiation (vendor terms, internal resource splits) starts from reservation bounds: no deal exists outside seller-minimum through buyer-maximum, and knowing both bounds before conceding beats discovering them mid-talk. Standing prices check against reservations before anything closes. Concede inside the zone deliberately; outside it, walk away early.
+
 ## Build It
 
 Reconstruct **Negotiation and Bargaining** by following `BargainState` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
