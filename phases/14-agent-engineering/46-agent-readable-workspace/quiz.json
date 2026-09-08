@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which directory is excluded by SKIP_DIRS when build_index scans a workspace?",
+      "question": "An agent drowns in build output and stale notes while missing the files that define its task. What helps?",
       "options": [
-        "docs",
-        "src",
-        "dist",
-        "tests"
+        "Feed it every file including generated output",
+        "Delete the whole repository",
+        "Let it guess file paths from memory",
+        "A workspace map first, with detail opened on demand"
       ],
-      "correct": 2,
-      "explanation": "SKIP_DIRS contains .git, .venv, __pycache__, dist, build, and .cache; source and docs remain indexable."
+      "correct": 3,
+      "explanation": "Unreadable bulk is not context. This lesson builds the workspace index: map first, progressive reads after."
     },
     {
       "stage": "check",

@@ -63,6 +63,10 @@ Hand off `outputs/skill-workspace-index.md` with the command `python3 main.py`, 
 - Add a generated directory and prove that it never appears in the index.
 - Replace keyword overlap with a small path-to-capability registry.
 
+## CBP context: a map first, detail on demand
+
+In the CBP context the workspace index is what keeps CBP repos usable for agents: a generated map of routers, contracts, schemas, and task-relevant sources, with build output, generated code, and stale notes excluded from the scan. The agent opens detail on demand instead of drowning in every file. Regenerate the index when the repo shape changes and review it like documentation — an index pointing at deleted files teaches the agent to hallucinate paths.
+
 ## Further reading
 
 - [Phase 14 · 33 — Agent Instructions as Executable Constraints](../../33-instructions-as-executable-constraints/docs/en.md)
