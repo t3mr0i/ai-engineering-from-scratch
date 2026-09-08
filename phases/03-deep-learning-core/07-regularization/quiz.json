@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "With inverted Dropout(p=0.5), what value is returned for an activation of 2 when that unit is retained during training?",
+      "question": "Training accuracy soars while validation stalls far behind. What family of fixes applies?",
       "options": [
-        "4",
-        "2",
-        "1",
-        "0"
+        "Bigger models with more capacity",
+        "Longer training on the same data",
+        "Higher learning rates throughout",
+        "Constraint: dropout, decay, normalization"
       ],
-      "correct": 0,
-      "explanation": "A retained activation is multiplied by 1/(1-p)=2, so 2 becomes 4. The expected activation remains 2 after half the units are dropped."
+      "correct": 3,
+      "explanation": "Memorization needs constraint, not capacity. This lesson regularizes the train-eval gap."
     },
     {
       "stage": "check",

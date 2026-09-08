@@ -32,6 +32,10 @@ flowchart LR
     I --> Y
 ```
 
+## CBP context: close the train-eval gap deliberately
+
+In the CBP context regularization closes train-eval gaps: dropout during training (off at inference), weight decay in the optimizer, normalization stabilizing layers. When validation lags training, reach for these before more data or bigger models — memorization is a constraint problem first. Measure the gap on held-out CBP cases; a gap that never closes is a data problem wearing a model costume.
+
 ## Build It
 
 Run `python3 main.py` from `code/`. It prints a seeded Dropout train/eval pair, the penalty and gradient for weights `[3,-4]` with `lambda=0.1` (`1.25`, approximately `[0.3,-0.4]`), and LayerNorm/RMSNorm outputs. `RegularizedNetwork.train_model` then performs five local updates before `evaluate`; the sample is intentionally not a claim about generalization.
