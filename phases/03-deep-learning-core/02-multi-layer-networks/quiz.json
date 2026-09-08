@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "A Layer is constructed with n_inputs=2 and n_neurons=3. What is the length of its forward output for one input vector?",
+      "question": "A network layer takes 2 inputs into 3 neurons. How many outputs does one input vector produce?",
       "options": [
-        "2",
-        "5",
-        "3",
-        "1"
+        "2, matching the inputs",
+        "5, the sum of both",
+        "3, one per neuron",
+        "1, always a single number"
       ],
       "correct": 2,
-      "explanation": "Each neuron produces one scalar, so three neurons produce a list of length three."
+      "explanation": "Each neuron emits one scalar. This lesson builds the forward pass as shape plumbing."
     },
     {
       "stage": "check",

@@ -30,6 +30,10 @@ flowchart LR
 
 The hand-tuned XOR fixture uses hidden weights `[[20,20],[-20,-20]]`, hidden biases `[-10,30]`, output weights `[20,20]`, and output bias `-30`. For `[1,1]`, the hidden logits are `30` and `-10`; their sigmoid outputs are approximately `1` and `0`, so the output class is 0. For `[0,1]` and `[1,0]`, one hidden unit is high and the output class is 1.
 
+## CBP context: shapes flow through layers
+
+In the CBP context the forward pass is shape plumbing with learned weights: each layer maps its input width to its neuron count, and the whole network is a shape pipeline from embedding dimension to output classes. Read model cards with this lens — width, depth, and output shape tell you what a deployment does before any prose does. Dimensional mismatches between layers are the same shape bug as lesson 01/02, one level deeper.
+
 ## Build It
 
 From `code/`, run `python3 main.py`. It prints probabilities approximately `[0.000045, 0.999955, 0.999955, 0.000045]` for XOR inputs in lexicographic order, followed by `parameters=9`. `parameter_count((784,256,128,10))` returns `235146`; this is a count of scalar weights and biases, not memory usage.
