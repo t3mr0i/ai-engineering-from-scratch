@@ -114,6 +114,10 @@ python3 -m pytest code/tests/ -v
 
 The demo prints a per-step trace, the final eval report, and the Prometheus exposition. Exit code is zero. The tests cover the policy state transitions, the gate refusals on synthetic tool calls, the end-to-end run on the bundled fixture, and the step-budget invariants.
 
+## CBP context: read-only, edit, test — inside the budget
+
+In the CBP context the end-to-end coding demo is the Boards-to-PR loop in miniature: read files, edit inside scope, run tests, read the failure, fix, repeat — inside step and spend budgets, with the pull request as the only exit. The sensible next move after a failed test run is always the failure message, never a random file. Demo the loop here; operate it there with branch policies and human approval.
+
 ## Build It
 
 Reconstruct **End-to-End Coding Agent on the Harness** by following `call` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
