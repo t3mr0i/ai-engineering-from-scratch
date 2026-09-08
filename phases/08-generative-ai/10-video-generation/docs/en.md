@@ -70,6 +70,10 @@ Open weights are closing the gap faster than in the image space: HunyuanVideo + 
 
 
 
+## CBP context: frames plus positions price clips
+
+In the CBP context video generation prices by frames times positions: each frame tokenized with its temporal coordinates, seconds of footage multipling token counts directly. Short reviewed clips via services beat ambitious unreviewed minutes; every second bills and every second needs review. Position-aware patches are the mechanism; per-second review is the policy.
+
 ## Build It
 
 Reconstruct **Video Generation** by following `sin_embed` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does patchify_with_pos return for the toy video with T_FRAMES=6 and POS_DIM=4?",
+      "question": "Generated clips need temporal order, not shuffled frames. What must frame tokens carry?",
       "options": [
-        "One vector of length 30 with all frames already flattened",
-        "Four vectors of length 6, with no position information",
-        "Six vectors of length 5: one frame value plus four position features",
-        "Six scalar values with the position discarded"
+        "Only pixel values",
+        "Random identifiers",
+        "The file name",
+        "Position features alongside frame values"
       ],
-      "correct": 2,
-      "explanation": "Each frame becomes `[video[t]] + sin_embed(t, POS_DIM)`, giving one value plus four positional coordinates."
+      "correct": 3,
+      "explanation": "Time needs encoding like space does. This lesson patches video with positions attached."
     },
     {
       "stage": "check",
