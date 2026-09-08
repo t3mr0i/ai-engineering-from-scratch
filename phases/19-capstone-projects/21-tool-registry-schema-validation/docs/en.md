@@ -469,6 +469,10 @@ else:
     print("WRONG:", results_ok)
 ```
 
+## CBP context: names with rules, schemas with teeth
+
+In the CBP context the registry is the Java dispatch table with naming rules enforced at registration (lowercase dotted segments, no surprises) and JSON Schemas validated before any handler runs. Reject unknown tools and malformed arguments at the boundary with model-readable errors; never let a bad call reach a handler. The registry file itself is reviewed configuration — a new tool is a pull request, not a chat message.
+
 ## Going further
 
 The two extensions you will want once this lesson lands are `$ref` resolution against a local definitions block, and `additionalProperties: false` for strict shape. Both are small. Both are common to add as the tool catalog grows past fifty tools. We left them out of the lesson to keep the file under one read.

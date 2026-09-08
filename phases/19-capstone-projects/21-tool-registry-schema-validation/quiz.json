@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which name matches ToolRegistry._NAME_RE?",
+      "question": "Tools register under any name with unchecked arguments, and bad calls crash handlers. What belongs at the boundary?",
       "options": [
-        "Tool.Read",
-        "tool-name",
-        "db.get_user",
-        "1st.tool"
+        "Trust in well-behaved callers",
+        "Bigger handlers that catch everything",
+        "No registry at all, direct calls",
+        "Naming rules plus schema validation before dispatch"
       ],
-      "correct": 2,
-      "explanation": "The pattern requires lowercase segments beginning with a letter, permits digits and underscores afterward, and separates segments with dots; db.get_user matches it."
+      "correct": 3,
+      "explanation": "Handlers should never see malformed calls. This lesson guards the boundary: names with rules, arguments with schemas."
     },
     {
       "stage": "check",
