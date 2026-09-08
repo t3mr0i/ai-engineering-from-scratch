@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the local DOMAINS table identify as the remaining nuclear bottleneck?",
+      "question": "One domain's risk turns on material access while others move with model information gains. Why does that split matter?",
       "options": [
-        "A lack of language-model context windows",
-        "A missing watermark detector",
-        "Fissile-material acquisition, which is not solved by more information alone",
-        "The absence of any nuclear physics data"
+        "All domains need identical controls",
+        "Material bottlenecks do not exist",
+        "Information never affects risk",
+        "Controls must target the actual bottleneck per domain"
       ],
-      "correct": 2,
-      "explanation": "The nuclear row stays limited in both 2024 and 2025 and names material access as the bottleneck. That is different from bio/chem/cyber, where the lesson describes information or execution gains."
+      "correct": 3,
+      "explanation": "Uniform ratings misallocate controls. This lesson splits information from material bottlenecks."
     },
     {
       "stage": "check",

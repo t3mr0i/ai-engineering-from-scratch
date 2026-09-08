@@ -78,6 +78,10 @@ Lesson 30 is the capstone: the current dual-use picture that every prior lesson 
 
 
 
+## CBP context: information gains differ by domain
+
+In the CBP context dual-use threat models distinguish information bottlenecks from material ones: bio, chem, and cyber risks move with model capabilities, while nuclear risk still turns on fissile-material access that information alone does not solve. Assess per domain with that split explicit — uniform "AI risk" ratings misallocate controls. Domain-aware threat models spend security budgets where information actually tips outcomes.
+
 ## Build It
 
 Reconstruct **Dual-Use Risk — Cyber, Bio, Chem, Nuclear Uplift** by following `main` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
