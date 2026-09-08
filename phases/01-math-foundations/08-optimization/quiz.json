@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For f(x)=x^2, what is one gradient-descent step from x=3 with learning rate 0.1?",
+      "question": "Training diverges with huge rate and crawls with tiny rate. What does one update step actually do?",
       "options": [
-        "x becomes 3.3",
-        "x becomes 2.9",
-        "x becomes 2.4",
-        "x becomes 0.3"
+        "Jump to a random new position",
+        "Stay exactly in place always",
+        "Move uphill along the gradient",
+        "Step downhill proportional to slope and rate"
       ],
-      "correct": 2,
-      "explanation": "The gradient is 2x=6. The update is 3 - 0.1*6 = 2.4."
+      "correct": 3,
+      "explanation": "Optimization is repeated slope-following. This lesson builds the single step behind all training."
     },
     {
       "stage": "check",

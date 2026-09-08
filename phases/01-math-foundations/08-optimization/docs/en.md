@@ -15,6 +15,10 @@
 - Use Hessian shape and a saddle fixture to distinguish a stationary saddle from a minimum.
 - Inspect finite, bounded trajectories instead of treating a missing update as convergence.
 
+## CBP context: step size decides training fate
+
+In the CBP context the gradient-descent step is the mental model behind every fine-tune configuration: too large a rate diverges, too small crawls, and the update is always position minus rate times gradient. When a consumed training job misbehaves, learning-rate schedule joins data on the suspect list (lesson 19/44). Run the one-step demo once so the arithmetic is concrete, then reason in intuitions, not in code.
+
 ## Build It
 
 `code/main.jl` is the canonical implementation. `optimizers.py` is a matching Python reference for reading and small experiments. Run:
