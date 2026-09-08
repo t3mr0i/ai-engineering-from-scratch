@@ -21,6 +21,10 @@ Traditional software receives rules and data and emits an answer. In supervised 
 
 The local implementation uses a deliberately small model. NearestCentroid.fit computes one mean feature vector per class. predict compares a new row with those means using squared Euclidean distance, and score counts correct labels. It is useful because every learned number can be printed and checked; it is not a claim that centroids solve every real classification problem.
 
+## CBP context: name the task type before choosing the tool
+
+In the CBP context every ML-flavored request is typed first — supervised prediction with labels, unsupervised discovery without them, sequential decisions by reward — because the type decides timeline, data needs, and evaluation (lesson 11/73). "Predict the price" with past prices is supervised regression; "find groups" without labels is clustering. Typing wrong means building the wrong system confidently.
+
 ## Build It
 
 From code/, run python3 main.py. The seeded fixture has 240 rows and two features; a 75/25 split produces train_shape=(180, 2) and test_shape=(60, 2). The output prints two centroids, held-out accuracy, and the random/majority baselines. The exact decimals are data from seed 42, not a promised production score.
