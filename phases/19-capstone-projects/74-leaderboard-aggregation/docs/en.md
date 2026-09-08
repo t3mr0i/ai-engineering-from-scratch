@@ -173,6 +173,10 @@ Read `main.py` top to bottom. The data shape (EvalRun, LeaderboardRow) comes fir
 
 The natural next step is paired-task significance instead of unpaired bootstrap. If model A and B both ran the same hundred tasks, the appropriate test is the paired bootstrap on task-by-task differences, which we implement. Beyond that, you want a hierarchical bootstrap that respects task families (math problems are not independent from each other; an arithmetic error pattern affects ten of them). That is a follow-up. The point of this lesson is to get the floor right so the eval reports a number you can defend.
 
+## CBP context: normalized scores, comparable quarters
+
+In the CBP context the model-selection leaderboard stores normalized scores (0 to 1, validated on entry) per deployment per CBP task, so quarters stay comparable and no percentage-versus-fraction mix-up corrupts a decision. Aggregate with stated weights, show uncertainty, and link every cell back to its eval run. A leaderboard without validation rules is a spreadsheet with ambitions.
+
 ## Build It
 
 Reconstruct **Leaderboard Aggregation** by following `EvalRun` on the two-element input [1.0, 2.0]. Run `python3 main.py` and verify that the printed shape/value follows the stated formula, and the zero case does not produce an unexplained finite substitute for an undefined quantity.

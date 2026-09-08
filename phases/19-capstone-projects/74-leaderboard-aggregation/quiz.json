@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What invariant does _validate_runs enforce for each EvalRun score?",
+      "question": "Scores arrive as percentages, fractions, and raw counts from different evals. How do you make them comparable?",
       "options": [
-        "A score may be any finite real number",
-        "A score must be an integer percentage from 0 to 100",
-        "A score must be between 0 and 1 inclusive",
-        "A score must equal the model's mean across tasks"
+        "Average them as-is regardless of scale",
+        "Keep only the biggest numbers",
+        "Compare raw counts directly",
+        "Validate into normalized scores with stated weights"
       ],
-      "correct": 2,
-      "explanation": "The validator rejects scores outside [0, 1]. The leaderboard stores normalized metric scores rather than percentages or aggregate-only values."
+      "correct": 3,
+      "explanation": "Mixed scales corrupt comparisons. This lesson normalizes, validates, and aggregates with declared weights."
     },
     {
       "stage": "check",
