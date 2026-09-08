@@ -65,6 +65,10 @@ This is the same argument you hear about RankFusion vs RRF in Vespa and Weaviate
 
 
 
+## CBP context: hybrid search over CBP corpora
+
+In the CBP context hybrid retrieval is the Azure AI Search default: BM25 for literal matches (ticket ids, error codes, product names) fused with dense vectors for paraphrase, combined by reciprocal rank fusion. CBP queries mix both constantly — "checkout-api 429" needs the literal, "payment failures last week" needs the meaning. Run hybrid from day one; single-signal search always has the blind spot from lesson 19/51.
+
 ## Build It
 
 Reconstruct **Hybrid Retrieval with BM25 and Dense Embeddings** by following `Doc` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
