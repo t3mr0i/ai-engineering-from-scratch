@@ -115,6 +115,10 @@ Call `Layer` from a small caller with the demo’s smallest built-in fixture. Co
 
 Hand off `outputs/skill-qa-gate-designer.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: three layers in the pipeline
+
+In the CBP context AI features carry three eval layers in CI: structural checks (schema, shape), behavioral judges (tone, quality, graded scores with baselines), and adversarial probes (hallucinated dates, names, injections). Schema-green with drifted quality fails the behavioral layer; vibe-iterated prompts fail all three. Binary pass/fail belongs to unit tests; probabilistic systems get graded baselines plus regression gates.
+
 ## Further Reading
 
 - [RAGAS documentation](https://docs.ragas.io) — faithfulness, answer relevance, context precision metrics for RAG evaluation.
