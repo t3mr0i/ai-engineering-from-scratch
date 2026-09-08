@@ -554,6 +554,10 @@ Call `call` from a small caller with the text "red fox". Compare its result with
 
 Hand off `outputs/skill-ecosystem-blueprint.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: the same stack on LCAG infrastructure
+
+In the CBP context this ecosystem runs on the platform: the gateway is APIM with Entra ID, the servers wrap Boards, Repos, and Search, traces land in Application Insights, and releases flow through Azure Pipelines. Every primitive keeps its place — tools for actions, resources for documents, tasks for long runs, A2A for delegation, `ui://` for review — with the platform owning auth, audit, rate limits, and residency. Ship it as the reference the next CBP team copies: pinned tool hashes, scoped approvals, measured aliases, and an eval set in the repository.
+
 ## Further Reading
 
 - [MCP — Specification 2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25) — consolidated reference

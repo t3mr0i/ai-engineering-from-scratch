@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does research_arxiv_search return for the demo query agent protocol?",
+      "question": "A team ships search, delegation, long reports, a review UI, and tracing as five separate one-off integrations. What breaks first?",
       "options": [
-        "All three papers, regardless of their titles",
-        "Only the task paper because every query is a task query",
-        "empty hit list",
-        "A report task with a UI resource"
+        "Each integration works fine in isolation forever",
+        "More integrations always mean more reliability",
+        "Users prefer five different logins",
+        "Auth, audit, and naming diverge until no two parts agree"
       ],
-      "correct": 2,
-      "explanation": "The search lowercases the query and performs a title substring check; none of the three fixture titles contains the exact phrase agent protocol."
+      "correct": 3,
+      "explanation": "Separate one-offs diverge on every cross-cutting concern. This capstone assembles the whole Phase 13 stack — gateway, server, tasks, delegation, UI, traces — as one coherent ecosystem."
     },
     {
       "stage": "check",
