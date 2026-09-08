@@ -15,6 +15,10 @@
 - Integrate a supplied velocity field from `t=1` to `t=0` with bounded Euler steps.
 - Separate this deterministic equation fixture from an unimplemented model or checkpoint.
 
+## CBP context: straight paths, patched images
+
+In the CBP context diffusion transformers plus rectified flow are the modern generation stack behind image services: patched images as tokens, straighter denoising paths for fewer steps, same prompt-seed-guidance levers to operate. Know the stack names to read service changelogs and pricing; fewer steps per image is latency and cost directly. Operate services, read stacks.
+
 ## Build It
 
 The NumPy implementation in `code/main.py` has no model download or framework requirement.
