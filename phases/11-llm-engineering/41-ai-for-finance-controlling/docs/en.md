@@ -68,6 +68,10 @@ The template in `outputs/sheet-finance-ai-review.md` can be used before AI-assis
 The demo's first case is **monthly commentary**: Variance gap with source mismatch before management reporting. Treat the labels source mismatch, forecast uncertainty, approval risk, variance gap as evidence to inspect, not as an automatic approval. The implementation's signal matcher looks for those terms in the scenario name, description, and explicit signal list; then the scorer combines impact, uncertainty, and two points per matched signal (capped at 20). The priority function maps that score to a control level: launch gate at 16 or above, guided pilot at 11–15, team practice at 7–10, and awareness below 7.
 
 Run the case and check which of the controls — source trace, assumption log, variance check, approval owner — appear in the returned row. Ask three questions: Which signal is supported by an observable source? Which control has an owner who can act this week? What evidence would move the case to a different priority? Then change one signal or impact value and rerun it. If the priority changes, explain whether the change came from the score, the matching rule, or both. The score is a triage aid; it does not replace domain approval, privacy review, or a pilot metric. Keep that distinction in the artifact and in the handoff.
+## CBP context: sources and approvals before sharing
+
+In the CBP context finance narratives carry their provenance: source data linked, assumptions stated, variance logic checkable, approvals recorded — before anything is shared beyond the team. A plausible paragraph that hides weak data is a control failure, not a draft. The model accelerates reasoning; the control model decides what leaves the room.
+
 ## Key Takeaways
 
 - AI can draft finance narratives, but source checks are mandatory.
