@@ -84,6 +84,10 @@ Call `Chunk` from a small caller with the text "red fox". Compare its result wit
 
 Hand off `outputs/skill-codebase-rag.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: AI Search over Azure Repos
+
+In the CBP context cross-repo search runs on Azure AI Search over mirrored Azure Repos — chunked with file-and-line anchors, reindexed by pipeline, cited by source id in every answer. Freshness beats cleverness: a brilliant ranking over last quarter's code misleads with confidence. Measure retrieval on CBP queries (faithfulness, not vibes) before trusting a new embedding model, and scope results per tenant so one team's code never grounds another team's answer.
+
 ## Further Reading
 
 - [Sourcegraph Amp](https://ampcode.com) — production cross-repo code intelligence

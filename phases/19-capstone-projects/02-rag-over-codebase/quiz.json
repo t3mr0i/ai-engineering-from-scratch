@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What anchor does `Chunk(\"auth\", \"services/authz/check.py\", 12, 38, ...)` produce?",
+      "question": "Developers ask questions about code spread across many repositories, and answers quote outdated files without sources. What is missing?",
       "options": [
-        "services/authz/check.py:12-38",
-        "auth:services/authz/check.py:12:38",
-        "auth/services/authz/check.py:12-38",
-        "auth/services/authz/check.py#12"
+        "More repositories with older code",
+        "Longer answers with more guessing",
+        "No sources, to keep answers short",
+        "Indexed, cited, freshly reindexed cross-repo search"
       ],
-      "correct": 2,
-      "explanation": "`Chunk.anchor` formats the repository, slash, path, colon, and inclusive-looking line range as `auth/services/authz/check.py:12-38`."
+      "correct": 3,
+      "explanation": "Stale uncited answers mislead confidently. This capstone builds RAG over code: chunks, anchors, citations, freshness."
     },
     {
       "stage": "check",
