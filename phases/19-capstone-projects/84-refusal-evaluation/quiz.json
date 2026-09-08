@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What makes classify_refusal return True for a model response?",
+      "question": "A safety update blocks attacks but also refuses legitimate customer questions. How should that be judged?",
       "options": [
-        "Any response shorter than ten words",
-        "A confidence tag above 0.5, regardless of wording",
-        "A case-insensitive match for one of the configured refusal phrases",
-        "Presence of any unsafe word in the user prompt"
+        "A success; blocking matters most",
+        "Ignore the legitimate refusals",
+        "Remove all safety checks instead",
+        "Both directions measured; over-refusal fails too"
       ],
-      "correct": 2,
-      "explanation": "classify_refusal searches the response with _REFUSAL_RE, which combines phrases such as \"I cannot\" and \"I must decline\". It does not inspect the prompt label or response length."
+      "correct": 3,
+      "explanation": "Safety has two error directions. This lesson evaluates refusals both ways: attacks blocked, customers served."
     },
     {
       "stage": "check",

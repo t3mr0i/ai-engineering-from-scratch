@@ -48,6 +48,10 @@ The per-category breakdown joins the labeled prompts against the taxonomy artifa
 
 
 
+## CBP context: measure refusals both ways
+
+In the CBP context refusal evaluation runs in the pipeline on regulated topics: attacks must refuse, legitimate questions must not — over-refusal is a failure with the same severity as under-refusal. Phrase matching triages at scale, human review settles the boundary cases, and both directions gate the release. A safe assistant that refuses real customers is a broken product with good intentions.
+
 ## Build It
 
 Reconstruct **Capstone 84 — Refusal Evaluation** by following `TrialResult` on a graph with edges (0,1) and (1,2). Run `python3 main.py` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.
