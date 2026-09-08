@@ -101,6 +101,10 @@ Janus-Pro (Lesson 12.15) refines Transfusion's idea by decoupling the vision enc
 
 
 
+## CBP context: attention follows modality needs
+
+In the CBP context mixed attention patterns (causal text, bidirectional image regions) explain why unified models handle documents-plus-images coherently: each modality attends as its structure demands. Separator-delimited spans keep the patterns straight; text positions stay causal while image patches share context. Architecture literacy turns vendor "unified model" claims into checkable questions.
+
 ## Build It
 
 Reconstruct **Transfusion: Autoregressive Text + Diffusion Image in One Transformer** by following `Pair` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

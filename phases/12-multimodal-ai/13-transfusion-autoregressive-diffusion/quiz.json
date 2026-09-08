@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What attention pattern does build_mask use for image patches inside one image span?",
+      "question": "Text needs causal order while image regions need shared context. How can one model serve both?",
       "options": [
-        "Bidirectional attention among patches in the same image, while text remains causal",
-        "Only each patch attending to its immediate predecessor",
-        "A fully bidirectional mask over every text and image token in the batch",
-        "No attention between image patches because diffusion is independent"
+        "One attention pattern for everything",
+        "No attention anywhere",
+        "Text and images in separate models only",
+        "Per-span patterns: causal text, bidirectional patches"
       ],
-      "correct": 0,
-      "explanation": "build_mask identifies image ranges between SEP_OPEN and SEP_CLOSE. Tokens in the same range attend to one another, while text-to-text positions obey j <= i."
+      "correct": 3,
+      "explanation": "Modalities need different attention. This lesson mixes autoregressive and diffusion patterns."
     },
     {
       "stage": "check",
