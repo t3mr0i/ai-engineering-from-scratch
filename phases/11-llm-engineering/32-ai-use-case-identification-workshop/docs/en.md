@@ -70,6 +70,10 @@ The template in `outputs/canvas-ai-use-case-pilot.md` can be used to capture val
 The demo's first case is **invoice intake**: High volume manual work with process variance. Treat the labels manual work, high volume, process variance, handoff delay as evidence to inspect, not as an automatic approval. The implementation's signal matcher looks for those terms in the scenario name, description, and explicit signal list; then the scorer combines impact, uncertainty, and two points per matched signal (capped at 20). The priority function maps that score to a control level: launch gate at 16 or above, guided pilot at 11–15, team practice at 7–10, and awareness below 7.
 
 Run the case and check which of the controls — use case canvas, value risk score, pilot metric, accountable owner — appear in the returned row. Ask three questions: Which signal is supported by an observable source? Which control has an owner who can act this week? What evidence would move the case to a different priority? Then change one signal or impact value and rerun it. If the priority changes, explain whether the change came from the score, the matching rule, or both. The score is a triage aid; it does not replace domain approval, privacy review, or a pilot metric. Keep that distinction in the artifact and in the handoff.
+## CBP context: score comparably, scope from the canvas
+
+In the CBP context workshop ideas enter the shared scoring method — workflow pain, volume, data readiness, risk, value — so minutes saved, risk reduced, and quality gained compare on one scale instead of by loudest voice. Winners leave with the discovery canvas filled (lesson 11/24): no canvas, no PoC. Opinion-driven backlogs fund demos; scored backlogs fund delivery.
+
 ## Key Takeaways
 
 - Start with a workflow, not with a tool.
