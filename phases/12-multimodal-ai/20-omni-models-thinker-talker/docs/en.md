@@ -95,6 +95,10 @@ This is why small dedicated Talker models exist rather than "just use the main m
 
 
 
+## CBP context: budget first audio byte by component
+
+In the CBP context omni voice features budget time-to-first-audio-byte per component — mic, prefill, vision, text, talker, codec, waveform — against the turn budget, with vision cost explicit when the camera is on. The component sum is the SLA negotiation tool with stakeholders: each millisecond owned, none assumed. Measure the breakdown on CBP calls; optimize the largest slice first.
+
 ## Build It
 
 Reconstruct **Omni Models: Qwen2.5-Omni and the Thinker-Talker Split** by following `StreamConfig` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.

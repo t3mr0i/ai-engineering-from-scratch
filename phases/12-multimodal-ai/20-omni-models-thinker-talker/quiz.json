@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What TTFAB does ttfab(StreamConfig(7, 300, include_vision=True)) return with the default 16kHz microphone?",
+      "question": "Voice responses feel slow but no stage owns the delay. How is first-audio latency budgeted?",
       "options": [
-        "270 ms, because vision is ignored by the Thinker",
-        "350 ms, because the Talker adds no speech decode cost",
-        "390 ms, from 50 mic + 180 prefill + 40 first text + 20 Talker + 30 RVQ + 70 waveform",
-        "470 ms, because all visual tokens are generated serially twice"
+        "One lump sum with no breakdown",
+        "Trust in faster hardware someday",
+        "Measure only the last stage",
+        "Per-component times summed against the turn budget"
       ],
-      "correct": 2,
-      "explanation": "At 16kHz mic_ms=50. A 7B Thinker has 100ms prefill plus 80ms vision cost, first text is 40ms, and the remaining components are 20+30+70ms. The sum is 390ms."
+      "correct": 3,
+      "explanation": "Unowned milliseconds accumulate. This lesson budgets thinker-talker pipelines per component."
     },
     {
       "stage": "check",
