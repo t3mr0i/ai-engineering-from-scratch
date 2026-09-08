@@ -111,6 +111,10 @@ A useful submission records python3 main.py, the observed output, and the conclu
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
+## CBP context: context in, judgment out
+
+In the CBP context consultative prompting means loading the engagement reality — stakeholder tension, decision criteria, risks, client history — before asking for output, so the draft reflects the situation instead of generic best practice. Keep client-confidential context inside tenant boundaries and out of shared prompts. A generic agenda with the client name filled in is template work wearing an AI costume.
+
 ## Further Reading
 
 ### Recommended trainings (LHIND AI Literacy)
