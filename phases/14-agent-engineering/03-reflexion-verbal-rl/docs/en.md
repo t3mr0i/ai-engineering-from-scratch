@@ -326,6 +326,10 @@ Call `call` from a small caller with x=0.5 with the demo defaults. Compare its r
 
 Hand off `outputs/skill-reflexion-buffer.md` with the command `python3 main.py`, the accepted input shape (x=0.5 with the demo defaults), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: failed runs write the lesson down
+
+In the CBP context Reflexion is the incident-note habit for agents: when a run fails, the service asks the model what went wrong, stores that verbal reflection with the run log, and includes it in the retry's context — no retraining, no weight updates. Scope reflections per tenant and per workflow so one team's failure note never steers another team's runs. Review stored reflections like any other persistent prompt text: a wrong lesson, confidently written, poisons every future retry until someone removes it.
+
 ## Further Reading
 
 - [Shinn et al., Reflexion: Language Agents with Verbal Reinforcement Learning (arXiv:2303.11366)](https://arxiv.org/abs/2303.11366) — the canonical paper

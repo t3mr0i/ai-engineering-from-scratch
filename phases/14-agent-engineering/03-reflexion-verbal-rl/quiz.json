@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "With `TARGET = 20`, how does the memory-enabled demo finish?",
+      "question": "An assistant fails a task three times in a row, making the same mistake each time because it never looks at its earlier attempts. What would help?",
       "options": [
-        "It reaches `[6, 7, 7]` on trial 3 and succeeds.",
-        "It repeats `[1, 2, 3]` for four trials and fails.",
-        "It reaches `[5, 6, 7]` on trial 2 and succeeds.",
-        "It uses five trials because the target is not reachable."
+        "Run the identical attempt a fourth time",
+        "Delete the logs of the failed attempts",
+        "Use a bigger model for the next try",
+        "Write down why each attempt failed and include that note in the next try"
       ],
-      "correct": 0,
-      "explanation": "The actor changes its proposal after two stored reflections: `[6, 7, 7]` sums to 20 on trial 3."
+      "correct": 3,
+      "explanation": "Repeating a blind attempt repeats the mistake. This lesson builds Reflexion: verbal self-critique stored between trials, no retraining needed."
     },
     {
       "stage": "check",
