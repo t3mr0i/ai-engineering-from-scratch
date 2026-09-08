@@ -112,6 +112,10 @@ Call `AdrStatus` from a small caller with the demo’s smallest built-in fixture
 
 Hand off `outputs/skill-ai-adr-governance.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: boundary conditions are the living document
+
+In the CBP context AI ADRs record revert triggers, not just choices: the cost threshold that reopens the decision, the latency SLA it was measured against, the data classification the vendor was assessed at, the review date. Model deprecations, silent output shifts, and price jumps invalidate museum-exhibit ADRs within months; boundary conditions keep them governable. Record what would change your mind, or the document cannot.
+
 ## Further Reading
 
 - [Documenting Architecture Decisions — Michael Nygard (2011)](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) — the original ADR post; the template this lesson extends.

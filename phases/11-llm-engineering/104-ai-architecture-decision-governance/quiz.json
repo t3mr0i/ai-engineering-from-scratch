@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which information does validate_adr require before an ADR can pass?",
+      "question": "A model deprecates, outputs shift silently, and prices jump — and the ADR that chose it helps nobody. What was missing from it?",
       "options": [
-        "The full required-field set plus non-empty cost, capability, compliance, and deprecation triggers",
-        "Only an ADR id, model name, and a benchmark screenshot",
-        "A vendor contract but no cost projection or review date",
-        "A model tier and owner; trigger conditions are optional notes"
+        "A longer model name",
+        "More benchmark screenshots",
+        "Trust that choices stay valid",
+        "Revert triggers: cost, latency, classification, review date"
       ],
-      "correct": 0,
-      "explanation": "validate_adr checks every name in REQUIRED_FIELDS and then requires all four categories in REQUIRED_TRIGGERS. Warnings about cost or aliases do not replace those completeness gates."
+      "correct": 3,
+      "explanation": "Static ADRs expire with conditions. This lesson records the boundary conditions that keep decisions governable."
     },
     {
       "stage": "check",
