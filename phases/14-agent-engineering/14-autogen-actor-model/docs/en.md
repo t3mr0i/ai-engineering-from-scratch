@@ -75,6 +75,10 @@ Call `Message` from a small caller with the smallest valid record {"id": 1}. Com
 
 Hand off `outputs/skill-actor-runtime.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: reviewers as isolated actors
+
+In the CBP context the actor split fits review pipelines: each reviewer (policy check, test gate, security scan) owns private state and a message inbox, so one crashing reviewer never takes the pipeline down. Interact by messages only — no shared mutable state across reviewers — and let the runtime deliver concurrently. A failing actor restarts from its last checkpointed message; the review continues with the survivors. Distribution across services later is a transport change, not a rewrite, because the boundaries were messages from the start.
+
 ## Further Reading
 
 - [AutoGen v0.4, Microsoft Research](https://www.microsoft.com/en-us/research/articles/autogen-v0-4-reimagining-the-foundation-of-agentic-ai-for-scale-extensibility-and-robustness/) — the redesign post
