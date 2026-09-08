@@ -112,6 +112,10 @@ The retrieval client returns a `RetrievalResult` with both the ranked list and t
 
 Lesson fifty produces a hypothesis. Lesson fifty-one searches the literature to see whether that hypothesis is already settled. Lesson fifty-two runs the experiment if it is not. Lesson fifty-three reads both the retrieval result and the experiment metrics to write the verdict. The retrieval client is the cheapest of the four stages and runs first in the orchestrator.
 
+## CBP context: lexical plus graph covers both misses
+
+In the CBP context the BM25-plus-graph lesson is the hybrid-retrieval rule (lessons 11/07, 19/65): lexical search misses same-meaning-different-words, graph search misses unconnected-but-relevant — run both and fuse. Apply it to CBP knowledge (tickets cite tickets, docs share terms) so foundational items surface even when vocabulary drifts. Single-signal retrieval always has a blind spot; name it before trusting it.
+
 ## Build It
 
 Reconstruct **Literature Retrieval** by following `Paper` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
