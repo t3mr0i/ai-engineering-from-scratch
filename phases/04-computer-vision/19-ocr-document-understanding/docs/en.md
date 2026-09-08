@@ -20,6 +20,10 @@
 
 An OCR product may detect text regions, recognize each crop, restore reading order, and extract fields. The local artifact implements only line recognition: a synthetic grayscale line becomes a time-major log-probability tensor and a CTC decoder turns it into IDs. Naming the omitted stages prevents a recognizer score from being mistaken for document understanding.
 
+## CBP context: prefer the document service, know the mechanism
+
+In the CBP context production OCR runs on the platform's document service with layout, tables, and handwriting handled — but the CTC intuition (sequence reading without per-character alignment) explains its failure modes: merged lines, dropped characters, confident misreads on unusual fonts. Evaluate extraction on CBP documents with field-level accuracy, and keep layout attached to text; words without positions lose tables, forms, and signatures.
+
 ## Build It
 
 `VOCAB[0]` is the blank. The NumPy Build-It path uses `numpy_build_batch`, `numpy_ctc_greedy_decode`, and `numpy_ctc_loss`: `numpy_ctc_loss` walks the blank-interleaved target trellis in log space and rejects an input length below `target_length + adjacent_repeat_count`. `synthetic_line("abc", height=32, char_width=8)` returns a `(32,24)` float image. `numpy_build_batch(["abc","xy"], max_len=3)` pads images to `(2,1,32,48)`, concatenates target IDs to a one-dimensional vector, and returns target lengths `[3,2]`.

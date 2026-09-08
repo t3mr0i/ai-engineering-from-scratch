@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which index is the CTC blank symbol in the lesson's VOCAB?",
+      "question": "Extracted text reads fluently but table structure and signatures are lost. What else must extraction preserve?",
       "options": [
-        "0",
-        "1",
-        "The final vocabulary index",
-        "It has no index"
+        "Only the raw character stream",
+        "The font colors of each word",
+        "Nothing beyond plain text",
+        "Layout and positions alongside words"
       ],
-      "correct": 0,
-      "explanation": "VOCAB starts with '_' at index zero, followed by digits and lowercase letters."
+      "correct": 3,
+      "explanation": "Documents are spatial, not linear. This lesson reads sequences while keeping layout attached."
     },
     {
       "stage": "check",
