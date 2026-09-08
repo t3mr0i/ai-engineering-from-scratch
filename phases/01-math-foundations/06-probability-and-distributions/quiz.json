@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "A Bernoulli variable has P(X=1)=0.7. What are its expected value and variance?",
+      "question": "A model outputs 0.8 confidence on its answers. What does that number mean on its own?",
       "options": [
-        "E[X]=1 and Var(X)=0.7",
-        "E[X]=0.3 and Var(X)=0.49",
-        "E[X]=0.7 and Var(X)=0.21",
-        "E[X]=0.7 and Var(X)=0.7"
+        "The answer is 80% correct, guaranteed",
+        "Nothing until calibration is measured",
+        "The model used 80% of its capacity",
+        "80% of the training data agrees"
       ],
-      "correct": 2,
-      "explanation": "For Bernoulli(p), E[X]=p and Var(X)=p(1-p). Here 0.7*0.3=0.21."
+      "correct": 1,
+      "explanation": "Scores need calibration to mean anything. This lesson builds probability as the language of model outputs."
     },
     {
       "stage": "check",

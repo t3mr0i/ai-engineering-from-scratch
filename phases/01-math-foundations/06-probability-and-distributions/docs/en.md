@@ -15,6 +15,10 @@
 - Calculate cross-entropy from logits and a zero-based target index.
 - Derive marginal distributions and test independence from a joint table.
 
+## CBP context: model outputs are probabilities, treat them so
+
+In the CBP context every model score is a probability with expected value and spread — never a fact. Calibration (lesson 19/73) decides whether 0.8 means right four times out of five; thresholds on uncalibrated scores decide nothing reliably. Read distributions for the intuition behind confidence, sampling temperature, and abstention; compute nothing by hand in production.
+
 ## Build It
 
 `code/main.jl` is the canonical, deterministic entry point and uses only Julia's `Random`, `Statistics`, and `Printf` standard libraries. `probability.py` is a parallel stdlib-only reference; neither path imports a plotting package.
