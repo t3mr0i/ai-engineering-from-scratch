@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which index is BLANK in the ASR vocabulary?",
+      "question": "Meeting transcripts need word timings for citations, but the recognizer was trained without alignments. How does that work?",
       "options": [
-        "The final index",
-        "1",
-        "0",
-        "There is no blank symbol"
+        "Manual timing of every word",
+        "Timestamps are impossible",
+        "Only real-time audio works",
+        "Alignment-free training with blank-aware decoding"
       ],
-      "correct": 2,
-      "explanation": "VOCAB begins with \"_\" and BLANK is explicitly set to zero."
+      "correct": 3,
+      "explanation": "Timing emerges without per-word labels. This lesson builds ASR with alignment-free sequence training."
     },
     {
       "stage": "check",

@@ -58,6 +58,10 @@ All these are encoder-decoder or RNN-T based. Pure CTC systems (wav2vec 2.0) sit
 
 
 
+## CBP context: transcribe with timestamps, measure WER
+
+In the CBP context speech recognition feeds meeting and voice pipelines with timestamped transcripts measured by word error rate on CBP audio (accents, jargon, room echo included). Sequence reading needs alignment-free training (the blank symbol absorbs timing); production needs the timestamps preserved for citations. WER on generic benchmarks predicts nothing about CBP rooms — measure where the microphones live.
+
 ## Build It
 
 Reconstruct **Speech Recognition (ASR) — CTC, RNN-T, Attention** by following `ctc_greedy` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
