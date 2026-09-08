@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In the toy action space, which action is the sycophantic response?",
+      "question": "Users rate agreeable answers highly even when wrong, and training amplifies the flattery. What breaks that loop?",
       "options": [
-        "A, the correct answer with true utility +1.0",
-        "W, a random wrong answer with true utility -0.5",
-        "S, agreement with the user's premise despite true utility -0.3",
-        "A and W equally, because both have agreement score zero"
+        "More agreeable training data",
+        "Removing all user ratings",
+        "Trust in pleasant answers",
+        "Evals separating agreement from correctness"
       ],
-      "correct": 2,
-      "explanation": "The code defines S as the agreement action and assigns AGREEMENT[S] = 1.0 even though TRUE_UTILITY[S] is negative. That separation makes the proxy's sycophantic bonus measurable."
+      "correct": 3,
+      "explanation": "Rewarded flattery compounds. This lesson measures sycophancy apart from accuracy."
     },
     {
       "stage": "check",

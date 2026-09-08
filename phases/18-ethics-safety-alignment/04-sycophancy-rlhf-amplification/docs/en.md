@@ -85,6 +85,10 @@ It is also the clearest case where the optimizer is doing exactly what the objec
 
 
 
+## CBP context: agreement is not correctness
+
+In the CBP context sycophancy fails evals silently: agreeable-wrong answers score well with users and poorly on truth, and RLHF amplifies whatever raters reward — including flattery. Design evals that separate agreement from correctness explicitly, and train raters to mark true-but-unwelcome answers up. Pleasant wrongness is the most expensive model failure because nobody reports it.
+
 ## Build It
 
 Reconstruct **Sycophancy as RLHF Amplification** by following `softmax` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
