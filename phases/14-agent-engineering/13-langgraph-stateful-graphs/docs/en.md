@@ -375,6 +375,10 @@ Call `call` from a small caller with a graph with edges (0,1) and (1,2). Compare
 
 Hand off `outputs/skill-state-graph.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: checkpoint every node, resume after crash
+
+In the CBP context long runs checkpoint after every node into tenant-scoped durable state: a crash at step 38 resumes at step 38, never from zero. Human approvals are graph nodes that pause — the run waits on the Boards approval the same way the lesson waits on an interrupt, with state intact. Type the state, make mutations explicit, and keep the checkpointer where the platform backs it up; in-memory state dies with the pod and takes the run's audit trail with it.
+
 ## Further Reading
 
 - [LangGraph overview](https://docs.langchain.com/oss/python/langgraph/overview) — the reference docs
