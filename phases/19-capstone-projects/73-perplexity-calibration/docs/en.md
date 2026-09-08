@@ -159,6 +159,10 @@ Read `main.py` top to bottom. The function ordering goes scalar to vector to rep
 
 Calibration is the most ignored axis in published eval. Most leaderboards report a single accuracy number and call it done. A model that wins on accuracy and loses on Brier is a worse production deployment than a model that scores a few points lower on accuracy but reliably reports its uncertainty. Once you have the calibration plumbing in place, add temperature scaling on a held-out validation slice, recompute ECE, and watch the gap shrink. That is a separate lesson, but the floor lives here.
 
+## CBP context: calibrate confidence, gate on tasks
+
+In the CBP context perplexity stays a training diagnostic while calibration gates behavior: a well-calibrated assistant abstains or escalates when its confidence is low instead of answering fluently and wrong. Measure calibration on CBP tasks (does 80% confidence mean right 80% of the time?) and wire low-confidence outputs to human review. Confidence without calibration is decoration on a guess.
+
 ## Build It
 
 Reconstruct **Perplexity and Calibration** by following `PerplexityResult` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

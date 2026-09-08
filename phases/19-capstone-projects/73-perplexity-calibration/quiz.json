@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does PerplexityResult.from_token_nll convert token negative log-likelihoods into perplexity?",
+      "question": "A model states wrong answers with 95% confidence. What is broken and what fixes it?",
       "options": [
-        "It exponentiates total NLL divided by total token count",
-        "It averages the per-sequence perplexities without weighting tokens",
-        "It returns the largest NLL as the perplexity",
-        "It takes log of the mean token count"
+        "Nothing; confidence is always accurate",
+        "Lower all confidences to zero",
+        "Remove confidence scores entirely",
+        "Miscalibrated confidence; measure and calibrate it on real tasks"
       ],
-      "correct": 0,
-      "explanation": "The implementation sums NLL and token counts, computes average NLL = total_nll/total_tokens, and returns exp(average NLL)."
+      "correct": 3,
+      "explanation": "Confidence must track accuracy. This lesson converts likelihoods properly and calibrates stated confidence."
     },
     {
       "stage": "check",
