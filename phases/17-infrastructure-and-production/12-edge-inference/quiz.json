@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does ceiling compute the theoretical decode rate for a target?",
+      "question": "The same model runs fast on a flagship laptop but crawls on a mid-range phone. What fundamentally limits it there?",
       "options": [
-        "It takes 1 divided by model_gb / bandwidth_gb_s",
-        "It multiplies model_gb by bandwidth_gb_s",
-        "It returns observed tok/s without using bandwidth",
-        "It divides TOPS by the number of CPU cores"
+        "The model's intelligence",
+        "The color scheme of the app",
+        "The number of app features",
+        "Memory bandwidth against the weight size"
       ],
-      "correct": 0,
-      "explanation": "ceiling calculates seconds_per_token = model_gb / target bandwidth and returns its reciprocal, giving a bandwidth-limited tokens/second ceiling."
+      "correct": 3,
+      "explanation": "Decode reads all weights per token, so bandwidth sets the ceiling. This lesson sizes edge models to the weakest target device."
     },
     {
       "stage": "check",

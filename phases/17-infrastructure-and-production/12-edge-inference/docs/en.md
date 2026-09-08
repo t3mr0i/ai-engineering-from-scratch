@@ -101,6 +101,10 @@ Call `Target` from a small caller with the reported device check on CPU. Compare
 
 Hand off `outputs/skill-edge-target-picker.md` with the command `python3 main.py`, the accepted input shape (the reported device check on CPU), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: server-side default, edge only for offline
+
+In the CBP context inference stays server-side on Azure unless a concrete requirement forces it to the edge: offline operation, private-by-default voice, or latency no round trip can meet. When edge is required, size the model to the weakest target device's memory bandwidth — the decode ceiling is physics, not tuning — and keep the server path as fallback. Never ship an edge model on flagship-device numbers and discover the mid-range reality from user complaints.
+
 ## Further Reading
 
 - [On-Device LLMs State of the Union 2026](https://v-chandra.github.io/on-device-llms/) — landscape and benchmarks.
