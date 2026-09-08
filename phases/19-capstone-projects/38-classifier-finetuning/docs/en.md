@@ -134,6 +134,10 @@ The lesson does not pick a winner. It teaches you to read the numbers and the co
 
 The implementation gives you the hooks. The tests pin the contract. The numbers are yours to push.
 
+## CBP context: small heads for triage and moderation
+
+In the CBP context head-swap fine-tuning covers the small classifiers around the assistant: triage routing, content moderation, urgency detection — a pretrained body with a fresh linear head on CBP labels. Keep the body frozen first and unfreeze only with evidence; 800 labeled examples train a head, not a transformer. Evaluate on held-out CBP cases and ship the classifier behind the same eval gate as everything else.
+
 ## Build It
 
 Reconstruct **Capstone Lesson 38: Classifier Fine-Tuning by Head Swap** by following `ByteTokenizer` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
