@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which embedding streams does multi_vector_search combine for a video query?",
+      "question": "Questions about long recordings get fluent answers nobody can verify against the footage. What is missing?",
       "options": [
-        "Only one pooled frame embedding",
-        "Audio waveform, optical flow, and OCR pixels",
-        "Caption, frame, and transcript embeddings",
-        "Caption embeddings and the final answer text only"
+        "Longer fluent answers",
+        "Fewer recordings to search",
+        "Trust in unverifiable summaries",
+        "Scene-level evidence cited with timestamps"
       ],
-      "correct": 2,
-      "explanation": "Each Scene carries caption_emb, frame_emb, and transcript_emb; the search ranks all three streams before fusing them."
+      "correct": 3,
+      "explanation": "Video answers need openable evidence. This capstone fuses caption, frame, and transcript streams into cited scenes."
     },
     {
       "stage": "check",

@@ -84,6 +84,10 @@ Call `tokenize` from a small caller with a graph with edges (0,1) and (1,2). Com
 
 Hand off `outputs/skill-video-qa.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: scene evidence for reviewable answers
+
+In the CBP context video understanding serves reviewable workflows — site walkthroughs, recorded inspections, training sessions: scenes captioned, framed, and transcribed, queries answered with scene citations a reviewer can open. Prefer platform media services where they cover the format; build the custom pipeline where scene-level evidence matters. An answer about footage without a timestamp is a rumor with compute behind it.
+
 ## Further Reading
 
 - [AI2 Molmo 2](https://allenai.org/blog/molmo2) — open VLM checkpoints
