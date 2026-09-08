@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does crossing_cycle(records, threshold=1.5) return?",
+      "question": "Capability climbs while alignment evidence stalls, widening the gap each cycle. When must the line stop?",
       "options": [
-        "The first cycle whose capability-minus-alignment gap reaches 1.5, or -1 if none does",
-        "The cycle with the highest alignment value",
-        "The average cycle count across scenarios",
-        "The last cycle regardless of the gap"
+        "Never; capability justifies itself",
+        "After the next milestone ships",
+        "When users complain loudly",
+        "At the first cycle breaching the gap threshold"
       ],
-      "correct": 0,
-      "explanation": "The function scans the signed C-A gap in order and returns the first cycle with gap >= threshold; it uses -1 when no crossing occurs."
+      "correct": 3,
+      "explanation": "Gaps compound silently. This lesson trips the line at the first threshold breach."
     },
     {
       "stage": "check",

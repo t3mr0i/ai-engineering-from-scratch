@@ -70,6 +70,10 @@ The workshop summary (openreview.net/pdf?id=OsPQ6zTQXV) identifies four current 
 
 
 
+## CBP context: gate capability on alignment evidence
+
+In the CBP context recursive improvement watches the capability-minus-alignment gap per cycle: capability may grow only while alignment evidence keeps pace, and the first cycle breaching the threshold stops the line. No autonomous capability jump ships without a safety review at the crossing — the gap metric is the tripwire, not a dashboard decoration. Growth without evidence is not progress.
+
 ## Build It
 
 Reconstruct **Recursive Self-Improvement — Capability vs Alignment** by following `Config` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
