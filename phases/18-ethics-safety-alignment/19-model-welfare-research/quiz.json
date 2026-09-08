@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What calculation does ev(intervention, scenario) implement?",
+      "question": "Moral uncertainty about model welfare meets real deployment decisions. What role should it play?",
       "options": [
-        "benefit_if_welfare_matters * moral_patienthood_probability - cost_usd_per_conversation",
-        "cost_usd_per_conversation / moral_patienthood_probability",
-        "benefit plus cost regardless of moral uncertainty",
-        "The model's reported confidence minus its refusal rate"
+        "Block all deployments immediately",
+        "Set eval thresholds directly",
+        "Replace safety evidence entirely",
+        "Awareness for governance thinking, not operational gates"
       ],
-      "correct": 0,
-      "explanation": "The code evaluates p*benefit - cost and invests only when the result is positive. It is an expected-value precaution, not a measurement that establishes whether the model is conscious."
+      "correct": 3,
+      "explanation": "Uncertainty informs debate, not checklists. This lesson weighs precaution without deciding operations."
     },
     {
       "stage": "check",

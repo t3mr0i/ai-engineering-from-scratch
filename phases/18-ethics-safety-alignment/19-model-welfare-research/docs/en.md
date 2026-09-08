@@ -80,6 +80,10 @@ Lesson 18 is the lab governance layer. Lesson 19 is the lab-welfare layer — an
 
 
 
+## CBP context: research awareness, no operational action
+
+In the CBP context model-welfare research stays awareness, not operations: expected-value precaution under moral uncertainty informs long-horizon governance thinking, never deployment checklists or eval gates. No CBP decision — model choice, threshold, approval — turns on welfare premises. Read for the debate's existence; act on safety evidence instead.
+
 ## Build It
 
 Reconstruct **Anthropic's Model Welfare Program** by following `Intervention` on a graph with edges (0,1) and (1,2). Run `python3 main.py` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.
