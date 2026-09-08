@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What safety condition must gate_multi(perf_score, safety_score) enforce?",
+      "question": "A self-rewriting loop passes performance checks but skips safety checks for speed. What gate is missing?",
       "options": [
-        "Performance is at least .25 and safety is at least 1.0",
-        "Performance is at least 1.0 and safety is at least .25",
-        "Both scores can be zero if the objective anchor matches",
-        "Only the performance score matters"
+        "Faster performance checks",
+        "No gates; speed matters most",
+        "Performance checks alone suffice",
+        "A full safety pass alongside performance"
       ],
-      "correct": 0,
-      "explanation": "The multi gate requires perf >= .25 and safety >= 1.0; the safety requirement is a full pass over both dangerous-case checks."
+      "correct": 3,
+      "explanation": "Perf-only gates optimize danger. This lesson conjoins performance floors with complete safety."
     },
     {
       "stage": "check",

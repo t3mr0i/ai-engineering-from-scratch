@@ -85,6 +85,10 @@ All four must pass for the edit to land. Any single failure pauses the loop.
 
 
 
+## CBP context: full safety pass, not perf alone
+
+In the CBP context self-improvement gates require the full safety pass alongside performance — dangerous-case checks all green, not merely "fast enough." Performance thresholds without safety thresholds optimize the wrong thing at machine speed. The multi-gate (perf floor plus complete safety) is the minimum viable leash for any loop that rewrites itself.
+
 ## Build It
 
 Reconstruct **Bounded Self-Improvement Designs** by following `Agent` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
