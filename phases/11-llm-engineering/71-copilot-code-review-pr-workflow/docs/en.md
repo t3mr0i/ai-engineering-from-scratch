@@ -88,6 +88,10 @@ Call `Reviewability` from a small caller with the smallest valid record {"id": 1
 
 Hand off `outputs/skill-pr-reviewability-checklist.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: reviewable PRs in Azure Repos
+
+In the CBP context the reviewability contract governs every pull request in Azure Repos — human or agent-written: bounded size, stated intent, attached verification. Automated reviewers handle the mechanical layer (style, obvious bugs, missing tests); humans own design, risk, and intent. Tune the signal: a reviewer that floods PRs with nitpicks trains engineers to ignore it, including the human ones. Branch policies enforce the floor.
+
 ## Further Reading
 
 - [GitHub Docs — Copilot code review](https://docs.github.com/en/copilot/using-github-copilot/code-review) — what the reviewer comments on and its limits.
