@@ -66,6 +66,10 @@ This is where every attention implementation goes wrong the first time. Read slo
 
 
 
+## CBP context: relevance weighting behind everything
+
+In the CBP context attention is relevance weighting: queries scoring keys, softmax normalizing (shift-invariant, so relative differences decide), values blending by weight. The same shape ranks retrieved passages, focuses generation on evidence, and powers the rerankers from lesson 19/66. Shift-invariance means only differences matter — calibrate thresholds on score gaps, never on absolutes.
+
 ## Build It
 
 Reconstruct **Attention Mechanism — The Breakthrough** by following `softmax` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
