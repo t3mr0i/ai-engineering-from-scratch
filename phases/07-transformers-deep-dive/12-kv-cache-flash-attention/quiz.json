@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does KVCache.append(k, v) retain for a later decode step?",
+      "question": "Long conversations recompute everything per token without reuse. What must persist across decode steps?",
       "options": [
-        "It stores only the newest query and recomputes all keys",
-        "It averages k and v into one scalar and discards their positions",
-        "It appends k to K and v to V so future queries can attend to the full prefix",
-        "It appends values to K but leaves V unchanged"
+        "Only the newest query vector",
+        "A single averaged scalar",
+        "Nothing; recompute all each time",
+        "Past keys and values for the full prefix"
       ],
-      "correct": 2,
-      "explanation": "The cache maintains parallel K and V lists; every decode step appends the current pair before calling attention_full."
+      "correct": 3,
+      "explanation": "Recompute is quadratic waste. This lesson caches keys and values for reuse."
     },
     {
       "stage": "check",

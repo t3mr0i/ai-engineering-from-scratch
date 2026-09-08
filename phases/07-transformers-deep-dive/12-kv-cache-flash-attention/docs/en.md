@@ -128,6 +128,10 @@ vLLM's headline feature. KV cache is allocated in 16-token blocks; a page table 
 
 
 
+## CBP context: the cache behind prefix economics
+
+In the CBP context KV caching plus exact attention math is what makes long CBP documents affordable: cached prefixes skip recompute (lesson 17/06), flash attention keeps the math exact while saving memory. When long-context features cost more than modeled, cache hit rates and attention memory — not model choice — are the first suspects. The cache is infrastructure; hit rate is FinOps.
+
 ## Build It
 
 Reconstruct **KV Cache, Flash Attention & Inference Optimization** by following `dot` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
