@@ -39,6 +39,10 @@ flowchart LR
     F --> G["CLS logits"]
 ```
 
+## CBP context: token count prices the image
+
+In the CBP context patch tokens price every vision call: (H/P)×(W/P) tokens per image, so resolution and patch size set cost directly — the same rule as lesson 19/58. Size document images to the smallest resolution the task tolerates before calling; a 4K scan where 1K suffices quadruples the bill for no gain. Count tokens before sending pixels.
+
 ## Build It
 
 The canonical artifact is `code/main.py`. It uses a `(2, 3, 32, 32)` fixture,

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For an NCHW image with H=W=32 and patch_size=8, how many patch tokens does patchify create?",
+      "question": "Higher image resolution improves detail but multiplies tokens and cost. What sets the token count?",
       "options": [
-        "8",
-        "16",
-        "24",
-        "64"
+        "The image file name",
+        "The model's mood",
+        "Fixed at 100 tokens always",
+        "Image area divided by patch area"
       ],
-      "correct": 1,
-      "explanation": "There are 32/8 = 4 patches along each spatial axis, so the sequence contains 4 * 4 = 16 patches before [CLS]."
+      "correct": 3,
+      "explanation": "Patches tile the image. This lesson cuts images into priced tokens."
     },
     {
       "stage": "check",
