@@ -54,7 +54,6 @@ flowchart LR
 
 - Technology Consulting
 - Application Management
-- Products & Value Streams
 - Corporate Functions
 
 

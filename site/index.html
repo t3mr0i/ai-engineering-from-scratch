@@ -32,13 +32,14 @@
        CSS webfont path — robust against CDN path changes, no JS dependency. -->
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/light/style.css">
   <link rel="stylesheet" href="lrn/lrn.css?v=20260831d">
+  <link rel="stylesheet" href="lrn/journey.css?v=20260908a">
   <link rel="stylesheet" href="badges.css?v=20260713a">
   <link rel="stylesheet" href="pan.css?v=20260830a">
   <link rel="stylesheet" href="home.css?v=20260831b">
   <link rel="stylesheet" href="assessment-import.css?v=20260908a">
 </head>
 <body>
-  <a class="skip-link" href="#myLearningPath" data-i18n="skip_learning_home">Skip to your learning</a>
+  <a class="skip-link" href="#journeyCockpit" data-i18n="skip_learning_home">Skip to your learning</a>
   <header class="nav-edge" aria-label="Site navigation">
     <a class="wordmark" href="index.html">
       <img class="wordmark__logo" src="assets/logo/lhind-logo-blue.png" alt="LHIND" />
@@ -104,10 +105,10 @@
     <section class="hero" aria-labelledby="heroTitle">
       <div class="hero__inner">
         <div class="hero__copy">
-          <h1 id="heroTitle">Ready to continue?</h1>
-          <p id="homeHeroIntro">Continue your current course or choose one clear next step below.</p>
+          <h1 id="heroTitle">Your next learning step</h1>
+          <p id="homeHeroIntro">Choose your role, see its target profile, and continue with one clear next step.</p>
         </div>
-        <a id="resumeButton" href="#academyPathsTitle" class="resume-button">
+        <a id="resumeButton" href="#journeyCockpit" class="resume-button">
           <span class="button-text" id="resumeButtonText" data-i18n="home_explore_recommendations">Explore recommendations</span>
           <i class="ph-light ph-arrow-right" aria-hidden="true"></i>
         </a>
@@ -115,59 +116,36 @@
     </section>
 
     <section class="cockpit" id="cockpit" aria-label="Learning dashboard" data-i18n-aria-label="home_dashboard_label">
-      <section id="assessmentImport" data-assessment-import></section>
-
-      <section class="my-learning-path" id="myLearningPath" aria-labelledby="myLearningPathTitle">
-        <div class="my-learning-path__heading">
-          <div>
-            <h2 id="myLearningPathTitle" data-i18n="my_path_title">Your learning path</h2>
-            <p data-i18n="my_path_intro">Your selected path is saved in this browser and always points you to the next useful step.</p>
-          </div>
-          <span class="my-learning-path__saved" id="myLearningPathSaved">
-            <i class="ph-light ph-device-mobile" aria-hidden="true"></i>
-            <span data-i18n="my_path_saved_locally">Saved in this browser</span>
-          </span>
-        </div>
-        <div id="myLearningPathContent"></div>
-      </section>
-
-      <section class="academy-paths" aria-labelledby="academyPathsTitle">
-        <div class="academy-paths__heading">
-          <div>
-            <h2 id="academyPathsTitle" data-i18n="academy_paths_title">Recommended next</h2>
-            <p data-i18n="academy_paths_intro">Three focused options based on your profile and learning depth.</p>
-          </div>
-          <div class="academy-paths__actions">
-            <span id="academyPathCount" aria-live="polite"></span>
-            <button class="academy-paths__toggle" id="academyAllToggle" type="button" aria-pressed="false" data-i18n="academy_paths_show_all">Show all AI trainings</button>
-          </div>
-        </div>
-        <details class="recommendation-settings">
-          <summary>
-            <i class="ph-light ph-sliders-horizontal" aria-hidden="true"></i>
-            <span data-i18n="recommendation_settings_toggle">Adjust recommendations</span>
-            <i class="ph-light ph-caret-down recommendation-settings__chevron" aria-hidden="true"></i>
-          </summary>
-          <div class="recommendation-controls" role="group" aria-label="Choose profile and level" data-i18n-aria-label="recommendation_controls_label">
-            <label class="selector-field">
-              <span class="selector-field__label"><i class="ph-light ph-user-circle" aria-hidden="true"></i> <span data-i18n="role_label">Role</span></span>
+      <section class="journey-cockpit" id="journeyCockpit" aria-label="Your AI learning journey">
+        <div class="journey-cockpit__head">
+          <div class="journey-cockpit__role">
+            <label class="selector-field" for="roleSelect">
+              <span class="selector-field__label"><i class="ph-light ph-user-circle" aria-hidden="true"></i> <span data-i18n="journey_role">Role profile</span></span>
               <select id="roleSelect" aria-label="Choose role" data-i18n-aria-label="role_select_label"></select>
             </label>
-            <label class="selector-field" hidden>
-              <span class="selector-field__label"><i class="ph-light ph-squares-four" aria-hidden="true"></i> <span data-i18n="key_area_label">Key Area</span></span>
-              <select id="keyAreaSelect" aria-label="Choose key area" data-i18n-aria-label="key_area_select_label"></select>
-            </label>
-            <label class="selector-field" hidden>
-              <span class="selector-field__label"><i class="ph-light ph-identification-badge" aria-hidden="true"></i> <span data-i18n="specialization_label">Ausprägung</span></span>
-              <select id="specializationSelect" aria-label="Choose specialization" data-i18n-aria-label="specialization_select_label"></select>
-            </label>
-            <label class="selector-field">
-              <span class="selector-field__label"><i class="ph-light ph-chart-line-up" aria-hidden="true"></i> <span data-i18n="level_label">Level</span></span>
-              <select id="levelSelect" aria-label="Choose level" data-i18n-aria-label="level_select_label"></select>
-            </label>
           </div>
-        </details>
-        <div class="academy-path-list" id="academyPathList"></div>
+
+        </div>
+        <div id="journeyHome"></div>
+      </section>
+
+      <details class="journey-assessment">
+        <summary data-journey-copy="assessmentPanel">Place your current level / connect an assessment</summary>
+        <section id="assessmentImport" data-assessment-import></section>
+      </details>
+
+      <!-- Retained as non-rendered legacy mount points while Academy paths move
+           into the journey engine. They keep the catalog renderer compatible
+           without presenting a second recommendation surface on Home. -->
+      <section class="my-learning-path" id="myLearningPath" data-journey-replaced="true" hidden>
+        <div id="myLearningPathContent"></div>
+      </section>
+      <section class="academy-paths" data-journey-replaced="true" hidden aria-hidden="true">
+        <h2 id="academyPathsTitle">Academy paths</h2>
+        <details class="recommendation-settings"></details>
+        <div id="academyPathList"></div>
+        <span id="academyPathCount"></span>
+        <button id="academyAllToggle" type="button"></button>
       </section>
 
       <section class="learning-tools" aria-labelledby="learningToolsTitle">
@@ -229,6 +207,14 @@
           <p class="course-search__hint" id="searchHint" data-i18n="lrn_search_hint">Matches titles, topics, formats, related terms, and common typos in German and English.</p>
         </form>
 
+        <details class="recommendation-settings">
+          <summary data-i18n="journey_catalog_filters">More catalog filters</summary>
+          <div class="recommendation-controls">
+            <label class="selector-field" hidden><span data-i18n="key_area_label">Key Area</span><select id="keyAreaSelect" aria-label="Choose key area" data-i18n-aria-label="key_area_select_label"></select></label>
+            <label class="selector-field" hidden><span data-i18n="specialization_label">Ausprägung</span><select id="specializationSelect" aria-label="Choose specialization" data-i18n-aria-label="specialization_select_label"></select></label>
+            <label class="selector-field"><span data-i18n="journey_catalog_level">Course level filter</span><select id="levelSelect" aria-label="Course level filter" data-i18n-aria-label="journey_catalog_level"></select></label>
+          </div>
+        </details>
         <div class="catalog-bar" role="group" aria-label="Course filters" data-i18n-aria-label="course_filters_label">
           <div class="seg-control" id="courseFilters" role="group" aria-label="Filter course status" data-i18n-aria-label="course_status_filters_label"></div>
           <button class="filter-reset" type="button" id="resetBtn" aria-label="Reset all filters and selections" data-i18n-aria-label="reset_filters_label" title="Reset all filters and selections" data-i18n-title="reset_filters_label">
@@ -256,9 +242,16 @@
   <script src="lrn/schedule.js?v=20260825a"></script>
   <script src="search.js?v=20260813a"></script>
   <script src="lrn/mastery.js?v=20260830a"></script>
+  <script src="lrn/learning-plan.js?v=20260908a"></script>
+  <script src="lrn/learning-journey.js?v=20260908a"></script>
+  <script src="lrn/journey-state.js?v=20260908a"></script>
+  <script src="lrn/journey-ui.js?v=20260908a"></script>
   <script src="lrn/lrn.js?v=20260908a"></script>
   <script src="lrn/report-sync.js?v=20260830a"></script>
   <script src="pan.js?v=20260908a"></script>
+  <script>
+    if (window.LrnJourneyUI) window.LrnJourneyUI.mount(document.getElementById('journeyHome'));
+  </script>
 
   <!-- Resume from last lesson (localStorage) -->
   <script>
@@ -316,39 +309,19 @@
       function render() {
         const de = (window.SiteLang ? window.SiteLang.get() : 'en') === 'de';
         // Time-of-day greeting (morning / afternoon / evening)
-        const hour = new Date().getHours();
-        let greeting;
-        if (hour < 6 || hour >= 18) {
-          greeting = de ? 'Guten Abend!' : 'Good evening!';
-        } else if (hour < 12) {
-          greeting = de ? 'Guten Morgen!' : 'Good morning!';
-        } else {
-          greeting = de ? 'Guten Nachmittag!' : 'Good afternoon!';
-        }
-        const imported = window.AIFSAssessmentImport && window.AIFSAssessmentImport.load();
-        let activeImport = imported;
-        try { const cockpit = JSON.parse(localStorage.getItem('lhind:lrn-cockpit:v3')); if (cockpit && imported && cockpit.profileId !== imported.profileId) activeImport = null; } catch (e) {}
         const intro = document.getElementById('homeHeroIntro');
-        if (intro) intro.textContent = lessonName
-          ? (de ? 'Setze deinen aktuellen Kurs fort oder wähle unten deinen nächsten Schritt.' : 'Continue your current course or choose your next step below.')
-          : activeImport
-            ? (de ? 'Deine Empfehlungen setzen bei deinem Self-Assessment an. Wähle deinen nächsten Schritt.' : 'Your recommendations start from your self-assessment. Choose your next step.')
-            : imported ? (de ? 'Entdecke Trainings für deine ausgewählte Rolle.' : 'Explore training for your selected role.')
-            : (de ? 'Verbinde dein Self-Assessment und finde Trainings, die zu deinem Kenntnisstand passen.' : 'Connect your self-assessment to find training that fits your existing knowledge.');
-        if (lessonName) {
-          heroTitle.textContent = greeting + (de ? ' Bereit weiterzumachen?' : ' Ready to continue?');
-          resumeButtonText.textContent = de ? `${lessonName} fortsetzen` : `Continue ${lessonName}`;
-          resumeButton.title = resumeButtonText.textContent;
-          resumeButton.setAttribute('aria-label', resumeButtonText.textContent);
-        } else {
-          heroTitle.textContent = greeting + (de ? ' Was möchtest du lernen?' : ' What do you want to learn?');
-          resumeButtonText.removeAttribute('data-i18n');
-          resumeButtonText.textContent = imported ? (de ? 'Empfehlungen ansehen' : 'Explore recommendations') : (de ? 'Self-Assessment verbinden' : 'Connect self-assessment');
-          resumeButton.href = imported ? '#academyPathsTitle' : '#assessmentImport';
-        }
+        if (intro) intro.textContent = de
+          ? 'Wähle deine Rolle, sieh ihr Zielbild und gehe mit einem klaren nächsten Schritt weiter.'
+          : 'Choose your role, see its target profile, and continue with one clear next step.';
+        heroTitle.textContent = de ? 'Dein Weg zum AI-Zielbild' : 'Your path to your AI target';
+        resumeButtonText.removeAttribute('data-i18n');
+        resumeButtonText.textContent = de ? 'Lernreise ansehen' : 'View learning journey';
+        resumeButton.href = '#journeyCockpit';
+        resumeButton.title = resumeButtonText.textContent;
+        resumeButton.setAttribute('aria-label', resumeButtonText.textContent);
       }
 
-      resumeButton.href = lessonName ? resumeHref : '#academyPathsTitle';
+      resumeButton.href = '#journeyCockpit';
       render();
       document.addEventListener('sitelang:change', render);
       document.addEventListener('assessment-import:change', render);

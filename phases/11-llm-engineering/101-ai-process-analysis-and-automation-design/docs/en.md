@@ -123,6 +123,13 @@ Hand off `outputs/skill-process-automation-readiness.md` with the command `pytho
 - [Anthropic — Claude models overview](https://docs.claude.com/en/docs/about-claude/models/overview) — current model capabilities for the transcript analysis and log review use cases described in this lesson.
 - [ACM Queue — Deployments vs. experiments (Sculley et al.)](https://dl.acm.org/doi/10.1145/2668402.2668413) — the original technical debt paper for ML systems; the "hidden feedback loops" and "undeclared consumers" patterns apply directly to pre-automation analysis failures.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Implementing AI Solutions in Business](https://www.datacamp.com/courses/implementing-ai-solutions-in-business) — DataCamp · Acquire · Deepen · Create · 2–3 h · Rollen: Business & Strategy Consulting, Application Management, Project Management & Agility (Academy AI-04, AI-05)
+- [Agentic AI for Business Analysis](https://www.linkedin.com/learning/agentic-ai-for-business-analysis?u=2197772) — LinkedIn Learning · Create · 1,5 h · Rollen: Business & Strategy Consulting (Academy AI-04)
+- [Agentic AI for Business Analysis](https://www.linkedin.com/learning/agentic-ai-for-business-analysis) — LinkedIn Learning · Deepen · 1,5 h · Rollen: Technology Consulting, Leadership (Academy AI-04, AI-07)
+- [Agentic AI for Business Analysis](https://learn.microsoft.com/en-us/training/paths/enhance-autonomous-agents/) — Microsoft Learn · Create · 4 h · Rollen: Application Management (Academy AI-05)
+
 ## Exercises
 
 Use the demo as evidence, not as a ceremony: record what went in, what came out, and why that observation supports the objective.

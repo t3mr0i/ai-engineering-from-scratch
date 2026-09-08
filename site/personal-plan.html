@@ -17,6 +17,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title data-i18n="title_personal_plan">Personal Plan · LHIND AI Learning Catalog</title>
+  <link rel="stylesheet" href="lrn/journey.css?v=20260908b">
   <meta name="description" content="Build and save a personal AI learning plan around one goal, your available time, and existing progress.">
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305164d'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Arial,sans-serif' font-size='14' font-weight='700' fill='%23f8fafc'%3EAI%3C/text%3E%3C/svg%3E">
@@ -66,6 +67,7 @@
       <p data-i18n="personal_plan_page_intro">Shape a focused sequence around one outcome, your available time, and the progress already stored in this browser.</p>
     </header>
 
+    <section id="planJourney" class="journey-slot" aria-label="Your role target and next learning step"></section>
     <section class="tool-page__workspace personal-plan" id="personalPlan" aria-label="Personal learning plan" data-i18n-aria-label="personal_plan_workspace_label">
       <div id="personalPlanApp"></div>
     </section>
@@ -81,6 +83,9 @@
   <script src="skills-progress-evidence.js?v=20260825a"></script>
   <script src="lrn/mastery.js?v=20260830a"></script>
   <script src="lrn/learning-plan.js?v=20260908a"></script>
+  <script src="lrn/learning-journey.js?v=20260908b"></script>
+  <script src="lrn/journey-state.js?v=20260908b"></script>
+  <script src="lrn/journey-ui.js?v=20260908b"></script>
   <script src="lrn/plan-builder.js?v=20260908a"></script>
   <script src="pan.js?v=20260908a"></script>
 </body>

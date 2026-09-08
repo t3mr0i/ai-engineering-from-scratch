@@ -30,7 +30,7 @@
   var COPY = {
     en: {
       eyebrow: "Personal learning plan",
-      title: "Build a plan around your goal.",
+      title: "Make your learning path fit your workday.",
       intro: "Choose a goal and cadence. The plan uses your role, assessment gaps, and local progress, then stays editable before you save it.",
       local: "Stored in this browser",
       goal: "What do you want to be able to do?",
@@ -82,7 +82,7 @@
     },
     de: {
       eyebrow: "Persönlicher Lernplan",
-      title: "Baue einen Plan rund um dein Ziel.",
+      title: "Passe deinen Lernpfad an deinen Arbeitsalltag an.",
       intro: "Wähle Ziel und Rhythmus. Der Plan nutzt Rolle, Assessment-Lücken und lokalen Fortschritt und bleibt vor dem Speichern editierbar.",
       local: "In diesem Browser gespeichert",
       goal: "Was möchtest du anschließend können?",
@@ -119,7 +119,7 @@
       reviewTitle: "Jetzt wiederholen",
       reviewIntro: "Diese Quiz-Konzepte sind vor neuem Stoff fällig.",
       reviewOpen: "Lektion wiederholen",
-      adapted: "Plan anhand deiner neuesten Quiz-Evidenz und deines Fortschritts aktualisiert.",
+      adapted: "Plan anhand deines Assessments, deiner Quiz-Evidenz und deines Fortschritts aktualisiert.",
       assessmentChanged: "Assessment geändert. Erstelle diesen Entwurf neu, um deine neuen Ausgangslevel zu verwenden.",
       undoAdapt: "Automatische Aktualisierung rückgängig machen",
       save: "Plan speichern",
@@ -253,6 +253,7 @@
   }
 
   function reasonFor(step) {
+    if (step.journeyReason) return step.journeyReason;
     var signals = Array.isArray(step.signals) ? step.signals : [];
     var signal = signals.find(function (item) { return item.type === "progress"; }) ||
       signals.find(function (item) { return item.type === "goal_match"; }) ||
@@ -386,6 +387,7 @@
 
   function removeStep(index) {
     if (!draft) return;
+    draft.excludedCourseIds = Array.from(new Set((draft.excludedCourseIds || []).concat(draft.steps[index].courseId)));
     draft.steps = draft.steps.filter(function (_, stepIndex) { return stepIndex !== index; });
     draft.updatedAt = 0;
     recalculatePositions(draft);
@@ -397,7 +399,11 @@
     if (event) event.preventDefault();
     if (!root.LrnLearningPlan || !root.LrnData) return setStatus(t("generatedError"), "error");
     try {
-      draft = root.LrnLearningPlan.buildPlan({
+      draft = root.LrnJourneyState ? root.LrnJourneyState.buildPlan({
+        goal: goalInput.value,
+        durationWeeks: Number(weeksSelect.value),
+        sessionsPerWeek: Number(sessionsSelect.value)
+      }) : root.LrnLearningPlan.buildPlan({
         catalog: root.LrnData,
         capabilityEvidence: root.AIFSCapabilityEvidence || {},
         learner: learnerSnapshot(goalInput.value),
@@ -454,10 +460,15 @@
   }
 
   function adaptSavedPlan() {
+    if (draft && status && status.dataset.state !== "saved") return;
     var current = read(STORE, null);
     if (!current || !Array.isArray(current.steps) || !current.cadence || !root.LrnLearningPlan || !root.LrnData) return;
     try {
-      var next = root.LrnLearningPlan.adaptPlan(current, {
+      var next = root.LrnJourneyState ? root.LrnJourneyState.buildPlan({
+        goal: current.learner && current.learner.goal,
+        durationWeeks: current.cadence.durationWeeks,
+        sessionsPerWeek: current.cadence.sessionsPerWeek
+      }, current) : root.LrnLearningPlan.adaptPlan(current, {
         catalog: root.LrnData,
         capabilityEvidence: root.AIFSCapabilityEvidence || {},
         learner: learnerSnapshot(current.learner && current.learner.goal),
@@ -580,6 +591,8 @@
     if (!root.document) return;
     function run() {
       buildUi();
+      var journeyHost = root.document.getElementById("planJourney");
+      if (journeyHost && root.LrnJourneyUI) root.LrnJourneyUI.mount(journeyHost, { compact: false });
       function refreshAssessment() {
         if (updateAssessmentEvidence) updateAssessmentEvidence();
         if (draft && status && status.dataset.state !== "saved") {

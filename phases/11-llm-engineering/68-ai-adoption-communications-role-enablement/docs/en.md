@@ -104,3 +104,10 @@ Keep the solution auditable: run python3 main.py, save the output, and explain w
 - one concrete update to outputs/plan-adoption-communications.md that applies “Select role-narrative, manager-brief, practice-task, and feedback-channel controls” without hiding uncertainty.
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
+
+## Further Reading
+
+### Recommended trainings (LHIND AI Literacy)
+
+- [Empower your workforce with Microsoft 365 Copilot Use Cases](https://learn.microsoft.com/en-us/training/paths/empower-workforce-copilot-use-cases/) — Microsoft Learn · Deepen · 5 h · Rollen: Corporate Functions (Academy AI-06)
+- [AI for Business Users](https://learn.microsoft.com/de-de/training/paths/ai-fluency/) — Microsoft Learn · Acquire · 4 h · Rollen: Corporate Functions (Academy AI-06)

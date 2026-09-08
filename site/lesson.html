@@ -2331,6 +2331,9 @@
   <script src="lrn/mastery.js?v=20260830a"></script>
   <script src="lrn/report-sync.js?v=20260830a"></script>
   <script src="assessment-import.js?v=20260908a"></script>
+  <script src="lrn/learning-plan.js?v=20260908a"></script>
+  <script src="lrn/learning-journey.js?v=20260908a"></script>
+  <script src="lrn/journey-state.js?v=20260908a"></script>
   <script src="pan.js?v=20260908a"></script>
   <script src="search.js?v=20260813a" defer></script>
   <script src="cmdpalette.js?v=20260813a" defer></script>
@@ -2401,6 +2404,8 @@
       var lessonPath = params.get('path');
       var lrnCourseId = params.get('course') || params.get('lrnCourse') || params.get('courseId');
       var lrnContext = null;
+      document.addEventListener('lrn:journey-change', refreshLessonJourney);
+      document.addEventListener('sitelang:change', refreshLessonJourney);
       // Language of the currently-rendered lesson content, derived from
       // whichever docs/<lang>.md the page actually fetched (see fetchLesson).
       // The article gets this language independently from the surrounding UI,
@@ -5094,13 +5099,27 @@
           nav += '<span class="nav-title">' + escapeHtml(lrnContext.next.title) + '</span>';
           nav += '</a>';
         } else {
-          nav += '<a class="lesson-nav-btn next" href="index.html">';
-          nav += '<span class="nav-label">Course Complete</span>';
-          nav += '<span class="nav-title">Back to Learning Catalog</span>';
+          nav += '<a class="lesson-nav-btn next" id="lessonJourneyNext" href="lrn/course.html?id=' + encodeURIComponent(lrnContext.course.id) + '">';
+          nav += '<span class="nav-label">Review course progress</span>';
+          nav += '<span class="nav-title">Back to ' + escapeHtml(lrnContext.course.title) + '</span>';
           nav += '</a>';
         }
         nav += '</div>';
         return html + nav;
+      }
+
+      function refreshLessonJourney() {
+        var link = document.getElementById('lessonJourneyNext');
+        if (!link || !lrnContext || !window.LrnJourneyState) return;
+        var fresh = buildLrnContext(lrnContext.course.id, lessonPath);
+        if (!fresh || !fresh.total) return;
+        var de = window.SiteLang && window.SiteLang.get() === 'de';
+        var complete = fresh.completed >= fresh.total;
+        var journey = window.LrnJourneyState.snapshot();
+        var next = complete && journey && journey.next && journey.next.courseId !== fresh.course.id ? journey.next : null;
+        link.href = next ? next.href : 'lrn/course.html?id=' + encodeURIComponent(fresh.course.id);
+        link.querySelector('.nav-label').textContent = next ? (de ? 'Nächster Lernschritt' : 'Next learning step') : (de ? 'Kursfortschritt prüfen' : 'Review course progress');
+        link.querySelector('.nav-title').textContent = next ? next.title : fresh.course.title;
       }
 
       function renderAIPanels() {
@@ -5419,6 +5438,8 @@
       }
 
       function renderLrnContinuePanel(container) {
+        var fresh = buildLrnContext(lrnContext.course.id, lessonPath);
+        if (fresh) lrnContext = fresh;
         var panel = document.createElement('div');
         panel.className = 'ai-panel';
 
@@ -5428,14 +5449,23 @@
         if (lrnContext.next) {
           html += '<a class="continue-link" href="' + lrnLessonHref(lrnContext.next.path) + '">Next activity: ' + escapeHtml(lrnContext.next.title) + '</a>';
         } else {
-          html += '<div class="course-finished">All tasks shipped</div>';
+          html += '<div class="course-finished">' + (lrnContext.completed >= lrnContext.total ? 'All learning activities completed' : 'Review the remaining course activities') + '</div>';
         }
         html += '<a class="continue-link" href="lrn/course.html?id=' + encodeURIComponent(lrnContext.course.id) + '">Back to ' + escapeHtml(lrnContext.course.title) + '</a>';
+        if (!lrnContext.next && lrnContext.completed >= lrnContext.total && window.LrnJourneyState && typeof window.LrnJourneyState.snapshot === 'function') {
+          try {
+            var journey = window.LrnJourneyState.snapshot();
+            if (journey && journey.next && journey.next.courseId && journey.next.courseId !== lrnContext.course.id) {
+              html += '<a class="continue-link" href="' + escapeAttr(journey.next.href) + '">' + (window.SiteLang && window.SiteLang.get() === 'de' ? 'Nächster Lernschritt: ' : 'Next learning step: ') + escapeHtml(journey.next.title) + '</a>';
+            }
+          } catch (error) {}
+        }
         html += '</div>';
         html += '</div>';
 
         panel.innerHTML = html;
         container.appendChild(panel);
+        refreshLessonJourney();
       }
 
       function escapeHtml(str) {

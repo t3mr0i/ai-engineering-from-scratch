@@ -132,6 +132,7 @@
     }
   </style>
   <link rel="stylesheet" href="assessment-import.css?v=20260908a">
+  <link rel="stylesheet" href="lrn/journey.css?v=20260908a">
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
@@ -228,6 +229,7 @@
       <h2 style="margin-bottom:6px;" data-i18n="assess_your_path">Your learning path</h2>
       <p style="color:var(--text-muted); margin-bottom:20px;">
         Capabilities below your role's target come first. Each links to the lessons that build it.</p>
+      <div id="assessmentJourney" class="journey-slot" aria-live="polite"></div>
       <div id="pathList"></div>
       <div class="btn-row">
         <button class="btn secondary" id="backToRate" data-i18n="btn_adjust_ratings">← Adjust ratings</button>
@@ -240,13 +242,25 @@
   <script src="assessment-import-ui.js?v=20260908a"></script>
   <script src="data.js?v=20260525a"></script>
   <script src="capabilities.js?v=20260525a"></script>
+  <script src="lrn/data.js?v=20260908a"></script>
+  <script src="lrn/curriculum-map.js?v=20260908a"></script>
+  <script src="progress.js?v=20260908a"></script>
+  <script src="skills-progress-evidence.js?v=20260908a"></script>
+  <script src="lrn/mastery.js?v=20260908a"></script>
+  <script src="lrn/learning-plan.js?v=20260908a"></script>
+  <script src="lrn/learning-journey.js?v=20260908a"></script>
+  <script src="lrn/journey-state.js?v=20260908a"></script>
+  <script src="lrn/journey-ui.js?v=20260908a"></script>
   <script src="learning-visuals.js?v=20260831b"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <script>
     (function () {
       var STORE = 'aifs:assessment';
-      var LEVELS = ['Basic', 'Advanced', 'Expert'];
+      // Canonical LHIND terminology. Legacy labels are accepted only while
+      // reading older saved assessment data.
+      var LEVELS = ['Acquire', 'Deepen', 'Create'];
+      var LEGACY_LEVEL = { Basic: 'Acquire', Advanced: 'Deepen', Expert: 'Create' };
       var phaseById = {};
       if (typeof PHASES !== 'undefined') PHASES.forEach(function (p) { phaseById[p.id] = p; });
 
@@ -287,11 +301,37 @@
         return cut.replace(/[\s.,;:!?]+$/, '') + '…';
       }
 
-      var state = { role: '', ratings: {} }; // ratings: capId -> 'None'|'Basic'|'Advanced'|'Expert'
+      var state = { role: '', ratings: {} }; // ratings: capId -> canonical level
       try { var s = JSON.parse(localStorage.getItem(STORE)); if (s) state = s; } catch (e) {}
       // Legacy migration: dissolved "Products & Value Streams" maps to Corporate Functions.
       if (state.role === 'Products & Value Streams') state.role = 'Corporate Functions';
-      function save() { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} }
+      function save() {
+        state.updatedAt = new Date().toISOString();
+        try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {}
+        try {
+          document.dispatchEvent(new CustomEvent('assessment-change', { detail: state }));
+        } catch (e) {
+          var event = document.createEvent('CustomEvent');
+          event.initCustomEvent('assessment-change', false, false, state);
+          document.dispatchEvent(event);
+        }
+      }
+      function canonicalLevel(value) { return LEGACY_LEVEL[value] || value || 'None'; }
+      function syncCockpitRole(roleName) {
+        var roles = (window.LrnData && window.LrnData.roles) || [];
+        var role = roles.find(function (entry) {
+          return [entry.id, entry.label, entry.name, entry.segment].filter(Boolean).some(function (value) {
+            return String(value).toLowerCase().trim() === String(roleName || '').toLowerCase().trim();
+          });
+        });
+        if (!role) return;
+        try {
+          var key = 'lhind:lrn-cockpit:v3';
+          var cockpit = JSON.parse(localStorage.getItem(key) || '{}');
+          cockpit.profileId = role.id;
+          localStorage.setItem(key, JSON.stringify(cockpit));
+        } catch (e) {}
+      }
 
       function showStep(id) {
         ['step-role', 'step-rate', 'step-result'].forEach(function (sid) {
@@ -310,9 +350,10 @@
         roleSelect.appendChild(o);
       });
       if (state.role) roleSelect.value = state.role;
+      if (state.role) syncCockpitRole(state.role);
       toRate.disabled = !state.role;
       roleSelect.addEventListener('change', function () {
-        state.role = roleSelect.value; toRate.disabled = !state.role; save();
+        state.role = roleSelect.value; toRate.disabled = !state.role; save(); syncCockpitRole(state.role);
       });
       toRate.addEventListener('click', function () { buildRateForm(); showStep('step-rate'); });
 
@@ -330,7 +371,7 @@
             clusterEl.innerHTML = '<div class="cluster-title">' + cap.cluster + '</div>';
             form.appendChild(clusterEl);
           }
-          var target = role.targets[cap.id];
+          var target = canonicalLevel(role.targets[cap.id]);
           var row = document.createElement('div'); row.className = 'cap-row';
 
           var left = document.createElement('div');
@@ -346,7 +387,7 @@
           ['None'].concat(LEVELS).forEach(function (lvl) {
             var b = document.createElement('button');
             b.type = 'button'; b.className = 'level-btn'; b.textContent = lvl;
-            b.setAttribute('aria-pressed', String(state.ratings[cap.id] === lvl));
+            b.setAttribute('aria-pressed', String(Object.prototype.hasOwnProperty.call(state.ratings, cap.id) && canonicalLevel(state.ratings[cap.id]) === lvl));
             b.addEventListener('click', function () {
               state.ratings[cap.id] = lvl; save();
               group.querySelectorAll('.level-btn').forEach(function (x) {
@@ -363,7 +404,10 @@
       document.getElementById('toResult').addEventListener('click', function () { renderResult(); showStep('step-result'); });
 
       // ---- Step 3: result ----
-      function levelVal(lvl) { return lvl === 'Expert' ? 3 : lvl === 'Advanced' ? 2 : lvl === 'Basic' ? 1 : 0; }
+      function levelVal(lvl) {
+        lvl = canonicalLevel(lvl);
+        return lvl === 'Create' ? 3 : lvl === 'Deepen' ? 2 : lvl === 'Acquire' ? 1 : 0;
+      }
 
       // Capabilities are authored in cluster order; rank them by first appearance
       // so the path keeps Foundation → Engineering → … ordering.
@@ -374,7 +418,7 @@
 
       function renderResult() {
         var role = ROLES.find(function (r) { return r.name === state.role; }) || { targets: {} };
-        var lvlName = ['—', 'Basic', 'Advanced', 'Expert'];
+        var lvlName = ['—', 'Acquire', 'Deepen', 'Create'];
 
         // Build the per-capability view once. "required" = role has a target.
         var rows = CAPABILITIES.map(function (cap) {
@@ -441,6 +485,7 @@
         if (!items.length) {
           list.innerHTML = '<p style="color:var(--text-muted)">' + i18nText('assess_no_gaps') + ' <i data-lucide="party-popper" style="width:1em;height:1em;vertical-align:-0.15em"></i></p>';
           if (window.lucide) lucide.createIcons();
+          mountJourney();
           return;
         }
         var lastCluster = null;
@@ -472,6 +517,16 @@
           el.innerHTML = head + body;
           list.appendChild(el);
         });
+        mountJourney();
+      }
+
+      // Keep the assessment result on the same shared journey surface as the
+      // course and skills pages. The assessment itself remains a rating input;
+      // it never promotes competency merely because a result was displayed.
+      function mountJourney() {
+        var host = document.getElementById('assessmentJourney');
+        if (!host || !window.LrnJourneyUI || typeof window.LrnJourneyUI.mount !== 'function') return;
+        window.LrnJourneyUI.mount(host, { compact: true });
       }
 
       document.getElementById('backToRate').addEventListener('click', function () { showStep('step-rate'); });

@@ -59,8 +59,9 @@ window.SITE_I18N = {
   training_catalog_intro: { en: "Search the full catalog or narrow it by learning status.", de: "Durchsuche den vollständigen Katalog oder filtere nach Lernstatus." },
   skills_progress_overline: { en: "Learning progress", de: "Lernfortschritt" },
   skills_progress_title: { en: "Your capability progress", de: "Dein Kompetenzfortschritt" },
-  skills_progress_intro: { en: "Assigned courses move you through Acquire, Deepen, and Create — with every contribution visible.", de: "Zugeordnete Kurse bringen dich durch Acquire, Deepen und Create – jeder Beitrag bleibt nachvollziehbar." },
+  skills_progress_intro: { en: "See your dimension targets and the courses that contribute to them. Course completion and competence evidence are shown separately.", de: "Sieh deine Dimensionsziele und die zugeordneten Kurse. Kursabschluss und Kompetenznachweise werden getrennt dargestellt." },
   skills_progress_towards_target: { en: "towards your role target", de: "auf dem Weg zu deinem Rollenziel" },
+  skills_progress_course_progress: { en: "Course progress towards your role target", de: "Kursfortschritt zum Rollenziel" },
   skills_progress_levels_label: { en: "Capability levels", de: "Kompetenzlevel" },
   skills_progress_sort_label: { en: "Sort by", de: "Sortieren nach" },
   skills_progress_sort_aria: { en: "Sort capabilities", de: "Kompetenzen sortieren" },
@@ -486,5 +487,25 @@ window.SITE_I18N = {
   assessment_path_met: { en: "No additional courses needed for this assessment target", de: "Für dieses Assessment-Ziel sind keine weiteren Kurse nötig" },
   assessment_next_reason: { en: "Based on your assessment: {dimension}, {current} → {next}.", de: "Aus deinem Assessment: {dimension}, {current} → {next}." },
   assessment_group_baseline: { en: "Self-assessment: {current} · Target: {target}", de: "Self-Assessment: {current} · Ziel: {target}" },
-  assessment_course_progress: { en: "Course progress towards your role target", de: "Kursfortschritt zum Rollenziel" }
+  assessment_course_progress: { en: "Course progress towards your role target", de: "Kursfortschritt zum Rollenziel" },
+
+  // Shared role → dimension → level journey (learning-journey.js / journey-ui.js).
+  journey_catalog_filters: { en: "More catalog filters", de: "Weitere Katalogfilter" },
+  journey_catalog_level: { en: "Course level filter", de: "Kursniveau filtern" },
+  journey_title: { en: "Your learning journey", de: "Deine Lernreise" },
+  journey_course_contribution: { en: "Contribution to your target", de: "Beitrag zu deinem Zielbild" },
+  journey_intro: { en: "Your role profile and Self-Assessment point to one next useful step.", de: "Dein Rollenprofil und dein Self-Assessment zeigen dir den nächsten sinnvollen Schritt." },
+  journey_role: { en: "Role profile", de: "Rollenprofil" },
+  journey_current: { en: "Your level", de: "Dein Level" },
+  journey_target: { en: "Target Skill Level", de: "Ziel-Level" },
+  journey_next: { en: "Next learning step", de: "Nächster Lernschritt" },
+  journey_open_course: { en: "Open next course", de: "Nächsten Kurs öffnen" },
+  journey_no_gap: { en: "No open learning gap", de: "Keine offene Kompetenzlücke" },
+  journey_unknown: { en: "Complete your Self-Assessment to get a recommendation.", de: "Führe dein Self-Assessment durch, um eine Empfehlung zu erhalten." },
+  journey_provisional: { en: "Provisional target from your imported assessment", de: "Vorläufiges Ziel aus deinem importierten Assessment" },
+  journey_source_role: { en: "Source: role target", de: "Quelle: Rollenziel" },
+  journey_source_assessment: { en: "Source: Self-Assessment", de: "Quelle: Self-Assessment" },
+  journey_level_acquire: { en: "Acquire", de: "Acquire" },
+  journey_level_deepen: { en: "Deepen", de: "Deepen" },
+  journey_level_create: { en: "Create", de: "Create" }
 };

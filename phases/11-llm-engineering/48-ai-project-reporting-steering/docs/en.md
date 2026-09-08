@@ -50,7 +50,7 @@ flowchart LR
 
 - Project Management & Agility
 - Leadership
-- Products & Value Streams
+- Corporate Functions
 - Business & Strategy Consulting
 
 

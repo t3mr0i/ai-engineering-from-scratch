@@ -48,7 +48,7 @@ flowchart LR
 
 ### Target Roles
 
-- Products & Value Streams
+- Corporate Functions
 - Business & Strategy Consulting
 - Leadership
 

@@ -52,7 +52,7 @@ flowchart LR
 - Leadership
 - Project Management
 - Business & Strategy Consulting
-- Products & Value Streams
+- Corporate Functions
 
 
 ## Use It

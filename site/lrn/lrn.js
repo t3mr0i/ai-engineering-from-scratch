@@ -182,10 +182,21 @@
 
   function saveState() {
     try {
+      var latest = JSON.parse(localStorage.getItem(STORE) || "{}");
+      state.journeyFocus = latest.journeyFocus || null;
       localStorage.setItem(STORE, JSON.stringify(state));
       if (window.LrnReportSync) window.LrnReportSync.sync();
     } catch (error) {
       // Selection persistence is a convenience only. Lesson progress is owned by progress.js / LRN.
+    }
+  }
+
+  function hasSavedProfileSelection() {
+    try {
+      var saved = JSON.parse(localStorage.getItem(STORE));
+      return Boolean(saved && saved.profileId && roleById[saved.profileId]);
+    } catch (error) {
+      return false;
     }
   }
 
@@ -251,7 +262,7 @@
 
     els.roleSelect.addEventListener("change", function () {
       var role = roleById[els.roleSelect.value];
-      if (!role || state.profileId === role.id) return;
+      if (!role || (state.profileId === role.id && hasSavedProfileSelection())) return;
       state.profileId = role.id;
       state.keyAreaId = null;
       state.specializationId = null;
@@ -532,6 +543,7 @@
 
   function renderLearningPath(context) {
     if (!els.myLearningPathContent) return;
+    if (els.myLearningPath && els.myLearningPath.dataset.journeyReplaced === "true") return;
     if (!context.activePath) {
       if (els.myLearningPath) els.myLearningPath.hidden = true;
       return;
@@ -722,6 +734,7 @@
 
   function renderAcademyPaths(context) {
     if (!els.academyPathList) return;
+    if (els.academyPathList.closest("[data-journey-replaced='true']")) return;
 
     var activeLevel = context.activeLevel;
     var visiblePaths = context.visiblePaths;

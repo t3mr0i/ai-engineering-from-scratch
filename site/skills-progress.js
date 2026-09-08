@@ -108,6 +108,12 @@
   }
 
   function mergeCapabilities(catalogCapabilities, detailedCapabilities) {
+    var journey = typeof window !== "undefined" ? window.LrnLearningJourney : null;
+    function canonicalTitle(title) {
+      return journey && typeof journey.canonicalCapabilityTitle === "function"
+        ? journey.canonicalCapabilityTitle(title)
+        : title;
+    }
     var detailById = {};
     (detailedCapabilities || []).forEach(function (capability) {
       detailById[capability.id] = capability;
@@ -117,7 +123,7 @@
       return {
         id: capability.id,
         cluster: capability.cluster || detail.cluster || "",
-        title: capability.title || detail.title || "",
+        title: canonicalTitle(capability.title || detail.title || ""),
         targets: capability.targets || {},
         description: detail.description || "",
         levels: detail.levels || {}
@@ -263,6 +269,13 @@
     var showAll = false;
     var activeCluster = "";
     var cockpitStore = "lhind:lrn-cockpit:v3";
+    var journeyRoot = doc.getElementById("skillsJourney");
+
+    function mountJourney() {
+      var browser = typeof window !== "undefined" ? window : null;
+      if (!journeyRoot || !browser || !browser.LrnJourneyUI || typeof browser.LrnJourneyUI.mount !== "function") return;
+      browser.LrnJourneyUI.mount(journeyRoot, { compact: false });
+    }
 
     function i18n(key, fallback, vars) {
       var dict = (typeof window !== "undefined" && window.SITE_I18N) || {};
@@ -574,6 +587,7 @@
     }
 
     function render() {
+      mountJourney();
       var model = createModel({
         catalogCapabilities: data.capabilities || [],
         detailedCapabilities: detailed,
@@ -585,9 +599,7 @@
         assessmentImport: assessmentImport
       });
       var summaryLabel = doc.querySelector('.skills-progress__summary [data-i18n="skills_progress_towards_target"]');
-      if (summaryLabel) summaryLabel.textContent = model.assessmentImport
-        ? i18n("assessment_course_progress", "Course progress towards your role target")
-        : i18n("skills_progress_towards_target", "towards your role target");
+      if (summaryLabel) summaryLabel.textContent = i18n("skills_progress_course_progress", "Course progress towards your role target");
       if (!model.items.length) {
         section.hidden = true;
         return;

@@ -156,6 +156,10 @@ Hand off `outputs/skill-rag-source-governance.md` with the command `python3 main
 - [DeepEval — RAG evaluation metrics](https://docs.confident-ai.com/docs/metrics-overview) — open-source framework covering faithfulness, contextual recall, and answer relevancy; the tool most commonly used for RAG eval automation in 2026.
 - [Lewis et al., "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks" (2020)](https://arxiv.org/abs/2005.11401) — the original RAG paper; the retrieve-then-generate pattern this course builds on.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Create agents in Microsoft Copilot Studio](https://learn.microsoft.com/en-us/training/paths/create-extend-custom-copilots-microsoft-copilot-studio/) — Microsoft Learn · Create · 5 h · Rollen: Leadership (Academy AI-07)
+
 ## Exercises
 
 Begin with a control run and leave a short receipt: input, output, and the reasoning that connects them to the objective.

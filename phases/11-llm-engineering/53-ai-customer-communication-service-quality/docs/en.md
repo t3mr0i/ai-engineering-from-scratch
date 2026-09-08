@@ -49,7 +49,7 @@ flowchart LR
 ### Target Roles
 
 - Application Management
-- Products & Value Streams
+- Corporate Functions
 - Business & Strategy Consulting
 - Customer-facing Teams
 

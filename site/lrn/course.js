@@ -17,6 +17,7 @@
   var trackByCode = indexBy(data.tracks || [], "code");
 
   var root = document.getElementById("courseRoot");
+  var journeyRoot = document.getElementById("courseJourney");
   var srStatus = document.getElementById("srStatus");
   var course = resolveCourse();
   var academyPath = resolveAcademyPath();
@@ -131,6 +132,17 @@
     return Boolean(placement && placement.mapped && !placement.needsLearning);
   }
 
+  function sharedJourneyNext() {
+    var stateApi = window.LrnJourneyState;
+    if (!stateApi || typeof stateApi.snapshot !== "function") return null;
+    try {
+      var snapshot = stateApi.snapshot();
+      return snapshot && snapshot.next && snapshot.next.href ? snapshot.next : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
   function render() {
     if (academyPath) {
       renderAcademyPath(academyPath);
@@ -150,6 +162,7 @@
     var map = courseMap(course.id);
     var stats = courseProgress(course);
     var nextLesson = nextLessonForCourse(course.id);
+    var journeyNext = sharedJourneyNext();
 
     var intro = document.createElement("section");
     intro.className = "course-intro";
@@ -178,6 +191,11 @@
       var ctaLabel = document.createElement("span");
       ctaLabel.textContent = stats.visitedLessons > 0 ? i18n("course_resume", "Resume") : i18n("course_open_first_task", "Open first task");
       action.append(ctaLabel, lucideIcon("arrow-right"));
+    } else if (journeyNext) {
+      action.href = journeyNext.href;
+      var journeyLabel = document.createElement("span");
+      journeyLabel.textContent = i18n("journey_open_course", "Open next course");
+      action.append(journeyLabel, lucideIcon("arrow-right"));
     } else {
       action.appendChild(lucideIcon("check-circle"));
       var doneLabel = document.createElement("span");
@@ -197,6 +215,17 @@
 
     progress.append(progressLabel, progressMeter(stats.percent, i18nFmt("course_progress_label", { title: course.title }, "Progress {title}")));
     head.append(code, title, summary, progress, action);
+    if (window.LrnJourneyState) {
+      var journeyModel = window.LrnJourneyState.snapshot();
+      var contribution = journeyModel && journeyModel.steps.find(function (step) { return step.courseId === course.id; });
+      if (contribution && contribution.matches.length) {
+        var purpose = document.createElement("p");
+        purpose.className = "course-journey-purpose";
+        purpose.textContent = i18n("journey_course_contribution", "Contribution to your target") + ": " +
+          uniqueValues(contribution.matches.map(function (match) { return match.dimension + " · " + match.capability + " · " + match.targetLevel; })).join("; ");
+        head.appendChild(purpose);
+      }
+    }
 
     var includes = document.createElement("aside");
     includes.className = "course-includes";
@@ -352,7 +381,16 @@
     }
 
     replaceChildren(root, children);
+    mountJourney(course.id);
     refreshIcons();
+  }
+
+  // The journey card is driven by the shared state engine. Course content and
+  // lesson progress remain owned by this page; mounting here only exposes the
+  // next recommended step and never changes competency or completion state.
+  function mountJourney(courseId) {
+    if (!journeyRoot || !window.LrnJourneyUI || typeof window.LrnJourneyUI.mount !== "function") return;
+    window.LrnJourneyUI.mount(journeyRoot, { compact: true, courseId: courseId });
   }
 
   function renderAcademyPath(path) {
@@ -548,6 +586,7 @@
     });
 
     replaceChildren(root, children);
+    mountJourney(path.academyCourse);
     refreshIcons();
   }
 
@@ -742,12 +781,13 @@
   }
 
   // Kurstermine aus catalog.json (window.LrnData.sessions). Die Sektion bleibt
-  // ganz weg, solange für den Kurs nie ein Termin gepflegt wurde — ein leerer
-  // Kasten auf jeder Kursseite wäre nur Rauschen.
+  // On a normal course page the section stays hidden when no date exists. An
+  // explicit Academy handoff may target #courseSessionsTitle, so materialize
+  // the anchor in that case even when the schedule is currently empty.
   function sessionSection(courseItem) {
     if (!window.LrnSchedule) return null;
     var all = window.LrnSchedule.sessions(courseItem.id);
-    if (!all.length) return null;
+    if (!all.length && window.location.hash !== "#courseSessionsTitle") return null;
     var open = window.LrnSchedule.upcoming(courseItem.id);
     var locale = (window.SiteLang ? window.SiteLang.get() : "en") === "de" ? "de-DE" : "en-GB";
 

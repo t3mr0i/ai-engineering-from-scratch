@@ -50,7 +50,6 @@ flowchart LR
 ### Target Roles
 
 - Corporate Functions
-- Products & Value Streams
 - Application Management
 - Business & Strategy Consulting
 
@@ -104,3 +103,9 @@ A complete handoff records python3 main.py, the observed output, and the reasoni
 - one concrete update to outputs/intake-internal-knowledge-assistant.md that applies “Choose controls before indexing internal knowledge” without hiding uncertainty.
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
+
+## Further Reading
+
+### Recommended trainings (LHIND AI Literacy)
+
+- [Create agents in Microsoft Copilot Studio](https://learn.microsoft.com/en-us/training/paths/create-extend-custom-copilots-microsoft-copilot-studio/) — Microsoft Learn · Create · 5 h · Rollen: Leadership (Academy AI-07)

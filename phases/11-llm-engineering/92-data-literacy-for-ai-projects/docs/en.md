@@ -117,6 +117,11 @@ Hand off `outputs/skill-data-readiness-assessment.md` with the command `python3 
 - [ACM FAccT — Datasheets for Datasets (Gebru et al., 2018)](https://dl.acm.org/doi/10.1145/3458723) — the foundational paper defining what provenance documentation should contain; still the reference most practitioners cite.
 - [NIST AI RMF — Govern 1.6 and Map 2.3](https://airc.nist.gov/) — the NIST AI Risk Management Framework sections on data quality and bias in training data; relevant for US federal and regulated-industry projects.
 
+### Recommended trainings (LHIND AI Literacy)
+
+- [Data-Driven Decision Making for Business](https://www.datacamp.com/courses/data-driven-decision-making-for-business) — DataCamp · Deepen · 2 h · Rollen: Application Management, Corporate Functions (Academy AI-07)
+- [Data Strategy](https://www.datacamp.com/courses/data-strategy) — DataCamp · Create · 4 h · Rollen: Technology Consulting, Business & Strategy Consulting (Academy AI-01, AI-04)
+
 ## Exercises
 
 Use the demo as evidence, not as a ceremony: record what went in, what came out, and why that observation supports the objective.

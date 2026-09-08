@@ -49,7 +49,7 @@ flowchart LR
 ### Target Roles
 
 - Technology Consulting
-- Products & Value Streams
+- Corporate Functions
 - Application Management
 - Leadership
 

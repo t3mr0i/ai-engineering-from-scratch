@@ -49,7 +49,7 @@ flowchart LR
 
 ### Target Roles
 
-- Products & Value Streams
+- Corporate Functions
 - Product Owners
 - Project Management & Agility
 - Business Consulting
