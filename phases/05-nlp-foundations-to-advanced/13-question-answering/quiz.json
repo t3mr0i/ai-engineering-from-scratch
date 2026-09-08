@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does normalize(\"The June 29, 2007\") remove before comparison?",
+      "question": "A correct answer fails evaluation over punctuation and casing differences. What fixes the comparison?",
       "options": [
-        "Case differences, articles, punctuation, and extra whitespace",
-        "All digits and every month name",
-        "Only the final answer token",
-        "The meaning of the sentence through stemming"
+        "Stricter exact string matching",
+        "Longer reference answers",
+        "Human grading of every answer",
+        "Normalizing both sides before comparing"
       ],
-      "correct": 0,
-      "explanation": "normalize lowercases, removes a/an/the, replaces non-word characters with spaces, and collapses whitespace."
+      "correct": 3,
+      "explanation": "Formatting is not correctness. This lesson normalizes answers before judging them."
     },
     {
       "stage": "check",

@@ -39,6 +39,10 @@ The trend in 2026 is hybrid: retrieve the best few passages, then prompt a gener
 
 
 
+## CBP context: normalize before comparing answers
+
+In the CBP context answer equivalence needs normalization — case, articles, punctuation, whitespace — before exact match, or correct answers fail evals on formatting. "June 29, 2007" and "june 29 2007" are the same answer; an eval that disagrees measures string code, not QA quality. Normalize predictions and references identically, then judge faithfulness against sources separately.
+
 ## Build It
 
 Reconstruct **Question Answering Systems** by following `tokenize` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
