@@ -19,6 +19,10 @@
 
 `code/ensembles.py` is a NumPy implementation. `make_classification_data` returns labels `-1` and `1`; `make_regression_data` returns a nonlinear continuous target. `DecisionStump.fit` scans each feature’s unique thresholds under a weight vector. `AdaBoostScratch` stores one stump and alpha per round, while `SimpleRegressionTree` recursively chooses the largest variance reduction. Classifier fits reject `0/1` labels, non-finite or mismatched arrays, and non-positive estimator/depth parameters; prediction before fitting raises `RuntimeError`.
 
+## CBP context: average samples for critical calls
+
+In the CBP context ensembling appears as self-consistency: sample critical classifications several times and take the majority, trading multiplied cost for reduced variance. Reserve it for high-stakes calls (moderation, triage escalations) where a single-sample error costs more than the extra tokens. Averaging cannot fix shared bias — diverse prompts or models diversify, repeats merely stabilize.
+
 ## Build It
 
 Run `python3 main.py` for a bounded 160-row AdaBoost fixture. The full source demos are available by running `python3 ensembles.py`, but the canonical path intentionally reports only a quick train/test comparison. For a hand check, a uniform weight vector sums to one before the stump fit; after a round, the AdaBoost weights are renormalized and `alpha = 0.5 * log((1-error)/error)`.
