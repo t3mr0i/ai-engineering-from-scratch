@@ -71,6 +71,10 @@ Same actor-critic structure as A2C. Three coefficients, usually `c_v = 0.5`, `c_
 
 
 
+## CBP context: stable updates behind RLHF pipelines
+
+In the CBP context PPO's clipped updates plus old-versus-new comparison are the stability machinery inside consumed RLHF pipelines: steps stay bounded, behavior policy anchors the new one, advantage estimates credit actions fairly. When a fine-tune oscillates or collapses, clipping and trust regions are on the diagnostic list. Stability is engineered per update, not hoped per run.
+
 ## Build It
 
 Reconstruct **Proximal Policy Optimization (PPO)** by following `reset` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.

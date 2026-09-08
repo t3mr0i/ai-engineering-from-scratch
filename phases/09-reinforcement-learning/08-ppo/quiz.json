@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does collect_rollout store so PPO can compare the new policy with the behavior policy?",
+      "question": "Policy updates overshoot and collapse training repeatedly. What bounds each step safely?",
       "options": [
-        "Only terminal states and their rewards",
-        "A copy of the target network for every environment",
-        "Each transition's old value estimate and log probability of the sampled action",
-        "A sorted list of all legal actions, with no sampled action"
+        "Bigger steps to escape faster",
+        "No updates after the first",
+        "Random step sizes",
+        "Clipped ratios anchoring new to behavior policy"
       ],
-      "correct": 2,
-      "explanation": "Each record stores v_old and log_pi_old alongside x, a, r, and done; these are needed for GAE and the PPO ratio."
+      "correct": 3,
+      "explanation": "Unbounded steps collapse. This lesson clips updates against the behavior policy."
     },
     {
       "stage": "check",
