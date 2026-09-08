@@ -182,6 +182,10 @@ Llama 3 deliberately violates the Chinchilla law. Meta found that overtraining o
 
 
 
+## CBP context: stream corpora, version datasets
+
+In the CBP context training-scale corpora stream out-of-core with deterministic shuffling and versioned snapshots — the same hygiene eval corpora deserve at CBP scale: reproducible slices, checksummed shards, documented provenance. Memory-sized thinking ("load it all") fails at corpus scale; streaming with receipts scales to any size. Pipeline discipline transfers whole from training data to eval data.
+
 ## Build It
 
 Reconstruct **Data Pipelines for Pre-Training** by following `clean_text` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
