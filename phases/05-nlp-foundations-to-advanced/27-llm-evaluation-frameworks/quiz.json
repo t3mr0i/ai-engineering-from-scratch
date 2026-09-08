@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does faithfulness score one answer sentence in the toy evaluator?",
+      "question": "An answer mixes supported and invented sentences fluently. How should faithfulness be scored?",
       "options": [
-        "It counts the sentence as supported when at least half of its non-stopword tokens occur in the context",
-        "It checks whether the answer has the same number of characters as the context",
-        "It compares only the answer length with the question length",
-        "It gives one point whenever the answer contains a period"
+        "One score for the whole answer",
+        "By answer length alone",
+        "By fluency of the prose",
+        "Per sentence against the retrieved context"
       ],
-      "correct": 0,
-      "explanation": "For each claim, faithfulness computes context-token overlap and accepts it when overlap/claim-token count is at least 0.5."
+      "correct": 3,
+      "explanation": "Mixed answers need sentence verdicts. This lesson scores faithfulness claim by claim."
     },
     {
       "stage": "check",

@@ -430,6 +430,10 @@ print(f"G-Eval Correctness: {g:.2f}")
 print(f"\nAverage: {(faith + rel + cp + cr + g) / 5:.2f}")
 ```
 
+## CBP context: frameworks run in the pipeline
+
+In the CBP context RAGAS-style frameworks score faithfulness per sentence against retrieved context in CI — supported claims pass, the rest fail the build. Pick the framework that fits the stack, but the discipline is fixed: sentence-level grounding measured on CBP cases, judges versioned with prompts, regressions blocking merges. Framework choice is preference; measurement is obligation.
+
 ## Build It
 
 Reconstruct **LLM Evaluation — RAGAS, DeepEval, G-Eval** by following `call` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
