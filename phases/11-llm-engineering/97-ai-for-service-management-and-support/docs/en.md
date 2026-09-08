@@ -114,6 +114,10 @@ Call `Intent` from a small caller with a graph with edges (0,1) and (1,2). Compa
 
 Hand off `outputs/skill-service-ai-pipeline.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: pipeline, not classifier
+
+In the CBP context service AI is a pipeline — extract decision-relevant fields (intent, version, urgency, history), verify KB coverage for that combination, draft with sources, hand off structured context on escalation. Triage confidence without completeness reopens tickets; articles procedurally wrong for the customer's version waste the contact. Measure re-open rate, not classification accuracy, as the quality signal.
+
 ## Further Reading
 
 - [ITIL 4 Foundation — IT Service Management](https://www.axelos.com/certifications/itil-service-management/itil-4-foundation) — the standard framework for service management; the "incident", "problem", and "knowledge" processes that AI augments.

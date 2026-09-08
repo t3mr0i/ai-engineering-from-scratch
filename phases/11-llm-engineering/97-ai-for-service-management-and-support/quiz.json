@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does extract_fields return for the Salesforce v3 billing follow-up ticket in TICKETS?",
+      "question": "Triage routes confidently to the wrong queue and answers cite articles wrong for the customer's version. What is the deeper fix?",
       "options": [
-        "BILLING intent, product salesforce, version v3, prior_contact=True, and full confidence",
-        "ACCESS intent, no product, no version, and prior_contact=False",
-        "BREAK_FIX intent, product grafana, version v2, and urgency_p1=True",
-        "UNKNOWN intent because a follow-up marker suppresses keyword extraction"
+        "A bigger classifier on subject lines",
+        "More articles in the knowledge base",
+        "Faster first responses regardless of fit",
+        "A pipeline: extract fields, verify coverage, hand off structured"
       ],
-      "correct": 0,
-      "explanation": "The ticket contains invoice and charge terms, Salesforce, v3, and the Re:/Reopening markers. All three completeness fields are filled, so confidence reaches 1.0 and prior_contact is true."
+      "correct": 3,
+      "explanation": "Failures live at stage boundaries, not just the model. This lesson builds the service pipeline end to end."
     },
     {
       "stage": "check",
