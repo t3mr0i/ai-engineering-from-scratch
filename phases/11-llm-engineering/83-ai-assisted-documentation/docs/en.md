@@ -119,6 +119,10 @@ Call `GroundingStatus` from a small caller with the text "red fox". Compare its 
 
 Hand off `outputs/skill-doc-grounding-checklist.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: every claim traces to an artifact
+
+In the CBP context generated documentation grounds every non-trivial claim at an artifact id — code, ticket, decision record — checked mechanically, not by reviewer vibes. Drift (renamed parameters, vanished sources) fails the grounding check instead of hiding in fluent prose. Undocumented systems are bad; ungrounded documentation is worse, because it looks maintained.
+
 ## Further Reading
 
 - [Diátaxis documentation framework](https://diataxis.fr/) — the canonical framework for documentation types (tutorials, how-to guides, reference, explanation); source grounding requirements differ by type.

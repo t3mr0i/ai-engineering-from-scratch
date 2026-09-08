@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "When does match_claims mark a documentation claim as GROUNDED?",
+      "question": "A runbook step references a parameter renamed six months ago, but the prose reads perfectly. What check catches that?",
       "options": [
-        "Whenever the claim sounds plausible to a reviewer",
-        "When a model has already written the claim in a previous draft",
-        "When at least one artifact keyword appears in the claim and identifies a source artifact",
-        "Only when every word in the claim appears in one artifact"
+        "Trust in fluent prose",
+        "Longer review meetings",
+        "More documentation volume",
+        "Claim-level grounding against source artifacts"
       ],
-      "correct": 2,
-      "explanation": "The matcher uses an intentionally simple explicit-evidence rule: the first artifact with any matching keyword marks the claim GROUNDED and records its artifact_id."
+      "correct": 3,
+      "explanation": "Fluency masks source drift. This lesson grounds every claim at an artifact before trusting the document."
     },
     {
       "stage": "check",
