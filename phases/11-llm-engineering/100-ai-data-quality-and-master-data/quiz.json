@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which dimension has the largest weight in DomainProfile.weighted_score?",
+      "question": "A pipeline fails softly for weeks: plausible but wrong context from duplicated records, with evals sharing the same bias. Where should it have been caught?",
       "options": [
-        "Uniqueness, weighted 0.45 because duplicate master records are especially harmful",
-        "Completeness, weighted 0.50 because null fields dominate every workflow",
-        "Timeliness, weighted 0.45 because stale records are always blocking",
-        "All three dimensions are weighted equally at one third"
+        "In model tuning after launch",
+        "In bigger eval datasets later",
+        "Never; soft failures are unavoidable",
+        "In a per-use-case data assessment before building"
       ],
-      "correct": 0,
-      "explanation": "WEIGHTS assigns 0.30 to completeness, 0.45 to uniqueness, and 0.25 to timeliness. The scorer deliberately gives duplicate-record risk the greatest influence."
+      "correct": 3,
+      "explanation": "Bad data fails softly and jointly with biased evals. This lesson assesses quality per use case before the build."
     },
     {
       "stage": "check",

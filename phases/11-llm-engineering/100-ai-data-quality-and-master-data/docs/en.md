@@ -112,6 +112,10 @@ Call `Criticality` from a small caller with the smallest valid record {"id": 1}.
 
 Hand off `outputs/skill-data-quality-assessment-checklist.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: assess per use case before building
+
+In the CBP context data quality is assessed per use case before the pipeline exists: duplicates hurt most (majority variants reproduce confidently), then completeness, then timeliness — weighted by downstream blast radius per master-data domain. Eval data sharing the training bias fails together with it; assess both. The highest-leverage consulting intervention is the assessment that stops a doomed build, not the tuning that follows it.
+
 ## Further Reading
 
 - [DAMA International — DMBOK2 (Data Management Body of Knowledge)](https://www.dama.org/cpages/body-of-knowledge) — the canonical reference for data quality dimensions, master data management, and data governance frameworks.
