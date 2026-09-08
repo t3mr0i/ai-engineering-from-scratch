@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "On the initial failing turn, what does JsonScaffold.step do in this toy repository?",
+      "question": "A coding agent edits files before ever running the failing tests. What loop order fixes that?",
       "options": [
-        "It edits the first failing file and returns a JSON edit action",
-        "It rewrites every file in one Python snippet",
-        "It runs no tests before editing",
-        "It changes the model's test expectations"
+        "Edit more files faster",
+        "Skip tests to save time",
+        "Trust edits without verification",
+        "Reproduce, fix boundedly, re-run green"
       ],
-      "correct": 0,
-      "explanation": "step runs the deterministic tests, applies the first available per-path FIXES entry, and returns a JSON edit action naming the path."
+      "correct": 3,
+      "explanation": "Edits without failing tests are guesses. This lesson scaffolds test-first agent loops."
     },
     {
       "stage": "check",

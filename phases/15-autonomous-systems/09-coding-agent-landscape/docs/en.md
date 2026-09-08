@@ -75,6 +75,10 @@ Implication for choosing an agent: run a Pro-like subset of your own bug backlog
 
 
 
+## CBP context: tests first, edits second
+
+In the CBP context coding agents on CBP repos run tests before editing: reproduce the failure, apply the bounded fix, re-run green — the scaffold discipline from lesson 19/01 with JSON action records per step. Agents that edit before testing generate diffs, not fixes. Landscape knowledge (which agent for which repo shape) matters less than this loop order, which matters always.
+
 ## Build It
 
 Reconstruct **The Autonomous Coding Agent Landscape (2026)** by following `add` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.
