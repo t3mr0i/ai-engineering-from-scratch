@@ -102,6 +102,10 @@ The shape of the mock is what matters, not the data. In production you swap the 
 
 
 
+## CBP context: expand CBP queries, measure the gain
+
+In the CBP context query rewriting bridges the vocabulary gap between users and documents: expand with product names, synonyms, and ticket jargon, or retrieve against a hypothetical answer's vector when the question words match nothing. Gate every rewrite on measured retrieval gain — rewrites cost model calls and can drift the intent. Log original plus rewritten queries so failures debug to the rewrite, not to the corpus.
+
 ## Build It
 
 Reconstruct **Query Rewriting: HyDE, Multi-Query, and Decomposition** by following `tokenize` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
