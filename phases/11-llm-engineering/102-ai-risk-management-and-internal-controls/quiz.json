@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which level does classify_output assign when regulatory_exposure=True but a human review still precedes action?",
+      "question": "A feature is 99.1% accurate, but nobody can say who approved it, what risk level it holds, or what review precedes its output. What is missing?",
       "options": [
-        "L3, because regulatory exposure is a high-stakes trigger that review does not downgrade",
-        "L1, because a human decision is required before the output is used",
-        "L2, because financial and regulatory attributes are treated identically",
-        "L0, because the output never acts automatically"
+        "More accuracy above 99.1%",
+        "A faster model version",
+        "Trust in high accuracy alone",
+        "Owner, consequence level, control, and control evidence"
       ],
-      "correct": 0,
-      "explanation": "classify_output checks irreversible or regulatory exposure first. Either flag returns L3, so a human gate does not turn a regulatory consequence into an operational one."
+      "correct": 3,
+      "explanation": "Accuracy without auditability fails procurement and incident review. This lesson names owner, level, control, and evidence."
     },
     {
       "stage": "check",

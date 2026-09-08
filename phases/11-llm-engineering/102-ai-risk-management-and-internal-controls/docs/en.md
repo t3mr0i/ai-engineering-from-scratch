@@ -142,6 +142,10 @@ Call `Level` from a small caller with the demo’s smallest built-in fixture. Co
 
 Hand off `outputs/skill-ai-risk-controls-checklist.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: consequence level, owner, control, evidence
+
+In the CBP context every AI output carries its consequence level with named risk owner, operating control, and evidence the control ran — regulatory exposure stays high-stakes regardless of human review presence. Procurement in regulated industries rejects features without evidence packages; 99.1% accuracy without them is still unauditable. The four answers precede deployment, not the incident review.
+
 ## Further Reading
 
 - [NIST AI Risk Management Framework 1.0](https://airc.nist.gov/) — the GOVERN, MAP, MEASURE, MANAGE functions; profiles and playbooks.
