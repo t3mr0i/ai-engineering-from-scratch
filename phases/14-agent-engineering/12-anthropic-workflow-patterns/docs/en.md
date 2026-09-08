@@ -74,6 +74,10 @@ Call `ScriptedLLM` from a small caller with the text "red fox". Compare its resu
 
 Hand off `outputs/skill-workflow-picker.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: Java workflow first, agent when earned
+
+In the CBP context this lesson is the license to stay simple: a service method with a loop, explicit state, and tests beats a framework whose abstractions fight the problem shape — the same rule as lesson 11/17. Reach for prompt chaining, routing, or parallelization as plain code paths you own; reserve full agent autonomy for open-ended work where the model must direct its own steps. Every added layer must earn its cost in measured reliability on CBP traffic, and the failure modes must stay explainable to the team on call.
+
 ## Further Reading
 
 - [Anthropic, Building Effective Agents (Dec 2024)](https://www.anthropic.com/research/building-effective-agents) — the five workflow patterns
