@@ -180,6 +180,10 @@ Anthropic's 2022 paper trained a 52B reward model on 22,000 comparisons. Larger 
 
 
 
+## CBP context: CBP preferences train helpfulness
+
+In the CBP context helpfulness preferences come from pairwise CBP judgments — which of two answers better serves the ticket — collected with the same care as evals (lessons 19/40, 09/09). Reward modeling turns comparisons into signal; PPO-style pipelines consume it. Rater disagreement reveals task ambiguity worth resolving before training, not noise to average away.
+
 ## Build It
 
 Reconstruct **RLHF: Reward Model + PPO** by following `RewardModel` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
