@@ -63,6 +63,10 @@ Three terms: policy-gradient loss, value regression, entropy bonus. `c_v ~ 0.5`,
 
 
 
+## CBP context: proposers need evaluators
+
+In the CBP context the actor-critic split mirrors builder-reviewer discipline (lesson 14/39): the actor proposes actions, the critic judges states — separate weights, separate roles, lower variance together. Any system where one component both acts and grades itself inherits the bias this split removes. Propose and evaluate separately, in training and in review pipelines alike.
+
 ## Build It
 
 Reconstruct **Actor-Critic — A2C and A3C** by following `reset` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

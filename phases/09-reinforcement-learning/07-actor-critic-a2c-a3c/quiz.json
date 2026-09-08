@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does value(w, x) compute for the critic in this lesson?",
+      "question": "One component both acts and grades its own actions. What structural fix reduces bias and variance?",
       "options": [
-        "The dot product of critic weights w and one-hot state features x",
-        "A softmax distribution over the four actions",
-        "The maximum reward in the current trajectory",
-        "The squared distance between actor logits and the terminal state"
+        "Bigger single components",
+        "Faster actions without grades",
+        "No evaluation at all",
+        "Separate actor proposing from critic evaluating"
       ],
-      "correct": 0,
-      "explanation": "value returns sum(wj*xj), a linear state-value estimate; the actor uses separate logits and a softmax."
+      "correct": 3,
+      "explanation": "Self-grading inherits bias. This lesson splits acting from state evaluation."
     },
     {
       "stage": "check",
