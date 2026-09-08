@@ -98,6 +98,10 @@ Copy the `ProjectTask` shape into a small caller and replace only the fallback c
 
 Use `outputs/skill-copilot-task-router.md` as the project handoff template. Ship five linked artifacts: the bounded brief, repository-context packet, annotated diff review, captured verification output, and pull-request handoff with residual risks and a human owner. Another engineer should be able to reproduce the checks without reading this lesson.
 
+## CBP context: climb the ladder with contracts
+
+In the CBP context each Copilot rung carries its blast radius and review obligation: autocomplete gets a glance, agent mode gets the scope contract plus CI verification, unattended issue-to-PR runs get budgets, sandboxes, and branch policies. Never approve a 400-line diff you do not understand under deadline pressure — the review you skip is the bug you ship. Feed each rung its context deliberately; verification skipped is verification owed with interest.
+
 ## Further Reading
 
 - [GitHub Docs — Copilot agent mode](https://docs.github.com/en/copilot) — the in-IDE plan/edit/run loop and how to drive it.
