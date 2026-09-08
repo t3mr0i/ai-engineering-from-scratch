@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which local format is singled out for serving one base model with many LoRA adapters in vLLM?",
+      "question": "A 70B model needs 140 GB in full precision, but only one GPU is available. What is the principled way to fit it?",
       "options": [
-        "GPTQ-Int4 with Marlin",
-        "GGUF Q4_K_M in llama.cpp",
-        "FP8 with no adapter support",
-        "BF16 baseline"
+        "Delete half the layers and hope",
+        "Serve it across ten CPUs instead",
+        "Lower precision per the engine's supported formats, then re-evaluate",
+        "Truncate every answer to save memory"
       ],
-      "correct": 0,
-      "explanation": "The GPTQ-Int4 + Marlin row notes multi-LoRA support; the lesson uses that workload as GPTQ's distinctive production advantage."
+      "correct": 2,
+      "explanation": "Quantization trades precision for memory with format and engine constraints. This lesson picks by stack and proves by eval."
     },
     {
       "stage": "check",

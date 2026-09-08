@@ -110,6 +110,10 @@ Call `Format` from a small caller with the demo’s smallest built-in fixture. C
 
 Hand off `outputs/skill-quantization-picker.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: pick by stack, prove by eval
+
+In the CBP context quantization is chosen by the serving stack LCAG runs and proven on the CBP eval set — never copied from another team's blog post. Match the format to the engine (GPTQ multi-LoRA where adapters multiply, FP8 where the hardware supports it), re-run accuracy and reasoning evals after every precision change, and keep the full-precision baseline in the pipeline for regression comparison. Memory saved is only savings if the answers still pass.
+
 ## Further Reading
 
 - [VRLA Tech — LLM Quantization 2026](https://vrlatech.com/llm-quantization-explained-int4-int8-fp8-awq-and-gptq-in-2026/) — comparative benchmarks.
