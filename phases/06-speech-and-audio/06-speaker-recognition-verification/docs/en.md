@@ -59,6 +59,10 @@ The metric is **EER** — Equal Error Rate. Set your decision threshold so False
 
 
 
+## CBP context: biometrics need basis plus consent
+
+In the CBP context speaker verification is biometric processing: explicit legal basis plus consent, calibrated thresholds measured on CBP voices, and never the sole authentication factor. False accepts open doors; false rejects lock out legitimate users — both rates reported, both owned. Voice biometrics without a documented basis is a prohibited practice wearing a feature flag.
+
 ## Build It
 
 Reconstruct **Speaker Recognition & Verification** by following `tone_mix` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

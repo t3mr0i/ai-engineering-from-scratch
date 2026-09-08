@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What dimension does embed_mfcc_stats return with 13 MFCC coefficients?",
+      "question": "Voice verification gates building access with uncalibrated thresholds and no documented basis. What is missing?",
       "options": [
-        "40",
-        "13",
-        "26",
-        "52"
+        "Louder microphones",
+        "More voice samples stored forever",
+        "Trust in default thresholds",
+        "Legal basis, consent, and calibrated error rates"
       ],
-      "correct": 2,
-      "explanation": "It concatenates the per-coefficient mean and standard deviation, yielding 13+13 values before normalization."
+      "correct": 3,
+      "explanation": "Biometrics need basis and measured errors. This lesson verifies speakers with calibrated thresholds."
     },
     {
       "stage": "check",
