@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What tag does predict_mft use for a token it never saw during training?",
+      "question": "Document chunks split mid-sentence and retrieval returns fragments. What boundary should chunking respect?",
       "options": [
-        "The globally most frequent tag returned as default_tag",
-        "The tag of the previous token in the sentence",
-        "A random tag from the training vocabulary",
-        "An empty string that marks a parse boundary"
+        "Fixed character counts only",
+        "Random split points",
+        "Whole documents as one chunk",
+        "Grammatical structure: sentences and clauses"
       ],
-      "correct": 0,
-      "explanation": "train_mft counts all tags and returns all_tags.most_common(1)[0][0] as the unknown-word fallback."
+      "correct": 3,
+      "explanation": "Meaning breaks at syntax. This lesson tags structure that chunking should respect."
     },
     {
       "stage": "check",

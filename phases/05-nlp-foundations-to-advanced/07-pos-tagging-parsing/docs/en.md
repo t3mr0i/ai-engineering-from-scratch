@@ -50,6 +50,10 @@ at is prep of running
 
 
 
+## CBP context: structure serves chunking
+
+In the CBP context grammatical structure serves chunking and extraction: sentence and clause boundaries split documents where meaning breaks, not mid-thought — retrieval chunks respect syntax. Unknown words fall back to most-frequent defaults, another reason to evaluate on CBP German with its compounds and cases. Parse for structure that downstream stages consume, never for its own sake.
+
 ## Build It
 
 Reconstruct **POS Tagging and Syntactic Parsing** by following `train_mft` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
