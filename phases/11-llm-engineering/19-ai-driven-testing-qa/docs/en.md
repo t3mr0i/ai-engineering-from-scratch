@@ -111,6 +111,10 @@ A useful submission records python3 main.py, the observed output, and the conclu
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
+## CBP context: risk decides what runs in the pipeline
+
+In the CBP context AI-generated tests land in the same pipeline as human ones: JUnit suites plus eval cases, reviewed like generated code, gated on the risk model from this lesson — invoice logic and date handling get property tests and golden cases, help-text typos get a glance. Generated tests that only check happy paths are coverage vanity; the risk matrix decides what blocks the merge. Expand ideas with the model, weight risks as engineers.
+
 ## Further Reading
 
 ### Recommended trainings (LHIND AI Literacy)
