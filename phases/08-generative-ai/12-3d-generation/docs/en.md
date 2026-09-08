@@ -69,6 +69,10 @@ Neural Radiance Field (Mildenhall et al., 2020). A tiny MLP takes `(x, y, z, vie
 
 
 
+## CBP context: smooth assets via services
+
+In the CBP context 3D asset generation (product views, digital twins, training scenes) runs through specialized services with smooth-structure priors — blobs before details — reviewed against the brief like any deliverable. Understand resolution and smoothness knobs to brief vendors precisely; generate nothing in-house that a service covers. Assets ship reviewed, not just rendered.
+
 ## Build It
 
 Reconstruct **3D Generation** by following `make_target` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

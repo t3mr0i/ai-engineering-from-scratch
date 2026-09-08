@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What target does make_target(size=12) place in the toy image grid?",
+      "question": "A 3D asset needs smooth coherent structure, not scattered points. What should generation build first?",
       "options": [
-        "One constant value at every pixel",
-        "A checkerboard with exactly 12 alternating rows",
-        "A bright Gaussian-like blob near (3,3) plus a dimmer blob near (8,8)",
-        "A random point cloud with no smooth structure"
+        "Random disconnected points",
+        "Maximum detail everywhere at once",
+        "No structure, pure noise",
+        "Smooth blobs refined progressively"
       ],
-      "correct": 2,
-      "explanation": "The target adds exp(-d1) around (3,3) and 0.5*exp(-d2) around (8,8), producing two smooth blobs."
+      "correct": 3,
+      "explanation": "Coherence precedes detail. This lesson generates smooth 3D structure first."
     },
     {
       "stage": "check",
