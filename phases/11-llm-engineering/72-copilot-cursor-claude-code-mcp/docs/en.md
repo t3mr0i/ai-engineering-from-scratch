@@ -92,6 +92,10 @@ Call `Tool` from a small caller with the demo’s smallest built-in fixture. Com
 
 Hand off `outputs/skill-mcp-ide-wiring.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: choose by location, connect by MCP
+
+In the CBP context assistant choice follows where the work lives — web flow, editor, or terminal/CI — while context flows through CBP MCP servers (Boards, Repos, Search) regardless of surface. The transferable investment is the servers and their governance, not the editor preference; tools churn monthly, the context layer compounds. Evaluate a new assistant on what it reaches, not on its feature checklist.
+
 ## Further Reading
 
 - [Model Context Protocol — Specification](https://modelcontextprotocol.io/) — the shared protocol all three tools speak.
