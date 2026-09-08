@@ -114,6 +114,10 @@ python3 -m unittest code/test_main.py
 | FFN expansion | The feed-forward layer widens to `4 * hidden` before contracting |
 | CLS pooling | Use the first token's final hidden state as the image summary |
 
+## CBP context: same residuals, new modality
+
+In the CBP context the vision transformer needs no new mental model: the stabilizing pair from lesson 19/34 — normalize before the heavy step, add the input back after — carries over unchanged to stacked vision blocks. Read vision model cards with the same lens as language ones (depth, width, normalization placement), and evaluate on CBP images rather than leaderboard photos. Modality changes the input; engineering discipline does not change.
+
 ## Build It
 
 Reconstruct **Vision Transformer Encoder** by following `ViTConfig` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
