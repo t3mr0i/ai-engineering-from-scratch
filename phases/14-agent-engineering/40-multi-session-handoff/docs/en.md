@@ -89,6 +89,10 @@ Call `WorkbenchSnapshot` from a small caller with the demo’s smallest built-in
 
 Hand off `outputs/skill-handoff-generator.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: the handoff packet is generated, not remembered
+
+In the CBP context every session ends by writing its handoff packet — what changed, why, what was tried, what failed, what is left, what runs first next time — generated from state, verdict, review, and feedback records, never from the model's memory of the session. The next session (or the next on-call engineer) starts from the packet, not from rediscovery. A missing packet means the previous thirty seconds of work cost the next session thirty minutes; make packet generation part of session teardown, not a favor the agent does when asked.
+
 ## Further Reading
 
 - [Anthropic, Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)

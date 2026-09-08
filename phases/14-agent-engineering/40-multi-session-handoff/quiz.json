@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For the built-in T-001 fixture, what summary does generate_handoff produce?",
+      "question": "Each new session re-runs old commands and re-asks answered questions because the last session left nothing behind. What fixes that?",
       "options": [
-        "task T-001: review=pass, gate=True",
-        "task T-001: review=warn, gate=False",
-        "T-001 completed with no remaining risks",
-        "review=pass; gate=True; next_action=none"
+        "Longer sessions that never end",
+        "Deleting old sessions faster",
+        "Hoping the model remembers across sessions",
+        "An automatic handoff packet: changed, tried, failed, left, next"
       ],
-      "correct": 0,
-      "explanation": "The fixture has a passed verification verdict and a review verdict of pass, so the generated summary is exactly task T-001: review=pass, gate=True."
+      "correct": 3,
+      "explanation": "Bad handoffs tax every future session. This lesson generates the packet from records at session end."
     },
     {
       "stage": "check",
