@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For y=(3x+1)^2 at x=2, what derivative should a reverse-mode engine produce?",
+      "question": "A model has millions of parameters, yet training computes all gradients in one backward pass. What makes that possible?",
       "options": [
-        "42",
-        "14",
-        "12",
-        "49"
+        "Trying each parameter separately",
+        "Guessing gradients randomly",
+        "Training only one parameter at a time",
+        "Chaining local derivatives through composed functions"
       ],
-      "correct": 0,
-      "explanation": "Let u=3x+1=7. The chain rule gives dy/dx=2u*3=42."
+      "correct": 3,
+      "explanation": "Local derivatives compose. This lesson builds the chain rule that makes large-scale training possible."
     },
     {
       "stage": "check",

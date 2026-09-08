@@ -15,6 +15,10 @@
 - Compare autodiff gradients with centered finite differences using `gradient_check`.
 - Reset parameter gradients before training a small XOR MLP with the same engine.
 
+## CBP context: the chain rule is why training scales
+
+In the CBP context the chain rule is the reason million-parameter models can learn at all: reverse-mode differentiation computes every gradient in one backward pass instead of one pass per parameter. You will never implement it — frameworks and providers own that — but the intuition explains training cost, why deep networks train at all, and what "backprop" means when a fine-tune report mentions it. Read, run the demo if curious, move on.
+
 ## Build It
 
 The canonical implementation is `code/main.jl`; `autodiff.py` is a readable standard-library reference. Run:
