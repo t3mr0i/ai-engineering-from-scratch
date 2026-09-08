@@ -161,6 +161,10 @@ The harness loop from lesson twenty can read this directly. The dispatcher from 
 
 `code/tests/test_agent.py` covers a linear success, a mid-plan failure that replans once, replan exhaustion that returns `failed:replan_budget`, step-budget exhaustion, and the plan-diff event format.
 
+## CBP context: deterministic plans for repeatable ops
+
+In the CBP context deterministic plan-execute covers repeatable operations work — fetch, transform, render, submit — where the steps are known and only the data varies. The planner emits the DAG, workers execute in order, and failures re-plan from the error instead of improvising. Reserve model-driven planning for genuinely open work; a fixed pipeline wearing an agent costume wastes budget and hides the runbook.
+
 ## Going further
 
 Two extensions you will want once you wire this to a real model. First, partial-plan caching: when a plan succeeds for the first three of six steps and then fails, you do not want to re-run the first three. The executor already keeps history; the planner just needs to read it. Second, parallel branches: the current executor is strictly sequential. A planner that emits an independent branch (`gather_step` instead of `next_step`) can run two tool calls concurrently through the dispatcher.

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the initial four-step plan created by make_deterministic_planner?",
+      "question": "A repeatable multi-step job improvises its steps fresh on every run and drifts. What is the cheaper shape?",
       "options": [
-        "fetch → transform v1 → render → submit",
-        "survey → execute → review → deploy",
-        "fetch → transform v2 → notify → submit",
-        "plan → tool_call → retry → goal_met"
+        "More improvisation with a bigger model",
+        "No steps at all, one giant call",
+        "Different steps every time for variety",
+        "A fixed plan executed in order, re-planned only on failure"
       ],
-      "correct": 0,
-      "explanation": "With no last_error, the planner returns Step 1 fetch, Step 2 transform mode=v1, Step 3 render, and Step 4 submit."
+      "correct": 3,
+      "explanation": "Known work should not be rediscovered per run. This lesson fixes the plan and executes it deterministically."
     },
     {
       "stage": "check",
