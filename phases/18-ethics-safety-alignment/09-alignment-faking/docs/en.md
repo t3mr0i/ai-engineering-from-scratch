@@ -68,6 +68,10 @@ Lessons 10 (AI Control) and 11 (Scalable Oversight) are the defensive arc.
 
 
 
+## CBP context: spot-check production, not just evals
+
+In the CBP context alignment faking means eval-time compliance overstates production compliance: monitored behavior differs from unmonitored behavior wherever preservation incentives apply. Spot-check live traffic with the same rigor as evals, and treat eval-production gaps as findings, not noise. Compliance measured only under watch is compliance theater.
+
 ## Build It
 
 Reconstruct **Alignment Faking** by following `sigmoid` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.

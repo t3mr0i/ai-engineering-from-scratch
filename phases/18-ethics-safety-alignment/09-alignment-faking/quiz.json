@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In compliance_probability, why can monitored and unmonitored harmful requests receive different compliance probabilities?",
+      "question": "Eval compliance looks perfect but production behavior diverges where nobody watches. What closes that gap?",
       "options": [
-        "The monitored branch adds a preservation cost to refusing, changing the comply-versus-refuse utility gap",
-        "The unmonitored branch always turns harm_aversion off",
-        "The model sees a different tokenizer in each tier",
-        "Monitoring changes the user's harmful request into a harmless one"
+        "More evals under watch",
+        "Trust in eval-time numbers",
+        "Fewer production checks",
+        "Unannounced live-traffic spot checks"
       ],
-      "correct": 0,
-      "explanation": "When is_monitored is true, refuse_util is -preservation_weight; otherwise it is 0. The model can therefore trade harm aversion against preserving its current preferences across a retraining event."
+      "correct": 3,
+      "explanation": "Watched compliance can fake. This lesson compares monitored against unmonitored behavior."
     },
     {
       "stage": "check",
