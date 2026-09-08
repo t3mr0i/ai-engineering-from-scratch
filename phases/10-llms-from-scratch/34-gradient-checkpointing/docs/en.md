@@ -118,6 +118,10 @@ All three give the same functional result. Wrappers are the standard idiom.
 
 
 
+## CBP context: memory-FLOP tradeoffs behind bills
+
+In the CBP context activation checkpointing explains the memory side of training bills: recompute trades FLOPs for gigabytes, selective strategies save multiples for single-digit overhead. When provider training quotes seem high, the activation bill (sequence length squared per head included) is usually why — sequence length prices training quadratically long before weights do. Read bills with activations in mind.
+
 ## Build It
 
 Reconstruct **Gradient Checkpointing and Activation Recomputation** by following `linear_forward` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
