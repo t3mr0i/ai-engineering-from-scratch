@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What operation does maxsim(query_tokens, patches) compute?",
+      "question": "Scanned pages with tables lose structure through OCR before retrieval. What retrieves pages directly?",
       "options": [
-        "One average vector for each page, followed by one cosine score",
-        "The minimum cosine over all query-patch pairs",
-        "For each query token, the best patch cosine, summed across query tokens",
-        "A dot product between the first query token and the first patch only"
+        "Bigger OCR engines",
+        "Manual transcription of scans",
+        "Text-only indexes over OCR output",
+        "Patch-level late interaction on page images"
       ],
-      "correct": 2,
-      "explanation": "maxsim implements ColBERT late interaction: for each q it takes max(cosine(q,p)) over page patches, then sums those maxima."
+      "correct": 3,
+      "explanation": "OCR-first loses layout. This lesson retrieves page images natively with token-patch scoring."
     },
     {
       "stage": "check",

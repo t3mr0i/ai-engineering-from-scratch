@@ -110,6 +110,10 @@ For everything else in 2026 — financial reports, scientific papers, legal cont
 
 
 
+## CBP context: retrieve pages as images
+
+In the CBP context vision-native RAG retrieves scanned pages as images — no OCR stage to corrupt layouts — with late-interaction scoring (best patch per query token, summed) over page patches. Evaluate on CBP scans with tables and stamps where OCR pipelines fail; the layout preserved is the evidence kept. Native retrieval skips the transcription that loses structure.
+
 ## Build It
 
 Reconstruct **ColPali and Vision-Native Document RAG** by following `Page` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
