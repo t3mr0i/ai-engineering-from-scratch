@@ -92,6 +92,10 @@ where `λ` is a learned scalar (typically 0.5–0.8). A1 captures real content w
 
 
 
+## CBP context: variants price long context
+
+In the CBP context attention variants (sliding window, sparse, differential) are cost levers on deployment cards for long CBP documents: restricted attention trades some long-range fidelity for large context savings. Match the variant to the workload — local lookup tolerates windows, global reasoning does not — and verify on CBP long-doc evals. Variants are pricing plans with math attached.
+
 ## Build It
 
 Reconstruct **Attention Variants — Sliding Window, Sparse, Differential** by following `causal_mask` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How many finite cells does causal_mask(8) contain?",
+      "question": "Full attention over very long documents costs quadratically. What buys back feasibility?",
       "options": [
-        "36",
-        "32",
-        "64",
-        "8"
+        "Shorter documents by truncation only",
+        "No attention at all",
+        "Bigger GPUs unconditionally",
+        "Restricted patterns: windows, sparsity, differentials"
       ],
-      "correct": 0,
-      "explanation": "Row i contains i+1 allowed positions, so the lower triangle has 1+...+8 = 36 finite cells."
+      "correct": 3,
+      "explanation": "Full matrices do not scale. This lesson restricts attention patterns for long context."
     },
     {
       "stage": "check",
