@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What input does VisionPipeline.preprocess accept when given a NumPy image?",
+      "question": "Images arrive from scanners, phones, and uploads in mixed layouts. What keeps the pipeline honest?",
       "options": [
-        "A one-dimensional class-label array",
-        "A four-channel tensor with batch dimension already included",
-        "An HxWx3 RGB ndarray, converted to a float CHW tensor divided by 255",
-        "A list of bounding boxes without pixels"
+        "Accept every layout silently",
+        "Convert to grayscale always",
+        "Trust filenames for layout",
+        "One contracted preprocessing entry for all"
       ],
-      "correct": 2,
-      "explanation": "The NumPy branch checks ndim=3 and shape[-1]=3, permutes HWC to CHW, scales to [0,1], and moves the tensor to the device."
+      "correct": 3,
+      "explanation": "Mixed inputs need one contract. This capstone fixes preprocessing from demo to production."
     },
     {
       "stage": "check",

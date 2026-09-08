@@ -20,6 +20,10 @@
 
 Model demos often stop at a tensor. A usable vision service needs to state what happens at every boundary: malformed pixels, an out-of-bounds box, a crop too small for a classifier, an unknown class ID, and an image with no usable crops. The local capstone makes those decisions inspectable without downloading weights or importing a service framework.
 
+## CBP context: contract in, evidence out
+
+In the CBP context the vision pipeline shape is fixed: contracted preprocessing at entry (layout, range, device), model stages in the middle, evaluated evidence at exit. Accept HWC RGB arrays and normalize explicitly; never let callers guess the layout. The capstone habit — same input contract from demo to production — is what keeps the pipeline honest when images come from scanners, phones, and uploads at once.
+
 ## Build It
 
 `numpy_pipeline` is the Build-It path. `numpy_preprocess` converts HWC pixels to CHW floats, `numpy_detect` emits three deterministic boxes with scores `[0.92, 0.85, 0.71]`, and `numpy_classify_crop` turns channel means into a small softmax-like class score. The same detector/crop policy is exposed through `VisionPipeline` and `StubClassifier` for the optional Torch Use-It path. Both paths return the dataclasses `Detection`, `Classification`, and `PipelineResult`. `run` clamps every box to the `(H,W)` image boundary, records it, and only resizes crops whose integer width and height meet `min_crop` (16 by default). Classifications retain the detector index so a downstream consumer can join the two lists.
