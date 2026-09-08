@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which set matches the five-axis design space encoded by the recipe lesson?",
+      "question": "A top-ranked open model fails CBP document QA while a lower-ranked one passes. What went wrong in selection?",
       "options": [
-        "Image encoder, connector, LLM, data mix, and resolution schedule",
-        "Tokenizer vocabulary, optimizer, GPU brand, batch norm, and beam width",
-        "Only connector depth and prompt length",
-        "Audio codec, robot arm, video FPS, OCR engine, and database"
+        "Rankings are always perfect",
+        "CBP documents are too easy",
+        "Evaluation takes too long",
+        "Package benchmarks hid the limiting axis"
       ],
-      "correct": 0,
-      "explanation": "The lesson treats encoder, connector, language model, data mixture, and resolution schedule as separate recipe axes. The other choices mix in unrelated implementation details."
+      "correct": 3,
+      "explanation": "Ranks average away weaknesses. This lesson evaluates encoder, connector, LLM, data, and resolution separately."
     },
     {
       "stage": "check",

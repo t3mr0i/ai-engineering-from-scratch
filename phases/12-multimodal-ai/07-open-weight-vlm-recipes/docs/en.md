@@ -100,6 +100,10 @@ Every one of those defaults traces back to a measured ablation in the papers cit
 
 
 
+## CBP context: evaluate per axis, adopt by evidence
+
+In the CBP context open-weight VLMs are adopted per design axis — encoder quality, connector fidelity, LLM capability, data mix relevance, resolution schedule fit — each measured on CBP images, never as a package deal on generic benchmarks. A strong LLM with a weak connector fails document QA regardless of its rank; axis evals reveal which part limits. Adopt by evidence per axis, replace per axis.
+
 ## Build It
 
 Reconstruct **Open-Weight VLM Recipes: What Actually Matters** by following `Recipe` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
