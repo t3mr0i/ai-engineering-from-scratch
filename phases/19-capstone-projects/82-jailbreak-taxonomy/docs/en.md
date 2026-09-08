@@ -62,6 +62,10 @@ Severity follows a 1-5 scale. A 1 is a clumsy attack against a benign target ("p
 
 
 
+## CBP context: the red-team corpus lives in the repo
+
+In the CBP context the jailbreak taxonomy is a validated fixture corpus in the repository: unique ids, known categories, severity ratings, minimum coverage per category — validated before any matching runs. The harness (lesson 19/15) executes it; the pipeline gates on it. A taxonomy that grows unvalidated rots into duplicates and gaps that flatter the defense; validate the corpus with the same strictness as the defense itself.
+
 ## Build It
 
 Reconstruct **Capstone 82 — Jailbreak Taxonomy** by following `fixtures` on a graph with edges (0,1) and (1,2). Run `python3 main.py` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What corpus invariants does Taxonomy.validate enforce before matching prompts?",
+      "question": "Attack examples pile up unsorted with duplicates and gaps. What makes them a usable test corpus?",
       "options": [
-        "Only that every prompt has the same length",
-        "Only that fixture severity is an integer",
-        "Nonempty prompts, unique IDs, known categories, severity 1–5, and at least seven fixtures per category",
-        "Exactly one fixture per category and no duplicate subtypes"
+        "More unsorted examples",
+        "Longer attack strings",
+        "Trust that coverage is complete",
+        "Validated categories, unique ids, severity, coverage minimums"
       ],
-      "correct": 2,
-      "explanation": "validate checks all of those corpus properties. The default corpus has 50 fixtures across six categories; it is not restricted to one fixture or one subtype per category."
+      "correct": 3,
+      "explanation": "Unvalidated corpora flatter defenses. This lesson enforces corpus invariants before any matching runs."
     },
     {
       "stage": "check",
