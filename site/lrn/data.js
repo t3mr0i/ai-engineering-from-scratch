@@ -3652,7 +3652,8 @@ window.LrnData = {
       "recommendationRanks": {
         "bsc": 3,
         "pma": 4,
-        "lead": 3
+        "lead": 3,
+        "corp": 3
       },
       "trackCodes": [
         "LP02",

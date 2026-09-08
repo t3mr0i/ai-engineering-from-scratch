@@ -112,7 +112,7 @@ Hand off `outputs/skill-ai-cost-value-decision-aid.md` with the command `python3
 
 ### Recommended trainings (LHIND AI Literacy)
 
-- [Introduction to Cost Management for AI Workloads](https://learn.microsoft.com/en-us/training/modules/understand-cost-management-ai/) — Microsoft Learn · Acquire, Create · 1 h · Rollen: Technology Consulting, Leadership (Academy AI-03, AI-07)
+- [Introduction to Cost Management for AI Workloads](https://learn.microsoft.com/en-us/training/modules/understand-cost-management-ai/) — Microsoft Learn · Acquire · Create · 1 h · Rollen: Technology Consulting, Leadership (Academy AI-03, AI-07)
 
 ## Exercises
 

@@ -100,6 +100,10 @@ Call `token_count` from a small caller with tokens=["red","fox"]. Compare its re
 
 Hand off `outputs/skill-radix-scheduler-advisor.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: stable prefixes are a FinOps lever
+
+In the CBP context prefix caching rewards the discipline from lesson 11/15: stable system prompts, versioned tool schemas, and ordered retrieval headers mean the shared prefix hits cache instead of prefilling thousands of times. Keep the parts that repeat byte-identical across requests — that is what the radix tree keys on — and put per-request content last. Measure hit rate per tenant in Application Insights; a tenant whose prompts never share prefixes pays full prefill every call and should fix its assembler first.
+
 ## Further Reading
 
 - [SGLang GitHub](https://github.com/sgl-project/sglang) — source and docs.

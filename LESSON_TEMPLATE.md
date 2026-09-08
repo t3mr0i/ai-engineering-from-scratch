@@ -100,6 +100,10 @@ Include it here and save it in the outputs/ folder.]
 
 - [Resource 1](url) — [why it's worth reading]
 - [Resource 2](url) — [why it's worth reading]
+
+### Recommended trainings (LHIND AI Literacy)
+
+- Add matching courses from `docs/ai-literacy-lhind/kurse.json` here (mapping: `docs/ai-literacy-lhind/empfehlungen-mapping.json`) whenever thematically fitting courses exist. One bullet per course page (canonical URL without fragment/tracking params, roles/levels/academies combined). Format: `- [Title](url) — Provider · Level · X h · Rollen: … (Academy AI-XX)`.
 ```
 
 ## Code File Guidelines

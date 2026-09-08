@@ -22,10 +22,29 @@
   function locale() { return root.SiteLang && root.SiteLang.get ? root.SiteLang.get() : root.document && root.document.documentElement.lang || "en"; }
   function roleId(value, catalog) {
     var lowered = String(value || "").toLowerCase();
+    // Legacy alias: the dissolved "Products & Value Streams" profile (id pvs,
+    // segment PVS, code R02-PVS) now resolves to Corporate Functions.
+    var key = lowered.trim();
+    if (key === "pvs" || key === "r02-pvs" || key === "products-value-streams" || key === "products & value streams") lowered = "corp";
     var role = (catalog.roles || []).find(function (row) {
       return [row.id, row.label, row.code, row.segment].some(function (name) { return String(name || "").toLowerCase() === lowered; });
     });
     return role && role.id || null;
+  }
+  function legacyCorpAlias(value) {
+    var key = String(value == null ? "" : value).toLowerCase().trim();
+    return key === "pvs" || key === "r02-pvs" || key === "products-value-streams" || key === "products & value streams";
+  }
+  function mergedProfile(record) {
+    if (!record || !legacyCorpAlias(record.profileId)) return record;
+    return Object.assign({}, record, { profileId: "corp" });
+  }
+  function mergedAssessment(record) {
+    if (!record || typeof record !== "object") return record;
+    var next = record;
+    if (legacyCorpAlias(record.roleId)) next = Object.assign({}, next, { roleId: "corp" });
+    if (String(next.role || "").toLowerCase().trim() === "products & value streams") next = Object.assign({}, next, { role: "Corporate Functions" });
+    return next;
   }
   function inputs(options) {
     options = options || {};
@@ -35,6 +54,11 @@
     var importer = root.AIFSAssessmentImport || root.AssessmentImport;
     var imported = null;
     try { imported = importer && importer.load ? importer.load() : null; } catch (_) {}
+    // Legacy alias: assessment data stored under the dissolved "Products &
+    // Value Streams" profile keeps applying to Corporate Functions instead of
+    // being discarded as role-unknown.
+    imported = mergedProfile(imported);
+    assessment = mergedAssessment(assessment);
     var selectedRole = roleId(options.roleId || cockpit.profileId || cockpit.roleId, catalog) || roleId(assessment.roleId || assessment.role, catalog) || roleId(imported && imported.profileId, catalog);
     var progressState = { lessons: {} };
     try { progressState = root.AIFSProgress && root.AIFSProgress.getState ? root.AIFSProgress.getState() : read("aifs:progress:v1", { lessons: {} }); } catch (_) {}

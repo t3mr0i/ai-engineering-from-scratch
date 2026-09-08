@@ -108,5 +108,5 @@ Use normalize(), signal_matches(), score_scenario() to explain the result, not o
 
 ### Recommended trainings (LHIND AI Literacy)
 
-- [Data-Driven Decision Making for Business](https://www.datacamp.com/courses/data-driven-decision-making-for-business) — DataCamp · Deepen · 2 h · Rollen: Application Management, Corporate Functions (Academy AI-07)
+- [Data-Driven Decision Making for Business](https://www.datacamp.com/courses/data-driven-decision-making-for-business) — DataCamp · Deepen · 2 h · Rollen: Leadership, Application Management, Corporate Functions (Academy AI-07; auch gelistet als „AI Powered Decision Making")
 - [IT Service Management Foundations: Measures and Metrics](https://www.linkedin.com/learning/it-service-management-foundations-measures-and-metrics) — LinkedIn Learning · Deepen · 1,36 h · Rollen: Application Management (Academy AI-07)

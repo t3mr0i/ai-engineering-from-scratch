@@ -109,7 +109,6 @@ Use normalize(), signal_matches(), score_scenario() to explain the result, not o
 ### Recommended trainings (LHIND AI Literacy)
 
 - [Learning AI for Business Analysis](https://www.linkedin.com/learning/learning-ai-for-business-analysis) — LinkedIn Learning · Acquire · 1,5 h · Rollen: Leadership, Technology Consulting, Business & Strategy Consulting (Academy AI-04, AI-09)
-- [Agentic AI for Business Analysis](https://www.linkedin.com/learning/agentic-ai-for-business-analysis?u=2197772) — LinkedIn Learning · Create · 1,5 h · Rollen: Business & Strategy Consulting (Academy AI-04)
-- [Agentic AI for Business Analysis](https://www.linkedin.com/learning/agentic-ai-for-business-analysis) — LinkedIn Learning · Deepen · 1,5 h · Rollen: Technology Consulting, Leadership (Academy AI-04, AI-07)
+- [Agentic AI for Business Analysis](https://www.linkedin.com/learning/agentic-ai-for-business-analysis) — LinkedIn Learning · Deepen · Create · 1,5 h · Rollen: Business & Strategy Consulting, Technology Consulting, Leadership (Academy AI-04, AI-07)
 - [Agentic AI for Business Analysis](https://learn.microsoft.com/en-us/training/paths/enhance-autonomous-agents/) — Microsoft Learn · Create · 4 h · Rollen: Application Management (Academy AI-05)
 - [Implementing AI Solutions in Business](https://www.datacamp.com/courses/implementing-ai-solutions-in-business) — DataCamp · Acquire · Deepen · Create · 2–3 h · Rollen: Business & Strategy Consulting, Application Management, Project Management & Agility (Academy AI-04, AI-05)

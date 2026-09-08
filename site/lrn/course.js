@@ -780,15 +780,12 @@
     return { id: "toolkit", icon: "wrench", labelKey: "course_format_toolkit", label: "Toolkit" };
   }
 
-  // Kurstermine aus catalog.json (window.LrnData.sessions). Die Sektion bleibt
-  // On a normal course page the section stays hidden when no date exists. An
-  // explicit Academy handoff may target #courseSessionsTitle, so materialize
-  // the anchor in that case even when the schedule is currently empty.
+  // Course dates come from catalog.json (window.LrnData.sessions). Do not show
+  // a schedule section until there is an actionable upcoming date.
   function sessionSection(courseItem) {
     if (!window.LrnSchedule) return null;
-    var all = window.LrnSchedule.sessions(courseItem.id);
-    if (!all.length && window.location.hash !== "#courseSessionsTitle") return null;
     var open = window.LrnSchedule.upcoming(courseItem.id);
+    if (!open.length) return null;
     var locale = (window.SiteLang ? window.SiteLang.get() : "en") === "de" ? "de-DE" : "en-GB";
 
     var section = document.createElement("section");
@@ -800,14 +797,6 @@
     title.className = "course-sessions__title";
     title.textContent = i18n("course_sessions_title", "Upcoming dates");
     section.appendChild(title);
-
-    if (!open.length) {
-      var empty = document.createElement("p");
-      empty.className = "course-sessions__empty";
-      empty.textContent = i18n("course_sessions_empty", "No date has been scheduled for this course yet.");
-      section.appendChild(empty);
-      return section;
-    }
 
     var list = document.createElement("ul");
     list.className = "course-sessions__list";

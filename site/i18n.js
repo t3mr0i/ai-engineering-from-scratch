@@ -32,7 +32,7 @@ window.SITE_I18N = {
 
   // index.html — hero title + resume button are rendered dynamically
   // (time-of-day greeting + last lesson name) in index.html's inline script.
-  home_hero_intro: { en: "Continue your current course or choose one clear next step below.", de: "Setze deinen aktuellen Kurs fort oder wähle unten einen klaren nächsten Schritt." },
+  home_hero_intro: { en: "Choose your role and view a target profile aligned with your work and experience.", de: "Wähle deine Rolle und sieh ein Zielbild, das zu deiner Arbeit und Erfahrung passt." },
   home_explore_recommendations: { en: "Explore recommendations", de: "Empfehlungen ansehen" },
   home_dashboard_label: { en: "Learning dashboard", de: "Lernübersicht" },
   recommendation_controls_label: { en: "Choose profile and level", de: "Profil und Level auswählen" },
@@ -492,9 +492,9 @@ window.SITE_I18N = {
   // Shared role → dimension → level journey (learning-journey.js / journey-ui.js).
   journey_catalog_filters: { en: "More catalog filters", de: "Weitere Katalogfilter" },
   journey_catalog_level: { en: "Course level filter", de: "Kursniveau filtern" },
-  journey_title: { en: "Your learning journey", de: "Deine Lernreise" },
+  journey_title: { en: "Your next step with AI", de: "Dein nächster Schritt mit AI" },
   journey_course_contribution: { en: "Contribution to your target", de: "Beitrag zu deinem Zielbild" },
-  journey_intro: { en: "Your role profile and Self-Assessment point to one next useful step.", de: "Dein Rollenprofil und dein Self-Assessment zeigen dir den nächsten sinnvollen Schritt." },
+  journey_intro: { en: "Your role profile, experience, and Self-Assessment help identify a useful next step.", de: "Dein Rollenprofil, deine Erfahrung und dein Self-Assessment helfen dir, den nächsten sinnvollen Schritt zu finden." },
   journey_role: { en: "Role profile", de: "Rollenprofil" },
   journey_current: { en: "Your level", de: "Dein Level" },
   journey_target: { en: "Target Skill Level", de: "Ziel-Level" },

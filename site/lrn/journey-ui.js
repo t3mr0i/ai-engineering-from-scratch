@@ -4,12 +4,12 @@
   var mounted = [];
   var COPY = {
     en: {
-      title: "Your AI learning journey",
+      title: "Your learning compass",
       role: "Role",
       chooseRole: "Choose your role",
-      chooseRoleReason: "Choose a role to see the matching target profile and next learning step.",
-      target: "Your role target",
-      targetIntro: "This is the capability profile for your role. It stays visible while your next steps adapt.",
+      chooseRoleReason: "Choose a role to view the target profile that matches your work.",
+      target: "Guidance for your role",
+      targetIntro: "These levels provide guidance for your role. You can choose which area to focus on.",
       focus: "Focus area",
       focusAll: "Show all areas equally",
       targetReference: "Target from the AI Literacy reference",
@@ -38,7 +38,7 @@
       sourceImport: "From imported assessment",
       sourceSelf: "From self-assessment",
       sourceEvidence: "From learning evidence",
-      unknownTarget: "Add an assessment to see your starting point.",
+      unknownTarget: "Complete the Self-Assessment to see your starting point.",
       targetValue: "Target: {target}",
       referenceValue: "Reference target: {target}",
       fromTo: "{current} to {target}",
@@ -46,20 +46,20 @@
       blockedReason: "Your learning path still has preparatory or unavailable steps. Open your plan to review them.",
       provisional: "Recommendations are based on the information available in this browser.",
       browse: "Browse all courses",
-      academy: "Continue outside the platform",
+      academy: "Further recommendation",
       academyReady: "Continue with LHIND Academy",
-      academyPreparation: "Prepare this handover",
-      academyNoSession: "Offered externally; coordinate dates and participation through LHIND Academy.",
-      academyTtt: "A Train-the-Trainer handover is available after you complete this path."
-      , assessmentPanel: "Place your current level / connect an assessment"
+      academyPreparation: "Discuss with LHIND Academy",
+      academyNoSession: "Offered through LHIND Academy; dates and participation are arranged there.",
+      academyTtt: "After completing this path, the LHIND Academy can advise on suitable Train-the-Trainer formats."
+      , assessmentPanel: "Set your current level / connect an assessment"
     },
     de: {
-      title: "Deine KI-Lernreise",
+      title: "Dein Lernkompass",
       role: "Rolle",
       chooseRole: "Rolle auswählen",
-      chooseRoleReason: "Wähle eine Rolle, um das passende Zielbild und den nächsten Lernschritt zu sehen.",
-      target: "Dein Rollenzielbild",
-      targetIntro: "Dieses Kompetenzprofil gilt für deine Rolle. Es bleibt sichtbar, während sich die nächsten Schritte anpassen.",
+      chooseRoleReason: "Wähle eine Rolle, um das passende Zielbild für deine Arbeit zu sehen.",
+      target: "Orientierung für deine Rolle",
+      targetIntro: "Diese Kompetenzstufen geben dir Orientierung für deine Rolle. Du kannst selbst wählen, welchen Bereich du vertiefen möchtest.",
       focus: "Schwerpunkt setzen",
       focusAll: "Alle Bereiche gleich anzeigen",
       targetReference: "Zielbild aus der AI-Literacy-Referenz",
@@ -88,7 +88,7 @@
       sourceImport: "Aus importiertem Assessment",
       sourceSelf: "Aus Self-Assessment",
       sourceEvidence: "Aus Lernnachweisen",
-      unknownTarget: "Führe ein Assessment durch, um deinen Ausgangspunkt zu sehen.",
+      unknownTarget: "Führe das Self-Assessment durch, um deinen Ausgangspunkt zu sehen.",
       targetValue: "Ziel: {target}",
       referenceValue: "Referenzziel: {target}",
       fromTo: "{current} zu {target}",
@@ -96,11 +96,11 @@
       blockedReason: "In deinem Lernweg sind noch vorbereitende oder nicht verfügbare Schritte offen. Prüfe sie in deinem Plan.",
       provisional: "Die Empfehlungen basieren auf den Informationen, die in diesem Browser verfügbar sind.",
       browse: "Alle Kurse durchsuchen",
-      academy: "Außerhalb der Plattform fortsetzen",
+      academy: "Weitere Empfehlung",
       academyReady: "Mit der LHIND Academy fortsetzen",
-      academyPreparation: "Diese Übergabe vorbereiten",
-      academyNoSession: "Extern angeboten; Termine und Teilnahme über die LHIND Academy abstimmen.",
-      academyTtt: "Nach Abschluss dieses Lernwegs ist eine Train-the-Trainer-Übergabe möglich."
+      academyPreparation: "Mit der LHIND Academy abstimmen",
+      academyNoSession: "Angebot der LHIND Academy; Termine und Teilnahme werden dort abgestimmt.",
+      academyTtt: "Nach Abschluss dieses Lernpfads kann die LHIND Academy zu passenden Train-the-Trainer-Formaten beraten."
       , assessmentPanel: "Ist-Stand einordnen / Assessment verbinden"
     }
   };
@@ -171,7 +171,7 @@
       });
       var detail = el("p", "journey-ui__dimension-detail");
       if (dimension.status === "not-relevant") detail.textContent = t("notRelevant");
-      else if (!dimension.currentLevel) detail.textContent = t("unknownTarget") + " " + t("targetValue", { target: clean(dimension.targetLevel) });
+      else if (!dimension.currentLevel) detail.textContent = t("targetValue", { target: clean(dimension.targetLevel) });
       else detail.textContent = t("fromTo", { current: dimension.currentLevel, target: dimension.targetLevel }) + " · " + t("targetValue", { target: clean(dimension.targetLevel) });
       var sourceKey = { "assessment-import": "sourceImport", "self-assessment": "sourceSelf", "learning-evidence": "sourceEvidence" }[dimension.source];
       if (sourceKey) detail.textContent += " · " + t(sourceKey);
@@ -182,6 +182,7 @@
     return list;
   }
   function renderSteps(model) {
+    if (!Array.isArray(model.steps) || !model.steps.length) return null;
     var section = el("section", "journey-ui__steps");
     section.appendChild(el("h3", "journey-ui__subheading", t("journey")));
     var list = el("ol", "journey-ui__step-list");
@@ -197,10 +198,7 @@
       item.append(marker, copy, el("span", "journey-ui__step-state", statusText(step.status)));
       list.appendChild(item);
     });
-    if (!list.children.length) {
-      var empty = el("p", "journey-ui__empty", t("noCourse"));
-      section.appendChild(empty);
-    } else section.appendChild(list);
+    section.appendChild(list);
     return section;
   }
   function renderExternal(model) {
@@ -256,6 +254,7 @@
     if (!options.compact) {
       var target = el("section", "journey-ui__target");
       target.append(el("h3", "journey-ui__subheading", t("target")), el("p", "journey-ui__intro", t("targetIntro")), renderDimensions(model));
+      if ((model.dimensions || []).some(function (dimension) { return dimension.status !== "not-relevant" && !dimension.currentLevel; })) target.appendChild(el("p", "journey-ui__intro", t("unknownTarget")));
       var focusField = el("label", "journey-ui__focus");
       focusField.appendChild(el("span", "", t("focus")));
       var select = el("select", "journey-ui__focus-select");
@@ -285,7 +284,8 @@
     link.href = action.href;
     next.appendChild(link);
     host.appendChild(next);
-    if (!options.compact) host.appendChild(renderSteps(model));
+    var steps = !options.compact && renderSteps(model);
+    if (steps) host.appendChild(steps);
     var external = renderExternal(model);
     if (external) host.appendChild(external);
     if (model.provisional) host.appendChild(el("p", "journey-ui__provisional", t("provisional")));

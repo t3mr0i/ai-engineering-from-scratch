@@ -78,3 +78,8 @@
   .journey-ui__provisional { order: 5; }
   .journey-ui__browse { order: 6; }
 }
+
+/* Legacy mounts stay unavailable until replaced by useful journey content. */
+[data-journey-replaced][hidden] {
+  display: none !important;
+}

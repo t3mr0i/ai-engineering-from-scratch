@@ -109,5 +109,4 @@ Use normalize(), signal_matches(), score_scenario() to explain the result, not o
 
 ### Recommended trainings (LHIND AI Literacy)
 
-- [Drive AI transformation in your organization](https://learn.microsoft.com/en-us/training/courses/ab-731t00) — Microsoft Learn · Create · 8 h · Rollen: Corporate Functions, Business & Strategy Consulting, Leadership, Project Management & Agility (Academy AI-05, AI-08)
-- [Drive AI transformation in your organization](https://learn.microsoft.com/en-us/training/courses/ab-731t00#course-syllabus) — Microsoft Learn · Deepen · 8 h · Rollen: Leadership (Academy AI-07)
+- [Drive AI transformation in your organization](https://learn.microsoft.com/en-us/training/courses/ab-731t00) — Microsoft Learn · Deepen · Create · 8 h · Rollen: Corporate Functions, Leadership, Business & Strategy Consulting, Project Management & Agility (Academy AI-05, AI-07, AI-08)

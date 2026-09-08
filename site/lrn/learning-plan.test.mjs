@@ -113,6 +113,15 @@ test("normalizes the imported five-dimension baseline without inventing progress
   assert.equal(imported.dimensions.Foundation.gap, 0);
 });
 
+test("legacy Products & Value Streams imports resolve to Corporate Functions", () => {
+  for (const profileId of ["pvs", "PVS", "R02-PVS", "Products & Value Streams"]) {
+    const imported = normalizeAssessmentImport({ profileId, dimensions: {
+      Foundation: { score: 3, currentLevel: "Acquire", targetLevel: "Deepen" }
+    }});
+    assert.equal(imported.profileId, "corp");
+  }
+});
+
 test("imported dimension gaps raise matching courses and preserve completion semantics", () => {
   const courses = [
     course("FOUNDATION", 1, "Foundation", { interests: ["foundation"] }),

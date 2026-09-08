@@ -260,6 +260,53 @@
       font-weight: 650;
     }
 
+    .cap-note {
+      max-width: 760px;
+      margin: 0 0 14px;
+      color: var(--muted);
+    }
+
+    .cap-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .cap-card {
+      border: 1px solid var(--line);
+      border-top: 3px solid var(--accent, var(--blue));
+      background: var(--paper);
+      padding: 14px;
+    }
+
+    .cap-card h4 {
+      margin: 8px 0;
+      font-size: 0.95rem;
+      color: var(--blue);
+    }
+
+    .cap-card ul {
+      margin: 0;
+      padding-left: 1.1rem;
+      font-size: 0.88rem;
+      color: #2d374c;
+    }
+
+    .cap-facts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      padding: 14px 16px;
+      font-size: 0.88rem;
+    }
+
+    .cap-facts span {
+      color: var(--muted);
+    }
+
     .message-list {
       display: grid;
       gap: 12px;
@@ -482,6 +529,7 @@
       .qa-item,
       .principle,
       .roadmap-step,
+      .cap-card,
       .note,
       .callout {
         break-inside: avoid;
@@ -702,8 +750,9 @@
             Grundlagen für alle, dazu sechs rollenbezogene Lernpfade für
             Technology Consulting, Business &amp; Strategy Consulting,
             Application Management, Project Management &amp; Agility,
-            Corporate Functions (einschließlich Products &amp; Value Streams)
-            und Leadership. Jeder Pfad endet mit einem
+            Corporate Functions und Leadership. Products &amp; Value Streams
+            erhält kein eigenes Assessment-Profil; die Lernpfad-Empfehlung
+            läuft über Corporate Functions. Jeder Pfad endet mit einem
             prüfbaren Ergebnis: Review, Test, Dokument oder
             Backlog-Entscheidung.
           </dd>
@@ -760,27 +809,27 @@
         </dl>
 
         <h3>AI Capabilities Overview — Five dimensions, 19 capabilities</h3>
-        <p style="max-width: 760px; color: var(--muted); margin: 0 0 14px;">
+        <p class="cap-note">
           Quelle: Slide 04&nbsp;–&nbsp;Kompetenzmodell. Die Nummerierung 01–19
           ist fest. Fähigkeit 01 ist im Slide auf zwei Zeilen umbrochen
           (Terminologie / Konzepte und Tool-Überblick) und zählt als eine
-          Fähigkeit — daher 19, nicht 20.
+          Fähigkeit — daher 19, nicht 20. Schreibweise wie im Slide;
+          trainings.xlsx (Quelle für site/capabilities.js) schreibt 05 mit
+          „and" und 17 im Plural.
         </p>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;" role="list" aria-label="Five dimensions, 19 capabilities">
-          <article role="listitem" style="border: 1px solid var(--line); background: var(--paper); padding: 14px;">
-            <p style="margin: 0 0 4px; height: 3px; background: var(--blue);" aria-hidden="true"></p>
-            <h4 style="margin: 8px 0 8px; font-size: 0.95rem; color: var(--blue);">1 · Foundation</h4>
-            <ul style="margin: 0; padding-left: 1.1rem; font-size: 0.88rem; color: #2d374c;">
+        <div class="cap-grid" role="list" aria-label="Five dimensions, 19 capabilities">
+          <article class="cap-card" role="listitem" style="--accent: var(--blue);">
+            <h4>1 · Foundation</h4>
+            <ul>
               <li>01 Digital &amp; AI Terminology, AI Concepts, Tool overviews</li>
               <li>02 Data Literacy</li>
               <li>03 Personal AI Productivity</li>
               <li>04 Corporate Ethics &amp; Compliance</li>
             </ul>
           </article>
-          <article role="listitem" style="border: 1px solid var(--line); background: var(--paper); padding: 14px;">
-            <p style="margin: 0 0 4px; height: 3px; background: var(--teal);" aria-hidden="true"></p>
-            <h4 style="margin: 8px 0 8px; font-size: 0.95rem; color: var(--blue);">2 · Engineering</h4>
-            <ul style="margin: 0; padding-left: 1.1rem; font-size: 0.88rem; color: #2d374c;">
+          <article class="cap-card" role="listitem" style="--accent: var(--teal);">
+            <h4>2 · Engineering</h4>
+            <ul>
               <li>05 AI Systems &amp; Architecture</li>
               <li>06 Agentic Software Development</li>
               <li>07 AI-Driven Testing &amp; QA</li>
@@ -789,39 +838,36 @@
               <li>10 Sustainable Software &amp; Green Coding</li>
             </ul>
           </article>
-          <article role="listitem" style="border: 1px solid var(--line); background: var(--paper); padding: 14px;">
-            <p style="margin: 0 0 4px; height: 3px; background: var(--red);" aria-hidden="true"></p>
-            <h4 style="margin: 8px 0 8px; font-size: 0.95rem; color: var(--blue);">3 · Product and Process</h4>
-            <ul style="margin: 0; padding-left: 1.1rem; font-size: 0.88rem; color: #2d374c;">
+          <article class="cap-card" role="listitem" style="--accent: var(--red);">
+            <h4>3 · Product and Process</h4>
+            <ul>
               <li>11 AI-Augmented Requirement Engineering</li>
               <li>12 AI-Enhanced User Research</li>
             </ul>
           </article>
-          <article role="listitem" style="border: 1px solid var(--line); background: var(--paper); padding: 14px;">
-            <p style="margin: 0 0 4px; height: 3px; background: var(--red);" aria-hidden="true"></p>
-            <h4 style="margin: 8px 0 8px; font-size: 0.95rem; color: var(--blue);">4 · Advisory and Business Consulting</h4>
-            <ul style="margin: 0; padding-left: 1.1rem; font-size: 0.88rem; color: #2d374c;">
+          <article class="cap-card" role="listitem" style="--accent: var(--red);">
+            <h4>4 · Advisory and Business Consulting</h4>
+            <ul>
               <li>13 AI &amp; Automation Use Case Spotting</li>
               <li>14 AI Cost &amp; Value Economics</li>
               <li>15 Consultative Prompting</li>
               <li>16 AI Ecosystem Knowledge</li>
             </ul>
           </article>
-          <article role="listitem" style="border: 1px solid var(--line); background: var(--paper); padding: 14px;">
-            <p style="margin: 0 0 4px; height: 3px; background: #8a8f9e;" aria-hidden="true"></p>
-            <h4 style="margin: 8px 0 8px; font-size: 0.95rem; color: var(--blue);">5 · Leadership and Strategy</h4>
-            <ul style="margin: 0; padding-left: 1.1rem; font-size: 0.88rem; color: #2d374c;">
+          <article class="cap-card" role="listitem" style="--accent: #8a8f9e;">
+            <h4>5 · Leadership and Strategy</h4>
+            <ul>
               <li>17 Managing AI Transformation</li>
               <li>18 AI Workforce Strategy</li>
               <li>19 Decision Making with AI</li>
             </ul>
           </article>
         </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-top: 12px; border: 1px solid var(--line); background: var(--surface); padding: 14px 16px; font-size: 0.88rem;" aria-label="Einordnung">
-          <div><strong>5 Dimensionen</strong><br><span style="color: var(--muted);">strukturierte Einteilung, siehe Karten 1–5</span></div>
-          <div><strong>19 Fähigkeiten</strong><br><span style="color: var(--muted);">zentrale AI-Kompetenzen, 01–19</span></div>
-          <div><strong>3 Skill-Level</strong><br><span style="color: var(--muted);">Acquire – Deepen – Create</span></div>
-          <div><strong>6 Profile</strong><br><span style="color: var(--muted);">auf LHIND-Rollen zugeschnitten, mit Ziellevel je Fähigkeit</span></div>
+        <div class="cap-facts" aria-label="Einordnung">
+          <div><strong>5 Dimensionen</strong><br><span>strukturierte Einteilung, siehe Karten 1–5</span></div>
+          <div><strong>19 Fähigkeiten</strong><br><span>zentrale AI-Kompetenzen, 01–19</span></div>
+          <div><strong>3 Skill-Level</strong><br><span>Acquire – Deepen – Create</span></div>
+          <div><strong>6 Profile</strong><br><span>auf LHIND-Rollen zugeschnitten, mit Ziellevel je Fähigkeit</span></div>
         </div>
       </section>
 

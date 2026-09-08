@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does hbm_footprint_gb compute the weight footprint from params_b and weight_bits?",
+      "question": "The same model costs seven times less per token on a newer hardware-and-software stack. What should you check before switching?",
       "options": [
-        "params_b × weight_bits ÷ 8",
-        "params_b × 8 ÷ weight_bits",
-        "params_b + weight_bits",
-        "weight_bits ÷ 1e9, independent of params_b"
+        "Nothing; cheaper is always identical",
+        "Only the vendor's logo on the invoice",
+        "Which stack choices drive the gap and whether quality holds on your evals",
+        "The color of the new servers"
       ],
-      "correct": 0,
-      "explanation": "The code treats params_b as billions of parameters and converts bits to bytes with params_b * weight_bits / 8."
+      "correct": 2,
+      "explanation": "Price gaps come from stacked choices with quality tradeoffs. This lesson attributes each share before you commit a workload."
     },
     {
       "stage": "check",

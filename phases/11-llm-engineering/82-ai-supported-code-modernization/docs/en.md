@@ -101,8 +101,7 @@ Hand off `outputs/skill-legacy-refactor-slice-planner.md` with the command `pyth
 
 ### Recommended trainings (LHIND AI Literacy)
 
-- [AI-Supported Code Modernization](https://learn.microsoft.com/en-us/training/modules/intro-github-copilot-app-modernization/) — Microsoft Learn · Create · 1 h · Rollen: Application Management (Academy AI-01)
-- [Introduction to GitHub Copilot App Modernization](https://learn.microsoft.com/en-us/training/modules/intro-github-copilot-app-modernization/) — Microsoft Learn · Acquire · 1 h · Rollen: Application Management (Academy AI-01)
+- [Introduction to GitHub Copilot App Modernization](https://learn.microsoft.com/en-us/training/modules/intro-github-copilot-app-modernization/) — Microsoft Learn · Acquire · Create · 1 h · Rollen: Application Management (Academy AI-01; auch gelistet als „AI-Supported Code Modernization")
 
 ## Exercises
 

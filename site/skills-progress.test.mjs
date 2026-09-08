@@ -200,3 +200,24 @@ test('a different selected role does not inherit the imported dimension baseline
   assert.equal(model.assessmentImport, null);
   assert.equal(model.items[0].importedBaseline, null);
 });
+
+test('legacy Products & Value Streams imports resolve to Corporate Functions', () => {
+  for (const profileId of ['pvs', 'PVS', 'R02-PVS', 'Products & Value Streams']) {
+    const imported = skills.normalizeAssessmentImport({ profileId, dimensions: {
+      Foundation: { currentLevel: 'Acquire', targetLevel: 'Deepen', score: 3 }
+    } });
+    assert.equal(imported.profileId, 'corp');
+  }
+  const result = skills.createModel({
+    catalogCapabilities: [{ id: 11, title: 'Req', cluster: 'Product and Process', targets: { corp: 'Deepen' } }],
+    detailedCapabilities: [detail],
+    evidence: { 11: { Acquire: ['A'], Deepen: ['B'], Create: ['C'] } },
+    courses, courseMaps: maps,
+    progressState: { lessons: {} },
+    profileId: 'corp',
+    assessmentImport: { profileId: 'pvs', dimensions: {
+      'Product and Process Literacy': { score: 2, currentLevel: 'Acquire', targetLevel: 'Deepen' }
+    } }
+  });
+  assert.equal(result.items[0].importedBaseline.targetLevel, 'Deepen');
+});

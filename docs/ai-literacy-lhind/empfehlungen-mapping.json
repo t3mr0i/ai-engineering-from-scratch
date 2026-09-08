@@ -1,0 +1,734 @@
+{
+ "meta": {
+  "source": "docs/ai-literacy-lhind/kurse.json (97 Einträge, Stand 08/2026)",
+  "rule": "Passende Empfehlungen stehen unter ### Recommended trainings (LHIND AI Literacy) am Ende der Further-Reading-Sektion — nur wo es thematisch passende Kurse gibt.",
+  "merge": "Ein Bullet pro Kurs-Seite: kanonische URL (ohne Fragment/Tracking-Parameter); Rollen/Level/Academies kombiniert (Erstnennung-Reihenfolge aus kurse.json); Zweit-Titel als auch gelistet als …; Stunden deutsch mit Komma.",
+  "format": "- [Titel](url) — Provider · Level · X h · Rollen: … (Academy AI-XX)",
+  "pflege": "Diese Datei per Skript aus den Lessons regenerieren (Bullets parsen), nicht von Hand pflegen."
+ },
+ "aliases": [
+  {
+   "display": "Data-Driven Decision Making for Business",
+   "alsoListedAs": [
+    "AI Powered Decision Making"
+   ],
+   "url": "https://www.datacamp.com/courses/data-driven-decision-making-for-business"
+  },
+  {
+   "display": "Introduction to GitHub Copilot App Modernization",
+   "alsoListedAs": [
+    "AI-Supported Code Modernization"
+   ],
+   "url": "https://learn.microsoft.com/en-us/training/modules/intro-github-copilot-app-modernization/"
+  },
+  {
+   "display": "Drive AI transformation in your organization",
+   "alsoListedAs": [],
+   "url": "https://learn.microsoft.com/en-us/training/courses/ab-731t00",
+   "note": "kanonisch ohne #course-syllabus-Fragment"
+  },
+  {
+   "display": "Agentic AI for Business Analysis",
+   "alsoListedAs": [],
+   "url": "https://www.linkedin.com/learning/agentic-ai-for-business-analysis",
+   "note": "kanonisch ohne ?u=2197772-Tracking-Parameter; gleichnamiger Microsoft-Learn-Pfad bleibt separates Bullet (anderer Provider)"
+  },
+  {
+   "display": "Transform your business with AI",
+   "alsoListedAs": [
+    "Transform your business with A (Tippfehler in der Quelle)"
+   ],
+   "url": "https://learn.microsoft.com/en-us/training/paths/transform-your-business-with-microsoft-ai/"
+  },
+  {
+   "display": "Get started with Microsoft 365 Copilot",
+   "alsoListedAs": [
+    "AI for Everyone"
+   ],
+   "url": "https://learn.microsoft.com/en-us/training/paths/get-started-with-microsoft-365-copilot/",
+   "note": "gleiche Seite unter zwei Titeln; je Lesson nur das thematisch passende Bullet"
+  }
+ ],
+ "lessons": {
+  "phases/11-llm-engineering/01-prompt-engineering/docs/en.md": [
+   {
+    "title": "Advanced Prompt Engineering Techniques",
+    "url": "https://www.linkedin.com/learning/advanced-prompt-engineering-techniques"
+   },
+   {
+    "title": "Talking to AI: Prompt Engineering for Project Managers",
+    "url": "https://www.pmi.org/shop/p-/elearning/talking-to-ai-prompt-engineering-for-project-managers/el128"
+   },
+   {
+    "title": "Prompting with Agentic Techniques",
+    "url": "https://www.linkedin.com/learning/prompting-with-agentic-techniques?u=2197772"
+   },
+   {
+    "title": "Strategic AI Prompting for Managers",
+    "url": "https://www.linkedin.com/learning/strategic-ai-prompting-for-managers-leading-smarter-with-generative-ai"
+   }
+  ],
+  "phases/11-llm-engineering/02-few-shot-cot/docs/en.md": [
+   {
+    "title": "Advanced Prompt Engineering Techniques",
+    "url": "https://www.linkedin.com/learning/advanced-prompt-engineering-techniques"
+   }
+  ],
+  "phases/11-llm-engineering/101-ai-process-analysis-and-automation-design/docs/en.md": [
+   {
+    "title": "Implementing AI Solutions in Business",
+    "url": "https://www.datacamp.com/courses/implementing-ai-solutions-in-business"
+   },
+   {
+    "title": "Agentic AI for Business Analysis",
+    "url": "https://www.linkedin.com/learning/agentic-ai-for-business-analysis"
+   },
+   {
+    "title": "Agentic AI for Business Analysis",
+    "url": "https://learn.microsoft.com/en-us/training/paths/enhance-autonomous-agents/"
+   }
+  ],
+  "phases/11-llm-engineering/104-ai-architecture-decision-governance/docs/en.md": [
+   {
+    "title": "AI workload governance and DLP",
+    "url": "https://learn.microsoft.com/en-us/training/paths/ai-workloads-governance/"
+   },
+   {
+    "title": "Govern AI-ready Infrastructure",
+    "url": "https://learn.microsoft.com/en-us/training/paths/govern-ai-ready-infrastructure/"
+   }
+  ],
+  "phases/11-llm-engineering/105-ai-product-backlog-and-prioritization/docs/en.md": [
+   {
+    "title": "AI for Product Owner",
+    "url": "https://www.coursera.org/learn/ai-for-product-owners"
+   },
+   {
+    "title": "Building AI Products: Understanding the Workflow Professional Certificate by LinkedIn Learning",
+    "url": "https://www.linkedin.com/learning/paths/building-ai-products-understanding-the-workflow-professional-certificate-by-linkedin-learning"
+   }
+  ],
+  "phases/11-llm-engineering/108-ai-cloud-data-platform-and-iot/docs/en.md": [
+   {
+    "title": "Artificial Intelligence on Microsoft Azure",
+    "url": "https://www.coursera.org/learn/artificial-intelligence-microsoft-azure"
+   },
+   {
+    "title": "Get started with AI applications and agents on Azure",
+    "url": "https://learn.microsoft.com/en-us/training/paths/get-started-ai-apps-agents/"
+   },
+   {
+    "title": "Govern AI-ready Infrastructure",
+    "url": "https://learn.microsoft.com/en-us/training/paths/govern-ai-ready-infrastructure/"
+   }
+  ],
+  "phases/11-llm-engineering/110-ai-operating-model-and-center-of/docs/en.md": [
+   {
+    "title": "Drive AI transformation in your organization",
+    "url": "https://learn.microsoft.com/en-us/training/courses/ab-731t00"
+   },
+   {
+    "title": "Transform your business with AI",
+    "url": "https://learn.microsoft.com/en-us/training/paths/transform-your-business-with-microsoft-ai/"
+   }
+  ],
+  "phases/11-llm-engineering/111-ai-service-desk-runbook-and-knowledge/docs/en.md": [
+   {
+    "title": "Generative AI for Customer Service Automation",
+    "url": "https://www.coursera.org/learn/generative-ai-for-customer-service-automation"
+   },
+   {
+    "title": "IT Service Management Foundations: Measures and Metrics",
+    "url": "https://www.linkedin.com/learning/it-service-management-foundations-measures-and-metrics"
+   },
+   {
+    "title": "Create agents in Microsoft Copilot Studio",
+    "url": "https://learn.microsoft.com/en-us/training/paths/create-extend-custom-copilots-microsoft-copilot-studio/"
+   }
+  ],
+  "phases/11-llm-engineering/112-ai-security-review-and-threat-triage/docs/en.md": [
+   {
+    "title": "AI workload governance and DLP",
+    "url": "https://learn.microsoft.com/en-us/training/paths/ai-workloads-governance/"
+   },
+   {
+    "title": "Govern AI-ready Infrastructure",
+    "url": "https://learn.microsoft.com/en-us/training/paths/govern-ai-ready-infrastructure/"
+   }
+  ],
+  "phases/11-llm-engineering/113-ai-prompt-library-governance-and-reuse/docs/en.md": [
+   {
+    "title": "Advanced Prompt Engineering Techniques",
+    "url": "https://www.linkedin.com/learning/advanced-prompt-engineering-techniques"
+   }
+  ],
+  "phases/11-llm-engineering/114-ai-champion/docs/en.md": [
+   {
+    "title": "Drive AI transformation in your organization",
+    "url": "https://learn.microsoft.com/en-us/training/courses/ab-731t00"
+   }
+  ],
+  "phases/11-llm-engineering/14-model-context-protocol/docs/en.md": [
+   {
+    "title": "Introduction to Model Context Protocol (MCP)",
+    "url": "https://www.coursera.org/learn/introduction-to-model-context-protocol"
+   },
+   {
+    "title": "MCP: Build Rich-Context AI Apps with Anthropic",
+    "url": "https://www.deeplearning.ai/courses/mcp-build-rich-context-ai-apps-with-anthropic"
+   }
+  ],
+  "phases/11-llm-engineering/16-langgraph-state-machines/docs/en.md": [
+   {
+    "title": "Foundation: Introduction to LangGraph - Python",
+    "url": "https://academy.langchain.com/courses/intro-to-langgraph"
+   }
+  ],
+  "phases/11-llm-engineering/19-ai-driven-testing-qa/docs/en.md": [
+   {
+    "title": "AI-Powered Software Development: Coding, Testing, and System Design",
+    "url": "https://www.linkedin.com/learning/ai-powered-software-development-coding-testing-and-system-design?u=2197772"
+   }
+  ],
+  "phases/11-llm-engineering/21-ai-assisted-documentation/docs/en.md": [
+   {
+    "title": "How to Research and Write Using Generative AI Tools",
+    "url": "https://www.linkedin.com/learning/how-to-research-and-write-using-generative-ai-tools-29670569"
+   }
+  ],
+  "phases/11-llm-engineering/25-ai-cost-value-economics/docs/en.md": [
+   {
+    "title": "Introduction to Cost Management for AI Workloads",
+    "url": "https://learn.microsoft.com/en-us/training/modules/understand-cost-management-ai/"
+   }
+  ],
+  "phases/11-llm-engineering/26-consultative-prompting/docs/en.md": [
+   {
+    "title": "Advanced Prompt Engineering Techniques",
+    "url": "https://www.linkedin.com/learning/advanced-prompt-engineering-techniques"
+   },
+   {
+    "title": "Strategic AI Prompting for Managers",
+    "url": "https://www.linkedin.com/learning/strategic-ai-prompting-for-managers-leading-smarter-with-generative-ai"
+   }
+  ],
+  "phases/11-llm-engineering/27-ai-ecosystem-vendor-landscape/docs/en.md": [
+   {
+    "title": "The AI Ecosystem for Developers: Models, Datasets, and APIs",
+    "url": "https://www.linkedin.com/learning/the-ai-ecosystem-for-developers-models-datasets-and-apis?u=2197772"
+   },
+   {
+    "title": "Comparing AI Research Tools: ChatGPT, Claude, Gemini, and Perplexity",
+    "url": "https://www.linkedin.com/learning/comparing-ai-research-tools-chatgpt-claude-gemini-and-perplexity?u=2197772"
+   }
+  ],
+  "phases/11-llm-engineering/29-decision-making-with-ai/docs/en.md": [
+   {
+    "title": "Data-Driven Decision Making for Business",
+    "url": "https://www.datacamp.com/courses/data-driven-decision-making-for-business"
+   },
+   {
+    "title": "AI-Augmented Decision-Making for Business Leaders",
+    "url": "https://www.coursera.org/learn/ai-augmented-decision-making-for-business-leaders"
+   }
+  ],
+  "phases/11-llm-engineering/33-ai-change-management-team-integration/docs/en.md": [
+   {
+    "title": "Drive AI transformation in your organization",
+    "url": "https://learn.microsoft.com/en-us/training/courses/ab-731t00"
+   }
+  ],
+  "phases/11-llm-engineering/34-ai-champion-enablement/docs/en.md": [
+   {
+    "title": "Drive AI transformation in your organization",
+    "url": "https://learn.microsoft.com/en-us/training/courses/ab-731t00"
+   }
+  ],
+  "phases/11-llm-engineering/35-ai-security-prompt-injection/docs/en.md": [
+   {
+    "title": "AI workload governance and DLP",
+    "url": "https://learn.microsoft.com/en-us/training/paths/ai-workloads-governance/"
+   }
+  ],
+  "phases/11-llm-engineering/36-internal-knowledge-assistants-rag/docs/en.md": [
+   {
+    "title": "Create agents in Microsoft Copilot Studio",
+    "url": "https://learn.microsoft.com/en-us/training/paths/create-extend-custom-copilots-microsoft-copilot-studio/"
+   }
+  ],
+  "phases/11-llm-engineering/38-ai-operations-incident-response/docs/en.md": [
+   {
+    "title": "Applied AI for IT Operations (AIOps)",
+    "url": "https://www.linkedin.com/learning/applied-ai-for-it-operations-aiops?u=2197772"
+   },
+   {
+    "title": "IT Service Management Foundations: Measures and Metrics",
+    "url": "https://www.linkedin.com/learning/it-service-management-foundations-measures-and-metrics"
+   }
+  ],
+  "phases/11-llm-engineering/39-ai-portfolio-roadmap-management/docs/en.md": [
+   {
+    "title": "AI Strategy for Business Leaders",
+    "url": "https://www.coursera.org/learn/packt-ai-strategy-for-business-leaders-with-chatgpt-ml-dl-uel66"
+   },
+   {
+    "title": "Integrating Generative AI into Business Strategy",
+    "url": "https://www.linkedin.com/learning/integrating-generative-ai-into-business-strategy/why-a-strategic-framework-is-essential-for-ai-adoption"
+   },
+   {
+    "title": "Artificial Intelligence (AI) Strategy",
+    "url": "https://www.datacamp.com/courses/artificial-intelligence-ai-strategy"
+   }
+  ],
+  "phases/11-llm-engineering/43-ai-for-service-management-support/docs/en.md": [
+   {
+    "title": "Generative AI for Customer Service Automation",
+    "url": "https://www.coursera.org/learn/generative-ai-for-customer-service-automation"
+   },
+   {
+    "title": "IT Service Management Foundations: Measures and Metrics",
+    "url": "https://www.linkedin.com/learning/it-service-management-foundations-measures-and-metrics"
+   }
+  ],
+  "phases/11-llm-engineering/45-ai-for-corporate-communications-marketing/docs/en.md": [
+   {
+    "title": "How to Research and Write Using Generative AI Tools",
+    "url": "https://www.linkedin.com/learning/how-to-research-and-write-using-generative-ai-tools-29670569"
+   }
+  ],
+  "phases/11-llm-engineering/48-ai-project-reporting-steering/docs/en.md": [
+   {
+    "title": "Talking to AI: Prompt Engineering for Project Managers",
+    "url": "https://www.pmi.org/shop/p-/elearning/talking-to-ai-prompt-engineering-for-project-managers/el128"
+   },
+   {
+    "title": "Prompting with Agentic Techniques",
+    "url": "https://www.linkedin.com/learning/prompting-with-agentic-techniques?u=2197772"
+   },
+   {
+    "title": "AI for Project Management: Boosting Collaboration with Generative AI",
+    "url": "https://www.linkedin.com/learning/ai-for-project-management-boosting-collaboration-with-generative-ai?u=2197772"
+   },
+   {
+    "title": "AI for Project Managers and Scrum Masters",
+    "url": "https://www.coursera.org/learn/ai-for-project-managers-and-scrum-masters"
+   },
+   {
+    "title": "Generative AI Overview for PMs",
+    "url": "https://www.pmi.org/shop/p-/elearning/generative-ai-overview-for-project-managers/el083"
+   },
+   {
+    "title": "Project Leadership in the Age of AI",
+    "url": "https://www.linkedin.com/learning/project-leadership-in-the-age-of-ai/leading-projects-in-the-ai-era?u=2197772"
+   },
+   {
+    "title": "Transforming Project Management with AI Agents",
+    "url": "https://www.linkedin.com/learning/transforming-project-management-with-ai-agents-43161052?u=2197772"
+   }
+  ],
+  "phases/11-llm-engineering/50-ai-process-analysis-automation-design/docs/en.md": [
+   {
+    "title": "Implementing AI Solutions in Business",
+    "url": "https://www.datacamp.com/courses/implementing-ai-solutions-in-business"
+   },
+   {
+    "title": "Agentic AI for Business Analysis",
+    "url": "https://www.linkedin.com/learning/agentic-ai-for-business-analysis"
+   },
+   {
+    "title": "Agentic AI for Business Analysis",
+    "url": "https://learn.microsoft.com/en-us/training/paths/enhance-autonomous-agents/"
+   }
+  ],
+  "phases/11-llm-engineering/53-ai-customer-communication-service-quality/docs/en.md": [
+   {
+    "title": "Generative AI for Customer Service Automation",
+    "url": "https://www.coursera.org/learn/generative-ai-for-customer-service-automation"
+   }
+  ],
+  "phases/11-llm-engineering/54-ai-architecture-decision-governance/docs/en.md": [
+   {
+    "title": "AI workload governance and DLP",
+    "url": "https://learn.microsoft.com/en-us/training/paths/ai-workloads-governance/"
+   },
+   {
+    "title": "Govern AI-ready Infrastructure",
+    "url": "https://learn.microsoft.com/en-us/training/paths/govern-ai-ready-infrastructure/"
+   }
+  ],
+  "phases/11-llm-engineering/56-ai-business-analysis-process-discovery/docs/en.md": [
+   {
+    "title": "Learning AI for Business Analysis",
+    "url": "https://www.linkedin.com/learning/learning-ai-for-business-analysis"
+   },
+   {
+    "title": "Agentic AI for Business Analysis",
+    "url": "https://www.linkedin.com/learning/agentic-ai-for-business-analysis"
+   },
+   {
+    "title": "Agentic AI for Business Analysis",
+    "url": "https://learn.microsoft.com/en-us/training/paths/enhance-autonomous-agents/"
+   },
+   {
+    "title": "Implementing AI Solutions in Business",
+    "url": "https://www.datacamp.com/courses/implementing-ai-solutions-in-business"
+   }
+  ],
+  "phases/11-llm-engineering/62-ai-bi-reporting-data-storytelling/docs/en.md": [
+   {
+    "title": "Data-Driven Decision Making for Business",
+    "url": "https://www.datacamp.com/courses/data-driven-decision-making-for-business"
+   },
+   {
+    "title": "IT Service Management Foundations: Measures and Metrics",
+    "url": "https://www.linkedin.com/learning/it-service-management-foundations-measures-and-metrics"
+   }
+  ],
+  "phases/11-llm-engineering/68-ai-adoption-communications-role-enablement/docs/en.md": [
+   {
+    "title": "Empower your workforce with Microsoft 365 Copilot Use Cases",
+    "url": "https://learn.microsoft.com/en-us/training/paths/empower-workforce-copilot-use-cases/"
+   },
+   {
+    "title": "AI for Business Users",
+    "url": "https://learn.microsoft.com/de-de/training/paths/ai-fluency/"
+   }
+  ],
+  "phases/11-llm-engineering/70-github-copilot-daily-workflow/docs/en.md": [
+   {
+    "title": "Introduction to GitHub Copilot App Modernization",
+    "url": "https://learn.microsoft.com/en-us/training/modules/intro-github-copilot-app-modernization/"
+   },
+   {
+    "title": "AI Basics @ LHIND Learning Catalog",
+    "url": "https://trainingcamp.lhind.app.lufthansa.com/lesson.html?path=llm-primer&course=PRIMER-01"
+   },
+   {
+    "title": "Get started with Microsoft 365 Copilot",
+    "url": "https://learn.microsoft.com/en-us/training/paths/get-started-with-microsoft-365-copilot/"
+   },
+   {
+    "title": "Learning Microsoft 365 Copilot for Work",
+    "url": "https://www.linkedin.com/learning/learning-microsoft-365-copilot-for-work-26545077"
+   }
+  ],
+  "phases/11-llm-engineering/71-copilot-code-review-pr-workflow/docs/en.md": [
+   {
+    "title": "Introduction to GitHub Copilot App Modernization",
+    "url": "https://learn.microsoft.com/en-us/training/modules/intro-github-copilot-app-modernization/"
+   },
+   {
+    "title": "AI-Powered Software Development: Coding, Testing, and System Design",
+    "url": "https://www.linkedin.com/learning/ai-powered-software-development-coding-testing-and-system-design?u=2197772"
+   }
+  ],
+  "phases/11-llm-engineering/72-copilot-cursor-claude-code-mcp/docs/en.md": [
+   {
+    "title": "Introduction to Model Context Protocol (MCP)",
+    "url": "https://www.coursera.org/learn/introduction-to-model-context-protocol"
+   },
+   {
+    "title": "MCP: Build Rich-Context AI Apps with Anthropic",
+    "url": "https://www.deeplearning.ai/courses/mcp-build-rich-context-ai-apps-with-anthropic"
+   },
+   {
+    "title": "Introduction to GitHub Copilot App Modernization",
+    "url": "https://learn.microsoft.com/en-us/training/modules/intro-github-copilot-app-modernization/"
+   }
+  ],
+  "phases/11-llm-engineering/73-ai-fundamentals/docs/en.md": [
+   {
+    "title": "AI for Everyone",
+    "url": "https://learn.microsoft.com/en-us/training/paths/get-started-with-microsoft-365-copilot/"
+   },
+   {
+    "title": "Understanding Artificial Intelligence",
+    "url": "https://www.datacamp.com/courses/understanding-artificial-intelligence"
+   },
+   {
+    "title": "Fundamentals of AI",
+    "url": "https://www.coursera.org/learn/google-ai-fundamentals"
+   },
+   {
+    "title": "AI Basics @ LHIND Learning Catalog",
+    "url": "https://trainingcamp.lhind.app.lufthansa.com/lesson.html?path=llm-primer&course=PRIMER-01"
+   },
+   {
+    "title": "Transform your business with AI",
+    "url": "https://learn.microsoft.com/en-us/training/paths/transform-your-business-with-microsoft-ai/"
+   },
+   {
+    "title": "Generative AI for Business Leaders (2025)",
+    "url": "https://www.linkedin.com/learning/generative-ai-for-business-leaders-2025?u=2197772"
+   },
+   {
+    "title": "Introduction to GenAI for Executives",
+    "url": "https://www.coursera.org/learn/generative-ai-for-executives-business-leaders-introduction?utm_medium=institutions&utm_source=ibm-skills-network&utm_campaign=TrainingBlogGenAIExecctives"
+   },
+   {
+    "title": "Microsoft: AI Foundations for Business Leaders",
+    "url": "https://www.edx.org/learn/computer-science/microsoft-learning-path-introduction-to-ai-for-business-users"
+   },
+   {
+    "title": "AI Fluency",
+    "url": "https://learn.microsoft.com/en-us/training/paths/ai-fluency/"
+   },
+   {
+    "title": "AI for Managers",
+    "url": "https://www.linkedin.com/learning/paths/ai-for-managers-by-microsoft-and-linkedin?u=2197772"
+   }
+  ],
+  "phases/11-llm-engineering/74-ai-concepts-and-tools-for-personal/docs/en.md": [
+   {
+    "title": "AI for Business Users",
+    "url": "https://learn.microsoft.com/de-de/training/paths/ai-fluency/"
+   },
+   {
+    "title": "Get started with Microsoft 365 Copilot",
+    "url": "https://learn.microsoft.com/en-us/training/paths/get-started-with-microsoft-365-copilot/"
+   },
+   {
+    "title": "Learning Microsoft 365 Copilot for Work",
+    "url": "https://www.linkedin.com/learning/learning-microsoft-365-copilot-for-work-26545077"
+   },
+   {
+    "title": "Empower your workforce with Microsoft 365 Copilot Use Cases",
+    "url": "https://learn.microsoft.com/en-us/training/paths/empower-workforce-copilot-use-cases/"
+   },
+   {
+    "title": "Comparing AI Research Tools: ChatGPT, Claude, Gemini, and Perplexity",
+    "url": "https://www.linkedin.com/learning/comparing-ai-research-tools-chatgpt-claude-gemini-and-perplexity?u=2197772"
+   },
+   {
+    "title": "How to Research and Write Using Generative AI Tools",
+    "url": "https://www.linkedin.com/learning/how-to-research-and-write-using-generative-ai-tools-29670569"
+   }
+  ],
+  "phases/11-llm-engineering/75-responsible-and-trustworthy-ai/docs/en.md": [
+   {
+    "title": "AI Ethics",
+    "url": "https://www.datacamp.com/courses/ai-ethics"
+   },
+   {
+    "title": "AI fluency: Explore responsible AI",
+    "url": "https://learn.microsoft.com/en-us/training/modules/responsible-ai/"
+   }
+  ],
+  "phases/11-llm-engineering/76-hands-on-prompt-engineering-workshop/docs/en.md": [
+   {
+    "title": "Advanced Prompt Engineering Techniques",
+    "url": "https://www.linkedin.com/learning/advanced-prompt-engineering-techniques"
+   },
+   {
+    "title": "Talking to AI: Prompt Engineering for Project Managers",
+    "url": "https://www.pmi.org/shop/p-/elearning/talking-to-ai-prompt-engineering-for-project-managers/el128"
+   }
+  ],
+  "phases/11-llm-engineering/78-ai-introduction-to-architecture-for-ai/docs/en.md": [
+   {
+    "title": "Architecture of AI Solutions - Scalable GenAI Systems",
+    "url": "https://www.coursera.org/learn/packt-architecting-ai-solutions-scalable-genai-systems-btzcm"
+   },
+   {
+    "title": "Architectures for AI",
+    "url": "https://www.linkedin.com/learning/advanced-data-processing-batch-real-time-and-cloud-architectures-for-ai/architectures-for-ai?u=2197772"
+   },
+   {
+    "title": "Generative AI Architecture and Application Development",
+    "url": "https://www.coursera.org/learn/generative-ai-architecture-and-application-development"
+   },
+   {
+    "title": "Generative AI and Large Language Models: Architecture and Data Preparation",
+    "url": "https://www.coursera.org/learn/generative-ai-llm-architecture-data-preparation"
+   },
+   {
+    "title": "Artificial Intelligence on Microsoft Azure",
+    "url": "https://www.coursera.org/learn/artificial-intelligence-microsoft-azure"
+   },
+   {
+    "title": "Get started with AI applications and agents on Azure",
+    "url": "https://learn.microsoft.com/en-us/training/paths/get-started-ai-apps-agents/"
+   }
+  ],
+  "phases/11-llm-engineering/79-ai-agentic-software-engineering/docs/en.md": [
+   {
+    "title": "Agentic AI",
+    "url": "https://www.deeplearning.ai/courses/agentic-ai"
+   },
+   {
+    "title": "Agentic AI Fundamentals: Architectures, Frameworks, and Applications",
+    "url": "https://www.linkedin.com/learning/agentic-ai-fundamentals-architectures-frameworks-and-applications/agentic-ai-the-future-of-smart-ai-is-here?u=2197772"
+   },
+   {
+    "title": "Foundation: Introduction to LangGraph - Python",
+    "url": "https://academy.langchain.com/courses/intro-to-langgraph"
+   },
+   {
+    "title": "Introduction to LangChain - Python",
+    "url": "https://academy.langchain.com/courses/foundation-introduction-to-langchain-python"
+   },
+   {
+    "title": "Developing LLM Applications with LangChain",
+    "url": "https://www.datacamp.com/courses/developing-llm-applications-with-langchain"
+   }
+  ],
+  "phases/11-llm-engineering/80-corporate-ethics-and-compliance-for-ai/docs/en.md": [
+   {
+    "title": "AI fluency: Explore responsible AI",
+    "url": "https://learn.microsoft.com/en-us/training/modules/responsible-ai/"
+   },
+   {
+    "title": "AI Ethics",
+    "url": "https://www.datacamp.com/courses/ai-ethics"
+   }
+  ],
+  "phases/11-llm-engineering/81-ai-driven-testing-and-qa/docs/en.md": [
+   {
+    "title": "AI-Powered Software Development: Coding, Testing, and System Design",
+    "url": "https://www.linkedin.com/learning/ai-powered-software-development-coding-testing-and-system-design?u=2197772"
+   }
+  ],
+  "phases/11-llm-engineering/82-ai-supported-code-modernization/docs/en.md": [
+   {
+    "title": "Introduction to GitHub Copilot App Modernization",
+    "url": "https://learn.microsoft.com/en-us/training/modules/intro-github-copilot-app-modernization/"
+   }
+  ],
+  "phases/11-llm-engineering/83-ai-assisted-documentation/docs/en.md": [
+   {
+    "title": "How to Research and Write Using Generative AI Tools",
+    "url": "https://www.linkedin.com/learning/how-to-research-and-write-using-generative-ai-tools-29670569"
+   }
+  ],
+  "phases/11-llm-engineering/84-sustainable-software-and-green-coding/docs/en.md": [
+   {
+    "title": "The Principles of Sustainable Software Engineering",
+    "url": "https://learn.microsoft.com/en-us/training/modules/sustainable-software-engineering-overview/"
+   }
+  ],
+  "phases/11-llm-engineering/87-ai-cost-and-value-economics/docs/en.md": [
+   {
+    "title": "Introduction to Cost Management for AI Workloads",
+    "url": "https://learn.microsoft.com/en-us/training/modules/understand-cost-management-ai/"
+   }
+  ],
+  "phases/11-llm-engineering/88-consultative-prompting/docs/en.md": [
+   {
+    "title": "Advanced Prompt Engineering Techniques",
+    "url": "https://www.linkedin.com/learning/advanced-prompt-engineering-techniques"
+   },
+   {
+    "title": "Strategic AI Prompting for Managers",
+    "url": "https://www.linkedin.com/learning/strategic-ai-prompting-for-managers-leading-smarter-with-generative-ai"
+   }
+  ],
+  "phases/11-llm-engineering/89-ai-ecosystem-and-vendor-landscape/docs/en.md": [
+   {
+    "title": "The AI Ecosystem for Developers: Models, Datasets, and APIs",
+    "url": "https://www.linkedin.com/learning/the-ai-ecosystem-for-developers-models-datasets-and-apis?u=2197772"
+   },
+   {
+    "title": "Comparing AI Research Tools: ChatGPT, Claude, Gemini, and Perplexity",
+    "url": "https://www.linkedin.com/learning/comparing-ai-research-tools-chatgpt-claude-gemini-and-perplexity?u=2197772"
+   }
+  ],
+  "phases/11-llm-engineering/90-ai-workforce-strategy/docs/en.md": [
+   {
+    "title": "Empower your workforce with Microsoft 365 Copilot Use Cases",
+    "url": "https://learn.microsoft.com/en-us/training/paths/empower-workforce-copilot-use-cases/"
+   }
+  ],
+  "phases/11-llm-engineering/91-decision-making-with-ai/docs/en.md": [
+   {
+    "title": "Data-Driven Decision Making for Business",
+    "url": "https://www.datacamp.com/courses/data-driven-decision-making-for-business"
+   },
+   {
+    "title": "AI-Augmented Decision-Making for Business Leaders",
+    "url": "https://www.coursera.org/learn/ai-augmented-decision-making-for-business-leaders"
+   }
+  ],
+  "phases/11-llm-engineering/92-data-literacy-for-ai-projects/docs/en.md": [
+   {
+    "title": "Data-Driven Decision Making for Business",
+    "url": "https://www.datacamp.com/courses/data-driven-decision-making-for-business"
+   },
+   {
+    "title": "Data Strategy",
+    "url": "https://www.datacamp.com/courses/data-strategy"
+   }
+  ],
+  "phases/11-llm-engineering/93-ai-security-and-prompt-injection-defense/docs/en.md": [
+   {
+    "title": "AI workload governance and DLP",
+    "url": "https://learn.microsoft.com/en-us/training/paths/ai-workloads-governance/"
+   }
+  ],
+  "phases/11-llm-engineering/94-internal-knowledge-assistants-with-rag/docs/en.md": [
+   {
+    "title": "Create agents in Microsoft Copilot Studio",
+    "url": "https://learn.microsoft.com/en-us/training/paths/create-extend-custom-copilots-microsoft-copilot-studio/"
+   }
+  ],
+  "phases/11-llm-engineering/96-ai-operations-and-incident-response/docs/en.md": [
+   {
+    "title": "Applied AI for IT Operations (AIOps)",
+    "url": "https://www.linkedin.com/learning/applied-ai-for-it-operations-aiops?u=2197772"
+   },
+   {
+    "title": "IT Service Management Foundations: Measures and Metrics",
+    "url": "https://www.linkedin.com/learning/it-service-management-foundations-measures-and-metrics"
+   }
+  ],
+  "phases/11-llm-engineering/97-ai-for-service-management-and-support/docs/en.md": [
+   {
+    "title": "Generative AI for Customer Service Automation",
+    "url": "https://www.coursera.org/learn/generative-ai-for-customer-service-automation"
+   },
+   {
+    "title": "IT Service Management Foundations: Measures and Metrics",
+    "url": "https://www.linkedin.com/learning/it-service-management-foundations-measures-and-metrics"
+   }
+  ],
+  "phases/11-llm-engineering/99-ai-project-reporting-and-steering/docs/en.md": [
+   {
+    "title": "Talking to AI: Prompt Engineering for Project Managers",
+    "url": "https://www.pmi.org/shop/p-/elearning/talking-to-ai-prompt-engineering-for-project-managers/el128"
+   },
+   {
+    "title": "Prompting with Agentic Techniques",
+    "url": "https://www.linkedin.com/learning/prompting-with-agentic-techniques?u=2197772"
+   },
+   {
+    "title": "AI for Project Management: Boosting Collaboration with Generative AI",
+    "url": "https://www.linkedin.com/learning/ai-for-project-management-boosting-collaboration-with-generative-ai?u=2197772"
+   },
+   {
+    "title": "AI for Project Managers and Scrum Masters",
+    "url": "https://www.coursera.org/learn/ai-for-project-managers-and-scrum-masters"
+   },
+   {
+    "title": "Generative AI Overview for PMs",
+    "url": "https://www.pmi.org/shop/p-/elearning/generative-ai-overview-for-project-managers/el083"
+   },
+   {
+    "title": "Project Leadership in the Age of AI",
+    "url": "https://www.linkedin.com/learning/project-leadership-in-the-age-of-ai/leading-projects-in-the-ai-era?u=2197772"
+   },
+   {
+    "title": "Transforming Project Management with AI Agents",
+    "url": "https://www.linkedin.com/learning/transforming-project-management-with-ai-agents-43161052?u=2197772"
+   }
+  ],
+  "phases/13-tools-and-protocols/06-mcp-fundamentals/docs/en.md": [
+   {
+    "title": "Introduction to Model Context Protocol (MCP)",
+    "url": "https://www.coursera.org/learn/introduction-to-model-context-protocol"
+   },
+   {
+    "title": "MCP: Build Rich-Context AI Apps with Anthropic",
+    "url": "https://www.deeplearning.ai/courses/mcp-build-rich-context-ai-apps-with-anthropic"
+   }
+  ]
+ }
+}

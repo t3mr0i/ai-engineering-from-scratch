@@ -115,6 +115,5 @@ Use normalize(), signal_matches(), score_scenario() to explain the result, not o
 
 ### Recommended trainings (LHIND AI Literacy)
 
-- [AI Powered Decision Making](https://www.datacamp.com/courses/data-driven-decision-making-for-business) — DataCamp · Deepen · 2 h · Rollen: Leadership (Academy AI-07)
+- [Data-Driven Decision Making for Business](https://www.datacamp.com/courses/data-driven-decision-making-for-business) — DataCamp · Deepen · 2 h · Rollen: Leadership, Application Management, Corporate Functions (Academy AI-07; auch gelistet als „AI Powered Decision Making")
 - [AI-Augmented Decision-Making for Business Leaders](https://www.coursera.org/learn/ai-augmented-decision-making-for-business-leaders) — Coursera · Deepen · 4 h · Rollen: Leadership (Academy AI-07)
-- [Data-Driven Decision Making for Business](https://www.datacamp.com/courses/data-driven-decision-making-for-business) — DataCamp · Deepen · 2 h · Rollen: Application Management, Corporate Functions (Academy AI-07)

@@ -142,7 +142,17 @@
       };
     });
     if (!Object.keys(dimensions).length) return null;
-    return { profileId: record.profileId == null ? null : String(record.profileId).toLowerCase(), dimensions: dimensions };
+    return { profileId: mergedProfileId(record.profileId), dimensions: dimensions };
+  }
+
+  // Legacy alias: imports stored under the dissolved "Products & Value Streams"
+  // profile (id pvs, segment PVS, code R02-PVS) keep applying to its merge
+  // target, Corporate Functions.
+  function mergedProfileId(value) {
+    if (value == null) return null;
+    var key = String(value).toLowerCase().trim();
+    if (key === "pvs" || key === "r02-pvs" || key === "products-value-streams" || key === "products & value streams") return "corp";
+    return String(value).toLowerCase();
   }
 
   function importedDimensionForCourse(course, assessmentImport, placementContext) {

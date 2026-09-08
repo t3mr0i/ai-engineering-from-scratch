@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What token count does token_count assign to the SYSTEM segment?",
+      "question": "Thousands of requests share the same long system prompt, but the server recomputes it from scratch every time. What is wasted?",
       "options": [
-        "2,000",
-        "500",
-        "300",
-        "60"
+        "Nothing; recomputation is free",
+        "Only a few tokens per request",
+        "The users' patience, nothing else",
+        "The full shared prefix on every request instead of once"
       ],
-      "correct": 0,
-      "explanation": "The local token_count function returns 2000 for SYSTEM, 500 for DOC_ segments, 300 for TOOLS, and 60 for Q_ segments."
+      "correct": 3,
+      "explanation": "Repeated prefixes are repeated work. This lesson caches them: prefill cost becomes the new suffix only."
     },
     {
       "stage": "check",

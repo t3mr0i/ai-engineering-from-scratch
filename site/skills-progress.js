@@ -64,7 +64,17 @@
         gap: Math.max(0, target - current)
       };
     });
-    return Object.keys(dimensions).length ? { profileId: record.profileId == null ? null : String(record.profileId), dimensions: dimensions } : null;
+    return Object.keys(dimensions).length ? { profileId: mergedProfileId(record.profileId), dimensions: dimensions } : null;
+  }
+
+  // Legacy alias: imports stored under the dissolved "Products & Value Streams"
+  // profile (id pvs, segment PVS, code R02-PVS) keep applying to its merge
+  // target, Corporate Functions.
+  function mergedProfileId(value) {
+    if (value == null) return null;
+    var key = String(value).toLowerCase().trim();
+    if (key === "pvs" || key === "r02-pvs" || key === "products-value-streams" || key === "products & value streams") return "corp";
+    return String(value);
   }
 
   function importedBaselineForCluster(cluster, assessmentImport) {
@@ -645,9 +655,10 @@
     doc.addEventListener("assessment-import:change", function (event) {
       assessmentImport = event && event.detail || null;
       if (assessmentImport) {
+        var importedProfileId = mergedProfileId(assessmentImport.profileId);
         var importedRole = (data.roles || []).find(function (role) {
           return [role.id, role.label, role.segment].filter(Boolean).some(function (value) {
-            return String(value).toLowerCase().trim() === String(assessmentImport.profileId).toLowerCase().trim();
+            return String(value).toLowerCase().trim() === String(importedProfileId).toLowerCase().trim();
           });
         });
         if (importedRole && profileSelect) {

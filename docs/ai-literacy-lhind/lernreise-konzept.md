@@ -1,4 +1,4 @@
-# Dein Weg zum AI-Zielbild
+# Dein nächster Schritt mit AI
 
 Umgesetzter Produktzuschnitt · 8. September 2026 · lokale Implementierung
 
@@ -96,7 +96,7 @@ Auf schmalen Bildschirmen steht der Lernpfad vertikal. Die Reihenfolge bleibt au
 
 ## Zusammenarbeit mit dem AI-Literacy-Team
 
-Bestätigter Produktzuschnitt: Das Trainingcamp ist das Lerncockpit. Online-Kurse bleiben innerhalb der vorhandenen Kurse eingebunden. Externe Hands-on- und Train-the-Trainer-Angebote werden nicht als zusätzliche Online-Kursliste geführt. Nach absolvierter Vorbereitung weist das Cockpit auf den passenden externen Academy-Transfer hin. Ohne gepflegte Termine und Anbieterlinks wird die Abstimmung mit der LHIND Academy genannt.
+Bestätigter Produktzuschnitt: Das Trainingcamp ist das Lerncockpit. Online-Kurse bleiben innerhalb der vorhandenen Kurse eingebunden. Externe Hands-on- und Train-the-Trainer-Angebote werden nicht als zusätzliche Online-Kursliste geführt. Nach absolvierter Vorbereitung weist das Cockpit auf den passenden externen Academy-Transfer hin. Ohne konkrete verfügbare Angebote bleiben Academy-Hinweise und ihre Navigation ausgeblendet. Es erscheinen keine leeren Bereiche oder Platzhalter für spätere Angebote.
 
 | Bereich | Vorgeschlagene Verantwortung |
 | --- | --- |
@@ -140,6 +140,10 @@ Luna dokumentiert den Quellen- und Begriffsabgleich in [Terminologie-Abgleich](t
 - Konkrete Kursbeiträge stammen aus der bestehenden kuratierten Fähigkeits-/Kursmatrix. Die Lernreihenfolge führt zunächst durch offene frühere Etappen. Sie behauptet keine externe Zulassungsvoraussetzung.
 - Die fünf Dimensionsziele bleiben sichtbar. Ein Schwerpunkt priorisiert die passenden Schritte. Ein persönlicher Plan kann angepasst und gespeichert werden; entfernte Schritte werden bei Aktualisierungen nicht unbemerkt wieder eingefügt.
 - Kursfortschritt ist ein eigener Wert. Ein beobachtetes Kompetenzlevel benötigt pro zugeordneter Etappe Quiz-Evidenz und einen bestandenen praktischen Self-Check. Eine Selbsteinschätzung bleibt ausdrücklich eine Selbsteinschätzung.
-- Konkrete Train-the-Trainer-Termine sind im aktuellen Katalog nicht gepflegt. Nach abgeschlossener Academy-Pfad-Vorbereitung erscheint ein Hinweis auf Praxistransfer und eine optionale Abstimmung zur Trainerqualifizierung. Es werden keine Termine oder Buchungen erfunden.
+- Konkrete Train-the-Trainer-Termine sind im aktuellen Katalog nicht gepflegt. Eine externe Empfehlung erscheint erst nach passender Vorbereitung und mit einem tatsächlich verfügbaren Angebot. Bis dahin bleiben die entsprechenden Bereiche ausgeblendet.
 
 Technischer Einstieg: `site/lrn/learning-journey.js` berechnet das gemeinsame Modell; `journey-state.js` verbindet die vorhandenen lokalen Daten; `journey-ui.js` zeigt es auf Startseite, Plan, Kurs, Assessment und Fähigkeitenansicht. Der Abschluss der letzten Kursaktivität führt über dieselbe Empfehlung weiter.
+
+## Sprache und sichtbares Angebot
+
+Der Einstieg lädt zur persönlichen Weiterentwicklung ein: „Dein nächster Schritt mit AI“. Rollenbezogene Dimensionsziele bleiben als fachliche Orientierung erhalten. Die Ansprache ist freundlich, klar und sachlich im Lufthansa-Kontext; Lernreise und Etappen sind passende Metaphern, spielerische Flughafenansagen nicht. Leere Angebote werden nicht angekündigt. Die Oberfläche zeigt zuerst verfügbare Lernschritte und blendet zusätzliche Bereiche erst ein, wenn sie nutzbare Inhalte bieten.

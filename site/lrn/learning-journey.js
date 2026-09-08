@@ -77,6 +77,17 @@
     var row = masteryByCourse[id];
     return !!row && row.evidenceCount >= 6 && row.appliedEvidenceCount >= 1 && row.probability >= 0.8;
   }
+  function usableRegistration(session, now) {
+    if (!session || !session.registrationUrl || session.status === "cancelled" || session.status === "done") return null;
+    var end = Date.parse(session.end || session.start || "");
+    if (isNaN(end) || end < now) return null;
+    try {
+      var url = new URL(session.registrationUrl);
+      return /^https?:$/.test(url.protocol) ? url.href : null;
+    } catch (error) {
+      return null;
+    }
+  }
 
   function createModel(input) {
     input = input || {};
@@ -227,12 +238,15 @@
     var next = steps.find(function (step) { return step.status === "ready" || step.status === "in-progress"; }) || null;
     if (next) steps = [next].concat(steps.filter(function (step) { return step !== next; }));
     var externalRecommendations = [];
+    var now = Number.isFinite(input.now) ? input.now : Date.now();
     array(catalog.academyPaths).forEach(function (path) {
       if (!(path.recommendationRanks && path.recommendationRanks[roleId]) && !path.foundationRank) return;
       var ids = unique(array(path.stages).flatMap(function (stage) { return array(stage.courses); }));
       if (!ids.length || !ids.every(function (id) { return progress[id] && progress[id].completed; })) return;
       var anchor = ids[ids.length - 1];
-      externalRecommendations.push({ academyCourse: path.academyCourse, title: path.title, courseId: anchor, href: "lrn/course.html?id=" + encodeURIComponent(anchor) + "#courseSessionsTitle", status: "ready", bookingAvailable: array(catalog.sessions).some(function (session) { return session.courseId === anchor && session.registrationUrl && session.status !== "cancelled" && session.status !== "done"; }), reason: de ? "Die Lernschritte dieses Pfads sind abgeschlossen. Jetzt ist der externe Praxistransfer in der LHIND Academy sinnvoll. Wenn du Wissen weitergeben möchtest, stimme dort eine Train-the-Trainer-Qualifizierung ab." : "The learning steps in this path are complete. This is a useful point for external hands-on transfer with LHIND Academy. If you want to teach others, discuss train-the-trainer qualification with the Academy." });
+      var registrationUrl = array(catalog.sessions).filter(function (session) { return session.courseId === anchor; }).map(function (session) { return usableRegistration(session, now); }).filter(Boolean)[0];
+      if (!registrationUrl) return;
+      externalRecommendations.push({ academyCourse: path.academyCourse, title: path.title, courseId: anchor, href: registrationUrl, status: "ready", bookingAvailable: true, reason: de ? "Wenn du das Gelernte praktisch vertiefen möchtest, findest du hier ein passendes Angebot der LHIND Academy." : "If you want to deepen what you have learned in practice, you can find a suitable LHIND Academy offering here." });
     });
     var assessmentAvailable = !!imported || Object.keys(ratings).some(function (id) { return rank(ratings[id]) != null; });
     return {

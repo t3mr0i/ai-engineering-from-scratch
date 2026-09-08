@@ -105,8 +105,8 @@
     <section class="hero" aria-labelledby="heroTitle">
       <div class="hero__inner">
         <div class="hero__copy">
-          <h1 id="heroTitle">Your next learning step</h1>
-          <p id="homeHeroIntro">Choose your role, see its target profile, and continue with one clear next step.</p>
+          <h1 id="heroTitle">Your next step with AI</h1>
+          <p id="homeHeroIntro">Discover AI courses for your everyday work. Your role helps us suggest a starting point.</p>
         </div>
         <a id="resumeButton" href="#journeyCockpit" class="resume-button">
           <span class="button-text" id="resumeButtonText" data-i18n="home_explore_recommendations">Explore recommendations</span>
@@ -116,7 +116,7 @@
     </section>
 
     <section class="cockpit" id="cockpit" aria-label="Learning dashboard" data-i18n-aria-label="home_dashboard_label">
-      <section class="journey-cockpit" id="journeyCockpit" aria-label="Your AI learning journey">
+      <section class="journey-cockpit" id="journeyCockpit" aria-label="Your AI learning path">
         <div class="journey-cockpit__head">
           <div class="journey-cockpit__role">
             <label class="selector-field" for="roleSelect">
@@ -311,9 +311,9 @@
         // Time-of-day greeting (morning / afternoon / evening)
         const intro = document.getElementById('homeHeroIntro');
         if (intro) intro.textContent = de
-          ? 'Wähle deine Rolle, sieh ihr Zielbild und gehe mit einem klaren nächsten Schritt weiter.'
-          : 'Choose your role, see its target profile, and continue with one clear next step.';
-        heroTitle.textContent = de ? 'Dein Weg zum AI-Zielbild' : 'Your path to your AI target';
+          ? 'Entdecke AI-Kurse für deinen Arbeitsalltag. Deine Rolle hilft uns, dir einen passenden Einstieg vorzuschlagen.'
+          : 'Discover AI courses for your everyday work. Your role helps us suggest a starting point.';
+        heroTitle.textContent = de ? 'Dein nächster Schritt mit AI' : 'Your next step with AI';
         resumeButtonText.removeAttribute('data-i18n');
         resumeButtonText.textContent = de ? 'Lernreise ansehen' : 'View learning journey';
         resumeButton.href = '#journeyCockpit';

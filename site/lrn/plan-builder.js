@@ -193,7 +193,7 @@
     }) : { courses: [], dueReviews: [] };
     var assignmentState = read(ASSIGNMENT_STORE, { assignments: [] });
     return {
-      roleId: cockpit.profileId || "tc",
+      roleId: mergedProfileId(cockpit.profileId) || "tc",
       currentLevel: Number(cockpit.externalLevel || 1),
       goal: String(goal || "").trim().slice(0, 500),
       assessment: { ratings: assessment.ratings || {} },
@@ -203,6 +203,15 @@
       mastery: { courses: mastery.courses || [], dueReviews: mastery.dueReviews || [] },
       assignments: Array.isArray(assignmentState.assignments) ? assignmentState.assignments : []
     };
+  }
+
+  // Legacy alias: the dissolved "Products & Value Streams" profile (id pvs,
+  // segment PVS, code R02-PVS) now resolves to Corporate Functions.
+  function mergedProfileId(value) {
+    if (value == null) return value;
+    var key = String(value).toLowerCase().trim();
+    if (key === "pvs" || key === "r02-pvs" || key === "products-value-streams" || key === "products & value streams") return "corp";
+    return value;
   }
 
   function loadAssessmentImport() {
@@ -217,7 +226,7 @@
     var imported = null;
     try { imported = importer && importer.load ? importer.load() : null; } catch (_) {}
     var cockpit = read(COCKPIT_STORE, {});
-    if (imported && imported.profileId !== (cockpit.profileId || "tc")) imported = null;
+    if (imported && mergedProfileId(imported.profileId) !== mergedProfileId(cockpit.profileId || "tc")) imported = null;
     return Boolean((assessment.ratings && Object.keys(assessment.ratings).length > 0) ||
       (imported && imported.dimensions && Object.keys(imported.dimensions).length));
   }
@@ -604,7 +613,7 @@
       root.document.addEventListener("assessment-import:change", refreshAssessment);
       var incoming = loadAssessmentImport();
       var cockpit = read(COCKPIT_STORE, {});
-      if (incoming && incoming.profileId !== (cockpit.profileId || "tc")) incoming = null;
+      if (incoming && mergedProfileId(incoming.profileId) !== mergedProfileId(cockpit.profileId || "tc")) incoming = null;
       var normalized = root.LrnLearningPlan && root.LrnLearningPlan.normalizeAssessmentImport(incoming);
       if (saved && JSON.stringify(saved.learner && saved.learner.assessmentImport || null) !== JSON.stringify(normalized || null)) refreshAssessment();
       if (root.AIFSProgress && root.AIFSProgress.onChange) root.AIFSProgress.onChange(adaptSavedPlan);

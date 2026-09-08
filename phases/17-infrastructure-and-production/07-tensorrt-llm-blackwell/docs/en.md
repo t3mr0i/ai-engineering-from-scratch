@@ -86,6 +86,10 @@ Call `Stack` from a small caller with tokens=["red","fox"]. Compare its result w
 
 Hand off `outputs/skill-trtllm-blackwell-advisor.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: read the stack, buy the tokens
+
+In the CBP context you buy tokens per million, not hardware — but the hardware-precision-engine stack decides that price, so read it before committing a workload: Blackwell with FP8/NVFP4 and disaggregated serving is several times cheaper per token than older stacks for the same model. Keep KV cache at FP8 (FP4 collapses attention) and re-measure quality on your CBP eval set after any precision change; a cheaper token that fails the eval is not cheaper. Portability versus economics is the standing tradeoff — know which side your workload is on.
+
 ## Further Reading
 
 - [NVIDIA — Blackwell Ultra MLPerf Inference v6.0](https://developer.nvidia.com/blog/nvidia-blackwell-ultra-sets-new-inference-records-in-mlperf-debut/) — April 2026 MLPerf results.

@@ -119,7 +119,7 @@ Hand off `outputs/skill-data-readiness-assessment.md` with the command `python3 
 
 ### Recommended trainings (LHIND AI Literacy)
 
-- [Data-Driven Decision Making for Business](https://www.datacamp.com/courses/data-driven-decision-making-for-business) — DataCamp · Deepen · 2 h · Rollen: Application Management, Corporate Functions (Academy AI-07)
+- [Data-Driven Decision Making for Business](https://www.datacamp.com/courses/data-driven-decision-making-for-business) — DataCamp · Deepen · 2 h · Rollen: Leadership, Application Management, Corporate Functions (Academy AI-07; auch gelistet als „AI Powered Decision Making")
 - [Data Strategy](https://www.datacamp.com/courses/data-strategy) — DataCamp · Create · 4 h · Rollen: Technology Consulting, Business & Strategy Consulting (Academy AI-01, AI-04)
 
 ## Exercises

@@ -150,7 +150,7 @@
           try { api.clear(); pending = null; message = 'removed'; error = false; emit(null); render(); focusStatus(); }
           catch (e) { message = 'storage'; error = true; render(); }
         }, true));
-        var view = el('a', t('view')); view.href = /\/(?:index\.html)?$/.test(root.location.pathname) ? '#academyPathsTitle' : 'index.html#academyPathsTitle'; actions.appendChild(view);
+        var view = el('a', t('view')); view.href = /\/(?:index\.html)?$/.test(root.location.pathname) ? '#journeyCockpit' : 'index.html#journeyCockpit'; actions.appendChild(view);
       } else if (!/assessment\.html$/.test(root.location.pathname)) {
         var alternative = el('a', t('alternative')); alternative.href = 'assessment.html'; actions.appendChild(alternative);
       }

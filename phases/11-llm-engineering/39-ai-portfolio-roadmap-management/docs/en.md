@@ -111,4 +111,4 @@ Use normalize(), signal_matches(), score_scenario() to explain the result, not o
 
 - [AI Strategy for Business Leaders](https://www.coursera.org/learn/packt-ai-strategy-for-business-leaders-with-chatgpt-ml-dl-uel66) — Coursera · Deepen · 10 h · Rollen: Business & Strategy Consulting (Academy AI-04)
 - [Integrating Generative AI into Business Strategy](https://www.linkedin.com/learning/integrating-generative-ai-into-business-strategy/why-a-strategic-framework-is-essential-for-ai-adoption) — LinkedIn Learning · Deepen · 1,5 h · Rollen: Business & Strategy Consulting (Academy AI-04)
-- [Artificial Intelligence (AI) Strategy](https://www.datacamp.com/courses/artificial-intelligence-ai-strategy) — DataCamp · Acquire, Create · 3 h · Rollen: Business & Strategy Consulting, Corporate Functions, Leadership (Academy AI-04, AI-05, AI-08)
+- [Artificial Intelligence (AI) Strategy](https://www.datacamp.com/courses/artificial-intelligence-ai-strategy) — DataCamp · Acquire · Create · 3 h · Rollen: Business & Strategy Consulting, Corporate Functions, Leadership (Academy AI-04, AI-05, AI-08)

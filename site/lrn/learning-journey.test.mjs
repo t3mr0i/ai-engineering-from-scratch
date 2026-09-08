@@ -157,12 +157,30 @@ test('unavailable courses are never the next actionable step', () => {
   assert.ok(m.steps.every(s => s.status === 'unavailable'));
 });
 
-test('external Academy transfer appears after preparation, without invented booking data', () => {
+test('external Academy transfer appears only with a future usable registration link', () => {
   assert.deepEqual(model().externalRecommendations, []);
   const done = model({ progressState: { lessons: { a: { completedAt: 1 }, d: { completedAt: 1 }, c: { completedAt: 1 } } } });
-  assert.equal(done.externalRecommendations.length, 1);
-  assert.equal(done.externalRecommendations[0].bookingAvailable, false);
-  assert.equal(done.externalRecommendations[0].status, 'ready');
+  assert.deepEqual(done.externalRecommendations, []);
+  const bookable = model({
+    progressState: { lessons: { a: { completedAt: 1 }, d: { completedAt: 1 }, c: { completedAt: 1 } } },
+    now: Date.parse('2026-01-01T00:00:00Z'),
+    catalog: { ...fixture().catalog, sessions: [{ courseId: 'C', start: '2026-02-01', registrationUrl: 'https://academy.example/register' }] }
+  });
+  assert.equal(bookable.externalRecommendations.length, 1);
+  assert.equal(bookable.externalRecommendations[0].href, 'https://academy.example/register');
+  assert.equal(bookable.externalRecommendations[0].bookingAvailable, true);
+  const expired = model({
+    progressState: { lessons: { a: { completedAt: 1 }, d: { completedAt: 1 }, c: { completedAt: 1 } } },
+    now: Date.parse('2026-01-01T00:00:00Z'),
+    catalog: { ...fixture().catalog, sessions: [{ courseId: 'C', end: '2025-12-31', registrationUrl: 'https://academy.example/register' }] }
+  });
+  assert.deepEqual(expired.externalRecommendations, []);
+  const undated = model({
+    progressState: { lessons: { a: { completedAt: 1 }, d: { completedAt: 1 }, c: { completedAt: 1 } } },
+    now: Date.parse('2026-01-01T00:00:00Z'),
+    catalog: { ...fixture().catalog, sessions: [{ courseId: 'C', registrationUrl: 'https://academy.example/register' }] }
+  });
+  assert.deepEqual(undated.externalRecommendations, []);
   assert.equal(done.dimensions[1].currentLevel, null);
 });
 

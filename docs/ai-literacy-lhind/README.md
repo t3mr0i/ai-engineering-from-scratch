@@ -17,6 +17,7 @@ Erstellt 04.09.2026 laut Footer der Datei. Interner Stand: März–August 2026 j
 | `kurse.json` | Alle Kurs-Empfehlungen aus dem Anhang (97 Einträge) |
 | `academy.json` | AI-01 … AI-09 Academy-Titel |
 | `stats.json` | Bookings, Provider-Verteilung, Level-Totals |
+| `empfehlungen-mapping.json` | Welche Kurse in welchen Lessons unter `### Recommended trainings (LHIND AI Literacy)` stehen (60 Lessons, 140 Bullets) + URL-Aliase; per Skript aus den Lessons regeneriert |
 
 ## Struktur der Quelle
 
@@ -46,3 +47,21 @@ Dimension. Coverage „gedeckt" = alle Stufen bis inkl. Ziel-Level im Katalog.
 - Distinct Kursnamen: 66 (passt zur Deck-Angabe), 9 Anbieter.
 - Rollen: „6 Rollen" (Assessment) vs. „7 Profile" (Kompetenzmodell) –
   beide Zahlen stehen so im Deck.
+
+## Empfehlungen in den Lessons (Pflege)
+
+- Regel: Passende Kurse aus `kurse.json` stehen in den Lessons unter
+  `### Recommended trainings (LHIND AI Literacy)` am Ende der
+  Further-Reading-Sektion – nur wo es thematisch passende Kurse gibt.
+  Format: `- [Titel](url) — Provider · Level · X h · Rollen: … (Academy AI-XX)`.
+- Merge-Regel (ein Bullet pro Kurs-Seite): kanonische URL ohne
+  Fragment/Tracking-Parameter; Rollen/Level/Academies kombiniert in
+  Erstnennung-Reihenfolge aus `kurse.json`; Zweit-Titel als
+  „auch gelistet als …"; Stunden deutsch mit Komma. Gleichnamige Kurse
+  verschiedener Provider bleiben separate Bullets. Details in
+  `empfehlungen-mapping.json` (`aliases`).
+- Diese Datei (`empfehlungen-mapping.json`) nicht von Hand pflegen, sondern
+  per Skript aus den Lessons regenerieren (Bullets unter der
+  `### Recommended trainings`-Überschrift parsen).
+- Zwillings-Lessons (Original + AI-X-Variante, z. B. 26/88, 48/99, 35/93)
+  tragen jeweils denselben Empfehlungssatz.

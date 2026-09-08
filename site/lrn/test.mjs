@@ -332,7 +332,7 @@ test("Academy recommendations stay focused to three ordered trainings per profil
     tc: ["AI-01", "AI-02", "AI-03"],
     am: ["AI-02", "AI-01"],
     pma: ["AI-04", "AI-07", "AI-08"],
-    corp: ["AI-08", "AI-07"],
+    corp: ["AI-08", "AI-07", "AI-10"],
     lead: ["AI-08", "AI-07", "AI-10"],
   };
 

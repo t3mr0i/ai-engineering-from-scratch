@@ -115,4 +115,4 @@ Use normalize(), signal_matches(), score_scenario() to explain the result, not o
 
 ### Recommended trainings (LHIND AI Literacy)
 
-- [Introduction to Cost Management for AI Workloads](https://learn.microsoft.com/en-us/training/modules/understand-cost-management-ai/) — Microsoft Learn · Acquire, Create · 1 h · Rollen: Technology Consulting, Leadership (Academy AI-03, AI-07)
+- [Introduction to Cost Management for AI Workloads](https://learn.microsoft.com/en-us/training/modules/understand-cost-management-ai/) — Microsoft Learn · Acquire · Create · 1 h · Rollen: Technology Consulting, Leadership (Academy AI-03, AI-07)

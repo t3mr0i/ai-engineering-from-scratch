@@ -651,7 +651,7 @@
     );
     var change = document.createElement("a");
     change.className = "text-link my-learning-path__change";
-    change.href = "#academyPathsTitle";
+    change.href = "#journeyCockpit";
     change.textContent = i18n("my_path_choose_another", "Choose another path");
     next.append(nextIcon, nextLabel, nextTitle, nextDetail, action, change);
 

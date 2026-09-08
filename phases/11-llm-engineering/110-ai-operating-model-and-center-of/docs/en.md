@@ -141,9 +141,8 @@ Hand off `outputs/skill-coe-operating-model.md` with the command `python3 main.p
 
 ### Recommended trainings (LHIND AI Literacy)
 
-- [Drive AI transformation in your organization](https://learn.microsoft.com/en-us/training/courses/ab-731t00) — Microsoft Learn · Create · 8 h · Rollen: Corporate Functions, Business & Strategy Consulting, Leadership, Project Management & Agility (Academy AI-05, AI-08)
-- [Drive AI transformation in your organization](https://learn.microsoft.com/en-us/training/courses/ab-731t00#course-syllabus) — Microsoft Learn · Deepen · 8 h · Rollen: Leadership (Academy AI-07)
-- [Transform your business with A](https://learn.microsoft.com/en-us/training/paths/transform-your-business-with-microsoft-ai/) — Microsoft Learn · Acquire · 4 h · Rollen: Leadership (Academy AI-08)
+- [Drive AI transformation in your organization](https://learn.microsoft.com/en-us/training/courses/ab-731t00) — Microsoft Learn · Deepen · Create · 8 h · Rollen: Corporate Functions, Leadership, Business & Strategy Consulting, Project Management & Agility (Academy AI-05, AI-07, AI-08)
+- [Transform your business with AI](https://learn.microsoft.com/en-us/training/paths/transform-your-business-with-microsoft-ai/) — Microsoft Learn · Acquire · Deepen · 4 h · Rollen: Technology Consulting, Application Management, Project Management & Agility, Leadership, Corporate Functions (Academy AI-03, AI-05, AI-07, AI-08, AI-09)
 
 ## Exercises
 
