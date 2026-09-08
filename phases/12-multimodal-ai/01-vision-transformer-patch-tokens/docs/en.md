@@ -102,6 +102,10 @@ Every decision in that config traces back to a paper you can read.
 
 
 
+## CBP context: grid math prices vision calls
+
+In the CBP context the patch grid (image size divided by patch size, plus CLS) sets token counts and therefore vision-call prices — the same rule as lessons 04/14 and 19/58. Size CBP document images to the smallest resolution the task tolerates before calling; the grid math never lies about cost. Count patches before sending pixels.
+
 ## Build It
 
 Reconstruct **Vision Transformers and the Patch-Token Primitive** by following `ViTConfig` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

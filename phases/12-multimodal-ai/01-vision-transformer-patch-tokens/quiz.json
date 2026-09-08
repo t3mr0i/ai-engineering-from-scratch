@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For ViT-B/16 at 224x224 with a CLS token, what does seq_length return?",
+      "question": "Vision calls price by tokens, but images arrive as grids. What converts grid size to token count?",
       "options": [
-        "197: 14x14 patches plus one CLS token",
-        "196: the patch grid without any extra token",
-        "224: one token for each image row",
-        "14: one token for each patch-grid row"
+        "The image file name length",
+        "Random sampling per call",
+        "Fixed 100 tokens per image",
+        "Patches per side squared, plus the CLS token"
       ],
-      "correct": 0,
-      "explanation": "grid_shape gives 224/16 = 14 in each direction, so there are 196 patches. seq_length adds the configured CLS token and returns 197."
+      "correct": 3,
+      "explanation": "Grids tile into priced tokens. This lesson cuts images into patch sequences."
     },
     {
       "stage": "check",
