@@ -48,6 +48,10 @@ Reconstruction pushes `x̂` toward `x`. KL pushes `q(z|x)` toward the prior. The
 
 
 
+## CBP context: compress for signal, sample for variety
+
+In the CBP context autoencoders compress (embeddings, denoising, anomaly signals via reconstruction error) while VAEs add sampling with structured latents. Reconstruction error flags the unusual — failed parts, novel tickets, out-of-scope documents — without any labels. Shapes (input→hidden→latent) are the contract; the bottleneck size is the bias-variance decision.
+
 ## Build It
 
 Reconstruct **Autoencoders & Variational Autoencoders (VAE)** by following `matmul` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

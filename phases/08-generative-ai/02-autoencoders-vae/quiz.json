@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For init_vae(in_dim=8, hidden=10, z_dim=2), what is the shape of the encoder's W_mu matrix?",
+      "question": "Unlabeled data must flag unusual cases without any labels. What structure enables that?",
       "options": [
-        "8×2",
-        "10×8",
-        "2×10",
-        "2×8"
+        "Bigger labeled datasets",
+        "Manual review of everything",
+        "Trust that nothing is unusual",
+        "Compress-then-reconstruct; large errors mark anomalies"
       ],
-      "correct": 2,
-      "explanation": "W_mu maps the 10-dimensional encoder hidden vector to the 2-dimensional latent mean, so init_vae creates randn_matrix(2, 10)."
+      "correct": 3,
+      "explanation": "Reconstruction measures normality. This lesson builds autoencoders for compression and detection."
     },
     {
       "stage": "check",
