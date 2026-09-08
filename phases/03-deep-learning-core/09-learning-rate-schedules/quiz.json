@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does constant_schedule(7, lr=0.03) return?",
+      "question": "Full rate at step zero wrecks pretrained weights, and flat rates stall late training. What schedule fixes both?",
       "options": [
-        "0.03",
-        "0.0",
-        "0.03 / 7",
-        "It raises because step is not zero"
+        "Maximum rate from the first step",
+        "Zero rate with occasional spikes",
+        "One constant rate forever",
+        "Warmup ramp first, decay to settle after"
       ],
-      "correct": 0,
-      "explanation": "The constant schedule validates the non-negative step and returns the positive learning rate unchanged."
+      "correct": 3,
+      "explanation": "Starts need gentleness, endings need settling. This lesson schedules rates across training."
     },
     {
       "stage": "check",

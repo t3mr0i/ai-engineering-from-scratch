@@ -48,6 +48,10 @@ flowchart LR
     C --> E[clamp at floor after horizon]
 ```
 
+## CBP context: warm up, then decay — everywhere
+
+In the CBP context the warmup-then-decay schedule from lesson 19/44 is the standing answer to "what schedule": ramp from zero to protect pretrained weights, decay to settle into the optimum. Provider fine-tune jobs expose it as configuration; read training curves with it in mind (early spikes mean warmup trouble, late plateaus mean decay done). Schedules are the cheapest training lever and the most skipped diagnostic.
+
 ## Build It
 
 From `code/`, run:
