@@ -50,6 +50,10 @@ flowchart LR
 
 `gan_step` computes the discriminator gradients using fake values as a detached batch, updates `d_weight`/`d_bias`, then computes the generator gradient through the updated discriminator. It does not use a framework optimizer, spectral normalization, image convolutions, or a claim about convergence.
 
+## CBP context: adversaries check each other, collapse warns
+
+In the CBP context GANs matter as intuition and as warning: coupled generator-discriminator training produces sharp samples but collapses modes — synthetic data that looks real while missing whole varieties. Any synthetic training or eval data needs diversity checks, not just realism checks. Read the adversarial idea here; prefer diffusion services there for generation work.
+
 ## Build It
 
 Run from `code/`:
