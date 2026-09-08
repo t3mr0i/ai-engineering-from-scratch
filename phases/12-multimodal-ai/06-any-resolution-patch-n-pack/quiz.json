@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For Image('A', h=6, w=4) with patch=2, what grid and sequence does Image.seq return?",
+      "question": "Document pages arrive at mixed resolutions and fixed downscaling destroys fine print. What preserves detail affordably?",
       "options": [
-        "A 3x2 grid and 6 patch tokens",
-        "A 2x3 grid and 5 patch tokens",
-        "A 6x4 grid and 24 patch tokens",
-        "A 1x1 grid because the image is smaller than 336px"
+        "One fixed low resolution for all",
+        "Originals discarded after thumbnails",
+        "Largest resolution always regardless",
+        "Tiling native pages with explicit token budgets"
       ],
-      "correct": 0,
-      "explanation": "Image.grid divides height and width independently: 6//2=3 and 4//2=2. seq multiplies them, giving 3*2 = 6 tokens."
+      "correct": 3,
+      "explanation": "Detail needs native resolution. This lesson tiles and packs with counted budgets."
     },
     {
       "stage": "check",

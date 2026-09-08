@@ -95,6 +95,10 @@ The 2026 production rule: pick a per-task max-pixels cap, encode at native aspec
 
 
 
+## CBP context: native resolutions, budgeted tiles
+
+In the CBP context document pages arrive at native resolutions — never destructively downscaled before the model sees them: tiling plus packing preserves detail while the token budget stays explicit per image. Thumbnails give overview, tiles give detail; both bill. Send the resolution the task needs (fine print needs tiles, covers do not) and count before calling.
+
 ## Build It
 
 Reconstruct **Any-Resolution Vision: Patch-n'-Pack and NaFlex** by following `Image` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
