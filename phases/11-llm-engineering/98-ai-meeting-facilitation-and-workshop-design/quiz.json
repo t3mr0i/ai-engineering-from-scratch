@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which artifact type does classify assign to 'We agreed the new onboarding flow will go live in the June 30 release.'?",
+      "question": "Meeting notes end as a flat bullet list with no owners or deadlines, and nothing happens. What structure fixes that?",
       "options": [
-        "Decision, because the decision signal is checked before action language",
-        "Action, because the sentence contains the word will",
-        "OpenQuestion, because a release date can still change",
-        "ParkingLot, because the note has no named owner"
+        "Longer bullet lists",
+        "Fancier transcription bots",
+        "No notes at all, pure memory",
+        "Typed artifacts: decisions, owned actions, questions, parking lot"
       ],
-      "correct": 0,
-      "explanation": "classify checks decision patterns first. 'We agreed' matches the decision signal, so later action-like wording does not reclassify the note."
+      "correct": 3,
+      "explanation": "Flat lists destroy accountability signals. This lesson types every artifact with its consumer and shelf life."
     },
     {
       "stage": "check",

@@ -109,6 +109,10 @@ Call `ArtifactType` from a small caller with the demo’s smallest built-in fixt
 
 Hand off `outputs/skill-meeting-artifact-extractor.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: typed artifacts feed Boards
+
+In the CBP context meeting outputs type directly into work: decisions with rationale, actions with owner and deadline (Boards items), open questions with reopen triggers, parking-lot items with disposition. Flat bullet lists drive no accountability; typed artifacts do. Score output quality before it reaches the invite — ownerless actions are wishes, not work.
+
 ## Further Reading
 
 - [Anthropic — Claude API documentation](https://docs.claude.com/en/api/getting-started) — structured output modes and tool use patterns relevant to extraction chains.
