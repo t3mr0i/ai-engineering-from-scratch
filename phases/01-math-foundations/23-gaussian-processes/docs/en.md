@@ -15,6 +15,10 @@
 - Compare candidate length scales with log marginal likelihood.
 - Distinguish interpolation uncertainty from extrapolation uncertainty and test leakage.
 
+## CBP context: predictions should carry uncertainty
+
+In the CBP context the Gaussian-process idea — predictions with uncertainty attached, growing where data is sparse — is the standard every confidence score is judged against: a bare prediction without a credible interval is half an answer. Kernel similarity (nearby inputs behave alike) also previews how retrieval scoring thinks. Read for the uncertainty habit; compute GPs never in production.
+
 ## Build It
 
 Run the NumPy implementation:

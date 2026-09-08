@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "With signal_variance=1, what is rbf_kernel([x], [x]) for any input x?",
+      "question": "A prediction arrives with no sense of how sure it is, far from any training data. What is missing?",
       "options": [
-        "0",
-        "The length scale",
-        "1",
-        "The input value x"
+        "A bigger prediction number",
+        "Faster prediction delivery",
+        "More decimal places",
+        "Uncertainty that grows away from evidence"
       ],
-      "correct": 2,
-      "explanation": "The squared distance from x to itself is zero, so exp(0)=1 and the diagonal equals the signal variance."
+      "correct": 3,
+      "explanation": "Point predictions without uncertainty mislead. This lesson attaches credible intervals to predictions."
     },
     {
       "stage": "check",
