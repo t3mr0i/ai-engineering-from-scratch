@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which token does this lesson tokenize retain?",
+      "question": "Thousands of feedback texts need themes, but top terms come out as \"to\", \"of\", \"a\". What fixes the topics?",
       "options": [
-        "\"ai\"",
-        "\"to\"",
-        "\"of\"",
-        "\"a\""
+        "More feedback texts",
+        "Bigger topic counts",
+        "Trust the stopword topics",
+        "Domain stopword removal with explicit allowlists"
       ],
-      "correct": 0,
-      "explanation": "SHORT_ALLOWLIST preserves ai even though its length is two; ordinary alphabetic tokens must be longer than two characters."
+      "correct": 3,
+      "explanation": "Junk tokens make junk topics. This lesson filters deliberately so themes emerge."
     },
     {
       "stage": "check",

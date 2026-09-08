@@ -49,6 +49,10 @@ Output is one topic per document (plus a -1 outlier label). Optionally, a soft m
 
 
 
+## CBP context: themes emerge, stopwords excluded
+
+In the CBP context topic modeling triages feedback and ticket backlogs into reviewable themes — but only with domain stopwords removed and short junk tokens filtered, or "to/of/a" become the top topics. Keep the allowlist (like "ai") explicit and reviewed; themes inform backlogs, humans name them. Clustering proposes, reviewers dispose.
+
 ## Build It
 
 Reconstruct **Topic Modeling — LDA and BERTopic** by following `tokenize` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
