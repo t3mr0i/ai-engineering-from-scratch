@@ -80,6 +80,10 @@ Call `Content` from a small caller with the text "red fox". Compare its result w
 
 Hand off `outputs/skill-injection-defense.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: retrieved text never instructs
+
+In the CBP context every retrieved byte — Boards items, wiki pages, PDFs, emails, memory notes — is data, never instructions: wrap tool results in the delimited role the lesson prescribes, enforce the Rule of Two (untrusted input plus sensitive data never meets consequential action in one turn), and require approval before any state change a retrieved document "requested." Scan high-risk content for instruction patterns at ingestion, log every blocked attempt with the tenant id, and treat a successful injection as a security incident with the same runbook as a credential leak.
+
 ## Further Reading
 
 - [Greshake et al., Indirect Prompt Injection (arXiv:2302.12173)](https://arxiv.org/abs/2302.12173) — canonical attack paper
