@@ -105,6 +105,10 @@ The reference run should leave a small receipt: python3 main.py, its captured ou
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
+## CBP context: runbook, rollback, escalation, learning
+
+In the CBP context every live assistant ships with its operations kit: Application Insights observability, incident classification for model-specific failures (degradation, cost spike, tool outage, guardrail misfire), alias or policy-flag rollback in seconds, human escalation paths, and post-incident eval cases added to the harness. Support improvisation ends where the runbook begins; trust is rebuilt by the learning that follows.
+
 ## Further Reading
 
 ### Recommended trainings (LHIND AI Literacy)
