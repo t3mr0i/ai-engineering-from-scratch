@@ -122,6 +122,10 @@ The lesson provides scaffold code that is easy to extend into a real browser.
 
 
 
+## CBP context: typed actions, APIs first
+
+In the CBP context computer-use agents act through typed schemas — clicks with coordinates plus element descriptions, text with targets, waits with bounds — audited per action with screenshots. APIs precede pixels wherever they exist (lesson 14/21); sandboxed fallback with human approval covers the rest. An untyped click stream is unauditable automation.
+
 ## Build It
 
 Reconstruct **Multimodal Agents and Computer-Use (Capstone)** by following `BrowserState` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.

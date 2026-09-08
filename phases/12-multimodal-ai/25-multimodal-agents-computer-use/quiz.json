@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which fields does ACTION_SCHEMA require for a click action?",
+      "question": "An agent must click a specific control and prove afterward what it clicked. What must each action carry?",
       "options": [
-        "url and ms",
-        "text, x, and y",
-        "x, y, and element_desc",
-        "option_index and success"
+        "Nothing; clicks need no records",
+        "Only a timestamp",
+        "The whole screen image alone",
+        "Coordinates plus element description, audited"
       ],
-      "correct": 2,
-      "explanation": "ACTION_SCHEMA maps click to ['x', 'y', 'element_desc']. Type actions use text plus coordinates, while navigation and waits have their own fields."
+      "correct": 3,
+      "explanation": "Unaudited clicks cannot be reviewed. This lesson types actions with coordinates and descriptions."
     },
     {
       "stage": "check",
