@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which milestone does the local TIMELINE place first after the EU AI Act entered into force?",
+      "question": "A team tracks one AI Act date and misses staggered obligations. What should the compliance map key on?",
       "options": [
-        "All transparency duties on the entry-into-force date",
-        "High-risk obligations in January 2024 before the Act existed",
-        "1 August 2024 entry into force, followed by prohibited-practice and AI-literacy obligations on 2 February 2025",
-        "Full applicability in August 2025 with no staged dates"
+        "A single memorable date",
+        "The vendor's marketing timeline",
+        "Trust that one date covers all",
+        "Obligation classes with their staged milestones"
       ],
-      "correct": 2,
-      "explanation": "The code lists entry into force at 2024-08-01 and the first application milestone at 2025-02-02. The staggered schedule is why a compliance map must identify the obligation class, not just one Act date."
+      "correct": 3,
+      "explanation": "Single dates miss staggered duties. This lesson maps obligations across frameworks and time."
     },
     {
       "stage": "check",

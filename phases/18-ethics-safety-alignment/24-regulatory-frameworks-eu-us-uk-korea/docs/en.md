@@ -87,6 +87,10 @@ Lesson 18 is lab-voluntary governance; Lesson 24 is regulatory; Lesson 25 is an 
 
 
 
+## CBP context: map obligations, not dates
+
+In the CBP context compliance maps obligation classes to their staged milestones — prohibited practices and literacy first, high-risk duties after, full applicability last — per jurisdiction, never as one Act date. The EU AI Act schedule staggers precisely so teams sequence work; a map keyed to a single date misses every real deadline. Obligation first, calendar second, evidence always.
+
 ## Build It
 
 Reconstruct **Regulatory Frameworks — EU, US, UK, Korea** by following `main` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
