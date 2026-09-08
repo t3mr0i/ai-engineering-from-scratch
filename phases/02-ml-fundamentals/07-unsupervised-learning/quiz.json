@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "K-Means compares point x=[1,1] with centroids [0,0] and [5,5]. Which centroid receives the point?",
+      "question": "Thousands of unlabeled tickets need themes before anyone can label efficiently. What comes first?",
       "options": [
-        "The centroid [0,0]",
-        "The centroid [5,5]",
-        "Both centroids, because K-Means never assigns points",
-        "Neither, because centroids must be integers"
+        "Label every ticket by hand immediately",
+        "Ignore the tickets entirely",
+        "Train a supervised model with no labels",
+        "Group by similarity, then sample and name clusters"
       ],
-      "correct": 0,
-      "explanation": "The distances are about 1.41 and 5.66, so the first centroid is closer."
+      "correct": 3,
+      "explanation": "Structure precedes labels. This lesson clusters first so labeling effort lands where it pays."
     },
     {
       "stage": "check",

@@ -21,6 +21,10 @@ kmeans(data,k) samples k initial rows, assigns each row to the nearest centroid,
 
 dbscan grows a cluster from rows with at least min_samples neighbors inside eps; rows never reached remain -1 noise. gmm uses spherical variances and EM, returning hard assignments, means, weights, and a responsibility matrix. Its E-step uses log densities with a max-shift before exponentiation, so a high-dimensional row still receives finite normalized responsibilities. agglomerative_clustering returns labels plus merge history for single, complete, average, or Ward linkage. All functions reject empty or ragged data and invalid parameter ranges.
 
+## CBP context: cluster first, label what matters
+
+In the CBP context clustering triages the unlabeled: group support tickets by theme, deduplicate near-identical documents, segment users before any supervised effort. Labels are expensive; clusters tell you where labeling pays. Never trust cluster names without sampling members — the algorithm groups by geometry, meaning is assigned by reviewers.
+
 ## Build It
 
 Run python3 main.py. The seeded fixture has 60 rows around [0,0], [4,0], and [0,4]; the output prints K-Means inertia, silhouette, DBSCAN cluster count, GMM weights, and the first responsibility sum. On this fixture the three cluster weights sum to one and every responsibility row sums to one. These are reproducible local observations, not an assertion that three clusters are true in an unknown dataset.
