@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which token ranges does the Chameleon toy reserve for text and image codebook entries?",
+      "question": "One model handles text and images in a shared token space. What must stay measured per modality?",
       "options": [
-        "Text 0..31 and image 32..47, followed by separators 48 and 49",
-        "Text 0..15 and image 16..31, with no separators",
-        "Text 32..47 and image 0..31, because image codes come first",
-        "One shared range 0..47, with modality inferred from position"
+        "Nothing; sharing guarantees equal quality",
+        "Only the total parameter count",
+        "The training hardware brand",
+        "Quality per modality on domain data"
       ],
-      "correct": 0,
-      "explanation": "VOCAB_TEXT=32 and VOCAB_IMG=16. Image codes begin at IMG_OFFSET=32, while SEP_OPEN=48 and SEP_CLOSE=49 delimit image spans."
+      "correct": 3,
+      "explanation": "Shared spaces hide uneven quality. This lesson fuses modalities with reserved ranges."
     },
     {
       "stage": "check",

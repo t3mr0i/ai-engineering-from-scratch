@@ -100,6 +100,10 @@ AnyGPT (Zhan et al., 2024) extends Chameleon to four modalities: text, image, sp
 
 
 
+## CBP context: one space, measured tradeoffs
+
+In the CBP context early-fusion models trade operational simplicity (one model, one deployment, one bill) against per-modality quality — evaluate each modality separately on CBP data before consolidating. Reserved token ranges keep modalities distinct inside the shared space; separators delimit spans the model must not confuse. Unified billing never justifies unmeasured quality loss.
+
 ## Build It
 
 Reconstruct **Chameleon and Early-Fusion Token-Only Multimodal Models** by following `quantize_patch` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
