@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What condition must hold for `Operator.applicable(state)` to return `True`?",
+      "question": "A compliance workflow must never skip its approval step, but a fluent plan sometimes hallucinates it away. What kind of planner fits?",
       "options": [
-        "At least one precondition appears in `state`.",
-        "The operator has no effects to apply.",
-        "Every precondition appears in `state`.",
-        "The LLM has already proposed the operator in its cache."
+        "A freer model with a longer prompt",
+        "Hope the model remembers next time",
+        "Fewer workflow steps overall",
+        "One whose steps carry machine-checked preconditions"
       ],
-      "correct": 2,
-      "explanation": "The method returns `all(p in state for p in self.preconditions)`, so every declared precondition is required."
+      "correct": 3,
+      "explanation": "Fluency cannot guarantee a mandatory step. This lesson covers planners that are sound by construction, plus evolutionary search where fitness is measurable."
     },
     {
       "stage": "check",

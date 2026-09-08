@@ -102,6 +102,10 @@ Call `Operator` from a small caller with a graph with edges (0,1) and (1,2). Com
 
 Hand off `outputs/skill-hybrid-planner.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: sound plans for compliance, evolved plans for cost
+
+In the CBP context the two planners split by guarantee: compliance and release workflows must be sound by construction, so decompose them hierarchically with machine-checked preconditions — a fluent plan that sometimes hallucinates a step fails the audit. Cost and scheduling heuristics go the other way: let the model propose variants and keep the one the measured fitness function (latency, spend, success rate on CBP traffic) proves best. In both cases the LLM amplifies but never certifies; the checker — preconditions or fitness — certifies.
+
 ## Further Reading
 
 - [Gopalakrishnan et al., ChatHTN (arXiv:2505.11814)](https://arxiv.org/abs/2505.11814) — symbolic + LLM hybrid planner
