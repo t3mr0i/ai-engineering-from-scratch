@@ -31,6 +31,10 @@ flowchart LR
     S --> C[categorical cross-entropy]
 ```
 
+## CBP context: the loss decides what "better" means
+
+In the CBP context the loss function is the definition of better that training optimizes: squared error for regression magnitudes, cross-entropy for classification decisions — pick the loss that matches the business error, because the model will excel at exactly what the loss measures. Training loss falling while product quality stalls means the loss and the goal diverged; re-check the choice before scaling the run. Evals (lesson 11/10) judge the product; the loss merely steers training.
+
 ## Build It
 
 Run `python3 main.py` from `code/`. The output includes `mse([1,3],[0,2])=1.000`, `bce([0.9],[1])≈0.105`, normalized three-class probabilities, smoothed CCE, and a cosine contrastive loss. The Julia entry point implements the same families with standard-library arrays.
