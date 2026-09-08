@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which interaction-point properties increase score_impact?",
+      "question": "One generic AI course trains every role identically, but a PM judging requirements needs different skills than an engineer reviewing code. What is missing?",
       "options": [
-        "Non-reversible output, EU high-risk status, and review or govern direction",
-        "A reversible prompt with an adequate competency rating",
-        "Only the number of people in the role",
-        "A low-effort gap without any decision consequence"
+        "More licenses for the same course",
+        "A longer generic course for all",
+        "Trust that one course fits every role",
+        "A per-role matrix of interactions, risks, and judgment needs"
       ],
-      "correct": 0,
-      "explanation": "score_impact adds two for non-reversibility, two for EU high-risk, and one when the person is reviewing or governing the output, capped at five."
+      "correct": 3,
+      "explanation": "Capability gaps differ by role. This lesson enumerates interaction points and trains judgment per role."
     },
     {
       "stage": "check",

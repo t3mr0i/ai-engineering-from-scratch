@@ -111,6 +111,10 @@ Call `GapRating` from a small caller with the demo’s smallest built-in fixture
 
 Hand off `outputs/skill-ai-workforce-gap-mapper.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: train judgment per role, not usage generically
+
+In the CBP context workforce enablement enumerates per-role interaction points — what each role does with AI, what can go wrong there (irreversibility, EU high-risk status, review-vs-generate stance), and what judgment the person needs. Generic literacy courses leave the capability gap invisible; role matrices make it plannable. Procurement buys tools; the matrix builds the capability to use them safely.
+
 ## Further Reading
 
 - [EU AI Act — official text, Article 4 (AI literacy)](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689) — the binding literacy obligation for all providers and deployers of AI systems, applicable since 2 February 2025 regardless of risk tier.
