@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What maturity result does score_readiness return when only funded_team is present?",
+      "question": "Forty pilots each reinvent prompts, evals, and routing while a committee must approve every model call. What are the two failures?",
       "options": [
-        "0/100 and AD_HOC, because one signal cannot establish maturity",
-        "70/100 and DIFFERENTIATED, because a funded team owns every platform concern",
-        "25/100 and OPPORTUNISTIC, with a recommendation to enforce standards in CI",
-        "45/100 and SYSTEMATIC, because funding implies operating cadence"
+        "Too much delivery speed overall",
+        "Excessive model quality everywhere",
+        "No failures; both patterns scale well",
+        "Reinvention without platform versus governance as delay"
       ],
-      "correct": 2,
-      "explanation": "funded_team contributes weight 25. That clears the 20-point OPPORTUNISTIC threshold, whose next step is moving written standards into CI enforcement."
+      "correct": 3,
+      "explanation": "Scale breaks at both extremes. This lesson draws the line: platform owns shared standards, teams own delivery."
     },
     {
       "stage": "check",

@@ -131,6 +131,10 @@ Call `MaturityLevel` from a small caller with the demo’s smallest built-in fix
 
 Hand off `outputs/skill-coe-operating-model.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: platform owns standards, teams own builds
+
+In the CBP context the line runs between LCAG's platform (gateway, auth, eval harnesses, routing, cost attribution — enforced in CI) and delivery teams (features, prompts, domain evals). Funded teams without CI-enforced standards sit at opportunistic maturity; the next step is always standards-as-code, not more documents. Neither reinvention per department nor approval-per-model-call — the CoE enables, it does not gatekeep prototypes.
+
 ## Further Reading
 
 - [Gartner — AI Center of Excellence research](https://www.gartner.com/en/information-technology/insights/artificial-intelligence) — maturity models and organizational benchmarks.
