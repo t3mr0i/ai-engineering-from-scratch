@@ -21,6 +21,10 @@ The linear score is z=w·x+b; sigmoid(z) maps it into (0,1). LogisticRegression 
 
 ClassificationMetrics stores TP, TN, FP, and FN and derives accuracy, precision, recall, and F1. SoftmaxRegression subtracts the largest logit before exponentiating; its probability vector sums to one. The Julia entry point mirrors the same ideas with standard-library code.
 
+## CBP context: 0.5 means maximum uncertainty
+
+In the CBP context the sigmoid's 0.5 output is maximum uncertainty, not a neutral answer — triage and moderation thresholds must be calibrated around it, never assumed. Logistic outputs are probabilities needing the same calibration discipline as model confidences (lesson 19/73): measure what 0.8 means on CBP data before routing on it. A threshold is a decision; decisions need measured meanings.
+
 ## Build It
 
 Run python3 main.py from code/. It creates 60 points near (2,2) with label 0 and 60 points near (5,5) with label 1, for 120 rows total. It fits 800 epochs and prints the initial/final BCE, accuracy, and metric dictionary. It then prints softmax probabilities for [3,0]; their sum is one. Exact accuracy is a property of the seeded local fixture, not a general guarantee.

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What probability does the sigmoid function return when its input z is 0?",
+      "question": "A classifier outputs 0.5 for a triage decision. What does that number actually say?",
       "options": [
-        "0.5",
-        "0",
-        "1",
-        "-0.5"
+        "The case is neutral and safe",
+        "The model abstained properly",
+        "Both classes are proven present",
+        "Maximum uncertainty — the model cannot tell"
       ],
-      "correct": 0,
-      "explanation": "sigmoid(0)=1/(1+exp(0))=1/2."
+      "correct": 3,
+      "explanation": "Midpoint outputs are shrugs, not verdicts. This lesson builds the sigmoid behind calibrated thresholds."
     },
     {
       "stage": "check",
