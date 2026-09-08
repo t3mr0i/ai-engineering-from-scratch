@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does BYTES_PER_TRACE represent in the retention simulator?",
+      "question": "A shipped feature works, but nobody can see prompt failures, loops, latency regressions, or cost spikes. Eight tools all claim to help. How do you choose?",
       "options": [
-        "4,500 bytes per trace",
-        "4,500 gigabytes per trace",
-        "The number of spans in every trace",
-        "The monthly S3 price per trace"
+        "Buy all eight and compare later",
+        "Pick the one with the brightest website",
+        "Skip observability until the first big incident",
+        "Match the tool to the question by stack, license, budget, and hosting"
       ],
-      "correct": 0,
-      "explanation": "The Python and TypeScript simulators set BYTES_PER_TRACE to 4,500 and multiply it by retained traces to obtain daily storage."
+      "correct": 3,
+      "explanation": "Same claim, different audiences. This lesson selects by axis: which tool answers which operational question."
     },
     {
       "stage": "check",

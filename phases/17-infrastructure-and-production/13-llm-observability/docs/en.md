@@ -114,6 +114,10 @@ Call `ARIZE_AX_PER_GB` from a small caller with the text "red fox". Compare its 
 
 Hand off `outputs/skill-observability-stack.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: traces to App Insights, decisions by axis
+
+In the CBP context the observability answer is fixed at the platform layer — traces, metrics, and alerts in Application Insights — and this lesson is the selection vocabulary for everything around it: which questions need a development platform (why did this run fail, is the pipeline drifting, who burns tokens) and which axis decides (stack fit, license, budget, self-hosting). Keep prompt versions and eval sets in the repo regardless of tool choice; no dashboard replaces versioned prompts when the regression review starts.
+
 ## Further Reading
 
 - [SigNoz — Top LLM Observability Tools 2026](https://signoz.io/comparisons/llm-observability-tools/)
