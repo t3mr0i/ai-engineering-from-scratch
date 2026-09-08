@@ -78,6 +78,10 @@ Swarm pairs naturally with content-based routing (Lesson 22). Instead of a gener
 
 
 
+## CBP context: shared queues beat fixed piles
+
+In the CBP context uneven agent workloads dispatch from shared queues — workers taking the next job on completion — instead of fixed upfront piles that idle fast finishers beside stuck peers. Work-stealing finishes faster on varied sizes with no extra coordination cost. Static assignment wastes the very parallelism swarms exist to exploit.
+
 ## Build It
 
 Reconstruct **Parallel / Swarm / Networked Architectures** by following `Task` on a graph with edges (0,1) and (1,2). Run `python3 main.py` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.
