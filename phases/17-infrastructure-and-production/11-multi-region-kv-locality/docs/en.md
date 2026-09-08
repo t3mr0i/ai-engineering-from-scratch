@@ -101,6 +101,10 @@ Call `rtt` from a small caller with tokens=["red","fox"]. Compare its result wit
 
 Hand off `outputs/skill-multi-region-router.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: route to the cache, rehearse the failover
+
+In the CBP context multi-region serving follows data residency first (lesson 26 covers the compliance side): EU tenants stay in EU regions, and routing goes to the warm cache, never round-robin into a cold one. Keep the full replica definition — weights, tokenizer, quantization and RoPE configs — synced as one unit, and rehearse failover before the outage: a replica that refuses to start during a regional incident is a DR plan that existed only on paper.
+
 ## Further Reading
 
 - [BentoML — Multi-cloud and cross-region inference](https://bentoml.com/llm/infrastructure-and-operations/multi-cloud-and-cross-region-inference)

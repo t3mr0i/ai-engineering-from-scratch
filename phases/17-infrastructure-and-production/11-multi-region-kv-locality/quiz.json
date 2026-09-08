@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What TTFT values does the simulator assign to a local cache hit and a cold cache miss?",
+      "question": "Three regions serve behind round-robin, cache hit rate collapses, and failover replicas refuse to start for missing configs. What are the fixes?",
       "options": [
-        "80 ms and 800 ms",
-        "800 ms and 80 ms",
-        "65 ms and 75 ms",
-        "4 ms and 12 ms"
+        "More round-robin with more regions",
+        "No backups to save storage cost",
+        "Failover by hand during the outage",
+        "Cache-aware routing plus complete, rehearsed replicas"
       ],
-      "correct": 0,
-      "explanation": "CACHE_HIT_MS is 80 and CACHE_MISS_MS is 800; rtt is added on top when the chosen replica is remote."
+      "correct": 3,
+      "explanation": "Stateless balancing breaks stateful inference. This lesson routes to warm caches and keeps failover replicas complete and tested."
     },
     {
       "stage": "check",
