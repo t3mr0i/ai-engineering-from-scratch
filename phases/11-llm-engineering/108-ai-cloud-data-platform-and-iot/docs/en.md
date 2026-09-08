@@ -118,6 +118,10 @@ Call `BoundaryType` from a small caller with the reported device check on CPU. C
 
 Hand off `outputs/skill-cloud-data-iot-boundary-mapper.md` with the command `python3 main.py`, the accepted input shape (the reported device check on CPU), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: boundaries first, model last
+
+In the CBP context sovereignty, latency, and ownership boundaries are enumerated and patterned before any integration code — the model choice comes last, not first. Late boundary discovery burns integration budgets order-of-magnitude style; hybrid and federated patterns exist precisely for mixed topologies. The box-and-arrow slide without boundaries is a drawing, not an architecture.
+
 ## Further Reading
 
 - [Azure IoT Hub documentation](https://learn.microsoft.com/en-us/azure/iot-hub/) — event ingestion, routing, and edge processing with Azure IoT Edge.

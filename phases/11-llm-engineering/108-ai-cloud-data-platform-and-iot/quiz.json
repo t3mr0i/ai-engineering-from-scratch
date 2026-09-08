@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which architecture pattern does the factory-floor use case receive after combining its source boundaries?",
+      "question": "An architecture starts with the model and UI, and hits isolation rules, private-cloud regions, and regulated tables only at integration testing. What was skipped?",
       "options": [
-        "CLOUD_FIRST_RAG, because the ERP history is in a private cloud",
-        "ON_PREMISES_INFERENCE, because latency alone determines the pattern",
-        "HYBRID_FEDERATED, because sovereignty, latency, and ownership boundaries are all present",
-        "EDGE_PREPROCESSED_RAG, because regulated ERP history removes ownership"
+        "A bigger model for the same diagram",
+        "Trust that boundaries resolve themselves",
+        "Faster integration to outrun constraints",
+        "Enumerating sovereignty, latency, and ownership boundaries first"
       ],
-      "correct": 2,
-      "explanation": "The OT sensor has sovereignty, latency, and ownership boundaries; the regulated ERP source adds sovereignty and ownership. The combined set contains all three, selecting HYBRID_FEDERATED."
+      "correct": 3,
+      "explanation": "Late boundaries burn budgets. This lesson classifies boundaries before integration code exists."
     },
     {
       "stage": "check",
