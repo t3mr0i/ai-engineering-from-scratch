@@ -19,6 +19,10 @@
 
 `code/matrices.py` contains the Python `Vector` and `Matrix` classes; `matrices.jl` provides the same operations with Julia arrays. The Python wrapper `main.py` and Julia wrapper `main.jl` are the canonical entry points. Both are offline and use only their language standard libraries (`LinearAlgebra` is Julia stdlib).
 
+## CBP context: inner dimensions must agree
+
+In the CBP context the shape rule is the whole lesson: multiplying (2,3) by (3,2) works because the inner dimensions agree, and the result is (2,2). Shape mismatches are the most common integration bug where embeddings meet code — a 1536-dimensional query against a 768-dimensional index fails exactly this way. Check dimensions at every boundary; the rule fits in one sentence and saves hours.
+
 ## Build It
 
 Run:

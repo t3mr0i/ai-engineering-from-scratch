@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "If A has shape (2, 3) and B has shape (3, 2), what shape does A @ B have?",
+      "question": "A query embedding has 1536 dimensions but the index expects 768. What kind of error is that?",
       "options": [
-        "(3, 3)",
-        "(2, 3)",
-        "(2, 2)",
-        "The multiplication is invalid"
+        "A network timeout between services",
+        "An expired API key",
+        "A shape mismatch: inner dimensions must agree",
+        "A missing database table"
       ],
       "correct": 2,
-      "explanation": "The inner dimensions 3 and 3 agree, and the outer dimensions remain: two rows from A and two columns from B."
+      "explanation": "Dimension agreement decides validity. This lesson builds the shape rule behind every matrix operation."
     },
     {
       "stage": "check",
