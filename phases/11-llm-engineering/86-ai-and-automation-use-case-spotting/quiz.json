@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which risk flag overrides otherwise attractive value and readiness scores in score?",
+      "question": "A use case scores high on value but its data does not exist yet. Should it proceed to pilot?",
       "options": [
-        "data_not_ready, which forces the use case into DEFER",
-        "blast_radius_high, which forces DEPRIORITISE",
-        "regulatory, which forces DEFER regardless of data",
-        "A high value score, which forces PILOT_NOW"
+        "Yes, value outweighs everything",
+        "Yes, data appears once building starts",
+        "Only if the demo is impressive",
+        "No, missing data defers regardless of value"
       ],
-      "correct": 0,
-      "explanation": "The scorer records blast-radius and regulatory notes, but data_not_ready is the hard classification rule. It returns DEFER before the value/readiness thresholds are considered."
+      "correct": 3,
+      "explanation": "Hard gates override attractive scores. This lesson defers data-less use cases before value ranking."
     },
     {
       "stage": "check",

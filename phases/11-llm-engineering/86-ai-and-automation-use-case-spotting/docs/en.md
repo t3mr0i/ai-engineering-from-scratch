@@ -123,6 +123,10 @@ Call `Classification` from a small caller with the demo’s smallest built-in fi
 
 Hand off `outputs/skill-use-case-intake.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: score value density, gate on readiness
+
+In the CBP context process candidates score on value density, automation readiness, and risk — with hard gates that override attractive numbers: data not ready means DEFER, no matter the value score. Hunt the unglamorous high-volume subprocesses, not the interesting demos; the helpdesk nobody photographs often pays better than the showcase. Scoring replaces opinion; gates replace wishful thinking.
+
 ## Further Reading
 
 - [Gartner — AI Use Case Prism](https://www.gartner.com/en/information-technology/insights/artificial-intelligence) — the analyst firm's canonical use-case taxonomy and readiness assessment framework.
