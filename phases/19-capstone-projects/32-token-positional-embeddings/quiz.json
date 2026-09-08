@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which embedding table has trainable parameters in `LearnedPositionalEmbedding`?",
+      "question": "A model must know both what each token is and where it sits in the sequence. How do the two signals combine?",
       "options": [
-        "The position table of shape `(max_context_length, d_model)`",
-        "The fixed sine/cosine table only",
-        "A scalar shared by every position",
-        "No table; positions are always computed from token IDs"
+        "Only the token identity matters",
+        "Only the position matters",
+        "Positions are fixed and unchangeable",
+        "Token plus position vectors, learned or sinusoidal"
       ],
-      "correct": 0,
-      "explanation": "The learned implementation owns an `nn.Embedding(max_context_length, d_model)`, so each position vector is updated by optimization. The sinusoidal variant is parameter-free."
+      "correct": 3,
+      "explanation": "Identity without order cannot parse sequences. This lesson adds position signals to token embeddings."
     },
     {
       "stage": "check",

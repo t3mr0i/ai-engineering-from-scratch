@@ -142,6 +142,10 @@ It does not train the embedding. Training requires a loss, which requires a mode
 
 Run the demo. Then change the model dimension `D` from 64 to 32 and watch how the sinusoidal wavelength bands change.
 
+## CBP context: order content by relevance, not arrival
+
+In the CBP context positional behavior explains the "lost in the middle" effect (lesson 11/05): the model attends unevenly across long contexts, so retrieved CBP passages go in relevance order with the decisive content early, not in arrival order. Build both embedding styles here for the intuition; apply the ordering rule there on every RAG response. Position is not neutral — layout is a quality lever.
+
 ## Build It
 
 Reconstruct **Token and Positional Embeddings** by following `TokenEmbedding` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
