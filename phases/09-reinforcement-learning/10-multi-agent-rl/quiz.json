@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What joint state does reset() create for the cooperative 5x5 GridWorld?",
+      "question": "Two agents share one goal but act simultaneously without coordination. What must the setup make explicit?",
       "options": [
-        "((0, 0), (0, 0))",
-        "((4, 4), (0, 0))",
-        "((0, 0), (4, 0))",
-        "Two independent random positions near the goal"
+        "Nothing; simultaneity resolves itself",
+        "Bigger individual rewards",
+        "Independent goals per agent",
+        "Joint states, shared success, and credit per agent"
       ],
-      "correct": 2,
-      "explanation": "The first agent starts at (0,0) and the second at (GRID-1,0)=(4,0); both must reach GOAL=(4,4)."
+      "correct": 3,
+      "explanation": "Shared goals need joint framing. This lesson coordinates agents with shared states and rewards."
     },
     {
       "stage": "check",

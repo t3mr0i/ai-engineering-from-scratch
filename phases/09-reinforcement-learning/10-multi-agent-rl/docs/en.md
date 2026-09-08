@@ -57,6 +57,10 @@ This breaks tabular convergence proofs (Q-learning's guarantee assumes a station
 
 
 
+## CBP context: joint states cost coordination
+
+In the CBP context multi-agent setups (reviewer crews, debate panels from lesson 14/25) pay coordination costs the joint state makes visible: shared goals, simultaneous moves, credit assignment across agents. Cooperative grids teach the mechanics; CBP crews need the same explicitness about who decides, who observes what, and how shared success scores. Joint action without joint observability is parallel confusion.
+
 ## Build It
 
 Reconstruct **Multi-Agent RL** by following `move` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.
