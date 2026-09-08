@@ -28,6 +28,10 @@ max(0, logit) - y_true*logit + log(exp(-max(0,logit)) + exp(logit-max(0,logit)))
 The implementation also includes stable sigmoid branches, centered finite differences, norm/value clipping, `simulate_float16`, `simulate_bfloat16`, Welford variance, and epsilon-protected layer normalization.
 `binary_cross_entropy_stable` requires `y_true` to be exactly `0` or `1`; it is not a soft-label or probability-target helper.
 
+## CBP context: shift, clamp, log-space — then blame data
+
+In the CBP context stability patterns appear in scoring and aggregation code: subtract the max before softmax-style normalizations, clamp probabilities away from exact 0/1 before logs, add epsilon to denominators. When scores turn NaN, check the math guards before the model — overflow and log-of-zero explain most "model went crazy" incidents that are actually arithmetic. Stable code fails loudly on bad input instead of silently on good input.
+
 ## Build It
 
 Run the local diagnostic sequence:

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why can naive softmax fail on logits [1000, 1001], and what is the stable remedy?",
+      "question": "Exponentiating large scores overflows to infinity and poisons the normalization. What is the standard remedy?",
       "options": [
-        "exp overflows; subtract the maximum logit before exponentiating",
-        "The logits are negative; add their minimum before exponentiating",
-        "Softmax requires integer logits; round them first",
-        "Division by the sum always creates underflow, so use raw logits"
+        "Use smaller scores by truncation",
+        "Ignore overflow; it rarely matters",
+        "Round all scores to integers first",
+        "Shift scores by their maximum before exponentiating"
       ],
-      "correct": 0,
-      "explanation": "The probabilities are unchanged by a common shift. Subtracting 1001 produces [-1,0], keeping exponentials in a safe range."
+      "correct": 3,
+      "explanation": "Common shifts preserve probabilities. This lesson stabilizes the exponentials behind every softmax."
     },
     {
       "stage": "check",
