@@ -90,6 +90,10 @@ Swarm is "agent decides what's next"; GroupChat is "manager decides what's next.
 
 
 
+## CBP context: routers return agents, loops install them
+
+In the CBP context stateless handoffs work by return value: a routing function yields the next agent object, the loop logs the handoff message and continues with the same user message under new ownership. No shared graph mutation, no broadcasts — explicit, traceable, testable transfers. Routines stay stateless; state lives where the loop can see it.
+
 ## Build It
 
 Reconstruct **Handoffs and Routines — Stateless Orchestration** by following `returning` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

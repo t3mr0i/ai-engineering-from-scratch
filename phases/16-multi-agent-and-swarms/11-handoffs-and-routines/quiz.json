@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What event changes the active agent in this handoff miniature?",
+      "question": "Control must pass between specialists without shared mutable graphs or broadcasts. What mechanism does that?",
       "options": [
-        "A routing function returns an `Agent` object, which the run loop detects and installs as active.",
-        "The current agent mutates a global state graph before every token.",
-        "The manager broadcasts to every agent and waits for a majority vote.",
-        "A fixed round counter selects the next agent without reading tool results."
+        "Global state mutation per token",
+        "Broadcasts awaiting majority votes",
+        "Fixed round counters ignoring results",
+        "Routers returning the next agent explicitly"
       ],
-      "correct": 0,
-      "explanation": "`scripted_router` may return an `Agent`; `run_swarm` appends a handoff message, assigns that agent to `active`, and invokes it on the same user message."
+      "correct": 3,
+      "explanation": "Explicit returns beat hidden mutation. This lesson hands off by router return value."
     },
     {
       "stage": "check",
