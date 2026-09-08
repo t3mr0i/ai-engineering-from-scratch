@@ -45,6 +45,10 @@ The result dominates every modality by 2026. Language (GPT-5, Claude 4, Llama 4)
 
 
 
+## CBP context: parallelism, range, and no bottleneck
+
+In the CBP context the three RNN weaknesses explain three transformer strengths you rely on daily: parallel training makes frontier models possible at all, uncrushed long-range context lets assistants read whole ticket histories, and attention over all positions replaces the fixed-vector bottleneck behind RAG. When a model handles your 50-page contract, these three fixes are why. History explains the present's capabilities — and its bills.
+
 ## Build It
 
 Reconstruct **Why Transformers — The Problems with RNNs** by following `rnn_style` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
