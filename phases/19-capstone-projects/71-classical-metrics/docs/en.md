@@ -175,6 +175,10 @@ Read `main.py` top to bottom. The functions are ordered by complexity. exact_mat
 
 The classical metrics are necessary, not sufficient. They reward surface overlap and miss meaning. The fix is to layer model-based metrics on top (BLEURT, BERTScore, GEval) once you trust the classical floor. That is a later lesson. For now: make these five work, pin them with tests, and you have a metric stack that is auditable, fast, and reproducible.
 
+## CBP context: weak signals, never gates
+
+In the CBP context classical overlap metrics (BLEU, ROUGE, token F1) are weak diagnostic signals, never release gates: they score word overlap while the business needs task completion, faithfulness, and correctness. Track them for trend-spotting across model changes, but gate releases on the task metrics from lessons 19/41 and 19/68. A rising BLEU with failing task evals is a metric succeeding at the wrong job.
+
 ## Build It
 
 Reconstruct **Classical Metrics** by following `tokenize` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

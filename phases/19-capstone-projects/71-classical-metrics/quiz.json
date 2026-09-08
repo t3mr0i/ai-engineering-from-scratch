@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does tokenize(\"The Cat, sat!\") return in this lesson's implementation?",
+      "question": "Two answers share many words but only one is correct. What do word-overlap metrics miss?",
       "options": [
-        "[\"the\", \"cat\", \"sat\"]",
-        "[\"The\", \"Cat\", \"sat\"]",
-        "[\"the cat\", \"sat\"]",
-        "[\"the\", \"cat,\", \"sat!\"]"
+        "Nothing; overlap equals correctness",
+        "Spelling mistakes only",
+        "Sentence length only",
+        "Meaning, correctness, and task completion"
       ],
-      "correct": 0,
-      "explanation": "tokenize lowercases the input and applies the Unicode word-run regular expression, so punctuation is not retained and the three tokens are the, cat, and sat."
+      "correct": 3,
+      "explanation": "Overlap counts words, not truth. This lesson places classical metrics as weak signals beneath task evals."
     },
     {
       "stage": "check",
