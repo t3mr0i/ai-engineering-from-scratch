@@ -66,6 +66,10 @@ Allreduce gives every rank the full summed gradient. If you only need shard r, t
 
 
 
+## CBP context: know what dominates training memory
+
+In the CBP context ZeRO teaches what actually fills GPUs during training: not the weights alone but the fp32 master copy plus optimizer moments — multiples of the parameter count that sharding splits across ranks. Read provider training configs and bills with that lens: memory quotes that count weights only are fiction, and out-of-memory failures at scale are usually optimizer state, not model size. Shard the state, keep the model whole.
+
 ## Build It
 
 Reconstruct **ZeRO Optimizer State Sharding** by following `MiniMLP` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.

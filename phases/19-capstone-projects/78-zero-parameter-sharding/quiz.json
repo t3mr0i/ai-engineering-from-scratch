@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does this ZeRO-1 implementation shard across ranks?",
+      "question": "Training memory overflows though the weights alone should fit. What else lives on the GPU?",
       "options": [
-        "The model parameters themselves, which are absent on non-owning ranks",
-        "Only the input batch, while optimizer state stays replicated",
-        "The fp32 master parameters and Adam m/v state; the full model parameters remain present",
-        "Activations only; all optimizer tensors remain full-sized"
+        "Nothing; weights are the only memory",
+        "The training data целиком",
+        "Only the loss scalar",
+        "Master weights plus optimizer moments, multiples of the model"
       ],
-      "correct": 2,
-      "explanation": "This is optimizer-state sharding: every module still holds full model parameters, while each rank owns one shard of the fp32 master copy and Adam moments."
+      "correct": 3,
+      "explanation": "Optimizer state dwarfs weights. This lesson shards it across ranks while keeping the model whole."
     },
     {
       "stage": "check",
