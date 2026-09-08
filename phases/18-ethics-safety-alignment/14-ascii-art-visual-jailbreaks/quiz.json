@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does cloak_prompt do to the word \"bomb\" in the demo?",
+      "question": "A filter blocks a dangerous word, but the request renders it as ASCII art the model can still read. What failed?",
       "options": [
-        "It deletes the word and leaves no representation for the model",
-        "It encrypts the word with a public key",
-        "It replaces the literal word with a placeholder followed by a 5-row ASCII rendering",
-        "It changes the prompt into an image file"
+        "The filter list was too short",
+        "The model reads too well",
+        "ASCII art should be banned entirely",
+        "Literal matching while the model reads renderings"
       ],
-      "correct": 2,
-      "explanation": "cloak_prompt replaces each listed word with [word-i], then appends the glyph block returned by render_word. The literal substring is absent even though a capable model can read the visual letters."
+      "correct": 3,
+      "explanation": "Filters and models must read the same representation. This lesson normalizes visual encodings first."
     },
     {
       "stage": "check",

@@ -56,6 +56,10 @@ Lessons 12-14 describe three orthogonal attack vectors: iterative refinement (PA
 
 
 
+## CBP context: read the rendering, not just the literals
+
+In the CBP context literal-word filters miss rendered text: ASCII art, homoglyphs, and visual encodings carry the blocked word without containing it. Normalize visual and obfuscated content before filters run (lesson 19/83) — render, map, then match. Filters reading literals while models read renderings guard the wrong representation.
+
 ## Build It
 
 Reconstruct **ASCII Art and Visual Jailbreaks** by following `render_word` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
