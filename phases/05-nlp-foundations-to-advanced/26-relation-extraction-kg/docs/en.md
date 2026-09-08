@@ -58,6 +58,10 @@ Production KGs usually mix: open IE for discovery, then canonicalize relations o
 
 
 
+## CBP context: triples feed the graph
+
+In the CBP context extracted relations become knowledge-graph edges — tickets linked to products, products to owners, incidents to causes — feeding the graph leg of hybrid retrieval (lesson 19/51). Patterns bootstrap fast; evaluated models generalize; human review accepts edges that change decisions. A triple without provenance is gossip with structure.
+
 ## Build It
 
 Reconstruct **Relation Extraction & Knowledge Graph Construction** by following `extract` on a graph with edges (0,1) and (1,2). Run `python3 main.py` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which relation code does the pattern for \"Tim Cook became CEO of Apple\" emit?",
+      "question": "Tickets, products, and owners sit disconnected across documents. What structure connects them?",
       "options": [
-        "P19",
-        "P112",
-        "P169",
-        "P69"
+        "Longer documents with more text",
+        "Fewer documents overall",
+        "Trust in keyword search alone",
+        "Extracted subject-relation-object triples as graph edges"
       ],
-      "correct": 2,
-      "explanation": "The became/is/was CEO of pattern is mapped to P169, labeled CEO of."
+      "correct": 3,
+      "explanation": "Relations connect entities. This lesson extracts triples that build knowledge graphs."
     },
     {
       "stage": "check",
