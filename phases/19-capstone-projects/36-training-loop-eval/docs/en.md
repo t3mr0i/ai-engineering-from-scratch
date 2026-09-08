@@ -82,6 +82,10 @@ A model whose training loss drops nicely but whose generated samples are all the
 | Eval batches | "Held out batches" | A fixed slice of the validation token tensor, sliced once at script start, used identically every probe |
 | Qualitative probe | "Sample print" | A short generation from a fixed prompt printed every K steps to catch failure modes loss alone hides |
 
+## CBP context: validate early, fool yourself never
+
+In the CBP context the training-loop discipline maps to delivery: evaluate early and often on held-out CBP cases, stop what is not improving, and never report training-set numbers as progress. The habit that matters is the honest validation split — the same split behind every eval gate in lessons 11/10 and 14/30. Build the loop here; enforce the honesty there on every change.
+
 ## Build It
 
 Reconstruct **Training Loop and Evaluation** by following `TrainConfig` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
