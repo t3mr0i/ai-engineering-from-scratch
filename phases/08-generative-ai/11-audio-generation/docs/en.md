@@ -66,6 +66,10 @@ The 2024-2026 trend: flow matching is winning for music (faster inference, clean
 
 
 
+## CBP context: structured audio, reviewed output
+
+In the CBP context generated audio (announcements, prompts, notifications) follows token structure with style control, delivered via platform TTS where it covers the need and custom generation where it does not. Every generated clip passes native-listener review on domain text before deployment; synthetic speech that mispronounces products erodes trust per play. Structure first, review always.
+
 ## Build It
 
 Reconstruct **Audio Generation** by following `make_tokens` on a 160-sample 16 kHz waveform. Run `python3 main.py` and verify that the duration/frame count is zero or the documented validation path is used; no plausible speech label should be fabricated.

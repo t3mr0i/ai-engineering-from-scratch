@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does make_tokens(style=0, length=4, rng) define its synthetic speech-like sequence?",
+      "question": "Generated announcements must follow speech-like structure with controllable style. What token pattern enables that?",
       "options": [
-        "It uses (i + random bit) % 16 for each position",
-        "It uses (3*i + random bit) % 16 for each position",
-        "It draws every token uniformly from 0 through 4",
-        "It repeats the start token four times"
+        "Uniform random tokens",
+        "Fixed repetition of one token",
+        "No structure, pure noise",
+        "Style-conditioned sequences with position structure"
       ],
-      "correct": 0,
-      "explanation": "The style-0 branch returns `[(i + rng.randint(0,1)) % VOCAB ...]` with VOCAB=16; style 1 uses the three-step ramp."
+      "correct": 3,
+      "explanation": "Structure plus style control speech. This lesson builds styled audio token sequences."
     },
     {
       "stage": "check",
