@@ -158,6 +158,10 @@ Call `No` from a small caller with the demo’s smallest built-in fixture. Compa
 
 Hand off `outputs/skill-vendor-scorecard.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: re-quote every engagement, size evals right
+
+In the CBP context vendor figures are re-quoted with dates at every engagement start — token prices drift monthly — and hard gates (residency, latency, exit) filter before scoring. Size CBP evals by the 50/200 rule: 50 prompts catch most of the gap, 200 catch nearly all of it, below 50 is noise-ranking. Procurement scorecards use dated evidence, never remembered prices.
+
 ## Further Reading
 
 - [Anthropic — API reference and model documentation](https://docs.claude.com) — canonical source for Claude model capabilities, pricing, and data handling terms.
