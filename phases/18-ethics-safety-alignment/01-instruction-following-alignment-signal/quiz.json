@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In the toy pipeline, what does stage1_sft learn from the 200 demonstrations?",
+      "question": "A model imitates demonstration format perfectly but ignores safety constraints. What does that show?",
       "options": [
-        "A categorical policy whose action frequencies follow the labeler's softmax utilities",
-        "A scalar reward for every possible prompt",
-        "A KL coefficient chosen by PPO",
-        "A tokenizer that adds Python syntax"
+        "Imitation equals full alignment",
+        "Demonstrations are useless",
+        "Safety emerges automatically",
+        "Format learning precedes value learning"
       ],
-      "correct": 0,
-      "explanation": "stage1_sft samples actions from softmax([0.0, 1.0, -0.3]) and uses their empirical log frequencies as policy logits. It is imitation of responses, not reward learning or tokenizer training."
+      "correct": 3,
+      "explanation": "Imitation teaches shape, not values. This lesson starts alignment with instruction following."
     },
     {
       "stage": "check",

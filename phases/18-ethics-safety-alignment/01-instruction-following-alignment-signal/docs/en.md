@@ -75,6 +75,10 @@ Every critique in later lessons — reward hacking (Lesson 2), DPO (Lesson 3), s
 
 
 
+## CBP context: demonstrations teach format, not values
+
+In the CBP context instruction-following starts as imitation: reviewed demonstration pairs teach response format, while values and safety arrive through later stages (lessons 10/06, 19/86). Never mistake format compliance for alignment — a model that follows instructions beautifully still needs constitutions, guardrails, and evals. Demonstrations are stage one of alignment, not its completion.
+
 ## Build It
 
 Reconstruct **Instruction-Following as Alignment Signal** by following `softmax` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
