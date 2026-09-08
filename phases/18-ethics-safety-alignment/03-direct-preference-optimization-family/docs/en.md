@@ -122,6 +122,10 @@ Every lab runs all five on a battery and picks the winner per task. There is no 
 
 
 
+## CBP context: preferences without reward machinery
+
+In the CBP context the DPO family offers preference tuning without operating a separate reward model (lesson 10/08): paired CBP judgments convert directly through the policy-reference log-ratio into training signal. Same review discipline on pairs — tenant-scoped, decontaminated, versioned — with less machinery to stabilize. Simplicity here is reliability, not shortcut.
+
 ## Build It
 
 Reconstruct **The Direct Preference Optimization Family** by following `softmax` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
