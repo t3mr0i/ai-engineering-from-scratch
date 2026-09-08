@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In what order does build_default_chain evaluate its four gates?",
+      "question": "An agent reads unlimited observations including bloated and hostile content. What bounds its looking?",
       "options": [
-        "budget → recency → regex → whitelist",
-        "regex → whitelist → budget → recency",
-        "whitelist → regex → recency → budget",
-        "recency → budget → whitelist → regex"
+        "Trust in all observations equally",
+        "Bigger context windows alone",
+        "No observations at all",
+        "A gate chain plus a token budget, denying early"
       ],
-      "correct": 2,
-      "explanation": "The tuple in build_default_chain is WhitelistGate, RegexGate, RecencyGate(window=3), then BudgetGate(max_tokens=budget); GateChain short-circuits at the first denial."
+      "correct": 3,
+      "explanation": "Unbounded observation is billed and exploitable. This lesson gates what the agent may see within a fixed budget."
     },
     {
       "stage": "check",

@@ -96,6 +96,10 @@ python3 -m pytest code/tests/ -v
 
 The demo prints a turn-by-turn trace including every gate decision and exits zero. The tests cover the ledger, each gate in isolation, the chain short-circuit, and the synthetic loop end-to-end.
 
+## CBP context: gate the observations, budget the looking
+
+In the CBP context verification gates filter what the agent may observe — allowlisted sources first, pattern checks next, recency windows after, token budget last — short-circuiting at the first denial so a bloated or hostile observation never reaches the model. The observation budget is a cost control as much as a safety one: every kilobyte the model reads is billed. Order the chain from cheapest denial to most expensive check and log each denial with its reason.
+
 ## Build It
 
 Reconstruct **Capstone Lesson 25: Verification Gates and the Observation Budget** by following `ToolCall` on a graph with edges (0,1) and (1,2). Run `python3 main.py` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.
