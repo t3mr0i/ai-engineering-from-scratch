@@ -107,6 +107,10 @@ Two extensions a real implementation will want. First, multi-format render: the 
 
 The skeleton is the bet. Sections, figures, and citations declared as data, prose generated into slots, manifest emitted alongside the LaTeX. Every other improvement composes on top.
 
+## CBP context: structure first, prose last
+
+In the CBP context reports, ADRs, and steering decks declare their structure as data — decisions, metrics, citations, open points — before any prose is written, so completeness validates mechanically. The model fills sections; it never invents the outline. A deck whose numbers lack cited sources fails review the same way an incomplete paper fails the harness: structure is the contract.
+
 ## Build It
 
 Reconstruct **Paper Writer** by following `PaperValidationError` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
