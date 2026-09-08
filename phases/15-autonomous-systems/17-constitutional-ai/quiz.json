@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which rule is checked before the numeric TierScore thresholds?",
+      "question": "Prohibited requests reach scoring logic that might pass them on points. What ordering prevents that?",
       "options": [
-        "helpfulness >= 3",
-        "guidelines >= 3",
-        "A hardcoded prohibition substring match",
-        "The output length"
+        "Score everything, then filter",
+        "Trust scores to catch prohibitions",
+        "No prohibitions, only scores",
+        "Hardcoded refusals before any scoring"
       ],
-      "correct": 2,
-      "explanation": "resolve calls hardcoded_block first, so phrases such as bioweapons uplift or false identity trigger a refusal before tier scores are considered."
+      "correct": 3,
+      "explanation": "Absolutes precede gradations. This lesson refuses prohibitions before tier scoring."
     },
     {
       "stage": "check",

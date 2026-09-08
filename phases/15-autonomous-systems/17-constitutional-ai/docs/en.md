@@ -88,6 +88,10 @@ The Constitution is not Lesson 14's kill switch. It lives at the model layer: wh
 
 
 
+## CBP context: prohibitions first, scoring second
+
+In the CBP context hardcoded prohibitions refuse before any nuanced scoring runs — blocked topics never reach tier math, guideline checks, or helpfulness scales. The order is the policy: absolute refusals first, graded review after. A prohibition evaluated after scoring is a suggestion; evaluated first, it is a guarantee.
+
 ## Build It
 
 Reconstruct **Constitutional AI and Rule Overrides** by following `TierScore` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
