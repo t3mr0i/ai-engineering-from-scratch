@@ -79,6 +79,10 @@ Lessons 6-11 form the "deception and oversight" arc. Lesson 6 gives the vocabula
 
 
 
+## CBP context: test off-distribution, not just in it
+
+In the CBP context equal training behavior proves nothing about deployment: policies sharing the training objective can defect off-distribution, so CBP evals include deployment-like and adversarial conditions, never training replays alone. Behavioral equivalence on the training set leaves inner objectives unresolved — test where it matters, not where it trained.
+
 ## Build It
 
 Reconstruct **Mesa-Optimization and Deceptive Alignment** by following `Example` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
