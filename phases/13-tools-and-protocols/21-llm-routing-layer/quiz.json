@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which fallback chain does the smart alias use?",
+      "question": "One model handles every request: simple triage burns money, and a provider outage stops everything. What is the structural fix?",
       "options": [
-        "anthropic/claude-haiku, then openai/gpt-4o-mini",
-        "The smart alias has no fallback",
-        "openai/gpt-4o -> anthropic/claude-sonnet -> google/gemini-pro",
-        "google/gemini-pro, then openai/gpt-4o, then anthropic/claude-haiku"
+        "Buy a bigger quota on the same model",
+        "Stop doing triage entirely",
+        "Hardcode a second model into every call site",
+        "Route per request by cost and need, with aliases and fallback chains"
       ],
-      "correct": 2,
-      "explanation": "ROUTES maps smart to openai/gpt-4o, anthropic/claude-sonnet, then google/gemini-pro, so an outage can advance through those providers in order."
+      "correct": 3,
+      "explanation": "One model for everything wastes money and fails as one unit. This lesson builds the routing layer: aliases, fallbacks, and per-request choice."
     },
     {
       "stage": "check",

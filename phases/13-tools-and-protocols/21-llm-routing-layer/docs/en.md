@@ -112,6 +112,10 @@ Call `provider_call` from a small caller with tokens=["red","fox"]. Compare its 
 
 Hand off `outputs/skill-routing-config-designer.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: APIM policies instead of a sidecar proxy
+
+In the CBP context the routing layer is APIM gateway policy, not a self-hosted proxy: model aliases map to Azure OpenAI deployments, fallback chains step across deployments, and per-tenant rate limits and cost attribution ride the same policies. Route by the lesson's reasons — cheap model for triage, strong model for synthesis, EU residency where required — and keep the exit path the lesson demands as an alias pointing off Azure, exercised before it is needed. Measure per-alias cost and latency in Application Insights; an alias nobody measures drifts to the most expensive default.
+
 ## Further Reading
 
 - [LiteLLM — docs](https://docs.litellm.ai/) — self-hosted routing gateway
