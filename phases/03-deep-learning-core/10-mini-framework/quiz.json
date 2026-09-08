@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does a Parameter object keep separate?",
+      "question": "Frameworks feel like magic: parameters update themselves across complex models. What minimal machinery explains that?",
       "options": [
-        "Its scalar data and its accumulated gradient",
-        "Its training dataset and its validation labels",
-        "Its device name and its batch size",
-        "Its optimizer class and its activation function"
+        "Magic compiler passes nobody can read",
+        "Manual updates per parameter by hand",
+        "Luck with large compute budgets",
+        "Values with gradients, composable modules, stepping optimizers"
       ],
-      "correct": 0,
-      "explanation": "The framework stores `data` for the forward computation and `grad` for the next optimizer update."
+      "correct": 3,
+      "explanation": "Three pieces compose all frameworks. This lesson builds the miniature that explains the giants."
     },
     {
       "stage": "check",

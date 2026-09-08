@@ -32,6 +32,10 @@ flowchart LR
     Z --> M
 ```
 
+## CBP context: demystify frameworks, then use them
+
+In the CBP context the miniature framework — parameters holding data plus gradients, modules composing, optimizers stepping — demystifies every framework you will ever consume: PyTorch, JAX, and provider training APIs all share this skeleton. Build it once so "the framework handles it" never means "nobody understands it," then happily let the framework handle it. Understanding without reimplementation is the whole point.
+
 ## Build It
 
 From `code/`, run:
