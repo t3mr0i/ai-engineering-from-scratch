@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which element receives a click at coordinates `(140, 115)` in the demo screen?",
+      "question": "A workflow could use a service API or a screen-driving agent that clicks through the UI. Which should you prefer and why?",
       "options": [
-        "The query field, because text inputs have priority.",
-        "The buy button, because it is the first listed element.",
-        "The search button, because `(140,115)` lies inside its inclusive bounds.",
-        "No element, because the point must be strictly inside the rectangle."
+        "Screen-driving, because pixels always work",
+        "Neither; do the workflow by hand forever",
+        "The API first; screen-driving is the fallback where no API exists",
+        "Both at once on the same data"
       ],
       "correct": 2,
-      "explanation": "The search button spans x=100..180 and y=100..130; the hit test includes boundary values, and `(140,115)` falls within that rectangle."
+      "explanation": "APIs are deterministic and auditable; pixels are brittle. This lesson compares the computer-use vendors for the cases where no API exists."
     },
     {
       "stage": "check",

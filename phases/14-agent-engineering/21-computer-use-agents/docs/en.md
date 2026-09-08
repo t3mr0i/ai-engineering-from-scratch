@@ -90,6 +90,10 @@ Call `Element` from a small caller with the text "red fox". Compare its result w
 
 Hand off `outputs/skill-computer-use-safety.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: pixels are a last resort, APIs first
+
+In the CBP context driving screens is the fallback, not the plan: prefer Boards, Repos, and service APIs over pixel-reading agents for every workflow that has an API. Where no API exists, sandbox the computer-use agent hard — dedicated virtual display, least-privilege desktop user, no credentials in reach — and require human approval before any consequential click. Log screenshots with the action trace so the 3 AM review shows what the agent saw, not just what it claims it clicked.
+
 ## Further Reading
 
 - [Anthropic, Introducing computer use](https://www.anthropic.com/news/3-5-models-and-computer-use) — Claude's design
