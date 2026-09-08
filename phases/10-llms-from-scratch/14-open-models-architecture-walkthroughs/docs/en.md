@@ -223,6 +223,10 @@ The 8B weights are 16 GB in BF16. The KV cache for a single 128k sequence is lar
 
 
 
+## CBP context: estimate before provisioning
+
+In the CBP context settings files are read before hardware is provisioned: sizes, layers, and heads estimate memory and compute against available cards, and no deployment starts on assumed fit. Compare estimates across candidate models with CBP evals attached; the cheapest sufficient deployment wins. Provisioning without estimates is budgeting by hope.
+
 ## Build It
 
 Reconstruct **Open Models: Architecture Walkthroughs** by following `Breakdown` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.
