@@ -105,6 +105,10 @@ Worth knowing. Worth experimenting with. Not yet worth betting a product on.
 
 
 
+## CBP context: shared boards beat turn-taking
+
+In the CBP context loosely-coupled agent work parallelizes over a shared board — agents reading and updating common state, dividing remainder on the fly — instead of waiting turns through coordinators. Define conflict rules up front (last-write-wins per field, owner per section) or hogwild updates corrupt shared state silently. Turn-taking is safe and slow; shared boards are fast with rules.
+
 ## Build It
 
 Reconstruct **Async and Hogwild! Inference** by following `SharedCache` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
