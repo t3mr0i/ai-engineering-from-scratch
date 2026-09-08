@@ -86,6 +86,10 @@ What flow matching added: the *clarity* of the target (a plain velocity), a clea
 
 
 
+## CBP context: time features price the path
+
+In the CBP context flow matching (time-augmented velocity learning, rectified straight paths) is the efficiency story behind modern image services: fewer steps per image at held quality, which prices directly into latency and bills. Time features (t, t², sinusoids) condition generation on progress; straighter paths need fewer of them. Operate services with step counts measured on the brief.
+
 ## Build It
 
 Reconstruct **Flow Matching & Rectified Flows** by following `tanh` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What five values form the input to forward(x, t, net)?",
+      "question": "Curved denoising paths waste steps that bills count. What straightens the path?",
       "options": [
-        "x, t, t², sin(2πt), and cos(2πt)",
-        "x, t, x², sin(2πx), and cos(2πx)",
-        "Only x and a one-hot timestep vector",
-        "x0, x1, t, and the target velocity"
+        "More curved steps",
+        "Random path directions",
+        "No conditioning on progress",
+        "Time-conditioned velocity with rectified flows"
       ],
-      "correct": 0,
-      "explanation": "forward builds `inp = [x, t, t*t, sin(2*pi*t), cos(2*pi*t)]`, giving the network both scalar state and time features."
+      "correct": 3,
+      "explanation": "Straight paths need fewer steps. This lesson matches flows with time features."
     },
     {
       "stage": "check",
