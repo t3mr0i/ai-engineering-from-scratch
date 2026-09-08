@@ -158,6 +158,10 @@ DPO is mathematically equivalent to RLHF under the Bradley-Terry preference mode
 
 The implementation gives you the loss, the reference invariance, and the training loop. The math is the lesson. The code makes the math concrete.
 
+## CBP context: preferences as evals, not just training
+
+In the CBP context the Bradley-Terry insight pays off in evaluation before training: collect pairwise human judgments on CBP outputs (which answer better serves the ticket?) and score models on win rate, no reward model required. When preference-tuning a provider fine-tune, the same pairs become training data — reviewed, tenant-scoped, and decontaminated from evals. Differences decide; absolute scores mislead.
+
 ## Build It
 
 Reconstruct **Capstone Lesson 40: Direct Preference Optimization from Scratch** by following `InstructionTokenizer` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
