@@ -37,6 +37,10 @@ Mutual information uses a joint table. The independent fixture
 `[[0.25,0.25],[0.25,0.25]]` has MI zero; the diagonal-heavy table
 `[[0.45,0.05],[0.05,0.45]]` has positive MI because the row changes the conditional distribution of the column.
 
+## CBP context: uncertainty has a unit, surprise has a price
+
+In the CBP context entropy measures what the model does not know, and KL divergence measures how far one prediction stands from another — the vocabulary behind confidence thresholds, abstention policies, and eval comparisons. A confidently wrong answer is low-entropy and high-error at once; that combination is exactly what calibration and verification gates exist to catch. Learn the units here; spend them wisely in lessons 11/10 and 14/30.
+
 ## Build It
 
 Run the canonical demo from the lesson's code directory:

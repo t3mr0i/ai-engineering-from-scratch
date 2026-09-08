@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the entropy of a fair binary variable, using log base 2?",
+      "question": "A model answers confidently and wrongly at the same time. Which concepts describe that failure?",
       "options": [
-        "1 bit",
-        "0 bits",
-        "2 bits",
-        "0.5 bits"
+        "High accuracy with low latency",
+        "Large vocabulary with short answers",
+        "Low uncertainty but high error versus truth",
+        "Fast tokens with slow tools"
       ],
-      "correct": 0,
-      "explanation": "H(X) = -2*(0.5 log2 0.5) = 1. A fair coin has one bit of uncertainty."
+      "correct": 2,
+      "explanation": "Confidence and correctness are different axes. This lesson gives uncertainty a unit and error a distance."
     },
     {
       "stage": "check",
