@@ -56,6 +56,10 @@ Get these right and the rest of Phase 6 is tractable. Get them wrong and even Wh
 
 
 
+## CBP context: sample rates are contracts
+
+In the CBP context audio starts with the sample-rate contract: mismatched rates between capture, model, and playback corrupt pipelines silently — verify rate, channels, and duration at every boundary the way text pipelines verify encoding. Waveforms, sampling, and the Fourier view from lesson 01/20 are the vocabulary behind every voice feature the team consumes. Rate mismatches debug first, models second.
+
 ## Build It
 
 Reconstruct **Audio Fundamentals — Waveforms, Sampling, Fourier Transform** by following `sine` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

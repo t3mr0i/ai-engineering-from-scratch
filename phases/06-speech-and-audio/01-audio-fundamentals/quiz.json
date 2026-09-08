@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How many samples does sine(440.0, sr=8000, seconds=0.064) create?",
+      "question": "Voice audio sounds wrong after passing through three pipeline stages. What should be verified first?",
       "options": [
-        "512",
-        "440",
-        "8000",
-        "64"
+        "The model version number",
+        "The UI color scheme",
+        "The network cable brand",
+        "Sample rate, channels, and duration at each boundary"
       ],
-      "correct": 0,
-      "explanation": "The function uses n=int(sr*seconds), so 8000*0.064 gives 512 samples."
+      "correct": 3,
+      "explanation": "Format mismatches corrupt silently. This lesson builds waveforms and sampling as contracts."
     },
     {
       "stage": "check",
