@@ -69,6 +69,10 @@ HR AI use-case triage sheet.
 
 The template in `outputs/sheet-hr-ai-use-case-triage.md` can be used in HR intake or enablement planning.
 
+## CBP context: drafts yes, decisions never
+
+In the CBP context HR workflows use AI for drafting and structuring only — job posts, policy explanations, learning paths — with personal data minimized, fairness reviewed, and every employee-facing decision owned by a human manager. No model output reaches an employee without human review; sensitive escalations route to people, never to prompts. Trust here is the product, and it spends exactly once.
+
 ## Key Takeaways
 
 - HR use cases require privacy and fairness controls.
