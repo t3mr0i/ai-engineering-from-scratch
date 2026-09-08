@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does TwoTower.encode_image return for eight image feature rows?",
+      "question": "Teams need to find images by text description without training a classifier per phrase. What enables that?",
       "options": [
-        "Eight class labels without embeddings",
-        "One unnormalized vector for the whole batch",
-        "Eight L2-normalized embedding vectors",
-        "A 2D image tensor with three channels"
+        "A classifier retrained per query",
+        "Manual tagging of every image",
+        "Keyword file names on all images",
+        "Shared normalized image-text embedding space"
       ],
-      "correct": 2,
-      "explanation": "The image projection maps each row to the embedding dimension and F.normalize scales each vector to unit length."
+      "correct": 3,
+      "explanation": "One space for both modalities removes per-class training. This lesson aligns images and text contrastively."
     },
     {
       "stage": "check",

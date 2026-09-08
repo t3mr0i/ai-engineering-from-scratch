@@ -20,6 +20,10 @@
 
 A closed classifier fixes its label head at training time. A CLIP-style two-tower model instead accepts a candidate list at inference: one image encoder and one text encoder project into the same space, and a similarity matrix ranks the candidates. The local lesson makes that matrix and its contracts executable without a tokenizer or downloaded weights.
 
+## CBP context: search images with words, no retraining
+
+In the CBP context CLIP-style two-tower embeddings let teams search CBP images with text queries — "corrosion near weld", "missing signature block" — with zero per-class training, both sides L2-normalized into one space. Evaluate hit quality on CBP vocabularies before trusting open-vocabulary claims; domain jargon not seen in pretraining retrieves poorly. Normalize always; unnormalized similarities lie.
+
 ## Build It
 
 The NumPy Build-It path uses `numpy_row_normalize`, `numpy_similarity`, `numpy_clip_loss`, and `numpy_zero_shot_classify`: rows are normalized with a scale-stable norm, an `N×N` cosine matrix is scaled, both cross-entropies use diagonal pair targets, and each image routes to one supplied class name. The optional `TwoTower(img_in=128, txt_in=64, emb=64)` maps each input row through a small MLP and L2-normalizes the result; its Torch `clip_loss` and `zero_shot_classify` mirror the NumPy contracts.
