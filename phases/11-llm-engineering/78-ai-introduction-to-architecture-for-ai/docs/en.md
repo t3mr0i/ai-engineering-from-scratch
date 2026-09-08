@@ -128,6 +128,10 @@ Call `OrchestrationPattern` from a small caller with the smallest valid record {
 
 Hand off `outputs/skill-ai-system-architecture-picker.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: layers the requirement demands, none it does not
+
+In the CBP context the five-layer reference maps to the platform: Azure OpenAI deployments, APIM gateway, AI Search, Java service, Application Insights — added only where a requirement demands them. A thin wrapper fails in week two on load, overflow, and hallucination; a full stack on a single-turn task bills double digits extra per request for nothing. Architecture is risk arithmetic: every layer must earn its failure surface and its cost.
+
 ## Further Reading
 
 - [Microsoft — Azure AI Foundry documentation](https://learn.microsoft.com/en-us/azure/ai-foundry/) — orchestration, RAG pipelines, tracing, content safety, and managed endpoints.

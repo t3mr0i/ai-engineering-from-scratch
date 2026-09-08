@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which requirement activates the context-assembly layer as a RAG pipeline?",
+      "question": "A thin API wrapper fails in week two on load, overflow, and hallucinations, while a full stack on a simple task wastes money. What decides the layers?",
       "options": [
-        "The answer depends on proprietary or recent data that the model was not trained on",
-        "The application has a user-facing latency target but no source data",
-        "The team wants a larger model even though the prompt already contains all context",
-        "The output is a single call with no retrieval or tool requirement"
+        "Always the thinnest possible wrapper",
+        "Always the full stack for safety",
+        "Whatever the team already knows",
+        "Which layers the requirements actually demand"
       ],
-      "correct": 0,
-      "explanation": "classify_architecture adds the RAG context layer when needs_rag is true. Latency, model preference, and call count do not by themselves make retrieval necessary."
+      "correct": 3,
+      "explanation": "Under- and over-engineering both fail differently. This lesson maps requirements to layers, nothing more."
     },
     {
       "stage": "check",
