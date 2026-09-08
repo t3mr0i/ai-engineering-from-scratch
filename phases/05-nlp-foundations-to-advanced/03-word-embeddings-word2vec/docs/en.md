@@ -48,6 +48,10 @@ The trick: softmax over 100k words is prohibitively expensive. Word2Vec uses **n
 
 
 
+## CBP context: context predicts meaning
+
+In the CBP context skip-gram intuition explains every embedding model consumed: words appearing in similar contexts land nearby, and nearby vectors retrieve related documents. Window size trades specificity against generality — narrow windows capture function, wide windows capture topic. Consume pretrained embeddings; understand that similarity is learned co-occurrence, not dictionary truth.
+
 ## Build It
 
 Reconstruct **Word Embeddings — Word2Vec from Scratch** by following `tokenize` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which skip-gram pairs does skipgram_pairs([\"a\", \"b\", \"c\"], window=1) emit?",
+      "question": "Related documents cluster together in vector space without any manual tagging. What training signal creates that?",
       "options": [
-        "(a,b), (b,a), (b,c), (c,b)",
-        "(a,c), (c,a) only",
-        "(a,a), (b,b), (c,c)",
-        "Every ordered pair, including tokens more than one position away"
+        "Random vector assignment",
+        "Alphabetical ordering of terms",
+        "Manual labels on every document",
+        "Predicting neighboring words from each word"
       ],
-      "correct": 0,
-      "explanation": "The loop visits neighbors within one position and skips i==j, producing the four adjacent ordered pairs."
+      "correct": 3,
+      "explanation": "Co-occurrence teaches similarity. This lesson builds skip-gram context prediction."
     },
     {
       "stage": "check",
