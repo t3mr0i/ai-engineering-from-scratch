@@ -76,6 +76,10 @@ By 2026 most "TTS" models are end-to-end from text to waveform; the mel spectrog
 
 
 
+## CBP context: lexicons for domain terms
+
+In the CBP context platform TTS voices announcements and notifications with pronunciation lexicons for CBP product names, abbreviations, and German compounds — "the" must come out right, and so must every article number. Evaluate voice quality with native listeners on domain text; generic benchmarks miss exactly the terms customers notice. Mispronounced products erode trust per utterance.
+
 ## Build It
 
 Reconstruct **Text-to-Speech (TTS) — From Tacotron to F5 and Kokoro** by following `phonemize` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

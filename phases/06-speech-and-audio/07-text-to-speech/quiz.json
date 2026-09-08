@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What phonemes does phonemize(\"the\") return?",
+      "question": "A voice assistant mispronounces every product name customers care about. What fixes domain pronunciation?",
       "options": [
-        "[\"DH\", \"AH\"]",
-        "[\"T\", \"H\", \"EH\"]",
-        "[\"the\"]",
-        "[\"TH\", \"EH\"]"
+        "Louder synthesis volume",
+        "Faster speech rate",
+        "A different voice actor only",
+        "Grapheme-to-phoneme rules plus a domain lexicon"
       ],
-      "correct": 0,
-      "explanation": "The longest-match loop sees the three-letter G2P entry the before trying shorter graphemes."
+      "correct": 3,
+      "explanation": "Letters are not sounds. This lesson maps graphemes to phonemes with lexicon overrides."
     },
     {
       "stage": "check",
