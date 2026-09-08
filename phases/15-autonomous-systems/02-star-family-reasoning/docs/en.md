@@ -72,6 +72,10 @@ Understanding STaR makes all of these click. It is the minimum-viable self-impro
 
 
 
+## CBP context: right answers need sound reasons
+
+In the CBP context self-taught reasoning is judged on rationales, not just answers: a correct answer from an unsound rationale fails review, because shortcuts shatter on out-of-distribution CBP cases. Evaluate reasoning traces on hard held-out tasks with soundness labels; answer accuracy alone certifies luck alongside skill. Sound reasons transfer; shortcuts do not.
+
 ## Build It
 
 Reconstruct **STaR, V-STaR, Quiet-STaR — Self-Taught Reasoning** by following `Trace` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In the simulator, which trace is a shortcut rather than a sound rationale?",
+      "question": "A model answers correctly but its reasoning is unsound, and it fails similar new cases. What should evaluation have checked?",
       "options": [
-        "It gets the answer right but sets rationale_sound to False",
-        "It gets the answer wrong and has a sound rationale",
-        "It is always sampled on OOD tasks",
-        "It is discarded before answer accuracy is measured"
+        "Answer accuracy only",
+        "Response speed only",
+        "Longer answers preferred",
+        "Rationale soundness on held-out tasks"
       ],
-      "correct": 0,
-      "explanation": "A shortcut trace can be correct, but the model marks its rationale as unsound; the ID/OOD difference changes its answer probability, not that label."
+      "correct": 3,
+      "explanation": "Correct answers can ride broken reasoning. This lesson labels rationales, not just answers."
     },
     {
       "stage": "check",
