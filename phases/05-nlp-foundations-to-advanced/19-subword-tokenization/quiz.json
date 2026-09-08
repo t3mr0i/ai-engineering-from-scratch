@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does word_counts do with uppercase words in the corpus?",
+      "question": "The same sentence consumes different token counts across models, breaking budget math. What explains that?",
       "options": [
-        "It lowercases them before counting",
-        "It drops them because the pattern accepts only lowercase input",
-        "It keeps a separate count for every capitalization",
-        "It turns each uppercase letter into a boundary token"
+        "All tokenizers behave identically",
+        "Token counts never matter",
+        "Longer sentences always cost less",
+        "Casing, merges, and vocabularies differ per tokenizer"
       ],
-      "correct": 0,
-      "explanation": "The regex accepts letters and the code applies text.lower() before constructing the Counter."
+      "correct": 3,
+      "explanation": "Budgets depend on the deployed tokenizer. This lesson builds subword mechanics behind the counts."
     },
     {
       "stage": "check",

@@ -45,6 +45,10 @@ Rule of thumb:
 
 
 
+## CBP context: casing and merges shape budgets
+
+In the CBP context subword mechanics (lowercasing, merge tables, vocabulary coverage) decide token counts and therefore context budgets: the same German sentence tokenizes differently across models, and the deployed model's tokenizer is the only one that counts for limits (lessons 11/05, 19/30). Verify casing behavior on CBP text — aggressive lowercasing breaks named entities in German nouns. Tokenizer awareness is budget awareness.
+
 ## Build It
 
 Reconstruct **Subword Tokenization — BPE, WordPiece, Unigram, SentencePiece** by following `word_counts` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
