@@ -105,6 +105,10 @@ Call `pick_engine` from a small caller with the text "red fox". Compare its resu
 
 Hand off `outputs/skill-engine-picker.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: Azure first, self-hosted for the edges
+
+In the CBP context the default is the Azure OpenAI deployment, not a self-hosted engine — self-hosting enters only for offline, data-residency, or cost-at-scale reasons the platform cannot cover. When it does, choose by hardware first, scale second, workload third, and skip TGI for new projects (maintenance mode since December 2025). Keep the Azure path as the fallback behind the same alias so a self-hosted experiment can fail back without a redeploy.
+
 ## Further Reading
 
 - [AI Made Tools — vLLM vs Ollama vs llama.cpp vs TGI 2026](https://www.aimadetools.com/blog/vllm-vs-ollama-vs-llamacpp-vs-tgi/)

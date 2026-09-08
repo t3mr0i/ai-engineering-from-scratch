@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What engine does pick_engine choose for CPU hardware at single_user scale?",
+      "question": "Three engineers propose Ollama, vLLM, and TGI for the same project and all sound right. How do you decide?",
       "options": [
-        "vLLM with CUDA",
-        "TRT-LLM",
-        "Ollama (llama.cpp under the hood)",
-        "SGLang on a GPU"
+        "Pick the loudest engineer",
+        "Use all three at once",
+        "Choose by logo recognition",
+        "Decide by hardware first, then scale, then workload"
       ],
-      "correct": 2,
-      "explanation": "CPU first selects llama.cpp, then the single_user branch wraps it as Ollama for one-command developer UX."
+      "correct": 3,
+      "explanation": "Every engine wins a different context. This lesson walks the choice tree: hardware, scale, workload — in that order."
     },
     {
       "stage": "check",
