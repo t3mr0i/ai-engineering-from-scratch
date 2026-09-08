@@ -70,6 +70,10 @@ You will re-answer these five for every lesson in this phase. By the end, they w
 
 
 
+## CBP context: match family to task
+
+In the CBP context the taxonomy decides the tool: diffusion services for images, autoregressive models for text, VAEs for compression and anomaly signals, GANs legacy-only for new work. Choosing by task family first prevents the classic mismatch — a GAN where control is needed, an LLM where a compressed representation suffices. History explains why each family exists; the task picks among them.
+
 ## Build It
 
 Reconstruct **Generative Models — Taxonomy & History** by following `sample_mixture` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

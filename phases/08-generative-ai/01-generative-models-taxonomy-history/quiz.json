@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In sample_mixture(n, rng), which mode is sampled when the first random draw is below 0.4?",
+      "question": "A task needs controlled image editing, but the team reaches for a text generator. What went wrong first?",
       "options": [
-        "A Gaussian centered at -2.0 with standard deviation 0.6",
-        "A Gaussian centered at +2.0 with standard deviation 0.9",
-        "A uniform sample between -2 and +2",
-        "A kernel sample with bandwidth 0.3"
+        "The budget was too small",
+        "The timeline was too short",
+        "The team size was wrong",
+        "Family-task mismatch: images need image models"
       ],
-      "correct": 0,
-      "explanation": "The branch `rng.random() < 0.4` calls rng.gauss(-2.0, 0.6); the other branch uses the +2.0 mode."
+      "correct": 3,
+      "explanation": "Families serve different tasks. This lesson maps generative history to task fit."
     },
     {
       "stage": "check",
