@@ -79,6 +79,10 @@ Call `Finding` from a small caller with the demo’s smallest built-in fixture. 
 
 Hand off `outputs/skill-verification-gate.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: the gate is deterministic and unbribable
+
+In the CBP context the verification gate is a deterministic check in the pipeline — tests green, coverage floor held, scope respected, acceptance criteria literally met — reading the agent's records, never its self-assessment. The agent cannot bribe it, rephrase around it, or skip it; a red gate blocks the merge the same way for model-written and human-written code. Keep the gate in version control next to the code it guards, and extend it with every new failure shape the taxonomy (lesson 26) teaches.
+
 ## Further Reading
 
 - [Anthropic, Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps)
