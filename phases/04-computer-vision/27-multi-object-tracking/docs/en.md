@@ -15,6 +15,10 @@
 - Distinguish detection errors from identity switches in simple MOT metrics.
 - State the limits of a bounded assignment solver without a motion model.
 
+## CBP context: identities persist through occlusion
+
+In the CBP context tracking keeps identities across frames — parts on a line, people in a zone, vehicles in a yard — with IoU association plus re-identification surviving brief occlusions. Count identity switches as the headline metric, not just per-frame boxes; a tracker that relabels every occlusion counts nothing reliably. Persist IDs in the team's record store, not just on the overlay.
+
 ## Build It
 
 `bbox_iou` rejects non-finite or zero-area boxes and returns an `(N,M)` matrix; empty detection

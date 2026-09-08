@@ -4,10 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How is IoU defined for two axis-aligned boxes?",
-      "options": ["Intersection area divided by union area", "Center distance divided by width", "The sum of their areas", "The number of matching corner coordinates"],
-      "correct": 0,
-      "explanation": "bbox_iou computes intersection area divided by area(left)+area(right)-intersection."
+      "question": "Per-frame boxes work, but identities swap at every occlusion and counts go wrong. What is the missing metric?",
+      "options": [
+        "Bigger boxes per frame",
+        "Faster per-frame detection",
+        "More classes per box",
+        "Identity persistence across frames"
+      ],
+      "correct": 3,
+      "explanation": "Tracking is identity over time. This lesson associates boxes with IoU and persists IDs."
     },
     {
       "stage": "check",
