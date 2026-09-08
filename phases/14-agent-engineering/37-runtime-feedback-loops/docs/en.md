@@ -71,6 +71,10 @@ Call `FeedbackRecord` from a small caller with tokens=["red","fox"]. Compare its
 
 Hand off `outputs/skill-feedback-runner.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: no command runs outside the runner
+
+In the CBP context every agent-executed command goes through the feedback runner: captured stdout and stderr, exit code, duration, and agent note in one record, secrets redacted before the record is written. "All tests pass" counts only with the record attached — an imagined test run is a failed verification, not a passed one. The runner's log is what the verification gate reads and what the on-call engineer replays; a run without records is a story, not evidence.
+
 ## Further Reading
 
 - [OpenTelemetry GenAI semantic conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/)

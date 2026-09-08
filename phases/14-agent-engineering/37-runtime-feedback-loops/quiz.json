@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How many redactions does the demo's secret-bearing command record?",
+      "question": "An agent claims all tests pass, but no test output was ever captured. What is wrong?",
       "options": [
-        "0, because redaction happens only when loading the JSONL file.",
-        "1, because only the bearer token is recognized.",
-        "3, covering the bearer token, password, and AKIA-shaped key.",
-        "5, one for every line in the feedback log."
+        "Nothing; the agent's word is sufficient",
+        "Tests should never produce output",
+        "The agent should run even fewer commands",
+        "Unrecorded runs are claims, not evidence"
       ],
-      "correct": 2,
-      "explanation": "The command emits a bearer token, a password assignment, and an AKIA key. The three redaction patterns match once each, so the record reports three stdout redactions."
+      "correct": 3,
+      "explanation": "Without captured output, exit code, and duration there is nothing to verify. This lesson routes every command through a feedback runner."
     },
     {
       "stage": "check",
