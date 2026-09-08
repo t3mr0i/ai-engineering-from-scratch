@@ -56,6 +56,10 @@ Two numbers for your spec sheet: retrieval-effective and reasoning-effective. Us
 
 
 
+## CBP context: probe positions before trusting length
+
+In the CBP context long-context features (full ticket histories, long contracts) are evaluated with positioned probes — needles at multiple depths, not just the convenient top — before anyone trusts the window. Models lose information mid-context (lesson 11/05); retrieval plus ordering beats stuffing regardless of claimed length. Claimed context is marketing; probed context is engineering.
+
 ## Build It
 
 Reconstruct **Long-Context Evaluation — NIAH, RULER, LongBench, MRCR** by following `make_filler` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.

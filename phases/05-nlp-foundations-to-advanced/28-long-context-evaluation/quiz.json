@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Where does insert_needle place a needle when depth_ratio=0.5?",
+      "question": "A model claims a huge context window, but key facts buried mid-context go unused. How do you test that honestly?",
       "options": [
-        "Always at the first token",
-        "After the final token regardless of filler length",
-        "At position int(len(filler_words)*0.5)",
-        "At a random position independent of depth_ratio"
+        "Trust the claimed window size",
+        "Test only facts at the very start",
+        "Ask the vendor for assurance",
+        "Probe with needles at multiple depths"
       ],
-      "correct": 2,
-      "explanation": "The function computes pos=int(len(words)*depth_ratio) and inserts the needle at that word boundary."
+      "correct": 3,
+      "explanation": "Windows are claimed, not proven. This lesson places probes to measure what models actually use."
     },
     {
       "stage": "check",
