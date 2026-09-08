@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What makes content_vector(\"hello\", dim=64) repeatable?",
+      "question": "A demo clones an executive's voice with no consent process. What must exist before any pilot?",
       "options": [
-        "It uses the current microphone waveform",
-        "It samples a new random vector on every call",
-        "It hashes the text with SHA-256 and deterministically maps bytes to values",
-        "It looks up a speaker name in the leaderboard"
+        "Better cloning quality first",
+        "More demo audiences",
+        "Trust that nobody misuses it",
+        "Explicit consent, disclosure, and watermarking"
       ],
-      "correct": 2,
-      "explanation": "The SHA-256 digest is expanded to the requested dimension, so the same text gives the same vector."
+      "correct": 3,
+      "explanation": "Cloned voices are fraud-adjacent. This lesson separates content from speaker with consent guardrails."
     },
     {
       "stage": "check",

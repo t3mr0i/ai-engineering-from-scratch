@@ -67,6 +67,10 @@ SECS > 0.70 is generally indistinguishable from the target for most listeners.
 
 
 
+## CBP context: consent, disclosure, watermark
+
+In the CBP context voice cloning requires explicit speaker consent, listener disclosure that the voice is synthetic, and watermarking where the platform supports it (lesson 06/16) — non-negotiable, before any pilot. Cloned executive or customer voices without consent are fraud infrastructure, and the team that built the demo owns the incident. Content-speaker disentanglement is the mechanism; consent is the product requirement.
+
 ## Build It
 
 Reconstruct **Voice Cloning & Voice Conversion** by following `content_vector` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
