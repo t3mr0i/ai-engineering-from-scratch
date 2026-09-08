@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which version does the generated agent-workbench-pack write to VERSION?",
+      "question": "Every team rebuilds its agent setup from scattered notes and half-remembered scripts each quarter. What ends that cycle?",
       "options": [
-        "1.0.0",
-        "0.1.0",
-        "2026.14",
-        "latest"
+        "More scattered notes in more places",
+        "A chat history everyone shares",
+        "Rebuilding from scratch each time for freshness",
+        "A versioned pack with surfaces, schemas, scripts, and an installer"
       ],
-      "correct": 0,
-      "explanation": "PACK_VERSION is the literal string 1.0.0, and main writes that value followed by a newline to the pack's VERSION file."
+      "correct": 3,
+      "explanation": "Unpackaged practice evaporates. This capstone ships the workbench as an installable, versioned pack."
     },
     {
       "stage": "check",

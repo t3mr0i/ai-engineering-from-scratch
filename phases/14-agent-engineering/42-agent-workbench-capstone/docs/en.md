@@ -98,6 +98,10 @@ Call `deterministic_tail` from a small caller with the smallest valid record {"i
 
 Hand off `outputs/agent-workbench-pack` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: the pack is how the next team starts
+
+In the CBP context the workbench pack is the onboarding artifact: a versioned directory with surfaces, schemas, scripts, and a one-command installer that drops the whole harness into any CBP repo. Version it, changelog it, and install it from the pinned version — never by copying last quarter's half-remembered scripts. The team that receives the pack inherits every lesson of this phase on day one: scope contracts, feedback records, gates, reviewers, and handoffs, all wired and all scored.
+
 ## Further Reading
 
 - Phases 14 · 31 to 14 · 41 — every surface this pack bundles
