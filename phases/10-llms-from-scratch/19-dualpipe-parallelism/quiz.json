@@ -4,10 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which four operations make up the forward/backward chunk that DualPipe tries to overlap?",
-      "options": ["Attention, all-to-all dispatch, MLP experts, and all-to-all combine.", "Tokenization, decoding, sampling, and evaluation.", "Embedding, layer norm, dropout, and checkpointing only.", "QKV projection, optimizer step, checkpoint save, and validation."],
-      "correct": 0,
-      "explanation": "The lesson's chunk follows attention with expert dispatch, MoE MLP computation, and expert-output combine; DualPipe overlaps these communication and compute windows."
+      "question": "Distributed training idles on interconnect waits between compute stages. What removes that idle time?",
+      "options": [
+        "Bigger idle gaps for safety",
+        "Fewer pipeline stages overall",
+        "Slower interconnect hardware",
+        "Overlapping communication behind computation"
+      ],
+      "correct": 3,
+      "explanation": "Waits bill without working. This lesson pipelines comms and compute concurrently."
     },
     {
       "stage": "check",

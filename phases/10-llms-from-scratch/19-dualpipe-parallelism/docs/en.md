@@ -110,6 +110,10 @@ For smaller runs (under 1k GPUs), DualPipe is overkill — pipeline bubbles are 
 
 
 
+## CBP context: overlap is a training-bill line
+
+In the CBP context DualPipe-style overlap (communication hidden behind computation) is a line item on large training bills, not code CBP teams write: attention, dispatch, experts, and combine stages pipelined so interconnect waits vanish. Read provider training reports for overlap efficiency before approving large runs; idle interconnect is billed bandwidth doing nothing.
+
 ## Build It
 
 Reconstruct **DualPipe Parallelism** by following `ScheduleStats` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
