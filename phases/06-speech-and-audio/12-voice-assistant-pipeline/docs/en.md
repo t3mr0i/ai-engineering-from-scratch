@@ -61,6 +61,10 @@ Latency target: first TTS audio byte within 800 ms of the user finishing their u
 
 
 
+## CBP context: measure every stage of the chain
+
+In the CBP context the voice chain (mic, VAD, ASR, LLM, TTS, playback) gets per-stage latency budgets summing to the ~600ms turn budget from lesson 14/22 — and the stage that blows its budget is found by measurement, not debate. Stream audio in fixed chunks end to end; batching anywhere in the chain breaks the budget silently. The chain is only as real-time as its slowest unmeasured stage.
+
 ## Build It
 
 Reconstruct **Build a Voice Assistant Pipeline — The Phase 6 Capstone** by following `mic_generator` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

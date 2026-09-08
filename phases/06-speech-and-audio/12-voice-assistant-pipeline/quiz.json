@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How many samples are in one mic_generator chunk with sr=16000 and chunk_ms=20?",
+      "question": "A voice assistant feels slow but nobody knows which stage lags. How is the latency found?",
       "options": [
-        "16000",
-        "20",
-        "320",
-        "640"
+        "Upgrade every stage at once",
+        "Trust the slowest-looking stage",
+        "Remove stages until it feels fast",
+        "Per-stage budgets measured against the turn total"
       ],
-      "correct": 2,
-      "explanation": "The generator uses int(sr*chunk_ms/1000)=16000*20/1000=320 samples."
+      "correct": 3,
+      "explanation": "Chains need per-link measurement. This lesson pipelines voice with staged budgets."
     },
     {
       "stage": "check",
