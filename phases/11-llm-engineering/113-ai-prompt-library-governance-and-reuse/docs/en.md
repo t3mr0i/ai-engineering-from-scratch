@@ -129,6 +129,10 @@ Call `LifecycleState` from a small caller with the text "red fox". Compare its r
 
 Hand off `outputs/skill-prompt-library-governance.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: prompts as versioned functions
+
+In the CBP context prompts live as versioned resources with owners, evaluation anchors (canonical input/output pairs every version must beat), and retirement rules — managed like functions, not folklore. Owners submit, independent reviewers approve STABLE, upgrades re-run the anchor before replacing. Five drifting copies in production mean the library failed; one versioned record per prompt means it works.
+
 ## Further Reading
 
 - [Anthropic — Model deprecations and migration](https://docs.claude.com/en/api/versioning) — official model lifecycle and deprecation timeline policy; the source of truth for `model_sunset` retirement rules.

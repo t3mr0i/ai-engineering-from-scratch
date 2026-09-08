@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Who may move a PromptRecord from DRAFT to REVIEW?",
+      "question": "Five slightly different copies of one prompt run in production with no record of which was tested. What governance prevents that?",
       "options": [
-        "Any reviewer, because REVIEW is only an editorial state",
-        "The decision owner, even when the record owner is absent",
-        "The registered owner, because can_promote requires acting_as to match owner",
-        "The model provider, because it controls the target model"
+        "More copying through faster channels",
+        "Trust that all copies behave alike",
+        "A shared folder with no review process",
+        "Ownership, versioning, eval anchors, and retirement"
       ],
-      "correct": 2,
-      "explanation": "The DRAFT-to-REVIEW transition is valid only when acting_as equals record.owner. The owner submits the prompt; an independent reviewer is required for the later STABLE transition."
+      "correct": 3,
+      "explanation": "Ad-hoc sharing drifts silently. This lesson governs prompts like functions: owned, versioned, anchored, retired."
     },
     {
       "stage": "check",
