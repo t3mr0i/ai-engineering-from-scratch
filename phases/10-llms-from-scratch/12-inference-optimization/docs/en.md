@@ -246,6 +246,10 @@ The crossover point on A100 is around ops:byte = 156 (312 TFLOPS / 2 TB/s). Belo
 
 
 
+## CBP context: cache discipline prices serving
+
+In the CBP context inference optimization is cache discipline: write keys and values at the current logical length, advance exactly once, never regenerate what the cache holds — the mechanics behind prefix economics (lesson 17/06). Serving bills follow cache behavior; sloppy cache management bills twice for the same prefix. Operate serving through platforms that implement this correctly; understand it well enough to read their bills.
+
 ## Build It
 
 Reconstruct **Inference Optimization** by following `KVCache` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
