@@ -69,6 +69,10 @@ The template in `outputs/sheet-human-review-approval-workflow.md` can be used be
 The demo's first case is **candidate shortlist**: Decision authority and user impact require a human approval gate. Treat the labels decision authority, approval gap, quality uncertainty, user impact as evidence to inspect, not as an automatic approval. The implementation's signal matcher looks for those terms in the scenario name, description, and explicit signal list; then the scorer combines impact, uncertainty, and two points per matched signal (capped at 20). The priority function maps that score to a control level: launch gate at 16 or above, guided pilot at 11–15, team practice at 7–10, and awareness below 7.
 
 Run the case and check which of the controls — review role, approval gate, quality checklist, appeal path — appear in the returned row. Ask three questions: Which signal is supported by an observable source? Which control has an owner who can act this week? What evidence would move the case to a different priority? Then change one signal or impact value and rerun it. If the priority changes, explain whether the change came from the score, the matching rule, or both. The score is a triage aid; it does not replace domain approval, privacy review, or a pilot metric. Keep that distinction in the artifact and in the handoff.
+## CBP context: named role, decision point, criteria, appeal
+
+In the CBP context human review is an inspectable workflow: a named role with authority, a decision point in the pipeline, quality criteria to check, and an appeal path for uncertain outcomes — logged per decision with the tenant id. "A human will review" without these is reassurance, not control. Review throughput itself gets measured; a review queue that never drains is a blocked pipeline wearing a human face.
+
 ## Key Takeaways
 
 - Human review must name a role and authority.
