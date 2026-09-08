@@ -42,6 +42,10 @@ Key property: both produce sparse vectors with interpretable axes. You can look 
 
 
 
+## CBP context: the lexical leg of hybrid search
+
+In the CBP context bag-of-words plus TF-IDF is the lexical leg inside hybrid AI Search: exact terms (ticket ids, error codes, product names) matched and weighted by rarity, fused with dense vectors for meaning. First-seen vocabulary order and term weighting are index-build decisions with retrieval consequences — rebuild and re-measure rather than hand-tune. Lexical for the literal, dense for the paraphrase, always both.
+
 ## Build It
 
 Reconstruct **Bag of Words, TF-IDF, and Text Representation** by following `tokenize` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.

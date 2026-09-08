@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What vocabulary indices does build_vocab assign to [\"cat\", \"dog\"] followed by [\"dog\", \"fish\"]?",
+      "question": "Users search for exact ticket ids and error codes that dense vectors paraphrase away. What retrieval leg catches them?",
       "options": [
-        "dog=0, cat=1, fish=2",
-        "cat=1, dog=2, fish=3",
-        "cat=0, dog=1, fish=2",
-        "The indices are randomized for every document"
+        "Bigger dense models alone",
+        "No retrieval, answer from memory",
+        "Longer generated answers",
+        "Lexical term matching weighted by rarity"
       ],
-      "correct": 2,
-      "explanation": "build_vocab inserts unseen tokens in first-seen order and uses the current vocabulary size as the next index."
+      "correct": 3,
+      "explanation": "Literal terms need literal matching. This lesson builds the TF-IDF leg of hybrid search."
     },
     {
       "stage": "check",
