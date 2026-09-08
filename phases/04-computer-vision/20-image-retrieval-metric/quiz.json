@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "When d_ap=0.4, d_an=0.7, and margin=0.2, what does triplet_loss contribute before the batch mean?",
+      "question": "Visual search returns similar-looking but wrong items. What training rule fixes ranking order?",
       "options": [
-        "0.1",
-        "0.3",
-        "0 because 0.4-0.7+0.2 is negative",
-        "1.3"
+        "Bigger embedding dimensions blindly",
+        "More random training pairs",
+        "Trust in raw similarity scores",
+        "Same-item pairs closer than negatives by margin"
       ],
-      "correct": 2,
-      "explanation": "The hinge argument is 0.4-0.7+0.2=-0.1, so F.relu returns zero."
+      "correct": 3,
+      "explanation": "Ranking needs enforced separation. This lesson trains triplets with margins."
     },
     {
       "stage": "check",

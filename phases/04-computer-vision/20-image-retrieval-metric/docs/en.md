@@ -20,6 +20,10 @@
 
 The phrase “similar image” is underspecified. Category retrieval may treat any image of a bicycle as relevant; instance retrieval may require the exact bicycle. Metric learning can shape the embedding, but evaluation must state the relevance label and exclude malformed or self-generated cases. The local lesson uses six seeded prototype classes and an exact in-memory search so every distance and index is inspectable.
 
+## CBP context: closer than negatives, by margin
+
+In the CBP context triplet discipline governs visual search and dedup evals: same-item pairs closer than cross-item pairs by an enforced margin, measured on CBP image sets. A retrieval that returns "similar-looking but wrong" fails the margin; tune it with hard negatives from real confusions, not random pairs. Margins turn similarity from a vibe into a testable contract.
+
 ## Build It
 
 The NumPy Build-It path exposes `numpy_triplet_loss`, `numpy_semi_hard_negatives`, and `numpy_recall_at_k`. `numpy_triplet_loss(a,p,n,margin)` computes `relu(d(a,p) - d(a,n) + margin).mean()` with scale-stable Euclidean distances; an unrepresentable distance or hinge is rejected rather than returned as `NaN`/`inf`. The miner requires at least two examples per class and two classes, chooses the nearest same-class positive, then prefers a different-class negative with `d_an > d_ap` and finite gap `d_an - d_ap < margin`; if none exists it falls back to the closest different-class row. Recall normalizes both matrices with a scale-stable norm, checks `1 <= k <= gallery_rows`, ranks by dot product, and asks whether any top-k label equals the query label.
