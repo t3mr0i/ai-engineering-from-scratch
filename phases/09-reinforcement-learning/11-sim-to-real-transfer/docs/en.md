@@ -56,6 +56,10 @@ You need a policy that is *robust to sim-to-real distribution shift*. Three hist
 
 
 
+## CBP context: noise in training, reality in evals
+
+In the CBP context sim-to-real is the demo-to-production gap: slip and noise during training build policies robust to the messiness evals must then reproduce — production-like conditions, not lab-clean ones. A policy perfect in simulation and brittle in reality was evaluated wrong, not trained wrong. Transfer is proven in realistic evals, never assumed from simulation scores.
+
 ## Build It
 
 Reconstruct **Sim-to-Real Transfer** by following `step` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does step do when rng.random() falls below slip?",
+      "question": "A policy excels in simulation but fails on real messiness it never saw. What bridges that gap?",
       "options": [
-        "It replaces the requested action with a randomly chosen perpendicular action",
-        "It terminates the episode with reward +10",
-        "It doubles the requested action's Q value",
-        "It ignores the state and samples a new terminal coordinate"
+        "More simulation of the same clean kind",
+        "Trust in simulation scores alone",
+        "No evaluation before deployment",
+        "Noise-robust training plus realistic evals"
       ],
-      "correct": 0,
-      "explanation": "For up/down, slip chooses left or right; for left/right, it chooses up or down before applying the grid transition."
+      "correct": 3,
+      "explanation": "Clean training meets messy reality. This lesson transfers with slip modeled and proven."
     },
     {
       "stage": "check",
