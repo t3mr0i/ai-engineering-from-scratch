@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does ToxicityClassifier classify one non-negated toxicity hit?",
+      "question": "A classifier flags content but nothing downstream distinguishes a mild hit from a severe one. What is missing?",
       "options": [
-        "low severity with score 0.6",
-        "medium severity with score 0.8",
-        "high severity with score 1.0",
-        "none severity because a single term is ignored"
+        "More flags on everything",
+        "Blocking all flagged content alike",
+        "Ignoring mild hits entirely",
+        "Severity tiers mapped to log, review, or block"
       ],
-      "correct": 0,
-      "explanation": "The classifier counts non-negated toxicity terms. One hit maps to low/0.6; two hits map to medium/0.8 and three or more to high/1.0."
+      "correct": 3,
+      "explanation": "Flags without tiers force one blunt response. This lesson grades severity and maps each tier to an action."
     },
     {
       "stage": "check",

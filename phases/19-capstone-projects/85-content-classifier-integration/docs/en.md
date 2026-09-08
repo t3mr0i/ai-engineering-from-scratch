@@ -56,6 +56,10 @@ The toxicity classifier is rule-based on purpose: a curated list of harassment k
 
 
 
+## CBP context: severity tiers map to actions
+
+In the CBP context classifier severity drives action: low logs, medium holds for review, high blocks — mapped explicitly in the gateway or service policy, never left to the model's discretion. Azure Content Safety provides the production signal; the tier-to-action table is the team's reviewed configuration. Retune thresholds on CBP traffic with attack and normal cases, because a threshold tuned elsewhere misfires here.
+
 ## Build It
 
 Reconstruct **Capstone 85 — Content Classifier Integration** by following `ClassifierVerdict` on a graph with edges (0,1) and (1,2). Run `python3 main.py` and verify that degrees, adjacency, or connectivity expose the isolated/no-edge case explicitly.
