@@ -105,6 +105,10 @@ A useful submission records python3 main.py, the observed output, and the conclu
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
+## CBP context: champions curate the shared library
+
+In the CBP context champions feed the team skill library (lessons 13/22, 14/10): reusable prompts, review checklists, and patterns reviewed into the repo — not scattered across channels. The enablement loop (observe, collect, review quality, share, escalate) turns local wins into team capability. A champion who hoards tricks is a single point of failure with a title.
+
 ## Further Reading
 
 ### Recommended trainings (LHIND AI Literacy)
