@@ -23,6 +23,10 @@ The t-test helpers compute a statistic, degrees of freedom, and a two-sided p-va
 
 `bootstrap_statistic` resamples the observed list with replacement and returns percentile bounds, the original estimate, the requested confidence level, and a bootstrap standard error. `cohens_d` describes standardized effect magnitude; `bonferroni_correction` compares each p-value with `alpha / number_of_tests`.
 
+## CBP context: report uncertainty, never single numbers
+
+In the CBP context eval statistics decide releases: means with variance, sample sizes stated, Bessel-corrected denominators — and never a bare single-number comparison between models (lesson 19/53). A "win" inside the noise band is a tie; a metric without its spread is marketing. Statistics here is release hygiene, not academia.
+
 ## Build It
 
 Run the local report:
