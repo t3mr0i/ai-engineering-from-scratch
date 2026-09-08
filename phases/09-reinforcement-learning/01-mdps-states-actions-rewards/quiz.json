@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does all_states() return when GRID=4?",
+      "question": "An agent loop has no named failure states, unpriced actions, and undefined success. What framing exposes the gaps?",
       "options": [
-        "The 16 coordinate pairs (r, c) for rows and columns 0 through 3",
-        "Only the 4 terminal states on the bottom row",
-        "A probability distribution over the four action names",
-        "A value table containing one floating-point return"
+        "A bigger prompt with more examples",
+        "Faster model responses",
+        "More tools without structure",
+        "States, actions, and rewards named explicitly"
       ],
-      "correct": 0,
-      "explanation": "all_states uses two ranges of length four and returns every pair, so the 4x4 grid contains 16 states."
+      "correct": 3,
+      "explanation": "Unframed loops cannot be reasoned about. This lesson frames decisions as MDPs."
     },
     {
       "stage": "check",

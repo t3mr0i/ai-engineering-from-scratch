@@ -48,6 +48,10 @@ These split expected return into "this step's reward" plus "discounted value of 
 
 
 
+## CBP context: frame agent loops as MDPs
+
+In the CBP context the MDP frame organizes agent reasoning: states are conversation-plus-tool contexts, actions are tool calls and replies, rewards are task success minus cost. Naming the three exposes design gaps — missing failure states, unpriced actions, success undefined. Frame the loop before optimizing it; an unframed agent cannot be reasoned about, only prompted at.
+
 ## Build It
 
 Reconstruct **MDPs, States, Actions & Rewards** by following `all_states` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
