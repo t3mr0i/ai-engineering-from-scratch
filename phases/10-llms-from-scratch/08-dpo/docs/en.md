@@ -175,6 +175,10 @@ The trend is clear: each method eliminates one more piece of complexity. RLHF ne
 
 
 
+## CBP context: preferences without the machinery
+
+In the CBP context DPO is the simpler preference path for provider fine-tunes: paired CBP examples teach preference directly, no separate reward model to operate and stabilize. Same pairs as RLHF, less machinery, same review discipline — tenant-scoped, decontaminated, versioned. Prefer the direct path unless the use case demonstrably needs the full RL stack.
+
 ## Build It
 
 Reconstruct **DPO: Direct Preference Optimization** by following `tokenize_sequence` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
