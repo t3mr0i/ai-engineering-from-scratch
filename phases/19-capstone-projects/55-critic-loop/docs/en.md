@@ -127,6 +127,10 @@ Two extensions a real implementation will want. First, dimension weights: a pape
 
 The bet is the score vector. Once the critique is structured, every other improvement, convergence rule, dashboard, paired critic, drops in without changing the loop.
 
+## CBP context: fixed dimensions catch regressions
+
+In the CBP context review rubrics score fixed dimensions — correctness, scope, evidence, clarity, risk — instead of freeform paragraphs, so round-over-round regressions show per dimension instead of hiding in prose. The reviewer agent (lesson 14/39) files the same vector the pipeline reads; a dimension hitting zero blocks like any other gate. Freeform praise is not a review.
+
 ## Build It
 
 Reconstruct **Critic Loop** by following `MiniSection` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
