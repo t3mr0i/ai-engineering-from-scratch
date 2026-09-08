@@ -104,6 +104,10 @@ The reference run should leave a small receipt: python3 main.py, its captured ou
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
+## CBP context: ADRs for every sticky choice
+
+In the CBP context providers, gateways, RAG designs, security boundaries, observability, and cost patterns each get an ADR recording decision, alternatives, risk, cost, boundary, and review owner — the stickier and harder to reverse, the stronger the gate. Teams inherit context instead of archaeology. An unrecorded architecture decision is technical debt with no creditor named.
+
 ## Further Reading
 
 ### Recommended trainings (LHIND AI Literacy)
