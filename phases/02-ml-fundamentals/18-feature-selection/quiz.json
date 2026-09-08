@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "A feature has the same value in every training row. What is its variance?",
+      "question": "A feature holds the same value in every row while ten noise columns ride along. What should selection do?",
       "options": [
-        "1",
-        "The number of rows",
-        "0",
-        "The target mean"
+        "Keep everything for completeness",
+        "Trust noise columns equally",
+        "Add more correlated copies",
+        "Drop constants and noise, prove on folds"
       ],
-      "correct": 2,
-      "explanation": "No row differs from the mean, so every squared deviation and the variance are zero."
+      "correct": 3,
+      "explanation": "Dead weight adds variance without signal. This lesson selects informative features and proves them held-out."
     },
     {
       "stage": "check",

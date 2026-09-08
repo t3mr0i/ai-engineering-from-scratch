@@ -46,6 +46,10 @@ soft-threshold after each gradient step, so some weights can become exactly zero
 Both are model-dependent. tree_importance bootstraps rows and accumulates Gini
 impurity gains; correlated or high-cardinality columns can share or attract gain.
 
+## CBP context: constants carry nothing, correlation duplicates
+
+In the CBP context feature selection drops zero-variance constants, deduplicates correlated combinations, and measures the remainder on held-out folds — noise columns ride along otherwise, adding variance without signal. Select on the demo split, prove on folds; selection tuned on the test set is another leak (lesson 02/13). Fewer honest features beat many hopeful ones.
+
 ## Build It
 
 From code/, run python3 main.py. It prints the 500-by-20 fixture, variance and
