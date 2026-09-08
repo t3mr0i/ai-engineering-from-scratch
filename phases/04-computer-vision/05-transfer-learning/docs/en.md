@@ -31,6 +31,10 @@ flowchart LR
 
 `discriminative_lrs` assigns a positive base rate to named stages, multiplying earlier stages by `decay` more times than later stages. It is a transparent configuration helper; it does not mutate parameters or assert that one schedule is universally optimal. `init_head` is seeded, and `train_head` reports a loss history so a reviewer can see whether the local fixture is learnable.
 
+## CBP context: frozen base, fresh head, small data
+
+In the CBP context transfer learning is the small-data playbook: freeze the pretrained backbone, train only the linear head on CBP labels — the vision twin of lesson 19/38. A few hundred labeled CBP images train a head, never a backbone. Evaluate the head on held-out captures and unfreeze deeper only with measured cause; each unfrozen layer multiplies data needs.
+
 ## Build It
 
 Run:

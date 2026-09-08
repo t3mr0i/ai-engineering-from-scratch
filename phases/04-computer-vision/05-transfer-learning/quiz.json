@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is frozen in the local transfer-learning fixture?",
+      "question": "Only a few hundred labeled images exist for a new visual task. What is the defensible first move?",
       "options": [
-        "The deterministic backbone_features computation; only the linear head has update state",
-        "The labels, while every image pixel is optimized",
-        "The final logits after they are computed",
-        "Nothing; train_head updates a hidden convolutional checkpoint"
+        "Train a giant network from scratch",
+        "Skip evaluation until more data arrives",
+        "Label ten thousand more by hand first",
+        "Freeze a pretrained base, train only the head"
       ],
-      "correct": 0,
-      "explanation": "backbone_features is a fixed NumPy feature function. train_head allocates and updates only its weights and bias."
+      "correct": 3,
+      "explanation": "Small data trains heads, not backbones. This lesson transfers pretrained vision to new tasks."
     },
     {
       "stage": "check",
