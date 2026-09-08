@@ -1,9 +1,7 @@
 {
   "active_task_id": "T-002",
-  "touched_files": [
-    "app.py"
-  ],
+  "touched_files": [],
   "assumptions": [],
   "blockers": [],
-  "next_action": "add test for T-002 acceptance"
+  "next_action": "start work on T-002: document the new /signup contract"
 }
