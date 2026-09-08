@@ -91,6 +91,10 @@ Call `Task` from a small caller with the smallest valid record {"id": 1}. Compar
 
 Hand off `outputs/skill-benchmark-harness.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: benchmark the engagement, not the leaderboard
+
+In the CBP context public leaderboards inform vendor choice but never certify delivery: quote SWE-bench and GAIA numbers with their contamination and evaluator caveats, then build the engagement's own eval set from CBP tickets, repos, and documents. A fix counts when the reproduction passes and the regression suite stays green on the tenant's code — the same discipline as lesson 11/10. Re-run that set in the pipeline on every model or prompt change; a leaderboard cannot tell you your update broke invoice handling.
+
 ## Further Reading
 
 - [Jimenez et al., SWE-bench (arXiv:2310.06770)](https://arxiv.org/abs/2310.06770) — the original benchmark
