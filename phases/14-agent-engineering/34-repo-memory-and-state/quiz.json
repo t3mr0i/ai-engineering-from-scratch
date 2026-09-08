@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What state does the demo persist after selecting the first board task?",
+      "question": "A new session redoes finished work because it relies on stale chat notes. Where should the truth live?",
       "options": [
-        "`active_task_id` is null and `next_action` is empty.",
-        "`active_task_id` is `T-002` and the board has no owner.",
-        "`active_task_id` is `T-001` and `next_action` is `read existing /signup handler`.",
-        "The state is rejected because `T-001` is not a valid ID."
+        "Only in the model's memory",
+        "In longer chat histories",
+        "Nowhere; redoing work is fine",
+        "In schema-validated state files in the repo"
       ],
-      "correct": 2,
-      "explanation": "The demo commits the initial state, loads the board's first ID `T-001`, changes the next action, and commits the valid state again."
+      "correct": 3,
+      "explanation": "Chat is transient; the repo persists. This lesson builds repo memory: atomic, validated, diff-friendly state as the system of record."
     },
     {
       "stage": "check",

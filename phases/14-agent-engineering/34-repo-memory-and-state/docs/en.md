@@ -79,6 +79,10 @@ Call `SchemaError` from a small caller with the smallest valid record {"id": 1}.
 
 Hand off `outputs/skill-state-schema.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: the repo is the system of record
+
+In the CBP context agent state lives in schema-validated JSON in the repo, written atomically and reviewed as diffs — chat is a transient feed, the repo remembers. The next session starts by reading state, not by re-reading stale notes and redoing finished work. Keep the schema versioned and the writes atomic so a crashed session never leaves half a state file behind; a corrupt state file rewrites finished work as confidently as no state at all.
+
 ## Further Reading
 
 - [JSON Schema specification](https://json-schema.org/specification.html)
