@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "With NUM_PATCH=64 and NUM_QUERY=8 in the toy, how many rows does cross_attention return?",
+      "question": "Frozen vision and language towers must connect for a new visual domain without retraining billions of weights. What bridges them?",
       "options": [
-        "8, one attended output for each learnable query",
-        "64, because every patch becomes an output token",
-        "16, because QUERY_DIM is 16",
-        "24, because LLM_DIM controls the attention count"
+        "Full retraining of both towers",
+        "No connection; use towers separately",
+        "A new giant model from scratch",
+        "A small learned query bridge over frozen patches"
       ],
-      "correct": 0,
-      "explanation": "Queries determine the output rows. The toy sends eight query vectors over 64 patch keys, so the attended result has eight rows."
+      "correct": 3,
+      "explanation": "Bridges adapt cheaply. This lesson queries frozen patches with learned questions."
     },
     {
       "stage": "check",

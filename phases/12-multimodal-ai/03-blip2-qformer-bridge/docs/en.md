@@ -89,6 +89,10 @@ All four are valid. The deciding question is whether you are constrained on toke
 
 
 
+## CBP context: small bridges adapt frozen towers
+
+In the CBP context the Q-Former pattern — frozen vision and language towers with a small learned query bridge — is the efficient domain-adaptation shape: train dozens of queries on CBP images instead of billions of weights. Queries decide the output count, patches supply the evidence. Adapt bridges for CBP visual vocabularies; leave the towers frozen and billed once.
+
 ## Build It
 
 Reconstruct **From CLIP to BLIP-2 — Q-Former as Modality Bridge** by following `vec` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
