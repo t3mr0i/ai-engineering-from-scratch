@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What mask ratio does cosine_schedule(T=8) return at its first step?",
+      "question": "Generation should settle confident structure before uncertain detail. What schedule does that?",
       "options": [
-        "0.000, because sampling begins with every token visible",
-        "0.500, because the midpoint is used for the first prediction",
-        "About 0.981, from cos(pi/16), so almost all positions remain masked initially",
-        "1.500, because cosine values are shifted above one"
+        "Reveal everything at once",
+        "Random reveal order",
+        "Detail first, structure last",
+        "High masking early, confident unmasking progressively"
       ],
-      "correct": 2,
-      "explanation": "The schedule uses cos(pi*(t+1)/(2*T)). At t=0 and T=8 this is cos(pi/16) ≈ 0.981, a high initial mask ratio."
+      "correct": 3,
+      "explanation": "Order of reveal shapes quality. This lesson schedules discrete diffusion from masked to certain."
     },
     {
       "stage": "check",

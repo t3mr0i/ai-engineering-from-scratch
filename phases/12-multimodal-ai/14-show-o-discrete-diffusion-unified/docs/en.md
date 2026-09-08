@@ -92,6 +92,10 @@ Pick by task: Show-o when you want T2I + inpainting + VQA in one open model with
 
 
 
+## CBP context: masked schedules enable staged review
+
+In the CBP context discrete-diffusion schedules (high mask ratios early, resolving progressively) mirror the coarse-to-fine review economy from lesson 08/19: approve structure early while cheap, details late. Cosine schedules front-load masking; each step unmasks the most confident positions first. Review gates can ride the same schedule — structure gates before detail gates.
+
 ## Build It
 
 Reconstruct **Show-o and Discrete-Diffusion Unified Models** by following `cosine_schedule` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
