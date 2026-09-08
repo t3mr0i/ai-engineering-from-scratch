@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What system-boundary result does classify_system_boundary return for a use case spanning three platforms?",
+      "question": "A use case scoped in a workshop hits GDPR tenants, unapproved connectors, and cross-system data only at integration time. What was skipped?",
       "options": [
-        "GREEN, because three systems provide more context for the model",
-        "AMBER, because any multi-platform use case needs only an integration note",
-        "RED, because three or more platforms require architecture sign-off",
-        "The function returns no result until data ownership is confirmed"
+        "A bigger workshop with more ideas",
+        "Trust that integrations sort themselves out",
+        "Faster implementation to outrun constraints",
+        "The boundary graph: systems, owners, APIs, compliance"
       ],
-      "correct": 2,
-      "explanation": "The classifier treats one platform as GREEN, two as AMBER, and three or more as RED. The multi-team integration surface must be reduced or explicitly signed off architecturally."
+      "correct": 3,
+      "explanation": "Standalone scoping hides integration reality. This lesson maps boundaries before committing to implementation."
     },
     {
       "stage": "check",

@@ -99,6 +99,10 @@ Call `RAG` from a small caller with the demo’s smallest built-in fixture. Comp
 
 Hand off `outputs/skill-erp-crm-use-case-evaluator.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: the boundary graph before the business case
+
+In the CBP context ERP and CRM use cases ship with the boundary graph — systems, data owners, APIs, compliance constraints — drawn before implementation commits. Multi-platform surfaces get explicit architecture sign-off; single-platform process-owned work skips the security queue with its boundary map attached. The use case is a node in that graph, never a stand-alone artifact.
+
 ## Further Reading
 
 - [SAP Business AI documentation](https://help.sap.com/docs/sap-ai-core) — AI Core, Joule, and BTP AI services; the canonical reference for SAP data residency and integration patterns.
