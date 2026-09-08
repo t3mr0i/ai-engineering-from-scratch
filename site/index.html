@@ -32,7 +32,7 @@
        CSS webfont path — robust against CDN path changes, no JS dependency. -->
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/light/style.css">
   <link rel="stylesheet" href="lrn/lrn.css?v=20260831d">
-  <link rel="stylesheet" href="lrn/journey.css?v=20260908a">
+  <link rel="stylesheet" href="lrn/journey.css?v=20260908g">
   <link rel="stylesheet" href="badges.css?v=20260713a">
   <link rel="stylesheet" href="pan.css?v=20260830a">
   <link rel="stylesheet" href="home.css?v=20260831b">
@@ -63,7 +63,7 @@
       <span id="langIcon" class="theme-icon">EN</span>
     </a>
   </header>
-  <script src="i18n.js?v=20260908a"></script>
+  <script src="i18n.js?v=20260908d"></script>
   <script src="lang.js"></script>
   <script>
     /* D1 — dark-mode toggle button. Wires the button in the header above
@@ -106,7 +106,7 @@
       <div class="hero__inner">
         <div class="hero__copy">
           <h1 id="heroTitle">Your next step with AI</h1>
-          <p id="homeHeroIntro">Discover AI courses for your everyday work. Your role helps us suggest a starting point.</p>
+          <p id="homeHeroIntro">Choose your role, start a matching course and put your knowledge into practice. We guide you along the way.</p>
         </div>
         <a id="resumeButton" href="#journeyCockpit" class="resume-button">
           <span class="button-text" id="resumeButtonText" data-i18n="home_explore_recommendations">Explore recommendations</span>
@@ -129,7 +129,7 @@
         <div id="journeyHome"></div>
       </section>
 
-      <details class="journey-assessment">
+      <details class="journey-assessment journey-optional">
         <summary data-journey-copy="assessmentPanel">Place your current level / connect an assessment</summary>
         <section id="assessmentImport" data-assessment-import></section>
       </details>
@@ -148,6 +148,7 @@
         <button id="academyAllToggle" type="button"></button>
       </section>
 
+      <details class="journey-optional"><summary data-journey-copy="moreTools">Plan and learn with your team</summary>
       <section class="learning-tools" aria-labelledby="learningToolsTitle">
         <div class="home-section-heading">
           <h2 id="learningToolsTitle" data-i18n="learning_tools_title">Plan and verify</h2>
@@ -176,6 +177,8 @@
           </a>
         </nav>
       </section>
+
+      </details>
 
       <section class="training-catalog" aria-labelledby="trainingCatalogTitle">
         <div class="home-section-heading home-section-heading--catalog">
@@ -245,10 +248,9 @@
   <script src="lrn/learning-plan.js?v=20260908a"></script>
   <script src="lrn/learning-journey.js?v=20260908a"></script>
   <script src="lrn/journey-state.js?v=20260908a"></script>
-  <script src="lrn/journey-ui.js?v=20260908a"></script>
+  <script src="lrn/journey-ui.js?v=20260908g"></script>
   <script src="lrn/lrn.js?v=20260908a"></script>
   <script src="lrn/report-sync.js?v=20260830a"></script>
-  <script src="pan.js?v=20260908a"></script>
   <script>
     if (window.LrnJourneyUI) window.LrnJourneyUI.mount(document.getElementById('journeyHome'));
   </script>
@@ -311,8 +313,8 @@
         // Time-of-day greeting (morning / afternoon / evening)
         const intro = document.getElementById('homeHeroIntro');
         if (intro) intro.textContent = de
-          ? 'Entdecke AI-Kurse für deinen Arbeitsalltag. Deine Rolle hilft uns, dir einen passenden Einstieg vorzuschlagen.'
-          : 'Discover AI courses for your everyday work. Your role helps us suggest a starting point.';
+          ? 'Wähle deine Rolle, starte einen passenden Kurs und wende dein Wissen an. Wir begleiten dich Schritt für Schritt.'
+          : 'Choose your role, start a matching course and put your knowledge into practice. We guide you along the way.';
         heroTitle.textContent = de ? 'Dein nächster Schritt mit AI' : 'Your next step with AI';
         resumeButtonText.removeAttribute('data-i18n');
         resumeButtonText.textContent = de ? 'Lernreise ansehen' : 'View learning journey';

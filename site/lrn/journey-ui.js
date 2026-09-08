@@ -2,9 +2,12 @@
   "use strict";
 
   var mounted = [];
+  var levelLegendSequence = 0;
   var COPY = {
     en: {
-      title: "Your learning compass",
+      title: "Your learning journey",
+      courseEvidence: "Course contributions in detail",
+      moreTools: "Plan and learn with your team",
       role: "Role",
       chooseRole: "Choose your role",
       chooseRoleReason: "Choose a role to view the target profile that matches your work.",
@@ -50,11 +53,22 @@
       academyReady: "Continue with LHIND Academy",
       academyPreparation: "Discuss with LHIND Academy",
       academyNoSession: "Offered through LHIND Academy; dates and participation are arranged there.",
-      academyTtt: "After completing this path, the LHIND Academy can advise on suitable Train-the-Trainer formats."
-      , assessmentPanel: "Set your current level / connect an assessment"
+      academyTtt: "After completing this path, the LHIND Academy can advise on suitable Train-the-Trainer formats.",
+      assessmentPanel: "Import an existing assessment",
+      levelLegend: "How to read the level bars",
+      levelLegendTitle: "Levels and colours",
+      levelAcquire: "Build foundations.",
+      levelDeepen: "Deepen in your work context.",
+      levelCreate: "Design and share.",
+      levelTarget: "Light blue: part of the target for your role.",
+      levelCurrent: "Dark blue: your current level from an assessment or learning evidence.",
+      levelNext: "Outline: your next level on the way to the target.",
+      levelMuted: "Grey: outside your role target or not relevant."
     },
     de: {
-      title: "Dein Lernkompass",
+      title: "Deine Lernreise",
+      courseEvidence: "Kursbeiträge im Detail",
+      moreTools: "Lernplan anpassen und im Team lernen",
       role: "Rolle",
       chooseRole: "Rolle auswählen",
       chooseRoleReason: "Wähle eine Rolle, um das passende Zielbild für deine Arbeit zu sehen.",
@@ -100,8 +114,17 @@
       academyReady: "Mit der LHIND Academy fortsetzen",
       academyPreparation: "Mit der LHIND Academy abstimmen",
       academyNoSession: "Angebot der LHIND Academy; Termine und Teilnahme werden dort abgestimmt.",
-      academyTtt: "Nach Abschluss dieses Lernpfads kann die LHIND Academy zu passenden Train-the-Trainer-Formaten beraten."
-      , assessmentPanel: "Ist-Stand einordnen / Assessment verbinden"
+      academyTtt: "Nach Abschluss dieses Lernpfads kann die LHIND Academy zu passenden Train-the-Trainer-Formaten beraten.",
+      assessmentPanel: "Vorhandenes Assessment importieren",
+      levelLegend: "So liest du die Stufenbalken",
+      levelLegendTitle: "Stufen und Farben",
+      levelAcquire: "Grundlagen aufbauen.",
+      levelDeepen: "Im Arbeitskontext vertiefen.",
+      levelCreate: "Gestalten und weitergeben.",
+      levelTarget: "Hellblau: Teil des Zielbereichs für deine Rolle.",
+      levelCurrent: "Dunkelblau: dein aktueller Stand aus Assessment oder Lernnachweisen.",
+      levelNext: "Rahmen: deine nächste Stufe auf dem Weg zum Ziel.",
+      levelMuted: "Grau: außerhalb des Rollenziels oder nicht relevant."
     }
   };
 
@@ -115,6 +138,11 @@
     var node = root.document.createElement(name);
     if (className) node.className = className;
     if (text != null) node.textContent = text;
+    return node;
+  }
+  function icon(name) {
+    var node = el("i", "ph-light ph-" + name);
+    node.setAttribute("aria-hidden", "true");
     return node;
   }
   function levelRank(value) { return ["Acquire", "Deepen", "Create"].indexOf(value) + 1; }
@@ -150,6 +178,61 @@
     if (hasGaps || model.unknownCount > 0 || hasOpenSteps) return { href: links.plan || "personal-plan.html", label: t("plan"), title: t("plan"), reason: hasOpenSteps && !hasGaps && !model.unknownCount ? t("blockedReason") : t("planReason") };
     return { href: links.skills || "skills.html", label: t("progress"), title: t("progress"), reason: t("progressReason") };
   }
+  function renderLevelLegend() {
+    var legend = el("div", "journey-ui__level-legend");
+    var control = el("div", "journey-ui__level-legend-control");
+    var id = "journeyLevelLegend" + (++levelLegendSequence);
+    var button = el("button", "journey-ui__level-legend-button", t("levelLegend"));
+    button.type = "button";
+    button.setAttribute("aria-expanded", "false");
+    button.setAttribute("aria-controls", id);
+    button.appendChild(icon("info"));
+    var popover = el("div", "journey-ui__level-legend-popover");
+    popover.id = id;
+    popover.hidden = true;
+    popover.setAttribute("role", "region");
+    popover.setAttribute("aria-label", t("levelLegendTitle"));
+    popover.appendChild(el("strong", "journey-ui__level-legend-title", t("levelLegendTitle")));
+    var levels = el("ul", "journey-ui__level-legend-list");
+    [["Acquire", "levelAcquire"], ["Deepen", "levelDeepen"], ["Create", "levelCreate"]].forEach(function (entry) {
+      var item = el("li", "");
+      item.append(el("strong", "", entry[0]), root.document.createTextNode(" — " + t(entry[1])));
+      levels.appendChild(item);
+    });
+    popover.appendChild(levels);
+    var keys = el("ul", "journey-ui__level-legend-keys");
+    [["target", "levelTarget"], ["current", "levelCurrent"], ["next", "levelNext"], ["muted", "levelMuted"]].forEach(function (entry) {
+      var item = el("li", "");
+      var swatch = el("span", "journey-ui__level-legend-swatch");
+      swatch.dataset.state = entry[0];
+      swatch.setAttribute("aria-hidden", "true");
+      item.append(swatch, el("span", "", t(entry[1])));
+      keys.appendChild(item);
+    });
+    popover.appendChild(keys);
+    function setOpen(open) {
+      legend.classList.toggle("is-open", open);
+      button.setAttribute("aria-expanded", String(open));
+      popover.hidden = !open;
+    }
+    var pinned = false;
+    button.addEventListener("click", function () { pinned = !pinned; setOpen(pinned); });
+    control.addEventListener("mouseenter", function () { setOpen(true); });
+    control.addEventListener("mouseleave", function () { if (!pinned && !control.matches(":focus-within")) setOpen(false); });
+    control.addEventListener("focusin", function () { setOpen(true); });
+    control.addEventListener("focusout", function () {
+      root.setTimeout(function () { if (!pinned && !control.matches(":hover") && !control.matches(":focus-within")) setOpen(false); }, 0);
+    });
+    control.addEventListener("keydown", function (event) {
+      if (event.key !== "Escape") return;
+      pinned = false;
+      setOpen(false);
+      button.focus();
+    });
+    control.append(button, popover);
+    legend.appendChild(control);
+    return legend;
+  }
   function renderDimensions(model) {
     var list = el("ol", "journey-ui__dimensions");
     focused(model, model.dimensions).slice(0, 5).forEach(function (dimension) {
@@ -184,18 +267,18 @@
   function renderSteps(model) {
     if (!Array.isArray(model.steps) || !model.steps.length) return null;
     var section = el("section", "journey-ui__steps");
-    section.appendChild(el("h3", "journey-ui__subheading", t("journey")));
     var list = el("ol", "journey-ui__step-list");
     (model.steps || []).slice(0, 5).forEach(function (step) {
       var item = el("li", "journey-ui__step");
       item.dataset.status = step.status || "upcoming";
-      var marker = el("span", "journey-ui__step-marker", String(list.children.length + 1));
+      var marker = el("span", "journey-ui__step-marker");
+      marker.appendChild(icon(step.status === "completed" ? "check" : "book-open"));
       marker.setAttribute("aria-hidden", "true");
       var copy = el("div", "journey-ui__step-copy");
       copy.appendChild(el("strong", "", step.title || step.capability || step.dimension || t("next")));
-      var meta = [step.dimension, step.capability, step.targetLevel].filter(Boolean).join(" · ");
+      var meta = [step.dimension, step.targetLevel].filter(Boolean).join(" · ");
       if (meta) copy.appendChild(el("span", "", meta));
-      item.append(marker, copy, el("span", "journey-ui__step-state", statusText(step.status)));
+      item.append(marker, copy);
       list.appendChild(item);
     });
     section.appendChild(list);
@@ -239,6 +322,8 @@
   }
   function render(host, options) {
     var model = snapshot();
+    var de = language() === "de";
+    var expanded = !!(host.querySelector(".journey-ui__details[open]"));
     var restoreFocus = root.document.activeElement && root.document.activeElement === host.querySelector(".journey-ui__focus-select");
     host.replaceChildren();
     host.className = "journey-ui" + (options.compact ? " journey-ui--compact" : "");
@@ -247,27 +332,58 @@
       host.appendChild(el("p", "journey-ui__loading", language() === "de" ? "Deine Lernreise wird vorbereitet …" : "Preparing your learning journey …"));
       return;
     }
-    var heading = el(options.compact ? "h2" : "h2", "journey-ui__title", t("title"));
-    host.appendChild(heading);
-    var role = el("p", "journey-ui__role", (model.role && model.role.label) || "–");
-    host.appendChild(role);
+    if (!options.progressOnly && !options.compact) {
+      host.appendChild(el("h2", "journey-ui__title", t("title")));
+    }
     if (!options.compact) {
       var target = el("section", "journey-ui__target");
-      target.append(el("h3", "journey-ui__subheading", t("target")), el("p", "journey-ui__intro", t("targetIntro")), renderDimensions(model));
-      if ((model.dimensions || []).some(function (dimension) { return dimension.status !== "not-relevant" && !dimension.currentLevel; })) target.appendChild(el("p", "journey-ui__intro", t("unknownTarget")));
+      var progressTitle = el(options.progressOnly ? "h2" : "h3", "journey-ui__subheading", de ? "Dein Kompetenzstand" : "Your capability progress");
+      progressTitle.prepend(icon("chart-line-up"));
+      target.appendChild(progressTitle);
+      var dimensions = (model.dimensions || []).filter(function (d) { return d.status !== "not-relevant"; });
+      var known = dimensions.filter(function (d) { return !!d.currentLevel; });
+      target.appendChild(el("p", "journey-ui__intro", known.length
+        ? (de ? "Dein aktueller Stand und die Orientierung für deine Rolle." : "Your current level and guidance for your role.")
+        : (de ? "Wo stehst du heute? Eine Selbsteinschätzung macht deine Entwicklung sichtbar." : "Where are you today? A self-assessment makes your development visible.")));
+      var overview = el("ul", "journey-ui__overview");
+      dimensions.forEach(function (dimension) {
+        var row = el("li", "journey-ui__overview-row");
+        row.append(el("span", "", dimension.name), el("strong", "", dimension.currentLevel || (de ? "Noch offen" : "Not assessed")));
+        overview.appendChild(row);
+      });
+      if (!options.progressOnly) target.appendChild(overview);
+      var assessmentLink = el("a", "journey-ui__text-link", known.length ? (de ? "Einschätzung aktualisieren" : "Update self-assessment") : t("assessment"));
+      assessmentLink.href = model.links && model.links.assessment || "assessment.html";
+      target.appendChild(assessmentLink);
+      var details = el("details", "journey-ui__details");
+      details.open = options.progressOnly || expanded;
+      details.appendChild(el("summary", "", de ? "Kompetenzstufen und Schwerpunkt" : "Capability levels and focus"));
+      details.appendChild(renderLevelLegend());
+      details.appendChild(renderDimensions(model));
       var focusField = el("label", "journey-ui__focus");
       focusField.appendChild(el("span", "", t("focus")));
       var select = el("select", "journey-ui__focus-select");
       select.appendChild(new Option(t("focusAll"), ""));
-      (model.dimensions || []).forEach(function (dimension) { select.appendChild(new Option(dimension.name, dimension.id)); });
+      dimensions.forEach(function (dimension) { select.appendChild(new Option(dimension.name, dimension.id)); });
       select.value = model.focusDimensionId || "";
       select.addEventListener("change", function () {
         if (root.LrnJourneyState && typeof root.LrnJourneyState.setFocus === "function") root.LrnJourneyState.setFocus(select.value);
       });
-      focusField.appendChild(select); target.appendChild(focusField);
-      target.appendChild(el("p", "journey-ui__target-source", model.targetSource === "assessment-import" ? t("targetImported") : t("targetReference")));
-      if (model.targetChanged) target.appendChild(el("p", "journey-ui__target-changed", t("targetChanged")));
+      focusField.appendChild(select); details.appendChild(focusField);
+      if (model.targetChanged) details.appendChild(el("p", "journey-ui__target-changed", de ? "Für dich gelten die Zielstufen aus deinem importierten Assessment." : "Your target levels come from your imported assessment."));
+      target.appendChild(details);
+      if (!options.progressOnly) {
+        var progressLink = el("a", "journey-ui__text-link", de ? "Fortschritt und Nachweise ansehen" : "View progress and evidence");
+        progressLink.href = model.links && model.links.skills || "skills.html";
+        target.appendChild(progressLink);
+      }
       host.appendChild(target);
+    }
+    if (options.progressOnly) {
+      host.classList.add("journey-ui--progress");
+      if (restoreFocus) host.querySelector(".journey-ui__focus-select").focus({ preventScroll: true });
+      decorateDisclosures();
+      return;
     }
     var courseMatches = renderCourseMatches(model, options.courseId);
     if (courseMatches) host.appendChild(courseMatches);
@@ -277,23 +393,41 @@
       action.label = model.next.status === "in-progress" ? t("continue") : language() === "de" ? "Erste Lernaktivität starten" : "Start first learning activity";
     }
     var next = el("section", "journey-ui__next");
-    next.appendChild(el("h3", "journey-ui__subheading", t("next")));
+    var nextHeading = el("h3", "journey-ui__subheading", t("next"));
+    nextHeading.prepend(icon("play-circle"));
+    next.appendChild(nextHeading);
     next.appendChild(el("strong", "journey-ui__next-title", action.title));
     if (action.reason) next.appendChild(el("p", "journey-ui__next-reason", action.reason));
     var link = el("a", "journey-ui__action", action.label);
     link.href = action.href;
     next.appendChild(link);
-    host.appendChild(next);
-    var steps = !options.compact && renderSteps(model);
-    if (steps) host.appendChild(steps);
+    host.insertBefore(next, host.querySelector(".journey-ui__target"));
+    if (!options.compact && model.steps && model.steps.length > 1) {
+      var later = el("section", "journey-ui__route");
+      var routeHeading = el("h4", "journey-ui__route-heading", de ? "Danach auf deinem Lernweg" : "Next on your learning journey");
+      routeHeading.prepend(icon("path"));
+      later.appendChild(routeHeading);
+      var following = renderSteps(Object.assign({}, model, { steps: model.steps.filter(function (step) { return !model.next || step.courseId !== model.next.courseId; }).slice(0, 2) }));
+      if (following) later.appendChild(following);
+      next.appendChild(later);
+    }
     var external = renderExternal(model);
     if (external) host.appendChild(external);
-    if (model.provisional) host.appendChild(el("p", "journey-ui__provisional", t("provisional")));
+
     var browse = el("a", "journey-ui__browse", t("browse"));
     browse.href = model.links && model.links.catalog || "index.html#trainingCatalogTitle";
     host.appendChild(browse);
     var focusSelect = restoreFocus && host.querySelector(".journey-ui__focus-select");
     if (focusSelect) focusSelect.focus({ preventScroll: true });
+    decorateDisclosures();
+  }
+  function decorateDisclosures() {
+    root.document.querySelectorAll(".journey-ui__details > summary, .journey-optional > summary, .page--home .recommendation-settings > summary").forEach(function (summary) {
+      if (summary.querySelector(".journey-disclosure__label")) return;
+      var label = summary.textContent;
+      var name = summary.parentElement.classList.contains("journey-assessment") || summary.dataset.journeyCopy === "assessmentPanel" ? "file-arrow-up" : summary.dataset.journeyCopy === "moreTools" ? "sliders-horizontal" : summary.dataset.journeyCopy === "courseEvidence" ? "certificate" : "sliders-horizontal";
+      summary.replaceChildren(icon(name), el("span", "journey-disclosure__label", label), icon("caret-down"));
+    });
   }
   function refreshStaticCopy() {
     root.document.querySelectorAll("[data-journey-copy]").forEach(function (node) { node.textContent = t(node.dataset.journeyCopy); });

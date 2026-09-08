@@ -26,7 +26,8 @@
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/light/style.css">
   <link rel="stylesheet" href="lrn/lrn.css?v=20260825d">
   <link rel="stylesheet" href="assessment-import.css?v=20260908a">
-  <link rel="stylesheet" href="lrn/journey.css?v=20260908a">
+  <link rel="stylesheet" href="pan.css?v=20260830a">
+  <link rel="stylesheet" href="lrn/journey.css?v=20260908g">
 </head>
 <body>
   <a class="skip-link" href="#main" data-i18n="skip_content">Skip to content</a>
@@ -52,7 +53,7 @@
       <span id="langIcon" class="theme-icon">EN</span>
     </a>
   </header>
-  <script src="i18n.js?v=20260908a"></script>
+  <script src="i18n.js?v=20260908d"></script>
   <script src="lang.js"></script>
   <script>
     (function () {
@@ -95,7 +96,6 @@
 
     <header class="skills-page__header">
       <div>
-        <p class="skills-progress__overline" data-i18n="skills_progress_overline">Learning progress</p>
         <h1 id="skillsProgressTitle" data-i18n="skills_progress_title">Your capability progress</h1>
         <p class="skills-progress__intro" data-i18n="skills_progress_intro">Assigned courses move you through Acquire, Deepen, and Create — with every contribution visible.</p>
         <label class="skills-page__profile" for="capabilityProfileSelect">
@@ -104,13 +104,16 @@
           <select id="capabilityProfileSelect" aria-label="Choose role profile" data-i18n-aria-label="role_select_label"></select>
         </label>
       </div>
-      <div class="skills-progress__summary" aria-live="polite">
+      <div class="skills-progress__summary" aria-live="polite" hidden>
         <strong id="skillsProgressTotal">0%</strong>
         <span data-i18n="skills_progress_towards_target">towards your role target</span>
         <small id="skillsProgressCoverage"></small>
       </div>
     </header>
 
+    <div id="skillsJourney" class="journey-slot" aria-live="polite"></div>
+    <details class="journey-optional"><summary data-journey-copy="assessmentPanel">Import an existing assessment</summary><section id="assessmentImport" data-assessment-import></section></details>
+    <details class="journey-optional"><summary data-journey-copy="courseEvidence">Course contributions in detail</summary>
     <section class="capability-groups" aria-labelledby="capabilityGroupsTitle">
       <div class="capability-groups__heading">
         <div>
@@ -123,8 +126,7 @@
       <div class="capability-groups__list" id="capabilityGroupList"></div>
     </section>
 
-    <section id="assessmentImport" data-assessment-import></section>
-    <div id="skillsJourney" class="journey-slot" aria-live="polite"></div>
+
 
     <section class="skills-progress skills-progress--standalone" id="skillsProgress" aria-label="Capability progress details" data-i18n-aria-label="skills_progress_details_label">
       <div class="skills-progress__toolbar">
@@ -149,6 +151,7 @@
         <i class="ph-light ph-arrow-down" aria-hidden="true"></i>
       </button>
     </section>
+    </details>
   </main>
 
   <noscript><p class="noscript-note">JavaScript is required to calculate your local learning progress.</p></noscript>
@@ -159,10 +162,11 @@
   <script src="lrn/data.js?v=20260825a"></script>
   <script src="lrn/curriculum-map.js?v=20260824b"></script>
   <script src="skills-progress-evidence.js"></script>
+  <script src="lrn/mastery.js?v=20260908d"></script>
   <script src="lrn/learning-plan.js?v=20260908a"></script>
   <script src="lrn/learning-journey.js?v=20260908a"></script>
   <script src="lrn/journey-state.js?v=20260908a"></script>
-  <script src="lrn/journey-ui.js?v=20260908a"></script>
-  <script src="skills-progress.js?v=20260908a"></script>
+  <script src="lrn/journey-ui.js?v=20260908g"></script>
+  <script src="skills-progress.js?v=20260908d"></script>
 </body>
 </html>

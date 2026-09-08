@@ -147,3 +147,7 @@ Technischer Einstieg: `site/lrn/learning-journey.js` berechnet das gemeinsame Mo
 ## Sprache und sichtbares Angebot
 
 Der Einstieg lädt zur persönlichen Weiterentwicklung ein: „Dein nächster Schritt mit AI“. Rollenbezogene Dimensionsziele bleiben als fachliche Orientierung erhalten. Die Ansprache ist freundlich, klar und sachlich im Lufthansa-Kontext; Lernreise und Etappen sind passende Metaphern, spielerische Flughafenansagen nicht. Leere Angebote werden nicht angekündigt. Die Oberfläche zeigt zuerst verfügbare Lernschritte und blendet zusätzliche Bereiche erst ein, wenn sie nutzbare Inhalte bieten.
+
+## Verdichteter Einstieg
+
+Die Startseite führt eine gemeinsame „Lernreise“: Der nächste Kurs ist die primäre Aktion, der Kompetenzstand steht daneben. Die nächsten zwei Kurse erscheinen als kompakter verbundener Lernweg im selben Kursbereich; eine zweite Etappenübersicht entfällt. Kompetenzstufen, Schwerpunkt, Assessment-Import und eigene Planung bleiben bei Bedarf erreichbar. Die Fortschrittsseite vertieft dieselben Dimensionsdaten; Kursbeiträge öffnen sich separat als Nachweise. Quellenhinweise ohne Handlungsnutzen und redundante Prozentübersichten entfallen. Eine direkte Lernhilfe begleitet den Kursvorschlag, der Navigator ist auch auf der Fortschrittsseite erreichbar.

@@ -15,7 +15,7 @@ test("standalone tools preserve the shared learner shell", () => {
     assert.match(page, /href="pan\.css\?v=[^"]+"/);
     assert.match(page, /href="tool-page\.css\?v=[^"]+"/);
     assert.match(page, /src="theme-toggle\.js"/);
-    assert.match(page, /src="pan\.js\?v=[^"]+"/);
+    assert.doesNotMatch(page, /src="pan\.js(?:\?[^"]*)?"/);
   });
 });
 

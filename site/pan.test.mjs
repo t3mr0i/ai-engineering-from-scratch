@@ -6,16 +6,20 @@ import { readFileSync } from "node:fs";
 const require = createRequire(import.meta.url);
 const Navigator = require("./pan.js");
 
-test("learner surfaces load the shared Learning Navigator assets", () => {
-  const index = readFileSync(new URL("./index.html", import.meta.url), "utf8");
-  const lesson = readFileSync(new URL("./lesson.html", import.meta.url), "utf8");
-  const course = readFileSync(new URL("./lrn/course.html", import.meta.url), "utf8");
-  assert.match(index, /href="pan\.css\?v=[^"]+"/);
-  assert.match(index, /src="pan\.js\?v=[^"]+"/);
-  assert.match(lesson, /href="pan\.css\?v=[^"]+"/);
-  assert.match(lesson, /src="pan\.js\?v=[^"]+"/);
-  assert.match(course, /href="\.\.\/pan\.css\?v=[^"]+"/);
-  assert.match(course, /src="\.\.\/pan\.js\?v=[^"]+"/);
+test("learner surfaces retain shared Navigator CSS without loading its script", () => {
+  const pages = [
+    ["./index.html", ""],
+    ["./lesson.html", ""],
+    ["./skills.html", ""],
+    ["./personal-plan.html", ""],
+    ["./team-learning.html", ""],
+    ["./lrn/course.html", "../"]
+  ];
+  pages.forEach(([pagePath, prefix]) => {
+    const page = readFileSync(new URL(pagePath, import.meta.url), "utf8");
+    assert.match(page, new RegExp(`href="${prefix.replace("/", "\\/")}pan\\.css\\?v=[^"]+"`));
+    assert.doesNotMatch(page, /src="(?:\.\.\/)?pan\.js\?v=[^"]+"/);
+  });
 });
 
 test("Learning Navigator has consistent visible and accessible naming", () => {

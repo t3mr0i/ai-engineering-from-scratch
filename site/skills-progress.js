@@ -284,7 +284,7 @@
     function mountJourney() {
       var browser = typeof window !== "undefined" ? window : null;
       if (!journeyRoot || !browser || !browser.LrnJourneyUI || typeof browser.LrnJourneyUI.mount !== "function") return;
-      browser.LrnJourneyUI.mount(journeyRoot, { compact: false });
+      browser.LrnJourneyUI.mount(journeyRoot, { progressOnly: true });
     }
 
     function i18n(key, fallback, vars) {
