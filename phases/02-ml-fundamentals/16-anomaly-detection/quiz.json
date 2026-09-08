@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "A feature has mean 10 and standard deviation 2. What is the z-score of x=16?",
+      "question": "A metric spikes to an impossible value at 3 AM. What is the screening layer's job?",
       "options": [
-        "8",
-        "12",
-        "3",
-        "0.33"
+        "Decide the business response alone",
+        "Assign fraud probability definitively",
+        "Ignore single impossible values",
+        "Flag the deviation for operator procedure"
       ],
-      "correct": 2,
-      "explanation": "The z-score is (16-10)/2=3."
+      "correct": 3,
+      "explanation": "Screening flags; operators decide. This lesson builds point and multivariate screening."
     },
     {
       "stage": "check",

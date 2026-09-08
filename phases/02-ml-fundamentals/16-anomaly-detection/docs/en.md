@@ -49,6 +49,10 @@ parameters n_estimators and max_samples are positive, max_samples is at least
 two, and anomaly_score/predict require fit first. Fitting a second time resets
 the tree list and reuses the configured seed.
 
+## CBP context: screen metrics, operators decide
+
+In the CBP context anomaly screening watches Azure Monitor metrics for point, contextual, and sequence anomalies — impossible values, normal values in wrong contexts, suspicious runs — while intent and response stay with operators. z-score screening is the first line, multivariate screening the second; neither replaces the runbook. Alert on deviation, decide by procedure.
+
 ## Build It
 
 From code/, run python3 main.py. It compares Z-score, IQR, and a 100-tree
