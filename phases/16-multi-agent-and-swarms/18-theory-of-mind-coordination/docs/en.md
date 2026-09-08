@@ -113,6 +113,10 @@ These are measurable in a logged multi-agent system. They are the substantive ve
 
 
 
+## CBP context: deconflict by watching peers
+
+In the CBP context shared queues deconflict when workers account for what peers recently took — avoiding freshly-taken tasks while open ones remain (lessons 14/08, 16/09). Blind choosing duplicates effort; peer-aware choosing divides it. Publish recent picks where workers can see them; visibility is the cheapest coordinator.
+
 ## Build It
 
 Reconstruct **Theory of Mind and Emergent Coordination** by following `World` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
