@@ -104,6 +104,10 @@ Your solution is complete when it records python3 main.py, the captured output, 
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
+## CBP context: evidence, empathy, threshold, escalation
+
+In the CBP context customer replies carry source evidence, pass an empathy check, clear a confidence threshold, and escalate on doubt — especially with frustrated customers and incomplete sources. Uncertainty is stated, never polished over; a reply that hides doubt trades one ticket for a complaint. The four controls are the quality gate, not the tone.
+
 ## Further Reading
 
 ### Recommended trainings (LHIND AI Literacy)
