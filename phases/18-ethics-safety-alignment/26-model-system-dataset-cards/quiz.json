@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the generated Model Card for ToyClassifier-1.0 document first?",
+      "question": "Procurement asks what a model is for, how it performs, and where it must not be used. What answers?",
       "options": [
-        "Only the dataset's collection licenses",
-        "Only the production incident response SLA",
-        "The model's details, intended use, factors, metrics, training data, and ethical caveats",
-        "The model's hidden chain of thought"
+        "The model weights file alone",
+        "A verbal assurance in the meeting",
+        "Training logs with no summary",
+        "Model, system, and dataset cards maintained per release"
       ],
-      "correct": 2,
-      "explanation": "model_card returns sections about the model and its use, including accuracy and fairness metrics plus an explicit out-of-scope production warning. Dataset provenance and deployment controls belong in the companion cards."
+      "correct": 3,
+      "explanation": "Decisions need documented artifacts. This lesson cards models, systems, and datasets."
     },
     {
       "stage": "check",

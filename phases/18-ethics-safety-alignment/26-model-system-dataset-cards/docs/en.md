@@ -82,6 +82,10 @@ Lessons 24-25 are regulatory and CVE layers. Lesson 26 is the documentation laye
 
 
 
+## CBP context: cards ship with the feature
+
+In the CBP context model, system, and dataset cards ship with every AI feature: intended use, metrics with fairness numbers, training-data summary, ethical caveats, and explicit out-of-scope warnings. Procurement and auditors read cards before meetings; missing cards delay both. Cards are maintained artifacts, updated per release — stale cards mislead worse than none.
+
 ## Build It
 
 Reconstruct **Model, System, and Dataset Cards** by following `model_card` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
