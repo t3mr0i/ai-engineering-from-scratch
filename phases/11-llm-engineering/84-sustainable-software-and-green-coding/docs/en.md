@@ -106,6 +106,10 @@ Call `EfficiencyGrade` from a small caller with the demo’s smallest built-in f
 
 Hand off `outputs/skill-green-ai-checklist.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: four levers with payback periods
+
+In the CBP context sustainability is quantified per lever — task-fit model choice, prompt efficiency, serving region carbon intensity, right-sized deployments — each with its savings and payback period in the recommendation. Prompt rewrites that cut tokens to a third are the cheapest lever; region choice moves the rest. Green claims without per-lever numbers are compliance theater.
+
 ## Further Reading
 
 - [Green Software Foundation — SCI Specification](https://sci.greensoftware.foundation/) — the authoritative definition of Software Carbon Intensity, including the formula and guidance on functional units.

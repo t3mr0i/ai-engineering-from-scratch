@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which change most directly improves the prompt-efficiency score for a support-ticket task?",
+      "question": "Nobody owns prompt token waste, model oversizing, or region carbon intensity, so all three accrue silently. What makes them manageable?",
       "options": [
-        "Remove filler language and add a bounded output format such as the JSON contract",
-        "Add more polite phrases while leaving response length unconstrained",
-        "Move the same long context into a second paragraph",
-        "Use a larger model before measuring token count or output shape"
+        "A smaller model for everything blindly",
+        "Ignoring energy as infra-only concern",
+        "One generic green slogan per project",
+        "Per-lever measurement with savings and payback"
       ],
-      "correct": 0,
-      "explanation": "The scorer looks for verbose padding, an explicit length or format signal, and context stuffing. Removing filler and constraining the output addresses two common inefficiencies without changing the task."
+      "correct": 3,
+      "explanation": "Unowned waste compounds. This lesson traces four levers from task to region with quantified savings."
     },
     {
       "stage": "check",
