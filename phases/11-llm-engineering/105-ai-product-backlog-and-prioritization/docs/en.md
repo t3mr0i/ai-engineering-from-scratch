@@ -116,6 +116,10 @@ Call `BacklogItem` from a small caller with the demo’s smallest built-in fixtu
 
 Hand off `outputs/skill-backlog-scoring-decision-record.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: decision records, not ranks
+
+In the CBP context backlog ordering records weights, scores, risks, and blockers per item — value and low risk over adjusted effort — so the roadmap stays defensible when stakeholders challenge it months later. An LLM may draft the ranking; the recorded reasoning is the artifact, never just the rank. Effort connects to value at ordering time, or the post-mortem writes itself.
+
 ## Further Reading
 
 - [SAFe — Weighted Shortest Job First](https://scaledagileframework.com/wsjf/) — the canonical WSJF definition, including Cost of Delay breakdown.

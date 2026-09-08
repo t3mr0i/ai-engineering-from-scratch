@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which formula does score_and_rank use for a backlog item's composite score?",
+      "question": "A pasted backlog ranking has no recorded weights or assumptions, and nobody can defend the roadmap months later. What is missing?",
       "options": [
-        "(value/5 * value_weight + (1-risk) * risk_weight) / adjusted_effort * 10",
-        "(value + risk + effort + blocker_count) / 4, with no normalization",
-        "value * risk_weight / effort, ignoring dependencies",
-        "value/5 * effort plus risk, so expensive work always ranks higher"
+        "A longer ranked list",
+        "Trust in the model's ordering",
+        "Faster ranking next quarter",
+        "The decision record: weights, scores, risks, blockers"
       ],
-      "correct": 0,
-      "explanation": "The scorer rewards normalized value and low risk, then divides by effort adjusted by 1 + 0.3 per blocker. Multiplying the quotient by 10 only makes the result easier to read."
+      "correct": 3,
+      "explanation": "Ranks without reasoning cannot be defended or revised. This lesson scores transparently with recorded assumptions."
     },
     {
       "stage": "check",
