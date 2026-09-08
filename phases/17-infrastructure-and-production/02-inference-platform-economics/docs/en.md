@@ -104,6 +104,10 @@ Call `Vendor` from a small caller with tokens=["red","fox"]. Compare its result 
 
 Hand off `outputs/skill-inference-platform-picker.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: Azure is the default, the market is the exit path
+
+In the CBP context the platform decision is pre-made (lesson 01): Azure OpenAI provisioned by LCAG, billed through Azure scopes with team and feature attribution. Read this lesson's six-provider comparison as the exit-path vocabulary — per-token versus per-minute versus per-prediction cost functions, and which workload shape favors which — so vendor claims stay checkable and the alternative stays reachable. Model your own heaviest feature's cost on the Azure rate card first; a cheaper alternative only matters with your traffic numbers attached.
+
 ## Further Reading
 
 - [Fireworks Pricing](https://fireworks.ai/pricing) — per-token rates, batch tier, GPU rental.

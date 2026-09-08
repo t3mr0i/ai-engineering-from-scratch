@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which pricing branch does cost_per_day use for Replicate?",
+      "question": "Six providers quote per-token, per-minute, per-second, and per-prediction prices for the same workload. How do you compare them?",
       "options": [
-        "per_prediction × count",
-        "per-minute billing with a 1,440-minute floor",
-        "per-million output tokens",
-        "A fixed monthly reservation"
+        "Pick the smallest headline number",
+        "Compare them directly without modeling",
+        "Ask each vendor which is cheapest",
+        "Model your own workload against each cost function"
       ],
-      "correct": 0,
-      "explanation": "Replicate is the only local vendor with per_prediction set, so cost_per_day multiplies $0.006 by the prediction count."
+      "correct": 3,
+      "explanation": "Pricing pages do not line up without your traffic shape. This lesson models each provider so the comparison uses your numbers."
     },
     {
       "stage": "check",
