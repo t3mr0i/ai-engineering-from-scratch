@@ -121,6 +121,10 @@ All implementable on top of the primitives. None of them are new primitives.
 
 
 
+## CBP context: four primitives structure every design
+
+In the CBP context every multi-agent design reduces to agent, handoff, shared state, and orchestrator — name all four in the design doc before choosing frameworks. Varying the orchestrator while keeping agents and state fixed isolates what actually changed between experiments. Primitives first, frameworks second, always.
+
 ## Build It
 
 Reconstruct **The Multi-Agent Primitive Model** by following `SharedState` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.
