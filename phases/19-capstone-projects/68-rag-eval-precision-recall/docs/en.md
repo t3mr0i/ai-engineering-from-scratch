@@ -159,6 +159,10 @@ else:
 The naive check says 1.0 -- a gold doc showed up somewhere in the top-5, so it calls the retrieval a success. precision@3 (0.33), recall@3 (0.5), MRR (0.5), and nDCG@3 (0.39) all disagree: `d1` only reached rank 2 and `d3` fell outside the top-3 entirely, which is exactly the kind of ranking failure a rank-blind check can't see.
 
 
+## CBP context: retrieval first, answers second
+
+In the CBP context RAG evals run in dependency order: recall@k proves the evidence arrived before any judge scores the answer, because a generator cannot ground what retrieval never delivered. Track precision, recall, MRR, and nDCG on CBP qrels plus faithfulness and answer relevance on the generated text. When answers degrade, read the evals top-down — retrieval first — instead of blaming the model for missing evidence.
+
 ## Build It
 
 Reconstruct **RAG Evaluation: Precision, Recall, MRR, nDCG, Faithfulness, Answer Relevance** by following `Qrel` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
