@@ -71,6 +71,10 @@ This is the same reasoning pattern as Lob's theorem (Lesson 8): the agent cannot
 
 
 
+## CBP context: sanitize pages before models read them
+
+In the CBP context browser tools fetch untrusted pages — sanitize visible text for instruction overrides and exfiltration patterns before the model ever sees them (lesson 14/27). Block post-to-unknown endpoints and auth reuse at the tool layer, not in prompts. The page is attacker-controlled input; the sanitizer is the trust boundary.
+
 ## Build It
 
 Reconstruct **Browser Agents and Long-Horizon Web Tasks** by following `sanitizer` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.
