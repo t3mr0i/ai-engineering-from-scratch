@@ -101,6 +101,10 @@ PSO and ACO need only an *evaluator* function. If you can score a candidate outp
 
 
 
+## CBP context: route by performance trails
+
+In the CBP context task routing follows pheromone logic: successful agent-task pairings strengthen future routing, poor outcomes weaken it — performance trails replacing static assignment. Particle-style search tunes continuous parameters (thresholds, budgets) around measured fitness peaks. Static routing tables rot; feedback trails adapt.
+
 ## Build It
 
 Reconstruct **Swarm Optimization for LLMs (PSO, ACO)** by following `Particle` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.

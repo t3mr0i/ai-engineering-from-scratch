@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What are the two optimization substrates in this lesson?",
+      "question": "Static task routing rots as agent performance shifts. What adaptive mechanism replaces fixed tables?",
       "options": [
-        "PSO trains a neural critic while ACO disables all exploration.",
-        "PSO performs FIPA speech acts; ACO verifies Python syntax.",
-        "PSO searches a bounded two-dimensional fitness surface; ACO routes task types through pheromone trails.",
-        "Both algorithms only sort a fixed list and never update state."
+        "Bigger fixed tables",
+        "Random assignment forever",
+        "No routing at all",
+        "Feedback trails strengthening successful pairings"
       ],
-      "correct": 2,
-      "explanation": "`run_lmpso` updates particle positions and velocities around a fitness peak, while `PheromoneRouter` updates task-type/agent pheromone values after simulated quality."
+      "correct": 3,
+      "explanation": "Static maps decay. This lesson routes by reinforced performance trails."
     },
     {
       "stage": "check",
