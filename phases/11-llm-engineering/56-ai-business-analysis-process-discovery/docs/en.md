@@ -104,6 +104,10 @@ A useful submission records python3 main.py, the observed output, and the conclu
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
+## CBP context: gaps visible, evidence registered
+
+In the CBP context discovery records show their gaps: stakeholders covered and missing, variants mapped, assumptions logged, evidence registered. A clean summary without these is false confidence with formatting. The analyst's job is better questions, not prettier summaries — the register proves the work happened.
+
 ## Further Reading
 
 ### Recommended trainings (LHIND AI Literacy)
