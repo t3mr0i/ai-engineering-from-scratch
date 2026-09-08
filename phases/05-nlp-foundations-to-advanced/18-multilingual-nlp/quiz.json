@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is similarity(\"marathi\", \"hindi\") in the lesson feature table?",
+      "question": "English evals look great, but German customer text with compounds and cases fails. What was wrongly assumed?",
       "options": [
-        "0.0",
-        "0.33",
-        "1.0",
-        "0.5"
+        "That evaluation matters at all",
+        "That German needs no special care",
+        "That quality transfers across languages automatically",
+        "That customers write in English"
       ],
       "correct": 2,
-      "explanation": "Both entries share SOV word order, Devanagari script, and Indic family, so all three features match."
+      "explanation": "Transfer follows linguistic similarity, not hope. This lesson measures per-language with shared structure."
     },
     {
       "stage": "check",

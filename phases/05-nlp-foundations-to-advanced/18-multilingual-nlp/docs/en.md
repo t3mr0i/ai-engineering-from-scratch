@@ -59,6 +59,10 @@ Practical rule: if your target language has a typologically close high-resource 
 
 
 
+## CBP context: German first, transfer measured
+
+In the CBP context multilingual claims are verified per language on CBP data: related languages share structure (word order, script, family) that transfers, distant ones do not — and German compounds, cases, and formality levels need their own evals regardless of English scores. Never extrapolate multilingual quality from one language's benchmark; measure each served language like a separate product.
+
 ## Build It
 
 Reconstruct **Multilingual NLP** by following `similarity` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
