@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which changed_files tuple does prompt_only_attempt return for the validator task?",
+      "question": "A plausible patch with a confident sentence arrives with no scope or acceptance check. Why is that not enough?",
       "options": [
-        "('src/validator.py', 'tests/test_validator.py')",
-        "('src/validator.py', 'README.md')",
-        "('src/validator.py', 'tests/test_validator.py', 'notes.txt')",
-        "('notes.txt', 'README.md', 'src/validator.py')"
+        "Confident sentences are always correct",
+        "Patches never need validation",
+        "Checks slow down confident work",
+        "Plausibility is not compliance with the contract"
       ],
-      "correct": 2,
-      "explanation": "The baseline deliberately includes notes.txt in addition to the source and test paths, creating an out-of-scope violation."
+      "correct": 3,
+      "explanation": "A confident patch can still violate scope and acceptance. This lesson measures prompt-only against rules-first on the same task."
     },
     {
       "stage": "check",

@@ -70,6 +70,10 @@ Hand off `outputs/skill-prompt-rules-comparison.md` with the command `python3 ma
 - Replace the fixture workers with a subprocess-backed implementation and retain
   the same validator API.
 
+## CBP context: measure the contract, not the model
+
+In the CBP context the prompt-only versus rules-first experiment is how the team justifies the harness: same task, both pipelines, counted scope violations and acceptance passes. The worker is replaceable — swap the deterministic stub for a model call later — but the Task contract and the validation boundary stay. Re-run the experiment whenever the model changes; a new model that passes prompt-only today still ships behind rules-first, because the contract is what the audit reads.
+
 ## Further reading
 
 - [Phase 14 · 36 — Scope Contracts](../../36-scope-contracts/docs/en.md)
