@@ -40,6 +40,10 @@ flowchart LR
 
 `max_pool2d` uses the same output-size arithmetic but takes a maximum rather than a learned weighted sum. Its padded border uses `-inf` for floating-point inputs and the dtype minimum for integer inputs, so an out-of-image value cannot beat a real negative pixel. `receptive_field` tracks both the current jump between neighboring features and the pixels seen by a feature after a sequence of `(kernel, stride[, dilation])` layers.
 
+## CBP context: local patterns, counted positions
+
+In the CBP context convolutions explain how vision models read locally: small windows sliding across the image, one number per position, with kernel size, stride, and padding deciding the output count. Run the sliding-window demo once so "receptive field" reads as concrete coverage rather than jargon. No service convolves by hand; every document-AI result assumes you know what a window saw.
+
 ## Build It
 
 Run:
