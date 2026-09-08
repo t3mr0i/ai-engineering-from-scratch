@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What makes a Proposal idempotent in Store?",
+      "question": "An approval covers one action but the agent executes something different afterward. How is approval bound to execution?",
       "options": [
-        "Its thread_id is always random",
-        "Its status is printed twice",
-        "A hash of its sorted thread/action/payload data is used as the key",
-        "Its rollback field is empty"
+        "Trust that proposals match actions",
+        "Approve verbally with no record",
+        "Allow post-approval edits freely",
+        "Content-hashed proposals approved as the executed object"
       ],
-      "correct": 2,
-      "explanation": "Proposal.key hashes the sorted JSON of thread_id, action, and payload, so repeating the same request addresses the same stored proposal."
+      "correct": 3,
+      "explanation": "Approvals must pin execution. This lesson keys proposals by content hash for idempotence."
     },
     {
       "stage": "check",

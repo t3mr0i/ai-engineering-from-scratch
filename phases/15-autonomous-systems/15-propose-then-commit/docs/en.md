@@ -75,6 +75,10 @@ Article 14 mandates effective human oversight for high-risk AI systems in the EU
 
 
 
+## CBP context: humans commit the same object proposed
+
+In the CBP context propose-then-commit means the human approves the exact hashed proposal object — thread, action, payload — that the agent will execute, making double-commit impossible and review precise. Idempotency keys derive from content, not from counters the agent controls. The approver sees what executes, byte for byte; anything else is theater with a button.
+
 ## Build It
 
 Reconstruct **Human-in-the-Loop: Propose-Then-Commit** by following `Proposal` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
