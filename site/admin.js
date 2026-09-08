@@ -2295,6 +2295,9 @@
       let remembered = "";
       try { remembered = localStorage.getItem("lhind:admin:changeset") || ""; } catch (_) {}
       if (remembered && state.changesets.some((item) => item.id === remembered)) await selectChangeset(remembered);
+      const requestedView = new URLSearchParams(window.location.search).get("view");
+      const allowedViews = ["overview", "courses", "lessons", "paths", "trainers", "calendar", "teams", "assistant", "review", "history", "stats"];
+      if (allowedViews.includes(requestedView)) activateView(requestedView);
     } catch (error) {
       renderFatal(error);
     }

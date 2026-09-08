@@ -1,10 +1,9 @@
 /**
- * LLM gateway proxy for notebooks — Azure Static Web Apps counterpart to
- * server/server.js's handleLlmProxy (see B31: this route existed only in
- * the OpenShift/dev server, so it 404'd on the SWA deployment regardless
- * of what the dev server could do). Injects LLM_GATEWAY_KEY server-side so
- * it never reaches the browser; kept independent of the ase_gate cookie,
- * same as the OpenShift version.
+ * LLM gateway proxy for notebooks — legacy Azure Static Web Apps managed
+ * function. Canonical implementation: server/server.js handleLlmProxy
+ * (OpenShift + local dev via serve.sh). Uses LLM_GATEWAY_KEY server-side when
+ * configured; the current internal gateway also accepts trusted requests
+ * without that optional credential. Kept independent of the ase_gate cookie.
  *
  * The rate limiter is in-memory per function instance, so it caps per
  * instance, not globally, under Functions' Consumption plan scale-out —
@@ -13,6 +12,8 @@
  */
 
 const LLM_GATEWAY_URL = 'https://gateway.lhind.ai/v1/chat/completions';
+const PRIMARY_MODEL = 'azure/gpt-5.6-luna';
+const FALLBACK_MODEL = 'azure/gpt-5.4-mini';
 const LLM_RATE_LIMIT_PER_MIN = 20;
 const MAX_BODY_BYTES = 1_000_000;
 
@@ -37,11 +38,6 @@ function rateLimited(ip) {
 
 module.exports = async function (context, req) {
   const key = process.env.LLM_GATEWAY_KEY;
-  if (!key) {
-    context.res = { status: 500, body: { error: { message: 'LLM gateway not configured' } } };
-    return;
-  }
-
   if (rateLimited(clientIp(req))) {
     context.res = { status: 429, body: { error: { message: 'rate limit exceeded, try again shortly' } } };
     return;
@@ -54,15 +50,28 @@ module.exports = async function (context, req) {
   }
 
   try {
-    const upstream = await fetch(LLM_GATEWAY_URL, {
+    const headers = { 'content-type': 'application/json' };
+    if (key) headers.Authorization = `Bearer ${key}`;
+    let upstream = await fetch(LLM_GATEWAY_URL, {
       method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        Authorization: `Bearer ${key}`,
-      },
+      headers,
       body: raw,
     });
-    const text = await upstream.text();
+    let text = await upstream.text();
+    let requestedModel = '';
+    let parsedBody;
+    try {
+      parsedBody = JSON.parse(raw);
+      requestedModel = parsedBody && parsedBody.model;
+    } catch (_) {}
+    if (requestedModel === PRIMARY_MODEL && upstream.status >= 500) {
+      upstream = await fetch(LLM_GATEWAY_URL, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ ...parsedBody, model: FALLBACK_MODEL }),
+      });
+      text = await upstream.text();
+    }
     context.res = {
       status: upstream.status,
       headers: { 'Content-Type': 'application/json' },

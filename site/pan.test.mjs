@@ -5,6 +5,8 @@ import { readFileSync } from "node:fs";
 
 const require = createRequire(import.meta.url);
 const Navigator = require("./pan.js");
+const PAN = require("./pan.js");
+const panSource = readFileSync(new URL("./pan.js", import.meta.url), "utf8");
 
 test("learner surfaces retain shared Navigator CSS without loading its script", () => {
   const pages = [
@@ -45,6 +47,25 @@ test("the team-learning page wires assignments and evidence", () => {
   assert.match(page, /src="lrn\/team-learning\.js\?v=[^"]+"/);
 });
 
+test("the cockpit delegates editable planning to the personal-plan page", () => {
+  // Home mounts the journey engine; the inline personalPlan workspace was
+  // retired to legacy mount points (see index.html data-journey-replaced).
+  // Planning execution lives on personal-plan.html; the cockpit keeps the
+  // placement script plus the engine's change-listener contract.
+  const index = readFileSync(new URL("./index.html", import.meta.url), "utf8");
+  const planBuilder = readFileSync(new URL("./lrn/plan-builder.js", import.meta.url), "utf8");
+  const planPage = readFileSync(new URL("./personal-plan.html", import.meta.url), "utf8");
+  assert.match(index, /src="lrn\/learning-plan\.js\?v=[^"]+"/);
+  assert.match(planPage, /src="lrn\/plan-builder\.js\?v=[^"]+"/);
+  assert.match(planBuilder, /addEventListener\("aifs:personal-plan-change"/);
+});
+
+test("the curriculum admin accepts a validated courses deep link", () => {
+  const admin = readFileSync(new URL("./admin.js", import.meta.url), "utf8");
+  assert.match(admin, /new URLSearchParams\(window\.location\.search\)\.get\("view"\)/);
+  assert.match(admin, /allowedViews\.includes\(requestedView\)/);
+});
+
 test("safeHref accepts same-origin learner destinations", () => {
   const location = { origin: "https://learning.test", href: "https://learning.test/index.html" };
   assert.equal(Navigator.safeHref("lesson.html?path=phases%2F11-x%2F01-y", location), "/lesson.html?path=phases%2F11-x%2F01-y");
@@ -76,4 +97,153 @@ test("courseProgressSnapshot distinguishes complete and in-progress courses", ()
   globalThis.LrnData = previousData;
   globalThis.LrnCurriculumMap = previousMap;
   globalThis.AIFSProgress = previousProgress;
+});
+
+test("PAN uses the deployed OpenAI-compatible gateway route", () => {
+  assert.match(panSource, /GATEWAY_PATH = "\/api\/llm\/chat\/completions"/);
+  assert.match(panSource, /fetch\(GATEWAY_PATH/);
+  assert.doesNotMatch(panSource, /\/api\/lrn\/ai\/chat/);
+  assert.match(panSource, /azure\/gpt-5\.6-luna/);
+});
+
+test("PAN sends an OpenAI-compatible, curriculum-grounded request", () => {
+  const previousData = globalThis.LrnData;
+  const previousMap = globalThis.LrnCurriculumMap;
+  globalThis.LrnData = { courses: [{ id: "PRIMER-01", title: "LLM Primer", summary: "Tokens and context" }] };
+  globalThis.LrnCurriculumMap = { courseMaps: {} };
+  try {
+    const request = PAN.gatewayRequest("What next?", "en", [], { plannedCourses: [] });
+    assert.equal(request.model, "azure/gpt-5.6-luna");
+    assert.equal(request.temperature, undefined);
+    assert.equal(request.messages[0].role, "system");
+    assert.match(request.messages[0].content, /Markdown/);
+    assert.match(request.messages[0].content, /2[–-]4 short paragraphs/i);
+    assert.match(request.messages[0].content, /recommendation, alternatives, and next step/i);
+    assert.match(request.messages[0].content, /complete user messages in the first person/i);
+    assert.match(request.messages[0].content, /add-course-to-plan/);
+    assert.match(request.messages[1].content, /PRIMER-01/);
+    assert.deepEqual(request.messages.at(-1), { role: "user", content: "What next?" });
+  } finally {
+    globalThis.LrnData = previousData;
+    globalThis.LrnCurriculumMap = previousMap;
+  }
+});
+
+test("assistant-perspective suggestions become user utterances", () => {
+  assert.equal(
+    PAN.followUpAsUserMessage("Do you want a path for testing, agents, or production controls?", "en"),
+    "I want a path for testing, agents, or production controls."
+  );
+  assert.equal(
+    PAN.followUpAsUserMessage("Should I suggest a course that matches your current in-progress items?", "en"),
+    "Show me a course that matches my current in-progress items."
+  );
+  assert.equal(
+    PAN.followUpAsUserMessage("Soll ich einen passenden Kurs vorschlagen?", "de"),
+    "Bitte schlage einen passenden Kurs vor."
+  );
+  assert.equal(PAN.followUpAsUserMessage("What should I learn next?", "en"), "What should I learn next?");
+});
+
+test("Markdown is parsed into a constrained block model without interpreting HTML", () => {
+  assert.deepEqual(PAN.parseMarkdownBlocks("## Next step\n\n- **Open** the course\n- Try `main.py`\n\n<script>alert(1)</script>"), [
+    { type: "heading", level: 2, text: "Next step" },
+    { type: "list", ordered: false, items: ["**Open** the course", "Try `main.py`"] },
+    { type: "paragraph", text: "<script>alert(1)</script>" }
+  ]);
+  assert.doesNotMatch(panSource, /\.innerHTML\s*=/);
+});
+
+test("long PAN prose is split into short readable paragraphs", () => {
+  const answer = "I can do either. For you as an AI Engineer, the most role-relevant next course is usually better: LRN-25 — AI: Introduction to Architecture for AI-Systems. If you want the easiest continuation from what you already have in progress, LRN-06 — AI for Software Engineers / GitHub Copilot is the smoother next step. If you want, I can recommend one based on either role fit or continuity.";
+  assert.deepEqual(PAN.parseMarkdownBlocks(answer), [
+    { type: "paragraph", text: "I can do either." },
+    { type: "paragraph", text: "For you as an AI Engineer, the most role-relevant next course is usually better: LRN-25 — AI: Introduction to Architecture for AI-Systems." },
+    { type: "paragraph", text: "If you want the easiest continuation from what you already have in progress, LRN-06 — AI for Software Engineers / GitHub Copilot is the smoother next step." },
+    { type: "paragraph", text: "If you want, I can recommend one based on either role fit or continuity." }
+  ]);
+});
+
+test("only validated source-backed course mentions become inline references", () => {
+  const sources = [{
+    type: "course",
+    id: "LRN-25",
+    title: "AI: Introduction to Architecture for AI-Systems",
+    href: "/lrn/course.html?id=LRN-25"
+  }];
+  const text = "Start with LRN-25 — AI: Introduction to Architecture for AI-Systems, then compare the options.";
+  const mention = PAN.findCourseMention(text, sources);
+  assert.equal(text.slice(mention.index, mention.end), "LRN-25 — AI: Introduction to Architecture for AI-Systems");
+  assert.equal(mention.source.href, "/lrn/course.html?id=LRN-25");
+  assert.equal(PAN.findCourseMention("Start with LRN-99.", sources), null);
+
+  const titleOnly = PAN.findCourseMention("Open AI: Introduction to Architecture for AI-Systems next.", sources);
+  assert.equal(
+    "Open AI: Introduction to Architecture for AI-Systems next.".slice(titleOnly.index, titleOnly.end),
+    "AI: Introduction to Architecture for AI-Systems"
+  );
+});
+
+test("course references receive validated open and add-to-plan tools", () => {
+  const previousData = globalThis.LrnData;
+  const previousMap = globalThis.LrnCurriculumMap;
+  globalThis.LrnData = { courses: [{ id: "PRIMER-01", title: "LLM Primer" }] };
+  globalThis.LrnCurriculumMap = { courseMaps: {} };
+  try {
+    const result = PAN.normalizeGatewayResult({
+      answer: "Start with **LLM Primer**.",
+      sources: [{ type: "course", id: "PRIMER-01" }, { type: "course", id: "MADE-UP" }],
+      actions: [
+        { type: "open-course", target: "MADE-UP", label: "Open fake" },
+        { type: "open-course-creator", label: "Create a course draft" },
+        { type: "add-course-to-plan", course_id: "PRIMER-01" }
+      ]
+    }, "en");
+    assert.deepEqual(result.sources.map((source) => source.id), ["PRIMER-01"]);
+    assert.deepEqual(result.actions.map((action) => [action.type, action.target || ""]), [
+      ["open-course-creator", ""],
+      ["add-course-to-plan", "PRIMER-01"],
+      ["open-course", "PRIMER-01"]
+    ]);
+    assert.equal(result.actions[0].label, "Create a course draft");
+    assert.equal(result.actions[1].label, "Add to my plan: LLM Primer");
+    assert.equal(result.actions[2].label, "Open course: LLM Primer");
+  } finally {
+    globalThis.LrnData = previousData;
+    globalThis.LrnCurriculumMap = previousMap;
+  }
+});
+
+test("adding a course preserves the plan and never creates duplicates", () => {
+  const plan = { schemaVersion: 1, cadence: { durationWeeks: 6, sessionsPerWeek: 2 }, capacity: { selectedCourses: 1 }, steps: [{ position: 1, courseId: "A", title: "A" }] };
+  const course = { id: "B", title: "Course B" };
+  const next = PAN.planWithCourse(plan, course, 1234);
+  assert.deepEqual(next.steps.map((step) => step.courseId), ["A", "B"]);
+  assert.equal(next.steps[1].position, 2);
+  assert.equal(next.steps[1].targetWeek, 6);
+  assert.equal(next.updatedAt, 1234);
+  assert.equal(next.capacity.selectedCourses, 2);
+  assert.equal(PAN.planWithCourse(next, course, 2000), null);
+});
+
+test("PAN normalizes a structured gateway completion", () => {
+  const payload = {
+    choices: [{
+      message: {
+        content: JSON.stringify({
+          answer: "Start with the primer.",
+          sources: [{ type: "course", id: "PRIMER-01" }],
+          followups: ["Why this course?"],
+          nextAction: { type: "open-course", target: "PRIMER-01", label: "Open primer" }
+        })
+      }
+    }]
+  };
+
+  assert.deepEqual(PAN.responseObject(payload), {
+    answer: "Start with the primer.",
+    sources: [{ type: "course", id: "PRIMER-01" }],
+    followups: ["Why this course?"],
+    nextAction: { type: "open-course", target: "PRIMER-01", label: "Open primer" }
+  });
 });
