@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does threshold_crossed decide whether the illustrative RSP signal is crossed?",
+      "question": "One noisy metric keeps tripping reviews while real capability shifts hide in averages. What threshold design fixes that?",
       "options": [
-        "Any one measurement above its threshold is enough",
-        "It ignores all measurements below 100 hours",
-        "At least two of the three capability measurements must meet their thresholds",
-        "Only eval_context_gaming_rate is considered"
+        "A single metric with a low bar",
+        "Averaging all signals together",
+        "No thresholds, pure judgment",
+        "Multiple independent signals conjoining"
       ],
-      "correct": 2,
-      "explanation": "The function adds reasons for RD automation >=.5, METR horizon >=40 hours, and AAR outperform share >=.4, then requires len(reasons) >= 2."
+      "correct": 3,
+      "explanation": "Single signals misfire; averages hide. This lesson trips on conjoined independent evidence."
     },
     {
       "stage": "check",

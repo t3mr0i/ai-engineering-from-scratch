@@ -68,6 +68,10 @@ This is not a lesson in compliance. RSP v3.0 is not a regulation; nothing forces
 
 
 
+## CBP context: tripwires conjoin, never average
+
+In the CBP context capability tripwires for deployed agents conjoin: multiple independent signals must agree before escalation, so no single noisy metric triggers reviews alone — and no single quiet metric suppresses them. Define thresholds with reasons attached before deployment; evaluate crossings on cadence. Averaged tripwires hide the signal that matters.
+
 ## Build It
 
 Reconstruct **Anthropic Responsible Scaling Policy v3.0** by following `CapabilityMeasurement` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.
