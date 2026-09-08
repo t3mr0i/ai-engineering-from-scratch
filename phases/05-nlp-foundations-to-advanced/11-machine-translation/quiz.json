@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What tokens does the lesson tokenizer return for \"Les chats courent.\"?",
+      "question": "Translated customer content must preserve domain terms across languages. What must be evaluated per language pair?",
       "options": [
-        "[\"les\", \"chats\", \"courent\", \".\"]",
-        "[\"Les\", \"chats\", \"courent.\"]",
-        "[\"leschatscourent\"]",
-        "[\"les\", \"chats\", \"courent\", \"<EOS>\"]"
+        "Only generic benchmark scores",
+        "Translation speed alone",
+        "The model's training date",
+        "Domain-term fidelity on CBP vocabulary"
       ],
-      "correct": 0,
-      "explanation": "tokenize lowercases the text, inserts a space before a period, and splits on whitespace."
+      "correct": 3,
+      "explanation": "Generic scores hide domain failures. This lesson translates with per-pair, per-domain evaluation."
     },
     {
       "stage": "check",

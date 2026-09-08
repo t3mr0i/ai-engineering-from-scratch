@@ -37,6 +37,10 @@ Three operational choices drive real-world MT quality.
 
 
 
+## CBP context: evaluate language pairs on domain terms
+
+In the CBP context German-English translation serves customer content, tickets, and documentation — evaluated on CBP domain vocabulary, never on generic benchmarks alone. Untested pairs mistranslate terms of art confidently; legal and contractual text always passes human review regardless of scores. Language quality is measured per pair per domain, not once globally.
+
 ## Build It
 
 Reconstruct **Machine Translation** by following `tokenize` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
