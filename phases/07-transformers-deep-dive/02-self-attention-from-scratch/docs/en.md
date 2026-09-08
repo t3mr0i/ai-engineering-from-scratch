@@ -166,6 +166,10 @@ Attention(Q, K, V) = softmax( Q @ K^T / sqrt(dk) ) @ V
 
 
 
+## CBP context: every position reads every position
+
+In the CBP context self-attention is the single parallel step behind model quality: each token weighs all others at once, with QK dimensions setting the weight matrix and V carrying the blended content. Long CBP documents work because no bottleneck crushes early tokens. Build it once from scratch for the shapes; consume it everywhere after. The 6×6 weights over 6 tokens generalize to every context window you will ever pay for.
+
 ## Build It
 
 Reconstruct **Self-Attention from Scratch** by following `softmax_rows` on tokens=["red","fox"]. Run `rustc --edition 2021 main.rs -o /tmp/lesson && /tmp/lesson` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

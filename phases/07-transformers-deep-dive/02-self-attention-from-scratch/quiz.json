@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In the Rust demo with 6 tokens, d_model=16, dk=8, and dv=8, what shapes are printed for output and attention weights?",
+      "question": "Early tokens in long documents must stay readable at the final position without crushing. What mechanism allows that?",
       "options": [
-        "Output (8, 6) and weights (16, 6)",
-        "Output (6, 16) and weights (8, 8)",
-        "Output (6, 8) and weights (6, 6)",
-        "Output (6, 6) and weights (6, 8)"
+        "A fixed-size bottleneck vector",
+        "Sequential compression per token",
+        "Forgetting early tokens deliberately",
+        "Every position attending to every other at once"
       ],
-      "correct": 2,
-      "explanation": "Q and K have width 8, so QKᵀ gives a 6×6 weight matrix; multiplying it by V of width 8 yields a 6×8 output."
+      "correct": 3,
+      "explanation": "Bottlenecks crush distance. This lesson attends all-to-all in one parallel step."
     },
     {
       "stage": "check",
