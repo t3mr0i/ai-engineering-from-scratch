@@ -80,6 +80,10 @@ LangGraph originally shipped a `langgraph-supervisor` library with a high-level 
 
 
 
+## CBP context: decompose, parallelize, synthesize, trace
+
+In the CBP context supervisor fan-out suits independent CBP subtasks: the lead decomposes, scoped workers run parallel, results synthesize — with planning, worker events, and synthesis all in one joined trace. Specialists never talk past the supervisor; routing stays inspectable. Parallelism without the joined trace is concurrency without accountability.
+
 ## Build It
 
 Reconstruct **Supervisor / Orchestrator-Worker Pattern** by following `WorkerResult` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
