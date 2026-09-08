@@ -98,6 +98,10 @@ It does not parallelize the pair counter. A loop in Python over a corpus of a fe
 
 Run the demo. Then change the target vocabulary size in the demo from 300 to 600 and watch how the encoded length of the held-out sentence drops. That curve is the BPE compression curve.
 
+## CBP context: count with the deployed tokenizer, train nothing
+
+In the CBP context tokenizers are consumed, never trained: count every context budget with the tokenizer matching the Azure deployment (lesson 11/05), because a wrong tokenizer means a wrong budget and a provider 400 in production. Build the BPE here to understand merges, byte fallbacks, and special tokens — then use the platform's tokenizer and never think about training one again.
+
 ## Build It
 
 Reconstruct **BPE Tokenizer From Scratch** by following `BPETokenizer` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

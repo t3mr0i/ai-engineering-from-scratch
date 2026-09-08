@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the initial byte alphabet contribute before any BPE merges are trained?",
+      "question": "A model never sees text, only integers, and any byte must survive the round trip. What must the starting alphabet cover?",
       "options": [
-        "256 token IDs, one for each possible byte",
-        "128 token IDs, one for each ASCII letter",
-        "Only the tokens seen in the training corpus",
-        "One token for every Unicode code point"
+        "Only common English letters",
+        "Only tokens seen in training",
+        "One token per whole document",
+        "Every possible byte before any learned merges"
       ],
-      "correct": 0,
-      "explanation": "The tokenizer starts with the complete 0–255 byte alphabet, so every byte has a stable raw token before learned merges are appended."
+      "correct": 3,
+      "explanation": "Byte coverage guarantees lossless round-trips. This lesson builds BPE from that floor upward."
     },
     {
       "stage": "check",
