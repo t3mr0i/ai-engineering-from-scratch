@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "When is a timer trigger due in the main API?",
+      "question": "A nightly job runs on a timer, but nobody can say what it did, whether it passed, or why it stopped. What is missing?",
       "options": [
-        "Only when requested=True, regardless of elapsed time",
-        "When event_name matches the timer's interval",
-        "When last_run is absent or now - last_run reaches interval",
-        "Only after the evaluator has passed twice"
+        "A louder timer with more alarms",
+        "Jobs that never stop by design",
+        "Trust that nightly jobs always work",
+        "Trigger, maker, independent evaluator, and a stop receipt"
       ],
-      "correct": 2,
-      "explanation": "trigger_due treats timers as stateless: no last_run means due immediately; otherwise the elapsed time must meet the configured interval."
+      "correct": 3,
+      "explanation": "A scheduled loop needs the full contract. This project wires trigger, maker, evaluator, and stop policy into one automated loop."
     },
     {
       "stage": "check",

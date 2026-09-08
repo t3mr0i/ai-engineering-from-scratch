@@ -68,6 +68,10 @@ Hand off `outputs/skill-automated-loop.md` with the command `python3 main.py`, t
 - Add a wall-clock budget and record it in each stop receipt.
 - Add an event deduplication key and a retry limit.
 
+## CBP context: scheduled CBP jobs with stop receipts
+
+In the CBP context the automated loop runs scheduled work — nightly dependency checks, stale-ticket triage, eval-set refreshes — with a trigger per job, a maker proposing the artifact, an independent evaluator, and a stop policy that writes a receipt. The receipt says what ran, what passed, what it cost, and why it stopped; a loop without a receipt is indistinguishable from a loop that never ran. Review receipts in the morning standup the way the team reviews pipeline runs.
+
 ## Further reading
 
 - [Phase 14 · 43 — Loop Engineering](../../43-loop-engineering/docs/en.md)
