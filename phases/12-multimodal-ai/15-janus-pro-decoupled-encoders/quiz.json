@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What task does route('Generate a picture of a sunset') select?",
+      "question": "One request needs image understanding, another needs image generation. How should one system serve both?",
       "options": [
-        "understand, because every image prompt first needs a caption",
-        "ambiguous, because generate and describe have equal scores",
-        "generate, because a generation keyword scores higher than understanding keywords",
-        "text_out, because the shared body never emits image tokens"
+        "One encoder forced to do both jobs",
+        "Refuse one of the two intents",
+        "Two fully separate giant models",
+        "Route by intent to specialized encoders"
       ],
-      "correct": 2,
-      "explanation": "route counts generation keywords such as generate and picture. Their score exceeds the understanding score, so the task is routed to the VQ generation path."
+      "correct": 3,
+      "explanation": "Understanding and generation need different eyes. This lesson decouples encoders by task."
     },
     {
       "stage": "check",

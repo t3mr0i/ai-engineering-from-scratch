@@ -91,6 +91,10 @@ For products that need both, Janus-Pro is now the reference open architecture.
 
 
 
+## CBP context: route understanding versus generation
+
+In the CBP context decoupled encoders route by intent: understanding requests take the comprehension path, generation requests take the synthesis path — each evaluated on its own CBP cases. Keyword routing ("generate", "picture" versus descriptive asks) is the mechanism; intent-labeled evals prove it. One shared body with two specialized front ends beats either monolith where both jobs matter.
+
 ## Build It
 
 Reconstruct **Janus-Pro: Decoupled Encoders for Unified Multimodal Models** by following `SiglipStub` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
