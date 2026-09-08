@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What UI resource does tool_visualize_timeline return for the notes timeline?",
+      "question": "A tool returns a paragraph describing a timeline, but users actually want to see and explore the timeline. What is missing?",
       "options": [
-        "notes://recent",
-        "https://notes.example.com/timeline",
-        "ui://notes/timeline",
-        "file:///tmp/timeline.html"
+        "A longer paragraph with more dates",
+        "A separate desktop app per assistant host",
+        "Screenshots pasted into the chat",
+        "A sandboxed interactive UI the host renders from the tool result"
       ],
-      "correct": 2,
-      "explanation": "The tool result points at the exact MCP App resource URI ui://notes/timeline."
+      "correct": 3,
+      "explanation": "Text cannot be explored. This lesson builds MCP Apps: the ui:// resource that turns a tool result into an interactive view."
     },
     {
       "stage": "check",

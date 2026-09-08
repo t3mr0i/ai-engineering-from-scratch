@@ -176,6 +176,10 @@ Call `timeline_html` from a small caller with the demo’s smallest built-in fix
 
 Hand off `outputs/skill-mcp-apps-spec.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: review UIs in the sandbox, data stays inside
+
+In the CBP context MCP Apps are how review workflows get a face: timelines, diff views, and approval panels render as `ui://` resources in the host's sandboxed iframe, one HTML bundle for every client. Keep the sandbox tight — strict CSP, no network access unless the host explicitly grants it — because the UI sits next to tenant data. The app displays; it never exfiltrates. Anything the UI needs comes through the host bridge, audited like any other tool call.
+
 ## Further Reading
 
 - [MCP ext-apps — GitHub](https://github.com/modelcontextprotocol/ext-apps) — reference implementation and SDK
