@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "A perceptron has weights [1,1], bias -1.5, and a step output of 1 when the total is at least zero. What does it predict for input [1,1]?",
+      "question": "A decision unit weights its inputs, adds a bias, and fires past a threshold. What is that the building block of?",
       "options": [
-        "1",
-        "0",
-        "0.5",
-        "-1"
+        "Spreadsheets with formulas",
+        "Every neural network neuron",
+        "Database indexes",
+        "Network routers"
       ],
-      "correct": 0,
-      "explanation": "The weighted total is 1+1-1.5=0.5, so the step activation returns 1."
+      "correct": 1,
+      "explanation": "Weighted sum plus threshold is the neural atom. This lesson builds the perceptron it all starts from."
     },
     {
       "stage": "check",

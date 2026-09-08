@@ -39,6 +39,10 @@ flowchart LR
 
 AND and OR can be separated by one line. XOR cannot: the positive points `[0,1]` and `[1,0]` lie on opposite corners from the negative points `[0,0]` and `[1,1]`. The hand-wired Python function `xor_predict` and the Julia `xor_network` expose the usual two-layer workaround: OR and NAND feed an AND unit.
 
+## CBP context: the atom of every neuron
+
+In the CBP context the perceptron is the smallest unit worth understanding: weighted sum, bias, threshold — the atom repeated millions of times in every deployed model. Its limit matters more than its mechanism: single layers separate only linearly separable classes, which is why features and depth exist. Read for the atom; the rest of the phase assembles it.
+
 ## Build It
 
 Run `python3 main.py` from `code/` (or `julia main.jl` when Julia is installed). The Python demo prints AND predictions `[0, 0, 0, 1]`, hand-wired XOR `[0, 1, 1, 0]`, and a trained XOR loss near `0.0002`. The reusable functions are `Perceptron.predict`, `Perceptron.train`, `xor_predict`, and `TwoLayerNetwork.train`.
