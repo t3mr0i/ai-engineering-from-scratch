@@ -561,6 +561,10 @@ Call `call` from a small caller with the text "red fox". Compare its result with
 
 Hand off `outputs/skill-mcp-handshake-tracer.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: one server behind the gateway, every client
+
+In the CBP context MCP is how a capability is built once and reused: expose it as an MCP server behind the APIM gateway with Entra ID authentication, and every MCP-capable client — including the Java service via its MCP client — consumes the same tools, resources, and prompts. The lifecycle from this lesson (initialize, capability negotiation, notifications) is unchanged; only the hosting differs. Prefer this over per-client integrations for anything more than one team uses: the second consumer already pays back the server investment.
+
 ## Further Reading
 
 - [Model Context Protocol — Specification 2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25) — the canonical spec document

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does Message.kind classify a JSON-RPC object with method and id fields?",
+      "question": "A team built the same database lookup three times, once per assistant host, and every fix must be copied by hand. What is the structural fix?",
       "options": [
-        "As a request",
-        "As a notification",
-        "As a response result",
-        "As an unknown message"
+        "Build a fourth copy with cleaner code",
+        "Stop fixing bugs in the lookups",
+        "Give each host its own database",
+        "Agree on one wire format so a single server works in every host"
       ],
-      "correct": 0,
-      "explanation": "A method paired with an id is a request; the id lets the peer correlate the eventual response."
+      "correct": 3,
+      "explanation": "Per-host integrations multiply every change. This lesson introduces MCP: the shared contract that lets one server serve every client."
     },
     {
       "stage": "check",
