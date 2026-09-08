@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What must PCA do before forming the covariance matrix?",
+      "question": "High-dimensional data must be compressed for cost and visualized for exploration. What must happen before finding the main directions?",
       "options": [
-        "Sort every row lexicographically",
-        "Replace all features with their absolute values",
-        "Center each feature by subtracting its sample mean",
-        "Normalize labels into one-hot vectors"
+        "Sort all rows alphabetically",
+        "Take absolute values everywhere",
+        "Center each feature on its mean",
+        "Delete half the records at random"
       ],
       "correct": 2,
-      "explanation": "Centering makes the covariance describe variation around the data mean rather than the location of the cloud."
+      "explanation": "Centering reveals shape instead of location. This lesson reduces dimensions around the data's own center."
     },
     {
       "stage": "check",

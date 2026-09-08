@@ -29,6 +29,10 @@ and eigendecomposes `C`. The implementation sorts eigenvalues in descending orde
 
 Kernel PCA follows the same idea on a centered Gram matrix. For the RBF kernel, `K[i,j] = exp(-gamma * ||x_i-x_j||²)`. The function returns one coordinate row per training input; it does not claim to implement an out-of-sample transform.
 
+## CBP context: center first, reduce for cost and sight
+
+In the CBP context dimensionality reduction serves two masters: lower embedding dimensions cut index cost and latency, and 2D projections make cluster structure visible during exploration. Center features before covariance or the "principal" directions describe the cloud's location instead of its shape. Reduce deliberately for a measured reason; each dropped dimension is information the retriever will never get back.
+
 ## Build It
 
 Run the offline demo:
