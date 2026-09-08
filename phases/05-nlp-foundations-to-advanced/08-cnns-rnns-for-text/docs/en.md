@@ -41,6 +41,10 @@ Plain RNNs suffer vanishing gradients. The **LSTM** adds gates that decide what 
 
 
 
+## CBP context: vanishing gradients explain transformers
+
+In the CBP context CNNs and RNNs for text are history that explains the present: recurrent gradients vanish exponentially with length (0.9^100 ≈ 0), which is why long documents defeated RNNs and why attention replaced recurrence. Know the failure to appreciate the fix; never build text CNNs or RNNs for new CBP work. Architecture history prevents architecture nostalgia.
+
 ## Build It
 
 Reconstruct **CNNs and RNNs for Text** by following `vanishing_gradient_sim` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is vanishing_gradient_sim(seq_len=100, recurrent_weight=0.9) approximately?",
+      "question": "Recurrent models forget distant words as gradients shrink exponentially with length. What does that explain?",
       "options": [
-        "0.9",
-        "9.0",
-        "2.66e-5",
-        "100^0.9"
+        "Why longer training always helps",
+        "Why bigger vocabularies fix memory",
+        "Why recurrence suits short texts only",
+        "Why attention replaced recurrence for long context"
       ],
-      "correct": 2,
-      "explanation": "The helper returns 0.9**100, which is about 0.0000266."
+      "correct": 3,
+      "explanation": "Vanishing gradients bound recurrent memory. This lesson measures the decay behind the transformer shift."
     },
     {
       "stage": "check",
