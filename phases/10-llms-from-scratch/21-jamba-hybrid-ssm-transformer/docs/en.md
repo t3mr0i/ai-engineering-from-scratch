@@ -124,6 +124,10 @@ The 2026 landscape: pure-Transformer MoE dominates the frontier, but hybrids own
 
 
 
+## CBP context: hybrids for very long chats
+
+In the CBP context hybrid SSM-transformer deployments suit very-long-chat features where quadratic attention prices out dense models: attention layers where exact recall matters, fixed-state layers for cheap long stretches. Evaluate hybrids on state tracking and in-context retrieval over CBP long conversations — not on perplexity alone, where pure SSMs flatter. Ratio choices are vendor engineering; evals are yours.
+
 ## Build It
 
 Reconstruct **Jamba — Hybrid SSM-Transformer** by following `HybridConfig` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
