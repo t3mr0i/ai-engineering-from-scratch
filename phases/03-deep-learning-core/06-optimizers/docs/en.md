@@ -29,6 +29,10 @@ p -= lr*m_hat/(sqrt(v_hat)+epsilon)
 
 On Adam's first step with gradient `g`, bias correction makes `m_hat=g` and `v_hat=g²`, even though the raw moments are only `(1-beta1)g` and `(1-beta2)g²`. If `d_adam` is the bias-corrected direction and `p_old` is the pre-step value, this implementation uses the decoupled equation `p_new = p_old - lr*d_adam - lr*weight_decay*p_old`. The decay term therefore never scales the adaptive Adam update.
 
+## CBP context: read configs, default to AdamW
+
+In the CBP context optimizers appear as fine-tune configuration names: AdamW for transformers by default, SGD with momentum where the recipe says so, each with its learning rate and schedule beside it. Momentum carries past gradients forward; adaptive methods scale per-parameter steps. Never accept a default blindly on a divergent job — the optimizer line is the first config to interrogate after data.
+
 ## Build It
 
 Run `python3 main.py` from `code/`. It applies 100 updates to `(x-3)^2` from `x=10` with each optimizer and prints the final `x` and loss. `bias_correction_demo()` reports raw first moments `0.1` and `0.001` for a unit gradient with the default betas, while the corrected values are 1 and 1.

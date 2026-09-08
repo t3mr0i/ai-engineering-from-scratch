@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "SGD receives parameter p=1, gradient g=0.5, and lr=0.1. What is p after one step?",
+      "question": "Gradients point downhill, but raw steps oscillate and crawl. What improves the raw gradient step?",
       "options": [
-        "1.05",
-        "0.5",
-        "0.95",
-        "0.9"
+        "Bigger raw steps always",
+        "Freezing all parameters",
+        "Random directions per step",
+        "Momentum plus per-parameter adaptive scaling"
       ],
-      "correct": 2,
-      "explanation": "The update is p-lr*g=1-0.1*0.5=0.95."
+      "correct": 3,
+      "explanation": "Raw steps waste motion. This lesson builds momentum and adaptive updates behind modern optimizers."
     },
     {
       "stage": "check",
