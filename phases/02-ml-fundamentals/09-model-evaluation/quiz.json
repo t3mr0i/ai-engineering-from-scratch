@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "A classifier has TP=8, FP=2, FN=4, and TN=6. What is its recall?",
+      "question": "Missing a fraud case costs far more than a false alarm. Which metric should the team optimize?",
       "options": [
-        "0.67",
-        "0.80",
-        "0.57",
-        "0.40"
+        "Overall accuracy alone",
+        "The metric that looks highest",
+        "Precision regardless of misses",
+        "Recall, reflecting the cost of missed cases"
       ],
-      "correct": 0,
-      "explanation": "Recall is TP/(TP+FN)=8/(8+4)=2/3, approximately 0.67."
+      "correct": 3,
+      "explanation": "Error costs choose the metric. This lesson builds precision, recall, and their tradeoffs."
     },
     {
       "stage": "check",

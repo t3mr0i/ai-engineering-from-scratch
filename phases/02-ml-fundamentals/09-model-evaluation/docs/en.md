@@ -19,6 +19,10 @@
 
 `code/evaluation.py` is a standard-library implementation; `code/main.py` runs the Python fixture and `code/main.jl` mirrors the split/metric ideas with Julia stdlib modules. `make_classification_data(120, seed=7)` feeds `SimpleLogistic`. The Python demo prints 72/24/24 row counts for the default 60/20/20 split, then reports test accuracy and ROC-AUC. Exact scores are fixture outputs, not universal benchmarks.
 
+## CBP context: the metric follows the cost of error
+
+In the CBP context precision versus recall is a business decision: missed fraud (low recall) costs differently than false alarms (low precision), so the metric follows the error costs, never a default. Report both with the confusion counts on CBP evals; a single accuracy number on imbalanced data is a lie by averaging. The stakeholder names which error hurts; the metric obeys.
+
 ## Build It
 
 Start with `train_val_test_split(X, y, seed=7)`. The returned order is `X_train, y_train, X_val, y_val, X_test, y_test`; with ten rows and ratios `0.6`/`0.2`, the groups contain 6, 2, and 2 rows. `kfold_split(11, k=4)` distributes every index to validation exactly once, with the final fold receiving the remainder. `stratified_kfold_split` distributes each class across folds, assigning any per-class remainder to the currently smallest validation fold so total fold sizes stay balanced.
