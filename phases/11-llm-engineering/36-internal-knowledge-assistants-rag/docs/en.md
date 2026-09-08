@@ -104,6 +104,10 @@ A complete handoff records python3 main.py, the observed output, and the reasoni
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
+## CBP context: inventory, permissions, evals, fallback
+
+In the CBP context the knowledge assistant stands on four reviewed artifacts: a source inventory with owners, an Entra ID permission model with jurisdiction rules, an eval sample from real CBP questions, and a fallback path (abstain plus escalate) for uncertain answers. Prefer RAG over fine-tuning for company knowledge; reindex on the data pipeline's schedule. The chat box is the easy 10%; governance is the product.
+
 ## Further Reading
 
 ### Recommended trainings (LHIND AI Literacy)
