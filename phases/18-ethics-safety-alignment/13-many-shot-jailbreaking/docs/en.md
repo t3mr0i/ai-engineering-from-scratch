@@ -68,6 +68,10 @@ Lesson 12 is the in-context iterative attack. Lesson 13 is the long-context leng
 
 
 
+## CBP context: cap untrusted demonstrations
+
+In the CBP context long contexts filled with untrusted demonstrations are in-context training attackers control: cap untrusted example counts, filter compliance-looking dialogues from retrieved content, and monitor for demonstration-stuffing patterns. Length is attack surface; many compliant-looking shots make harmful continuations look like the task. Bound what strangers teach the model per request.
+
 ## Build It
 
 Reconstruct **Many-Shot Jailbreaking** by following `target_asr` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
