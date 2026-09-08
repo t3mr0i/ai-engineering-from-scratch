@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "After the demo completes its current turn, what durable state is shown?",
+      "question": "A team writes a huge instruction file, but the agent ignores half of it and still fails the same way. What is the better shape?",
       "options": [
-        "`T-001` is still active and waiting for its test command.",
-        "Both `T-001` and `T-002` are marked done.",
-        "No active task; `T-001` is done, `T-002` remains todo, and the next action is to pick the next task.",
-        "The board is empty because completed tasks are deleted."
+        "An even longer instruction file",
+        "No instructions at all",
+        "Instructions hidden in chat history",
+        "A tiny router plus durable state and a task board"
       ],
-      "correct": 2,
-      "explanation": "With both touched files already recorded, `run_one_turn` closes `T-001`, clears `active_task_id` and `touched_files`, and leaves `T-002` for the next turn."
+      "correct": 3,
+      "explanation": "Bulk instructions get skimmed and ignored. This lesson builds the minimal workbench: router, state, and board, each with one job."
     },
     {
       "stage": "check",

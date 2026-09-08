@@ -75,6 +75,10 @@ Call `AgentState` from a small caller with the smallest valid record {"id": 1}. 
 
 Hand off `outputs/skill-minimal-workbench.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: three files, each with a job
+
+In the CBP context the minimal workbench is a short AGENTS.md router, a JSON state file the agent reads before acting and writes after, and a task board with in-flight, blocked, and next — all in the repo, all diff-friendly in review. Keep the root file tiny and route deeper only when relevant; a 3000-line AGENTS.md is documentation the model will ignore. These three files are the seed the full harness (lessons 43-52) grows from.
+
 ## Further Reading
 
 - [agents.md — the open spec](https://agents.md/) — adopted by Cursor, Codex, Claude Code, Copilot, Gemini, OpenCode
