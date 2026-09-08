@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "A feature has mean 10 and standard deviation 5. After standardization, what value represents x=15?",
+      "question": "A seconds-valued feature drowns a 0-1 priority signal in every distance computation. What fixes that?",
       "options": [
-        "15",
-        "3",
-        "1",
-        "0.5"
+        "Delete the priority signal",
+        "Use raw scales for authenticity",
+        "Bigger models that ignore scale",
+        "Standardize features to comparable scales"
       ],
-      "correct": 2,
-      "explanation": "The z-score is (15-10)/5=1."
+      "correct": 3,
+      "explanation": "Unscaled magnitudes dominate unfairly. This lesson standardizes inputs before they enter models."
     },
     {
       "stage": "check",

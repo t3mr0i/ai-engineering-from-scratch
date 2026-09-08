@@ -19,6 +19,10 @@
 
 An estimator only sees the representation it receives. A house row from `make_housing_data` contains missing `sqft`/`age`, categories such as `neighborhood`, and a continuous `price`. The functions in `code/features.py` make each conversion explicit so a model does not silently mix units or learn from a future target.
 
+## CBP context: scale inputs before scoring them
+
+In the CBP context unscaled features let the largest-magnitude input dominate every distance and gradient: standardize scoring inputs (z-scores or documented ranges) before they enter models or thresholds. A ticket-age-in-seconds beside a 0-1 priority will drown the priority without scaling. Document the transform with the model; unscaling at serving time is a classic silent bug.
+
 ## Build It
 
 Run `python3 main.py` from `code/`. The fixture creates 200 housing rows, reports missing counts, imputes `sqft` with `impute_median` and `age` with `impute_mean`, then prints a standardized mean near `0`, a min–max range `[0, 1]`, five age bins, sorted neighborhood categories, and vocabulary sizes for five descriptions. The TF-IDF implementation uses `log(n_documents / document_frequency)`; a word present in both documents therefore receives zero IDF in the two-document check.
