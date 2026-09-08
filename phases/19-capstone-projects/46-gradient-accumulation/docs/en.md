@@ -115,6 +115,10 @@ There is no free lunch. Doubling `accum_steps` doubles the wall time per optimiz
 
 
 
+## CBP context: effective batch is a configured meaning
+
+In the CBP context effective batch size is a configuration you set on provider fine-tune jobs, not code you write — micro-batch times accumulation steps, trading memory against update frequency. Know the identity so the configured number means what you think: doubling accumulation halves the update count per epoch, which changes convergence behavior, not just speed. A fine-tune that "saw the same data" with different accumulation did not take the same path.
+
 ## Build It
 
 Reconstruct **Gradient Accumulation** by following `StepResult` on x=0.5 with the demo defaults. Run `python3 main.py` and verify that the update or loss change agrees with the gradient sign; a zero gradient produces no accidental jump.

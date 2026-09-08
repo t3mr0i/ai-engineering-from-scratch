@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the effective batch identity that gradient accumulation expresses?",
+      "question": "Only a small batch fits in memory, but the training recipe needs a large effective batch. How do you get there?",
       "options": [
-        "effective_batch = micro_batch / accum_steps",
-        "effective_batch = micro_batch * accum_steps",
-        "effective_batch = micro_batch + accum_steps",
-        "effective_batch = world_size only"
+        "Buy infinite memory",
+        "Use the small batch and hope",
+        "Train on a subset of the data",
+        "Pile small-batch gradients before each optimizer step"
       ],
-      "correct": 1,
-      "explanation": "Micro batch is what fits in memory; accumulation steps are how many forward + backward passes pile gradients into the same buffer before one optimizer step."
+      "correct": 3,
+      "explanation": "Memory bounds the micro-batch, not the effective one. This lesson accumulates gradients across passes per update."
     },
     {
       "stage": "check",
