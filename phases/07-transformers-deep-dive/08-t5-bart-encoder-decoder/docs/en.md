@@ -101,6 +101,10 @@ The trend since ~2022: decoder-only takes over tasks that encoder-decoder used t
 
 
 
+## CBP context: frame rewriting as conditioned tasks
+
+In the CBP context encoder-decoder models handle conditioned rewriting — summarize this, normalize that, translate with context — where explicit task framing beats open generation. Span-corruption training is why they reconstruct faithfully; sentinel structure is the mechanism, not trivia. Reach for encoder-decoder deployments when the job names its input and its output shape.
+
 ## Build It
 
 Reconstruct **T5, BART — Encoder-Decoder Models** by following `sentinel` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In corrupt_spans, what role does <extra_id_0> play in the returned source and target?",
+      "question": "A job rewrites inputs to outputs with both sides fully specified. Which architecture fits best?",
       "options": [
-        "It replaces every masked token separately, one sentinel per token",
-        "It is a normal vocabulary word copied into both sequences",
-        "It marks the first masked span in the source and starts that span's original tokens in the decoder target",
-        "It marks the end of the entire target but never appears in the source"
+        "Pure generation with no input reading",
+        "Classification with no text output",
+        "No model, manual rewriting only",
+        "Encoder reading fully plus decoder writing conditionally"
       ],
-      "correct": 2,
-      "explanation": "Each ordered masked span gets a sentinel in source; target repeats that sentinel and then emits the span's original tokens."
+      "correct": 3,
+      "explanation": "Conditioned rewriting needs both sides. This lesson corrupts spans and reconstructs them."
     },
     {
       "stage": "check",
