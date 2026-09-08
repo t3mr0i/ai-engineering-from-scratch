@@ -67,6 +67,10 @@ Lessons 12-15 are the attack families. Lesson 16 is the production tooling. Less
 
 
 
+## CBP context: scored categories in CI
+
+In the CBP context Garak, Llama Guard, and PyRIT run as pipeline tooling with scored hazard categories and thresholds — not ad-hoc scripts: probes execute per release, scores gate merges, trends alert before regressions ship. Tool choice matters less than wiring; unwired tools test nothing. Red-team tooling without CI integration is a demo, not a defense.
+
 ## Build It
 
 Reconstruct **Red-Team Tooling — Garak, Llama Guard, PyRIT** by following `guard_classify` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

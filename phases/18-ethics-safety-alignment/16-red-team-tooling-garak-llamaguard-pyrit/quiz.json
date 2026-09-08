@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does guard_classify return for a matching hazard phrase in the toy?",
+      "question": "Red-team probes run manually before big releases only. What makes them a real defense?",
       "options": [
-        "A single natural-language refusal with no category",
-        "A gradient with respect to the target model",
-        "A category-to-score map in which a matching trigger can receive 0.9",
-        "A list of prompts selected for PyRIT"
+        "Bigger manual probe lists",
+        "Annual penetration tests",
+        "Trust in quiet periods",
+        "Scored categories with thresholds in CI"
       ],
-      "correct": 2,
-      "explanation": "guard_classify initializes every category to 0.0 and raises a category to 0.9 when one of its trigger strings appears. is_unsafe then compares those scores with the threshold, 0.5 by default."
+      "correct": 3,
+      "explanation": "Unwired tools test nothing. This lesson runs probes per release with gating scores."
     },
     {
       "stage": "check",
