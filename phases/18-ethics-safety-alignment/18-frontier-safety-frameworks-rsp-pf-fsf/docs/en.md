@@ -99,6 +99,10 @@ Lessons 17-18 are the measurement-and-governance layer on top of the deception a
 
 
 
+## CBP context: tiers, triggers, safeguards — mapped
+
+In the CBP context frontier frameworks share one design grammar — tiered capability thresholds, domain risk triggers, safeguards activating with capability — differing in vocabulary, not structure. Map vendor commitments onto that grammar during procurement and governance reviews; different names for the same tier still bind. Structure aligns; cutoffs and enforcement vary, and variance is what diligence checks.
+
 ## Build It
 
 Reconstruct **Frontier Safety Frameworks — RSP, PF, FSF** by following `print_row` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
