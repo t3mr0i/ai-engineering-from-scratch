@@ -77,6 +77,10 @@ Reference: https://reference.langchain.com/python/langgraph-supervisor.
 
 
 
+## CBP context: summarize below, decide above
+
+In the CBP context hierarchy condenses: groups summarize their own findings so leads read syntheses, not raw notes — engineering and legal streams combining into one decision. Watch decomposition drift (subtasks wandering from intent) with the lead re-anchoring per round. Hierarchy scales attention; drift unanchored hierarchies into parallel misunderstandings.
+
 ## Build It
 
 Reconstruct **Hierarchical Architecture and Its Failure Mode** by following `LeafOutput` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
