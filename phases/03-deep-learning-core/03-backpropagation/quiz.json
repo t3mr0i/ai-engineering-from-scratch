@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For z=a+b, an upstream gradient dz/dz of 1 reaches the addition node. What gradient does the Value engine send to a?",
+      "question": "Training must tell millions of weights how much each contributed to one error. What computes that?",
       "options": [
-        "1",
-        "0",
-        "b",
-        "a+b"
+        "Trying every weight separately",
+        "Random credit assignment",
+        "Human inspection of each weight",
+        "Backward gradient flow via the chain rule"
       ],
-      "correct": 0,
-      "explanation": "The local derivative of addition with respect to either operand is 1, so the upstream gradient passes through unchanged."
+      "correct": 3,
+      "explanation": "Credit assignment scales only backwards. This lesson builds backpropagation from the chain rule."
     },
     {
       "stage": "check",

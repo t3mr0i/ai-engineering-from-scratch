@@ -32,6 +32,10 @@ flowchart LR
 
 The Python and Julia MLPs use (L=\frac12(a-y)^2). If (a=\sigma(z)), then (\partial L/\partial z=(a-y)a(1-a)). The finite-difference check in the Julia demo compares one `w1` entry with `(L(w+h)-L(w-h))/(2h)`; the Python tests verify the simpler scalar cases directly.
 
+## CBP context: credit assignment, automated
+
+In the CBP context backpropagation is automated credit assignment: every weight learns how much it contributed to the error, via the chain rule from lesson 01/05 applied mechanically. This is what "training" executes billions of times — no intuition beyond that is required to consume fine-tunes, but no less either. When training curves misbehave, the backward flow of gradients is where the explanation lives.
+
 ## Build It
 
 Run `python3 main.py` in `code/`; it trains a seeded 2-4-1 network for 400 batch epochs and prints four probabilities with classes `[0,1,1,0]`. `julia main.jl` runs the equivalent XOR, circle, and finite-difference demonstrations when Julia is installed. Both paths use only standard-library functionality.
