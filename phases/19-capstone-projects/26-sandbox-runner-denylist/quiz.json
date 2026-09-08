@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which executable is rejected immediately by the default sandbox denylist?",
+      "question": "An agent runs shell commands with full filesystem and network access. What is the minimal safe shape?",
       "options": [
-        "printf",
-        "git",
-        "rm",
-        "date"
+        "Full access for speed",
+        "Trust in well-behaved agents",
+        "No commands at all, ever",
+        "Denylist plus path jail plus scoped credentials"
       ],
-      "correct": 2,
-      "explanation": "The default denylist contains rm, along with commands such as sudo, curl, wget, and shutdown. The other names are not denied merely because of their executable name."
+      "correct": 3,
+      "explanation": "Unjailed shells are incidents waiting for a prompt. This lesson sandboxes: denylists, path jails, minimal credentials."
     },
     {
       "stage": "check",

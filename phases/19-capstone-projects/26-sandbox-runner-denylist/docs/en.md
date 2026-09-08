@@ -92,6 +92,10 @@ The demo creates a temp directory, drops a clean file into it, then runs a batte
 
 Lesson 25 produced the gate chain. Lesson 26 is the executor that runs after a gate ALLOW. Lesson 27's eval harness compares the sandbox results against the expected exit-code per task. Lesson 28 emits a `gen_ai.tool.execution` span around each `Sandbox.run` invocation. Lesson 29's end-to-end demo wires a real coding agent through both layers.
 
+## CBP context: deny by default, jail the paths
+
+In the CBP context the sandbox denies destructive executables by name, jails file access to the single task repository, and scopes credentials to that repo — the same posture as the Boards-to-PR agent. `rm`, `sudo`, and network fetch have no business in an agent's shell; anything the task truly needs arrives through an allowlisted tool, not the command line. Log every denial: the denylist log is where the next attack pattern shows up first.
+
 ## Build It
 
 Reconstruct **Capstone Lesson 26: Sandbox Runner with Denylist and Path Jail** by following `SandboxResult` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
