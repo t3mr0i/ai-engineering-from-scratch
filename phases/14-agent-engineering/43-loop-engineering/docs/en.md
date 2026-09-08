@@ -186,6 +186,10 @@ Parallel agents also do not remove the review bottleneck: more runs can create
 more output than a human can inspect. The graph lesson that follows makes that
 coordination cost explicit.
 
+## CBP context: schedule the loop, bound the autonomy
+
+In the CBP context loop engineering is what lets a CBP agent run without a human hovering: explicit triggers (schedule, event, manual request), explicit state transitions, an evaluator per turn, and a stop condition — all inspectable in the repo. Autonomy stays bounded by the same limits as lesson 01 (iterations, spend) plus a trigger audit: every wake records why the loop woke. An unscheduled, unlogged loop is a cron job nobody owns; an explicit one is a service.
+
 ## Further reading
 
 - [Anthropic: Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) — workflow patterns and evaluator/optimizer separation.

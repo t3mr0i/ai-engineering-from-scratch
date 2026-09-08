@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In trigger_is_due, what must a GOAL trigger receive before it wakes the loop?",
+      "question": "An agent only acts when a human presses the next button each turn. What moves it to bounded autonomy?",
       "options": [
-        "requested=True",
-        "last_run older than interval_seconds",
-        "event_name equal to 'goal.completed'",
-        "a passing CheckResult from the previous run"
+        "Removing all limits so it runs freely",
+        "Hiding the loop's decisions from review",
+        "Letting it wake for any reason without logging",
+        "Explicit triggers, transitions, evaluators, and stop conditions"
       ],
-      "correct": 0,
-      "explanation": "MANUAL and GOAL triggers return the requested flag; they do not infer readiness from elapsed time or an event name."
+      "correct": 3,
+      "explanation": "Autonomy without explicit structure is unowned automation. This lesson makes trigger, transition, evaluation, and stop inspectable."
     },
     {
       "stage": "check",
