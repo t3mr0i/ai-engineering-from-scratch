@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "When does TargetModel.verify accept a draft token at one position?",
+      "question": "A draft proposes cheap tokens and a bigger model checks them in batches. When should a draft token be accepted?",
       "options": [
-        "Whenever the draft model and target model have different top tokens",
-        "Only when the token is the target's absolute top-probability token",
-        "When the target probability for that token is at least half of the target's maximum probability",
-        "Whenever the token is in VOCAB, regardless of its probability"
+        "Always, whatever the target thinks",
+        "Only when it is the target's single top token",
+        "Whenever it appears in the vocabulary",
+        "When the target rates it likely enough against its best"
       ],
-      "correct": 2,
-      "explanation": "The local acceptance rule is dist[tok] >= 0.5 * max(dist). Verification stops at the first draft token that fails this comparison."
+      "correct": 3,
+      "explanation": "Acceptance needs a probabilistic rule, not blind trust. This capstone verifies drafts against target probabilities."
     },
     {
       "stage": "check",

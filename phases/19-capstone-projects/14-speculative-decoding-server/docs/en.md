@@ -81,6 +81,10 @@ Call `softmax_from` from a small caller with a graph with edges (0,1) and (1,2).
 
 Hand off `outputs/skill-inference-server.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: build to understand, enable by measurement
+
+In the CBP context nobody hand-rolls a speculative decoding server — the platform offers the flag — but building one here teaches what the flag does: draft, verify against target probabilities, accept on threshold, stop at first rejection. That understanding is what makes the lesson 17/05 rule enforceable: measure acceptance on CBP traffic, enable where it earns, keep measuring. Operators who never built the mechanism cannot diagnose its tail-latency surprises.
+
 ## Further Reading
 
 - [vLLM EAGLE and P-EAGLE documentation](https://docs.vllm.ai) — the reference serving stack
