@@ -105,6 +105,10 @@ A useful submission records python3 main.py, the observed output, and the conclu
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
+## CBP context: kill criteria are delivery discipline
+
+In the CBP context the portfolio kills weak pilots on schedule using the value metrics from lesson 11/25 — adoption, review cost, operations impact — not on enthusiasm. Every initiative carries launch and kill criteria from day one, reviewed on cadence with staffing and dependencies explicit. A portfolio without funerals is a budget with extra steps.
+
 ## Further Reading
 
 ### Recommended trainings (LHIND AI Literacy)
