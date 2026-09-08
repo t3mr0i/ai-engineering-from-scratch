@@ -36,6 +36,10 @@ Logistic regression fixes the independence assumption. It learns a weight per fe
 
 
 
+## CBP context: triage feelings with negation handled
+
+In the CBP context sentiment routes feedback — frustrated tickets escalate, praise files silently — with negation ("not great") handled explicitly, never averaged away. Evaluate on CBP phrasing including German negation patterns and domain sarcasm; generic sentiment models misread both. Sentiment is a triage signal with confidence, not a verdict.
+
 ## Build It
 
 Reconstruct **Sentiment Analysis** by following `tokenize` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

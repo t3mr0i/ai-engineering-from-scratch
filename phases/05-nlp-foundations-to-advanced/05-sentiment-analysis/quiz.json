@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What tokens does tokenize(\"not great!\") return?",
+      "question": "\"Not great!\" reads as negative to humans but positive to naive word lists. What must the tokenizer preserve?",
       "options": [
-        "[\"not\", \"great\", \"!\"]",
-        "[\"not great\"]",
-        "[\"not\", \"great!\"]",
-        "[\"not\", \"great\", \"positive\"]"
+        "Only the exclamation marks",
+        "Only positive words",
+        "Neither words nor punctuation",
+        "Negation words and punctuation as separate tokens"
       ],
-      "correct": 0,
-      "explanation": "TOKEN_RE captures words and the punctuation character ! as separate lowercase tokens."
+      "correct": 3,
+      "explanation": "Negation flips meaning. This lesson tokenizes so sentiment sees what humans see."
     },
     {
       "stage": "check",
