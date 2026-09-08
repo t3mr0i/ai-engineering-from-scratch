@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What components make up the lesson's miniature group chat?",
+      "question": "Coder, reviewer, and manager agents talk past each other with no order and no end. What structures the chat?",
       "options": [
-        "Coder, reviewer, and manager agents plus round-robin and context-aware speaker selectors.",
-        "A single coder with no pool and no termination condition.",
-        "Three independent queues with fixed workers and no messages.",
-        "Only a manager that writes every code revision itself."
+        "Louder messages from managers",
+        "No structure; chaos resolves itself",
+        "One agent doing everything silently",
+        "Speaker selection rules plus termination conditions"
       ],
-      "correct": 0,
-      "explanation": "`AGENTS` contains coder, reviewer, and manager. `run_groupchat` can use `round_robin_selector` or the simulated `llm_style_selector` to choose the next speaker."
+      "correct": 3,
+      "explanation": "Unruled chats ramble. This lesson selects speakers and ends conversations by rule."
     },
     {
       "stage": "check",

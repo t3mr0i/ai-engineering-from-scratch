@@ -100,6 +100,10 @@ Both use the four primitives from the shared-state memory lesson. Group chat def
 
 
 
+## CBP context: turn-taking rules prevent chat chaos
+
+In the CBP context group chats need explicit speaker selection — round-robin for fairness, context-aware for relevance — plus termination conditions, or multi-agent conversations ramble without converging. Coder, reviewer, and manager roles with a selection rule turn chatter into review pipelines. Unruled group chat is a meeting without a facilitator.
+
 ## Build It
 
 Reconstruct **Group Chat and Speaker Selection** by following `Msg` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
