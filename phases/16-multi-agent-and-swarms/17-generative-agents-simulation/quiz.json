@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which three components create coordination in the miniature generative-agent world?",
+      "question": "Agents coordinate with no orchestrator, only memories and plans. What three pieces create that order?",
       "options": [
-        "Only a shared random seed; agents never store state.",
-        "A central scheduler that directly teleports every agent.",
-        "Memory observations, reflection that forms beliefs, and plans that act at a future tick.",
-        "A fixed graph edge that bypasses memory and planning."
+        "A shared random seed alone",
+        "Teleportation by central control",
+        "Fixed wiring bypassing thought",
+        "Observations, reflected beliefs, future plans"
       ],
-      "correct": 2,
-      "explanation": "Agents append memories, reflect important invitation observations into a belief, and update a plan for `HobbsCafe` at tick 5. The orchestrator is deliberately absent."
+      "correct": 3,
+      "explanation": "Emergence needs memory discipline. This lesson coordinates through observe-reflect-plan cycles."
     },
     {
       "stage": "check",

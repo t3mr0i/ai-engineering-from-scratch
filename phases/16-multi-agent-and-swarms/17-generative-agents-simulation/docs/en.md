@@ -96,6 +96,10 @@ Smallville is the proof of concept that multi-agent emergence is cheap when the 
 
 
 
+## CBP context: memory, belief, plans — reviewed
+
+In the CBP context emergent coordination runs on memory observations, reflected beliefs, and future-tick plans — with beliefs reviewed, because unreviewed reflection compounds fiction into coordination. No orchestrator means no single throat to choke: emergent behavior needs monitoring for drift, not just admiration. Memory in, belief out, plans audited.
+
 ## Build It
 
 Reconstruct **Generative Agents and Emergent Simulation** by following `Memory` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.
