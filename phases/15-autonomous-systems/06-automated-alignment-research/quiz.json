@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "When Forum.post adds a record, what does its prev_hash point to?",
+      "question": "Agent action logs can be edited after the fact with nobody noticing. What structure prevents silent edits?",
       "options": [
-        "The forum's current head before the new record",
-        "The author's previous result only",
-        "A random 16-character value",
-        "The SHA-256 hash of the next record"
+        "Longer log messages",
+        "More log files",
+        "Trust in log writers",
+        "Hash-chained append-only records"
       ],
-      "correct": 0,
-      "explanation": "post links the new record to the current head, then hashes the payload containing that predecessor link."
+      "correct": 3,
+      "explanation": "Unlinked logs rewrite silently. This lesson chains records so tampering shows."
     },
     {
       "stage": "check",

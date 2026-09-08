@@ -59,6 +59,10 @@ This matches the propose-then-commit pattern from Lesson 15 applied to research 
 
 
 
+## CBP context: hash-chained action logs
+
+In the CBP context automated research records chain by hash — each entry pointing at its predecessor — giving agent action logs tamper evidence for audit. Append-only history with verifiable links turns "the agent did X" from assertion into proof. Apply the same chaining to consequential agent runs; auditors verify chains, not stories.
+
 ## Build It
 
 Reconstruct **Automated Alignment Research (Anthropic AAR)** by following `ForumRecord` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
