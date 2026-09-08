@@ -111,6 +111,10 @@ Parsing is deterministic: JSON.parse over the model's output. Compare to free-fo
 
 
 
+## CBP context: time-aware positions for video QA
+
+In the CBP context video QA over CBP footage (inspections, walkthroughs) needs time-aware positions — temporal, height, and width bands tracked separately — plus frame rates adapting to motion rather than fixed sampling. Static scenes bill fewer frames; action bills more, automatically. Evaluate temporal grounding (which moment answers which question) before trusting video answers.
+
 ## Build It
 
 Reconstruct **Qwen-VL Family and Dynamic-FPS Video** by following `MRoPEConfig` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

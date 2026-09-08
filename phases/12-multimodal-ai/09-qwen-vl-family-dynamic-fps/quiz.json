@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For mrope_angles(MRoPEConfig(48,16,16,16), t=12, h=0, w=0), what are the first rotation angles for the three bands?",
+      "question": "Fixed frame sampling wastes tokens on static scenes and misses fast action. What adapts sampling to motion?",
       "options": [
-        "[12, 0, 0] for temporal, height, and width",
-        "[0, 12, 12], because images use spatial positions first",
-        "[1, 1, 1], because the base normalizes every position",
-        "[12, 12, 12], because all axes share the temporal coordinate"
+        "Maximum frames always",
+        "One frame per video",
+        "Fixed low frame rates",
+        "Dynamic rates with time-aware positions"
       ],
-      "correct": 0,
-      "explanation": "For the first pair i=0, theta=base^0=1. The temporal position is 12 and both spatial positions are zero, yielding [12,0,0]."
+      "correct": 3,
+      "explanation": "Motion varies, sampling should too. This lesson positions time, height, and width separately."
     },
     {
       "stage": "check",
