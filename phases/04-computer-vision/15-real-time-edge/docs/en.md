@@ -19,6 +19,10 @@
 
 An edge decision has at least three independent gates: the model must fit in memory, finish within the tail-latency budget, and meet the task-quality threshold. A workstation measurement can demonstrate the measurement procedure, but it cannot establish a phone, camera, or accelerator SLA. This lesson therefore ships a small offline fixture rather than pretending that an uninstalled deployment runtime is available.
 
+## CBP context: three gates measured on the device
+
+In the CBP context edge deployment passes three gates measured on the target device — fits in memory, meets tail latency, holds quality — never on workstation numbers. Warm up before timing, report p50/p95/p99 (lesson 17/08), and fail closed when any gate misses: a model that fits but lags, or runs fast but wrong, ships nowhere. The fixture teaches procedure; the device gives verdicts.
+
 ## Build It
 
 The executable Build-It artifact is the stdlib-only Rust companion. It applies a depthwise 3×3 pass and a pointwise 1×1 pass over a fixed `160×160×3` tensor, measures warmup/timing percentiles, and has five inline tests. This makes the convolution and measurement ideas runnable even when no ML framework is installed.
