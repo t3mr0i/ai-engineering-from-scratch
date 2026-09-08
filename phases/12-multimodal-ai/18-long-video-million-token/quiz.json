@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How many visual tokens does tokens(duration_s=300, fps=2, per_frame=81) return?",
+      "question": "A five-minute video feature surprises everyone with its token bill. What three factors set that price?",
       "options": [
-        "24,300, because 300 seconds contains 300 frames at the reduced rate",
-        "162, because only two frames are kept per minute",
-        "48,600, from 300*2 frames times 81 tokens per frame",
-        "583,200, the two-hour brute-context count"
+        "Video title length only",
+        "The number of viewers",
+        "Thumbnail colors",
+        "Duration, frame rate, and tokens per frame"
       ],
-      "correct": 2,
-      "explanation": "tokens multiplies duration, FPS, and per-frame count directly: 300*2*81 = 48,600. The 24,300 option omits the second frame per second."
+      "correct": 3,
+      "explanation": "Video bills multiply three ways. This lesson budgets long footage explicitly."
     },
     {
       "stage": "check",

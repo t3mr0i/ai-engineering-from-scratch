@@ -94,6 +94,10 @@ This combines brute-context for global understanding and retrieval for local det
 
 
 
+## CBP context: duration times fps times tokens
+
+In the CBP context long-video budgets compute directly: seconds times frames-per-second times tokens-per-frame — five minutes at 2fps and 81 tokens bills 48,600 tokens before a word is generated. Budget footage features with that product visible to stakeholders; reduce fps or per-frame tokens deliberately when the price exceeds the value. Million-token windows invite million-token bills.
+
 ## Build It
 
 Reconstruct **Long-Video Understanding at Million-Token Context** by following `tokens` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
