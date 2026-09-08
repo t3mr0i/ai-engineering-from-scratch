@@ -311,6 +311,10 @@ print(f"\n✅ Chunking Design for {YOUR_DOMAIN}:\n")
 print(response)
 ```
 
+## CBP context: overlap preserves boundaries
+
+In the CBP context fixed-size chunking with overlap keeps answers spanning boundaries retrievable: step equals size minus overlap, so no sentence falls entirely in the gap. Prefer structure-based splits (lesson 19/64) and use overlapped fixed windows where structure is absent; measure retrieval on CBP queries either way. Chunking bounds quality upstream of every ranker and generator.
+
 ## Build It
 
 Reconstruct **Chunking Strategies for RAG** by following `call` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.

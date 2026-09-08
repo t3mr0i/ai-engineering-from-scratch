@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "With size=10 and overlap=3, what step does chunk_fixed use between starts?",
+      "question": "Answers spanning chunk boundaries go missing from retrieval. What windowing prevents that?",
       "options": [
-        "7 characters",
-        "3 characters",
-        "10 characters",
-        "13 characters"
+        "Bigger gaps between chunks",
+        "Single chunks per document",
+        "No chunking at all",
+        "Overlapped fixed windows covering boundaries"
       ],
-      "correct": 0,
-      "explanation": "The function sets step=size-overlap, so adjacent chunks start seven characters apart."
+      "correct": 3,
+      "explanation": "Gaps lose boundary answers. This lesson overlaps windows so evidence survives splitting."
     },
     {
       "stage": "check",
