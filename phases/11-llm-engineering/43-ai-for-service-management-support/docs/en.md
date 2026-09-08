@@ -104,6 +104,10 @@ The reference run should leave a small receipt: python3 main.py, its captured ou
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
+## CBP context: scope, source, confidence, escalation, loop
+
+In the CBP context support AI runs inside the service scope with named knowledge sources, confidence-gated drafts, explicit escalation paths, and a learning loop fed by resolved tickets. Uncertainty is shown, never hidden — a draft that conceals doubt degrades quality faster than no draft at all. Suggested articles cite their source; classifications carry their confidence into the queue.
+
 ## Further Reading
 
 ### Recommended trainings (LHIND AI Literacy)
