@@ -86,6 +86,10 @@ Call `Span` from a small caller with the demo’s smallest built-in fixture. Com
 
 Hand off `outputs/skill-otel-genai.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: GenAI spans into Application Insights
+
+In the CBP context the GenAI span conventions land in Azure Monitor Application Insights via the OpenTelemetry exporter: model, agent, and tool spans with the tenant id on every span, costs attributable per run. Keep the redaction default from lesson 13/20 — prompts and tool payloads stay out of traces unless a tenant explicitly opts in. Standard span names mean one dashboard for every CBP agent; per-framework dashboards are the failure mode this lesson exists to prevent.
+
 ## Further Reading
 
 - [OpenTelemetry GenAI semantic conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/) — the spec
