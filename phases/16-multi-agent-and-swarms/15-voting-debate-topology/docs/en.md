@@ -107,6 +107,10 @@ The Sibyl framework (cited in Minsky-LLM literature) formalizes a "jury" — a s
 
 
 
+## CBP context: topologies measured, not fashionable
+
+In the CBP context star, chain, tree, and graph topologies compare on accuracy, tokens, and steps under controlled agent quality — and the winner varies by workload, so measure per use case instead of adopting by fashion. Chains serialize latency; stars centralize load; graphs multiply tokens. The harness habit (same agents, varied topology) isolates what the shape itself contributes.
+
 ## Build It
 
 Reconstruct **Voting, Self-Consistency, and Debate Topology** by following `SimAgent` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does this topology harness compare?",
+      "question": "Topologies are adopted by fashion while accuracy, tokens, and steps go unmeasured. What decides instead?",
       "options": [
-        "A2A authentication modes and FIPA performatives.",
-        "Only a single-agent baseline with no topology.",
-        "Star, chain, tree, and graph communication patterns under controlled agent accuracy and token costs.",
-        "Four auction mechanisms with no agent messages."
+        "The most fashionable shape",
+        "Always the star topology",
+        "Always fully connected graphs",
+        "Controlled comparison per workload"
       ],
-      "correct": 2,
-      "explanation": "The code implements `run_star`, `run_chain`, `run_tree`, and `run_graph`, then reports accuracy, tokens, and steps for different N and heterogeneity."
+      "correct": 3,
+      "explanation": "Shapes trade accuracy against cost. This lesson compares topologies under measurement."
     },
     {
       "stage": "check",
