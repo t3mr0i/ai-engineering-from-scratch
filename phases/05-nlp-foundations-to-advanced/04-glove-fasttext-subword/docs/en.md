@@ -37,6 +37,10 @@ This lesson walks all three, then explains which to reach for when.
 
 
 
+## CBP context: compounds and rare words need pieces
+
+In the CBP context German compounds and rare domain terms break whole-word vocabularies — subword and character-n-gram pieces (fastText, BPE) give unknown words usable representations from their parts, with boundary markers preserving word edges. Evaluate embedding models on CBP German queries before trusting multilingual claims; compounds are where generic models fail first. Pieces beat dictionaries for morphologically rich text.
+
 ## Build It
 
 Reconstruct **GloVe, FastText, and Subword Embeddings** by following `char_ngrams` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

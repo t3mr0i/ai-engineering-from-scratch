@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does char_ngrams wrap a word such as \"where\" in angle brackets?",
+      "question": "A German compound word never seen in training gets no usable vector. What fixes out-of-vocabulary terms?",
       "options": [
-        "They force every word to have exactly two characters",
-        "They turn the word into a BPE merge before counting",
-        "The boundary markers let n-grams represent the beginning and end of the word",
-        "They remove all internal character n-grams"
+        "Bigger whole-word dictionaries",
+        "Ignoring unknown words",
+        "Retraining weekly on new words",
+        "Subword pieces assembled from character parts"
       ],
-      "correct": 2,
-      "explanation": "char_ngrams builds <where> first, so n-grams can encode boundary information as well as interior spelling."
+      "correct": 3,
+      "explanation": "Parts generalize where dictionaries end. This lesson builds subword and n-gram representations."
     },
     {
       "stage": "check",
