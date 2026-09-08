@@ -21,6 +21,10 @@ DecisionTree enumerates midpoints between distinct values in each candidate feat
 
 RandomForest draws a bootstrap sample for each tree and defaults to a random subset of features (max_features="sqrt"). Its classifier votes across trees and its regressor averages. The local forest is intentionally small and deterministic when seed is set.
 
+## CBP context: interpretable models for regulated calls
+
+In the CBP context decision trees earn their place where explanations are mandatory: regulated triage, eligibility checks, and audit-facing rules read as inspectable splits, not black boxes. Impurity measures which split separates best; depth limits keep the tree reviewable. When the regulator asks "why this decision," a shallow tree answers and a deep net hires a consultant.
+
 ## Build It
 
 Run python3 main.py. The seeded two-feature fixture uses the sign of x1+x2 as its local target, trains on 90 rows, and prints held-out tree accuracy, forest accuracy, and two feature-importance values. For the hand calculation, labels [0,0,1,1] have Gini 0.5; the split [0,0] | [1,1] has child impurity zero and therefore gain 0.5.

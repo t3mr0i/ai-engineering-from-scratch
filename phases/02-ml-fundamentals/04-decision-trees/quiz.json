@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the Gini impurity of a node containing 50% class A and 50% class B?",
+      "question": "A regulated decision needs an explanation a reviewer can follow. What model shape fits?",
       "options": [
-        "0",
-        "1",
-        "0.5",
-        "0.25"
+        "The deepest possible neural network",
+        "An ensemble nobody can inspect",
+        "Random decisions for fairness",
+        "Shallow inspectable splits with measured impurity"
       ],
-      "correct": 2,
-      "explanation": "Gini impurity is 1-(0.5 squared+0.5 squared)=0.5. A pure node has impurity zero."
+      "correct": 3,
+      "explanation": "Regulated calls need readable reasons. This lesson splits by impurity into reviewable trees."
     },
     {
       "stage": "check",
