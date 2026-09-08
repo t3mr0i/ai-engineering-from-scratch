@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "A 3-neighbor classifier sees labels [cat, cat, dog] among the nearest points. What label does majority voting return?",
+      "question": "Search returns the k closest documents and their consensus decides the answer. What method is that?",
       "options": [
-        "dog",
-        "A continuous average of the two labels",
-        "cat",
-        "No label until a neural network is trained"
+        "Random sampling of the corpus",
+        "Training a new model per query",
+        "Ignoring all retrieved documents",
+        "Nearest-neighbor voting by proximity"
       ],
-      "correct": 2,
-      "explanation": "Two of the three neighbors are cats, so an unweighted majority vote returns cat."
+      "correct": 3,
+      "explanation": "Proximity votes. This lesson builds kNN: distances plus majority rule."
     },
     {
       "stage": "check",

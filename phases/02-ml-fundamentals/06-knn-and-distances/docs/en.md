@@ -21,6 +21,10 @@ KNN.fit stores numeric rows and labels; it performs no learned parameter update.
 
 KDTree recursively partitions rows by alternating feature axes. The lesson implementation collects exact distances for a clear reference result; it is an inspectable baseline, not a complexity promise. KDTree.query returns (distance, original_index, point) tuples.
 
+## CBP context: retrieval is nearest neighbors
+
+In the CBP context kNN is the mechanism behind every vector search: the top-k documents vote by proximity, and the distance metric plus k decide the answer set. Majority voting intuition transfers directly — three near neighbors agreeing beats one close outlier. Tune k and the metric on CBP queries; the defaults were chosen for someone else's data.
+
 ## Build It
 
 Run python3 main.py. It reports KNN accuracy on a seeded three-center fixture, the distances between [1,2] and [2,4], and the original index of one KD-tree neighbor. The exact accuracy is local to that fixture. The hand calculation is l1_distance([1,2],[4,6])=7 and l2_distance([1,2],[4,6])=5.
