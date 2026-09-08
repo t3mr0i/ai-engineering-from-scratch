@@ -73,6 +73,10 @@ The axis is "where does the preference signal come from." CAI's 2022 paper was t
 
 
 
+## CBP context: critique-revise against written principles
+
+In the CBP context constitutional AI runs on the repo's principles (lesson 19/86): critique outputs against written rules, revise violations into compliant answers, train on the revisions — extending human labels without replacing them. Harmful-token rates measured before and after prove the loop works; unmeasured principles are aspirations. Principles first, critique always, measurement per release.
+
 ## Build It
 
 Reconstruct **Constitutional AI and RLAIF** by following `base_model_sample` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

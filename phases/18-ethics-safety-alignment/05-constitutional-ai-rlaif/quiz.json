@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "The toy CAI demo reports harmful-token rate 0.346 before alignment and 0.000 after CAI-SFT. What caused the first-stage change?",
+      "question": "Human labels run out while unhelpful answers persist. What extends supervision without new labels?",
       "options": [
-        "Critique identifies harmful tokens and revise replaces them with mapped safe tokens before they become SFT targets",
-        "PPO changes the random seed so harmful tokens are never sampled",
-        "The constitution removes all harmful words from the tokenizer",
-        "RLAIF trains a reward model before any response is generated"
+        "Repeating old labels verbatim",
+        "Removing all guidelines",
+        "Trust in unreviewed outputs",
+        "Principles-driven critique and revision loops"
       ],
-      "correct": 0,
-      "explanation": "build_cai_sft_corpus samples a response, selects a principle, calls critique, and applies REPLACEMENT to every flagged token. The toy's zero post-SFT rate reflects that explicit substitution, not a tokenizer or PPO change."
+      "correct": 3,
+      "explanation": "Written principles scale supervision. This lesson reviews and rewrites against constitutions."
     },
     {
       "stage": "check",
