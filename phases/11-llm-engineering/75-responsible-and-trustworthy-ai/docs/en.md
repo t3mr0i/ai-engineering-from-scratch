@@ -148,6 +148,10 @@ Call `RiskTier` from a small caller with the demo’s smallest built-in fixture.
 
 Hand off `outputs/skill-responsible-ai-compliance-checklist.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: data tier, use-case tier, blocking gate
+
+In the CBP context every assistant ships with the composed verdict: data tier (GDPR basis, minimization, retention) plus AI Act use-case tier (prohibited, high-risk, limited) equals a gate that can actually block deployment — not a sign-off paragraph. Log completions minimally, audit proxies for bias (postcodes included), and wire Art. 14 human oversight into the workflow for high-risk uses. Technically compliant plus legally non-compliant is still non-compliant.
+
 ## Further Reading
 
 - [EU AI Act — Official text (EUR-Lex)](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689) — Annex III high-risk categories; Articles 9, 10, 13, 14, 15. The binding text, not a summary.

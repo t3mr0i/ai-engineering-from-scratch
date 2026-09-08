@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does assess_gdpr_risk classify a health_data field that is necessary but has no accepted Article 9 basis?",
+      "question": "A system uses clean data with a declared lawful basis, but the use case itself triggers AI Act obligations nobody mapped. What is missing?",
       "options": [
-        "GREEN, because the field is necessary for the purpose",
-        "AMBER, because every personal field starts in the middle tier",
-        "RED, because special-category data lacks an Article 9 lawful basis",
-        "GREEN, if the model never displays the field to a user"
+        "A better privacy notice",
+        "A bigger training dataset",
+        "Trust that clean data means compliance",
+        "Composed data-tier plus use-case-tier verdict as a gate"
       ],
-      "correct": 2,
-      "explanation": "The scorer treats health_data as special-category data. Without one of the accepted Article 9 bases, it records a special-category violation and returns RED."
+      "correct": 3,
+      "explanation": "Green data with a red use case is still non-compliant. This lesson composes both tiers into a blocking gate."
     },
     {
       "stage": "check",
