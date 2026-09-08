@@ -142,6 +142,10 @@ Call `Surface` from a small caller with the text "red fox". Compare its result w
 
 Hand off `outputs/skill-ai-security-triage.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: map the surface, control proportionally
+
+In the CBP context every AI workflow ships with its threat-surface map — which sources the window aggregates, who controls each, where instructions could override intent — and controls proportional to the realistic risk: untrusted retrieval plus write tools plus multi-agent handoffs gets the full stack (lesson 14/27), a fixed-template local answer gets a light touch. Defend the boundary the attack actually crosses; hardening the system prompt while PDFs walk in unreviewed defends the wrong wall.
+
 ## Further Reading
 
 - [OWASP Top 10 for LLM Applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/) — the canonical reference; in the 2025 edition, LLM01 (prompt injection) and LLM02 (sensitive information disclosure) are the two surfaces this lesson covers most directly, alongside LLM06 (excessive agency) for the tool-misuse shape above.

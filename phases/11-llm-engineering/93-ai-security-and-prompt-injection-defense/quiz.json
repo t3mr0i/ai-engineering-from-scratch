@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which deployment combination most amplifies indirect-injection risk?",
+      "question": "A workflow hardens its system prompt but ingests unreviewed PDFs and grants write tools. Where does the real attack come through?",
       "options": [
-        "No retrieval, read-only output, and a non-sensitive system prompt",
-        "A single trusted prompt with no tool access",
-        "Untrusted retrieval combined with write tools and a multi-agent pipeline",
-        "A local model that returns a reviewed answer from a fixed template"
+        "The hardened system prompt",
+        "Nowhere; hardening one layer covers all",
+        "Only through direct user messages",
+        "Untrusted retrieval plus write tools"
       ],
-      "correct": 2,
-      "explanation": "score_surfaces adds indirect-injection points for untrusted retrieval, write tools, and multi-agent hand-offs. The combination reaches the cap and creates a large blast radius."
+      "correct": 3,
+      "explanation": "Risk concentrates where untrusted content meets capability. This lesson maps surfaces and controls proportionally."
     },
     {
       "stage": "check",
