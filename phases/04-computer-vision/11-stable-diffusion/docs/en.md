@@ -41,6 +41,10 @@ flowchart LR
 
 The manifest labels the text encoder, denoiser, and safety check as contract-only components. `scheduler_sigmas(num_steps,start,end)` requires at least two steps and includes both supplied endpoints exactly. There is no `diffusers` import, no network access, no weights download, and no generated PNG to mistake for Stable Diffusion inference.
 
+## CBP context: five levers around image services
+
+In the CBP context text-conditioned image generation is operated through five levers — text conditioning, denoiser steps, scheduler choice, latent resolution, and safety policy — each with cost and quality effects the team measures on the brief. Compressed latents save memory at fidelity cost; guidance trades adherence against diversity. Generated assets pass the same review as commissioned ones; the pipeline differs, the bar does not.
+
 ## Build It
 
 Run from `code/`:
