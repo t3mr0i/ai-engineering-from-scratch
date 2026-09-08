@@ -87,6 +87,10 @@ They make the gradient path additive across depth, which keeps the gradient norm
 | Fused QKV | "Combined projection" | One linear of width 3D instead of three linears of width D; one kernel, one matmul |
 | Residual stream | "Skip connection" | The unnormalized tensor that flows top to bottom through every block; what each block adds to |
 
+## CBP context: residuals are why depth trains
+
+In the CBP context the block's residual stream plus normalization is the reason hundred-layer models train at all — gradients flow through the additions instead of vanishing through the stack. Read vendor architecture walkthroughs (lesson 10/20) with this lens: depth, width, and normalization placement are the dials behind capability claims. Build one block here; judge model cards there.
+
 ## Build It
 
 Reconstruct **Transformer Block from Scratch** by following `BlockConfig` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

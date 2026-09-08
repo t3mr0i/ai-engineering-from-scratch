@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the residual order in a pre-LayerNorm `TransformerBlock`?",
+      "question": "Stacking many layers naively kills gradients before they reach the early layers. What structural fix lets depth train?",
       "options": [
-        "`x = x + attn(ln1(x)); x = x + mlp(ln2(x))`",
-        "`x = ln1(x + attn(x)); x = ln2(x + mlp(x))`",
-        "`x = attn(x) + mlp(x)` with no residuals",
-        "`x = ln1(attn(x)); x = ln2(mlp(x))`"
+        "Fewer layers always",
+        "No normalization anywhere",
+        "Random layer order per batch",
+        "Residual additions plus normalization around sublayers"
       ],
-      "correct": 0,
-      "explanation": "With `pre_ln=True`, each sublayer first normalizes its input and then adds its transformed output to the residual stream. The block therefore applies attention and MLP in two residual updates."
+      "correct": 3,
+      "explanation": "Gradients need a highway through depth. This lesson builds the pre-norm residual block that provides it."
     },
     {
       "stage": "check",
