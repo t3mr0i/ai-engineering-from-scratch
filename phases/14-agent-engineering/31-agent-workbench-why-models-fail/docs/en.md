@@ -419,6 +419,10 @@ Call `call` from a small caller with the text "red fox". Compare its result with
 
 Hand off `outputs/failure_modes.json` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: wrap the model before blaming it
+
+In the CBP context this lesson is the diagnostic order: when an agent fails on a CBP repo, check the workbench first — was done defined, was scope bounded, were the authoritative tests named, was handoff state written — before blaming the model. Every one of the seven surfaces maps to a file or policy the team owns in the repo. A frontier model in a missing workbench fails like a junior without onboarding; the fix is onboarding, not a bigger model.
+
 ## Further Reading
 
 Read these as data points, not as authorities. Each one is a partial taxonomy. Translate every concept back to a primitive (function, worker, trigger, runtime, HTTP/RPC, queue, persistence, policy) before deciding whether to adopt it.

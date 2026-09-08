@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which unrelated files does the prompt-only run touch for the signup task?",
+      "question": "A strong model edits the wrong files, skips tests, and leaves no record of what is done. Is that a model bug?",
       "options": [
-        "`README.md` and `scripts/release.sh`.",
-        "Only `app.py` and `test_app.py`.",
-        "`agent_state.json` and `task_board.json`.",
-        "No files, because a prompt-only run cannot produce a diff."
+        "Yes, only a bigger model fixes it",
+        "No, but nothing can be done about it",
+        "It means the task is impossible",
+        "No, the surrounding workbench is missing its surfaces"
       ],
-      "correct": 0,
-      "explanation": "Without the scope surface, `stub_agent` appends `README.md` and `scripts/release.sh` to the two allowed files and records the off-scope note."
+      "correct": 3,
+      "explanation": "Capable models fail without scope, done-criteria, tests, and handoff state. This lesson names the workbench surfaces that fix that."
     },
     {
       "stage": "check",
