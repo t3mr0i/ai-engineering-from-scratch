@@ -60,6 +60,10 @@ The modern pipeline: classical DST concepts + LLM extractors + structured-output
 
 
 
+## CBP context: canonical slots across turns
+
+In the CBP context support bots track canonical slots — product, version, urgency, approval — normalized ("pasta" becomes italian, "v3" becomes a version) and carried across turns until confirmed. Untracked state forces users to repeat themselves; mistracked state acts on wrong values. Slots persist in session state with confirmation gates on consequential ones.
+
 ## Build It
 
 Reconstruct **Dialogue State Tracking** by following `extract_cuisine` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

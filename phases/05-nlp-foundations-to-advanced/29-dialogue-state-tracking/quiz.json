@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What canonical cuisine does extract_cuisine(\"I would like pasta\") return?",
+      "question": "Users repeat product and version every turn because the bot remembers nothing. What must it track?",
       "options": [
-        "italian",
-        "pasta",
-        "any",
-        "None"
+        "Nothing; repetition is fine",
+        "Only the last user message",
+        "The weather at call time",
+        "Canonical slots carried across turns"
       ],
-      "correct": 0,
-      "explanation": "pasta is listed as an Italian synonym and the extractor returns the canonical key italian."
+      "correct": 3,
+      "explanation": "Conversations accumulate state. This lesson tracks slots canonically turn by turn."
     },
     {
       "stage": "check",
