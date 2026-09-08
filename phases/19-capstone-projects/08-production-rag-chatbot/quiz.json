@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For an analyst asking about GDPR, which retrieved document is excluded by the eligibility filter?",
+      "question": "A regulated chatbot retrieves a restricted document for an unauthorized user. What must the retrieval layer enforce?",
       "options": [
-        "The public general FAQ",
-        "The analyst's GDPR policy chunk",
-        "A counsel-only HIPAA chunk",
-        "A public GDPR glossary chunk"
+        "Faster retrieval for everyone",
+        "Longer answers to dilute the leak",
+        "Trust in the model's discretion",
+        "Role and jurisdiction eligibility before any passage is used"
       ],
-      "correct": 2,
-      "explanation": "retrieve first requires the same role or public visibility and the same jurisdiction or any jurisdiction; a counsel-only HIPAA chunk fails both checks for an analyst's GDPR request."
+      "correct": 3,
+      "explanation": "Regulated RAG filters before generating. This capstone excludes ineligible passages so they never reach the model."
     },
     {
       "stage": "check",

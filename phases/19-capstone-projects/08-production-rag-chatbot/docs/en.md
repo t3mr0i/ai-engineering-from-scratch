@@ -90,6 +90,10 @@ Call `Chunk` from a small caller with the text "red fox". Compare its result wit
 
 Hand off `outputs/skill-production-rag.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: eligibility is Entra ID plus jurisdiction
+
+In the CBP context the regulated chatbot's eligibility filter is Entra ID roles plus data jurisdiction: counsel-only chunks never reach analysts, EU data never leaves EU regions, and every grounded answer logs which passages grounded it for audit. Prefer RAG over fine-tuning for company knowledge — freshness, cost, attribution — and reindex on the data pipeline's schedule. A fluent answer without a supporting passage is a defect; an answer from a forbidden passage is an incident.
+
 ## Further Reading
 
 - [Harvey AI](https://www.harvey.ai) — reference legal production stack
