@@ -105,6 +105,10 @@ A useful submission records python3 main.py, the observed output, and the conclu
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
+## CBP context: map first, automate what is understood
+
+In the CBP context no process is automated before it is mapped: flow, handoffs, exceptions, value check, fallback plan — the pilot starts only when all five exist. Automating an unmapped process makes it faster and less reliable at once. The exception log decides pilot safety more than the happy path ever will.
+
 ## Further Reading
 
 ### Recommended trainings (LHIND AI Literacy)
