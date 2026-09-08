@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For the demo image (24, 24, 3) and patch_size=6, what does patchify return?",
+      "question": "Transformers need sequences but images are grids. What conversion bridges that gap?",
       "options": [
-        "16 patches, each flattened to 108 values, on a 4×4 grid",
-        "24 patches, each 6 values, on a 3×3 grid",
-        "4 patches, each 16 values, on a 6×6 grid",
-        "16 patches, each 24 values, on a 6×6 grid"
+        "One token per whole image only",
+        "Pixels sorted by brightness",
+        "File names as tokens",
+        "Non-overlapping flattened patches in grid order"
       ],
-      "correct": 0,
-      "explanation": "Both spatial dimensions split into 24/6=4 cells, giving 16 patches; each contains 6*6*3=108 channel values."
+      "correct": 3,
+      "explanation": "Grids become sequences by patching. This lesson cuts images into transformer tokens."
     },
     {
       "stage": "check",

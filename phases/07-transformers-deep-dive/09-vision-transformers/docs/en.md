@@ -75,6 +75,10 @@ ViT needs *a lot* of data to match CNNs because it has none of the CNN inductive
 
 
 
+## CBP context: patches are the image API
+
+In the CBP context the patch grid is the image API: resolution divided by patch size sets token counts, costs, and detail limits for every vision call (lessons 04/14, 19/58). Flattened patches carry channel values; the grid preserves locality for attention. Read ViT talent (classification, retrieval backbones) through patch economics, and size inputs before sending.
+
 ## Build It
 
 Reconstruct **Vision Transformers (ViT)** by following `make_image` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
