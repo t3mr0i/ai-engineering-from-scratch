@@ -164,6 +164,10 @@ Most 2026 frontier pipelines run all four. CAI for safety layers. GRPO for the r
 
 
 
+## CBP context: principles plus self-review in the repo
+
+In the CBP context constitutional rules live versioned in the repository (lesson 19/86): written principles the assistant reviews its own outputs against, with rewrites logged for audit. Self-improvement without principles drifts; principles without review rot. Human labels remain the gold standard — constitutions stretch them further, never replace them.
+
 ## Build It
 
 Reconstruct **Constitutional AI and Self-Improvement** by following `critique` on an 8x8 synthetic image. Run `python3 main.py` and verify that the reported height/width or feature-map shape changes predictably, without inventing pixels.
