@@ -140,6 +140,10 @@ for hypothesis in queue:
 
 That orchestrator is not in this lesson; the four lessons compose into it without any glue beyond the dataclasses each one defines.
 
+## CBP context: pair the seeds, isolate the change
+
+In the CBP context comparing two single numbers proves nothing — pair the same seeds across candidate and baseline so the configuration change stands out from initialization noise, the same discipline as the A/B rules in lesson 17/21. Report the paired test with its uncertainty, not a bare winner; a "win" inside the noise band is a tie wearing a costume. Statistics guard the steering deck from expensive false launches.
+
 ## Build It
 
 Reconstruct **Result Evaluator** by following `ExperimentResultLike` on the two-element input [1.0, 2.0]. Run `python3 main.py` and verify that the printed shape/value follows the stated formula, and the zero case does not produce an unexplained finite substitute for an undefined quantity.
