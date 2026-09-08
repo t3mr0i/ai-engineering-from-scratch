@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the migration workflow do before it spends a turn on the agent loop?",
+      "question": "Dozens of repositories need the same framework upgrade. Where should the agent loop spend its turns?",
       "options": [
-        "It runs the deterministic migration recipes first",
-        "It opens a pull request and lets CI choose a recipe",
-        "It classifies failures before compiling the source repository",
-        "It skips recipes whenever the repository has tests"
+        "On everything, skipping deterministic steps",
+        "On writing the upgrade announcement",
+        "On opening empty pull requests first",
+        "Only on what deterministic recipes could not finish"
       ],
-      "correct": 0,
-      "explanation": "run_recipes is the first migration attempt; the agent loop is reserved for work that the deterministic recipes did not finish."
+      "correct": 3,
+      "explanation": "Recipes are cheap and repeatable; model turns are not. This capstone runs recipes first and reserves the loop for the remainder."
     },
     {
       "stage": "check",

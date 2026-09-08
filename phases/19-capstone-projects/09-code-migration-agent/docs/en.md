@@ -85,6 +85,10 @@ Call `Repo` from a small caller with the text "red fox". Compare its result with
 
 Hand off `outputs/skill-migration-agent.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: recipes first, loop for the remainder
+
+In the CBP context repo upgrades (Java version bumps, Spring Boot migrations, dependency renewals) run deterministic recipes first across every affected repository, with one pull request per repo verified by CI — the agent loop handles only what recipes cannot finish. Scope credentials to the single repository, forbid force-pushes through branch policies, and budget per day. A migration that cannot show a green build per repo is a draft, not a delivery.
+
 ## Further Reading
 
 - [Amazon MigrationBench](https://aws.amazon.com/blogs/devops/amazon-introduces-two-benchmark-datasets-for-evaluating-ai-agents-ability-on-code-migration/) — the canonical 2026 benchmark
