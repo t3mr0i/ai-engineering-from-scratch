@@ -388,6 +388,10 @@ else:
     print("\n❌ Self-check failed: pipeline did not produce output for all roles.")
 ```
 
+## CBP context: planner, critic, executor, verifier
+
+In the CBP context role specialization splits planner, critic, executor, and verifier — with concrete examples run after careful reading, because reading misses wrong behavior only execution shows. The verifier's tests prove what the critic's review cannot; skipping execution trusts prose over evidence. Four roles, each checking what the others cannot see.
+
 ## Build It
 
 Reconstruct **Role Specialization — Planner, Critic, Executor, Verifier** by following `call` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
