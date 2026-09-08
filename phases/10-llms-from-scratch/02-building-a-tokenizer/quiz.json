@@ -4,10 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does `ProductionTokenizer.normalize` do before it splits text into chunks?",
-      "options": ["It removes all whitespace.", "It converts every character to ASCII.", "It NFKC-normalizes the text.", "It replaces every word with a byte ID."],
-      "correct": 2,
-      "explanation": "The method calls `unicodedata.normalize('NFKC', text)`, which canonicalizes compatibility forms while retaining the normalized text."
+      "question": "Index and query tokenize the same word differently, so retrieval misses. What prevents that split?",
+      "options": [
+        "Bigger indexes over raw text",
+        "Trust in default behaviors",
+        "Separate rules per side",
+        "Identical normalization on both sides"
+      ],
+      "correct": 3,
+      "explanation": "Mismatched normalization splits identities. This lesson canonicalizes text before tokenizing."
     },
     {
       "stage": "check",

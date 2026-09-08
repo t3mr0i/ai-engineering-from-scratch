@@ -151,6 +151,10 @@ You are building in Python to understand the algorithm. In production, you would
 
 
 
+## CBP context: normalize identically everywhere
+
+In the CBP context NFKC normalization must run identically at index time and query time — a mismatch silently splits the same word into different tokens on each side. Canonicalize compatibility forms once, document the normalizer with the pipeline, and test round-trips on CBP German (umlauts, ß, compounds). Normalization drift is a retrieval bug wearing a tokenizer costume.
+
 ## Build It
 
 Reconstruct **Building a Tokenizer from Scratch** by following `pre_tokenize` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
