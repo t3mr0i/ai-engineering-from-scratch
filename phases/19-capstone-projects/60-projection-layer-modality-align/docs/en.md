@@ -98,6 +98,10 @@ python3 -m unittest code/test_main.py
 | Frozen encoder | The vision (or text) model has all parameters with `requires_grad=False` |
 | Mock corpus | Synthetic pairs used so training has no dataset download dependency |
 
+## CBP context: bridge spaces explicitly, verify on CBP data
+
+In the CBP context any connection between two embedding spaces — document vectors into a model, search scores into a reranker — needs an explicit learned bridge verified on CBP data, because mismatched spaces fail silently with fluent-looking garbage. Never assume vectors from different systems are comparable; prove the alignment with retrieval evals before trusting it. Silent misalignment is the most expensive kind of wrong.
+
 ## Build It
 
 Reconstruct **Projection Layer for Modality Alignment** by following `AlignConfig` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
