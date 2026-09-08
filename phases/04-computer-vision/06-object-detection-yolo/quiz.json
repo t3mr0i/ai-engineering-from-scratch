@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What coordinate convention does validate_boxes enforce?",
+      "question": "Detected regions arrive without a stated coordinate convention and land in the wrong places. What was missing?",
       "options": [
-        "Normalized center-width-height boxes with values only in [0,1]",
-        "Integer corner pixels with x2<=x1 allowed for a point",
-        "Finite absolute xyxy boxes with x1<x2 and y1<y2",
-        "Four logits that have not yet been decoded"
+        "Bigger detection models",
+        "More training images",
+        "Trust in default layouts",
+        "An explicit box convention at the boundary"
       ],
-      "correct": 2,
-      "explanation": "The local geometry APIs use absolute corners and require a positive width and height; normalization is not silently assumed."
+      "correct": 3,
+      "explanation": "Silent convention mismatches misplace regions. This lesson contracts boxes explicitly."
     },
     {
       "stage": "check",

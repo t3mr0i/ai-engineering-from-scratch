@@ -31,6 +31,10 @@ flowchart LR
 
 `assign_targets` chooses the anchor with the largest width/height IoU, sets objectness to one, and writes a one-hot class target. `yolo_loss` expects prediction and target arrays shaped `(grid_h, grid_w, anchors, 5+C)` plus a boolean object mask. It averages each named component and combines them with nonnegative weights. An empty positive mask is valid; a malformed shape is not.
 
+## CBP context: box conventions are contracts
+
+In the CBP context detection outputs (document fields, signatures, stamps, defects) carry explicit box conventions — absolute versus normalized, corner versus center — agreed at the API boundary, never assumed. A consumer reading normalized boxes as pixels misplaces every region silently. Validate finiteness and ordering on receipt; geometry bugs hide behind confident scores.
+
 ## Build It
 
 Run:
