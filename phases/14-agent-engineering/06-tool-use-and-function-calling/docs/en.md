@@ -96,6 +96,10 @@ Call `ToolDef` from a small caller with tokens=["red","fox"]. Compare its result
 
 Hand off `outputs/skill-tool-registry.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: validate every call, isolate every run
+
+In the CBP context the tool registry from this lesson is the Java service's dispatch table: every model-requested call is validated against its schema with Jackson before anything runs, hallucinated tool names are rejected outright, and minor type mismatches are coerced only where the schema allows it. Isolate each run per tenant — no shared mutable state between runs — and audit every call with its arguments and result. Chained multi-step runs stay inside the iteration and spend bounds from lesson 01; a 40-step chain without bounds is an incident waiting for a meter.
+
 ## Further Reading
 
 - [Schick et al., Toolformer (arXiv:2302.04761)](https://arxiv.org/abs/2302.04761) — self-supervised tool annotation
