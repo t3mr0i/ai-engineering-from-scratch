@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In build_demo_graph, which route leaves verify when requirements are missing?",
+      "question": "One agent juggles research, code, tests, and review in a single context and fails opaquely. What structure helps?",
       "options": [
-        "needs_research",
-        "fail",
-        "pass",
-        "default"
+        "A bigger single context for everything",
+        "Fewer kinds of work per project",
+        "One loop with no boundaries at all",
+        "A graph of small nodes with explicit handoffs between them"
       ],
-      "correct": 0,
-      "explanation": "verify_node checks requirements before artifact evidence and returns route='needs_research' when the requirements string is empty."
+      "correct": 3,
+      "explanation": "Mixed concerns in one context fail opaquely. This lesson makes structure explicit: nodes own loops, the graph owns handoffs."
     },
     {
       "stage": "check",

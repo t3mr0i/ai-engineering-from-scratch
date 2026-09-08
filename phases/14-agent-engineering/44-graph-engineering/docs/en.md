@@ -277,6 +277,10 @@ Hand off `outputs/skill-graph-engineering.md` with the command `python3 main.py`
    checkpoints, branch decisions, and human review actions; do not compare only
    wall-clock time.
 
+## CBP context: nodes own loops, the graph owns handoffs
+
+In the CBP context the graph is the delivery pipeline made explicit: research, implement, test, review, approve, and rollback as nodes with typed handoffs between them, each node running its own bounded loop. Failures localize to the node whose contract broke, and the handoff record shows exactly what crossed each boundary. Keep node contexts separate — one agent holding research, code, tests, and rollback in a single context fails opaquely; a graph of small contexts fails legibly.
+
 ## Further reading
 
 - [Anthropic: Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) — routing, parallelization, and evaluator/optimizer patterns.
