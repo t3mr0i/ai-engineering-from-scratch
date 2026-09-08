@@ -92,6 +92,10 @@ No single layer is sufficient. The layers cover different attack classes.
 
 
 
+## CBP context: normalize text, then classify
+
+In the CBP context input/output classification normalizes first — NFKC, homoglyph maps, invisible-character removal — then matches taxonomy rules, because attackers obfuscate exactly what raw matching reads. The same normalization as lesson 19/83, guarding CBP assistants at both edges. Classify normalized text or classify nothing reliably.
+
 ## Build It
 
 Reconstruct **Llama Guard and Input/Output Classification** by following `classify_raw` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

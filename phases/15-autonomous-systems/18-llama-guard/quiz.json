@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does classify_normalized add to the raw keyword check?",
+      "question": "Attacks hide behind homoglyphs and invisible characters that raw keyword checks miss. What precedes matching?",
       "options": [
-        "It removes every non-ASCII character and skips regexes",
-        "It checks only output strings",
-        "It applies NFKC, the partial homoglyph map, and invisible-character removal before classify_raw",
-        "It replaces S1 with S14"
+        "Longer keyword lists alone",
+        "Trust in raw text matching",
+        "Ignoring non-ASCII entirely",
+        "Normalization: NFKC, homoglyphs, invisibles"
       ],
-      "correct": 2,
-      "explanation": "normalize runs NFKC, _homoglyph_map, and the explicit invisible-codepoint filter; classify_normalized then applies the same taxonomy regexes."
+      "correct": 3,
+      "explanation": "Obfuscation defeats raw checks. This lesson normalizes before classifying."
     },
     {
       "stage": "check",
