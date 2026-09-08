@@ -51,6 +51,10 @@ A pipeline runs M microbatches of size B each. The effective batch size is M*B. 
 
 
 
+## CBP context: bubbles tax every pipeline
+
+In the CBP context the pipeline bubble is the idle tax on every staged system: while one stage fills, the others wait, and the fraction shrinks only with more microbatches per stage. The formula generalizes beyond GPUs — review queues, staged rollouts, and approval chains all carry bubble fractions that microbatching (smaller, more numerous work units) reduces. Count the idle share before adding capacity; utilization without bubble math is optimism.
+
 ## Build It
 
 Reconstruct **Pipeline Parallel and Bubble Analysis** by following `bubble_fraction` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.
