@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What weights does a default `Mem0Config` assign to relevance, importance, and recency?",
+      "question": "An assistant must recall a phone number exactly, find similar past discussions, and reason about which customers share a billing entity. Can one store do all three?",
       "options": [
-        "0.5, 0.5, and 0.0",
-        "0.2, 0.6, and 0.2",
-        "0.6, 0.2, and 0.2",
-        "1.0, 0.0, and 0.0"
+        "Yes, a single store handles exact facts, similarity, and relationships equally",
+        "No, assistants should not remember anything",
+        "Exact facts and relationships never matter in practice",
+        "No, each query class needs its own store behind one surface"
       ],
-      "correct": 2,
-      "explanation": "The dataclass defaults are `w_relevance=0.6`, `w_importance=0.2`, and `w_recency=0.2`."
+      "correct": 3,
+      "explanation": "Exact lookup, semantic similarity, and relationship reasoning need different stores. This lesson wires all three behind one add/search surface."
     },
     {
       "stage": "check",

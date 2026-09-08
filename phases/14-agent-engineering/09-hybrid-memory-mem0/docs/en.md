@@ -103,6 +103,10 @@ Call `Record` from a small caller with a graph with edges (0,1) and (1,2). Compa
 
 Hand off `outputs/skill-hybrid-memory.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: one surface, three stores, tenant-scoped
+
+In the CBP context the three stores have natural owners: key-value for session facts (ticket id, environment, approver), vector search over CBP documents for semantic recall, and a graph for entity relationships (customers, billing entities, services). Fuse them behind one `add`/`search` surface as this lesson shows, but scope every store per tenant — a fused score must never surface another tenant's fact because it scored high on similarity. Measure which store answers which query class on CBP data before trusting the fusion weights.
+
 ## Further Reading
 
 - [Chhikara et al., Mem0 (arXiv:2504.19413)](https://arxiv.org/abs/2504.19413) — the original paper
