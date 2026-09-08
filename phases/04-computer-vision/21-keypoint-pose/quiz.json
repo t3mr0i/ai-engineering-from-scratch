@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Where is gaussian_heatmap(size=64,cx=20,cy=30) largest?",
+      "question": "A posture check needs joint positions, not boxes or labels. What output shape gives that?",
       "options": [
-        "At or nearest pixel (x=20,y=30)",
-        "At the top-left corner only",
-        "At every pixel with value exactly zero",
-        "At x=30,y=20 because the axes are swapped"
+        "One class label per image",
+        "A single bounding box",
+        "The image file size",
+        "Heatmaps peaking at each joint"
       ],
-      "correct": 0,
-      "explanation": "The exponent is zero at the specified center and negative as squared distance increases, so the Gaussian peaks there."
+      "correct": 3,
+      "explanation": "Joints are points, not regions. This lesson locates keypoints through heatmap peaks."
     },
     {
       "stage": "check",

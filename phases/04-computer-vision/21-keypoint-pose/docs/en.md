@@ -20,6 +20,10 @@
 
 Top-down pose first detects people and predicts keypoints per crop; bottom-up pose predicts all keypoint heatmaps and then associates them with an extra relation such as a Part Affinity Field. This lesson implements the heatmap half of a top-down-style toy task. It does not implement person detection, PAF grouping, a real camera pipeline, or a 3-D pose model.
 
+## CBP context: peaks mark joints, evals mark truth
+
+In the CBP context keypoint models serve posture and equipment checks: heatmaps peak at joint locations, coordinates derive from peaks — and production quality is measured against annotated CBP images, not demo skeletons. Occlusion and unusual angles break keypoints first; eval sets must contain them. A pose without a measured error distribution is a guess with joints.
+
 ## Build It
 
 `gaussian_heatmap(size,cx,cy,sigma)` requires a finite positive `sigma` whose square is also representable and positive, plus a coordinate inside the `size×size` grid. The NumPy Build-It path uses `numpy_heatmap_to_coords` and `numpy_subpixel_refine` to decode `(N,K,H,W)` arrays, uses `idx // W` for y and `idx % W` for x, and adds at most ±0.25 along each interior axis. The optional `TinyKeypointNet` accepts non-empty NCHW tensors with three channels and H/W divisible by four, then returns K heatmap channels at the original spatial size.
