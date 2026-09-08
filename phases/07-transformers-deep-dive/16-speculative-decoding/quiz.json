@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In spec_step_one_token(q, p, rng), which distribution drafts the candidate token?",
+      "question": "A cheap model drafts tokens and the big model verifies them in batches. What decides acceptance?",
       "options": [
-        "residual(q,p), before any rejection",
-        "q, the verifier distribution",
-        "p, the draft distribution",
-        "A uniform distribution over the vocabulary"
+        "Always accept every draft",
+        "Always reject every draft",
+        "Accept by coin flip",
+        "The verifier distribution judging each draft"
       ],
-      "correct": 2,
-      "explanation": "The first line samples d = sample(p, rng); q is used afterward to decide whether that draft is accepted."
+      "correct": 3,
+      "explanation": "Drafts propose, verifiers dispose. This lesson drafts cheaply and verifies in batches."
     },
     {
       "stage": "check",

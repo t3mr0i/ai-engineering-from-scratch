@@ -90,6 +90,10 @@ Production implementations (vLLM's `--speculative-model`, TensorRT-LLM's Lookahe
 
 
 
+## CBP context: drafts must earn their verification
+
+In the CBP context speculative decoding is the platform flag from lesson 17/05: cheap drafts verified in batches, accepted on measured rates, enabled only where CBP traffic proves alpha. The draft distribution drafts; the verifier decides — same split as sampling discipline everywhere. Build the mechanism here to diagnose its tail-latency surprises there.
+
 ## Build It
 
 Reconstruct **Speculative Decoding — Draft, Verify, Repeat** by following `sample` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
