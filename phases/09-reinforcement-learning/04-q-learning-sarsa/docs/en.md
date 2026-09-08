@@ -59,6 +59,10 @@ Lower variance than SARSA (no sample of `a'`), same on-policy target. Often the 
 
 
 
+## CBP context: logged runs teach off-policy
+
+In the CBP context the on/off-policy split decides what past runs teach: Q-learning learns the optimal policy from logged behavior (operator overrides included), SARSA learns the actually-followed policy with its exploration warts. Mine production logs off-policy for what good looks like; evaluate on-policy for what the deployed agent does. Mixing the two confuses "best possible" with "currently shipped."
+
 ## Build It
 
 Reconstruct **Temporal Difference — Q-Learning & SARSA** by following `reset` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

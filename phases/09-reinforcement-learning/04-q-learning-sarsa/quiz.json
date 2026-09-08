@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What state does reset() return at the start of every GridWorld episode?",
+      "question": "Production logs contain operator overrides mixed with agent actions. What can that data teach?",
       "options": [
-        "(0, 3)",
-        "(3, 3)",
-        "(0, 0)",
-        "A random coordinate in the grid"
+        "Nothing; mixed logs are useless",
+        "Only the exact deployed behavior",
+        "Future stock prices",
+        "Optimal behavior off-policy, separate from shipped behavior"
       ],
-      "correct": 2,
-      "explanation": "This toy environment always starts at the upper-left coordinate (0,0); TERMINAL is the separate state (3,3)."
+      "correct": 3,
+      "explanation": "Logs teach what was done and what was best. This lesson separates on-policy from off-policy learning."
     },
     {
       "stage": "check",
