@@ -95,6 +95,10 @@ Call `request_response` from a small caller with a graph with edges (0,1) and (1
 
 Hand off `outputs/skill-runtime-shape.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: queue, event, and cron on the platform
+
+In the CBP context the three runtime shapes map to platform primitives: a queue with retries and dead-lettering for long jobs that may fail mid-run, event triggers on Boards and Repos webhooks for reactive work, and scheduled Pipelines for nightly cleanup. Short synchronous calls stay synchronous only under 30 seconds; everything longer is a task id plus polling (lesson 13/13). Size workers against APIM rate limits, persist progress per step so step 37 survives a pod restart, and alert on dead-letter growth before users report the silence.
+
 ## Further Reading
 
 - [LangGraph overview](https://docs.langchain.com/oss/python/langgraph/overview) — durable execution details
