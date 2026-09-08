@@ -101,6 +101,10 @@ Call `server_notes` from a small caller with the demo’s smallest built-in fixt
 
 Hand off `outputs/skill-mcp-client-harness.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: the Java service is the client
+
+In the CBP context the client from this lesson is the Java service: it connects to the gateway-registered MCP servers (Boards, Repos, Search) with Entra ID or managed identity, merges their `tools/list` results into one namespace with server prefixes, and routes each model-requested call to the owning server. Keep one session per server with its capabilities and pending-request map, reconnect with backoff on transport failure, and re-list on `tools/list_changed` instead of caching forever. Colliding tool names across servers are resolved by prefix at discovery time, not by guessing at call time.
+
 ## Further Reading
 
 - [Model Context Protocol — Client spec](https://modelcontextprotocol.io/specification/2025-11-25/client) — canonical client behavior

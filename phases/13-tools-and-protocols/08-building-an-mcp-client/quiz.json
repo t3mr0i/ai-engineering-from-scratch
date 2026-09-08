@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How many canonical tools are present after discovering the three fake servers and prefixing collisions?",
+      "question": "An assistant needs tools from a file store, a database, and a ticket system, each owned by a different team. How should the host combine them?",
       "options": [
-        "7",
-        "3",
-        "5",
-        "10"
+        "Copy all three implementations into the host's codebase",
+        "Pick one system and ignore the other two",
+        "Ask the model to choose which system exists",
+        "Connect to each server, merge their tool lists into one namespace, and route calls by name"
       ],
-      "correct": 0,
-      "explanation": "The merged registry keeps seven tools: notes search/create, files search/read, and three GitHub tools with colliding search names prefixed."
+      "correct": 3,
+      "explanation": "Each system stays behind its own server; the client merges and routes. This lesson builds that client: discovery, namespacing, and session handling."
     },
     {
       "stage": "check",
