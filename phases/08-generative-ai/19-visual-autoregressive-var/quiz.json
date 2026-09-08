@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What token-grid shapes does tokenize_multiscale produce for an 8×8 image with SCALES=(1,2,4,8)?",
+      "question": "Full-resolution generation bills heavily before anyone reviews direction. What cheaper checkpoint exists?",
       "options": [
-        "1×1, 2×2, 4×4, and 8×8 grids",
-        "Four 8×8 grids, one per codebook",
-        "1×1, 1×2, 1×4, and 1×8 vectors",
-        "A single 64-token grid with no scale structure"
+        "Generate everything blindly first",
+        "Skip review entirely",
+        "Review only after full billing",
+        "Approve coarse scales before fine ones"
       ],
-      "correct": 0,
-      "explanation": "Each scale downsamples the current residual to scale×scale before encode, so the four token arrays have those shapes."
+      "correct": 3,
+      "explanation": "Coarse previews cost little. This lesson predicts next scales progressively."
     },
     {
       "stage": "check",

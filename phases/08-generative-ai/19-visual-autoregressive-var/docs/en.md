@@ -97,6 +97,10 @@ They are different axes through the problem. Both yield tractable conditional di
 
 
 
+## CBP context: review coarse before billing fine
+
+In the CBP context next-scale prediction suggests a review economy: approve coarse low-resolution drafts before paying for full-resolution generation — multiscale grids make the cheap check possible. Each scale refines residuals of the last; errors caught at 1×1 cost nothing, errors caught at full resolution cost everything. Structure reviews coarse-to-fine like the model generates.
+
 ## Build It
 
 Reconstruct **Visual Autoregressive Modeling (VAR): Next-Scale Prediction** by following `make_patterns` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
