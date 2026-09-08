@@ -68,6 +68,10 @@ Hand off `outputs/skill-verification-report.md` with the command `python3 main.p
 - Add a command-backed check that records a truncated output excerpt.
 - Require two consecutive passing reports before an unattended loop stops.
 
+## CBP context: fail closed outside the maker
+
+In the CBP context the verification boundary sits outside whoever produced the artifact: scope, required files, and acceptance commands each return structured evidence, and any missing piece fails the run closed — existing code without its tests is a failure, not a partial pass. The maker never votes on its own completion. Record checks in a stable order so two runs of the same artifact produce the same report; nondeterministic verification is another word for no verification.
+
 ## Further reading
 
 - [Phase 14 · 30 — Eval-Driven Agent Development](../../30-eval-driven-agent-development/docs/en.md)

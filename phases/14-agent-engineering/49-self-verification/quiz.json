@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why does the main verification demo print passed=false?",
+      "question": "An artifact looks convincing but misses the requirement that matters, and its maker declares it done. Who should decide completion?",
       "options": [
-        "The implementation check raises RuntimeError",
-        "The scope check returns a malformed tuple",
-        "tests/test_app.py is missing even though src/app.py exists",
-        "The temporary workspace contains a forbidden symlink"
+        "The maker, since it knows its own work best",
+        "Nobody; convincing is good enough",
+        "Whoever shouts loudest in the review",
+        "Independent checks outside the maker, failing closed"
       ],
-      "correct": 2,
-      "explanation": "The demo creates src/app.py but not tests/test_app.py; file_exists therefore contributes failed evidence and the aggregate report fails closed."
+      "correct": 3,
+      "explanation": "Makers cannot grade themselves. This lesson moves completion outside: separate checks, structured evidence, fail-closed reports."
     },
     {
       "stage": "check",
