@@ -39,6 +39,10 @@ flowchart LR
 
 `timestep_embedding` supplies sinusoidal features for a future time-conditioned network. `synthetic_circles` returns a tiny NCHW fixture in `[-1,1]`; it is used to exercise shapes, not to claim a generative result.
 
+## CBP context: noise schedules behind image services
+
+In the CBP context diffusion is the engine inside image-generation services: forward noise by schedule, learned reverse denoising, prompts plus seeds plus guidance shaping outputs. Control generations with those three levers and evaluate outputs against the brief — generated marketing or illustration assets still pass review like any other deliverable. Understand the schedule intuition here; operate services there.
+
 ## Build It
 
 Run from `code/`:
