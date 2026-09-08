@@ -46,6 +46,10 @@ sequenceDiagram
     O->>M: step()
 ```
 
+## CBP context: consume frameworks, degrade gracefully
+
+In the CBP context PyTorch is demo and research tooling, never a service dependency: lesson code runs where tensors exist and exits cleanly where they do not — the same grace your services show when optional backends are absent. Read the tensor vocabulary (shapes, dtypes, devices) for the day you debug an integration; keep the Java service free of Python ML packages always.
+
 ## Build It
 
 From `code/`, run:
