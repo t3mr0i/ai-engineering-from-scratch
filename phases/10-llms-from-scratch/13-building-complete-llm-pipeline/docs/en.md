@@ -196,6 +196,10 @@ The numbers change every six months. The skeleton does not.
 
 
 
+## CBP context: content labels between every step
+
+In the CBP context multi-step pipelines (data prep, training, eval, serving) pass content-labeled artifacts with checks between steps — never silent overwrites, never unlabeled handoffs. Reruns skip verified steps; failures point at the step whose check failed. The pipeline receipt habit from agent harnesses (lesson 14/50) applies verbatim to model pipelines.
+
 ## Build It
 
 Reconstruct **Building a Complete LLM Pipeline** by following `StageRecord` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
