@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For the line y=2x+1, what prediction is made at x=3?",
+      "question": "A team trains a complex model without ever fitting a simple baseline. What did they lose?",
       "options": [
-        "5",
-        "6",
-        "7",
-        "9"
+        "Nothing; complex models always win",
+        "Training time only",
+        "Just a few lines of code",
+        "The reference point proving complexity earns its keep"
       ],
-      "correct": 2,
-      "explanation": "Substitute x=3: y=2(3)+1=7."
+      "correct": 3,
+      "explanation": "Baselines anchor every comparison. This lesson fits the line everything else must beat."
     },
     {
       "stage": "check",

@@ -21,6 +21,10 @@ For a row x, the scratch model predicts w*x+b. LinearRegression.compute_gradient
 
 MultipleLinearRegression generalizes the dot product to rows such as [size, bedrooms, age]. standardize returns scaled rows plus the training means and standard deviations. RidgeRegression adds alpha*sum(w squared) to the objective and its gradient; the bias is left unpenalized. PolynomialRegression creates [x, x squared, ...] features, so scaling the input before fitting matters for high degrees.
 
+## CBP context: fit the simple model first
+
+In the CBP context linear regression is the baseline every fancier model must beat: fit the line, measure residuals, and only add complexity when the baseline's errors justify it. Least-squares intuition (lesson 01/17) also diagnoses misfit — patterned residuals mean the model class is wrong, not the data. A neural net that barely beats a line bought complexity with nothing.
+
 ## Build It
 
 Run python3 main.py from code/. The seeded fixture contains 80 noisy samples from approximately y=3x+7. The output reports gradient and normal-equation coefficients, an R-squared value, the means of two standardized features, and Ridge weights. Re-run with the same seed before comparing a change in learning rate.
