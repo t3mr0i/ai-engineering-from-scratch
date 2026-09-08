@@ -78,6 +78,10 @@ Call `SpanEvent` from a small caller with the text "red fox". Compare its result
 
 Hand off `outputs/skill-obs-platform-wiring.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: App Insights plus versioned prompts in the repo
+
+In the CBP context the observability platform is Application Insights for traces, metrics, and alerts; prompt versions and eval sets live in the repository next to the code, reviewed like code. Whatever evaluation UI the team prefers, the non-negotiables stay: every request traceable to its prompt version, tool results, and cost, with regressions paging before users notice. Evaluate judges in the pipeline (lesson 11/10), not in a dashboard nobody opens after week two.
+
 ## Further Reading
 
 - [Langfuse docs](https://langfuse.com/) — tracing, evals, prompt mgmt
