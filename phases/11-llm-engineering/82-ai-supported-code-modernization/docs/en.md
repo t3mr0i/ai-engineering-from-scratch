@@ -91,6 +91,10 @@ Call `Tier` from a small caller with the demo’s smallest built-in fixture. Com
 
 Hand off `outputs/skill-legacy-refactor-slice-planner.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: bounded slices with gates, never atomic rewrites
+
+In the CBP context legacy modernization cuts sequenced, bounded slices — each with explicit implicit contracts surfaced first, each passing its verification gate before the next is cut. No 2,000-line PRs across 40 files; no rubber stamps. The model analyzes (coupling, churn, coverage gaps, smells) and humans sequence; the gate decides. A rewrite without slice boundaries is a migration wearing a demo costume.
+
 ## Further Reading
 
 - [Martin Fowler — Refactoring (official site)](https://refactoring.com/) — the canonical reference on bounded change, test-first refactoring, and safe transformation patterns. The slice framework is an LLM-assisted implementation of these principles.
