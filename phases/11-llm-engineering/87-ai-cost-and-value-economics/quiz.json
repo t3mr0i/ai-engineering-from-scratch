@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does caching change in cost_per_query when the system prompt is a cache hit?",
+      "question": "A spreadsheet prices every query identically and the project blows its budget in production. What did the model miss?",
       "options": [
-        "The user turn becomes free and the output is billed at the input price",
-        "Every token is charged at the cache-write premium on a hit",
-        "Only the system-prompt portion uses the cache-read fraction; the user turn and output remain full-price",
-        "Caching changes quality routing but never changes token cost"
+        "Spreadsheets are always wrong",
+        "The project needed no budget at all",
+        "Only the cheapest possible model matters",
+        "Realistic traffic mix plus finance-signable value terms"
       ],
-      "correct": 2,
-      "explanation": "The function applies CACHE_READ_FRACTION to cached system tokens. User tokens and output tokens are still billed with their normal input and output prices."
+      "correct": 3,
+      "explanation": "Flat pricing models hide the real stack. This lesson separates cost structure from value justification."
     },
     {
       "stage": "check",

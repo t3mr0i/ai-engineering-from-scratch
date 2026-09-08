@@ -102,6 +102,10 @@ Call `ModelTier` from a small caller with tokens=["red","fox"]. Compare its resu
 
 Hand off `outputs/skill-ai-cost-value-decision-aid.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: model the stack under realistic traffic
+
+In the CBP context cost modeling uses realistic traffic — mixed complexity, growing contexts, measured cache behavior — and values output in finance-signable terms (time saved, decisions improved, risk reduced). Cache-read fractions apply to cached system tokens only; user turns and outputs bill full price. The lever that moves the number is rarely raw token price — find it before the steering committee asks.
+
 ## Further Reading
 
 - [Anthropic API pricing](https://www.anthropic.com/pricing) — canonical source for current model prices; check before any cost model is committed to a slide deck.
