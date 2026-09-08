@@ -112,6 +112,10 @@ Keep the solution auditable: run python3 main.py, save the output, and explain w
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
+## CBP context: every command verified before trusted
+
+In the CBP context generated runbooks and release notes live in the repo and earn trust the hard way: every command executed, every prerequisite checked, every screenshot current — reviewed in the same pull request as the change they describe. An unverified runbook slows the incident it was written for; a verified one is the responder's first tool. Polished prose without verified steps is a liability with good formatting.
+
 ## Further Reading
 
 ### Recommended trainings (LHIND AI Literacy)
