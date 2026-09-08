@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What tokens does tokenize(\"The cats were running at 3pm.\") return?",
+      "question": "Search misses documents because numbers stick to units and case handling is accidental. What fixes that?",
       "options": [
-        "The, cats, were, running, at, 3, pm, .",
-        "The, cats, were, running, at, 3pm.",
-        "The, catswere, runningat, 3pm",
-        "One token containing the entire sentence"
+        "Bigger indexes over raw text",
+        "Trust in default tokenization",
+        "More documents indexed as-is",
+        "Deliberate tokenization and normalization rules"
       ],
-      "correct": 0,
-      "explanation": "WORD_RE keeps words, numbers, and punctuation; the adjacent digits and letters in 3pm become separate tokens."
+      "correct": 3,
+      "explanation": "Preprocessing decides what retrieval can find. This lesson tokenizes and normalizes deliberately."
     },
     {
       "stage": "check",

@@ -39,6 +39,10 @@ Rule of thumb. Stem when speed matters and you can tolerate noise (search indexi
 
 
 
+## CBP context: normalize German text deliberately
+
+In the CBP context text preprocessing handles German realities — compounds, umlauts, case sensitivity in nouns — before search and classification: lowercase where case carries no meaning, preserve it where it does, split numbers from units ("3pm" is two tokens, not one). Document the tokenizer with the pipeline; retrieval quality inherits every preprocessing choice silently. Normalize deliberately, never by default.
+
 ## Build It
 
 Reconstruct **Text Processing — Tokenization, Stemming, Lemmatization** by following `tokenize` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
