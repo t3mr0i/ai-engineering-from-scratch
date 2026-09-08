@@ -57,6 +57,10 @@ Every primitive lands with a unit test that compares its output against `torch.d
 
 
 
+## CBP context: bandwidth is the training bill
+
+In the CBP context collectives explain where distributed-training money goes: every sync round moves full tensors across the interconnect, so bandwidth — not GPUs alone — prices the job. Ring algorithms trade latency for bandwidth efficiency; the two passes (scatter-reduce then gather) give every rank the full sum without a central bottleneck. Read provider training bills with this lens before approving the next large run.
+
 ## Build It
 
 Reconstruct **Collective Ops From Scratch** by following `name` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

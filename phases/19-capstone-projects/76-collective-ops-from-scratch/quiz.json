@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does ring_allreduce return for each rank after its two ring passes?",
+      "question": "Several machines must all agree on the sum of their tensors without a central server. What pattern does that?",
       "options": [
-        "Only rank 0's original tensor",
-        "A scalar containing the global maximum",
-        "The elementwise sum across ranks, with the original tensor shape",
-        "A concatenation of every rank's unmodified tensor"
+        "Each machine guesses the total",
+        "Send everything to one machine forever",
+        "No communication; hope the sums match",
+        "Ring passes that scatter-reduce then gather the sum"
       ],
-      "correct": 2,
-      "explanation": "The reduce-scatter pass sums shards and the allgather pass distributes the summed shards. Every rank receives the full elementwise sum, padded internally only when needed and trimmed back to the input shape."
+      "correct": 3,
+      "explanation": "Decentralized agreement needs structured exchange. This lesson builds ring allreduce from scratch."
     },
     {
       "stage": "check",
