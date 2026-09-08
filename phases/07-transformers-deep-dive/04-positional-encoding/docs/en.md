@@ -83,6 +83,10 @@ RoPE won because it slots into attention without changing the architecture, enco
 
 
 
+## CBP context: position schemes bound usable length
+
+In the CBP context the position era (sinusoidal, learned, RoPE, ALiBi) behind a deployment bounds how far past training length it reasons honestly: extrapolation claims need probing (lesson 05/28), not trust. Order-blind attention plus injected position equals sequence understanding; the scheme name on the model card tells you which length promises to verify. Length claims without scheme awareness are marketing.
+
 ## Build It
 
 Reconstruct **Positional Encoding — Sinusoidal, RoPE, ALiBi** by following `sinusoidal_pe` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

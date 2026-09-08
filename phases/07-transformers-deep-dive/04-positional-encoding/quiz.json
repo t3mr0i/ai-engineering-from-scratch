@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What are the first four values of sinusoidal_pe(n=8, d=8)[0]?",
+      "question": "Attention alone cannot tell word order, which language and code require. What must be added?",
       "options": [
-        "[0, 0, 1, 1]",
-        "[1, 0, 1, 0]",
-        "[0, 1, 0, 1]",
-        "[sin(8), cos(8), sin(8), cos(8)]"
+        "Bigger attention matrices",
+        "More training data only",
+        "No order information ever",
+        "Position signals injected into embeddings"
       ],
-      "correct": 2,
-      "explanation": "At position zero every angle is zero, so the even sine coordinates are 0 and the odd cosine coordinates are 1."
+      "correct": 3,
+      "explanation": "Order-blindness is fatal for sequences. This lesson injects position across three eras."
     },
     {
       "stage": "check",
