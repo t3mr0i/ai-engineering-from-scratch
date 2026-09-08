@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "A disease has prevalence 1%, sensitivity 90%, and specificity 95%. What is P(disease | positive)?",
+      "question": "A 90%-accurate test flags a 1% event as positive. Roughly how likely is the event really present?",
       "options": [
-        "About 15.4%",
-        "90%",
-        "95%",
-        "About 1.0%"
+        "About 90%, matching the accuracy",
+        "Nearly certain, tests do not lie",
+        "About 50% regardless of details",
+        "Far lower — false positives swamp rare truths"
       ],
-      "correct": 0,
-      "explanation": "The true-positive mass is 0.01*0.90=0.009. False positives contribute 0.99*0.05=0.0495, so the posterior is 0.009/(0.0585), about 15.4%."
+      "correct": 3,
+      "explanation": "Base rates dominate rare-event reasoning. This lesson builds Bayes for posteriors that surprise."
     },
     {
       "stage": "check",

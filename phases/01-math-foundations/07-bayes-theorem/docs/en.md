@@ -15,6 +15,10 @@
 - Compare MLE with Beta-prior MAP estimates and identify the effect of a stronger prior.
 - Update a Beta-Binomial belief incrementally and check it against a batch update.
 
+## CBP context: base rates decide whether alerts mean anything
+
+In the CBP context Bayes rules rare-event alerting: a 90%-accurate detector on a 1% event is wrong most of the time it fires — the base rate dominates, not the sensitivity. Design escalation, precision targets, and human review around posteriors, never around accuracy alone. Every "high-accuracy" alert on a rare CBP event needs this math beside it before anyone pages on it.
+
 ## Build It
 
 The offline Python entry point is:
