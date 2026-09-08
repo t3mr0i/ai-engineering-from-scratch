@@ -93,6 +93,10 @@ python3 -m unittest code/test_main.py
 | Sinusoidal position | Fixed sin/cos signal that encodes 2D grid coordinates |
 | CLS token | Learned vector prepended to the sequence as the pooling head |
 
+## CBP context: patches are tokens are cost
+
+In the CBP context vision patches translate directly into tokens and therefore into money: higher resolution means more patches, more tokens, higher bills — size document images to the smallest resolution the task tolerates. The tractability argument from this lesson is the pricing argument in production. Pixel-per-token thinking bankrupts the feature before it ships.
+
 ## Build It
 
 Reconstruct **Vision Encoder Patches** by following `FrontEndConfig` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
