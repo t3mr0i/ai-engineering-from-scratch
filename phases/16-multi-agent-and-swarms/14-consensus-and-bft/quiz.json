@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which three aggregators are implemented in this lesson?",
+      "question": "Reviewers include sycophants and monoculture thinkers, yet agreement must hold. What makes aggregation robust?",
       "options": [
-        "PSO, ACO, and MAPPO.",
-        "Round-robin, Contract Net, and a SQLite checkpoint.",
-        "Plurality, confidence-weighted CP-WBFT, and the simplified DecentLLMs scorer.",
-        "A single majority vote repeated three times with no confidence."
+        "Trust every vote equally",
+        "One vote repeated thrice",
+        "The loudest reviewer's opinion",
+        "Rules tested against hostile scenarios"
       ],
-      "correct": 2,
-      "explanation": "The module defines `plurality`, `cp_wbft`, and `decentllms`, then runs them over honest, Byzantine, sycophantic, and monoculture scenarios."
+      "correct": 3,
+      "explanation": "Honest-only rules break adversarially. This lesson aggregates with Byzantine faults modeled."
     },
     {
       "stage": "check",

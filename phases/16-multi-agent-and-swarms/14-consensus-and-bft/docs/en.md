@@ -93,6 +93,10 @@ The `threshold` parameter decides when to accept and when to retry. Too low: you
 
 
 
+## CBP context: agreement rules survive bad actors
+
+In the CBP context reviewer agreement must survive sycophants, monoculture, and Byzantine faults: plurality for honest majorities, confidence weighting where calibration holds, robust scorers where adversaries lurk. Test aggregators against hostile scenarios before trusting them — honest-only evals flatter every rule. Consensus is a security property, not a voting formality.
+
 ## Build It
 
 Reconstruct **Consensus and Byzantine Fault Tolerance for Agents** by following `Vote` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.
