@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which configuration matches the reference GPT assembled in this lesson?",
+      "question": "Blocks, embeddings, and output heads exist separately. What turns the pile into a working model?",
       "options": [
-        "vocab 256, context 32, width 64, 2 heads, 2 layers",
-        "vocab 32, context 2048, width 1024, 16 heads, 24 layers",
-        "vocab 50257, context 1024, width 768, 12 heads, 12 layers",
-        "vocab 50257, context 4096, width 512, 8 heads, 6 layers"
+        "Stacking them in any random order",
+        "More blocks with no connections",
+        "Embeddings alone without blocks",
+        "Assembling them into one wired configuration"
       ],
-      "correct": 2,
-      "explanation": "The default `GPTConfig` uses the familiar reference-sized settings: vocabulary 50,257, context length 1,024, model width 768, 12 heads, and 12 Transformer layers."
+      "correct": 3,
+      "explanation": "Parts are not a system. This lesson assembles embeddings, blocks, and head into a complete GPT."
     },
     {
       "stage": "check",

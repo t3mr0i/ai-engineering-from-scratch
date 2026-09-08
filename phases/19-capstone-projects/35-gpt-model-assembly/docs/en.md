@@ -88,6 +88,10 @@ Three knobs, three different behaviors. Temperature near zero collapses to greed
 | Top-k sampling | "K truncation" | Keep the K logits with the highest values, mask the rest to negative infinity, softmax over the remainder |
 | Temperature | "Sampling temperature" | Divide logits by T before softmax; T less than 1 sharpens, T equal to 1 keeps the natural distribution, T greater than 1 flattens |
 
+## CBP context: pick deployments by eval, not by size romance
+
+In the CBP context model assembly maps to deployment selection: vocabulary, context length, width, heads, and layers become the Azure deployment card you choose per feature — and the choice is proven on CBP evals, not on parameter counts. A bigger assembly that fails the invoice test loses to a smaller one that passes it. Know what each dial changes so the selection reads as engineering, not brand loyalty.
+
 ## Build It
 
 Reconstruct **GPT Model Assembly** by following `GPTConfig` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
