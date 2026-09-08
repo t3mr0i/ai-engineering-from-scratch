@@ -4,10 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In `BPETokenizer.train`, which ID is assigned to the first learned merge after the 256 byte values?",
-      "options": ["256", "2", "0", "255, the last reserved byte ID"],
-      "correct": 0,
-      "explanation": "The tokenizer reserves IDs 0 through 255 for raw bytes, so the first merge receives ID 256."
+      "question": "Arbitrary bytes must tokenize without loss before any learned vocabulary applies. What guarantees that floor?",
+      "options": [
+        "A dictionary of common words",
+        "Trust that inputs are always clean",
+        "Skipping unknown bytes silently",
+        "256 reserved byte values beneath learned merges"
+      ],
+      "correct": 3,
+      "explanation": "Bytes guarantee total coverage. This lesson builds BPE from the byte floor upward."
     },
     {
       "stage": "check",

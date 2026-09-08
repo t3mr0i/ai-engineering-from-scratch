@@ -205,6 +205,10 @@ This is why Llama 3 quadrupled its vocabulary from 32K to 128K. More tokens dedi
 
 
 
+## CBP context: bytes first, merges after
+
+In the CBP context tokenizers start from 256 byte values with learned merges appended — the floor guaranteeing every input tokenizes, the merges deciding budget efficiency per language. German text tokenizes longer than English on most vocabularies; measure per-language token counts on CBP traffic before fixing context budgets. The deployed tokenizer counts; all others merely estimate.
+
 ## Build It
 
 Reconstruct **Tokenizers: BPE, WordPiece, SentencePiece** by following `BPETokenizer` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
