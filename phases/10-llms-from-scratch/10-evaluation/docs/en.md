@@ -138,6 +138,10 @@ The only eval that matters for production. The process:
 
 
 
+## CBP context: fixed task sets certify versions
+
+In the CBP context new model versions certify on fixed representative CBP task sets — same tasks, both versions, compared results — never on meeting demos or developer opinion. Demos persuade; evals decide. Version the task set with the deployments it judges so every comparison stays reproducible quarters later.
+
 ## Build It
 
 Reconstruct **Evaluation: Benchmarks, Evals, LM Harness** by following `EvalCase` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
