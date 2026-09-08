@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which explicit signal is accepted as an alias for sensitive data?",
+      "question": "An AI use case carries vague unease but no named risks, so no controls get built. What comes first?",
       "options": [
-        "PII",
-        "data",
-        "decision",
-        "private-ish"
+        "Deploy and watch what happens",
+        "Trust general good intentions",
+        "More model capability",
+        "Explicit risk phrases with bounded impact levels"
       ],
-      "correct": 0,
-      "explanation": "The parser normalizes PII to the canonical sensitive data signal. Generic words such as data and decision are not complete signal phrases, and private-ish is not a documented alias."
+      "correct": 3,
+      "explanation": "Unnamed risks get no controls. This lesson turns use cases into explicit, evidenced risk phrases."
     },
     {
       "stage": "check",

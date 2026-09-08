@@ -15,6 +15,10 @@
 - Produce the union of controls and evidence requests implied by the matched signals.
 - Serialize a sorted intake plan while keeping its score separate from a legal or regulatory verdict.
 
+## CBP context: explicit phrases, explicit evidence
+
+In the CBP context the compliance workflow turns vague AI worry into explicit risk phrases with bounded impact and uncertainty levels, then into governance categories, controls, and review evidence. Name the risk in words before scoring it in numbers — unnameable risks get no controls. The workflow's output feeds the same deployment gate as lesson 11/75: no explicit evidence, no production.
+
 ## Build It
 
 Run the standard-library implementation:
