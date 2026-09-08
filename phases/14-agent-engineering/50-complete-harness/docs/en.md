@@ -66,6 +66,10 @@ Hand off `outputs/skill-complete-harness.md` with the command `python3 main.py`,
 - Persist the report and reload it in a fresh process.
 - Add an explicit approval state and make the handoff pause until a human signs.
 
+## CBP context: one report per candidate change
+
+In the CBP context the complete harness is the shape every CBP agent run converges to: instructions followed, state updated, scope checked, feedback captured, verification evidenced, review filed, handoff written — one report per candidate change, no framework required. Wire that report into the pull request so reviewers read machine-checked evidence instead of re-running the agent's claims by hand. Composition without a framework keeps every seam inspectable; adopt a framework only when its seams beat these, measured.
+
 ## Further reading
 
 - [Phase 14 · 42 — Agent Workbench Capstone](../../42-agent-workbench-capstone/docs/en.md)

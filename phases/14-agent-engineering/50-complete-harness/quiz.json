@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Why is the first harness.run call blocked in main?",
+      "question": "Instructions, state, scope, feedback, verification, review, and handoff each work alone but never meet. What is missing?",
       "options": [
-        "It has no task_id and no instructions",
-        "Its unit check is marked false despite passing feedback",
-        "It includes secrets/key.txt and omits the required acceptance check",
-        "It changed no files, so scope validation cannot run"
+        "A bigger framework to hide them all",
+        "Fewer mechanisms overall",
+        "One mechanism picked at random",
+        "One composed report per candidate change, no framework needed"
       ],
-      "correct": 2,
-      "explanation": "The incomplete call has a forbidden secrets/key.txt path and only unit=True; the missing acceptance evidence also prevents readiness."
+      "correct": 3,
+      "explanation": "Isolated mechanisms do not make a system. This capstone composes them into one harness report per change."
     },
     {
       "stage": "check",
