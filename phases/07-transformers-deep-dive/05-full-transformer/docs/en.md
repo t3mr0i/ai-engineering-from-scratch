@@ -92,6 +92,10 @@ At `d = 4096, r = 2.6, layers = 32` (roughly Llama 3 8B), total: `32 · (4·4096
 
 
 
+## CBP context: one skeleton, three specializations
+
+In the CBP context every deployed transformer reads as this skeleton plus refinements: BERT (encoder) for classification and search, GPT (decoder) for generation, T5/BART (both) for conditioned rewriting — with RMSNorm, SwiGLU, pre-norm, and RoPE as the modern fittings. Name the specialization before choosing the deployment; an encoder where generation is needed fails by architecture, not by tuning.
+
 ## Build It
 
 Reconstruct **The Full Transformer — Encoder + Decoder** by following `randn_matrix` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

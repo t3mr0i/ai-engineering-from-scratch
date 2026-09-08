@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In the demo, what are the source and target shapes before the encoder and decoder run?",
+      "question": "One attention layer extracts features but cannot carry language alone. What turns layers into a model?",
       "options": [
-        "Source is 6×8 and target is 5×8",
-        "Source is 8×6 and target is 8×5",
-        "Both are 6×6 because attention changes the model width",
-        "Source is 5×8 and target is 6×8"
+        "A single wider layer only",
+        "Fewer layers with no plumbing",
+        "Attention without any stacking",
+        "Depth with the six stackable design decisions"
       ],
-      "correct": 0,
-      "explanation": "main sets src_len=6, tgt_len=5, and d=8; attention changes token interactions but preserves each sequence's model width."
+      "correct": 3,
+      "explanation": "Capacity needs stackable depth. This lesson packages the transformer skeleton every model inherits."
     },
     {
       "stage": "check",
