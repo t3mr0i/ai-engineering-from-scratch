@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In the demo's `SequentialCrew`, in what order are the three declared tasks executed?",
+      "question": "A customer bug needs a deterministic replay of what the agents did, but the free-roaming crew cannot reproduce its own run. What is the structural answer?",
       "options": [
-        "Researcher, then writer, then editor.",
-        "Editor, then researcher, then writer.",
-        "Writer and editor run in parallel before the researcher.",
-        "The manager chooses a new order at every kickoff."
+        "Run the crew again and hope for the same path",
+        "Remove all logging to save tokens",
+        "Let the manager model improvise more freely",
+        "Separate exploratory crews from code-owned, auditable flows"
       ],
-      "correct": 0,
-      "explanation": "A sequential crew walks its task list in declaration order: the researcher creates material, the writer drafts it, and the editor revises the draft."
+      "correct": 3,
+      "explanation": "Exploration and auditability want different shapes. This lesson splits them: crews for collaboration, flows for production."
     },
     {
       "stage": "check",

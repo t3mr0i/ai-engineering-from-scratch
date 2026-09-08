@@ -147,6 +147,10 @@ Call `tool` from a small caller with the text "red fox". Compare its result with
 
 Hand off `outputs/skill-crew-or-flow.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: crews explore, flows deliver
+
+In the CBP context keep the lesson's split as a deployment rule: role-based crews for exploratory work (brainstorming remediation options, drafting incident narratives) where the collaborative shape helps, and code-owned flows for production paths (triage, release, billing) where replay, cost attribution, and on-call debugging are non-negotiable. Watch the three failure modes as cost drivers — prompt bloat per agent, the manager model's tax on every handoff, brittle handoffs that drop context. A crew that cannot replay its 3 AM stall is a demo, not a service.
+
 ## Further Reading
 
 - [CrewAI docs introduction](https://docs.crewai.com/en/introduction): concepts and the recommended production path
