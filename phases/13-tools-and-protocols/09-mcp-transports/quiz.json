@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does the HTTP handler treat an initialize request from an unapproved evil origin?",
+      "question": "A tool server works on one developer's laptop through a local process pipe. The team wants every assistant host to reach it over the network. What must change?",
       "options": [
-        "It returns HTTP 403 before dispatching JSON-RPC",
-        "It mints a session and returns 200",
-        "It accepts the request only when the body is empty",
-        "It converts the origin to localhost"
+        "Nothing; local pipes work across machines",
+        "Copy the server folder to every machine by hand",
+        "Give the laptop a bigger hard drive",
+        "Serve it over the network transport with session handling and auth at the edge"
       ],
-      "correct": 0,
-      "explanation": "_require_origin checks the exact/prefix allowlist first, so an evil origin receives 403 and cannot create a session."
+      "correct": 3,
+      "explanation": "Local pipes do not cross machines. This lesson covers the transports: stdio for this machine, Streamable HTTP with sessions and auth for the network."
     },
     {
       "stage": "check",

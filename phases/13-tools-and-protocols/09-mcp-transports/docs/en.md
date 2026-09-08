@@ -108,6 +108,10 @@ Call `dispatch` from a small caller with the demo’s smallest built-in fixture.
 
 Hand off `outputs/skill-mcp-transport-migrator.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: Streamable HTTP behind the gateway
+
+In the CBP context every shared MCP server is remote, so it speaks Streamable HTTP behind the APIM gateway: one endpoint, TLS and Entra ID at the edge, a random `Mcp-Session-Id` per session, and an origin allowlist against DNS rebinding. Stdio stays a local-development tool — spawning a server on the same machine for a fast loop — never a production transport. Terminate idle sessions explicitly and let the gateway (not the server) own rate limits and audit.
+
 ## Further Reading
 
 - [MCP — Basic transports spec 2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports) — canonical reference for stdio and Streamable HTTP
