@@ -105,6 +105,10 @@ Keep the solution auditable: run python3 main.py, save the output, and explain w
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
+## CBP context: roles hear what changes for them
+
+In the CBP context adoption communication tells each role what changes: which tasks shift, which decisions stay human, what good practice looks like, where concerns go — plus a manager brief, a practice task, and a feedback channel. Tool capability announcements without role translation produce logins, not adoption. Enablement is measured in changed workflows, not in message opens.
+
 ## Further Reading
 
 ### Recommended trainings (LHIND AI Literacy)
