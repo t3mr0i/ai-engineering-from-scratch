@@ -104,6 +104,10 @@ Your solution is complete when it records python3 main.py, the captured output, 
 
 Use normalize(), signal_matches(), score_scenario() to explain the result, not only the prose output. If the experiment disagrees with the prediction, keep the failed prediction in the receipt and revise the explanation rather than changing the input until it passes.
 
+## CBP context: metric, chart, causality, decision
+
+In the CBP context BI narratives pass the gate — metric defined, chart inspected, causality limits flagged, decision context stated — before any management report ships. Correlation never becomes a business claim without the causal evidence attached. A confident narrative over ambiguous metrics is storytelling in the wrong genre: fiction.
+
 ## Further Reading
 
 ### Recommended trainings (LHIND AI Literacy)
