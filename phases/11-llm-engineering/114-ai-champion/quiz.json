@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What primary artifact does recommend_artifact choose for an L2 practitioner with procedural knowledge?",
+      "question": "A champion answers the same five questions in DMs while brown bags stall and pilots have no successors. What structure fixes that?",
       "options": [
-        "A session, because practitioners should learn only synchronously",
-        "A decision aid, because code is too detailed for L2",
-        "A reference implementation, followed by an eval harness",
-        "An eval harness alone, because procedure and evaluation are identical"
+        "More brown bags on the same format",
+        "Whatever anyone asks for next",
+        "Synchronous sessions only for all",
+        "Audience-matched artifacts sequenced by a triage model"
       ],
-      "correct": 2,
-      "explanation": "The routing table maps (L2_PRACTITIONER, PROCEDURAL) to REFERENCE_IMPL with EVAL_HARNESS as the next artifact. A runnable pattern grounds the procedure and the harness checks it."
+      "correct": 3,
+      "explanation": "Unstructured championing does not compose. This lesson matches artifact format to audience level and knowledge type."
     },
     {
       "stage": "check",

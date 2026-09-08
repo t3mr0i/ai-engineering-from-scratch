@@ -91,6 +91,10 @@ Call `AudienceLevel` from a small caller with a graph with edges (0,1) and (1,2)
 
 Hand off `outputs/skill-ai-champion-triage.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: match artifact to audience and knowledge
+
+In the CBP context champions triage finite time by audience level and knowledge type: practitioners get reference implementations with eval harnesses, decision-makers get one-page aids, never notebooks for executives or decks for platform engineers. Track named model series against the team's evals rather than announcing every release. One-off demos do not compose; matched artifacts do.
+
 ## Further Reading
 
 - [Anthropic — Model changelog and release notes](https://www.anthropic.com/news) — the primary source for model capability updates; scan for new tool-use modes, reasoning capabilities, and named model series.
