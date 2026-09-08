@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How does green_set create a token watermark in the toy?",
+      "question": "Synthetic assets circulate with no origin marks and enter workflows unquestioned. What two practices fix that?",
       "options": [
-        "It hashes the previous K=4 tokens and marks half the vocabulary green according to the hash parity",
-        "It signs the whole output with a private key",
-        "It appends an HTML comment to the prompt",
-        "It inserts a visible logo after decoding"
+        "Bigger generative models",
+        "Faster asset production",
+        "Trust in all circulating content",
+        "Watermark on generation, verify provenance on ingest"
       ],
-      "correct": 0,
-      "explanation": "green_set hashes the last four token IDs and includes token t when (t+h) % 2 == 0. watermarked_sample then chooses the green half with probability bias=0.9."
+      "correct": 3,
+      "explanation": "Unmarked synthesis is unattributed liability. This lesson marks outputs and verifies origins."
     },
     {
       "stage": "check",

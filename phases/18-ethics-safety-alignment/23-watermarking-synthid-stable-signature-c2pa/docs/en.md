@@ -75,6 +75,10 @@ Lessons 22-23 are about what the model emits (private data, provenance signal). 
 
 
 
+## CBP context: mark synthetic, verify provenance
+
+In the CBP context every synthetic asset (text, image, audio) carries provenance — watermarks plus C2PA-style manifests — and ingestion verifies it before use. Generation without marking is unattributed liability; consumption without verification trusts strangers. The green-list intuition (biased halves detectable statistically) explains detection; manifests explain trust.
+
 ## Build It
 
 Reconstruct **Watermarking — SynthID, Stable Signature, C2PA** by following `green_set` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
