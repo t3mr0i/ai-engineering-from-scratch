@@ -105,6 +105,10 @@ Call `Regression` from a small caller with the demo’s smallest built-in fixtur
 
 Hand off `outputs/skill-rollout-runbook.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: no model ships without a ramp
+
+In the CBP context every model, prompt, or alias change rides the ramp: shadow first (same requests, logged outputs, zero user impact), canary on a slice with cost and thumbs-down watched, policy-flag rollback in seconds — never a three-hour redeploy. Offline evals gate entry to shadow; shadow cost deltas gate entry to canary; canary user metrics gate the rollout. A direct flip to 100% on a 3% offline gain is how weekends get ruined.
+
 ## Further Reading
 
 - [TianPan — Releasing AI Features Without Breaking Production](https://tianpan.co/blog/2026-04-09-llm-gradual-rollout-shadow-canary-ab-testing)

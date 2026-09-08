@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the defining user-impact property of shadow traffic?",
+      "question": "Offline evals show a 3% gain, the team flips the new model to all users, and cost jumps 40% with angry tickets. What would have caught that?",
       "options": [
-        "The candidate receives all traffic at 100% immediately",
-        "The baseline is deleted before comparison",
-        "Shadow output never reaches users",
-        "Shadow mode bypasses cost and latency measurement"
+        "Better offline evals alone",
+        "A longer launch announcement",
+        "Faster full rollbacks after damage",
+        "Shadow traffic, then a watched canary, then rollout"
       ],
-      "correct": 2,
-      "explanation": "Shadow mode compares candidate samples while the baseline remains the serving response, so candidate output has zero user exposure."
+      "correct": 3,
+      "explanation": "Offline gains do not predict production cost or taste. This lesson ramps: shadow, canary, progressive rollout with instant rollback."
     },
     {
       "stage": "check",
