@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is Stage 1's job in classify(action, history)?",
+      "question": "An agent repeats the identical sensitive tool call five times unchallenged. What layered defense catches that?",
       "options": [
-        "Cheaply flag dangerous keywords or the fifth identical tool/payload before deeper review",
-        "Approve every curl command without looking at its host",
-        "Execute the action and inspect its side effects",
-        "Replace the Stage 2 verdict with a random choice"
+        "Approve everything for speed",
+        "One permission mode for all tools",
+        "Trust in well-behaved agents",
+        "Keyword pre-filter plus review plus repetition alarms"
       ],
-      "correct": 0,
-      "explanation": "stage1 checks the case-insensitive keyword list and repeated identical history; only actions that pass can receive its fast approval."
+      "correct": 3,
+      "explanation": "Single gates miss patterns. This lesson tiers permissions with repetition detection."
     },
     {
       "stage": "check",

@@ -75,6 +75,10 @@ Anthropic shipped Auto Mode as a research preview. The documentation is explicit
 
 
 
+## CBP context: cheap pre-filter, deep review, repetition alarms
+
+In the CBP context permission modes tier every tool: cheap keyword pre-filters catch the obvious, deeper review judges the rest, and repeated identical tool calls trip alarms (loops and exfiltration both repeat themselves). Allow, ask, and deny map per tool per tenant — never one mode for everything. The fifth identical call is information, not coincidence.
+
 ## Build It
 
 Reconstruct **Claude Code as an Autonomous Agent: Permission Modes and Auto Mode** by following `Verdict` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.
