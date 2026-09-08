@@ -118,6 +118,10 @@ Call `Tier` from a small caller with the text "red fox". Compare its result with
 
 Hand off `outputs/skill-source-quality-gate.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: govern before embedding, not after incidents
+
+In the CBP context source quality gates run before any embedding is computed: authority, currency, consistency, and scope as testable criteria per candidate source, superseded and ownerless documents excluded. Recall at 5 of 0.82 over an ungoverned corpus still serves three-year-old compliance guidance to client-facing consultants. Prevention beats retrieval tuning by orders of magnitude.
+
 ## Further Reading
 
 - [NIST AI Risk Management Framework (AI RMF)](https://airc.nist.gov/Home) — the US federal framework for AI risk, including data governance and provenance requirements.

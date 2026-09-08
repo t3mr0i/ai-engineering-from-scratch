@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What disposition does score_source give a T1 source with a named owner, current date, no contradiction, and in-scope content?",
+      "question": "An assistant cites a superseded policy nobody deleted, and a consultant repeats wrong compliance guidance. When should that source have been caught?",
       "options": [
-        "ADMIT, because all four quality dimensions pass the AND gate",
-        "DEFER, because T1 sources always need human sign-off",
-        "REJECT, because an authoritative source cannot enter retrieval directly",
-        "ADMIT only when its domain is a case study"
+        "After the incident, in the post-mortem",
+        "Never; old documents are harmless",
+        "In retrieval tuning months later",
+        "Before indexing, by ownership and freshness gates"
       ],
-      "correct": 0,
-      "explanation": "A named owner satisfies authority for T1, and the current, consistent, in-scope candidate passes currency, consistency, and scope. With no failed dimension, the disposition is ADMIT."
+      "correct": 3,
+      "explanation": "Governance failures predate embeddings. This lesson gates sources on authority, currency, consistency, and scope."
     },
     {
       "stage": "check",
