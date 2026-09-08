@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which three top-level MAST categories are represented by the categorizer?",
+      "question": "Multi-agent post-mortems fix symptoms while the same failures recur. What categorization breaks the cycle?",
       "options": [
-        "Planner, executor, and reviewer.",
-        "Latency, token cost, and model quality.",
-        "Specification Problem, Coordination Failure, and Verification Gap.",
-        "Discovery, transport, and authentication."
+        "Blame the loudest agent",
+        "Latency, cost, and quality only",
+        "Discovery and transport labels",
+        "Specification, coordination, and verification gaps"
       ],
-      "correct": 2,
-      "explanation": "`MAST_CATEGORIES` defines `spec`, `coord`, and `verify`, with the lesson's reported shares 41.77%, 36.94%, and 21.30%."
+      "correct": 3,
+      "explanation": "Uncategorized failures repeat. This lesson sorts incidents into fixable categories."
     },
     {
       "stage": "check",

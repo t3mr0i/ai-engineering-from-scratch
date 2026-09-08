@@ -147,6 +147,10 @@ The 2026 engineering move: instrument slow-failure proxies so you can catch drif
 
 
 
+## CBP context: spec problems dominate, verify the rest
+
+In the CBP context multi-agent incidents classify into specification, coordination, and verification failures — with unclear specs leading by share. Triage category first: spec problems need rewritten contracts, coordination needs routing fixes, verification needs gates. Category-blind post-mortems fix symptoms; categorized ones fix systems.
+
 ## Build It
 
 Reconstruct **Failure Modes — MAST, Groupthink, Monoculture, Cascading Errors** by following `categorize_incident` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
