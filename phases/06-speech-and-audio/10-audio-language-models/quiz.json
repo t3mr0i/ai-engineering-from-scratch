@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How many feature frames does fake_audio_encoder(audio_seconds=3.0) return?",
+      "question": "Voicemail triage needs both words and tone, but text-only models lose the tone. What joint input fixes that?",
       "options": [
-        "1280",
-        "3",
-        "150",
-        "50"
+        "Louder voicemail playback",
+        "Transcripts alone, tone ignored",
+        "Shorter voicemails forced",
+        "Audio frames encoded alongside text tokens"
       ],
-      "correct": 2,
-      "explanation": "The encoder uses int(audio_seconds*50), giving 150 frames for three seconds."
+      "correct": 3,
+      "explanation": "Tone lives outside transcripts. This lesson encodes audio jointly with text for full understanding."
     },
     {
       "stage": "check",

@@ -90,6 +90,10 @@ The **multi-audio column is damning for everyone.** Random chance on 4-option mu
 
 
 
+## CBP context: joint audio-text through platforms
+
+In the CBP context audio-language models arrive via platform speech and multimodal services: audio frames encoded alongside text tokens for joint understanding (voicemail triage with tone, support calls with content). Watch the frame economics — seconds times frame rate prices the call — and evaluate on CBP audio with accents and noise. Joint modeling is consumed, never built.
+
 ## Build It
 
 Reconstruct **Audio-Language Models — Qwen2.5-Omni, Audio Flamingo, GPT-4o Audio** by following `fake_audio_encoder` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
