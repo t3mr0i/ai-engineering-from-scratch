@@ -103,6 +103,10 @@ Call `Skill` from a small caller with the text "red fox". Compare its result wit
 
 Hand off `outputs/skill-skill-library.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: the team skill library lives in the repo
+
+In the CBP context the skill library is a reviewed directory in the repository — SKILL.md and AGENTS.md files as lesson 13/22 shows — not an unreviewed vector dump. Each skill names its trigger, its steps, and its verification; corrections learned in one session become pull requests that every later session inherits. Version and deprecate skills like code, because a stale skill silently steers every run that retrieves it. Lifelong learning without review is lifelong drift.
+
 ## Further Reading
 
 - [Wang et al., Voyager (arXiv:2305.16291)](https://arxiv.org/abs/2305.16291) — the original skill-library paper
