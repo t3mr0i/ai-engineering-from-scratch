@@ -66,6 +66,10 @@ Hand off `outputs/skill-runtime-feedback.md` with the command `python3 main.py`,
 - Add a command budget and stop after the first budget breach.
 - Add a path-diff receipt after a command that edits a temporary workspace.
 
+## CBP context: receipts decide, secrets stay out
+
+In the CBP context scope and feedback travel together: the contract allows the working tree and forbids secrets paths outright — credentials come from Key Vault, never from files the agent can read. Every runtime command returns a receipt (exit code plus captured output) that the next decision must read; a green sentence without a receipt changes nothing. A non-zero exit, a timeout, or a forbidden-path write stays visible to the next turn and to the audit log.
+
 ## Further reading
 
 - [Phase 14 · 37 — Runtime Feedback Loops](../../37-runtime-feedback-loops/docs/en.md)

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Under the demo contract, which path is forbidden even though src/** and tests/** are allowed?",
+      "question": "An agent's plan looks green in words, but the command behind it failed and a forbidden path was touched. What must survive to the next turn?",
       "options": [
-        "src/app.py",
-        "tests/test_app.py",
-        "secrets/key.txt",
-        "tests/fixtures/input.json"
+        "Only the green sentence",
+        "Nothing; plans matter more than runs",
+        "A summary written from memory",
+        "The exit code, captured output, and scope verdict"
       ],
-      "correct": 2,
-      "explanation": "The contract allows src/** and tests/** but explicitly lists secrets/** as forbidden; the demo reports secrets/key.txt as forbidden."
+      "correct": 3,
+      "explanation": "Feed-forward plans need runtime feedback. This lesson keeps receipts visible: exit, output, and scope on every turn."
     },
     {
       "stage": "check",
