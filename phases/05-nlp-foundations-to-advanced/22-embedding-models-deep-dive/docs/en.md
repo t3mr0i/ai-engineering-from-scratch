@@ -61,6 +61,10 @@ Most production stacks use all three.
 
 
 
+## CBP context: normalized vectors, evaluated models
+
+In the CBP context embedding models are consumed with two non-negotiables: vectors normalized (unit length, so cosine means something) and models evaluated on CBP German queries before trust. Hashing tricks teach the mechanics; production uses trained models chosen by retrieval metrics on tenant corpora. Change the model, re-embed the corpus, re-measure — the index and the model are one unit.
+
 ## Build It
 
 Reconstruct **Embedding Models — The 2026 Deep Dive** by following `tokenize` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

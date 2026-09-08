@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the norm of hash_embed(\"cat\", dim=256)?",
+      "question": "Similarity scores behave erratically across vectors of different lengths. What normalization fixes comparison?",
       "options": [
-        "Exactly 256",
-        "The number of tokens in text",
-        "Approximately 1",
-        "Always 0"
+        "Longer vectors always win",
+        "Raw dot products suffice",
+        "Truncate all vectors equally",
+        "Unit-length normalization before comparing"
       ],
-      "correct": 2,
-      "explanation": "hash_embed accumulates signed hash buckets and divides by the Euclidean norm when it is nonzero."
+      "correct": 3,
+      "explanation": "Unnormalized lengths distort similarity. This lesson normalizes embeddings for honest comparison."
     },
     {
       "stage": "check",
