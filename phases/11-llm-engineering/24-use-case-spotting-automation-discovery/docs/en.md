@@ -76,6 +76,10 @@ AI use-case discovery canvas and prioritization score.
 
 The output template in `outputs/canvas-ai-use-case-discovery.md` can be copied into a project kickoff, enablement workshop, or team retro. Keep the artifact short enough that teams actually use it.
 
+## CBP context: no canvas, no PoC
+
+In the CBP context the discovery canvas is the entry gate to delivery: workflow, observable pain, available data, owner, risk, and value measure named before any PoC is scoped. Sixty excited ideas without that canvas produce zero shipments; five canvassed use cases produce a roadmap. The CBP engagement starts where this lesson ends — with a viable, owned, measurable use case, not with a model choice.
+
 ## Key Takeaways
 
 - The course is about operational judgment, not generic AI enthusiasm.
