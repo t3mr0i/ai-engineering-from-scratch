@@ -121,6 +121,10 @@ Three extensions a real implementation will want. First, persistent UCB stats ac
 
 The scheduler is the place where research becomes more than a worklist. Once UCB is wired and the slots run in parallel, every other improvement composes on top.
 
+## CBP context: budget exploration explicitly
+
+In the CBP context iteration scheduling rations exploration across remediation branches or vendor trials: exploit the current best, explore the uncertain, with the exploration share budgeted up front rather than discovered on the invoice. Greedy always-pick-best stalls on local optima; unbounded exploration stalls on the meter. The schedule is the compromise, written down and costed.
+
 ## Build It
 
 Reconstruct **Iteration Scheduler** by following `Hypothesis` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
