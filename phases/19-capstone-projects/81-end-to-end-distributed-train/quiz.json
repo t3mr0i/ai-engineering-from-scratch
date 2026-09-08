@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which attention mask makes MiniGPT causal?",
+      "question": "Generated tokens must not peek at tokens that come later in the sequence. What enforces that?",
       "options": [
-        "An upper-triangular mask that blocks attention to future token positions",
-        "A lower-triangular mask that blocks all previous context",
-        "A mask that allows every query to see every key",
-        "A mask that removes only padding embeddings"
+        "Trust in well-behaved generation",
+        "Longer training runs",
+        "Bigger models with more memory",
+        "A mask blocking future positions per token"
       ],
-      "correct": 0,
-      "explanation": "The causal self-attention uses an upper-triangular future-position mask. Each token may attend to itself and earlier tokens, not tokens to its right."
+      "correct": 3,
+      "explanation": "Autoregression needs enforced future-blindness. This lesson masks future positions so each token sees only its past."
     },
     {
       "stage": "check",

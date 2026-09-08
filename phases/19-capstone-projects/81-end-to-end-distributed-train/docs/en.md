@@ -58,6 +58,10 @@ The loop runs a fixed 20 steps and exits. No `while True`, no human intervention
 
 
 
+## CBP context: future-blind by construction
+
+In the CBP context the causal mask is the property every completion depends on: each token sees only itself and earlier tokens, which is why streaming works token by token and why the model cannot peek at the answer it has not written. Understand this before debugging "the model ignored the later instruction" — position and masking decide what was even visible. The composed distributed run here proves the pieces fit; the masking rule proves the outputs are honest.
+
 ## Build It
 
 Reconstruct **End-to-End Distributed Training** by following `CausalSelfAttention` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
