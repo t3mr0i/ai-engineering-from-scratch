@@ -105,6 +105,10 @@ Call `Experiment` from a small caller with the text "red fox". Compare its resul
 
 Hand off `outputs/skill-chaos-plan.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: break the LLM failure modes on purpose
+
+In the CBP context chaos experiments target the LLM-specific modes unit tests miss: poison-character prompts stalling tokenization, provider 429s amplified by gateway retries into OOMs, KV eviction storms cascading into re-prefill saturation. Run them against staging with SLOs, observability, and a kill switch wired first — never in production without all three. Each discovered mode becomes a monitor plus a runbook entry; chaos that teaches nothing is just an outage with a calendar invite.
+
 ## Further Reading
 
 - [DevSecOps School — Chaos Engineering 2026 Guide](https://devsecopsschool.com/blog/chaos-engineering/)

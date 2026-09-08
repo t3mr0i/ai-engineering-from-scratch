@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What daily error budget does ERROR_BUDGET_PER_DAY=0.001 represent?",
+      "question": "Unit tests pass, but a poison prompt stalls the tokenizer and a provider hiccup cascades through retries. How do you find such failures first?",
       "options": [
-        "0.001%, or 99.999% availability",
-        "1.0%, or 99% availability",
-        "0.1%, or a 99.9% SLO",
-        "10%, or a 90% SLO"
+        "More unit tests of the same kind",
+        "Hope users report them kindly",
+        "Disable retries everywhere",
+        "Controlled chaos against staging with SLOs and a kill switch"
       ],
-      "correct": 2,
-      "explanation": "0.001 as a fraction is 0.1%, leaving a 99.9% success target; main prints the SLO error budget as 0.10%/day."
+      "correct": 3,
+      "explanation": "Unit tests cannot show emergent production modes. This lesson breaks them on purpose, with guardrails, before users do."
     },
     {
       "stage": "check",
