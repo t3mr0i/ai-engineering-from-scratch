@@ -85,6 +85,10 @@ Call `Span` from a small caller with a graph with edges (0,1) and (1,2). Compare
 
 Hand off `outputs/skill-llm-observability.md` with the command `python3 main.py`, the accepted input shape (a graph with edges (0,1) and (1,2)), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: errors kept, tenants attributed
+
+In the CBP context the eval dashboard reads from Application Insights: tail sampling keeps every error trace regardless of the random draw, costs attribute per model, tool, and tenant, and regressions page before users notice. Build the sampling and aggregation craft here; operate it on platform telemetry there. A dashboard nobody opens after week two is decoration — wire its alerts into the on-call channel.
+
 ## Further Reading
 
 - [Langfuse](https://github.com/langfuse/langfuse) — the reference open-core observability platform

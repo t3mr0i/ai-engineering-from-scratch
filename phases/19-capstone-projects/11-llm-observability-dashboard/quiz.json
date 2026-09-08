@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which trace does TailSampler keep regardless of its random sample draw?",
+      "question": "Random sampling drops the one error trace that explains an outage. What sampling rule prevents that?",
       "options": [
-        "Any trace containing at least one span with status == \"error\"",
-        "Only traces whose spans all have latency under 100 ms",
-        "Only traces whose user_id is new",
-        "Only traces selected by the 20% random sample"
+        "Sample fewer traces overall",
+        "Keep only fast successful traces",
+        "Sample by user name alphabetically",
+        "Keep every error trace regardless of the random draw"
       ],
-      "correct": 0,
-      "explanation": "TailSampler checks `any(s.status == \"error\" for s in trace)` first, so a trace with at least one error-status span is kept before the random, toxicity, or PII branches."
+      "correct": 3,
+      "explanation": "Errors are rare and precious. This capstone tail-samples: errors always kept, the rest sampled for cost."
     },
     {
       "stage": "check",
