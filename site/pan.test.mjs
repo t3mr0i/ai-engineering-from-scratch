@@ -14,7 +14,6 @@ test("learner surfaces retain shared Navigator CSS without loading its script", 
     ["./lesson.html", ""],
     ["./skills.html", ""],
     ["./personal-plan.html", ""],
-    ["./team-learning.html", ""],
     ["./lrn/course.html", "../"]
   ];
   pages.forEach(([pagePath, prefix]) => {
@@ -38,13 +37,6 @@ test("the personal-plan page wires the editable planning engine", () => {
   assert.match(page, /id="personalPlan"[^>]+aria-label="Personal learning plan"/);
   assert.match(page, /src="lrn\/learning-plan\.js\?v=[^"]+"/);
   assert.match(page, /src="lrn\/plan-builder\.js\?v=[^"]+"/);
-});
-
-test("the team-learning page wires assignments and evidence", () => {
-  const page = readFileSync(new URL("./team-learning.html", import.meta.url), "utf8");
-  assert.match(page, /id="teamLearning"[^>]+aria-label="Team learning and skill evidence"/);
-  assert.match(page, /src="lrn\/report-sync\.js\?v=[^"]+"/);
-  assert.match(page, /src="lrn\/team-learning\.js\?v=[^"]+"/);
 });
 
 test("the cockpit delegates editable planning to the personal-plan page", () => {

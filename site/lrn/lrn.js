@@ -94,6 +94,7 @@
     roleSelect: document.getElementById("roleSelect"),
     keyAreaSelect: document.getElementById("keyAreaSelect"),
     specializationSelect: document.getElementById("specializationSelect"),
+    keyAreaHint: document.getElementById("keyAreaHint"),
     levelSelect: document.getElementById("levelSelect"),
     courseFilters: document.getElementById("courseFilters"),
     courseGrid: document.getElementById("courseGrid"),
@@ -351,11 +352,13 @@
     var wrapper = els.keyAreaSelect.closest(".selector-field");
     if (!options.length) {
       if (wrapper) wrapper.hidden = true;
+      if (els.keyAreaHint) els.keyAreaHint.hidden = false;
       els.keyAreaSelect.innerHTML = "";
       state.keyAreaId = null;
       return;
     }
     if (wrapper) wrapper.hidden = false;
+    if (els.keyAreaHint) els.keyAreaHint.hidden = true;
     replaceChildren(els.keyAreaSelect, options.map(function (keyArea) {
       var option = document.createElement("option");
       option.value = keyArea.id;
@@ -399,7 +402,7 @@
       return option;
     });
     var imported = assessmentImport();
-    if (imported && imported.profileId !== state.profileId) imported = null;
+    if (imported && mergedProfileId(imported.profileId) !== state.profileId) imported = null;
     if (imported && imported.profileId && resolveRole(imported.profileId) === state.profileId) {
       var importedOption = document.createElement("option");
       importedOption.value = "imported";
@@ -451,7 +454,7 @@
     var profileId = computed && computed.profile && computed.profile.id || state.profileId;
     var allPaths = data.academyPaths || [];
     var imported = assessmentImport();
-    if (imported && imported.profileId !== profileId) imported = null;
+    if (imported && mergedProfileId(imported.profileId) !== profileId) imported = null;
     function pathSupportsImported(path) {
       return imported && (path.stages || []).some(function (stage) {
         return (stage.courses || []).some(function (courseId) {
@@ -826,7 +829,7 @@
   function academyPathCard(path, context) {
     var pathStats = academyPathProgress(path);
     var imported = assessmentImport();
-    var activeLevel = imported && imported.profileId === context.profileId && pathStats.nextCourse ? pathStats.nextStage : context.activeLevel;
+    var activeLevel = imported && mergedProfileId(imported.profileId) === context.profileId && pathStats.nextCourse ? pathStats.nextStage : context.activeLevel;
     var link = document.createElement("a");
     link.className = "interactive-surface interactive-card academy-card";
     link.dataset.pathId = path.id;
@@ -855,6 +858,12 @@
     var format = document.createElement("span");
     format.textContent = path.format;
     identity.append(title, format);
+    if (Array.isArray(path.providers) && path.providers.length) {
+      var providers = document.createElement("span");
+      providers.className = "academy-card__providers";
+      providers.textContent = path.providers.join(" · ");
+      identity.appendChild(providers);
+    }
 
     var selectedStage = (path.stages || []).find(function (stage) { return stage.label === activeLevel; }) || path.stages[0];
     var stageBadge = document.createElement("span");
@@ -1158,7 +1167,7 @@
     // matching the external level's focus (Acquire/Deepen/Create).
     var stageCoursesForLevel = curatedCourseIds(role, level.focusLevels);
     var imported = assessmentImport();
-    if (imported && imported.profileId !== role.id) imported = null;
+    if (imported && mergedProfileId(imported.profileId) !== role.id) imported = null;
 
     var entries = data.courses.filter(function (course) {
       return course.roleIds.indexOf(role.id) !== -1;
@@ -1168,8 +1177,13 @@
       var roleTargetMatch = course.dimensions.some(function (dimensionId) {
         return Number(role.targets[dimensionId] || 0) > 0;
       });
-      var keyAreaMatch = state.keyAreaId &&
-        Array.isArray(course.keyAreaIds) && course.keyAreaIds.indexOf(state.keyAreaId) !== -1;
+      var keyAreaMatch = state.keyAreaId && (
+        (Array.isArray(course.keyAreaIds) && course.keyAreaIds.indexOf(state.keyAreaId) !== -1) ||
+        (Array.isArray(course.specializationDepths) && course.specializationDepths.some(function (entry) {
+          var spec = (data.specializations || []).filter(function (row) { return row.id === entry.specializationId; })[0];
+          return !!spec && spec.keyAreaId === state.keyAreaId;
+        }))
+      );
       var specializationMatch = state.specializationId && (
         (Array.isArray(course.specializationIds) && course.specializationIds.indexOf(state.specializationId) !== -1) ||
         (Array.isArray(course.specializationDepths) && course.specializationDepths.some(function (entry) {
@@ -1363,6 +1377,15 @@
     if (!raw) return null;
     var match = { acquire: 1, deepen: 2, create: 3 }[String(raw).trim().toLowerCase()];
     return match || null;
+  }
+
+  // Legacy alias: the dissolved "Products & Value Streams" profile (id pvs,
+  // segment PVS, code R02-PVS) now resolves to Corporate Functions.
+  function mergedProfileId(value) {
+    if (value == null) return value;
+    var key = String(value).toLowerCase().trim();
+    if (key === "pvs" || key === "r02-pvs" || key === "products-value-streams" || key === "products & value streams") return "corp";
+    return value;
   }
 
   function resolveRole(rawRole) {

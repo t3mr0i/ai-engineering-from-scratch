@@ -19,11 +19,10 @@ test("home presents one current path before recommendations and tools", () => {
 });
 
 test("secondary planning tools navigate to focused pages", () => {
-  assert.equal((html.match(/<a class="learning-tool"/g) || []).length, 2);
+  assert.equal((html.match(/<a class="learning-tool"/g) || []).length, 1);
   assert.match(html, /<details class="recommendation-settings">/,
     "profile controls should not compete with the recommendation list by default");
   assert.match(html, /<a class="learning-tool" href="personal-plan\.html">/);
-  assert.match(html, /<a class="learning-tool" href="team-learning\.html">/);
   assert.doesNotMatch(html, /id="personalPlan"|id="teamLearning"/,
     "tool workspaces should not remain embedded in the learning overview");
   assert.doesNotMatch(html, /src="lrn\/(?:plan-builder|team-learning)\.js/,

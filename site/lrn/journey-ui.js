@@ -7,7 +7,7 @@
     en: {
       title: "Your learning journey",
       courseEvidence: "Course contributions in detail",
-      moreTools: "Plan and learn with your team",
+      moreTools: "Adapt your learning plan",
       role: "Role",
       chooseRole: "Choose your role",
       chooseRoleReason: "Choose a role to view the target profile that matches your work.",
@@ -68,7 +68,7 @@
     de: {
       title: "Deine Lernreise",
       courseEvidence: "Kursbeiträge im Detail",
-      moreTools: "Lernplan anpassen und im Team lernen",
+      moreTools: "Lernplan anpassen",
       role: "Rolle",
       chooseRole: "Rolle auswählen",
       chooseRoleReason: "Wähle eine Rolle, um das passende Zielbild für deine Arbeit zu sehen.",

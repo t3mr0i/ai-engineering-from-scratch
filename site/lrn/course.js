@@ -515,6 +515,9 @@
       factItem("stack", i18n("academy_path_fact_courses", "Courses"), String(stats.courses.length)),
       factItem("list-checks", i18n("academy_path_fact_activities", "Activities"), String(stats.lessonCount))
     );
+    if (Array.isArray(path.providers) && path.providers.length) {
+      facts.appendChild(factItem("buildings", i18n("academy_path_fact_providers", "Providers"), path.providers.join(" · ")));
+    }
 
     var overview = document.createElement("section");
     overview.className = "course-overview";

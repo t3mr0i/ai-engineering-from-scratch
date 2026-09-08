@@ -3342,6 +3342,12 @@ window.LrnData = {
             "LRN-19"
           ]
         }
+      ],
+      "providers": [
+        "Microsoft Learn",
+        "LinkedIn Learning",
+        "LHIND Trainingcamp",
+        "DataCamp"
       ]
     },
     {
@@ -3385,6 +3391,14 @@ window.LrnData = {
             "LRN-25"
           ]
         }
+      ],
+      "providers": [
+        "Microsoft Learn",
+        "DeepLearning.AI",
+        "LinkedIn Learning",
+        "Coursera",
+        "LangChain Academy",
+        "DataCamp"
       ]
     },
     {
@@ -3427,6 +3441,11 @@ window.LrnData = {
             "LRN-36"
           ]
         }
+      ],
+      "providers": [
+        "Coursera",
+        "Microsoft Learn",
+        "LinkedIn Learning"
       ]
     },
     {
@@ -3469,6 +3488,67 @@ window.LrnData = {
           "focus": "Design traceable human review, approval, and quality gates tied to business goals.",
           "courses": [
             "LRN-38"
+          ]
+        }
+      ],
+      "providers": [
+        "Microsoft Learn",
+        "LHIND Trainingcamp",
+        "LinkedIn Learning",
+        "Coursera",
+        "DataCamp"
+      ]
+    },
+    {
+      "id": "academy-ai-05",
+      "academyCourse": "AI-05",
+      "title": "AI for Project Managers and Product Owners",
+      "format": "Online courses with facilitated peer transfer",
+      "audience": "Project managers, product owners, and operations roles guiding AI adoption.",
+      "prerequisites": "Confident workplace tooling use; programming is not required.",
+      "summary": "Use AI across the project lifecycle: prompting techniques for project managers, collaboration and reporting with AI, agents in project work, and accountable adoption.",
+      "category": "role",
+      "recommendationRanks": {
+        "pma": 5,
+        "am": 3,
+        "corp": 4
+      },
+      "providers": [
+        "DataCamp",
+        "Microsoft Learn",
+        "LinkedIn Learning",
+        "PMI",
+        "Coursera"
+      ],
+      "trackCodes": [
+        "LP02",
+        "LP04",
+        "LP05"
+      ],
+      "stages": [
+        {
+          "label": "Acquire",
+          "focus": "Build AI foundations and data readiness for project work.",
+          "courses": [
+            "LRN-01",
+            "LRN-05"
+          ]
+        },
+        {
+          "label": "Deepen",
+          "focus": "Apply AI to use cases, reporting, and prompting in projects.",
+          "courses": [
+            "LRN-23",
+            "LRN-32",
+            "LRN-21"
+          ]
+        },
+        {
+          "label": "Create",
+          "focus": "Prioritize AI backlogs and design automation with measurable value.",
+          "courses": [
+            "LRN-30",
+            "LRN-31"
           ]
         }
       ]
@@ -3514,6 +3594,11 @@ window.LrnData = {
             "LRN-26"
           ]
         }
+      ],
+      "providers": [
+        "LinkedIn Learning",
+        "Microsoft Learn",
+        "Coursera"
       ]
     },
     {
@@ -3560,6 +3645,13 @@ window.LrnData = {
             "LRN-32"
           ]
         }
+      ],
+      "providers": [
+        "LinkedIn Learning",
+        "DataCamp",
+        "Coursera",
+        "LHIND Trainingcamp",
+        "Microsoft Learn"
       ]
     },
     {
@@ -3604,6 +3696,13 @@ window.LrnData = {
             "LRN-44"
           ]
         }
+      ],
+      "providers": [
+        "Microsoft Learn",
+        "Coursera",
+        "edX",
+        "LinkedIn Learning",
+        "DataCamp"
       ]
     },
     {
@@ -3638,6 +3737,13 @@ window.LrnData = {
             "LRN-10"
           ]
         }
+      ],
+      "providers": [
+        "LHIND Trainingcamp",
+        "Coursera",
+        "DataCamp",
+        "LinkedIn Learning",
+        "Microsoft Learn"
       ]
     },
     {
@@ -3684,6 +3790,9 @@ window.LrnData = {
             "LRN-32"
           ]
         }
+      ],
+      "providers": [
+        "LHIND"
       ]
     },
     {
@@ -3728,6 +3837,9 @@ window.LrnData = {
             "LRN-36"
           ]
         }
+      ],
+      "providers": [
+        "LHIND"
       ]
     }
   ],

@@ -290,7 +290,7 @@ test("Harness Engineering is staged in LP03 and not broadened through LP02", () 
 test("Academy learning paths cover every imported AI course exactly once", () => {
   assert.ok(Array.isArray(data.academyPaths), "LrnData.academyPaths must be an array");
   const actual = data.academyPaths.map((path) => path.academyCourse).sort();
-  const expected = ["AI-01", "AI-02", "AI-03", "AI-04", "AI-06", "AI-07", "AI-08", "AI-09", "AI-10", "AI-12"];
+  const expected = ["AI-01", "AI-02", "AI-03", "AI-04", "AI-05", "AI-06", "AI-07", "AI-08", "AI-09", "AI-10", "AI-12"];
   assert.deepEqual([...actual], expected);
   assert.equal(new Set(data.academyPaths.map((path) => path.id)).size, data.academyPaths.length,
     "Academy path ids must be unique");
@@ -330,7 +330,7 @@ test("Academy recommendations stay focused to three ordered trainings per profil
   const expected = {
     bsc: ["AI-04", "AI-07", "AI-10"],
     tc: ["AI-01", "AI-02", "AI-03"],
-    am: ["AI-02", "AI-01"],
+    am: ["AI-02", "AI-01", "AI-05"],
     pma: ["AI-04", "AI-07", "AI-08"],
     corp: ["AI-08", "AI-07", "AI-10"],
     lead: ["AI-08", "AI-07", "AI-10"],
@@ -343,6 +343,17 @@ test("Academy recommendations stay focused to three ordered trainings per profil
       .slice(0, 3)
       .map((path) => path.academyCourse);
     assert.deepEqual([...actual], academyCourses, `unexpected recommendations for ${profileId}`);
+  }
+});
+
+test("every Academy path names its content providers", () => {
+  for (const path of data.academyPaths) {
+    assert.ok(Array.isArray(path.providers) && path.providers.length > 0,
+      `Academy path ${path.id} needs at least one provider`);
+    for (const provider of path.providers) {
+      assert.ok(typeof provider === "string" && provider.trim(),
+        `Academy path ${path.id} has an invalid provider entry`);
+    }
   }
 });
 
