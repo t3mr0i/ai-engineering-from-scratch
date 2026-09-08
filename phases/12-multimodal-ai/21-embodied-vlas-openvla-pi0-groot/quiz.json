@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does discretize([-1.0, 1.0], bins=256) return?",
+      "question": "A robot must convert continuous motions into model outputs. What representation bridges that gap?",
       "options": [
-        "[1, 256], because the endpoints are one-indexed",
-        "[127, 128], because both values map to the center",
-        "[0, 255], the two endpoints of the 256-bin action range",
-        "[-1, 1], because discretize preserves continuous actions"
+        "Raw voltages with no structure",
+        "Free-form prose commands",
+        "No representation; direct wiring",
+        "Discretized action bins per dimension"
       ],
-      "correct": 2,
-      "explanation": "The formula int((a+1)/2*(bins-1)) maps -1 to 0 and +1 to 255, followed by clamping to that same range."
+      "correct": 3,
+      "explanation": "Continuous control needs discrete tokens. This lesson discretizes actions for VLAs."
     },
     {
       "stage": "check",

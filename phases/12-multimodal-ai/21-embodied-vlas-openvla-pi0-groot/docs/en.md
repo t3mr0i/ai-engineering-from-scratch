@@ -108,6 +108,10 @@ These sit outside the VLA as control-layer checks. The VLA's output is a suggest
 
 
 
+## CBP context: vocabulary, not a product plan
+
+In the CBP context embodied VLAs are vocabulary for physical-automation conversations — discretized actions, vision-language-action loops — not a CBP product plan: robots act in the world where software mistakes break hardware and people. Safety framing (bounds, e-stops, human confirmation per consequential motion) precedes any pilot discussion. Read for the words; keep CBP automation in verified software.
+
 ## Build It
 
 Reconstruct **Embodied VLAs: RT-2, OpenVLA, π0, GR00T** by following `discretize` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
