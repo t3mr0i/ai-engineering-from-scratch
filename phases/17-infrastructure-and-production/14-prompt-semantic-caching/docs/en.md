@@ -108,6 +108,10 @@ Call `Request` from a small caller with tokens=["red","fox"]. Compare its result
 
 Hand off `outputs/skill-cache-auditor.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: stable prompts first, flags second
+
+In the CBP context caching rewards prompt hygiene before any flag: strip timestamps, request ids, and randomized ordering out of the shared prefix so requests actually share it, and serialize parallel fan-out so the first write completes before nine duplicate writes. Then enable provider prefix caching on the stable head and semantic caching on repeated questions, and watch hit rate per tenant — a 7% hit rate is a prompt-design bug, not a pricing problem. Cache what repeats byte-identical; fix what does not.
+
 ## Further Reading
 
 - [Anthropic Prompt Caching](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching) — official `cache_control` semantics and TTLs.

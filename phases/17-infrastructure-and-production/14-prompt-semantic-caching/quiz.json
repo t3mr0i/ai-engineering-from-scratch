@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the L2 cache key represent in the Python simulator?",
+      "question": "Caching is enabled but the bill stays flat: prompts carry timestamps and parallel calls all write before the first read. What is wrong?",
       "options": [
-        "The request's prefix_hash",
-        "The full generated response text",
-        "The tenant's API key",
-        "The cosine threshold alone"
+        "Caching never works for anyone",
+        "The provider ignores all cache flags",
+        "Bills cannot be reduced by design",
+        "Dynamic prefixes and racing writes defeat the cache"
       ],
-      "correct": 0,
-      "explanation": "The L2 cache is a set of prefix_hash values; a matching prefix uses the cached-input rate instead of a new cache write."
+      "correct": 3,
+      "explanation": "Caching is a protocol, not a flag. This lesson fixes the two failure modes: unstable prefixes and parallel write races."
     },
     {
       "stage": "check",
