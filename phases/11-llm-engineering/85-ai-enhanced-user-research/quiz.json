@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which evidence profile can reach the STRONG confidence tier in score_hypothesis?",
+      "question": "A synthesis claims strong confidence from two users in one segment in one session. What is wrong?",
       "options": [
-        "Two participants from one segment across one session",
-        "Three participants with seven snippets and no second segment",
-        "Five or more participants, at least two segments, and multi-session evidence",
-        "One participant with many snippets and a clear research label"
+        "Nothing; two users are sufficient",
+        "The claim needs fancier charts",
+        "More sessions with the same two users",
+        "Confidence needs participants, segments, and sessions"
       ],
-      "correct": 2,
-      "explanation": "The strong branch requires all three conditions: at least five distinct participants, at least two segments, and evidence spanning multiple sessions."
+      "correct": 3,
+      "explanation": "Narrow evidence cannot carry strong confidence. This lesson gates tiers on coverage minimums."
     },
     {
       "stage": "check",

@@ -122,6 +122,10 @@ Call `ConfidenceTier` from a small caller with the demo’s smallest built-in fi
 
 Hand off `outputs/skill-user-research-pipeline.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: traceability, falsifiability, coverage
+
+In the CBP context synthesis pipelines carry three engineering constraints: every cluster traces to its snippets, every hypothesis states what would falsify it, and coverage minimums (participants, segments, sessions) gate confidence tiers. A STRONG finding from one segment in one session is a labeled anecdote, not evidence. Speed without these constraints amplifies bias at machine pace.
+
 ## Further Reading
 
 - [Nielsen Norman Group — Research and Synthesis methods](https://www.nngroup.com/articles/which-ux-research-methods/) — canonical UX research library covering affinity diagramming, hypothesis framing, and synthesis best practices.
