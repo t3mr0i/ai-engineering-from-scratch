@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For CosineWithWarmup(warmup_steps=4, total_steps=10, lr_max=1.0, lr_min=0.1), what are lr(0) and lr(4)?",
+      "question": "Training starts at full learning rate and the model wrecks its pretrained weights in the first steps. What schedule prevents that?",
       "options": [
-        "lr(0) = 1.0 and lr(4) = 0.1.",
-        "Both values are 0.1 because cosine decay starts immediately.",
-        "Both calls raise because step zero is outside the schedule.",
-        "lr(0) = 0.0 and lr(4) = 1.0."
+        "Full rate from step zero",
+        "Zero rate forever",
+        "Random rates per step",
+        "Ramp from zero to peak, then decay"
       ],
       "correct": 3,
-      "explanation": "With a nonzero warmup, the first branch returns lr_max * step / warmup_steps: zero at step 0 and the peak at step 4. A schedule with warmup_steps=0 is the explicit exception and starts at lr_max."
+      "explanation": "Cold starts at full rate destroy prior weights. This lesson warms up first, then follows cosine decay."
     },
     {
       "stage": "check",

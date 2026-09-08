@@ -59,6 +59,10 @@ The schedule is half of training health. The gradient norm is the other half. Th
 
 
 
+## CBP context: read the schedule behind a fine-tune
+
+In the CBP context learning-rate schedules live inside provider fine-tune jobs you configure but never code — and warmup-then-decay is what keeps early steps from destroying pretrained weights. When a consumed fine-tune diverges or underperforms, the schedule is on the suspect list alongside the data; knowing warmup ramps from zero to peak before decaying turns "the model broke" into a checkable hypothesis. Configure by the provider's guidance, diagnose by this lesson.
+
 ## Build It
 
 Reconstruct **Cosine LR with Linear Warmup** by following `CosineWithWarmup` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
