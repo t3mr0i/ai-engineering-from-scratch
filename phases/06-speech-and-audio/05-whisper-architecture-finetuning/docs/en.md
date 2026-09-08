@@ -80,6 +80,10 @@ Community results: fine-tuning Medium on 20 hours of medical dictation drops WER
 
 
 
+## CBP context: consume Whisper, configure per call
+
+In the CBP context Whisper arrives via platform speech services: language, task (transcribe versus translate), and timestamp tokens configured per call, with German and domain jargon evaluated before trust. Fine-tuning enters only for persistent domain gaps with measured WER deltas; configuration covers the rest. Prompt the task explicitly every call — defaults transcribe, they do not translate.
+
 ## Build It
 
 Reconstruct **Whisper — Architecture & Fine-Tuning** by following `build_prompt` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

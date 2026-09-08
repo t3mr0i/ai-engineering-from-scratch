@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What prompt does build_prompt(\"en\", task=\"transcribe\", timestamps=False) include after SOT?",
+      "question": "Transcription works but translations never happen despite multilingual needs. What was never configured?",
       "options": [
-        "<|en|>, <|transcribe|>, and <|notimestamps|>",
-        "<|fr|>, <|translate|>, and <|notimestamps|>",
-        "<|en|> and <|translate|> only",
-        "<|en|>, <|transcribe|>, and <|endoftext|>"
+        "The microphone volume",
+        "The file format",
+        "Bigger audio buffers",
+        "Language and task tokens per call"
       ],
-      "correct": 0,
-      "explanation": "The function appends the language token, the task token, and the no-timestamps token when timestamps is false."
+      "correct": 3,
+      "explanation": "Multitask models need explicit tasking. This lesson configures Whisper per call before fine-tuning."
     },
     {
       "stage": "check",
