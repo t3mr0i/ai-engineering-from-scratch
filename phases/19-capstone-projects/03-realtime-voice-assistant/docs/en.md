@@ -91,6 +91,10 @@ Call `Frame` from a small caller with a 160-sample 16 kHz waveform. Compare its 
 
 Hand off `outputs/skill-voice-agent.md` with the command `python3 main.py`, the accepted input shape (a 160-sample 16 kHz waveform), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: voice as a platform transport
+
+In the CBP context the real-time voice pipeline (lesson 14/22) rides the same service as every other transport: turn detection, fillers, and barge-in on a latency budget, every voice-triggered action audited with its transcript like a typed one. Build the timing craft here; deliver it through the gateway with tenant scoping there. A phone call is a transport, not a separate system.
+
 ## Further Reading
 
 - [LiveKit Agents 1.0](https://github.com/livekit/agents) — reference WebRTC agent framework
