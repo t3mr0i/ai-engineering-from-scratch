@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How many samples are in one window_frames frame for sr=16000 and win_ms=25?",
+      "question": "Upgrading the audio model degrades accuracy though weights improved. The framing changed silently. What prevents that?",
       "options": [
-        "25 samples, because win_ms is used directly",
-        "160 samples, matching the 10ms hop",
-        "400 samples, from 16,000 * 25/1,000",
-        "16,000 samples, because one frame spans the full second"
+        "Bigger models to absorb mismatch",
+        "Trust in default framing",
+        "Faster inference hardware",
+        "Window and hop versioned with the model"
       ],
-      "correct": 2,
-      "explanation": "window_frames converts milliseconds to samples: int(16000*25/1000) = 400. The separate hop_ms=10 produces a 160-sample stride."
+      "correct": 3,
+      "explanation": "Features and models version together. This lesson frames audio consistently across the lineage."
     },
     {
       "stage": "check",

@@ -110,6 +110,10 @@ Open SOTA (AF3) at 0.72; proprietary frontier ~0.78 (Gemini 2.5 Pro, Claude Opus
 
 
 
+## CBP context: window math ships with the model
+
+In the CBP context audio framing (window milliseconds to samples, hop stride between windows) ships versioned with the consuming model — the same feature-recipe contract as lesson 06/02, extended across the Whisper-to-AF3 lineage. Mismatched windows degrade silently; document window and hop beside every audio deployment. Frames are contracts, not details.
+
 ## Build It
 
 Reconstruct **Audio-Language Models: the Whisper to Audio Flamingo 3 Arc** by following `synth_waveform` on a 160-sample 16 kHz waveform. Run `python3 main.py` and verify that the duration/frame count is zero or the documented validation path is used; no plausible speech label should be fabricated.
