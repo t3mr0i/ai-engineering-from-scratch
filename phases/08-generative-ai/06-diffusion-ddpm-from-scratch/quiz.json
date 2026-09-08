@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is sin_embed(t=0, T=40, dim=8)?",
+      "question": "Image quality improves with denoising steps, but each step bills latency and cost. What decides the step count?",
       "options": [
-        "A length-40 one-hot vector",
-        "[1, 0, 1, 0, 1, 0, 1, 0]",
-        "[0, 1, 0, 1, 0, 1, 0, 1]",
-        "Eight random values from the current noise sample"
+        "Always the maximum available",
+        "Always a single step",
+        "Random counts per image",
+        "Measured quality per step on the brief"
       ],
-      "correct": 2,
-      "explanation": "At t=0 every sine term is 0 and every cosine term is 1, so the interleaved embedding has that repeated pattern."
+      "correct": 3,
+      "explanation": "Steps trade quality against price. This lesson builds the diffusion loop behind the knob."
     },
     {
       "stage": "check",

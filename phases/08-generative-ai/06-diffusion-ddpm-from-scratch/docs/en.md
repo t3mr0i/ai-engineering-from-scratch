@@ -63,6 +63,10 @@ Three intuitions:
 
 
 
+## CBP context: schedules and steps price generation
+
+In the CBP context DDPM mechanics explain image-service knobs: noise schedules set the forward path, timestep embeddings tell the denoiser where it is, reverse steps trade quality against latency and cost. More steps help to a point, then bill without benefit — measure quality per step count on the brief before defaulting to maximum. The schedule is a pricing plan with math attached.
+
 ## Build It
 
 Reconstruct **Diffusion Models — DDPM from Scratch** by following `sin_embed` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
