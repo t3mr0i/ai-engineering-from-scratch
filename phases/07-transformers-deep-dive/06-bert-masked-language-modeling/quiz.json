@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which token IDs are protected from masking by create_mlm_batch?",
+      "question": "A task needs whole-input understanding with every token informing the verdict. Which architecture fits?",
       "options": [
-        "All IDs below 100",
-        "Only MASK_ID=0",
-        "MASK_ID=0, CLS_ID=1, and SEP_ID=2",
-        "The final three IDs in the vocabulary"
+        "Left-to-right generation only",
+        "No model at all, pure rules",
+        "Random token sampling",
+        "Bidirectional encoding of the full input"
       ],
-      "correct": 2,
-      "explanation": "SPECIAL_IDS is the set {0,1,2}, and the loop skips any token in that set."
+      "correct": 3,
+      "explanation": "Understanding reads both directions. This lesson masks and predicts for encoder representations."
     },
     {
       "stage": "check",

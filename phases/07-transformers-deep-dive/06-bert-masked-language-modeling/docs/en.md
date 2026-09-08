@@ -83,6 +83,10 @@ And unlike the 2018 stack, it is Flash-Attention-native. Inference is 2–3× fa
 
 
 
+## CBP context: encoders classify and search
+
+In the CBP context bidirectional encoders serve classification, search embeddings, and understanding tasks — anywhere the full context may inform every token. Masked modeling teaches representations, not generation; deploy encoders where judgments are needed, decoders where text is produced. Special tokens structure inputs; protect them in preprocessing or the model reads noise as signal.
+
 ## Build It
 
 Reconstruct **BERT — Masked Language Modeling** by following `create_mlm_batch` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
