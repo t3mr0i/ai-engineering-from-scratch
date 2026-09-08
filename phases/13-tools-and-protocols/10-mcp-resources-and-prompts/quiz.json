@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does handle_resources_list expose in addition to the five note resources?",
+      "question": "A server exposes every document read as a tool, so the model must guess when to fetch background reading for each question. What is the better shape?",
       "options": [
-        "The dynamic notes://recent resource",
-        "A second tools/call endpoint",
-        "A binary audio stream",
-        "Only the review_note prompt"
+        "The model will guess right often enough",
+        "Make the reads slower so the model calls them less",
+        "Hide all documents from the assistant",
+        "Expose reads as attachable resources and keep actions as tools"
       ],
-      "correct": 0,
-      "explanation": "The list contains note-1 through note-5 plus notes://recent, which is the dynamic application/json resource."
+      "correct": 3,
+      "explanation": "Reads are context, not decisions. This lesson teaches the split: resources for data, tools for actions, prompts for reusable workflows."
     },
     {
       "stage": "check",

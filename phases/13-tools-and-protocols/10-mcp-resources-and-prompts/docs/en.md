@@ -111,6 +111,10 @@ Call `emit_notification` from a small caller with the text "red fox". Compare it
 
 Hand off `outputs/skill-primitive-splitter.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: docs as resources, actions as tools
+
+In the CBP context the split from this lesson keeps the model honest: expose CBP documents (runbooks, ADRs, API specs, Boards work items) as resources the user attaches, state-changing operations as tools, and recurring workflows (incident triage, release review) as prompts. Do not wrap every read behind a model-driven tool call — attached resources are cheaper, auditable, and visible. Gate all three by Entra ID scopes: a resource URI must never leak a document its requester may not see.
+
 ## Further Reading
 
 - [MCP — Concepts: Resources](https://modelcontextprotocol.io/docs/concepts/resources) — resource URIs, subscriptions, and templates
