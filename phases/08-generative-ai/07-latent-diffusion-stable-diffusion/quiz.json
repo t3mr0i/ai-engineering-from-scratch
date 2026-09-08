@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What do encode(x) and decode(z) do in this toy latent diffusion pipeline?",
+      "question": "Full-resolution diffusion exhausts memory on large images. What makes generation tractable?",
       "options": [
-        "encode scales x by 0.5 and decode scales z by 2.0",
-        "encode adds Gaussian noise and decode applies a softmax",
-        "encode maps a scalar to a one-hot class and decode removes the class",
-        "Both functions return their input unchanged"
+        "Smaller images only, forever",
+        "No generation at all",
+        "Lower quality accepted blindly",
+        "Diffusion in compressed latent space with exact inverses"
       ],
-      "correct": 0,
-      "explanation": "The helpers are explicit inverses: encode(x)=x*0.5 and decode(z)=z*2.0."
+      "correct": 3,
+      "explanation": "Compression buys tractability. This lesson diffuses in latent space and decodes for display."
     },
     {
       "stage": "check",

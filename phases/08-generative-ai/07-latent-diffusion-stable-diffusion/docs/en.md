@@ -53,6 +53,10 @@ The trend: replace U-Net with DiT (transformer over latent patches), scale the t
 
 
 
+## CBP context: latents trade memory for fidelity
+
+In the CBP context latent diffusion is the memory-fidelity tradeoff operated via services: compressed latents with exact encode/decode inverses, diffusion in the small space, decode for display. Lower latents bill less and soften detail; the brief decides the point on that curve. Operate resolution and steps against measured output quality, not defaults.
+
 ## Build It
 
 Reconstruct **Latent Diffusion & Stable Diffusion** by following `sin_embed` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
