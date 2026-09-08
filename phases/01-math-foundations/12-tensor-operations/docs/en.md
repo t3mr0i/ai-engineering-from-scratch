@@ -21,6 +21,10 @@
 
 The same file uses NumPy for production-shaped examples. NumPy broadcasting aligns trailing axes: a bias of shape `(hidden,)` can be added to `(batch,sequence,hidden)`. `einsum` makes contractions explicit: `ij,jk->ik` contracts `j`, while `bhts,bhsd->bhtd` contracts the key-token axis.
 
+## CBP context: batch dimensions travel with everything
+
+In the CBP context tensors add the batch dimension to the shape discipline from lesson 02: every embedding array carries (batch, dimension), every request carries (batch, sequence, dimension), and contraction still follows inner agreement. Log shapes at service boundaries the way you log status codes — a (batch, 768) where (batch, 1536) was expected is caught in seconds with shape logs, in hours without them.
+
 ## Build It
 
 Run the bounded demo:

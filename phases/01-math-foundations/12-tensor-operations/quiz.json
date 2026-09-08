@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What shape results from multiplying a tensor of shape (2, 3) by one of shape (3, 4)?",
+      "question": "An embedding array arrives as (batch, 768) but the service expects (batch, 1536). What catches that in seconds?",
       "options": [
-        "(3, 3)",
-        "(2, 3, 4)",
-        "(2, 4)",
-        "The inner dimensions do not match"
+        "Retrying the request until it fits",
+        "Trusting the shapes to align themselves",
+        "Disabling shape checks for speed",
+        "Logging and asserting shapes at boundaries"
       ],
-      "correct": 2,
-      "explanation": "Matrix multiplication contracts the 3 dimension and leaves the outer dimensions 2 and 4."
+      "correct": 3,
+      "explanation": "Shapes are contracts. This lesson builds the contraction rule behind every tensor operation."
     },
     {
       "stage": "check",
