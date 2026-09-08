@@ -84,6 +84,10 @@ Qwen2.5-VL (Lesson 12.09) makes different choices. It uses M-RoPE and dynamic FP
 
 
 
+## CBP context: thumbnails plus tiles across media
+
+In the CBP context single images, multi-image sets, and video share one pattern: global thumbnails for overview plus tiles or sampled frames for detail, all inside explicit token budgets. Document spreads compare across pages; short clips sample frames deliberately. One architecture across media simplifies operations — one budget discipline, one eval shape, three input kinds.
+
 ## Build It
 
 Reconstruct **LLaVA-OneVision: Single-Image, Multi-Image, Video in One Model** by following `Budget` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

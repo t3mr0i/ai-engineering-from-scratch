@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does anyres_tokens(tiles=9, per_tile=182) return for the single-image plan?",
+      "question": "Images, image sets, and video each need different handling but one operations story. What unifies them?",
       "options": [
-        "1,820, counting nine tiles plus one global thumbnail",
-        "1,638, counting only the nine tiles",
-        "182, because all tiles are pooled into one token",
-        "2,916, because each tile uses the unpooled 729-token grid"
+        "Separate stacks per media type",
+        "Video ignored entirely",
+        "Thumbnails only, no detail ever",
+        "Overview plus detail tokens inside one budget"
       ],
-      "correct": 0,
-      "explanation": "anyres_tokens computes (tiles + 1) * per_tile. Thus (9+1)*182 = 1,820 visual tokens including the thumbnail."
+      "correct": 3,
+      "explanation": "Media differ, budgeting unifies. This lesson covers single, multi, and video in one architecture."
     },
     {
       "stage": "check",
