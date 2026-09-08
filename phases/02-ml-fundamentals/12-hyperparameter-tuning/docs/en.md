@@ -19,6 +19,10 @@
 
 `code/tuning.py` creates a fixed NumPy regression fixture with 240 training, 80 validation, and 80 test rows for `make_data(400)`. `GBMForTuning` is the local model. `neg_mse` returns the negative of the validation mean squared error; therefore a less negative score is better. The module implements all three search strategies directly and has no tuning-service dependency.
 
+## CBP context: configure outside, learn inside
+
+In the CBP context the parameter/hyperparameter split organizes every training configuration: rates, depths, and budgets are chosen and documented before the run; weights are learned inside it. Version configs with the artifacts they produce so results reproduce — an untracked learning rate is an unrepeatable experiment. Tune by eval gates, never by training loss alone.
+
 ## Build It
 
 Run `python3 main.py` for a four-configuration grid (`n_estimators` 4/8, learning rate 0.05/0.15, depth 2). The output includes `evaluated: 4`, the selected dictionary, and the validation MSE. `grid_search` returns `(best_params, best_score, history)`, and each history item stores a copied parameter dictionary.
