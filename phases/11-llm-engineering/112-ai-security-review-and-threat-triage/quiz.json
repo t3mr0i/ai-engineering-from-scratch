@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the composite verdict when any category contains a HIGH signal?",
+      "question": "A proposal reaches security review after scoping and prototyping, with a high-risk signal nobody triaged. What should have happened?",
       "options": [
-        "PROCEED, because a single high signal can be isolated in implementation",
-        "PROCEED WITH CONDITIONS, because the security milestone handles high signals",
-        "HARD STOP, with security-architect sign-off conditions for each HIGH category",
-        "The engine averages HIGH with the other three category scores"
+        "Faster reviews after prototyping",
+        "Trust that prototypes are low-risk",
+        "Averaging the high signal with low ones",
+        "Early triage with hard stops feeding formal review"
       ],
-      "correct": 2,
-      "explanation": "compute_verdict checks high_hits first. Any HIGH severity returns HARD_STOP and creates a security-architect sign-off condition for the matching category."
+      "correct": 3,
+      "explanation": "Late security is a blocker; early triage is design input. This lesson stops HIGH signals before scoping continues."
     },
     {
       "stage": "check",

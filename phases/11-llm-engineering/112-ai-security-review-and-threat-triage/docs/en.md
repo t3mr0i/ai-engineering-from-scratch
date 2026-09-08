@@ -104,6 +104,10 @@ Call `Severity` from a small caller with the smallest valid record {"id": 1}. Co
 
 Hand off `outputs/skill-ai-threat-triage.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: HIGH means hard stop with architect sign-off
+
+In the CBP context any HIGH in the four LLM risk categories (injection via untrusted inputs, identity ambiguity, permission-aggregating tool chains, plus data exposure) halts scoping until a security architect signs off with conditions — no averaging, no milestone-gating around it. Run the triage in a working session early, feed its artifact into the formal review, and never let a scoped-and-prototyped proposal meet security for the first time weeks later.
+
 ## Further Reading
 
 - [OWASP LLM Top 10 (2025)](https://owasp.org/www-project-top-10-for-large-language-model-applications/) — the canonical ranked list of LLM application security risks with technical descriptions and mitigations.
