@@ -58,6 +58,10 @@ Lessons 12-14 are model-centric jailbreaks. Lesson 15 is the system-centric atta
 
 
 
+## CBP context: content authorizes nothing
+
+In the CBP context tool-returned text never authorizes side effects: the agent that forwarded emails on an attacker's imperative failed the data-versus-instruction split (lesson 14/27). Authorizations come from users through trusted channels; content supplies data under suspicion. Separate the channel that says "do" from the channel that says "here is text" — conflating them is the vulnerability.
+
 ## Build It
 
 Reconstruct **Indirect Prompt Injection — Production Attack Surface** by following `AgentResult` on the text "red fox". Run `python3 main.py` and verify that the tokenizer/retriever reports zero or a clear empty-input result, rather than borrowing a result from the previous text.
