@@ -89,6 +89,10 @@ Cilium's eBPF-based network policy can rewrite a quarantined pod's egress to a f
 
 
 
+## CBP context: the switch lives outside agent reach
+
+In the CBP context the kill switch is operator-owned infrastructure outside agent control, checked before every action — when enabled, trajectories halt immediately, no negotiation. Canary tokens trip on exfiltration attempts, turning silent leaks into loud alarms. A switch the agent can talk its way around is decoration; test the halt path like a fire drill, not a feature.
+
 ## Build It
 
 Reconstruct **Kill Switches, Circuit Breakers, and Canary Tokens** by following `CircuitBreaker` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does run_trajectory check before it processes an agent action?",
+      "question": "A rogue agent run cannot be stopped because the stop control answers to the agent itself. Where must the switch live?",
       "options": [
-        "The canary path",
-        "The action's token cost",
-        "The external EXTERNAL_KILL_SWITCH",
-        "The next action's payload"
+        "Inside the agent's own prompt",
+        "In the agent's writable config",
+        "Nowhere; agents always behave",
+        "Outside agent control, checked before every action"
       ],
-      "correct": 2,
-      "explanation": "The kill switch is checked first and is outside the agent's control; when enabled, the trajectory breaks before taking another action."
+      "correct": 3,
+      "explanation": "Self-policed agents cannot be stopped. This lesson puts kill switches beyond agent reach."
     },
     {
       "stage": "check",
