@@ -76,6 +76,10 @@ ControlNet ≈ spatial. LoRA ≈ semantic. Use both.
 
 
 
+## CBP context: adapt frozen bases, control structure
+
+In the CBP context ControlNet plus LoRA adapt frozen models without retraining: low-rank adapters carry style and domain, structural conditioning (edges, poses, depth) carries layout — combined by scaled addition onto the frozen base. Adapt CBP image work this way (brand styles, document layouts) instead of training; measure adapter fidelity on the brief. Frozen bases plus small adapters beat retraining on cost and speed.
+
 ## Build It
 
 Reconstruct **ControlNet, LoRA & Conditioning** by following `matmul_mat_vec` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

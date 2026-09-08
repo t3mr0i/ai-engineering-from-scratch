@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What matrix does lora_forward add to W_frozen before applying it to x?",
+      "question": "A brand style and a fixed layout must both steer generation without retraining the base model. What combines them?",
       "options": [
-        "A + B without a matrix product",
-        "alpha * (A @ B)",
-        "alpha * (B @ A)",
-        "The outer product of x with W_frozen"
+        "Full retraining per style",
+        "Style or layout, never both",
+        "Bigger base models only",
+        "Low-rank adapters plus structural conditioning"
       ],
-      "correct": 2,
-      "explanation": "The function computes base=W_frozen@x, Ax=A@x, then BAx=B@Ax and returns base+alpha*BAx."
+      "correct": 3,
+      "explanation": "Adaptation composes without retraining. This lesson adds LoRA style and ControlNet structure."
     },
     {
       "stage": "check",
