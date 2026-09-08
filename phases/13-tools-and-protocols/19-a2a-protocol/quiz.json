@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the writer agent's Agent Card advertise for draft_report?",
+      "question": "Two teams run assistants on different frameworks, and one needs document-drafting help from the other. What is the clean way to connect them?",
       "options": [
-        "Input only audio and output only JSON",
-        "No declared skills or capabilities",
-        "text/file/data -> text/artifact",
-        "A required OAuth scope instead of input modes"
+        "Rewrite both assistants in the same framework",
+        "Share one codebase and one deployment",
+        "Copy the drafting logic by hand into the first assistant",
+        "Send a task with a defined lifecycle and consume only the result artifact"
       ],
-      "correct": 2,
-      "explanation": "The card declares the draft_report skill with text, file, and data inputs and text/artifact outputs."
+      "correct": 3,
+      "explanation": "Cross-framework work needs a delegation contract, not shared code. This lesson builds A2A: tasks, agent cards, and opaque internals."
     },
     {
       "stage": "check",

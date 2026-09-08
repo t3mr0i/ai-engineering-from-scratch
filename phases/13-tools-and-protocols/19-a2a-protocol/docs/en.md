@@ -150,6 +150,10 @@ Call `Part` from a small caller with the text "red fox". Compare its result with
 
 Hand off `outputs/skill-a2a-agent-spec.md` with the command `python3 main.py`, the accepted input shape (the text "red fox"), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: delegate across teams, keep internals opaque
+
+In the CBP context A2A is how agents owned by different teams collaborate without sharing a framework: a triage agent sends a Task to a writer agent behind its gateway URL, watches state transitions, and consumes the artifact — never the other agent's internals. Publish an Agent Card per agent on LCAG infrastructure with Entra ID at the edge, and keep the MCP/A2A split clean: MCP for calling tools, A2A for delegating work. The caller budgets and audits the delegation the same way it budgets a tool call.
+
 ## Further Reading
 
 - [a2a-protocol.org](https://a2a-protocol.org/latest/) — canonical A2A specification
