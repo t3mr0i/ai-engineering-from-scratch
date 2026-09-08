@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "In CrossAttention.forward, which tensors supply queries versus keys and values?",
+      "question": "Generated text should draw on retrieved evidence, not just on its own fluency. What mechanism lets writing query evidence?",
       "options": [
-        "Image memory supplies Q; text x supplies K and V",
-        "Both Q and K come from text, while V is a learned scalar",
-        "Text x supplies Q; image memory supplies K and V",
-        "Q, K, and V are all projected from the concatenated sequence"
+        "Writing longer sentences",
+        "Ignoring all retrieved content",
+        "Guessing from training memory only",
+        "Attention from the text to the evidence memory"
       ],
-      "correct": 2,
-      "explanation": "The method applies q_proj to x, the text stream, and project_memory to memory, the image stream. Thus text length is the query length and image-token length is the key/value length."
+      "correct": 3,
+      "explanation": "Grounded generation needs the text to read evidence as it writes. This lesson fuses modalities with cross-attention."
     },
     {
       "stage": "check",

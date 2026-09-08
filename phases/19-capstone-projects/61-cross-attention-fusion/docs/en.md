@@ -158,6 +158,10 @@ python3 -m unittest code/test_main.py
 | KV cache | Image keys and values stored once and reused for every decode step |
 | Memory tokens | The frozen image tokens that the decoder reaches into |
 
+## CBP context: answers attend to evidence
+
+In the CBP context cross-attention is the mechanism behind grounded generation: the text being written queries the retrieved image or document memory for keys and values, so the answer draws on evidence rather than fluency. When a CBP answer drifts from its sources, this is the connection that broke — the model stopped attending to the retrieved passages. Design prompts and layouts that keep evidence in the attended window (relevance-ordered, decisive content early).
+
 ## Build It
 
 Reconstruct **Cross-Attention Fusion** by following `DecoderConfig` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
