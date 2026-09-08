@@ -87,6 +87,10 @@ Call `Query` from a small caller with tokens=["red","fox"]. Compare its result w
 
 Hand off `outputs/skill-router-plan.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: route the 70%, guard the quality
+
+In the CBP context routing is the fastest bill cut available: classify the simple majority to a cheap deployment and reserve the frontier model for reasoning-heavy work, with per-route quality evals proving nothing regressed. Build the broker on the lesson's signals — task class, prompt length, similarity to known-hard sets — and short-circuit to frontier on doubt; a misrouted hard query costs more in failure than it saves in tokens. Attribute savings per tenant so the routing win shows up in FinOps, not just in engineering slides.
+
 ## Further Reading
 
 - [AbhyashSuchi — Model Routing LLM 2026 Best Practices](https://abhyashsuchi.in/model-routing-llm-2026-best-practices/)

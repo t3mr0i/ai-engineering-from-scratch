@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What happens when RouteSignals.hardSetSimilarity reaches the router's default 0.88 threshold?",
+      "question": "Seventy percent of queries are simple but all run on the most expensive model. How do you cut the bill without hurting quality?",
       "options": [
-        "The request is rejected as too difficult",
-        "The cheapest model is always selected",
-        "Similarity ≥ 0.88 pins frontier",
-        "The threshold is ignored until after a random retry"
+        "Answer simple queries with canned text",
+        "Delete the simple features",
+        "Use the cheap model for everything",
+        "Route simple to cheap and complex to frontier, with quality evals"
       ],
-      "correct": 2,
-      "explanation": "The hard-set similarity short circuit selects frontier before normal candidate scoring."
+      "correct": 3,
+      "explanation": "Most traffic does not need the frontier. This lesson builds the broker: classify, route, and prove quality held."
     },
     {
       "stage": "check",
