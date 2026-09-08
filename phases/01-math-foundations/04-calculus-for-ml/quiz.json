@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the derivative of f(x)=x^2 at x=3?",
+      "question": "Training improves a model by following the loss downhill. What tells it which direction is downhill?",
       "options": [
-        "9",
-        "3",
-        "6",
-        "1"
+        "The model's parameter count",
+        "The training data size",
+        "The slope of the loss at the current point",
+        "The number of training epochs"
       ],
       "correct": 2,
-      "explanation": "f'(x)=2x, so f'(3)=6. The function value f(3)=9 is not its slope."
+      "explanation": "Slopes point uphill; learning steps the other way. This lesson builds derivatives as the compass of training."
     },
     {
       "stage": "check",

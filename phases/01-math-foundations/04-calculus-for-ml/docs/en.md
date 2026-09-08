@@ -15,6 +15,10 @@
 - Use a second-order Taylor approximation and state when a local approximation is trustworthy.
 - Relate these numerical tools to the derivative flow used by a training loop.
 
+## CBP context: learning follows the slope down
+
+In the CBP context the derivative intuition is what "training" means: the slope of the loss tells which direction improves the model, and every fine-tune you consume was built by following slopes downhill. You will never differentiate by hand in a Java service — but "the gradient points uphill, so step the other way" explains learning rates, divergence, and why schedules warm up. One sentence carries the whole lesson.
+
 ## Build It
 
 The canonical implementation is `code/main.jl`; `derivatives.py` is a parallel standard-library reference with the same finite-difference formulas. Run the canonical program with:
