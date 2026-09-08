@@ -88,6 +88,10 @@ All experts live on GPU regardless of which ones fire. A 671B model needs ~1.3 T
 
 
 
+## CBP context: read active versus total parameters
+
+In the CBP context MoE deployment cards quote two numbers — total parameters and active-per-token — and only the second prices inference: routed experts give capacity without proportional cost. Ask both numbers before comparing MoE against dense on CBP evals; total parameters impress, active parameters bill. Routing quality decides whether the capacity materializes.
+
 ## Build It
 
 Reconstruct **Mixture of Experts (MoE)** by following `silu` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.

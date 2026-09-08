@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does route(hidden, W_router, top_k=2, bias) return?",
+      "question": "A model quotes huge total parameters but activates a fraction per token. What should pricing follow?",
       "options": [
-        "Two selected expert indices and normalized gate weights for those experts",
-        "One expert index and the unnormalized scores for every expert",
-        "A dense output vector with one coordinate per token",
-        "The bias vector after it has been updated for this token"
+        "Total parameters regardless of use",
+        "The number of experts ever trained",
+        "The router's vocabulary size",
+        "Active parameters per token"
       ],
-      "correct": 0,
-      "explanation": "route sorts biased scores to select top-k indices, then softmaxes the corresponding unbiassed scores into gates."
+      "correct": 3,
+      "explanation": "Sparse models bill what they use. This lesson routes tokens to top-k experts."
     },
     {
       "stage": "check",
