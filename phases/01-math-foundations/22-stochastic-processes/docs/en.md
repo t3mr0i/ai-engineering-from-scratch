@@ -15,6 +15,10 @@
 - Compare Langevin dynamics and Metropolis-Hastings as sampling mechanisms.
 - Read a beta schedule and trajectory from the forward diffusion fixture.
 
+## CBP context: noise grows slowly, averages converge
+
+In the CBP context random-walk scaling explains two practical facts: repeated eval runs average out noise (variance shrinks with samples, so run evals more than once), and small per-step errors accumulate sublinearly rather than exploding — unless the process has drift. Do not read randomness as excuse ("results vary, nothing to do"); read it as arithmetic telling you how many repetitions buy certainty.
+
 ## Build It
 
 Run the NumPy implementation and its five local demonstrations:

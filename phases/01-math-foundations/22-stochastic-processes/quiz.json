@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "For a fair one-dimensional random walk after n independent steps, what is the typical displacement scale?",
+      "question": "Eval scores wobble run to run and a single comparison looks decisive. How do you earn certainty?",
       "options": [
-        "sqrt(n)",
-        "n^2",
-        "1/n",
-        "Exactly n for every path"
+        "Trust the first run completely",
+        "Run once with more enthusiasm",
+        "Average over repetitions; noise shrinks with samples",
+        "Delete the runs that disagree"
       ],
-      "correct": 0,
-      "explanation": "The variance of the sum is n, so its standard deviation is sqrt(n). Individual paths can differ, but the scale grows sublinearly."
+      "correct": 2,
+      "explanation": "Randomness obeys scaling laws. This lesson shows how variation accumulates and averages converge."
     },
     {
       "stage": "check",
