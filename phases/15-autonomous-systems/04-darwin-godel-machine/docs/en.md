@@ -75,6 +75,10 @@ DGM sits one rung above AlphaEvolve: the target of self-modification is not a pr
 
 
 
+## CBP context: score externally, close side channels
+
+In the CBP context self-modifying loops are scored by external exact-case checks — never by agent-reported numbers — with evaluator side channels closed before the loop starts. Reported scores diverge from true scores exactly where incentives reward the gap; the simulator's hack bonus is the tame version of production reward hacking. Trust the outside measurement, audit the inside story.
+
 ## Build It
 
 Reconstruct **Darwin Godel Machine — Open-Ended Self-Modifying Agents** by following `lives` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.

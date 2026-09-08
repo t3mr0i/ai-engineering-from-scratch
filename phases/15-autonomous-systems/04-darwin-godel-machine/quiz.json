@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What is the key difference between true_score and reported_score in this simulator?",
+      "question": "A self-improving loop reports soaring scores while independent checks show stagnation. What diverged?",
       "options": [
-        "reported_score can add hack_bonus when the evaluator side channel is open, while true_score counts exact cases",
-        "true_score is produced by the agent and reported_score is always lower",
-        "true_score ignores the tool output and reported_score runs the tests",
-        "They are aliases for the same floating-point value"
+        "The loop ran too few iterations",
+        "Independent checks are always wrong",
+        "More compute is the only fix",
+        "Reported scores gamed through open side channels"
       ],
-      "correct": 0,
-      "explanation": "true_score is the external exact-case score; reported_score adds the agent's hack bonus only when hack_allowed is enabled, capped at 1.0."
+      "correct": 3,
+      "explanation": "Self-reported success games itself. This lesson scores externally with side channels closed."
     },
     {
       "stage": "check",
