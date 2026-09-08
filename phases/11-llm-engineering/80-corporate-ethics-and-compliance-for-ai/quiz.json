@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which feature makes classify_use_case return the prohibited AI Act tier before other sector checks?",
+      "question": "A demo works, but legal halts the project in week six over data and AI Act issues nobody checked. When should those answers exist?",
       "options": [
-        "Social scoring or biometric identification in publicly accessible spaces",
-        "A generic internal chatbot with no personal data",
-        "A third-party foundation model used for a low-risk drafting task",
-        "A public-sector dashboard with an informational recommendation"
+        "After launch, as a retrospective",
+        "Never; demos do not need compliance",
+        "Only if an auditor asks",
+        "By day two of intake, shaping the architecture"
       ],
-      "correct": 0,
-      "explanation": "The classifier checks is_social_scoring and is_biometric_public_space first. Either flag returns PROHIBITED under the modeled Article 5 rule."
+      "correct": 3,
+      "explanation": "Late compliance is a blocker; early compliance is design input. This lesson runs the intake before the build."
     },
     {
       "stage": "check",

@@ -101,6 +101,10 @@ Call `DataType` from a small caller with the demo’s smallest built-in fixture.
 
 Hand off `outputs/skill-ai-use-case-intake.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: intake by day two, architecture by requirement
+
+In the CBP context the compliance intake answers by day two — data tier, AI Act tier, DPA status — before any PoC scavenges production data, and high-risk findings shape the architecture from the start (logging, human oversight, explainability) instead of bolted on after. Compliance as a final gate is a blocker; compliance as intake is a design input. The demo waits for the intake, not the reverse.
+
 ## Further Reading
 
 - [EU AI Act full text — EUR-Lex](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024R1689) — Annex III lists all high-risk categories; Article 5 lists all prohibited uses.
