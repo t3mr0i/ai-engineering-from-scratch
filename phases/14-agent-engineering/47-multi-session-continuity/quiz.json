@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which schema version does the SessionState fixture accept?",
+      "question": "Work spans many short sessions, but each new session restarts from a truncated chat attached to the wrong task. What is the fix?",
       "options": [
-        "0",
-        "Any positive integer",
-        "1",
-        "The current Python version"
+        "Longer chats that never truncate",
+        "One endless session for the whole project",
+        "No state at all between sessions",
+        "Versioned durable state with progress and next action per session"
       ],
-      "correct": 2,
-      "explanation": "SCHEMA_VERSION is the integer 1, and validate rejects a loaded state whose schema_version differs from that value."
+      "correct": 3,
+      "explanation": "Transcripts are evidence, not state. This lesson builds the continuity contract: each session leaves truth behind for the next."
     },
     {
       "stage": "check",

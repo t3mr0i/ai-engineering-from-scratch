@@ -66,6 +66,10 @@ Hand off `outputs/skill-session-handoff.md` with the command `python3 main.py`, 
 - Add a handoff signature or owner field for a team workflow.
 - Simulate an interrupted write and prove that the previous valid state remains.
 
+## CBP context: sessions are short, the contract is long
+
+In the CBP context delivery spans many short sessions across days and engineers: each one saves versioned progress plus the next action into repo state, and the next session resumes from that contract — never from a truncated transcript attached to the wrong task. Treat the transcript as evidence and the state file as truth. A session that cannot say what is complete, blocked, and next has not finished; it has merely stopped.
+
 ## Further reading
 
 - [Phase 14 · 40 — Multi-Session Handoff](../../40-multi-session-handoff/docs/en.md)
