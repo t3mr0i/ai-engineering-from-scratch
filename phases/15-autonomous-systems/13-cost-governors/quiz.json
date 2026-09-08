@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Which token cost does turn_cost use at turn 30?",
+      "question": "An agent loops overnight with no spending limit and the tenant gets the invoice. What was missing?",
       "options": [
-        "2,500 tokens, because loop pricing starts at turn 31",
-        "10,000 tokens, the request cap",
-        "8,000 tokens, because LOOP_STARTS_AT is 30",
-        "500 tokens, the monthly average"
+        "A faster model to loop quicker",
+        "Trust in well-behaved loops",
+        "Post-hoc budget complaints",
+        "Per-turn governors with hard stops"
       ],
-      "correct": 2,
-      "explanation": "The implementation checks turn >= LOOP_STARTS_AT, so turn 30 is charged LOOP_TURN_TOKENS = 8,000."
+      "correct": 3,
+      "explanation": "Unmetered loops bill without bound. This lesson governs cost per turn with teeth."
     },
     {
       "stage": "check",

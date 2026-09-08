@@ -69,6 +69,10 @@ The real case in the Microsoft docs: an e-commerce agent whose monthly cost quad
 
 
 
+## CBP context: governors per tenant per run
+
+In the CBP context cost governors cap every run per tenant: per-turn token budgets with loop pricing kicking in past the free prefix, hard stops on breach — never a surprise invoice. Turns past the threshold cost more and need explicit approval to continue; the governor, not the model, decides when spending stops. Unmetered agents are unbudgeted liabilities.
+
 ## Build It
 
 Reconstruct **Action Budgets, Iteration Caps, and Cost Governors** by following `model` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.
