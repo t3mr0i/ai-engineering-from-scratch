@@ -121,6 +121,10 @@ python3 -m unittest code/test_main.py
 | Multi-reference | A captioning metric accepts several reference captions per image |
 | Held-out | The eval set is sampled from a seed disjoint from the training corpus |
 
+## CBP context: eval the surfaces, not the loss
+
+In the CBP context multimodal quality is retrieval, VQA accuracy, and caption faithfulness on held-out CBP cases — never training loss, which measures fit on the training distribution. Build one eval surface per capability the business relies on, with CBP images and documents, and gate releases on all of them. A falling loss curve with failing task evals is a model learning the wrong thing efficiently.
+
 ## Build It
 
 Reconstruct **Multimodal Evaluation** by following `RetrievalPair` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
