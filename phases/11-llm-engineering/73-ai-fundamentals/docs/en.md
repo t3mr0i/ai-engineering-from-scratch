@@ -154,6 +154,10 @@ Call `SystemType` from a small caller with the demo’s smallest built-in fixtur
 
 Hand off `outputs/skill-ai-system-type-classifier.md` with the command `python3 main.py`, the accepted input shape (the demo’s smallest built-in fixture), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: classify before scoping
+
+In the CBP context every "AI that reads our contracts" request is classified first — keyword rule, classifier, RAG generator, or agent — because each implies a different timeline, data need, compliance burden, and per-query cost. The cheapest sufficient layer wins; an agent where a rule suffices is months and governance overhead wasted, while a classifier where agency was promised fails on delivery day. Ask the classification questions before scoping begins, not after the demo.
+
 ## Further Reading
 
 - [Anthropic — Claude model overview](https://docs.claude.com/en/docs/about-claude/models) — current model naming, context windows, and capability tiers for Claude.

@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "A system reads an inbox, looks up CRM data, drafts a reply, and can send it through several steps. How should classify_system_type label it?",
+      "question": "A request for contract review could use a keyword rule, a classifier, a RAG generator, or an agent. What decides between them?",
       "options": [
-        "ML_CLASSIFIER",
-        "GENERATIVE",
-        "AGENTIC",
-        "RULE_BASED"
+        "Whichever demo looks most impressive",
+        "The newest available model",
+        "Whatever the team already knows",
+        "Timeline, data needs, compliance burden, and cost per query"
       ],
-      "correct": 2,
-      "explanation": "The profile can take external actions and plans a multi-step workflow. Gate 1 returns AGENTIC before the open-ended text gate is considered."
+      "correct": 3,
+      "explanation": "Each layer implies different build cost and governance. This lesson classifies first so scoping matches the real need."
     },
     {
       "stage": "check",
