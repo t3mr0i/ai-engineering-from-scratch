@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "If a chunk's RMS level is exactly -40 dBFS, what does energy_vad(chunk, threshold_dbfs=-40.0) return?",
+      "question": "Callers go silent mid-task or interrupt mid-sentence, and the assistant mishandles both. What must be specified?",
       "options": [
-        "True, because equality counts as speech",
-        "None, because the chunk has no previous state",
-        "False, because the implementation uses a strict greater-than comparison",
-        "A probability of 0.5"
+        "Louder prompts to fill silence",
+        "Ignoring all interruptions",
+        "Ending calls at fixed times",
+        "Silence patience plus barge-in as a first-class event"
       ],
-      "correct": 2,
-      "explanation": "energy_vad returns dbfs > threshold_dbfs, so equality at -40 dBFS is classified as inactive."
+      "correct": 3,
+      "explanation": "Turn-taking is specified behavior. This lesson detects speech and honors interruptions."
     },
     {
       "stage": "check",

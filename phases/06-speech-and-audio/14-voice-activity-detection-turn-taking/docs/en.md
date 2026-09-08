@@ -63,6 +63,10 @@ Silero is the right default. Cobra is the compliance / accuracy upgrade. Energy-
 
 
 
+## CBP context: document the threshold, honor the interruption
+
+In the CBP context VAD thresholds are documented decisions (strict greater-than versus equality matters at the boundary), and barge-in is a first-class event — callers interrupt, and the assistant yields within the turn budget. Silence handling (patience before prompting) and interruption handling (stop, listen, resume) are UX requirements with tests, not emergent behavior. Callers experience turn-taking, not thresholds.
+
 ## Build It
 
 Reconstruct **Voice Activity Detection & Turn-Taking — Silero, Cobra, and the Flush Trick** by following `synth_chunk` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
