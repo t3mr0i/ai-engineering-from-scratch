@@ -352,6 +352,10 @@ Call `call` from a small caller with tokens=["red","fox"]. Compare its result wi
 
 Hand off `outputs/skill-agent-loop.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: the loop runs in the Java service, bounded and audited
+
+In the CBP context the observe-think-act loop lives in the Java service, not in a demo script: the service sends the Azure OpenAI request, dispatches the returned tool call to an MCP-backed method, feeds the result back, and repeats until the model stops or the bound hits. Bound it twice — max iterations and max spend per run — so a confused model cannot loop overnight on the tenant's budget. Log every turn (thought, call, observation) with the tenant id; that trace is the audit trail and the debugging surface. Everything else in Phase 14 is scaffolding around this loop; get the loop, its bounds, and its log right first.
+
 ## Further Reading
 
 - [Yao et al., ReAct: Synergizing Reasoning and Acting in Language Models (arXiv:2210.03629)](https://arxiv.org/abs/2210.03629) — the canonical paper
