@@ -113,6 +113,10 @@ Without this separation, the verifier's outputs become new entries in the pool, 
 
 
 
+## CBP context: subscribe to topics, not firehoses
+
+In the CBP context agents subscribe to relevant blackboard topics instead of reading full message pools: per-topic entries with subscriber notifications cut both token cost and noise. Full-pool reads scale attention linearly with chatter; topic routing scales with relevance. Design shared memory as topics first — the firehose is the fallback, never the default.
+
 ## Build It
 
 Reconstruct **Shared Memory and Blackboard Patterns** by following `ProvenanceEntry` on the demo’s smallest built-in fixture. Run `python3 main.py` and verify that the result reports the empty case explicitly or raises the documented validation error.

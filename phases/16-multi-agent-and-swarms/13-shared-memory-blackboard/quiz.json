@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What structural difference does the lesson draw between `MessagePool` and `Blackboard`?",
+      "question": "Agents drown reading every message while needing only their topics. What structure fixes that?",
       "options": [
-        "MessagePool is append-only full-pool state; Blackboard stores entries by topic and notifies topic subscribers.",
-        "MessagePool encrypts messages while Blackboard deletes them after one read.",
-        "MessagePool is a single scalar and Blackboard is a neural model.",
-        "They use identical storage but different print labels."
+        "Bigger context windows for all",
+        "Fewer agents overall",
+        "No shared memory at all",
+        "Topic entries with subscriber notifications"
       ],
-      "correct": 0,
-      "explanation": "`MessagePool` exposes `read_all`, while `Blackboard` maintains `topics`, `subscribers`, `publish`, and `read_topic` so consumers can receive only relevant topics."
+      "correct": 3,
+      "explanation": "Firehoses waste attention. This lesson routes shared memory by topic subscription."
     },
     {
       "stage": "check",
