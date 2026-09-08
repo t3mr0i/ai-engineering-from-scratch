@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "Given CODEBOOKS=8, how many tokens does fake_mimi_encode return for one 80 ms audio frame?",
+      "question": "Staged voice pipelines add up stage latencies and cannot be interrupted mid-generation. What architecture removes the stages?",
       "options": [
-        "8 tokens",
-        "1 token",
-        "80 tokens",
-        "1,920 tokens"
+        "Bigger staged buffers",
+        "Faster individual stages only",
+        "No voice features at all",
+        "Full-duplex audio tokens in and out"
       ],
-      "correct": 0,
-      "explanation": "fake_mimi_encode creates one random integer for each of the eight codebooks, so the returned list has length 8."
+      "correct": 3,
+      "explanation": "Stages serialize latency. This lesson streams speech to speech without pipeline seams."
     },
     {
       "stage": "check",

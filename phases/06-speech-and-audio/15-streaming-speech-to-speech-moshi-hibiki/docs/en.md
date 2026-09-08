@@ -82,6 +82,10 @@ Sesame CSM (2025) uses a similar idea — a Llama-3 backbone with a Mimi codec h
 
 
 
+## CBP context: full-duplex as frontier vocabulary
+
+In the CBP context streaming speech-to-speech (Moshi/Hibiki lineage) is frontier vocabulary for interruptible voice without staged pipelines: audio tokens in, audio tokens out, full duplex by design. Evaluate latency and interruption quality on CBP calls before committing; staged pipelines remain the operable default until streaming proves itself on your traffic. Vocabulary now, commitment after measurement.
+
 ## Build It
 
 Reconstruct **Streaming Speech-to-Speech — Moshi, Hibiki, and Full-Duplex Dialogue** by following `fake_mimi_encode` on tokens=["red","fox"]. Run `python3 main.py` and verify that the attention/embedding shape follows the token count and each valid attention row remains normalized.
