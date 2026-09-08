@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "What does the A2A Agent Card expose in this local server?",
+      "question": "Teams discover agent capabilities through hallway knowledge that rots. What replaces tribal discovery?",
       "options": [
-        "The agent name/version, `review-python` skill, task endpoint, modalities, protocol version, and no-auth declaration.",
-        "Only a secret API key; skills and endpoints are intentionally hidden.",
-        "A fixed MCP tool list with no task lifecycle.",
-        "A database schema for the server's SQLite checkpoint table."
+        "Secret endpoints shared verbally",
+        "No documentation at all",
+        "Hidden skills for job security",
+        "Published cards: name, skills, endpoint, modalities"
       ],
-      "correct": 0,
-      "explanation": "`AGENT_CARD` advertises `code-review-agent`, `review-python`, the `/tasks` endpoint, text/structured modalities, `auth: none`, and `protocol_version: a2a-0.3`."
+      "correct": 3,
+      "explanation": "Discovery needs contracts. This lesson advertises agents with versioned cards."
     },
     {
       "stage": "check",

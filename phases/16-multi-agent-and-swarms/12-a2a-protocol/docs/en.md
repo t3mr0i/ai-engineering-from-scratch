@@ -108,6 +108,10 @@ A2A is the most-adopted peer protocol as of April 2026. See arXiv:2505.02279 (Li
 
 
 
+## CBP context: cards advertise, endpoints deliver
+
+In the CBP context every CBP agent publishes its card — name, version, skills, task endpoint, modalities, auth — so callers discover capabilities without tribal knowledge (lesson 13/19). Cards stay honest: advertised skills have backing implementations, endpoints answer, versions match deployments. A stale card is a broken contract with a URL.
+
 ## Build It
 
 Reconstruct **A2A — The Agent-to-Agent Protocol** by following `TaskStore` on the smallest valid record {"id": 1}. Run `python3 main.py` and verify that validation names the missing field or rejects the request; it must not silently accept an incomplete record.
