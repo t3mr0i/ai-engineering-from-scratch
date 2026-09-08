@@ -80,6 +80,10 @@ Call `Debater` from a small caller with tokens=["red","fox"]. Compare its result
 
 Hand off `outputs/skill-debate.md` with the command `python3 main.py`, the accepted input shape (tokens=["red","fox"]), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: debate for judgment calls, budget the rounds
+
+In the CBP context multi-agent debate fits judgment calls with no external verifier — architecture options, incident hypotheses, release readiness — where cross-critique beats self-review. Budget it explicitly: N agents times R rounds is the cost multiplier on the tenant's meter, so default to small (3x2) and escalate only when the first round disagrees. Converge to a decision with named dissent recorded; a debate whose minority view vanishes from the log teaches nothing the next incident.
+
 ## Further Reading
 
 - [Du et al., Society of Minds (arXiv:2305.14325)](https://arxiv.org/abs/2305.14325) — canonical multi-agent debate

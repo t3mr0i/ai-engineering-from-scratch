@@ -4,15 +4,15 @@
   "questions": [
     {
       "stage": "pre",
-      "question": "How many peer operations do three debaters perform in a full mesh over three rounds?",
+      "question": "One reviewer checks its own work and always agrees with itself, even when wrong. What setup catches the error?",
       "options": [
-        "6",
-        "9",
-        "18",
-        "24"
+        "The same reviewer checking twice as fast",
+        "No review at all to save time",
+        "A longer checklist for the same reviewer",
+        "Several independent reviewers critiquing each other's proposals"
       ],
-      "correct": 2,
-      "explanation": "Each of three debaters sees the other two, giving six directed peer operations per round; three rounds therefore produce 18 operations."
+      "correct": 3,
+      "explanation": "Self-review inherits its own blind spots. This lesson builds debate: independent instances, cross-critique, convergence by disagreement."
     },
     {
       "stage": "check",
