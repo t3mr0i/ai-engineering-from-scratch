@@ -88,6 +88,10 @@ Call `TraceStep` from a small caller with the smallest valid record {"id": 1}. C
 
 Hand off `outputs/skill-failure-detector.md` with the command `python3 main.py`, the accepted input shape (the smallest valid record {"id": 1}), the expected observable result, and a failure note for malformed inputs.
 
+## CBP context: name the failure, monitor for it, fix the design
+
+In the CBP context the failure taxonomy is an operations tool: map each recurring category (unauthorized edits, false success claims, dropped handoffs, scope drift) to a monitor with an alert, not to a post-mortem paragraph. When a CBP run fails, classify it first — taxonomy name, trace link, tenant — then fix the design flaw the category points at. Failures are system properties, not model moods; a retry without a design change is a donation to the meter.
+
 ## Further Reading
 
 - [Cemri et al., MASFT (arXiv:2503.13657)](https://arxiv.org/abs/2503.13657) — 14 failure modes, 3 categories
