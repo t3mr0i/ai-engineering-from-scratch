@@ -21,9 +21,45 @@ JupyterLite), progress tracking, and badges. Success looks like an employee
 finding the right course for their role without confusion about internal
 curriculum jargon (`Pxx`/`Lxx` phase/lesson numbers are implementation
 details, never surfaced in this UI — see `CLAUDE.md` §3), and completing
-lessons without the interface getting in the way. Learners can also turn a
-concrete goal into an editable personal plan and ask Learning Navigator for curriculum-bound
-help without exposing the shared model credential to the browser.
+lessons without the interface getting in the way. Learning Navigator offers
+curriculum-bound help without exposing the shared model credential to the
+browser.
+
+The learning home helps employees develop AI readiness for their role across
+parallel competency areas. Each area has its own recommended Acquire, Deepen,
+or Create target; reaching Create everywhere is not the goal. Learners connect
+an assessment, confirm their role, and review their starting points against
+those targets before saving their setup. Returning learners open their
+confirmed role's learning path directly and can edit that path at its top.
+They select an area to see its full, ordered Acquire / Deepen / Create course
+sequence, including named preparation and how shared courses support other
+areas. The next actionable course is marked within that sequence, rather than
+presented as an isolated recommendation. Course details may reveal only the
+real curriculum units and lesson titles. Unknown starting levels stay unknown,
+and course completion records activity without claiming mastery. The route's
+setup and return-visit behavior is defined in
+[the learning-home brief](.impeccable/briefs/learning-home.md).
+
+Only authored, prepared learning paths guide the default journey; learners do
+not create custom plans. Existing saved custom plans remain stored for
+compatibility but do not change default recommendations or path order.
+`personal-plan.html` is the progress-only compatibility URL. It answers what
+has actually been done: started and completed courses, completed lesson counts,
+and passed practical self-checks. Each course shows its own reading percentage
+and explicit completion count; reading 100% is not a completed course. All
+capability evidence remains under a disclosure. Notes and assessment management
+stay reachable. No duplicated dimension selector, global focus control, or
+aggregate ordinal percentage appears here. The role, current/target dimensions,
+and next course belong to My learning. `skills.html` redirects to progress.
+The home also exposes all Academy paths as optional learning offers.
+
+Role and assessment edits use `index.html?view=profile&from=progress` or
+`index.html?view=profile&from=learning`; only those origins are accepted. This
+dedicated view has its own “Role & Assessment” heading, active sidebar state,
+and backlink. Applying the change returns to the allowed origin; the catalog
+is hidden while editing. Normal home behavior is unchanged. Global header
+shortcuts do not duplicate progress navigation on home, workspace, course, or
+lesson routes.
 
 ## AI Learning Assistance
 
@@ -36,11 +72,9 @@ help without exposing the shared model credential to the browser.
   instruction to the model.
 - **Coach before revealing.** Learning Navigator uses diagnostic questions and hints and must
   not disclose graded quiz answers or complete exercise solutions.
-- **The learner owns the plan.** Plan ranking is deterministic and explainable;
-  the learner can reorder, remove, save, or clear steps locally. Focus-session
-  capacity is not presented as a course-duration estimate. Quiz-derived concept
-  mastery, spaced-review due dates, and team assignments can reprioritize a
-  saved plan; the previous revision remains available for undo.
+- **Authored paths remain authoritative.** Recommendation order comes from
+  shipped curriculum and progress state. Legacy saved custom plans remain
+  available as stored data but do not alter the default learning journey.
 - **Mastery requires observed evidence.** Reading and completion inform course
   progress but never raise concept mastery. Capability receipts require enough
   quiz observations, at least 80% modeled mastery, and a passed runnable
@@ -67,6 +101,12 @@ than a from-scratch identity; personality here means applying that system
 consistently, not inventing a new one. Precise and information-dense where
 the content demands it (lesson pages, catalogs), without reading as busy or
 cluttered.
+
+The voice is friendly and supportive: acknowledge the learner's existing
+knowledge, invite a useful next step, and leave room to explore at their own
+pace. Use familiar language for learning and progress; explain assessment
+limits without framing an unknown level as a personal shortcoming. Pair clear
+labels with consistent icons where helpful. Do not use emojis in the interface.
 
 ## Anti-references
 

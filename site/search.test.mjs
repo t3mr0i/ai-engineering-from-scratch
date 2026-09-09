@@ -117,14 +117,21 @@ test("control render path rebuilds stable selects once", () => {
   assert.doesNotMatch(render, /renderRoleSelect\(\)|renderLevelSelect\(\)/);
 });
 
-test("reset clears search and restores the canonical filter state", () => {
+test("reset clears catalog filters while preserving the learner's configured role", () => {
   const resetHandler = lrnSource.match(/els\.resetBtn\.addEventListener\("click", function \(\) \{[\s\S]*?\n    \}\);/)?.[0] || "";
-  assert.match(resetHandler, /state\.profileId = "tc"/);
-  assert.match(resetHandler, /state\.externalLevel = 1/);
-  assert.match(resetHandler, /state\.filter = "recommended"/);
-  assert.match(resetHandler, /els\.searchInput\.value = ""/);
-  assert.match(resetHandler, /syncSearchUi\(\)/);
-  assert.match(resetHandler, /announce\(i18n\("lrn_announce_reset"\)\)/);
+  for (const role of ["tc", "corp", "pma", ""]) {
+    let click;
+    const state = { profileId: role, externalLevel: 3, filter: "all", journeyFocus: "advisory" };
+    const els = { resetBtn: { addEventListener: (_, fn) => { click = fn; } }, searchInput: { value: "AI" } };
+    const noop = () => {};
+    vm.runInNewContext(resetHandler, { state, els, syncSearchUi: noop, saveState: noop, renderControls: noop, render: noop, announce: noop, i18n: key => key });
+    click();
+    assert.equal(state.profileId, role);
+    assert.equal(state.journeyFocus, "advisory");
+    assert.equal(state.externalLevel, 1);
+    assert.equal(state.filter, "recommended");
+    assert.equal(els.searchInput.value, "");
+  }
 });
 
 test("parseQuery preserves quoted phrases and negative clauses", () => {

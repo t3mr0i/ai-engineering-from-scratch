@@ -70,7 +70,7 @@ test("course editor assigns one responsible trainer and a trainer pool", () => {
 
 test("the schedule is read through one shared helper on both learner surfaces", () => {
   assert.match(read("lrn/course.html"), /<script src="schedule\.js\?v=[^"]+"><\/script>/);
-  assert.match(read("index.html"), /<script src="lrn\/schedule\.js\?v=[^"]+"><\/script>/);
+  assert.match(read("index.html"), /<script src="lrn\/schedule\.js\?v=[^"]+"(?: defer)?><\/script>/);
   assert.match(read("lrn/course.js"), /window\.LrnSchedule\.upcoming\(courseItem\.id\)/);
   assert.match(read("lrn/lrn.js"), /window\.LrnSchedule\.next\(course\.id\)/);
 });

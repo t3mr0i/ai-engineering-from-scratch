@@ -132,6 +132,18 @@ const MIME = {
   '.data': 'application/octet-stream',
 };
 
+function jsonResponseBody(text) {
+  try {
+    JSON.parse(text);
+    return text;
+  } catch (_) {
+    // Keep the proxy contract JSON even when a stale/static listener or an
+    // upstream error page returns HTML. Pyodide's response.json() would
+    // otherwise surface a misleading JSONDecodeError to the learner.
+    return JSON.stringify({ error: { message: 'upstream returned non-JSON response' } });
+  }
+}
+
 function mimeFor(p) {
   return MIME[path.extname(p).toLowerCase()] || 'application/octet-stream';
 }
@@ -339,7 +351,7 @@ function handleLlmProxy(req, res) {
       });
       const text = await upstream.text();
       res.writeHead(upstream.status, { 'Content-Type': 'application/json' });
-      res.end(text);
+      res.end(jsonResponseBody(text));
     } catch (err) {
       res.writeHead(502, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: { message: 'upstream request failed' } }));

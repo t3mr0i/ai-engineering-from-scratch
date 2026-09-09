@@ -3,42 +3,49 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 
 const plan = readFileSync("site/personal-plan.html", "utf8");
-const css = readFileSync("site/tool-page.css", "utf8");
-const i18n = readFileSync("site/i18n.js", "utf8");
+const redirect = readFileSync("site/skills.html", "utf8");
+const css = readFileSync("site/lrn/learning-workspace.css", "utf8");
+const workspace = readFileSync("site/lrn/learning-workspace.js", "utf8");
 
-test("standalone tools preserve the shared learner shell", () => {
-  [plan].forEach((page) => {
-    assert.match(page, /class="skip-link"/);
-    assert.match(page, /class="nav-edge"/);
-    assert.match(page, /href="lrn\/lrn\.css\?v=[^"]+"/);
-    assert.match(page, /href="pan\.css\?v=[^"]+"/);
-    assert.match(page, /href="tool-page\.css\?v=[^"]+"/);
-    assert.match(page, /src="theme-toggle\.js"/);
-    assert.doesNotMatch(page, /src="pan\.js(?:\?[^"]*)?"/);
-  });
+test("the progress workspace keeps one sidebar and one focused view", () => {
+  assert.match(plan, /class="learning-sidebar"/);
+  assert.match(plan, /id="learningNav"/);
+  assert.match(plan, /class="learning-content"/);
+  assert.equal((plan.match(/class="workspace-panel"/g) || []).length, 1);
+  assert.doesNotMatch(plan, /id="plan" class="workspace-panel"/);
+  assert.match(plan, /id="progress" class="workspace-panel"/);
+  assert.doesNotMatch(plan, /href="#plan"|data-workspace-view="plan"/);
+  assert.match(plan, /href="index\.html\?view=profile&amp;from=progress"[^>]+data-workspace-copy="editRole"/);
+  assert.doesNotMatch(plan, /id="personalPlanApp"/);
+  assert.doesNotMatch(plan, /plan-builder\.js/);
+  assert.match(plan, /id="skillsProgress"/);
+  assert.match(plan, /src="lrn\/learning-workspace\.js\?v=[^"]+"/);
+  assert.match(plan, /src="lrn\/assessment-prompt\.js\?v=[^"]+"/);
+  assert.match(plan, /src="skills-progress\.js\?v=[^"]+"/);
+  assert.match(plan, /href="pan\.css\?v=[^"]+"/);
+  assert.match(plan, /href="lrn\/learning-workspace\.css\?v=[^"]+"/);
+  assert.match(plan, /src="theme-toggle\.js"/);
+  assert.doesNotMatch(plan, /href="tool-page\.css\?v=[^"]+"/);
+  assert.doesNotMatch(plan, /src="pan\.js(?:\?[^\"]*)?"/);
 });
 
-test("each tool page has one page title and a direct way back", () => {
+test("the workspace has one page title and a direct home path", () => {
   assert.match(plan, /<h1 id="personalPlanPageTitle"[^>]*>/);
-  [plan].forEach((page) => {
-    assert.equal((page.match(/<h1\b/g) || []).length, 1);
-    assert.match(page, /class="tool-page__back" href="index\.html#learningToolsTitle"/);
-  });
+  assert.equal((plan.match(/<h1\b/g) || []).length, 1);
+  assert.match(plan, /href="index\.html#heroTitle" class="learning-nav__item"/);
 });
 
-test("tool-page copy is available in English and German", () => {
-  [
-    "title_personal_plan",
-    "personal_plan_page_title",
-    "tool_page_back",
-  ].forEach((key) => {
-    assert.match(i18n, new RegExp(`${key}: \\{ en: ".+", de: ".+" \\}`));
-  });
+test("the legacy skills URL redirects to the shared progress view", () => {
+  assert.match(redirect, /location\.replace\("personal-plan\.html" \+ location\.search \+ "#progress"\)/);
+  assert.match(redirect, /href="personal-plan\.html#progress"/);
+  assert.doesNotMatch(redirect, /id="skillsProgress"/);
+  assert.doesNotMatch(redirect, /src="skills-progress\.js/);
 });
 
-test("standalone composition adapts without hiding core functionality", () => {
-  assert.match(css, /@media \(max-width: 52rem\)/);
-  assert.match(css, /@media \(max-width: 40rem\)/);
-  assert.doesNotMatch(css, /display:\s*none/);
+test("shared workspace composition has responsive and reduced-motion rules", () => {
+  assert.match(css, /\.workspace-panel\[hidden\]\s*\{\s*display:\s*none/);
+  assert.match(css, /\.page--learning-workspace \.workspace-evidence/);
+  assert.match(workspace, /LrnCurriculumMap/);
+  assert.doesNotMatch(workspace, /AIFSPersonalPlan/);
+  assert.match(workspace, /function render\(\)/);
 });
-

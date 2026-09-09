@@ -8,11 +8,11 @@ colors:
   blue-100: "#e5f1ff"
   slate-700: "#52617c"
   slate-500: "#657898"
-  grey-100: "#f9f8f8"
-  grey-200: "#f1f0ef"
-  grey-300: "#e3e1de"
-  grey-400: "#cfccc8"
-  warm-grey: "#7a7673"
+  grey-100: "#f6f8fc"
+  grey-200: "#eef2f8"
+  grey-300: "#dde4ef"
+  grey-400: "#c7d1df"
+  cool blue-grey: "#627087"
   white: "#ffffff"
   sand: "#857461"
   teal: "#368089"
@@ -119,7 +119,7 @@ patch introduced a second, competing motion-token vocabulary — both are
 drift to reconcile, not features to preserve.
 
 **Key Characteristics:**
-- One brand palette (Lufthansa Group: Core Blue, warm greys, slate) expressed
+- One brand palette (Lufthansa Group: Core Blue, cool blue-greys, slate) expressed
   identically everywhere — never redefined per page.
 - Thin/light display type paired with light/regular body type; weight
   contrast carries hierarchy, not size alone.
@@ -131,7 +131,7 @@ drift to reconcile, not features to preserve.
 ## 2. Colors
 
 A single-hue-family, low-saturation palette: one deep blue carries authority,
-warm greys carry structure, and a small set of muted expression tones (teal,
+cool blue-greys carry structure, and a small set of muted expression tones (teal,
 purple, sand, red) exist only for badge/tier labeling, never as UI chrome.
 
 ### Primary
@@ -151,12 +151,12 @@ purple, sand, red) exist only for badge/tier labeling, never as UI chrome.
   tier / expression tones only. Never used for buttons, links, or body chrome.
 
 ### Neutral
-- **Grey 100** (`#f9f8f8`): page background. A true warm-grey, not a
+- **Grey 100** (`#f6f8fc`): page background. A true cool blue-grey, not a
   cream/sand tone — do not drift it toward parchment.
-- **Grey 200** (`#f1f0ef`): sunken surfaces, code blocks, hover backgrounds.
-- **Grey 300 / Grey 400** (`#e3e1de` / `#cfccc8`): hairline borders (300) and
+- **Grey 200** (`#eef2f8`): sunken surfaces, code blocks, hover backgrounds.
+- **Grey 300 / Grey 400** (`#dde4ef` / `#c7d1df`): hairline borders (300) and
   stronger borders/dividers (400).
-- **Warm Grey** (`#7a7673`): muted/tertiary text.
+- **Warm Grey** (`#627087`): muted/tertiary text.
 - **White** (`#ffffff`): card and modal surfaces.
 
 ### Named Rules
@@ -169,8 +169,8 @@ buttons, nav, or links.
 
 **Display Font:** Lufthansa Head (with Helvetica Neue, Arial fallback)
 **Body Font:** Lufthansa Text (with Helvetica Neue, Arial fallback)
-**Label/Mono Font:** `ui-monospace, SFMono-Regular, Menlo, monospace` — used
-sparingly for code and the rare tabular/technical label, never for buttons.
+**Label and code font:** Lufthansa Text, with Helvetica Neue and Arial fallbacks.
+No monospace font is visible anywhere, including code, metadata, and diagrams.
 
 **Character:** Thin display weight against light/regular body weight reads
 as precise and unhurried — an instrument panel, not a poster. Weight and
@@ -258,6 +258,46 @@ active lesson result set, and assessment bars use the same target-met ratio as
 the published score. Never invent illustrative progress or average ordinal
 Basic / Advanced / Expert levels as if their intervals were numeric.
 
+### Learning-home course path
+
+The returning learning home uses one aligned white syllabus surface rather
+than a recommendation card beside a separate map. Its compact header names
+the selected role and keeps the path-edit action within reach. A five-area
+selector always exposes each area's current level or “Not assessed” and its
+named role target. Selecting an area reveals the complete ordered course
+sequence under Acquire, Deepen, and Create headers. The next actionable course
+is a labelled row in that sequence; it may receive the primary action styling,
+while every other row keeps a quiet outlined action. Stage headers name current
+and target states in text, so a marker never carries meaning by color alone.
+
+The course sequence is a suggested reading order, not a claim that adjacent
+courses are prerequisites. Actual preparation is named and linked from the
+blocked course. Course details expand to authored curriculum units and lesson
+titles; direct lesson links appear only when that course is actionable or
+complete. Shared-course contributions, unavailable coverage, completed
+coursework awaiting assessment, and beyond-target stages remain explicit.
+This desktop surface uses one repeated row rhythm and hairline separation;
+avoid tall gray panels, unequal card heights, and isolated next-step cards.
+Keep coverage and evidence notes in the path-details disclosure, and keep a
+course's active-area focus reason in its own details rather than repeating
+microcopy in every row.
+
+### My progress
+
+`personal-plan.html` is the desktop progress-only compatibility route for the
+same role journey. It has no custom-plan builder or tabs: authored curriculum
+paths remain the sole route structure. Course and lesson counts describe
+activity; capability evidence makes the separate, narrower competence claim.
+`skills.html` redirects here. Use one shared assessment-import disclosure and
+the same aligned white surface and hairline row rhythm as the learning home;
+do not introduce a second visual system or token set.
+
+Profile editing is a dedicated home view with its own heading, active sidebar
+state, and a backlink to the whitelisted learning or progress origin. Hide the
+catalog only in that view. Keep global headers limited to identity and utility
+controls; progress shortcuts do not repeat across home, workspace, course, or
+lesson routes. The sidebar has no descriptive tagline.
+
 - **Authored concepts:** Mermaid or SVG only, following the repository rule.
   Use Mermaid for relationships and flows; use the existing figure registry
   for reusable interactive technical diagrams.
@@ -308,7 +348,7 @@ zero value.
 
 ### Don't:
 - **Don't** hand-duplicate the LHG palette in `style.css`'s own `:root`
-  (`--bg: #f9f8f8`, `--ink: #05164d`, etc.) as a second, independently
+  (`--bg: #f6f8fc`, `--ink: #05164d`, etc.) as a second, independently
   maintained copy of what `lrn/tokens.css` already defines under different
   names (`--color-bg`, `--text-primary`). Two copies of one palette is how
   it silently drifts.
@@ -326,3 +366,29 @@ zero value.
   borders — the standing anti-references from PRODUCT.md.
 - **Don't** reintroduce hard-offset shadows (`box-shadow: 6px 6px 0 var(--ink)`
   still exists at one call site in `style.css`) — soft/blue-tinted only.
+
+User-approved neutral palette: light surfaces and borders use cool blue-grey
+values from the shared tokens; legacy token names remain for compatibility.
+
+Learning-area selectors use a full-width current → target text row and an
+ordinal three-stage rail. Stages stay on one line, outside narrow chips. The
+current stage is bold; the target is secondary. Labels remain accessible.
+
+Course rows use a single separator and an icon beside the title. Course details
+use a chevron disclosure; unit groups reuse the cool sunken-surface token.
+Reached competency stages have a decorative checked-square marker and retain
+a collapsed course list. Course completion remains a separate state.
+
+Course icons come from the central topic mapping in `site/lrn/learning-icons.js`.
+Use the matching topic symbol across the 47 courses, with consistent SVG size
+and stroke weight. Reserve the book symbol for knowledge and reference topics.
+
+Lesson navigation uses sentence-case Lufthansa Text, grouped unit headers, and
+equal-height section links in a three-column desktop grid. Outcome cards have
+24px padding and no extra top margin on their heading.
+
+The progress page is an activity history, without the home dimension selector
+or a global focus dropdown. Started/completed courses use one aligned list:
+topic icon, title, completed lesson count, reading percentage, and course link.
+Keep practical self-checks and capability evidence in separate disclosures.
+Never imply that reading or course completion automatically proves competence.

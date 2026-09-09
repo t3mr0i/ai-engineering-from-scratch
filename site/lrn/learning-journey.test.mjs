@@ -196,3 +196,66 @@ test('browser snapshots share the next course and use correct nested-page links'
   assert.equal(window.LrnJourneyState.snapshot().next.courseId, nested.next.courseId);
   assert.equal(window.LrnJourneyState.snapshot().next.href, 'lrn/course.html?id=A');
 });
+
+test('readiness branches keep role-specific targets and omit irrelevant dimensions', () => {
+  const corporate = journey.createModel({ ...real, roleId: 'corp' });
+  assert.deepEqual(corporate.branches.map(branch => branch.targetLevel), ['Deepen', 'Deepen', 'Acquire', 'Acquire', 'Create']);
+  assert.equal(corporate.branches[0].stages[2].status, 'beyond-target');
+  assert.equal(corporate.branches[0].stages[1].isTarget, true);
+  const pma = journey.createModel({ ...real, roleId: 'pma' });
+  assert.ok(!pma.branches.some(branch => branch.id === 'engineering'));
+});
+
+test('shared courses connect branches without duplicating progress or inventing prerequisites', () => {
+  const base = fixture();
+  base.catalog.capabilities.push({ id: 2, title: 'Advisory foundations', cluster: 'Advisory and Business Consulting' });
+  base.capabilityEvidence[2] = { Acquire: ['A'], Deepen: ['D'], Create: ['C'] };
+  const m = journey.createModel(base);
+  const engineering = m.branches.find(branch => branch.id === 'engineering');
+  const advisory = m.branches.find(branch => branch.id === 'advisory');
+  assert.equal(engineering.next, advisory.next);
+  assert.equal(engineering.next, m.next);
+  assert.deepEqual(engineering.connections[0], { courseId: 'A', dimensionIds: ['engineering', 'advisory'] });
+  assert.deepEqual(advisory.stages[1].steps[0].prerequisiteCourseIds, ['A']);
+  assert.equal(advisory.stages[1].status, 'blocked');
+  assert.equal(m.steps.filter(step => step.courseId === 'A').length, 1);
+});
+
+test('unknown readiness stays unknown even when branch coursework is completed', () => {
+  const m = model({ progressState: { lessons: { a: { completedAt: 1 } } } });
+  const branch = m.branches.find(row => row.id === 'engineering');
+  assert.equal(branch.currentLevel, null);
+  assert.equal(branch.status, 'unknown');
+  assert.equal(branch.stages[0].status, 'courses-completed');
+  assert.equal(branch.stages[1].status, 'available');
+  assert.equal(branch.next.courseId, 'D');
+});
+
+test('unavailable and omitted branch courses never become actionable recommendations', () => {
+  const unavailable = model({ courseMaps: {} }).branches.find(row => row.id === 'engineering');
+  assert.equal(unavailable.next, null);
+  assert.ok(unavailable.stages.every(stage => stage.status === 'unavailable'));
+  const omitted = model({ savedPlan: { learner: { roleId: 'tc' }, excludedCourseIds: ['A'] } }).branches.find(row => row.id === 'engineering');
+  assert.equal(omitted.next, null);
+  assert.equal(omitted.stages[0].status, 'unavailable');
+  assert.equal(omitted.stages[1].status, 'blocked');
+});
+
+test('branch stages distinguish assessment from observed evidence', () => {
+  const assessed = model({ assessment: { ratings: { 1: 'Basic' } } }).branches.find(row => row.id === 'engineering');
+  assert.equal(assessed.stages[0].status, 'self-assessed');
+  assert.equal(assessed.stages[0].steps.length, 0);
+  assert.equal(assessed.next.courseId, 'D');
+  const observed = model({ mastery: { courses: [{ courseId: 'A', probability: .9, evidenceCount: 6, appliedEvidenceCount: 1 }] } }).branches.find(row => row.id === 'engineering');
+  assert.equal(observed.stages[0].status, 'evidenced');
+});
+
+ test('reached stages retain review courses without adding recommendations or fake completion', () => {
+  const m = model({ assessment: { ratings: { 1: 'Basic' } } });
+  const stage = m.branches.find(row => row.id === 'engineering').stages[0];
+  assert.equal(stage.steps.length, 0);
+  assert.equal(stage.reviewCourses[0].courseId, 'A');
+  assert.equal(stage.reviewCourses[0].reviewOnly, true);
+  assert.notEqual(stage.reviewCourses[0].status, 'completed');
+  assert.equal(m.branches.find(row => row.id === 'engineering').next.courseId, 'D');
+});

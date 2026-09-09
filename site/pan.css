@@ -335,7 +335,7 @@
   padding: 0.12em 0.34em;
   border-radius: var(--radius-xs, 4px);
   background: color-mix(in srgb, currentColor 9%, transparent);
-  font: 0.88em/1.4 var(--font-mono, monospace);
+  font: 0.88em/1.4 var(--font-mono, sans-serif);
 }
 
 .pan-markdown pre {
@@ -816,7 +816,7 @@
 
 .personal-plan-step__number {
   color: var(--text-muted, #6b6764);
-  font: 400 var(--fs-caption, 13px)/1 var(--font-mono, monospace);
+  font: 400 var(--fs-caption, 13px)/1 var(--font-mono, sans-serif);
 }
 
 .personal-plan-step__week,

@@ -5,10 +5,16 @@
   var levelLegendSequence = 0;
   var COPY = {
     en: {
+      orientationTitle: "A clear path to your AI skills",
+      orientationIntro: "Your role sets the direction. Your starting point shapes the courses. Practice builds the evidence.",
+      orientationRole: "Choose your role",
+      orientationStart: "Find your starting point",
+      orientationLearn: "Learn and apply",
+      toolsTitle: "Make this path yours",
       title: "Your learning journey",
       courseEvidence: "Course contributions in detail",
       moreTools: "Adapt your learning plan",
-      toolsIntro: "Two ways to your learning path: get recommendations from your assessment result, or assemble your own sequence in the personal plan — or combine both.",
+      toolsIntro: "Import your assessment for recommendations based on your current level, or build a personal plan around a specific goal.",
       role: "Role",
       chooseRole: "Choose your role",
       chooseRoleReason: "Choose a role to view the target profile that matches your work.",
@@ -22,8 +28,8 @@
       next: "Your next step",
       assessment: "Import your assessment result",
       assessmentReason: "Complete the official self-assessment in SharePoint, then import your result PDF so we can show the right next course.",
-      plan: "Build your personal plan",
-      planReason: "Turn your open capability gaps into an editable course sequence.",
+      plan: "Explore your learning paths",
+      planReason: "Find the prepared courses for your role and starting point.",
       progress: "View capability progress",
       progressReason: "Review your current position and evidence before choosing your next learning goal.",
       open: "Open course",
@@ -67,10 +73,16 @@
       levelMuted: "Grey: outside your role target or not relevant."
     },
     de: {
+      orientationTitle: "Dein Weg zu den passenden KI-Kompetenzen",
+      orientationIntro: "Deine Rolle gibt die Richtung vor. Dein Vorwissen bestimmt den Einstieg. In der Praxis zeigst du, was du kannst.",
+      orientationRole: "Rolle wählen",
+      orientationStart: "Einstieg bestimmen",
+      orientationLearn: "Lernen und anwenden",
+      toolsTitle: "Passe deinen Lernweg an",
       title: "Deine Lernreise",
       courseEvidence: "Kursbeiträge im Detail",
       moreTools: "Lernplan anpassen",
-      toolsIntro: "Zwei Wege zu deinem Lernpfad: Hole dir Empfehlungen aus deinem Assessment-Ergebnis oder stelle deine eigene Reihenfolge im persönlichen Plan zusammen – oder kombiniere beides.",
+      toolsIntro: "Übernimm dein Assessment für Empfehlungen passend zu deinem Vorwissen oder erstelle einen persönlichen Plan für ein konkretes Ziel.",
       role: "Rolle",
       chooseRole: "Rolle auswählen",
       chooseRoleReason: "Wähle eine Rolle, um das passende Zielbild für deine Arbeit zu sehen.",
@@ -84,8 +96,8 @@
       next: "Dein nächster Schritt",
       assessment: "Assessment-Ergebnis übernehmen",
       assessmentReason: "Führe das offizielle Self-Assessment in SharePoint durch und importiere danach deine Ergebnis-PDF, damit wir den passenden nächsten Kurs zeigen können.",
-      plan: "Persönlichen Plan erstellen",
-      planReason: "Mache aus offenen Kompetenzlücken eine bearbeitbare Kursfolge.",
+      plan: "Deine Lernpfade ansehen",
+      planReason: "Entdecke die vorgefertigten Kurse für deine Rolle und deinen Wissensstand.",
       progress: "Fähigkeitenfortschritt ansehen",
       progressReason: "Prüfe deinen Ist-Stand und deine Nachweise, bevor du dein nächstes Lernziel wählst.",
       open: "Kurs öffnen",
@@ -177,8 +189,8 @@
     if (!model || !model.assessmentAvailable) return { href: links.assessment || "assessment.html", label: t("assessment"), title: t("assessment"), reason: t("assessmentReason") };
     var hasGaps = Array.isArray(model.gaps) && model.gaps.length > 0;
     var hasOpenSteps = Array.isArray(model.steps) && model.steps.some(function (step) { return step.status !== "completed"; });
-    if (hasGaps || model.unknownCount > 0 || hasOpenSteps) return { href: links.plan || "personal-plan.html", label: t("plan"), title: t("plan"), reason: hasOpenSteps && !hasGaps && !model.unknownCount ? t("blockedReason") : t("planReason") };
-    return { href: links.skills || "skills.html", label: t("progress"), title: t("progress"), reason: t("progressReason") };
+    if (hasGaps || model.unknownCount > 0 || hasOpenSteps) return { href: links.plan || "index.html#readinessMap", label: t("plan"), title: t("plan"), reason: hasOpenSteps && !hasGaps && !model.unknownCount ? t("blockedReason") : t("planReason") };
+    return { href: links.skills || "personal-plan.html#progress", label: t("progress"), title: t("progress"), reason: t("progressReason") };
   }
   function renderLevelLegend() {
     var legend = el("div", "journey-ui__level-legend");
@@ -261,6 +273,7 @@
       var sourceKey = { "assessment-import": "sourceImport", "self-assessment": "sourceSelf", "learning-evidence": "sourceEvidence" }[dimension.source];
       if (sourceKey) detail.textContent += " · " + t(sourceKey);
       if (model.targetChanged && dimension.referenceTargetLevel && dimension.referenceTargetLevel !== dimension.targetLevel) detail.textContent += " · " + t("referenceValue", { target: dimension.referenceTargetLevel });
+      levels.title = detail.textContent;
       item.append(top, levels, detail);
       list.appendChild(item);
     });
@@ -280,6 +293,7 @@
       copy.appendChild(el("strong", "", step.title || step.capability || step.dimension || t("next")));
       var meta = [step.dimension, step.targetLevel].filter(Boolean).join(" · ");
       if (meta) copy.appendChild(el("span", "", meta));
+      copy.appendChild(el("span", "journey-ui__step-state", statusText(step.status || "upcoming")));
       item.append(marker, copy);
       list.appendChild(item);
     });
@@ -372,11 +386,10 @@
         if (root.LrnJourneyState && typeof root.LrnJourneyState.setFocus === "function") root.LrnJourneyState.setFocus(select.value);
       });
       focusField.appendChild(select); details.appendChild(focusField);
-      if (model.targetChanged) details.appendChild(el("p", "journey-ui__target-changed", de ? "Für dich gelten die Zielstufen aus deinem importierten Assessment." : "Your target levels come from your imported assessment."));
       target.appendChild(details);
       if (!options.progressOnly) {
         var progressLink = el("a", "journey-ui__text-link", de ? "Fortschritt und Nachweise ansehen" : "View progress and evidence");
-        progressLink.href = model.links && model.links.skills || "skills.html";
+        progressLink.href = model.links && model.links.skills || "personal-plan.html#progress";
         target.appendChild(progressLink);
       }
       host.appendChild(target);
@@ -428,7 +441,7 @@
     }
     next.appendChild(link);
     host.insertBefore(next, host.querySelector(".journey-ui__target"));
-    if (!options.compact && model.steps && model.steps.length > 1) {
+    if (!options.compact && model.roleSelected !== false && model.steps && model.steps.length > 1) {
       var later = el("section", "journey-ui__route");
       var routeHeading = el("h4", "journey-ui__route-heading", de ? "Danach auf deinem Lernweg" : "Next on your learning journey");
       routeHeading.prepend(icon("path"));

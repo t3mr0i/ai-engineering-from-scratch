@@ -87,3 +87,24 @@ test('falls back only when the Luna deployment has an upstream server error', as
   assert.deepEqual(models, ['azure/gpt-5.6-luna', 'azure/gpt-5.4-mini']);
   assert.equal(context.res.status, 200);
 });
+
+test('normalizes a non-JSON upstream error page to the proxy JSON contract', async (t) => {
+  const previousFetch = global.fetch;
+  const previousKey = process.env.LLM_GATEWAY_KEY;
+  t.after(() => {
+    global.fetch = previousFetch;
+    if (previousKey === undefined) delete process.env.LLM_GATEWAY_KEY;
+    else process.env.LLM_GATEWAY_KEY = previousKey;
+  });
+
+  delete process.env.LLM_GATEWAY_KEY;
+  global.fetch = async () => ({ status: 502, text: async () => '<html>Bad Gateway</html>' });
+
+  const context = {};
+  await handleLlm(context, request());
+
+  assert.equal(context.res.status, 502);
+  assert.deepEqual(JSON.parse(context.res.body), {
+    error: { message: 'upstream returned non-JSON response' },
+  });
+});

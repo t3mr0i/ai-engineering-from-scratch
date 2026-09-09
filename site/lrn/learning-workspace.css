@@ -1,0 +1,106 @@
+/* Desktop learning workspace: one aligned plan and progress surface. */
+.page--learning-workspace { background: var(--color-surface); }
+.page--learning-workspace .learning-content { max-width: 1120px; }
+.page--learning-workspace .workspace-header { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-5); align-items: end; padding: 0 0 var(--space-5); border-bottom: var(--border-hairline); }
+.page--learning-workspace .workspace-header h1 { max-width: 18ch; margin: 0; color: var(--text-primary); font: var(--weight-medium) clamp(var(--fs-h2), 3vw, var(--fs-h1))/var(--lh-snug) var(--font-head); letter-spacing: var(--ls-heading); }
+.page--learning-workspace .workspace-header > p { grid-column: 1; max-width: 66ch; margin: var(--space-2) 0 0; color: var(--text-secondary); font-size: var(--fs-body-sm); line-height: var(--lh-body); }
+.page--learning-workspace .workspace-role { grid-column: 2; grid-row: 1 / span 2; display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: var(--space-2); max-width: 24rem; color: var(--text-secondary); font-size: var(--fs-body-sm); text-align: end; }
+.page--learning-workspace .workspace-role strong { color: var(--text-primary); font-weight: var(--weight-medium); }
+.page--learning-workspace .workspace-role a { color: var(--text-primary); font-weight: var(--weight-medium); text-decoration: none; }
+
+.page--learning-workspace .workspace-panel { min-width: 0; padding-block: var(--space-5); }
+.page--learning-workspace .workspace-panel[hidden] { display: none; }
+
+/* Progress keeps the same row rhythm as the plan, with evidence behind one disclosure. */
+.page--learning-workspace .workspace-progress-header { display: grid; gap: 0; padding-bottom: var(--space-4); border-bottom: var(--border-hairline); }
+.page--learning-workspace .workspace-progress-header h2 { margin: 0; color: var(--text-primary); font: var(--weight-medium) var(--fs-h3)/var(--lh-snug) var(--font-head); }
+.page--learning-workspace .workspace-progress-header p { max-width: 72ch; margin: var(--space-2) 0 0; color: var(--text-primary); font-size: var(--fs-body-sm); }
+.page--learning-workspace .workspace-progress-header p + p { margin-top: var(--space-1); color: var(--text-secondary); font-size: var(--fs-caption); }
+.page--learning-workspace #skillsJourney { margin: var(--space-5) 0 0; }
+.page--learning-workspace #skillsJourney .journey-ui { gap: 0; padding: 0; }
+.page--learning-workspace #skillsJourney .journey-ui__target { gap: var(--space-3); padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.page--learning-workspace #skillsJourney .journey-ui__subheading { font-size: var(--fs-h4); }
+.page--learning-workspace #skillsJourney .journey-ui__details > summary { min-height: 44px; padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); background: var(--color-surface-sunken); }
+.page--learning-workspace #skillsJourney .journey-ui__details[open] > summary { margin-bottom: var(--space-3); }
+.page--learning-workspace #skillsJourney .journey-ui__dimension { grid-template-columns: minmax(12rem, 1fr) minmax(14rem, 1fr) minmax(11rem, .8fr); }
+.page--learning-workspace .workspace-evidence { margin-top: var(--space-4); border-top: var(--border-hairline); }
+.page--learning-workspace .workspace-evidence > summary { display: flex; align-items: center; min-height: 52px; color: var(--text-primary); font-size: var(--fs-body-sm); font-weight: var(--weight-medium); cursor: pointer; }
+.page--learning-workspace .workspace-evidence[open] > summary { border-bottom: var(--border-hairline); }
+.page--learning-workspace .workspace-evidence > .capability-groups { padding: var(--space-5) 0; border: 0; }
+.page--learning-workspace .capability-groups { gap: var(--space-4); }
+.page--learning-workspace .capability-groups__heading { gap: var(--space-4); }
+.page--learning-workspace .capability-groups__heading h2 { font-size: var(--fs-h4); }
+.page--learning-workspace .capability-groups__heading .skills-progress__overline { display: none; }
+.page--learning-workspace .capability-groups__list { gap: var(--space-2); }
+.page--learning-workspace .capability-group { min-height: 0; padding: var(--space-3); border: var(--border-hairline); border-radius: var(--radius-sm); background: transparent; box-shadow: none; }
+.page--learning-workspace .capability-group[aria-pressed="true"] { border-color: var(--action-primary); background: var(--color-surface-sunken); box-shadow: none; }
+.page--learning-workspace .capability-group__icon { width: 32px; height: 32px; background: var(--color-surface-sunken); }
+.page--learning-workspace .capability-group__copy { gap: var(--space-1); }
+.page--learning-workspace .capability-group__copy small { display: none; }
+.page--learning-workspace .skills-progress--standalone { margin: 0; padding: var(--space-5) 0 0; border: 0; border-top: var(--border-hairline); border-radius: 0; background: transparent; box-shadow: none; }
+.page--learning-workspace .skills-progress__toolbar { padding-top: 0; }
+.page--learning-workspace .skills-progress__show-all { margin-inline: 0; }
+
+/* Match the calm learning-home hierarchy and disclosure controls. */
+.page--learning-workspace #skillsJourney .journey-ui__dimension {
+  grid-template-columns: minmax(12rem, 1fr) minmax(18rem, 1fr);
+  gap: 24px; padding-block: 20px;
+}
+.page--learning-workspace .journey-ui__dimension-detail {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+.page--learning-workspace .journey-ui__dimension-name { font-size: var(--fs-body); }
+.page--learning-workspace .journey-ui__level { padding-block: 8px; border-radius: 6px; }
+.page--learning-workspace .workspace-evidence { border: 0; margin-top: 16px; }
+.page--learning-workspace .workspace-evidence > summary {
+  display: flex; justify-content: space-between; gap: 16px;
+  padding: 16px 20px; min-height: 56px; border: 0; border-radius: 8px;
+  background: var(--color-surface-sunken); font-size: var(--fs-body);
+  list-style: none;
+}
+.page--learning-workspace .workspace-evidence > summary::-webkit-details-marker { display: none; }
+.page--learning-workspace .workspace-evidence > summary::after {
+  content: ''; width: 8px; height: 8px; flex: none;
+  border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg); margin-right: 4px;
+}
+.page--learning-workspace .workspace-evidence[open] > summary::after { transform: rotate(225deg); }
+.page--learning-workspace .workspace-evidence[open] > summary { border-bottom: 0; margin-bottom: 16px; }
+.page--learning-workspace .workspace-evidence > summary:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 3px; }
+@media (max-width: 760px) {
+  .page--learning-workspace #skillsJourney .journey-ui__dimension { grid-template-columns: 1fr; gap: 12px; }
+}
+
+.page--learning-workspace #skillsJourney[hidden] { display: none; }
+.page--learning-workspace #capabilityGroupList { display: block; }
+.page--learning-workspace #capabilityGroupList .readiness-map { margin: 16px 0 24px; }
+.page--learning-workspace .workspace-evidence .skills-progress__summary { display: flex; align-items: baseline; gap: 12px; margin: 20px 0; }
+
+.page--learning-workspace .workspace-panel > .capability-groups { padding: 0; border: 0; margin: 0; }
+
+/* Progress is an activity history, separate from the role/target learning map. */
+.page--learning-workspace .skills-progress__summary[hidden] { display: none; }
+.workspace-history-section { margin-top: 32px; }
+.workspace-history-section h2 { margin: 0 0 16px; font: 500 var(--fs-h4)/1.25 var(--font-head); }
+.workspace-course-list, .workspace-check-list { margin: 0; padding: 0; list-style: none; }
+.workspace-course-row { display: grid; grid-template-columns: 24px minmax(0, 1fr) 128px auto; gap: 20px; align-items: center; padding: 20px 0; border-bottom: var(--border-hairline); }
+.workspace-course-row > svg { width: 24px; height: 24px; color: var(--text-secondary); }
+.workspace-course-copy h3 { margin: 0; font: 500 var(--fs-body)/1.4 var(--font-text); }
+.workspace-course-copy p, .workspace-course-metric { margin: 4px 0 0; color: var(--text-secondary); font-size: var(--fs-caption); }
+.workspace-course-metric { display: grid; gap: 8px; }
+.workspace-course-metric progress { appearance: none; width: 100%; height: 5px; border: 0; border-radius: 999px; background: var(--color-surface-sunken); color: var(--action-primary); }
+.workspace-course-metric progress::-webkit-progress-bar { background: var(--color-surface-sunken); border-radius: 999px; }
+.workspace-course-metric progress::-webkit-progress-value { background: var(--action-primary); border-radius: 999px; }
+.workspace-course-metric progress::-moz-progress-bar { background: var(--action-primary); border-radius: 999px; }
+.workspace-history-empty { margin: 12px 0 24px; color: var(--text-secondary); font-size: var(--fs-body-sm); line-height: 1.6; }
+.workspace-check-list li { display: flex; justify-content: space-between; gap: 16px; padding: 16px 0; border-bottom: var(--border-hairline); }
+.workspace-check-list span { color: var(--text-secondary); font-size: var(--fs-caption); }
+.workspace-resources { display: flex; gap: 24px; flex-wrap: wrap; margin: 24px 0; font-size: var(--fs-body-sm); }
+.workspace-resources a { color: var(--text-link); }
+@media (max-width: 760px) {
+ .workspace-course-row { grid-template-columns: 24px minmax(0, 1fr); gap: 12px; }
+ .workspace-course-metric, .workspace-course-row > a { grid-column: 2; }
+ .workspace-course-row > a { justify-self: start; }
+ .workspace-check-list li { flex-direction: column; gap: 4px; }
+}

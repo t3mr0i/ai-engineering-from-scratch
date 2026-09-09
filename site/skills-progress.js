@@ -300,6 +300,7 @@
     }
 
     function currentProfileId() {
+      if (!profileSelect && typeof window !== "undefined" && window.LrnJourneyState) return window.LrnJourneyState.snapshot().roleId;
       if (profileSelect && profileSelect.value) return profileSelect.value;
       return (data.roles || []).some(function (role) { return role.id === "tc"; }) ? "tc" : (data.roles[0] && data.roles[0].id || "tc");
     }
@@ -655,6 +656,7 @@
       showAllButton.focus();
     });
     doc.addEventListener("sitelang:change", render);
+    if (!profileSelect) doc.addEventListener("lrn:journey-change", render);
     doc.addEventListener("assessment-import:change", function (event) {
       assessmentImport = event && event.detail || null;
       if (assessmentImport) {

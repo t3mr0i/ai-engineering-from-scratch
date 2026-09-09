@@ -8,8 +8,8 @@
   var SHAREPOINT_URL = 'https://lufthansagroup.sharepoint.com/sites/LHIND_APP_AISelfAssessment/SitePages/de/TopicHome.aspx';
   var copy = {
     en: {
-      title: 'Import your SharePoint result', active: 'Your assessment result is connected',
-      intro: 'Complete the official self-assessment in SharePoint, export the result PDF, and upload it here to start at your existing skill level in each area.',
+      title: 'Add your assessment', active: 'Your assessment result is connected',
+      intro: 'Already completed your self-assessment in SharePoint? You can add your result PDF here.',
       local: 'Your PDF is read on this device. Only the extracted assessment is saved in this browser.',
       upload: 'Upload assessment PDF', replace: 'Upload a newer PDF', alternative: 'Open official self-assessment',
       dropHint: 'Or drag your PDF file onto this section.',
@@ -34,22 +34,22 @@
       ambiguous: 'The result contains conflicting rows or an unknown role target. Export the assessment again and try that PDF.'
     },
     de: {
-      title: 'SharePoint-Ergebnis übernehmen', active: 'Dein Assessment-Ergebnis ist verbunden',
-      intro: 'Führe das offizielle Self-Assessment in SharePoint durch, exportiere die Ergebnis-PDF und lade sie hier hoch, um in jedem Bereich bei deinem bisherigen Kenntnisstand anzusetzen.',
+      title: 'Dein Assessment ergänzen', active: 'Dein Assessment-Ergebnis ist verbunden',
+      intro: 'Du hast dein Self-Assessment in SharePoint bereits gemacht? Hier kannst du deine Ergebnis-PDF hinzufügen.',
       local: 'Deine PDF wird auf diesem Gerät gelesen. Nur die ausgelesene Einstufung wird in diesem Browser gespeichert.',
-      upload: 'Assessment-PDF hochladen', replace: 'Neuere PDF hochladen', alternative: 'Offizielles Self-Assessment öffnen',
+      upload: 'Assessment-PDF hochladen', replace: 'Neuere PDF hochladen', alternative: 'Zum Self-Assessment in SharePoint',
       dropHint: 'Oder ziehe deine PDF-Datei in diesen Bereich.',
       helpTitle: 'Welche PDF ist die richtige?',
       helpStep1: 'Schließe das offizielle Self-Assessment in SharePoint ab und öffne deine Ergebnisseite.',
       helpStep2: 'Exportiere oder drucke die Ergebnisseite als PDF – behalte alle fünf Ergebniszeilen (Foundation, Engineering Literacy, Product and Process Literacy, Advisory and Biz Literacy, Leadership Strategy).',
       helpStep3: 'Lade diesen originalen Export hier hoch – Screenshots oder bearbeitete Dateien können nicht gelesen werden.',
-      reading: 'Dein Assessment wird gelesen…', review: 'Deinen Ausgangspunkt prüfen',
-      reviewIntro: 'Prüfe die fünf Bereiche, bevor du sie für deine Empfehlungen übernimmst.',
+      reading: 'Dein Assessment wird gelesen…', review: 'Deine Ergebnisse ansehen',
+      reviewIntro: 'Schau in Ruhe, ob die Ergebnisse zu deinem Assessment passen. Danach übernehmen wir sie für deine Empfehlungen.',
       dimension: 'Bereich', current: 'Dein Level', target: 'Rollenziel', score: 'Wert',
       apply: 'Ergebnisse übernehmen', cancel: 'Abbrechen', remove: 'Assessment entfernen',
-      saved: 'Assessment übernommen. Deine Empfehlungen berücksichtigen jetzt diese Ausgangslevel.',
+      saved: 'Assessment übernommen. Deine Empfehlungen knüpfen jetzt an dein Wissen an.',
       removed: 'Assessment entfernt. Empfehlungen nutzen wieder dein gewähltes Rollenprofil.',
-      details: 'Level und Rollenziele ansehen', note: 'Ausgangslevel aus deinem importierten SharePoint-Ergebnis. Kursabschlüsse und erworbene Nachweise bleiben separat.',
+      details: 'Level und Rollenziele ansehen', note: 'Diese Stufen stammen aus deinem SharePoint-Ergebnis. Deine Kurse und praktischen Nachweise findest du weiterhin in deinem Lernfortschritt.',
       failed: 'Diese PDF konnte nicht gelesen werden. Wähle einen originalen Self-Assessment-Export mit allen fünf Ergebniszeilen.',
       storage: 'Das Ergebnis konnte in diesem Browser nicht gespeichert werden. Erlaube lokalen Speicher und versuche es erneut.',
       file: 'Wähle eine PDF-Datei mit höchstens 10 MB.', role: 'Profil', date: 'Importiert',
@@ -91,6 +91,9 @@
       }
     }
     function focusStatus(preventScroll) {
+      // Home advances to role confirmation after applying a result. Do not
+      // move focus back into the now-hidden import step.
+      if (host.closest('[hidden]')) return;
       var status = host.querySelector('.assessment-import__status');
       if (status && status.textContent) {
         try { status.focus({ preventScroll: !!preventScroll }); }
@@ -167,6 +170,13 @@
     // After applying a result, jump to where the recommendations live: the
     // journey slot on assessment.html, the cockpit on the home page.
     function jumpToRecommendations() {
+      var setup = root.document.getElementById('readinessSetup');
+      if (setup && !setup.hidden) {
+        var roleHeading = root.document.querySelector('#readinessRoleStep h3');
+        setup.scrollIntoView({ behavior: 'auto', block: 'start' });
+        if (roleHeading) roleHeading.focus({ preventScroll: true });
+        return;
+      }
       var target = root.document.getElementById('assessmentJourney') || root.document.getElementById('journeyCockpit');
       if (!target || !target.scrollIntoView) return;
       try { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
@@ -193,7 +203,7 @@
       var record = api.load();
       host.replaceChildren(); host.className = 'assessment-import';
       host.setAttribute('aria-busy', String(busy));
-      var heading = el('h2', t(record ? 'active' : 'title')); heading.id = 'assessmentImportTitle'; host.appendChild(heading);
+      var heading = el(root.document.getElementById('readinessSetup') ? 'h4' : 'h2', t(record ? 'active' : 'title')); heading.id = 'assessmentImportTitle'; host.appendChild(heading);
       host.setAttribute('aria-labelledby', heading.id);
       host.appendChild(el('p', record ? t('note') : t('intro'), 'assessment-import__intro'));
       if (record) {
@@ -217,7 +227,10 @@
           try { api.clear(); pending = null; message = 'removed'; error = false; emit(null); render(); focusStatus(); }
           catch (e) { message = 'storage'; error = true; render(); }
         }, true));
-        var view = el('a', t('view')); view.href = /\/(?:index\.html)?$/.test(root.location.pathname) ? '#journeyCockpit' : 'index.html#journeyCockpit'; actions.appendChild(view);
+        var view = el('a', t('view'));
+        view.href = /\/(?:index\.html)?$/.test(root.location.pathname) ? '#readinessSetup' : 'index.html#readinessDashboard';
+        if (root.document.getElementById('readinessSetup')) view.dataset.readyAction = 'role';
+        actions.appendChild(view);
       } else if (!/assessment\.html$/.test(root.location.pathname)) {
         // No manual rating exists anywhere in the catalog: the official
         // assessment lives in SharePoint, so link there directly.

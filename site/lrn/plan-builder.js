@@ -31,7 +31,7 @@
     en: {
       eyebrow: "Personal learning plan",
       title: "Make your learning path fit your workday.",
-      intro: "Choose a goal and cadence. The plan uses your role, assessment gaps, and local progress, then stays editable before you save it.",
+      intro: "What would you like to learn, and how much time fits your week? We’ll suggest suitable courses. You can adjust their order before saving.",
       local: "Stored in this browser",
       goal: "What do you want to be able to do?",
       goalPlaceholder: "For example: evaluate and ship reliable AI agents",
@@ -83,15 +83,15 @@
     de: {
       eyebrow: "Persönlicher Lernplan",
       title: "Passe deinen Lernpfad an deinen Arbeitsalltag an.",
-      intro: "Wähle Ziel und Rhythmus. Der Plan nutzt Rolle, Assessment-Lücken und lokalen Fortschritt und bleibt vor dem Speichern editierbar.",
+      intro: "Was möchtest du lernen, und wie viel Zeit passt in deine Woche? Wir stellen dir passende Kurse zusammen. Vor dem Speichern kannst du die Reihenfolge anpassen.",
       local: "In diesem Browser gespeichert",
       goal: "Was möchtest du anschließend können?",
       goalPlaceholder: "Zum Beispiel: zuverlässige KI-Agenten evaluieren und ausrollen",
       weeks: "Planungszeitraum",
-      sessions: "Fokus-Sessions pro Woche",
+      sessions: "Lerneinheiten pro Woche",
       weekOption: "{n} Wochen",
       sessionOption: "{n} pro Woche",
-      build: "Meinen Plan bauen",
+      build: "Meinen Plan erstellen",
       rebuild: "Prioritäten neu berechnen",
       assessmentUsed: "Assessment-Lücken berücksichtigt",
       assessmentMissing: "Mit importiertem SharePoint-Ergebnis werden Prioritäten genauer",
@@ -517,8 +517,8 @@
     var introCopy = create("div");
     var sectionTitle = create("h2", "", t("title"));
     sectionTitle.id = "personalPlanTitle";
-    introCopy.append(create("p", "personal-plan__eyebrow", t("eyebrow")), sectionTitle, create("p", "personal-plan__description", t("intro")));
-    intro.append(introCopy, create("span", "personal-plan__local", t("local")));
+    introCopy.append(sectionTitle, create("p", "personal-plan__description", t("intro")));
+    intro.append(introCopy);
 
     var form = create("form", "personal-plan-form");
     var goalField = create("label", "personal-plan-field personal-plan-field--goal");

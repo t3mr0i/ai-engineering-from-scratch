@@ -64,7 +64,7 @@
     try { progressState = root.AIFSProgress && root.AIFSProgress.getState ? root.AIFSProgress.getState() : read("aifs:progress:v1", { lessons: {} }); } catch (_) {}
     var curriculum = root.LrnCurriculumMap || {};
     var mastery = root.LrnMastery ? root.LrnMastery.summarize({ progressState: progressState, curriculumMap: curriculum }) : { courses: [], dueReviews: [] };
-    var saved = Object.prototype.hasOwnProperty.call(options, "savedPlan") ? options.savedPlan : read(PLAN, null);
+    var saved = Object.prototype.hasOwnProperty.call(options, "savedPlan") ? options.savedPlan : null;
     var assignments = read("aifs:team-assignments:v1", {});
     return {
       catalog: catalog, roleId: selectedRole || "tc", roleSelected: !!selectedRole,
@@ -111,8 +111,9 @@
     try { var ranked = rawPlan(input); input.rankedSteps = ranked && ranked.steps || []; } catch (_) { input.rankedSteps = []; }
     var model = root.LrnLearningJourney.createModel(input);
     model.steps.forEach(function (step) { step.href = relativeHref(step.href); if (step.activityHref) step.activityHref = relativeHref(step.activityHref); });
+    model.branches.forEach(function (branch) { branch.stages.forEach(function (stage) { (stage.reviewCourses || []).forEach(function (course) { course.href = relativeHref(course.href); }); }); });
     model.externalRecommendations.forEach(function (step) { step.href = relativeHref(step.href); });
-    model.links = { home: relativeHref("index.html"), assessment: relativeHref("assessment.html"), plan: relativeHref("personal-plan.html"), skills: relativeHref("skills.html"), catalog: relativeHref("index.html#trainingCatalogTitle") };
+    model.links = { home: relativeHref("index.html"), assessment: relativeHref("assessment.html"), plan: relativeHref("index.html#readinessMap"), skills: relativeHref("personal-plan.html#progress"), catalog: relativeHref("index.html#trainingCatalogTitle") };
     return model;
   }
   function buildPlan(options, existing) {

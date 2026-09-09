@@ -10,11 +10,11 @@
       "blue-100": { "role": "primary", "displayName": "Blue 100", "canonical": "#e5f1ff" },
       "slate-700": { "role": "neutral", "displayName": "Slate 700", "canonical": "#52617c" },
       "slate-500": { "role": "neutral", "displayName": "Slate 500", "canonical": "#657898" },
-      "grey-100": { "role": "neutral", "displayName": "Grey 100 (page background)", "canonical": "#f9f8f8", "tonalRamp": ["#7a7673", "#95908c", "#b3afab", "#cfccc8", "#e3e1de", "#f1f0ef", "#f9f8f8", "#ffffff"] },
-      "grey-200": { "role": "neutral", "displayName": "Grey 200 (sunken surface)", "canonical": "#f1f0ef" },
-      "grey-300": { "role": "neutral", "displayName": "Grey 300 (hairline border)", "canonical": "#e3e1de" },
-      "grey-400": { "role": "neutral", "displayName": "Grey 400 (strong border)", "canonical": "#cfccc8" },
-      "warm-grey": { "role": "neutral", "displayName": "Warm Grey (muted text)", "canonical": "#7a7673" },
+      "grey-100": { "role": "neutral", "displayName": "Grey 100 (page background)", "canonical": "#f6f8fc", "tonalRamp": ["#627087", "#95908c", "#b3afab", "#c7d1df", "#dde4ef", "#eef2f8", "#f6f8fc", "#ffffff"] },
+      "grey-200": { "role": "neutral", "displayName": "Grey 200 (sunken surface)", "canonical": "#eef2f8" },
+      "grey-300": { "role": "neutral", "displayName": "Grey 300 (hairline border)", "canonical": "#dde4ef" },
+      "grey-400": { "role": "neutral", "displayName": "Grey 400 (strong border)", "canonical": "#c7d1df" },
+      "warm-grey": { "role": "neutral", "displayName": "Warm Grey (muted text)", "canonical": "#627087" },
       "white": { "role": "neutral", "displayName": "White (card surface)", "canonical": "#ffffff" },
       "sand": { "role": "tertiary", "displayName": "Sand (badge tier)", "canonical": "#857461" },
       "teal": { "role": "tertiary", "displayName": "Teal (badge tier)", "canonical": "#368089" },
@@ -88,7 +88,7 @@
       "refersTo": "card",
       "description": "Standard content card: white surface, hairline border, soft shadow.",
       "html": "<div class=\"ds-card\"><h3 class=\"ds-card__title\">Prompt Engineering</h3><p class=\"ds-card__body\">Role-based course on structuring prompts for production LLM systems.</p></div>",
-      "css": ".ds-card { background: #ffffff; border: 1px solid #e3e1de; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(5, 22, 77, 0.06); } .ds-card__title { font-family: \"Lufthansa Head\", \"Helvetica Neue\", Arial, sans-serif; font-weight: 500; font-size: 26px; color: #05164d; margin-bottom: 8px; } .ds-card__body { font-family: \"Lufthansa Text\", \"Helvetica Neue\", Arial, sans-serif; font-size: 17px; line-height: 1.5; color: #52617c; }"
+      "css": ".ds-card { background: #ffffff; border: 1px solid #dde4ef; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(5, 22, 77, 0.06); } .ds-card__title { font-family: \"Lufthansa Head\", \"Helvetica Neue\", Arial, sans-serif; font-weight: 500; font-size: 26px; color: #05164d; margin-bottom: 8px; } .ds-card__body { font-family: \"Lufthansa Text\", \"Helvetica Neue\", Arial, sans-serif; font-size: 17px; line-height: 1.5; color: #52617c; }"
     },
     {
       "name": "Badge Tier Pill",
@@ -96,7 +96,7 @@
       "refersTo": "chip-neutral",
       "description": "Uppercase tracked label pill used for badge tiers; tone-tinted background per tier.",
       "html": "<span class=\"ds-pill ds-pill--blue\">Level 3</span>",
-      "css": ".ds-pill { display: inline-flex; align-items: center; gap: 6px; font-family: \"Lufthansa Text\", \"Helvetica Neue\", Arial, sans-serif; font-weight: 500; font-size: 0.62rem; line-height: 1; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; } .ds-pill--neutral { background: #f1f0ef; color: #52617c; } .ds-pill--blue { background: #e5f1ff; color: #243f9b; } .ds-pill--success { background: #e2f3ea; color: #1b8a5a; }"
+      "css": ".ds-pill { display: inline-flex; align-items: center; gap: 6px; font-family: \"Lufthansa Text\", \"Helvetica Neue\", Arial, sans-serif; font-weight: 500; font-size: 0.62rem; line-height: 1; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; } .ds-pill--neutral { background: #eef2f8; color: #52617c; } .ds-pill--blue { background: #e5f1ff; color: #243f9b; } .ds-pill--success { background: #e2f3ea; color: #1b8a5a; }"
     },
     {
       "name": "Nav Edge Header",
@@ -104,7 +104,7 @@
       "refersTo": "nav-edge",
       "description": "Fixed top header: wordmark left, pill icon buttons right, hairline bottom border.",
       "html": "<header class=\"ds-nav\"><span class=\"ds-nav__wordmark\">LHIND</span><nav class=\"ds-nav__actions\"><button class=\"ds-nav__icon-btn\" aria-label=\"Badges\"><svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"8\" r=\"5\"/><path d=\"m8.5 12-1 8 4.5-2 4.5 2-1-8\"/></svg></button></nav></header>",
-      "css": ".ds-nav { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; background: rgba(249, 248, 248, 0.9); border-bottom: 1px solid #e3e1de; } .ds-nav__wordmark { font-family: \"Lufthansa Head\", \"Helvetica Neue\", Arial, sans-serif; font-weight: 500; color: #05164d; } .ds-nav__icon-btn { border: none; background: transparent; border-radius: 8px; padding: 8px; cursor: pointer; color: #05164d; } .ds-nav__icon-btn:hover { background: #f1f0ef; } .ds-nav__icon-btn:focus-visible { outline: 2px solid #2d5fe4; outline-offset: 3px; }"
+      "css": ".ds-nav { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; background: rgba(249, 248, 248, 0.9); border-bottom: 1px solid #dde4ef; } .ds-nav__wordmark { font-family: \"Lufthansa Head\", \"Helvetica Neue\", Arial, sans-serif; font-weight: 500; color: #05164d; } .ds-nav__icon-btn { border: none; background: transparent; border-radius: 8px; padding: 8px; cursor: pointer; color: #05164d; } .ds-nav__icon-btn:hover { background: #eef2f8; } .ds-nav__icon-btn:focus-visible { outline: 2px solid #2d5fe4; outline-offset: 3px; }"
     },
     {
       "name": "Learning Route",
@@ -112,7 +112,7 @@
       "refersTo": "learning-route",
       "description": "Semantic learning sequence with a calm connector line; stacks vertically below 760px.",
       "html": "<nav class=\"ds-learning-route\" aria-label=\"Lesson route\"><ol><li><a href=\"#problem\" aria-current=\"location\"><span>01</span><strong>The problem</strong></a></li><li><a href=\"#concept\"><span>02</span><strong>The concept</strong></a></li><li><a href=\"#build\"><span>03</span><strong>Build it</strong></a></li></ol></nav>",
-      "css": ".ds-learning-route ol { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; } .ds-learning-route ol::before { content: \"\"; position: absolute; top: 17px; right: 8%; left: 8%; height: 1px; background: #e3e1de; } .ds-learning-route a { position: relative; display: grid; gap: 10px; color: #52617c; text-decoration: none; } .ds-learning-route a > span { z-index: 1; display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid #cfccc8; border-radius: 999px; background: #ffffff; } .ds-learning-route a[aria-current] > span { border-color: #05164d; background: #05164d; color: #ffffff; } .ds-learning-route a:focus-visible { outline: 2px solid #2d5fe4; outline-offset: 3px; } @media (max-width: 760px) { .ds-learning-route ol { grid-template-columns: 1fr; gap: 8px; } .ds-learning-route ol::before { top: 17px; right: auto; bottom: 17px; left: 17px; width: 1px; height: auto; } .ds-learning-route a { grid-template-columns: auto 1fr; align-items: center; } }"
+      "css": ".ds-learning-route ol { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; } .ds-learning-route ol::before { content: \"\"; position: absolute; top: 17px; right: 8%; left: 8%; height: 1px; background: #dde4ef; } .ds-learning-route a { position: relative; display: grid; gap: 10px; color: #52617c; text-decoration: none; } .ds-learning-route a > span { z-index: 1; display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid #c7d1df; border-radius: 999px; background: #ffffff; } .ds-learning-route a[aria-current] > span { border-color: #05164d; background: #05164d; color: #ffffff; } .ds-learning-route a:focus-visible { outline: 2px solid #2d5fe4; outline-offset: 3px; } @media (max-width: 760px) { .ds-learning-route ol { grid-template-columns: 1fr; gap: 8px; } .ds-learning-route ol::before { top: 17px; right: auto; bottom: 17px; left: 17px; width: 1px; height: auto; } .ds-learning-route a { grid-template-columns: auto 1fr; align-items: center; } }"
     }
   ],
   "narrative": {

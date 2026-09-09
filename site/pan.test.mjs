@@ -12,7 +12,6 @@ test("learner surfaces retain shared Navigator CSS without loading its script", 
   const pages = [
     ["./index.html", ""],
     ["./lesson.html", ""],
-    ["./skills.html", ""],
     ["./personal-plan.html", ""],
     ["./lrn/course.html", "../"]
   ];
@@ -32,24 +31,21 @@ test("Learning Navigator has consistent visible and accessible naming", () => {
   assert.doesNotMatch(source, /Open PAN|PAN-Lernhilfe|title: "PAN"|>PAN</);
 });
 
-test("the personal-plan page wires the editable planning engine", () => {
+test("the shared workspace wires progress without the custom plan builder", () => {
   const page = readFileSync(new URL("./personal-plan.html", import.meta.url), "utf8");
-  assert.match(page, /id="personalPlan"[^>]+aria-label="Personal learning plan"/);
-  assert.match(page, /src="lrn\/learning-plan\.js\?v=[^"]+"/);
-  assert.match(page, /src="lrn\/plan-builder\.js\?v=[^"]+"/);
+  assert.match(page, /id="progress" class="workspace-panel"/);
+  assert.doesNotMatch(page, /id="personalPlanApp"|plan-builder\.js/);
+  assert.match(page, /src="skills-progress\.js\?v=[^"]+"/);
+  assert.match(page, /src="lrn\/assessment-prompt\.js\?v=[^"]+"/);
+  assert.match(page, /src="lrn\/learning-workspace\.js\?v=[^"]+"/);
 });
 
-test("the cockpit delegates editable planning to the personal-plan page", () => {
-  // Home mounts the journey engine; the inline personalPlan workspace was
-  // retired to legacy mount points (see index.html data-journey-replaced).
-  // Planning execution lives on personal-plan.html; the cockpit keeps the
-  // placement script plus the engine's change-listener contract.
+test("the cockpit keeps plan generation out of the learner workspace", () => {
   const index = readFileSync(new URL("./index.html", import.meta.url), "utf8");
-  const planBuilder = readFileSync(new URL("./lrn/plan-builder.js", import.meta.url), "utf8");
   const planPage = readFileSync(new URL("./personal-plan.html", import.meta.url), "utf8");
   assert.match(index, /src="lrn\/learning-plan\.js\?v=[^"]+"/);
-  assert.match(planPage, /src="lrn\/plan-builder\.js\?v=[^"]+"/);
-  assert.match(planBuilder, /addEventListener\("aifs:personal-plan-change"/);
+  assert.doesNotMatch(index, /src="lrn\/plan-builder\.js/);
+  assert.doesNotMatch(planPage, /src="lrn\/plan-builder\.js/);
 });
 
 test("the curriculum admin accepts a validated courses deep link", () => {

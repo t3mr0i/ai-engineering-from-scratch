@@ -249,10 +249,50 @@
       externalRecommendations.push({ academyCourse: path.academyCourse, title: path.title, courseId: anchor, href: registrationUrl, status: "ready", bookingAvailable: true, reason: de ? "Wenn du das Gelernte praktisch vertiefen möchtest, findest du hier ein passendes Angebot der LHIND Academy." : "If you want to deepen what you have learned in practice, you can find a suitable LHIND Academy offering here." });
     });
     var assessmentAvailable = !!imported || Object.keys(ratings).some(function (id) { return rank(ratings[id]) != null; });
+    // A course may serve several competency branches. Reuse the same step so
+    // completion, availability and prerequisites cannot drift between views.
+    var branches = dimensions.filter(function (dimension) { return dimension.status !== "not-relevant"; }).map(function (dimension) {
+      var branchSteps = steps.filter(function (step) { return step.matches.some(function (match) { return match.dimensionId === dimension.id; }); });
+      var branchGaps = unavailable.filter(function (gap) { return gap.dimension === dimension.name; });
+      var targetRank = rank(dimension.targetLevel);
+      var stages = LEVELS.slice(1).map(function (level, index) {
+        var stageRank = index + 1;
+        var stageSteps = branchSteps.filter(function (step) { return step.matches.some(function (match) { return match.dimensionId === dimension.id && match.rank === stageRank; }); });
+        var required = stageRank <= targetRank;
+        var relevant = dimension.capabilities.filter(function (cap) { return !cap.notRelevant; });
+        var known = relevant.length > 0 && relevant.every(function (cap) { return cap.currentRank != null && cap.currentRank >= stageRank; });
+        var evidenced = relevant.length > 0 && relevant.every(function (cap) { return rank(cap.observedLevel) >= stageRank; });
+        var missing = branchGaps.some(function (gap) { return gap.targetLevel === level; });
+        // Excluding a mapped course from a personal plan is not completion.
+        var omitted = relevant.some(function (cap) { return cap.stages.some(function (stage) { return stage.level === level && stage.courseIds.some(function (id) { return excluded.indexOf(id) >= 0 && !(progress[id] && progress[id].completed); }); }); });
+        var status = !required ? "beyond-target" : evidenced ? "evidenced" : known ? "self-assessed"
+          : stageSteps.some(function (step) { return step.status === "ready" || step.status === "in-progress"; }) ? "available"
+          : missing || omitted || !stageSteps.length || stageSteps.some(function (step) { return step.status === "unavailable"; }) ? "unavailable"
+          : stageSteps.every(function (step) { return step.status === "completed"; }) ? "courses-completed" : "blocked";
+        var reviewCourses = [];
+        if (known || evidenced) {
+          var reviewIds = unique(relevant.flatMap(function (cap) { return array((evidence[cap.id] || {})[level]); }));
+          reviewCourses = reviewIds.filter(function (id) { return courseById[id] && eligible(courseById[id], roleId); }).map(function (id) {
+            var course = courseById[id], p = progress[id];
+            return { courseId: id, title: course.title, href: "lrn/course.html?id=" + encodeURIComponent(id), status: p.completed ? "completed" : p.available ? "ready" : "unavailable", percent: p.percent, reviewOnly: true, matches: [], prerequisiteCourseIds: [] };
+          });
+        }
+        return { level: level, rank: stageRank, isTarget: stageRank === targetRank, required: required, status: status, steps: stageSteps, reviewCourses: reviewCourses };
+      });
+      return {
+        id: dimension.id, name: dimension.name, currentLevel: dimension.currentLevel,
+        targetLevel: dimension.targetLevel, status: dimension.status, source: dimension.source,
+        next: branchSteps.find(function (step) { return step.status === "ready" || step.status === "in-progress"; }) || null,
+        steps: branchSteps, stages: stages, coverageGaps: branchGaps,
+        connections: branchSteps.map(function (step) {
+          return { courseId: step.courseId, dimensionIds: unique(step.matches.map(function (match) { return match.dimensionId; })) };
+        }).filter(function (connection) { return connection.dimensionIds.length > 1; })
+      };
+    });
     return {
       roleId: roleId, role: role, roleSelected: input.roleSelected !== false,
       focusDimensionId: input.focusDimensionId || null,
-      dimensions: dimensions, next: next, steps: steps, gaps: gaps,
+      dimensions: dimensions, branches: branches, next: next, steps: steps, gaps: gaps,
       unknownCount: dimensions.filter(function (row) { return row.status === "unknown"; }).length,
       assessmentAvailable: assessmentAvailable, provisional: !assessmentAvailable,
       targetSource: imported ? "assessment-import" : "reference", targetChanged: targetChanged,

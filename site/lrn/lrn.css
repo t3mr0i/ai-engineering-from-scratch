@@ -2,9 +2,9 @@
 /* LHIND LRN — Lufthansa Group Design System skin
    Visual language follows the Lufthansa Group corporate identity:
    medium display headlines, sentence case with periods, hairline 1px
-   borders in warm grey, pills on chips, soft blue-tinted shadows.
+   borders in cool blue-grey, pills on chips, soft blue-tinted shadows.
    Marke bleibt LHIND (kein Lufthansa-Crane/Wordmark). */
-@import url("tokens.css?v=20260825d");
+@import url("tokens.css?v=20260909reader");
 
 /* ── D4 fix on top of tokens.css (imported above) ─────────────────────────
    --shadow-focus (tokens.css) is rgba(45,95,228,0.30) in every theme.
@@ -48,13 +48,13 @@
    (it used to make this rule apply to every page unconditionally, even
    with no real user choice — now the attribute is only ever present when
    a stored choice or this session explicitly set it). Values below are
-   copied from tokens.css's own light :root block, one entry per property
+   copied from tokens.css?v=20260909reader's own light :root block, one entry per property
    the OS/[data-theme="dark"] blocks override. */
 @media (prefers-color-scheme: dark) {
   [data-theme="light"] {
     --text-primary: var(--lhg-core-blue);
     --text-secondary: var(--lhg-slate-700);
-    --text-muted: #6b6764;
+    --text-muted: var(--lhg-slate-700);
     --border-subtle: var(--lhg-grey-300);
     --border-strong: var(--lhg-grey-400);
     --color-bg: var(--lhg-grey-100);

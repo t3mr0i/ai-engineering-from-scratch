@@ -473,7 +473,7 @@
       actionLabel.textContent = i18n("my_path_open_next", "Open next course");
       action.append(actionLabel, lucideIcon("arrow-right"));
     } else if (noOpenAssessmentGap) {
-      action.href = "../skills.html";
+      action.href = "../personal-plan.html#progress";
       action.append(lucideIcon("chart-bar"), document.createTextNode(i18n("my_path_view_capabilities", "View capability progress")));
     } else {
       action.href = "#";

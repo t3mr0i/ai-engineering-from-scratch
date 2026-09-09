@@ -229,7 +229,7 @@
       render();
     });
     els.resetBtn.addEventListener("click", function () {
-      state.profileId = "";
+      // The role belongs to the learner's setup, not the catalog filters.
       state.keyAreaId = null;
       state.specializationId = null;
       state.externalLevel = 1;
@@ -687,7 +687,7 @@
     }
     var action = document.createElement("a");
     action.className = "primary-cta my-learning-path__cta";
-    action.href = stats.nextCourse ? courseHref(stats.nextCourse.id) : "skills.html";
+    action.href = stats.nextCourse ? courseHref(stats.nextCourse.id) : "personal-plan.html#progress";
     action.append(
       document.createTextNode(stats.nextCourse
         ? i18n("my_path_open_next", "Open next course")

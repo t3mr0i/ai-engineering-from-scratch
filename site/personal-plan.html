@@ -16,29 +16,28 @@
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title data-i18n="title_personal_plan">Personal Plan · LHIND AI Learning Catalog</title>
+  <title >My progress · LHIND AI Learning Catalog</title>
   <link rel="stylesheet" href="lrn/journey.css?v=20260909a">
-  <meta name="description" content="Build and save a personal AI learning plan around one goal, your available time, and existing progress.">
+  <meta name="description" content="View learning progress and competency evidence across your prepared AI learning paths.">
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305164d'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Arial,sans-serif' font-size='14' font-weight='700' fill='%23f8fafc'%3EAI%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/light/style.css">
-  <link rel="stylesheet" href="lrn/lrn.css?v=20260825d">
+  <link rel="stylesheet" href="lrn/lrn.css?v=20260909cool">
   <link rel="stylesheet" href="pan.css?v=20260830a">
-  <link rel="stylesheet" href="tool-page.css?v=20260831a">
+
   <link rel="stylesheet" href="assessment-import.css?v=20260908a">
+  <link rel="stylesheet" href="lrn/readiness-home.css?v=20260909assessment">
+  <link rel="stylesheet" href="lrn/learning-workspace.css?v=20260909history">
 </head>
 <body>
-  <a class="skip-link" href="#personalPlan" data-i18n="skip_personal_plan">Skip to personal plan</a>
+  <a class="skip-link" href="#personalPlanPageTitle" data-workspace-copy="skip">Skip to personal plan</a>
   <header class="nav-edge" aria-label="Site navigation" data-i18n-aria-label="nav_site_label">
     <a class="wordmark" href="index.html">
       <img class="wordmark__logo" src="assets/logo/lhind-logo-blue.png" alt="LHIND" />
       <span>AI Learning Catalog</span>
     </a>
     <div class="nav-edge__spacer" aria-hidden="true" style="flex:1"></div>
-    <a href="skills.html" class="nav-settings" title="Capability progress" aria-label="Capability progress" data-i18n-title="nav_skills">
-      <i class="ph-light ph-chart-line-up" aria-hidden="true"></i>
-    </a>
     <a href="badges.html" class="nav-settings" title="Your badges" aria-label="Your badges" data-i18n-title="badges_link_title">
       <i class="ph-light ph-medal" aria-hidden="true"></i>
     </a>
@@ -56,36 +55,93 @@
   <script src="lang.js"></script>
   <script src="theme-toggle.js"></script>
 
-  <main class="page page--tool" id="personalPlanMain" aria-labelledby="personalPlanPageTitle">
-    <a class="tool-page__back" href="index.html#learningToolsTitle">
-      <i class="ph-light ph-arrow-left" aria-hidden="true"></i>
-      <span data-i18n="tool_page_back">Back to learning overview</span>
-    </a>
+  <main class="page page--home page--learning-workspace" id="personalPlanMain" aria-labelledby="personalPlanPageTitle">
+    <aside class="learning-sidebar">
+      <nav class="learning-nav" aria-label="My learning" id="learningNav">
+        <a href="index.html#heroTitle" class="learning-nav__item"><span data-learning-icon="home"></span><span data-workspace-copy="navHome">My learning</span></a>
+        <a href="index.html#readinessMap" class="learning-nav__item"><span data-learning-icon="map"></span><span data-workspace-copy="navAreas">Learning areas</span></a>
+        <a href="index.html#trainingCatalogTitle" class="learning-nav__item"><span data-learning-icon="search"></span><span data-workspace-copy="navCatalog">Explore courses</span></a>
+        <div class="learning-nav__divider"></div>
+        <a href="personal-plan.html" class="learning-nav__item" aria-current="page"><span data-learning-icon="chart"></span><span data-workspace-copy="title">My progress</span></a>
+      </nav>
 
-    <header class="tool-page__masthead">
-      <h1 id="personalPlanPageTitle" data-i18n="personal_plan_page_title">Personal plan</h1>
-      <p data-i18n="personal_plan_page_intro">Shape a focused sequence around one outcome, your available time, and the progress already stored in this browser.</p>
-    </header>
+    </aside>
+    <div class="learning-content">
+      <header class="workspace-header">
+        <h1 id="personalPlanPageTitle" data-workspace-copy="title">My progress</h1>
+        <p data-workspace-copy="intro">Make time for learning and see how far you’ve come.</p>
+        <div class="workspace-role"><strong id="workspaceRole"></strong><a href="index.html?view=profile&amp;from=progress" class="readiness-button readiness-button--secondary" data-workspace-copy="editRole">Change role & assessment</a></div>
+      </header>
+      <section data-assessment-prompt></section>
+      <section id="progress" class="workspace-panel" aria-label="My progress" data-workspace-label="progress">
 
-    <section id="planJourney" class="journey-slot" aria-label="Your role target and next learning step"></section>
-    <section class="tool-page__workspace personal-plan" id="personalPlan" aria-label="Personal learning plan" data-i18n-aria-label="personal_plan_workspace_label">
-      <div id="personalPlanApp"></div>
+        <div class="workspace-progress-header">
+          <h2 data-workspace-copy="courseProgress">Your learning so far</h2>
+          <p id="workspaceCourseProgress" aria-live="polite"></p>
+          <p data-workspace-copy="evidenceNote">Course completion records your learning. Assessments and practical evidence show your competency level.</p>
+        </div>
+        <div id="workspaceHistory"></div>
+        <nav class="workspace-resources" aria-label="Learning resources">
+          <a href="index.html#readinessMap" data-workspace-copy="backToPath">My learning path</a>
+          <a href="notes.html" data-workspace-copy="savedNotes">Saved notes & code</a>
+        </nav>
+        <details class="workspace-evidence">
+          <summary data-workspace-copy="evidence">Explore course contributions and capabilities</summary>
+          <div class="skills-progress__summary" hidden><strong id="skillsProgressTotal">0%</strong><small id="skillsProgressCoverage"></small></div>
+
+
+
+
+    <section class="skills-progress skills-progress--standalone" id="skillsProgress" aria-label="Capability progress details" data-i18n-aria-label="skills_progress_details_label">
+      <div class="skills-progress__toolbar">
+        <div class="skills-progress__legend" aria-label="Capability levels" data-i18n-aria-label="skills_progress_levels_label">
+          <span><i aria-hidden="true"></i>Acquire</span>
+          <span><i aria-hidden="true"></i>Deepen</span>
+          <span><i aria-hidden="true"></i>Create</span>
+        </div>
+        <label class="skills-progress__sort">
+          <span data-i18n="skills_progress_sort_label">Sort by</span>
+          <select id="skillsProgressSort" aria-label="Sort capabilities" data-i18n-aria-label="skills_progress_sort_aria">
+            <option value="progress" data-i18n="skills_progress_sort_progress">Most progress</option>
+            <option value="order" data-i18n="skills_progress_sort_order">Capability order</option>
+            <option value="name" data-i18n="skills_progress_sort_name">Name</option>
+          </select>
+        </label>
+      </div>
+
+      <ol class="skills-progress__list" id="skillsProgressList"></ol>
+      <button class="skills-progress__show-all" id="skillsProgressShowAll" type="button" aria-expanded="false" aria-controls="skillsProgressList">
+        <span data-i18n="skills_progress_show_all">Show all capabilities</span>
+        <i class="ph-light ph-arrow-down" aria-hidden="true"></i>
+      </button>
     </section>
-    <section id="assessmentImport" data-assessment-import></section>
+
+        </details>
+      </section>
+      <details class="workspace-evidence" id="assessmentSettings">
+        <summary data-workspace-copy="assessment">Add or replace my assessment</summary>
+        <section id="assessmentImport" data-assessment-import></section>
+      </details>
+    </div>
   </main>
 
-  <noscript><p class="noscript-note">JavaScript is required to build and save a personal learning plan.</p></noscript>
+  <noscript><p class="noscript-note">JavaScript is required to show your learning progress.</p></noscript>
   <script src="assessment-import.js?v=20260908a"></script>
   <script src="assessment-import-ui.js?v=20260908a"></script>
   <script src="progress.js?v=20260830a"></script>
+  <script src="capabilities.js?v=20260908c"></script>
   <script src="lrn/data.js?v=20260908c"></script>
   <script src="lrn/curriculum-map.js?v=20260824b"></script>
   <script src="skills-progress-evidence.js?v=20260825a"></script>
   <script src="lrn/mastery.js?v=20260830a"></script>
   <script src="lrn/learning-plan.js?v=20260908c"></script>
-  <script src="lrn/learning-journey.js?v=20260908b"></script>
-  <script src="lrn/journey-state.js?v=20260908c"></script>
-  <script src="lrn/journey-ui.js?v=20260909a"></script>
-  <script src="lrn/plan-builder.js?v=20260908c"></script>
+  <script src="lrn/learning-journey.js?v=20260909courses"></script>
+  <script src="lrn/journey-state.js?v=20260909courses"></script>
+  <script src="lrn/journey-ui.js?v=20260909progress"></script>
+  <script src="skills-progress.js?v=20260909shared2"></script>
+  <script src="lrn/learning-icons.js?v=20260909topics"></script>
+  <script src="lrn/assessment-prompt.js?v=20260909a"></script>
+  <script src="lrn/learning-history.js?v=20260909history"></script>
+  <script src="lrn/learning-workspace.js?v=20260909history"></script>
 </body>
 </html>

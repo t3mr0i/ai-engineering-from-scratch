@@ -2,8 +2,8 @@
    LHIND LRN — Lufthansa Group Design System tokens
    ------------------------------------------------------------------------
    Visual language follows the Lufthansa Group corporate identity:
-   deep Core Blue, warm-grey neutrals, Lufthansa Head (display, medium) +
-   Lufthansa Text (body, regular) on a quiet warm-grey page.
+   deep Core Blue, cool blue-grey neutrals, Lufthansa Head (display, medium) +
+   Lufthansa Text (body, regular) on a quiet blue-grey page.
 
    Marke bleibt LHIND — keine Lufthansa-Crane/Wordmark-Assets, nur die
    visuelle Sprache (Typo, Farbe, Spacing, Komponenten-Stil).
@@ -75,7 +75,7 @@
 }
 
 :root {
-  /* ── Lufthansa raw colour scale (brand-true) ───────────────────── */
+  /* ── Brand colours with project-specific cool neutrals ───────────────────── */
   --lhg-core-blue:      #05164d;
   --lhg-blue-500:       #2d5fe4;
   --lhg-blue-600:       #243f9b;
@@ -84,11 +84,11 @@
 
   --lhg-slate-700:      #52617c;
   --lhg-slate-500:      #657898;
-  --lhg-grey-100:       #f9f8f8;
-  --lhg-grey-200:       #f1f0ef;
-  --lhg-grey-300:       #e3e1de;
-  --lhg-grey-400:       #cfccc8;
-  --lhg-warm-grey:      #7a7673;
+  --lhg-grey-100:       #f6f8fc;
+  --lhg-grey-200:       #eef2f8;
+  --lhg-grey-300:       #dde4ef;
+  --lhg-grey-400:       #c7d1df;
+  --lhg-warm-grey:      #627087;
 
   --lhg-red:            #bc0a1d;
   --lhg-teal:           #368089;
@@ -107,7 +107,7 @@
 
   --text-primary:           var(--lhg-core-blue);
   --text-secondary:         var(--lhg-slate-700);
-  --text-muted:             #6b6764; /* darkened from --lhg-warm-grey for AA margin on small caption text */
+  --text-muted:             #52617c; /* darkened from --lhg-warm-grey for AA margin on small caption text */
   --text-on-dark:           var(--lhg-white);
   --text-link:              var(--lhg-blue-500);
 
@@ -132,7 +132,7 @@
   --font-head:    "Lufthansa Head", "Helvetica Neue", Arial, sans-serif;
   --font-text:    "Lufthansa Text", "Helvetica Neue", Arial, sans-serif;
   --font-serif:   "Lufthansa Serif", Georgia, "Times New Roman", serif;
-  --font-mono:    ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-mono:    "Lufthansa Text", "Helvetica Neue", Arial, sans-serif;
 
   /* ── Type scale (LHG) — display thin/light, body light ─────────── */
   --fs-display-1: clamp(48px, 6vw, 88px);
@@ -288,8 +288,6 @@
   --text-2xl:       2.25rem;
   --text-display:   var(--fs-display-1);
 
-  --radius-sm:      var(--radius-sm);
-  --radius-md:      var(--radius-md);
 
   --rule-thin:      1px;
   --rule-strong:    2px;

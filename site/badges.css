@@ -120,7 +120,7 @@
 }
 .aifs-badge__bar { height: 100%; background: var(--tier-ring, #243f9b); }
 .aifs-badge__hint {
-  font-family: var(--font-mono, monospace);
+  font-family: var(--font-mono, sans-serif);
   font-size: 0.62rem;
   color: var(--b-mute);
 }
@@ -191,7 +191,7 @@
   border-radius: 999px;
   background: var(--lhg-warning, #e2974b); color: #05164d;
   font-size: 10px; font-weight: 800;
-  font-family: var(--font-mono, monospace);
+  font-family: var(--font-mono, sans-serif);
   display: none; align-items: center; justify-content: center;
   line-height: 1;
   box-shadow: 0 1px 3px rgba(5,22,77,0.3);
@@ -474,7 +474,7 @@ button.aifs-badge--locked:hover .aifs-badge__disc {
 }
 
 .aifs-dialog__progress-value {
-  font-family: var(--font-mono, monospace);
+  font-family: var(--font-mono, sans-serif);
 }
 
 .aifs-dialog__progress-bar {

@@ -33,24 +33,23 @@
   <!-- Phosphor Light icons (Lufthansa DS substitute for official LHG line-icons).
        CSS webfont path — robust against CDN path changes, no JS dependency. -->
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/light/style.css">
-  <link rel="stylesheet" href="lrn/lrn.css?v=20260831d">
-  <link rel="stylesheet" href="lrn/journey.css?v=20260909a">
+  <link rel="stylesheet" href="lrn/lrn.css?v=20260909cool">
+  <link rel="stylesheet" href="lrn/journey.css?v=20260909b">
   <link rel="stylesheet" href="badges.css?v=20260713a">
   <link rel="stylesheet" href="pan.css?v=20260831c">
   <link rel="stylesheet" href="home.css?v=20260831b">
-  <link rel="stylesheet" href="assessment-import.css?v=20260908a">
+  <link rel="stylesheet" href="assessment-import.css?v=20260909b">
+  <link rel="stylesheet" href="lrn/readiness-map.css?v=20260909clean">
+  <link rel="stylesheet" href="lrn/readiness-home.css?v=20260909history">
 </head>
 <body>
-  <a class="skip-link" href="#journeyCockpit" data-i18n="skip_learning_home">Skip to your learning</a>
+  <a class="skip-link" href="#readinessSetup" data-i18n="skip_learning_home">Skip to your learning</a>
   <header class="nav-edge" aria-label="Site navigation">
     <a class="wordmark" href="index.html">
       <img class="wordmark__logo" src="assets/logo/lhind-logo-blue.png" alt="LHIND" width="3939" height="823" fetchpriority="high" decoding="async" />
       <span>AI Learning Catalog</span>
     </a>
     <div class="nav-edge__spacer" aria-hidden="true" style="flex:1"></div>
-    <a href="skills.html" class="nav-settings" title="Capability progress" aria-label="Capability progress" data-i18n-title="nav_skills" data-i18n-aria-label="nav_skills">
-      <i class="ph-light ph-chart-line-up" aria-hidden="true"></i>
-    </a>
     <a href="badges.html" class="nav-settings badges-link" title="Deine Badges" aria-label="Badges" data-i18n-title="badges_link_title">
       <i class="ph-light ph-medal" aria-hidden="true"></i>
       <span class="badges-link__count" id="navBadgeCount" data-show="false" aria-hidden="true">0</span>
@@ -104,80 +103,115 @@
   </script>
 
   <main class="page page--home">
+    <aside class="learning-sidebar">
+      <nav class="learning-nav" aria-label="Your learning" id="learningNav">
+        <a href="index.html#heroTitle" class="learning-nav__item" data-home-nav="home"><span data-learning-icon="home"></span><span data-ready-copy="navHome">My learning</span></a>
+        <a href="index.html#readinessMap" class="learning-nav__item" data-home-nav="areas" hidden><span data-learning-icon="map"></span><span data-ready-copy="navAreas">Learning areas</span></a>
+        <a href="index.html#trainingCatalogTitle" class="learning-nav__item" data-home-nav="catalog"><span data-learning-icon="search"></span><span data-ready-copy="navCatalog">Explore courses</span></a>
+        <div class="learning-nav__divider"></div>
+        <a href="personal-plan.html" class="learning-nav__item"><span data-learning-icon="chart"></span><span data-ready-copy="navPlan">My progress</span></a>
+        <a href="index.html?view=profile" class="learning-nav__item" id="profileNav" hidden><span data-learning-icon="settings"></span><span data-ready-copy="profileTitle">Role &amp; assessment</span></a>
+      </nav>
+    </aside>
+    <div class="learning-content">
+    <a id="profileBack" class="readiness-link" hidden></a>
     <section class="hero" aria-labelledby="heroTitle">
       <div class="hero__inner">
         <div class="hero__copy">
           <h1 id="heroTitle">Your next step with AI</h1>
           <p id="homeHeroIntro">Choose your role, start a matching course and put your knowledge into practice. We guide you along the way.</p>
         </div>
-        <a id="resumeButton" href="#journeyCockpit" class="resume-button">
+        <a id="resumeButton" href="#readinessSetup" class="resume-button">
           <span class="button-text" id="resumeButtonText" data-i18n="home_explore_recommendations">Explore recommendations</span>
           <i class="ph-light ph-arrow-right" aria-hidden="true"></i>
         </a>
       </div>
     </section>
 
+    <section data-assessment-prompt></section>
     <section class="cockpit" id="cockpit" aria-label="Learning dashboard" data-i18n-aria-label="home_dashboard_label">
-      <section class="journey-cockpit" id="journeyCockpit" aria-label="Your AI learning path">
-        <div class="journey-cockpit__head">
-          <div class="journey-cockpit__role">
+      <section class="readiness-setup" id="readinessSetup" aria-labelledby="setupTitle">
+        <header class="readiness-setup__header">
+          <h2 class="learning-sr-only" id="setupTitle" data-ready-copy="setupTitle">Your personal starting point</h2>
+          <button type="button" class="readiness-link readiness-setup__return" id="setupReturn" data-ready-action="finish" data-ready-copy="returnPath" hidden>Back to my learning path</button>
+          <ol class="readiness-setup__steps" id="setupSteps"></ol>
+        </header>
+        <section class="readiness-setup__step" id="readinessImportStep">
+          <div class="readiness-setup__main">
+            <div class="readiness-setup__context">
+              <h3 data-ready-copy="importWhy">Let’s build on what you know</h3>
+              <p data-ready-copy="importWhyIntro">Your assessment helps us find courses that build on your experience. You can add it now or start exploring first.</p>
+            </div>
+            <div class="readiness-setup__import"><section id="assessmentImport" data-assessment-import></section></div>
+            <div class="readiness-setup__actions readiness-setup__actions--import">
+              <button type="button" class="readiness-button" data-ready-action="role" id="setupImportContinue" hidden data-ready-copy="confirmRole">Continue to your role</button>
+              <button type="button" class="readiness-button readiness-button--secondary" data-ready-action="role" id="setupSkip" data-ready-copy="skipAssessment">Explore without an assessment</button>
+
+            </div>
+          </div>
+          <aside class="readiness-setup__guide">
+            <span class="readiness-guide-icon" data-learning-icon="book"></span>
+            <h3 data-ready-copy="levelsTitle">Room to grow, step by step</h3>
+            <p data-ready-copy="levelsIntro">Your learning paths bring together three levels:</p>
+            <dl class="readiness-levels">
+              <div><dt>Acquire</dt><dd data-ready-copy="acquireMeaning">Discover the fundamentals.</dd></div>
+              <div><dt>Deepen</dt><dd data-ready-copy="deepenMeaning">Build on your experience.</dd></div>
+              <div><dt>Create</dt><dd data-ready-copy="createMeaning">Shape solutions and share what you know.</dd></div>
+            </dl>
+            <p class="readiness-setup__note" data-ready-copy="levelsNote">The recommended level depends on your role and the area you’re exploring.</p>
+          </aside>
+        </section>
+        <section class="readiness-setup__step readiness-setup__step--role" id="readinessRoleStep" hidden>
+          <div>
+            <h3 tabindex="-1" data-ready-copy="roleTitle">Which role describes your work?</h3>
+            <p data-ready-copy="roleIntro">Your role sets the recommended target for each competency area. You can change it later.</p>
             <label class="selector-field" for="roleSelect">
-              <span class="selector-field__label"><i class="ph-light ph-user-circle" aria-hidden="true"></i> <span data-i18n="journey_role">Role profile</span></span>
+              <span class="selector-field__label" data-i18n="journey_role">Role profile</span>
               <select id="roleSelect" aria-label="Choose role" data-i18n-aria-label="role_select_label"></select>
             </label>
+            <p id="setupRoleSource" class="readiness-setup__note"></p>
           </div>
-
-        </div>
-        <div id="journeyHome"></div>
+          <div id="setupRoleTargets" class="readiness-role-targets"></div>
+          <div class="readiness-setup__actions">
+            <button type="button" class="readiness-link" data-ready-action="import" data-ready-copy="back">Back</button>
+            <button type="button" class="readiness-button" data-ready-action="review" id="setupRoleContinue" data-ready-copy="previewPaths">Show my learning paths</button>
+          </div>
+        </section>
+        <section class="readiness-setup__step readiness-setup__step--review" id="readinessReviewStep" hidden>
+          <h3 tabindex="-1" data-ready-copy="reviewTitle">Different areas. One role-specific goal.</h3>
+          <p id="setupReviewIntro" hidden></p>
+          <div id="setupReview"></div>
+          <div class="readiness-setup__actions">
+            <button type="button" class="readiness-link" data-ready-action="role" data-ready-copy="back">Back</button>
+            <button type="button" class="readiness-button" data-ready-action="finish" data-ready-copy="finish">Use these learning paths</button>
+          </div>
+        </section>
       </section>
 
-      <p class="cockpit__choices" data-journey-copy="toolsIntro">Two ways to your learning path: get recommendations from your assessment result, or assemble your own sequence in the personal plan — or combine both.</p>
-
-      <details class="journey-assessment journey-optional">
-        <summary data-journey-copy="assessmentPanel">Place your current level / connect an assessment</summary>
-        <section id="assessmentImport" data-assessment-import></section>
-      </details>
-
-      <!-- Retained as non-rendered legacy mount points while Academy paths move
-           into the journey engine. They keep the catalog renderer compatible
-           without presenting a second recommendation surface on Home. -->
-      <section class="my-learning-path" id="myLearningPath" data-journey-replaced="true" hidden>
-        <div id="myLearningPathContent"></div>
+      <section id="readinessDashboard" class="readiness-dashboard" hidden aria-labelledby="readinessTitle">
+        <header class="readiness-dashboard__header">
+          <div><h2 id="readinessTitle" tabindex="-1"></h2><p id="readinessRoleSummary" hidden></p></div>
+          <div class="readiness-dashboard__actions">
+            <a class="readiness-button readiness-button--secondary" href="index.html?view=profile&amp;from=learning" data-ready-copy="profileTitle">Role &amp; assessment</a>
+          </div>
+        </header>
+        <p id="readinessStorageNotice" class="readiness-notice" role="status" hidden></p>
+        <div id="readinessNext" class="readiness-path-context"></div>
+        <div id="readinessMap"></div>
+        <details class="readiness-academy"><summary data-ready-copy="academyTitle">LHIND Academy learning paths</summary><p data-ready-copy="academyIntro"></p><ul id="readinessAcademyList"></ul></details>
       </section>
+
+      <!-- Compatibility mounts for the catalog renderer; home has one readiness surface. -->
+      <section id="journeyCockpit" hidden data-journey-replaced="true"><div id="journeyHome"></div></section>
+      <section class="my-learning-path" id="myLearningPath" data-journey-replaced="true" hidden><div id="myLearningPathContent"></div></section>
       <section class="academy-paths" data-journey-replaced="true" hidden aria-hidden="true">
-        <h2 id="academyPathsTitle">Academy paths</h2>
-        <details class="recommendation-settings"></details>
-        <div id="academyPathList"></div>
-        <span id="academyPathCount"></span>
-        <button id="academyAllToggle" type="button"></button>
+        <details class="recommendation-settings"></details><div id="academyPathList"></div><span id="academyPathCount"></span><button id="academyAllToggle" type="button"></button>
       </section>
-
-      <details class="journey-optional"><summary data-journey-copy="moreTools">Plan and learn with your team</summary>
-      <section class="learning-tools" aria-labelledby="learningToolsTitle">
-        <div class="home-section-heading">
-          <h2 id="learningToolsTitle" data-i18n="learning_tools_title">Plan and verify</h2>
-          <p data-i18n="learning_tools_intro">Open these tools only when you need a custom plan or team evidence.</p>
-        </div>
-
-        <nav class="learning-tools__links" aria-label="Planning and evidence tools" data-i18n-aria-label="learning_tools_nav_label">
-          <a class="learning-tool" href="personal-plan.html">
-            <span class="learning-tool__icon" aria-hidden="true"><i class="ph-light ph-target"></i></span>
-            <span class="learning-tool__copy">
-              <strong data-i18n="learning_tool_plan_title">Build a personal plan</strong>
-              <span data-i18n="learning_tool_plan_intro">Turn one concrete goal into an editable course sequence.</span>
-            </span>
-            <span class="learning-tool__action" data-i18n="learning_tool_plan_open">Open personal plan</span>
-            <i class="ph-light ph-arrow-right learning-tool__arrow" aria-hidden="true"></i>
-          </a>
-        </nav>
-      </section>
-
-      </details>
 
       <section class="training-catalog" aria-labelledby="trainingCatalogTitle">
         <div class="home-section-heading home-section-heading--catalog">
-          <h2 id="trainingCatalogTitle" data-i18n="training_catalog_title">Browse all trainings</h2>
-          <p data-i18n="training_catalog_intro">Search the full catalog or narrow it by learning status.</p>
+          <h2 id="trainingCatalogTitle" data-ready-copy="catalogTitle">Browse all trainings</h2>
+          <p data-ready-copy="catalogIntro">Search the full catalog or narrow it by learning status.</p>
         </div>
         <form class="course-search course-search--home" id="searchForm" role="search">
           <label class="selector-field__label" for="searchInput">
@@ -225,12 +259,13 @@
         <div class="course-grid" id="courseGrid"></div>
       </section>
     </section>
+    </div>
   </main>
 
   <div class="sr-status" id="srStatus" aria-live="polite"></div>
 
   <script src="assessment-import.js?v=20260908a" defer></script>
-  <script src="assessment-import-ui.js?v=20260908a" defer></script>
+  <script src="assessment-import-ui.js?v=20260909b" defer></script>
   <script src="progress.js?v=20260830a" defer></script>
   <script src="badges.js?v=20260713a" defer></script>
   <script src="lrn/data.js?v=20260908c" defer></script>
@@ -241,94 +276,15 @@
   <script src="search.js?v=20260813a" defer></script>
   <script src="lrn/mastery.js?v=20260830a" defer></script>
   <script src="lrn/learning-plan.js?v=20260908c" defer></script>
-  <script src="lrn/learning-journey.js?v=20260908a" defer></script>
-  <script src="lrn/journey-state.js?v=20260908c" defer></script>
-  <script src="lrn/journey-ui.js?v=20260909a" defer></script>
-  <script src="lrn/lrn.js?v=20260909a" defer></script>
+  <script src="lrn/learning-journey.js?v=20260909courses" defer></script>
+  <script src="lrn/journey-state.js?v=20260909courses" defer></script>
+  <script src="lrn/journey-ui.js?v=20260909assessment" defer></script>
+  <script src="lrn/lrn.js?v=20260909workspace" defer></script>
   <script src="lrn/report-sync.js?v=20260830a" defer></script>
-  <script>
-    /* Deferred scripts above execute in order before DOMContentLoaded, so the
-       journey mount runs here instead of inline during parsing — the HTML
-       parses and paints first while the ~400KB reader bundle downloads. */
-    document.addEventListener('DOMContentLoaded', function () {
-      if (window.LrnJourneyUI) window.LrnJourneyUI.mount(document.getElementById('journeyHome'));
-    });
-  </script>
-
-  <!-- Resume from last lesson (localStorage) -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const heroTitle = document.getElementById('heroTitle');
-      const resumeButton = document.getElementById('resumeButton');
-      const resumeButtonText = document.getElementById('resumeButtonText');
-
-      // Checks the last-visited lesson path against the known curriculum
-      // paths before it is used for the resume CTA (B3) — a stale
-      // localStorage entry (renamed/removed lesson) must not link to a dead
-      // lesson page.
-      function lessonPathExists(path) {
-        const maps = (window.LrnCurriculumMap && window.LrnCurriculumMap.courseMaps) || {};
-        return Object.keys(maps).some(courseId =>
-          maps[courseId].some(subcourse =>
-            (subcourse.lessons || []).some(lesson => lesson.path === path)
-          )
-        );
-      }
-
-      // Dynamic last lesson name — reads the most recently visited lesson
-      // from the LRN/progress storage (locus Dovage / aifs:progress:v1)
-      let lessonName = '';
-      let resumeHref = '#';
-      try {
-        const progressRaw = localStorage.getItem('aifs:progress:v1');
-        if (progressRaw) {
-          const progress = JSON.parse(progressRaw);
-          if (progress.lessons && Object.keys(progress.lessons).length > 0) {
-            let lastVisited = 0;
-            let lastPath = '';
-            Object.keys(progress.lessons).forEach(path => {
-              const ls = progress.lessons[path];
-              if (ls.visitedAt > lastVisited) {
-                lastVisited = ls.visitedAt;
-                lastPath = path;
-              }
-            });
-            if (lastPath && lessonPathExists(lastPath)) {
-              // Short pretty name e.g. "05-jupyter-notebooks" -> "Jupyter Notebooks".
-              // Title-casing capitalizes only the first letter of each word,
-              // so the domain's own name ends up as "Ai" (B4) — restore the
-              // acronym afterwards rather than special-casing the loop.
-              const slug = lastPath.split('/').pop();
-              lessonName = slug.replace(/^\d+[-_]?/, '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()).replace(/\bAi\b/g, 'AI');
-              resumeHref = `lesson.html?path=${lastPath}`;
-            }
-          }
-        }
-      } catch (e) {
-        // silent fail
-      }
-
-      function render() {
-        const de = (window.SiteLang ? window.SiteLang.get() : 'en') === 'de';
-        // Time-of-day greeting (morning / afternoon / evening)
-        const intro = document.getElementById('homeHeroIntro');
-        if (intro) intro.textContent = de
-          ? 'Wähle deine Rolle, starte einen passenden Kurs und wende dein Wissen an. Wir begleiten dich Schritt für Schritt.'
-          : 'Choose your role, start a matching course and put your knowledge into practice. We guide you along the way.';
-        heroTitle.textContent = de ? 'Dein nächster Schritt mit AI' : 'Your next step with AI';
-        resumeButtonText.removeAttribute('data-i18n');
-        resumeButtonText.textContent = de ? 'Lernreise ansehen' : 'View learning journey';
-        resumeButton.href = '#journeyCockpit';
-        resumeButton.title = resumeButtonText.textContent;
-        resumeButton.setAttribute('aria-label', resumeButtonText.textContent);
-      }
-
-      resumeButton.href = '#journeyCockpit';
-      render();
-      document.addEventListener('sitelang:change', render);
-      document.addEventListener('assessment-import:change', render);
-      document.addEventListener('change', function (event) { if (event.target.id === 'roleSelect') render(); });
-    });
-  </script>
+  <script src="lrn/readiness-setup-state.js?v=20260909a" defer></script>
+  <script src="lrn/learning-icons.js?v=20260909topics" defer></script>
+  <script src="lrn/readiness-map.js?v=20260909direction" defer></script>
+  <script src="lrn/assessment-prompt.js?v=20260909a" defer></script>
+  <script src="lrn/readiness-home.js?v=20260909history" defer></script>
 </body>
 </html>

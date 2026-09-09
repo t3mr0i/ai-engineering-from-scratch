@@ -3,7 +3,7 @@
    of re-declaring its own hex copies, so style.css-only pages (about,
    catalog, glossary, assessment, prereqs) share the exact same values as
    pages that load lrn.css directly. */
-@import url("lrn/tokens.css?v=20260824b");
+@import url("lrn/tokens.css?v=20260909reader");
 
 /* ── D4 fix on top of tokens.css (imported above) ─────────────────────────
    --shadow-focus (tokens.css) is rgba(45,95,228,0.30) in every theme.
@@ -47,7 +47,7 @@
    (it used to make this rule apply to every page unconditionally, even
    with no real user choice — now the attribute is only ever present when
    a stored choice or this session explicitly set it). Values below are
-   copied from tokens.css's own light :root block, one entry per property
+   copied from tokens.css?v=20260909reader's own light :root block, one entry per property
    the OS/[data-theme="dark"] blocks override. */
 @media (prefers-color-scheme: dark) {
   [data-theme="light"] {
@@ -148,7 +148,7 @@
      to Lufthansa Head so every existing heading rule picks up the LHG look. */
   --font-display: "Lufthansa Head", "Helvetica Neue", Arial, sans-serif;
   --font-body: "Lufthansa Text", "Helvetica Neue", Arial, sans-serif;
-  --font-mono: ui-monospace, "SFMono-Regular", Menlo, "Consolas", monospace;
+  --font-mono: "Lufthansa Text", "Helvetica Neue", Arial, sans-serif;
   --font-heading: var(--font-display);
 
   /* Lufthansa Group palette — aliased directly to lrn/tokens.css so this
@@ -202,7 +202,7 @@
 }
 
 [data-theme="dark"] {
-  /* LHG dark mode — aliased to lrn/tokens.css's own [data-theme="dark"]
+  /* LHG dark mode — aliased to lrn/tokens.css?v=20260909reader's own [data-theme="dark"]
      overrides, deep Core-Blue surfaces, not a near-black terminal. Accent
      lifts to sky blue for contrast. */
   --bg: var(--color-paper);            /* LHG dark paper */
@@ -1750,7 +1750,7 @@ a.gloss-term {
 /* ── Antigravity SOTA Micro-animations & Premium UI polish ──────────── */
 
 /* Smooth Transition Tokens.
-   --sota-ease was a byte-for-byte duplicate of lrn/tokens.css's --ease-out
+   --sota-ease was a byte-for-byte duplicate of lrn/tokens.css?v=20260909reader's --ease-out
    (cubic-bezier(0.16, 1, 0.3, 1)) and now aliases to it directly.
    --sota-ease-bounce and --sota-duration have no exact canonical
    equivalent (closest is --ease-spring / --dur-base, both slightly

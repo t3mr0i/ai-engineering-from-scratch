@@ -1,0 +1,41 @@
+.lesson-output-dialog {
+  box-sizing: border-box;
+  width: min(760px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  margin: auto;
+  padding: 28px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 16px;
+  background: var(--bg-surface);
+  color: var(--ink);
+  font-family: var(--font-body);
+  overflow: auto;
+}
+.lesson-output-dialog::backdrop { background: rgba(5, 22, 77, 0.38); backdrop-filter: blur(5px); }
+.lesson-output-dialog header { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.lesson-output-dialog h2 { margin: 0; font-size: 1.5rem; line-height: 1.3; font-weight: 500; }
+.lesson-output-dialog p { margin: 16px 0 24px; font-size: 1rem; line-height: 1.6; color: var(--ink-soft); }
+.lesson-output-dialog pre { margin: 0; padding: 20px; border-radius: 12px; background: var(--bg-surface-hover); color: var(--ink); font-family: var(--font-body); font-size: 1rem; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 2; }
+.lesson-output-dialog[data-state="pass"] h2 { color: var(--status-ok); }
+.lesson-output-dialog[data-state="error"] h2,
+.lesson-output-dialog[data-state="fail"] h2 { color: var(--status-error); }
+.lesson-output-dialog footer { display: flex; justify-content: flex-end; margin-top: 24px; }
+.lesson-output-dialog button,
+.lesson-output-open { padding: 10px 16px; border: 1px solid var(--rule-soft); border-radius: 999px; background: var(--bg-surface); color: var(--ink); font: 400 0.9375rem var(--font-body); cursor: pointer; white-space: normal; }
+.lesson-output-dialog button:hover,
+.lesson-output-open:hover { background: var(--bg-surface-hover); }
+.lesson-output-dialog button:focus-visible,
+.lesson-output-open:focus-visible { outline: 2px solid var(--blueprint); outline-offset: 3px; }
+@media (max-width: 480px) {
+  .lesson-output-dialog { padding: 20px; }
+  .lesson-output-dialog header { align-items: flex-start; gap: 12px; }
+  .lesson-output-dialog h2 { font-size: 1.25rem; }
+  .lesson-output-dialog pre { padding: 16px; }
+}
+
+.lesson-output-result { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.lesson-output-status { font: 500 1rem var(--font-body); }
+.lesson-output-technical { border-top: 1px solid var(--rule-soft); padding-top: 16px; }
+.lesson-output-technical summary { color: var(--ink-soft); cursor: pointer; font-size: 0.9375rem; padding: 4px 0; }
+.lesson-output-technical summary:focus-visible { outline: 2px solid var(--blueprint); outline-offset: 3px; }
+.lesson-output-technical[open] summary { margin-bottom: 16px; }

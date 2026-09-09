@@ -45,6 +45,63 @@
 .assessment-import :is(th, td) { text-align: left; padding: 12px 16px 12px 0; border-bottom: 1px solid var(--border-subtle, var(--rule, #e3e1de)); }
 .assessment-import thead th { font-size: 13px; color: var(--text-secondary, #52617c); }
 .assessment-import tbody th { font-weight: 400; }
+
+/* Home's disclosure is the container; its contents share one upload workspace. */
+.page--home .journey-assessment #assessmentImport {
+  padding: var(--space-6);
+  border-bottom: 0;
+}
+.page--home .assessment-import > h2 {
+  margin-bottom: var(--space-3);
+  font-size: clamp(24px, 2.5vw, 28px);
+  line-height: 1.2;
+}
+.page--home .assessment-import > .assessment-import__intro {
+  max-width: 68ch;
+  margin: 0;
+  font-size: var(--fs-body);
+}
+.page--home .assessment-import > .assessment-import__actions {
+  margin: var(--space-5) 0 var(--space-2);
+  gap: var(--space-3) var(--space-5);
+}
+.page--home .assessment-import__actions > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  line-height: 1.5;
+}
+.page--home .assessment-import > .assessment-import__drop-hint {
+  margin: 0;
+  font-size: var(--fs-body-sm);
+}
+.page--home .assessment-import > .assessment-import__help {
+  margin: var(--space-5) 0 0;
+  padding-top: var(--space-4);
+  border-top: var(--border-hairline);
+}
+.page--home .assessment-import__help > summary {
+  min-height: 44px;
+  padding-block: var(--space-2);
+}
+.page--home .assessment-import__help > summary::after {
+  content: none;
+}
+.page--home .assessment-import > .assessment-import__privacy {
+  max-width: 75ch;
+  margin: var(--space-2) 0 0;
+  font-size: var(--fs-body-sm);
+}
+.page--home .assessment-import__preview {
+  margin-top: var(--space-5);
+  padding: var(--space-5) 0 0;
+  border-top: var(--border-hairline);
+  border-radius: 0;
+  background: transparent;
+}
+.page--home .assessment-import--drop-over {
+  outline-offset: calc(-1 * var(--space-2));
+}
 @media (max-width: 40rem) {
   .assessment-import { padding-block: 24px; }
   .assessment-import__preview { padding: 16px 12px; }
@@ -53,4 +110,7 @@
   .assessment-import table { font-size: 13px; }
   .assessment-import :is(th, td) { padding: 10px 8px 10px 0; }
   .assessment-import th:first-child { min-width: 110px; }
+  .page--home .journey-assessment #assessmentImport { padding: var(--space-5) var(--space-4); }
+  .page--home .assessment-import > .assessment-import__actions { align-items: stretch; flex-direction: column; gap: var(--space-2); }
+  .page--home .assessment-import__actions > a { justify-content: center; text-align: center; }
 }

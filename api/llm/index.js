@@ -19,6 +19,17 @@ const MAX_BODY_BYTES = 1_000_000;
 
 const rateState = new Map();
 
+function jsonResponseBody(text) {
+  try {
+    JSON.parse(text);
+    return text;
+  } catch (_) {
+    // Keep response.json() usable when a proxy/upstream emits an HTML error
+    // page instead of the OpenAI-compatible JSON response.
+    return JSON.stringify({ error: { message: 'upstream returned non-JSON response' } });
+  }
+}
+
 function clientIp(req) {
   const xff = req.headers && req.headers['x-forwarded-for'];
   if (xff) return xff.split(',')[0].trim();
@@ -75,7 +86,7 @@ module.exports = async function (context, req) {
     context.res = {
       status: upstream.status,
       headers: { 'Content-Type': 'application/json' },
-      body: text,
+      body: jsonResponseBody(text),
     };
   } catch (err) {
     context.res = { status: 502, body: { error: { message: 'upstream request failed' } } };
