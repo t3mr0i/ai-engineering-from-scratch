@@ -58,8 +58,8 @@ test("capabilityClusters counts met targets without averaging ordinal levels", (
   ]);
 });
 
-test("all four learning surfaces load the shared visualization layer", async () => {
-  const pages = ["lesson.html", "catalog.html", "assessment.html", "lrn/course.html"];
+test("all learning surfaces with visualizations load the shared visualization layer", async () => {
+  const pages = ["lesson.html", "catalog.html", "lrn/course.html"];
   for (const page of pages) {
     const html = await readFile(new URL(page, import.meta.url), "utf8");
     assert.match(html, /learning-visuals\.css/);
@@ -67,12 +67,21 @@ test("all four learning surfaces load the shared visualization layer", async () 
   }
 });
 
+test("assessment page stays import-only and links the official SharePoint assessment", async () => {
+  const html = await readFile(new URL("assessment.html", import.meta.url), "utf8");
+  assert.match(html, /lufthansagroup\.sharepoint\.com\/sites\/LHIND_APP_AISelfAssessment/);
+  assert.match(html, /data-assessment-import/);
+  assert.match(html, /assessmentJourney/);
+  assert.doesNotMatch(html, /capForm/);
+  assert.doesNotMatch(html, /step-rate/);
+  assert.doesNotMatch(html, /learning-visuals\.js/);
+});
+
 test("visualization integrations preserve state, focus, and reduced motion", async () => {
-  const [visualSource, visualStyles, catalog, assessment, lesson] = await Promise.all([
+  const [visualSource, visualStyles, catalog, lesson] = await Promise.all([
     readFile(new URL("learning-visuals.js", import.meta.url), "utf8"),
     readFile(new URL("learning-visuals.css", import.meta.url), "utf8"),
     readFile(new URL("catalog.html", import.meta.url), "utf8"),
-    readFile(new URL("assessment.html", import.meta.url), "utf8"),
     readFile(new URL("lesson.html", import.meta.url), "utf8")
   ]);
   assert.match(visualSource, /setAttribute\("aria-current", "step"\)/);
@@ -82,7 +91,6 @@ test("visualization integrations preserve state, focus, and reduced motion", asy
     "lesson index should not fall back to a decorative timeline connector");
   assert.match(visualSource, /dataset\.phaseId/);
   assert.match(catalog, /phaseButtons\[buttonIndex\]\.focus\(\)/);
-  assert.match(assessment, /complete && window\.LearningVisuals/);
   assert.match(lesson, /<dl class="lesson-meta">/);
   assert.match(lesson, /<dt class="lesson-meta-label">/);
   assert.match(lesson, /prefers-reduced-motion: reduce/);

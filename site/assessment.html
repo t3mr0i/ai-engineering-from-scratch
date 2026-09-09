@@ -23,63 +23,34 @@
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title data-i18n="title_assessment">LHIND · AI-Literacy Self-Assessment</title>
+  <title data-i18n="title_assessment">LHIND · AI Self-Assessment – Ergebnis übernehmen</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%2305164d'>AI</text></svg>">
-  <meta name="description" content="Rate yourself across 19 AI-literacy capabilities, get your AI-Literacy score, and a personalized learning path built from the curriculum.">
+  <meta name="description" content="Complete the official AI Self-Assessment in SharePoint, upload your result PDF, and get course recommendations based on your levels.">
   <meta name="robots" content="noindex">
   <link rel="stylesheet" href="style.css?v=20260824a">
-  <link rel="stylesheet" href="learning-visuals.css?v=20260831b">
   <style>
     .assess-page { padding: 100px 0 80px; min-height: 100vh; }
     .assess-header { margin-bottom: 32px; }
     .assess-header h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 8px; }
     .assess-header p { color: var(--text-muted); font-size: 1.05rem; max-width: 60ch; }
 
-    .assess-step { display: none; }
-    .assess-step.active { display: block; }
+    .assess-source {
+      padding: 24px; margin-bottom: 8px; border-radius: 12px;
+      background: var(--bg-surface); box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+    .assess-source h2 { font-size: 1.25rem; margin-bottom: 12px; }
+    .assess-steps { margin: 0 0 4px 1.25rem; padding: 0; display: grid; gap: 10px; }
+    .assess-steps li { line-height: 1.5; }
+    .assess-steps strong { display: block; }
+    .assess-steps span { color: var(--text-muted); }
+    .assess-note { color: var(--text-muted); font-size: 0.9rem; margin-top: 12px; max-width: 72ch; }
 
-    .field-label {
-      display: block; margin-bottom: 8px; color: var(--text-secondary);
-      font-family: var(--font-body); font-size: var(--fs-body-sm); font-weight: 500;
-    }
-    .role-select {
-      font-family: var(--font-body); font-size: 1rem; padding: 12px 16px;
-      background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px;
-      color: var(--text); min-width: min(320px, 100%); max-width: 100%;
-    }
+    .assess-result { margin-top: 8px; }
+    .assess-result h2 { margin-bottom: 6px; }
+    .assess-result > p { color: var(--text-muted); margin-bottom: 20px; max-width: 72ch; }
 
-    .cluster-block { margin: 28px 0; border-top: 1px solid var(--rule); padding-top: 16px; }
-    .cluster-title {
-      font-family: var(--font-body); font-size: var(--fs-body-sm); font-weight: 600;
-      color: var(--blueprint); margin-bottom: 14px;
-    }
-
-    .cap-row {
-      display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: start;
-      padding: 14px 0; border-bottom: 1px solid var(--rule-soft);
-    }
-    .cap-name { font-weight: 600; }
-    .cap-desc { color: var(--text-muted); font-size: 0.9rem; margin-top: 2px; }
-    .cap-target {
-      font-family: var(--font-body); font-size: var(--fs-caption);
-      color: var(--warn); margin-top: 6px;
-    }
-    .cap-no-match {
-      font-family: var(--font-body); font-size: var(--fs-caption);
-      color: var(--text-muted); margin-top: 4px;
-    }
-
-    .level-group { display: flex; gap: 6px; flex-wrap: wrap; }
-    .level-btn {
-      min-height: 40px; padding: 7px 13px; border: 1px solid var(--border);
-      border-radius: 999px; background: var(--bg-surface); color: var(--text);
-      font-family: var(--font-body); font-size: var(--fs-caption); cursor: pointer; white-space: nowrap;
-    }
-    .level-btn[aria-pressed="true"] {
-      background: var(--blueprint); color: #fff; border-color: var(--blueprint);
-    }
-
-    .btn-row { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+    .btn-row { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
     .btn {
       min-height: 48px; padding: 13px 22px; border: 1px solid var(--blueprint);
       border-radius: 999px; background: var(--blueprint); color: #fff;
@@ -90,45 +61,10 @@
     .btn:active { transform: translateY(1px); }
     .btn.secondary { background: var(--bg-surface); color: var(--blueprint); }
     .btn:disabled { opacity: .4; cursor: not-allowed; box-shadow: none; transform: none; }
+    a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 
-    /* Result */
-    .score-card {
-      padding: 28px; margin-bottom: 32px; border-radius: 12px;
-      background: var(--bg-surface); box-shadow: var(--shadow-sm);
-      display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center;
-    }
-    .score-num {
-      font-family: var(--font-display); font-size: 5rem; line-height: 0.8;
-      color: var(--blueprint);
-    }
-    .score-meta .field-label { margin-bottom: 4px; }
-    .score-band { font-size: 1.4rem; font-weight: 700; }
-    .score-sub { color: var(--text-muted); margin-top: 6px; }
-
-    .path-item {
-      border: 1px solid var(--border); border-radius: 12px;
-      padding: 18px; margin-bottom: 14px; background: var(--bg-surface);
-    }
-    .path-item.met { opacity: 0.72; }
-    .path-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; flex-wrap: wrap; }
-    .path-cap { font-weight: 700; font-size: 1.05rem; }
-    .path-gap {
-      font-family: var(--font-body); font-size: var(--fs-caption);
-    }
-    .path-gap.gap { color: var(--warn); }
-    .path-gap.ok { color: var(--status-complete); }
-    .path-lessons { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
-    .lesson-chip {
-      font-family: var(--font-body); font-size: var(--fs-caption); padding: 7px 11px;
-      border: 1px solid var(--border); border-radius: 999px;
-      background: var(--bg-surface); color: var(--blueprint); text-decoration: none;
-    }
-    .lesson-chip:hover { background: var(--blueprint-tint); }
-    .path-nomatch { margin-top: 10px; color: var(--text-muted); font-size: 0.9rem; font-style: italic; }
     @media (max-width: 640px) {
       .assess-page { padding-inline: 16px; }
-      .cap-row { grid-template-columns: 1fr; }
-      .score-card { grid-template-columns: 1fr; text-align: left; }
     }
   </style>
   <link rel="stylesheet" href="assessment-import.css?v=20260908a">
@@ -190,58 +126,46 @@
 
   <main id="main" class="container assess-page">
     <div class="assess-header">
-      <h1 data-i18n="assess_title">AI-Literacy Self-Assessment</h1>
-      <p id="assessIntro">Pick your role, rate yourself, and get an
-         AI-Literacy score plus a learning path built from the lessons you actually need.</p>
+      <h1 data-i18n="assess_title">AI Self-Assessment – Ergebnis übernehmen</h1>
+      <p data-i18n="assess_intro">Das offizielle Self-Assessment findet in SharePoint statt – nicht hier. Führe es dort durch, lade deine Ergebnis-PDF unten hoch und erhalte Kursempfehlungen auf Basis deiner Level.</p>
     </div>
 
-    <!-- Step 1: role -->
+    <!-- Step 1: official assessment in SharePoint (external source of truth) -->
+    <section class="assess-source" aria-labelledby="assessSourceTitle">
+      <h2 id="assessSourceTitle" data-i18n="assess_source_title">Offizielles Assessment in SharePoint</h2>
+      <ol class="assess-steps">
+        <li>
+          <strong data-i18n="assess_step1_title">1. Self-Assessment in SharePoint durchführen</strong>
+          <span data-i18n="assess_step1_text">Beantworte dort die 10 Fragen in den 5 Bereichen (Skala 1–5, anonym).</span>
+        </li>
+        <li>
+          <strong data-i18n="assess_step2_title">2. Ergebnis als PDF exportieren</strong>
+          <span data-i18n="assess_step2_text">Lade den originalen Self-Assessment-Export mit allen fünf Ergebniszeilen herunter.</span>
+        </li>
+        <li>
+          <strong data-i18n="assess_step3_title">3. PDF hier hochladen</strong>
+          <span data-i18n="assess_step3_text">Deine PDF wird nur auf diesem Gerät gelesen. Nur die ausgelesene Einstufung wird in diesem Browser gespeichert.</span>
+        </li>
+      </ol>
+      <div class="btn-row">
+        <a class="btn" href="https://lufthansagroup.sharepoint.com/sites/LHIND_APP_AISelfAssessment/SitePages/de/TopicHome.aspx" target="_blank" rel="noopener" data-i18n="assess_source_cta">Offizielles AI Self-Assessment öffnen →</a>
+      </div>
+      <p class="assess-note" data-i18n="assess_source_note">Diese Seite enthält keine eigene Selbsteinschätzung und keine Fähigkeitsdefinitionen – verbindlich ist das SharePoint-Assessment.</p>
+    </section>
+
+    <!-- Step 2: upload the official result PDF -->
     <section id="assessmentImport" data-assessment-import></section>
 
-    <section class="assess-step active" id="step-role">
-      <label class="field-label" for="roleSelect" data-i18n="assess_role_label">Your role</label>
-      <select id="roleSelect" class="role-select" aria-label="Select your role"></select>
-      <div class="btn-row">
-        <button class="btn" id="toRate" disabled data-i18n="btn_start_assessment">Start assessment →</button>
-      </div>
-    </section>
-
-    <!-- Step 2: rate -->
-    <section class="assess-step" id="step-rate">
-      <div id="capForm"></div>
-      <div class="btn-row">
-        <button class="btn secondary" id="backToRole" data-i18n="btn_back_role">← Role</button>
-        <button class="btn" id="toResult" data-i18n="btn_see_path">See my path →</button>
-      </div>
-    </section>
-
-    <!-- Step 3: result -->
-    <section class="assess-step" id="step-result">
-      <div class="score-card">
-        <div class="score-num" id="scoreNum">0</div>
-        <div class="score-meta">
-          <span class="field-label">AI-Literacy Score</span>
-          <div class="score-band" id="scoreBand"></div>
-          <div class="score-sub" id="scoreSub"></div>
-        </div>
-      </div>
-      <div id="capabilityProfileVisual"></div>
-      <h2 style="margin-bottom:6px;" data-i18n="assess_your_path">Your learning path</h2>
-      <p style="color:var(--text-muted); margin-bottom:20px;">
-        Capabilities below your role's target come first. Each links to the lessons that build it.</p>
+    <!-- Step 3: recommendations based on the imported result -->
+    <section class="assess-result" aria-labelledby="assessResultTitle">
+      <h2 id="assessResultTitle" data-i18n="assess_result_title">Deine Empfehlungen</h2>
+      <p data-i18n="assess_result_hint">Sobald deine PDF oben übernommen ist, erscheint hier dein nächster Schritt.</p>
       <div id="assessmentJourney" class="journey-slot" aria-live="polite"></div>
-      <div id="pathList"></div>
-      <div class="btn-row">
-        <button class="btn secondary" id="backToRate" data-i18n="btn_adjust_ratings">← Adjust ratings</button>
-        <button class="btn secondary" id="restart" data-i18n="btn_start_over">Start over</button>
-      </div>
     </section>
   </main>
 
   <script src="assessment-import.js?v=20260908a"></script>
   <script src="assessment-import-ui.js?v=20260908a"></script>
-  <script src="data.js?v=20260525a"></script>
-  <script src="capabilities.js?v=20260908c"></script>
   <script src="lrn/data.js?v=20260908c"></script>
   <script src="lrn/curriculum-map.js?v=20260908a"></script>
   <script src="progress.js?v=20260908a"></script>
@@ -251,303 +175,22 @@
   <script src="lrn/learning-journey.js?v=20260908a"></script>
   <script src="lrn/journey-state.js?v=20260908c"></script>
   <script src="lrn/journey-ui.js?v=20260908g"></script>
-  <script src="learning-visuals.js?v=20260831b"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
 
   <script>
+    // Import-only page: the official AI Self-Assessment lives in SharePoint
+    // (linked above). This page only takes the exported result PDF
+    // (via [data-assessment-import]) and shows the shared journey
+    // recommendations for the imported levels. No manual rating happens here.
     (function () {
-      var STORE = 'aifs:assessment';
-      // Canonical LHIND terminology. Legacy labels are accepted only while
-      // reading older saved assessment data.
-      var LEVELS = ['Acquire', 'Deepen', 'Create'];
-      var LEGACY_LEVEL = { Basic: 'Acquire', Advanced: 'Deepen', Expert: 'Create' };
-      var phaseById = {};
-      if (typeof PHASES !== 'undefined') PHASES.forEach(function (p) { phaseById[p.id] = p; });
-
-      // Reads site/i18n.js directly (the shared window.SITE_I18N dictionary)
-      // rather than going through data-i18n, since these strings are built
-      // at runtime with values (capability count, score, role name) that
-      // data-i18n's static textContent swap can't fill in.
-      function i18nText(key, vars) {
-        var lang = (window.SiteLang ? window.SiteLang.get() : 'en');
-        var entry = window.SITE_I18N && window.SITE_I18N[key];
-        var s = entry && entry[lang] != null ? entry[lang] : (entry ? entry.en : key);
-        if (vars) {
-          Object.keys(vars).forEach(function (k) {
-            s = s.replace(new RegExp('\\{' + k + '\\}', 'g'), vars[k]);
-          });
-        }
-        return s;
-      }
-
-      // B7: the intro copy hardcoded "19 capabilities" instead of reading
-      // it from the data (capabilities.js currently has exactly 19, but
-      // that number drifts whenever the sheet capabilities.js is generated
-      // from changes) — derive it so the two can never disagree again.
-      var introEl = document.getElementById('assessIntro');
-      function renderIntro() {
-        if (introEl) introEl.textContent = i18nText('assess_intro', { count: CAPABILITIES.length });
-      }
-      renderIntro();
-
-      // B6: descriptions were cut at a hard 160-char slice, landing
-      // mid-word. Cut back to the last full word within the limit instead.
-      function truncateDesc(str, maxLen) {
-        str = str || '';
-        if (str.length <= maxLen) return str;
-        var cut = str.slice(0, maxLen);
-        var lastSpace = cut.lastIndexOf(' ');
-        if (lastSpace > 0) cut = cut.slice(0, lastSpace);
-        return cut.replace(/[\s.,;:!?]+$/, '') + '…';
-      }
-
-      var state = { role: '', ratings: {} }; // ratings: capId -> canonical level
-      try { var s = JSON.parse(localStorage.getItem(STORE)); if (s) state = s; } catch (e) {}
-      // Legacy migration: dissolved "Products & Value Streams" maps to Corporate Functions.
-      if (state.role === 'Products & Value Streams') state.role = 'Corporate Functions';
-      function save() {
-        state.updatedAt = new Date().toISOString();
-        try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {}
-        try {
-          document.dispatchEvent(new CustomEvent('assessment-change', { detail: state }));
-        } catch (e) {
-          var event = document.createEvent('CustomEvent');
-          event.initCustomEvent('assessment-change', false, false, state);
-          document.dispatchEvent(event);
-        }
-      }
-      function canonicalLevel(value) { return LEGACY_LEVEL[value] || value || 'None'; }
-      function syncCockpitRole(roleName) {
-        var roles = (window.LrnData && window.LrnData.roles) || [];
-        var role = roles.find(function (entry) {
-          return [entry.id, entry.label, entry.name, entry.segment].filter(Boolean).some(function (value) {
-            return String(value).toLowerCase().trim() === String(roleName || '').toLowerCase().trim();
-          });
-        });
-        if (!role) return;
-        try {
-          var key = 'lhind:lrn-cockpit:v3';
-          var cockpit = JSON.parse(localStorage.getItem(key) || '{}');
-          cockpit.profileId = role.id;
-          localStorage.setItem(key, JSON.stringify(cockpit));
-        } catch (e) {}
-      }
-
-      function showStep(id) {
-        ['step-role', 'step-rate', 'step-result'].forEach(function (sid) {
-          document.getElementById(sid).classList.toggle('active', sid === id);
-        });
-        window.scrollTo(0, 0);
-      }
-
-      // ---- Step 1: role ----
-      var roleSelect = document.getElementById('roleSelect');
-      var toRate = document.getElementById('toRate');
-      var ph = document.createElement('option');
-      ph.value = ''; ph.textContent = '— Select your role —'; roleSelect.appendChild(ph);
-      ROLES.forEach(function (r) {
-        var o = document.createElement('option'); o.value = r.name; o.textContent = r.name;
-        roleSelect.appendChild(o);
-      });
-      if (state.role) roleSelect.value = state.role;
-      if (state.role) syncCockpitRole(state.role);
-      toRate.disabled = !state.role;
-      roleSelect.addEventListener('change', function () {
-        state.role = roleSelect.value; toRate.disabled = !state.role; save(); syncCockpitRole(state.role);
-      });
-      toRate.addEventListener('click', function () { buildRateForm(); showStep('step-rate'); });
-
-      // ---- Step 2: rate ----
-      function buildRateForm() {
-        var form = document.getElementById('capForm');
-        form.innerHTML = '';
-        var role = ROLES.find(function (r) { return r.name === state.role; }) || { targets: {} };
-        var lastCluster = null, clusterEl = null;
-        CAPABILITIES.forEach(function (cap) {
-          if (cap.cluster !== lastCluster) {
-            lastCluster = cap.cluster;
-            clusterEl = document.createElement('div');
-            clusterEl.className = 'cluster-block';
-            clusterEl.innerHTML = '<div class="cluster-title">' + cap.cluster + '</div>';
-            form.appendChild(clusterEl);
-          }
-          var target = canonicalLevel(role.targets[cap.id]);
-          var row = document.createElement('div'); row.className = 'cap-row';
-
-          var left = document.createElement('div');
-          left.innerHTML =
-            '<div class="cap-name">' + cap.title + '</div>' +
-            '<div class="cap-desc">' + truncateDesc(cap.description, 160) + '</div>' +
-            (target ? '<div class="cap-target">Target for your role: ' + target + '</div>'
-                    : '<div class="cap-no-match">Not required for your role</div>') +
-            (cap.phases.length ? '' : '<div class="cap-no-match">No in-curriculum lessons yet</div>');
-          row.appendChild(left);
-
-          var group = document.createElement('div'); group.className = 'level-group';
-          ['None'].concat(LEVELS).forEach(function (lvl) {
-            var b = document.createElement('button');
-            b.type = 'button'; b.className = 'level-btn'; b.textContent = lvl;
-            b.setAttribute('aria-pressed', String(Object.prototype.hasOwnProperty.call(state.ratings, cap.id) && canonicalLevel(state.ratings[cap.id]) === lvl));
-            b.addEventListener('click', function () {
-              state.ratings[cap.id] = lvl; save();
-              group.querySelectorAll('.level-btn').forEach(function (x) {
-                x.setAttribute('aria-pressed', String(x === b));
-              });
-            });
-            group.appendChild(b);
-          });
-          row.appendChild(group);
-          clusterEl.appendChild(row);
-        });
-      }
-      document.getElementById('backToRole').addEventListener('click', function () { showStep('step-role'); });
-      document.getElementById('toResult').addEventListener('click', function () { renderResult(); showStep('step-result'); });
-
-      // ---- Step 3: result ----
-      function levelVal(lvl) {
-        lvl = canonicalLevel(lvl);
-        return lvl === 'Create' ? 3 : lvl === 'Deepen' ? 2 : lvl === 'Acquire' ? 1 : 0;
-      }
-
-      // Capabilities are authored in cluster order; rank them by first appearance
-      // so the path keeps Foundation → Engineering → … ordering.
-      var CLUSTER_RANK = {};
-      CAPABILITIES.forEach(function (c) {
-        if (!(c.cluster in CLUSTER_RANK)) CLUSTER_RANK[c.cluster] = Object.keys(CLUSTER_RANK).length;
-      });
-
-      function renderResult() {
-        var role = ROLES.find(function (r) { return r.name === state.role; }) || { targets: {} };
-        var lvlName = ['—', 'Acquire', 'Deepen', 'Create'];
-
-        // Build the per-capability view once. "required" = role has a target.
-        var rows = CAPABILITIES.map(function (cap) {
-          var t = levelVal(role.targets[cap.id]);
-          var c = levelVal(state.ratings[cap.id]);
-          return {
-            cap: cap, target: t, current: c,
-            required: t > 0,
-            rated: (cap.id in state.ratings),
-            gap: Math.max(0, t - c),
-            met: t > 0 && c >= t
-          };
-        });
-        var required = rows.filter(function (x) { return x.required; });
-        var ratedRequired = required.filter(function (x) { return x.rated; });
-
-        // Score is an ordinal-safe ratio: how many required targets you meet.
-        // No interval assumption (Basic/Advanced/Expert are not summed as points).
-        var metCount = required.filter(function (x) { return x.met; }).length;
-        var score = required.length ? Math.round((metCount / required.length) * 100) : 0;
-        var complete = ratedRequired.length === required.length;
-
-        document.getElementById('scoreNum').textContent = complete ? score : '–';
-        var band = !complete ? i18nText('assess_band_in_progress')
-          : score >= 85 ? i18nText('assess_band_role_ready') : score >= 60 ? i18nText('assess_band_on_track')
-          : score >= 35 ? i18nText('assess_band_developing') : i18nText('assess_band_getting_started');
-        document.getElementById('scoreBand').textContent = band;
-        document.getElementById('scoreSub').textContent = complete
-          ? i18nText('assess_score_sub_complete', { met: metCount, total: required.length, role: state.role })
-          : i18nText('assess_score_sub_incomplete', { total: required.length, rated: ratedRequired.length });
-
-        var profileHost = document.getElementById('capabilityProfileVisual');
-        profileHost.textContent = '';
-        if (complete && window.LearningVisuals) {
-          window.LearningVisuals.renderCapabilityProfile(
-            profileHost,
-            required.map(function (entry) {
-              return { cluster: entry.cap.cluster, current: entry.current, target: entry.target };
-            }),
-            {
-              title: i18nText('viz_assessment_title'),
-              description: i18nText('viz_assessment_desc')
-            }
-          );
-        } else if (!complete) {
-          var profilePending = document.createElement('p');
-          profilePending.className = 'capability-profile__empty';
-          profilePending.textContent = i18nText('viz_assessment_pending');
-          profileHost.appendChild(profilePending);
-        }
-
-        // Path: gaps only, ordered by cluster, then lessons-available, then gap size.
-        var items = required.filter(function (x) { return x.gap > 0; });
-        items.sort(function (a, b) {
-          var cr = CLUSTER_RANK[a.cap.cluster] - CLUSTER_RANK[b.cap.cluster];
-          if (cr) return cr;
-          var la = a.cap.phases.length ? 0 : 1, lb = b.cap.phases.length ? 0 : 1;
-          if (la !== lb) return la - lb;        // capabilities with lessons first
-          return b.gap - a.gap;                 // bigger gap first within a cluster
-        });
-
-        var list = document.getElementById('pathList');
-        list.innerHTML = '';
-        if (!items.length) {
-          list.innerHTML = '<p style="color:var(--text-muted)">' + i18nText('assess_no_gaps') + ' <i data-lucide="party-popper" style="width:1em;height:1em;vertical-align:-0.15em"></i></p>';
-          if (window.lucide) lucide.createIcons();
-          mountJourney();
-          return;
-        }
-        var lastCluster = null;
-        items.forEach(function (x) {
-          if (x.cap.cluster !== lastCluster) {
-            lastCluster = x.cap.cluster;
-            var h = document.createElement('div');
-            h.className = 'cluster-title';
-            h.style.margin = '22px 0 10px';
-            h.textContent = x.cap.cluster;
-            list.appendChild(h);
-          }
-          var el = document.createElement('div');
-          el.className = 'path-item';
-          var head = '<div class="path-head"><span class="path-cap">' + x.cap.title +
-            '</span><span class="path-gap gap">' + lvlName[x.current] + ' → ' + lvlName[x.target] + '</span></div>';
-          var body;
-          if (x.cap.phases.length) {
-            var chips = x.cap.phases.map(function (pid) {
-              var p = phaseById[pid];
-              if (!p) return '';
-              return '<a class="lesson-chip" href="index.html">' + p.name + '</a>';
-            }).join('');
-            body = '<div class="path-lessons">' + chips + '</div>';
-          } else {
-            body = '<div class="path-nomatch">No dedicated lessons in this curriculum yet — ' +
-              'a business/literacy capability covered through external training.</div>';
-          }
-          el.innerHTML = head + body;
-          list.appendChild(el);
-        });
-        mountJourney();
-      }
-
-      // Keep the assessment result on the same shared journey surface as the
-      // course and skills pages. The assessment itself remains a rating input;
-      // it never promotes competency merely because a result was displayed.
       function mountJourney() {
         var host = document.getElementById('assessmentJourney');
         if (!host || !window.LrnJourneyUI || typeof window.LrnJourneyUI.mount !== 'function') return;
         window.LrnJourneyUI.mount(host, { compact: true });
       }
-
-      document.getElementById('backToRate').addEventListener('click', function () { showStep('step-rate'); });
-      document.getElementById('restart').addEventListener('click', function () {
-        state = { role: '', ratings: {} }; save();
-        roleSelect.value = ''; toRate.disabled = true; showStep('step-role');
-      });
-
-      // Resume into the rate step (not results) so a partially-rated user
-      // continues rating rather than landing on a misleading low score.
-      if (state.role && Object.keys(state.ratings).length) { buildRateForm(); showStep('step-rate'); }
-
-      // i18nText reads the current language at call time, so re-run every
-      // runtime-built string when the toggle fires (data-i18n elements
-      // re-translate themselves; these don't since they're plain text, not
-      // DOM attributes).
-      if (window.SiteLang) {
-        document.addEventListener('sitelang:change', function () {
-          renderIntro();
-          if (document.getElementById('step-result').classList.contains('active')) renderResult();
-        });
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', mountJourney);
+      } else {
+        mountJourney();
       }
     })();
   </script>

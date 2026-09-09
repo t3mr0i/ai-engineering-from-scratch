@@ -3,12 +3,15 @@
   'use strict';
   var api = root.AIFSAssessmentImport;
   if (!api || !root.document) return;
+  // Official AI Self-Assessment (SharePoint) — source of truth. This widget
+  // only imports the exported result PDF; no rating happens here.
+  var SHAREPOINT_URL = 'https://lufthansagroup.sharepoint.com/sites/LHIND_APP_AISelfAssessment/SitePages/de/TopicHome.aspx';
   var copy = {
     en: {
-      title: 'Start with your self-assessment', active: 'Your self-assessment is connected',
-      intro: 'Upload your result PDF to start at your existing skill level in each area.',
+      title: 'Import your SharePoint result', active: 'Your assessment result is connected',
+      intro: 'Complete the official self-assessment in SharePoint, export the result PDF, and upload it here to start at your existing skill level in each area.',
       local: 'Your PDF is read on this device. Only the extracted assessment is saved in this browser.',
-      upload: 'Upload assessment PDF', replace: 'Upload a newer PDF', alternative: 'Take an assessment here',
+      upload: 'Upload assessment PDF', replace: 'Upload a newer PDF', alternative: 'Open official self-assessment',
       reading: 'Reading your assessment…', review: 'Review your starting point',
       reviewIntro: 'Check the five areas before applying them to your recommendations.',
       dimension: 'Area', current: 'Your level', target: 'Role target', score: 'Score',
@@ -26,10 +29,10 @@
       ambiguous: 'The result contains conflicting rows or an unknown role target. Export the assessment again and try that PDF.'
     },
     de: {
-      title: 'Mit deinem Self-Assessment einsteigen', active: 'Dein Self-Assessment ist verbunden',
-      intro: 'Lade deine Ergebnis-PDF hoch und setze in jedem Bereich bei deinem bisherigen Kenntnisstand an.',
+      title: 'SharePoint-Ergebnis übernehmen', active: 'Dein Assessment-Ergebnis ist verbunden',
+      intro: 'Führe das offizielle Self-Assessment in SharePoint durch, exportiere die Ergebnis-PDF und lade sie hier hoch, um in jedem Bereich bei deinem bisherigen Kenntnisstand anzusetzen.',
       local: 'Deine PDF wird auf diesem Gerät gelesen. Nur die ausgelesene Einstufung wird in diesem Browser gespeichert.',
-      upload: 'Assessment-PDF hochladen', replace: 'Neuere PDF hochladen', alternative: 'Assessment hier durchführen',
+      upload: 'Assessment-PDF hochladen', replace: 'Neuere PDF hochladen', alternative: 'Offizielles Self-Assessment öffnen',
       reading: 'Dein Assessment wird gelesen…', review: 'Deinen Ausgangspunkt prüfen',
       reviewIntro: 'Prüfe die fünf Bereiche, bevor du sie für deine Empfehlungen übernimmst.',
       dimension: 'Bereich', current: 'Dein Level', target: 'Rollenziel', score: 'Wert',
@@ -152,7 +155,10 @@
         }, true));
         var view = el('a', t('view')); view.href = /\/(?:index\.html)?$/.test(root.location.pathname) ? '#journeyCockpit' : 'index.html#journeyCockpit'; actions.appendChild(view);
       } else if (!/assessment\.html$/.test(root.location.pathname)) {
-        var alternative = el('a', t('alternative')); alternative.href = 'assessment.html'; actions.appendChild(alternative);
+        // No manual rating exists anywhere in the catalog: the official
+        // assessment lives in SharePoint, so link there directly.
+        var alternative = el('a', t('alternative')); alternative.href = SHAREPOINT_URL;
+        alternative.target = '_blank'; alternative.rel = 'noopener'; actions.appendChild(alternative);
       }
       host.appendChild(actions);
       host.appendChild(el('p', t('local'), 'assessment-import__privacy'));

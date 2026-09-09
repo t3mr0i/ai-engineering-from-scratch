@@ -19,8 +19,8 @@
       targetImported: "Target from your imported assessment",
       targetChanged: "Your imported assessment uses a different target for this role. It is shown here without changing the reference target.",
       next: "Your next step",
-      assessment: "Start your self-assessment",
-      assessmentReason: "Tell us where you are today so we can show the right next course.",
+      assessment: "Import your assessment result",
+      assessmentReason: "Complete the official self-assessment in SharePoint, then import your result PDF so we can show the right next course.",
       plan: "Build your personal plan",
       planReason: "Turn your open capability gaps into an editable course sequence.",
       progress: "View capability progress",
@@ -39,9 +39,9 @@
       preparation: "Preparation needed",
       unavailable: "Not available",
       sourceImport: "From imported assessment",
-      sourceSelf: "From self-assessment",
+      sourceSelf: "From imported assessment",
       sourceEvidence: "From learning evidence",
-      unknownTarget: "Complete the Self-Assessment to see your starting point.",
+      unknownTarget: "Complete the official Self-Assessment in SharePoint and import your result PDF to see your starting point.",
       targetValue: "Target: {target}",
       referenceValue: "Reference target: {target}",
       fromTo: "{current} to {target}",
@@ -80,8 +80,8 @@
       targetImported: "Zielbild aus deinem importierten Assessment",
       targetChanged: "Dein importiertes Assessment nutzt für diese Rolle ein abweichendes Ziel. Es wird hier sichtbar gemacht, ohne das Referenz-Zielbild zu ändern.",
       next: "Dein nächster Schritt",
-      assessment: "Self-Assessment starten",
-      assessmentReason: "Ordne deinen heutigen Stand ein, damit wir den passenden nächsten Kurs zeigen können.",
+      assessment: "Assessment-Ergebnis übernehmen",
+      assessmentReason: "Führe das offizielle Self-Assessment in SharePoint durch und importiere danach deine Ergebnis-PDF, damit wir den passenden nächsten Kurs zeigen können.",
       plan: "Persönlichen Plan erstellen",
       planReason: "Mache aus offenen Kompetenzlücken eine bearbeitbare Kursfolge.",
       progress: "Fähigkeitenfortschritt ansehen",
@@ -100,9 +100,9 @@
       preparation: "Vorbereitung offen",
       unavailable: "Nicht verfügbar",
       sourceImport: "Aus importiertem Assessment",
-      sourceSelf: "Aus Self-Assessment",
+      sourceSelf: "Aus importiertem Assessment",
       sourceEvidence: "Aus Lernnachweisen",
-      unknownTarget: "Führe das Self-Assessment durch, um deinen Ausgangspunkt zu sehen.",
+      unknownTarget: "Führe das offizielle Self-Assessment in SharePoint durch und importiere deine Ergebnis-PDF, um deinen Ausgangspunkt zu sehen.",
       targetValue: "Ziel: {target}",
       referenceValue: "Referenzziel: {target}",
       fromTo: "{current} zu {target}",
@@ -352,7 +352,7 @@
         overview.appendChild(row);
       });
       if (!options.progressOnly) target.appendChild(overview);
-      var assessmentLink = el("a", "journey-ui__text-link", known.length ? (de ? "Einschätzung aktualisieren" : "Update self-assessment") : t("assessment"));
+      var assessmentLink = el("a", "journey-ui__text-link", known.length ? (de ? "Assessment-Ergebnis aktualisieren" : "Update imported result") : t("assessment"));
       assessmentLink.href = model.links && model.links.assessment || "assessment.html";
       target.appendChild(assessmentLink);
       var details = el("details", "journey-ui__details");
