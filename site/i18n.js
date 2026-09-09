@@ -43,7 +43,6 @@ window.SITE_I18N = {
   learning_tool_plan_title: { en: "Build a personal plan", de: "Persönlichen Plan erstellen" },
   learning_tool_plan_intro: { en: "Turn one concrete goal into an editable course sequence.", de: "Mache aus einem konkreten Ziel eine anpassbare Kursreihenfolge." },
   learning_tool_plan_open: { en: "Open personal plan", de: "Persönlichen Plan öffnen" },
-  learning_path_choices_intro: { en: "Two ways to your learning path: import your assessment result for automatic recommendations, or assemble your own sequence in the personal plan.", de: "Zwei Wege zu deinem Lernpfad: Importiere dein Assessment-Ergebnis für automatische Empfehlungen oder stelle deine eigene Reihenfolge im persönlichen Plan zusammen." },
   tool_page_back: { en: "Back to learning overview", de: "Zurück zur Lernübersicht" },
   personal_plan_page_title: { en: "Personal plan", de: "Persönlicher Plan" },
   personal_plan_page_intro: { en: "Shape a focused sequence around one outcome, your available time, and the progress already stored in this browser.", de: "Erstelle eine fokussierte Reihenfolge aus einem Ziel, deiner verfügbaren Zeit und dem Fortschritt in diesem Browser." },
