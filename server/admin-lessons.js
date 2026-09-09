@@ -8,8 +8,37 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const LESSON_PATH = /^phases\/(\d{2})-[a-z0-9-]+\/(\d{2})-[a-z0-9-]+$/;
-const FILE_ALLOW = /^(?:docs\/(?:en|de)\.md|quiz\.json|code\/main\.(?:py|ts|rs|jl)|code\/tests\/[a-zA-Z0-9._-]+|outputs\/[a-zA-Z0-9._-]+)$/;
+const MEDIA_FILE = /^docs\/media\/[a-z0-9][a-z0-9._-]{0,100}\.(?:png|jpe?g|gif|webp|mp4|webm|mov|pdf)$/i;
+const FILE_ALLOW = new RegExp(`^(?:docs\\/(?:en|de)\\.md|${MEDIA_FILE.source.slice(1, -1)}|quiz\\.json|code\\/main\\.(?:py|ts|rs|jl)|code\\/tests\\/[a-zA-Z0-9._-]+|outputs\\/[a-zA-Z0-9._-]+)$`, "i");
 const MAX_LESSON_BYTES = 1_500_000;
+const MAX_MEDIA_BYTES = 8_000_000;
+
+const MEDIA_MIME_TYPES = {
+  png: "image/png",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  gif: "image/gif",
+  webp: "image/webp",
+  mp4: "video/mp4",
+  webm: "video/webm",
+  mov: "video/quicktime",
+  pdf: "application/pdf",
+};
+
+function isMediaFile(file) {
+  return MEDIA_FILE.test(String(file || ""));
+}
+
+function mediaMimeType(file) {
+  const extension = String(file || "").split(".").at(-1).toLowerCase();
+  return MEDIA_MIME_TYPES[extension] || "application/octet-stream";
+}
+
+function dataUrlBytes(content) {
+  const match = /^data:([^;,]+);base64,([a-z0-9+/=\s]+)$/i.exec(String(content || ""));
+  if (!match) return null;
+  try { return { mime: match[1].toLowerCase(), bytes: Buffer.from(match[2].replace(/\s/g, ""), "base64").length }; } catch (_) { return null; }
+}
 
 class LessonError extends Error {
   constructor(code, message, status = 400, details) {
@@ -73,8 +102,11 @@ function walkAllowed(root, current = root, files = {}) {
     const relative = path.relative(root, absolute).split(path.sep).join("/");
     if (!FILE_ALLOW.test(relative)) continue;
     const size = fs.statSync(absolute).size;
-    if (size > MAX_LESSON_BYTES) throw new LessonError("lesson.file.too_large", `${relative} ist zu groß für den Admin.`, 413);
-    files[relative] = fs.readFileSync(absolute, "utf8");
+    const maxBytes = isMediaFile(relative) ? MAX_MEDIA_BYTES : MAX_LESSON_BYTES;
+    if (size > maxBytes) throw new LessonError("lesson.file.too_large", `${relative} ist zu groß für den Admin.`, 413);
+    files[relative] = isMediaFile(relative)
+      ? `data:${mediaMimeType(relative)};base64,${fs.readFileSync(absolute).toString("base64")}`
+      : fs.readFileSync(absolute, "utf8");
   }
   return files;
 }
@@ -97,6 +129,13 @@ function validateLessonDraft(draft) {
   for (const [file, content] of Object.entries(files)) {
     if (!FILE_ALLOW.test(file) || typeof content !== "string") {
       issues.push({ severity: "error", code: "lesson.file.invalid", path: file, message: "Datei oder Inhalt ist für eine Lesson nicht zulässig." });
+    } else if (isMediaFile(file)) {
+      const encoded = dataUrlBytes(content);
+      if (!encoded || encoded.mime !== mediaMimeType(file)) {
+        issues.push({ severity: "error", code: "lesson.media.encoding", path: file, message: "Medien müssen als gültige Base64-Datei im erwarteten Format vorliegen." });
+      } else if (encoded.bytes > MAX_MEDIA_BYTES) {
+        issues.push({ severity: "error", code: "lesson.media.too_large", path: file, message: "Medien dürfen höchstens 8 MB groß sein." });
+      }
     }
   }
   if (!String(files["docs/en.md"] || "").trim()) issues.push({ severity: "error", code: "lesson.docs.missing", path: "docs/en.md", message: "Die englische Lesson-Dokumentation fehlt." });
@@ -133,4 +172,4 @@ function validateLessonDraft(draft) {
   return issues;
 }
 
-module.exports = { LessonError, LESSON_PATH, FILE_ALLOW, assertLessonPath, listLessons, loadLesson, validateLessonDraft };
+module.exports = { LessonError, LESSON_PATH, FILE_ALLOW, MEDIA_FILE, MAX_MEDIA_BYTES, assertLessonPath, listLessons, loadLesson, validateLessonDraft, dataUrlBytes, isMediaFile, mediaMimeType };

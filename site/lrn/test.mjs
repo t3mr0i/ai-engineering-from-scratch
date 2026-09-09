@@ -52,15 +52,17 @@ function loadCourseFormats() {
   return sandbox.window.LrnCourseFormats;
 }
 
-// Cockpit default profile — must match the constant in site/lrn/lrn.js
-// (state.profileId fallback and the "tc" reset in render()). If lrn.js
-// switches the default, update this constant in the same commit.
+// Cockpit content fallback — must match the constant in site/lrn/lrn.js
+// (CONTENT_FALLBACK_PROFILE_ID; the visible select shows an empty
+// "Choose your role" placeholder until a role is explicitly chosen).
+// If lrn.js switches the fallback, update this constant in the same commit.
 function loadActiveProfileId() {
   const lrn = readFileSync("site/lrn/lrn.js", "utf8");
-  // Look for an explicit reset like state.profileId = "tc" inside render()
-  // or a profileId:"tc" default object. We accept the first well-formed
-  // match and refuse to guess if none is present.
+  // Look for the explicit content-fallback constant first, then legacy
+  // explicit assignments. We accept the first well-formed match and refuse
+  // to guess if none is present.
   const candidates = [
+    /CONTENT_FALLBACK_PROFILE_ID\s*=\s*["']([a-z]+)["']/,
     /state\.profileId\s*=\s*["']([a-z]+)["']/,
     /profileId:\s*["']([a-z]+)["']/,
   ];

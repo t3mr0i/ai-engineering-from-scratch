@@ -16,7 +16,7 @@ const { createAdminAi, AdminAiError } = require("./admin-ai");
 const { createGitLabPublisher, GitLabError } = require("./admin-gitlab");
 const { LessonError, listLessons, loadLesson, validateLessonDraft } = require("./admin-lessons");
 
-const MAX_BODY_BYTES = 5_000_000;
+const MAX_BODY_BYTES = 15_000_000;
 
 function sendJson(res, status, body) {
   const data = JSON.stringify(body);

@@ -26,6 +26,8 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305164d'/%3E%3Cpath d='M8 10h16M8 16h10M8 22h13' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/light/style.css">
   <link rel="stylesheet" href="lrn/tokens.css">
+  <link rel="stylesheet" href="https://uicdn.toast.com/editor/3.2.2/toastui-editor.min.css">
+  <link id="toastEditorDarkTheme" rel="stylesheet" href="https://uicdn.toast.com/editor/3.2.2/theme/toastui-editor-dark.min.css" disabled>
   <link rel="stylesheet" href="admin.css">
 </head>
 <body>
@@ -59,32 +61,33 @@
           <i class="ph-light ph-path" aria-hidden="true"></i><span>Lernpfade</span>
           <span class="admin-nav__count" id="pathNavCount">0</span>
         </button>
-        <button class="admin-nav__item" type="button" data-view="trainers" aria-label="Trainer" title="Trainer">
+        <!-- Temporär ausgeblendet: nur Übersicht, Kurse, Lessons, Lernpfade bleiben sichtbar. Code/Panels bleiben erhalten. -->
+        <button class="admin-nav__item" type="button" data-view="trainers" aria-label="Trainer" title="Trainer" hidden>
           <i class="ph-light ph-users-three" aria-hidden="true"></i><span>Trainer</span>
           <span class="admin-nav__count" id="trainerNavCount">0</span>
         </button>
-        <button class="admin-nav__item" type="button" data-view="calendar" aria-label="Kalender" title="Kalender">
+        <button class="admin-nav__item" type="button" data-view="calendar" aria-label="Kalender" title="Kalender" hidden>
           <i class="ph-light ph-calendar-dots" aria-hidden="true"></i><span>Kalender</span>
           <span class="admin-nav__count" id="sessionNavCount">0</span>
         </button>
-        <button class="admin-nav__item" type="button" data-view="teams" aria-label="Teamlernen" title="Teamlernen">
+        <button class="admin-nav__item" type="button" data-view="teams" aria-label="Teamlernen" title="Teamlernen" hidden>
           <i class="ph-light ph-users-four" aria-hidden="true"></i><span>Teamlernen</span>
           <span class="admin-nav__count" id="teamNavCount">0</span>
         </button>
-        <button class="admin-nav__item" type="button" data-view="assistant" aria-label="KI-Studio" title="KI-Studio">
+        <button class="admin-nav__item" type="button" data-view="assistant" aria-label="KI-Studio" title="KI-Studio" hidden>
           <i class="ph-light ph-sparkle" aria-hidden="true"></i><span>KI-Studio</span>
         </button>
-        <button class="admin-nav__item" type="button" data-view="review" aria-label="Review" title="Review">
+        <button class="admin-nav__item" type="button" data-view="review" aria-label="Review" title="Review" hidden>
           <i class="ph-light ph-check-circle" aria-hidden="true"></i><span>Review</span>
           <span class="admin-nav__count admin-nav__count--attention" id="reviewNavCount">0</span>
         </button>
-        <button class="admin-nav__item" type="button" data-view="history" aria-label="Historie" title="Historie">
+        <button class="admin-nav__item" type="button" data-view="history" aria-label="Historie" title="Historie" hidden>
           <i class="ph-light ph-clock-counter-clockwise" aria-hidden="true"></i><span>Historie</span>
         </button>
-        <a class="admin-nav__item" href="https://app-trainquiz-b45lvqbqd7eae.azurewebsites.net" target="_blank" rel="noopener" aria-label="Quiz erstellen" title="Quiz erstellen">
+        <a class="admin-nav__item" href="https://app-trainquiz-b45lvqbqd7eae.azurewebsites.net" target="_blank" rel="noopener" aria-label="Quiz erstellen" title="Quiz erstellen" hidden>
           <i class="ph-light ph-question" aria-hidden="true"></i><span>Quiz erstellen</span>
         </a>
-        <button class="admin-nav__item" type="button" data-view="stats" aria-label="Statistik" title="Statistik">
+        <button class="admin-nav__item" type="button" data-view="stats" aria-label="Statistik" title="Statistik" hidden>
           <i class="ph-light ph-chart-bar" aria-hidden="true"></i><span>Statistik</span>
         </button>
       </nav>
@@ -246,6 +249,7 @@
   </dialog>
 
   <div class="admin-toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+  <script src="https://uicdn.toast.com/editor/3.2.2/toastui-editor-all.min.js"></script>
   <script src="admin.js?v=20260831a"></script>
 </body>
 </html>

@@ -313,7 +313,7 @@
           return saved.profileId;
         }
       } catch (error) {}
-      return (data.roles || []).some(function (role) { return role.id === "tc"; }) ? "tc" : (data.roles[0] && data.roles[0].id || "tc");
+      return "";
     }
 
     function saveProfileId(profileId) {
@@ -326,6 +326,9 @@
 
     function populateProfileSelect() {
       if (!profileSelect) return;
+      var placeholder = element("option", "", i18n("role_select_label", "Choose your role"));
+      placeholder.value = "";
+      profileSelect.appendChild(placeholder);
       (data.roles || []).forEach(function (role) {
         var option = element("option", "", role.label);
         option.value = role.id;

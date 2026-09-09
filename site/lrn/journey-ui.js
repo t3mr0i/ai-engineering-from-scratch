@@ -400,6 +400,30 @@
     if (action.reason) next.appendChild(el("p", "journey-ui__next-reason", action.reason));
     var link = el("a", "journey-ui__action", action.label);
     link.href = action.href;
+    if (model && model.roleSelected === false) {
+      link.addEventListener("click", function (event) {
+        var target = root.document.getElementById("roleSelect") || root.document.getElementById("capabilityProfileSelect");
+        if (!target) return;
+        event.preventDefault();
+        try {
+          if (root.history && typeof root.history.replaceState === "function") root.history.replaceState(null, "", "#roleSelect");
+          else root.location.hash = "roleSelect";
+        } catch (_) {}
+        if (typeof target.scrollIntoView === "function") {
+          try { target.scrollIntoView({ behavior: "smooth", block: "center" }); }
+          catch (_) { target.scrollIntoView(); }
+        }
+        try { target.focus({ preventScroll: true }); }
+        catch (_) { try { target.focus(); } catch (_) {} }
+        if (target.classList) {
+          target.classList.add("is-highlighted");
+          root.setTimeout(function () { target.classList.remove("is-highlighted"); }, 2000);
+        }
+        if (typeof target.showPicker === "function") {
+          try { target.showPicker(); } catch (_) {}
+        }
+      });
+    }
     next.appendChild(link);
     host.insertBefore(next, host.querySelector(".journey-ui__target"));
     if (!options.compact && model.steps && model.steps.length > 1) {

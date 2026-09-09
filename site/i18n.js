@@ -264,7 +264,7 @@ window.SITE_I18N = {
   topic_governance: { en: "Governance", de: "Governance" },
   topic_leadership: { en: "Leadership", de: "Leadership" },
   role_label: { en: "Role", de: "Rolle" },
-  role_select_label: { en: "Choose role", de: "Rolle auswählen" },
+  role_select_label: { en: "Choose your role", de: "Rolle auswählen" },
   key_area_label: { en: "Key Area", de: "Key Area" },
   key_area_select_label: { en: "Choose key area", de: "Key Area auswählen" },
   specialization_label: { en: "Ausprägung", de: "Ausprägung" },

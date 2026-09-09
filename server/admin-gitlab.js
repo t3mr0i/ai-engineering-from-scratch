@@ -42,6 +42,16 @@ function lessonCommitMessage(draft) {
   return `feat(phase-${match[1]}/${match[2]}): ${verb} ${match[3]}`.slice(0, 72);
 }
 
+function gitlabLessonAction(draft, file, content, existing) {
+  const encoded = /^data:[^;,]+;base64,([a-z0-9+/=\s]+)$/i.exec(String(content || ""));
+  return {
+    action: draft.mode === "create" || !existing.has(file) ? "create" : "update",
+    file_path: `${draft.path}/${file}`,
+    content: encoded ? encoded[1].replace(/\s/g, "") : content,
+    ...(encoded ? { encoding: "base64" } : {}),
+  };
+}
+
 function createGitLabPublisher(options = {}) {
   const env = options.env || process.env;
   const fetchFn = options.fetchFn || fetch;
@@ -127,11 +137,7 @@ function createGitLabPublisher(options = {}) {
           body: JSON.stringify({
             branch,
             commit_message: lessonCommitMessage(draft),
-            actions: Object.entries(draft.files || {}).sort(([left], [right]) => left.localeCompare(right)).map(([file, content]) => ({
-              action: draft.mode === "create" || !existing.has(file) ? "create" : "update",
-              file_path: `${draft.path}/${file}`,
-              content,
-            })),
+            actions: Object.entries(draft.files || {}).sort(([left], [right]) => left.localeCompare(right)).map(([file, content]) => gitlabLessonAction(draft, file, content, existing)),
           }),
         }, [201]);
         commits.push({ type: "lesson", path: draft.path, id: lessonCommit.id });
@@ -188,4 +194,4 @@ function createGitLabPublisher(options = {}) {
   };
 }
 
-module.exports = { GitLabError, createGitLabPublisher, filesForSnapshot, browserSource, lessonCommitMessage };
+module.exports = { GitLabError, createGitLabPublisher, filesForSnapshot, browserSource, lessonCommitMessage, gitlabLessonAction };

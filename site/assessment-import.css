@@ -19,6 +19,19 @@
 .assessment-import__button--secondary { background: transparent; color: var(--text-primary, var(--text, #05164d)); border-color: var(--border-strong, #cfccc8); }
 .assessment-import__button:disabled { opacity: .6; cursor: wait; }
 .assessment-import :is(button, a, summary):focus-visible { outline: 3px solid var(--border-focus, #2d5fe4); outline-offset: 4px; }
+.assessment-import--drop-over { outline: 3px dashed var(--border-focus, #2d5fe4); outline-offset: 8px; border-radius: 8px; }
+.assessment-import__drop-hint { font-size: 13px; color: var(--text-secondary, #52617c); }
+.assessment-import__help { margin-block: 4px 12px; }
+.assessment-import__help ul { margin: 8px 0 8px 1.25rem; padding: 0; display: grid; gap: 6px; max-width: 72ch; line-height: 1.5; }
+.assessment-import__viz { display: grid; gap: 10px; margin-bottom: 16px; }
+.assessment-import__viz-row { display: grid; grid-template-columns: minmax(150px, 230px) 1fr auto; gap: 12px; align-items: center; }
+.assessment-import__viz-name { font-size: 14px; }
+.assessment-import__bars { display: flex; gap: 4px; }
+.assessment-import__bar { flex: 1 1 0; height: 10px; border-radius: 999px; background: var(--border-subtle, var(--rule, #e3e1de)); border: 1px solid var(--border-subtle, var(--rule, #e3e1de)); }
+.assessment-import__bar[data-current="true"] { background: var(--action-primary, #05164d); border-color: var(--action-primary, #05164d); }
+.assessment-import__bar[data-gap="true"] { background: var(--blueprint-tint, #dbe4ff); border-color: var(--text-link, #2d5fe4); }
+.assessment-import__viz-meta { font-size: 13px; color: var(--text-secondary, #52617c); white-space: nowrap; }
+.assessment-import__viz-legend { font-size: 13px; color: var(--text-secondary, #52617c); margin: 0; }
 .assessment-import a { color: var(--text-link, #2d5fe4); text-underline-offset: 3px; }
 .assessment-import__privacy { font-size: 13px; color: var(--text-secondary, #52617c); }
 .assessment-import__status:empty { display: none; }
@@ -35,6 +48,8 @@
 @media (max-width: 40rem) {
   .assessment-import { padding-block: 24px; }
   .assessment-import__preview { padding: 16px 12px; }
+  .assessment-import__viz-row { grid-template-columns: 1fr auto; }
+  .assessment-import__viz-name { grid-column: 1 / -1; }
   .assessment-import table { font-size: 13px; }
   .assessment-import :is(th, td) { padding: 10px 8px 10px 0; }
   .assessment-import th:first-child { min-width: 110px; }

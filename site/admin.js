@@ -20,6 +20,8 @@
     lessonFile: "docs/en.md",
     lessonDirty: false,
     lessonIssues: [],
+    lessonEditor: null,
+    lessonEditorHost: null,
     selectedPathId: null,
     pathView: "structure",
     selectedTrainerId: null,
@@ -261,6 +263,80 @@
 
   function textareaFor(value, handler, attrs) {
     return h("textarea", { oninput: (event) => handler(event.target.value), ...(attrs || {}) }, value == null ? "" : value);
+  }
+
+  const LESSON_MEDIA_LIMIT = 8 * 1024 * 1024;
+  const LESSON_MEDIA_EXTENSIONS = {
+    "image/png": "png",
+    "image/jpeg": "jpg",
+    "image/gif": "gif",
+    "image/webp": "webp",
+    "video/mp4": "mp4",
+    "video/webm": "webm",
+    "video/quicktime": "mov",
+    "application/pdf": "pdf",
+  };
+
+  function isLessonMediaFile(file) {
+    return /^docs\/media\/[a-z0-9][a-z0-9._-]{0,100}\.(?:png|jpe?g|gif|webp|mp4|webm|mov|pdf)$/i.test(String(file || ""));
+  }
+
+  function isLessonMediaType(type) {
+    return Boolean(LESSON_MEDIA_EXTENSIONS[String(type || "").toLowerCase()]);
+  }
+
+  function mediaKind(file) {
+    const type = String(file && file.type || "").toLowerCase();
+    if (type.startsWith("image/")) return "image";
+    if (type.startsWith("video/")) return "video";
+    if (type === "application/pdf") return "pdf";
+    return "";
+  }
+
+  function mediaFilePath(file) {
+    const rawName = String(file && file.name || "media").normalize("NFKD").replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/^-+|-+$/g, "").toLowerCase();
+    const sourceExtension = rawName.match(/\.([a-z0-9]{1,6})$/);
+    const extension = LESSON_MEDIA_EXTENSIONS[String(file && file.type || "").toLowerCase()] || (sourceExtension && sourceExtension[1]) || "bin";
+    const base = (sourceExtension ? rawName.slice(0, -(sourceExtension[0].length)) : rawName) || "media";
+    let candidate = `docs/media/${base}.${extension}`;
+    let suffix = 2;
+    while (state.activeLesson && Object.prototype.hasOwnProperty.call(state.activeLesson.files, candidate)) {
+      candidate = `docs/media/${base}-${suffix}.${extension}`;
+      suffix += 1;
+    }
+    return candidate;
+  }
+
+  function lessonMediaCount() {
+    return state.activeLesson ? Object.keys(state.activeLesson.files || {}).filter(isLessonMediaFile).length : 0;
+  }
+
+  function mediaDataUrl(value) {
+    return /^data:[^;,]+;base64,[a-z0-9+/=\s]+$/i.test(String(value || ""));
+  }
+
+  function lessonEditorSource() {
+    if (!state.activeLesson) return "";
+    let source = state.activeLesson.files["docs/en.md"] || "";
+    for (const [file, content] of Object.entries(state.activeLesson.files || {})) {
+      if (!isLessonMediaFile(file) || !mediaDataUrl(content)) continue;
+      const relative = file.replace(/^docs\//, "");
+      source = source.split(`./${relative}`).join(content).split(relative).join(content);
+    }
+    return source;
+  }
+
+  function lessonFilesForSave() {
+    if (!state.activeLesson) return {};
+    const files = clone(state.activeLesson.files || {});
+    let source = files["docs/en.md"] || "";
+    for (const [file, content] of Object.entries(files)) {
+      if (!isLessonMediaFile(file) || !mediaDataUrl(content)) continue;
+      const relative = file.replace(/^docs\//, "");
+      source = source.split(content).join(relative).split(`./${relative}`).join(relative);
+    }
+    files["docs/en.md"] = source;
+    return files;
   }
 
   function selectFor(value, options, handler, attrs) {
@@ -1021,6 +1097,126 @@
   function markLessonDirty() {
     state.lessonDirty = true;
     setSaveStatus("Lesson noch nicht im Änderungssatz gespeichert", "dirty");
+    const lessonSaveButton = $("#lessonSaveButton");
+    if (lessonSaveButton) lessonSaveButton.disabled = false;
+  }
+
+  function destroyLessonEditor() {
+    if (state.lessonEditor && typeof state.lessonEditor.destroy === "function") state.lessonEditor.destroy();
+    state.lessonEditor = null;
+    state.lessonEditorHost = null;
+  }
+
+  function showMediaError(message) {
+    toast(message, "error");
+  }
+
+  function stageLessonMedia(file, onReady) {
+    if (!state.activeLesson) return;
+    const kind = mediaKind(file);
+    if (!kind) {
+      showMediaError("Dieses Format kann nicht als Lesson-Medium eingefügt werden. Nutze Bild, Video oder PDF.");
+      return;
+    }
+    if (file.size > LESSON_MEDIA_LIMIT) {
+      showMediaError("Medien dürfen lokal höchstens 8 MB groß sein. Größere Dateien bitte über eine URL verlinken.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onerror = () => showMediaError("Das Medium konnte nicht gelesen werden.");
+    reader.onload = () => {
+      const filePath = mediaFilePath(file);
+      state.activeLesson.files[filePath] = reader.result;
+      markLessonDirty();
+      if (typeof onReady === "function") onReady(reader.result, filePath, kind);
+      const mediaCount = $("#lessonMediaCount");
+      if (mediaCount) mediaCount.textContent = `${lessonMediaCount()} Medien im Entwurf`;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function mediaInsertText(url, filePath, kind) {
+    const name = filePath.split("/").at(-1).replace(/\.[^.]+$/, "");
+    if (kind === "image") return `![${name}](${url})\n\n`;
+    if (kind === "video") return `<video controls preload="metadata" src="${url}"></video>\n\n`;
+    return `[${name} öffnen](${url})\n\n`;
+  }
+
+  function insertLessonMedia(file) {
+    const editor = state.lessonEditor;
+    stageLessonMedia(file, (url, filePath, kind) => {
+      if (!editor || typeof editor.insertText !== "function") return;
+      editor.insertText(mediaInsertText(url, filePath, kind));
+    });
+  }
+
+  function bindLessonMediaDrop(host) {
+    if (!host) return;
+    const hasFiles = (event) => Array.from(event.dataTransfer && event.dataTransfer.types || []).includes("Files");
+    const clearDropState = () => host.classList.remove("is-drop-target");
+    host.addEventListener("dragover", (event) => {
+      if (!hasFiles(event)) return;
+      event.preventDefault();
+      host.classList.add("is-drop-target");
+    });
+    host.addEventListener("dragleave", (event) => {
+      if (event.relatedTarget && host.contains(event.relatedTarget)) return;
+      clearDropState();
+    });
+    host.addEventListener("drop", (event) => {
+      if (!hasFiles(event)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      clearDropState();
+      Array.from(event.dataTransfer.files || []).forEach(insertLessonMedia);
+    }, true);
+  }
+
+  function mountLessonEditor(host, source, editable) {
+    if (!host) return;
+    const Editor = window.toastui && window.toastui.Editor;
+    if (!editable || typeof Editor !== "function") {
+      host.append(h("label", { class: "admin-field lesson-source lesson-source--fallback" }, [
+        h("span", { text: typeof Editor === "function" ? "Nur-Lese-Ansicht" : "Markdown-Quelle" }),
+        h("textarea", {
+          value: source,
+          spellcheck: "true",
+          disabled: !editable,
+          oninput: (event) => { state.activeLesson.files[state.lessonFile] = event.target.value; markLessonDirty(); },
+        }),
+      ]));
+      return;
+    }
+    state.lessonEditorHost = host;
+    state.lessonEditor = new Editor({
+      el: host,
+      height: "min(660px, calc(100vh - 290px))",
+      minHeight: "420px",
+      initialValue: source,
+      initialEditType: "wysiwyg",
+      previewStyle: "vertical",
+      hideModeSwitch: false,
+      autofocus: false,
+      usageStatistics: false,
+      language: "de-DE",
+      toolbarItems: [
+        ["heading", "bold", "italic", "strike"],
+        ["hr", "quote"],
+        ["ul", "ol", "task"],
+        ["table", "link", "image"],
+        ["code", "codeblock"],
+      ],
+      hooks: {
+        addImageBlobHook: (blob, callback) => stageLessonMedia(blob, (url, filePath) => callback(url, filePath.split("/").at(-1))),
+      },
+      events: {
+        change: () => {
+          state.activeLesson.files[state.lessonFile] = state.lessonEditor.getMarkdown();
+          markLessonDirty();
+        },
+      },
+    });
+    bindLessonMediaDrop(host);
   }
 
   async function saveLessonDraft(quiet = false) {
@@ -1032,7 +1228,7 @@
           expectedVersion: state.active.version,
           path: state.activeLesson.path,
           mode: state.activeLesson.mode,
-          files: state.activeLesson.files,
+          files: lessonFilesForSave(),
         }),
       });
       state.active = body.changeset;
@@ -1634,6 +1830,7 @@
   }
 
   function renderLessons() {
+    destroyLessonEditor();
     const panel = $("#view-lessons");
     panel.replaceChildren(pageHeading(
       "lessonsTitle",
@@ -1662,28 +1859,62 @@
       const fileNames = Object.keys(state.activeLesson.files || {}).sort((left, right) => left.localeCompare(right));
       if (!fileNames.includes(state.lessonFile)) state.lessonFile = fileNames[0];
       const source = state.activeLesson.files[state.lessonFile] || "";
+      const isDocumentation = state.lessonFile === "docs/en.md";
+      const richEditorHost = isDocumentation ? h("div", { class: "lesson-rich-editor", "aria-label": "Lesson-Dokumentation bearbeiten" }) : null;
+      const mediaInput = h("input", {
+        type: "file",
+        accept: "image/*,video/*,application/pdf",
+        multiple: true,
+        hidden: true,
+        onchange: (event) => {
+          Array.from(event.target.files || []).forEach(insertLessonMedia);
+          event.target.value = "";
+        },
+      });
+      const mediaControl = h("div", { class: "lesson-media-control" }, [
+        button("Medien hinzufügen", "secondary", () => mediaInput.click(), "paperclip", { disabled: !editable }),
+        mediaInput,
+      ]);
+      const sourceCanvas = h("div", { class: "lesson-editor-canvas" });
+      if (isDocumentation && editable) {
+        sourceCanvas.append(
+          h("div", { class: "lesson-editor-meta" }, [
+            h("span", { class: "lesson-editor-meta__mode" }, [icon("pencil-simple"), "Visueller Editor"]),
+            h("span", { text: "Markdown bleibt die Quelle" }),
+            h("span", { id: "lessonMediaCount", text: `${lessonMediaCount()} Medien im Entwurf` }),
+          ]),
+          h("p", { class: "lesson-media-drop-hint" }, [icon("upload-simple"), h("span", { text: "Bild, Video oder PDF direkt in den Inhalt ziehen" })]),
+          richEditorHost,
+        );
+      } else if (isDocumentation) {
+        sourceCanvas.append(richEditorHost);
+      } else {
+        sourceCanvas.append(h("label", { class: "admin-field lesson-source" }, [
+          h("span", { text: state.lessonFile }),
+          h("textarea", {
+            value: source,
+            spellcheck: "false",
+            disabled: !editable,
+            oninput: (event) => { state.activeLesson.files[state.lessonFile] = event.target.value; markLessonDirty(); },
+          }),
+        ]));
+      }
       editor.append(
         h("div", { class: "editor-heading" }, [
           h("div", {}, [h("h1", { text: lessonTitle(state.activeLesson) }), h("p", { class: "admin-context-line", text: `${state.activeLesson.mode === "create" ? "Neue Lesson" : "Repository-Lesson"} · ${state.activeLesson.path}` })]),
-          button("Lesson speichern", "primary", () => saveLessonDraft(false), "floppy-disk", { disabled: !editable || !state.lessonDirty }),
+          button("Lesson speichern", "primary", () => saveLessonDraft(false), "floppy-disk", { id: "lessonSaveButton", disabled: !editable || !state.lessonDirty }),
         ]),
         state.lessonIssues.length ? h("div", { class: "lesson-issue-summary", role: "status" }, [icon("warning-circle"), h("span", { text: `${state.lessonIssues.length} Vertragspunkte offen. Entwürfe dürfen unvollständig sein; Review bleibt blockiert.` })]) : null,
         h("div", { class: "lesson-file-toolbar" }, [
           field("Datei", selectFor(state.lessonFile, fileNames.map((file) => ({ value: file, label: file })), (value) => { state.lessonFile = value; renderLessons(); }, { disabled: !fileNames.length })),
+          mediaControl,
           button("DE-Dokument", "secondary", () => addLessonFile("docs/de.md", "# Deutsche Übersetzung\n\n[TODO]\n"), "translate", { disabled: !editable || fileNames.includes("docs/de.md") }),
           button("Output", "secondary", () => addLessonFile("outputs/README.md", "# Reusable artifact\n\n[TODO]\n"), "package", { disabled: !editable || fileNames.includes("outputs/README.md") }),
           button("Datei entfernen", "quiet", removeLessonFile, "trash", { disabled: !editable || ["docs/en.md", "quiz.json"].includes(state.lessonFile) || /^code\/main\./.test(state.lessonFile) }),
         ]),
-        h("label", { class: "admin-field lesson-source" }, [
-          h("span", { text: state.lessonFile }),
-          h("textarea", {
-            value: source,
-            spellcheck: state.lessonFile.endsWith(".md") ? "true" : "false",
-            disabled: !editable,
-            oninput: (event) => { state.activeLesson.files[state.lessonFile] = event.target.value; markLessonDirty(); },
-          }),
-        ]),
+        sourceCanvas,
       );
+      if (richEditorHost) mountLessonEditor(richEditorHost, lessonEditorSource(), editable);
     }
     panel.append(h("div", { class: "content-shell lesson-shell" }, [list, editor]));
   }
@@ -2234,6 +2465,8 @@
 
   function renderAdminTheme() {
     const dark = currentAdminTheme() === "dark";
+    const toastDarkTheme = $("#toastEditorDarkTheme");
+    if (toastDarkTheme) toastDarkTheme.disabled = !dark;
     $("#adminThemeIcon").className = `ph-light ${dark ? "ph-sun" : "ph-moon"}`;
     const label = dark ? "Zu hellem Farbschema wechseln" : "Zu dunklem Farbschema wechseln";
     $("#adminThemeButton").setAttribute("aria-label", label);
@@ -2296,7 +2529,8 @@
       try { remembered = localStorage.getItem("lhind:admin:changeset") || ""; } catch (_) {}
       if (remembered && state.changesets.some((item) => item.id === remembered)) await selectChangeset(remembered);
       const requestedView = new URLSearchParams(window.location.search).get("view");
-      const allowedViews = ["overview", "courses", "lessons", "paths", "trainers", "calendar", "teams", "assistant", "review", "history", "stats"];
+      // Temporär reduziert: nur Übersicht, Kurse, Lessons, Lernpfade sind navigierbar. Restliche Renderer bleiben im Code.
+      const allowedViews = ["overview", "courses", "lessons", "paths"];
       if (allowedViews.includes(requestedView)) activateView(requestedView);
     } catch (error) {
       renderFatal(error);

@@ -192,3 +192,4 @@
 .journey-ui__overview-row strong { border-radius: 6px; background: var(--color-surface-sunken); padding: 3px 8px; }
 .journey-ui__overview-row { align-items: center; }
 @media (prefers-reduced-motion: reduce) { .journey-ui__details > summary, .journey-optional > summary, .journey-ui__details summary > i, .journey-optional summary > i { transition: none; } }
+#roleSelect.is-highlighted, #capabilityProfileSelect.is-highlighted { border-color: var(--border-focus); box-shadow: var(--shadow-focus); outline: none; }

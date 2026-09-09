@@ -14,7 +14,27 @@
   }
   var roleById = indexBy(data.roles, "id");
   var courseById = indexBy(data.courses, "id");
+  // Content fallback while no role was explicitly chosen yet (empty
+  // state.profileId shows the "Choose your role" placeholder). The catalog
+  // and journey engine keep rendering against this reference role.
+  var CONTENT_FALLBACK_PROFILE_ID = "tc";
   var state = loadState();
+
+  function hasExplicitProfileSelection() {
+    return Boolean(state.profileId && roleById[state.profileId]);
+  }
+
+  function effectiveProfileId() {
+    if (state.profileId && roleById[state.profileId]) return state.profileId;
+    var imported = assessmentImport();
+    var fromImport = imported && resolveRole(imported.profileId);
+    if (fromImport) return fromImport;
+    return CONTENT_FALLBACK_PROFILE_ID;
+  }
+
+  function effectiveRole() {
+    return roleById[effectiveProfileId()] || roleById[CONTENT_FALLBACK_PROFILE_ID];
+  }
 
   function assessmentImport() {
     var importer = window.AIFSAssessmentImport || window.AssessmentImport;
@@ -26,7 +46,7 @@
     var importer = window.AIFSAssessmentImport || window.AssessmentImport;
     if (!importer || typeof importer.coursePlacement !== "function") return 0;
     var placement = importer.coursePlacement(course, record, {
-      profileId: state.profileId,
+      profileId: effectiveProfileId(),
       capabilities: data.capabilities || [],
       evidence: window.AIFSCapabilityEvidence || {}
     });
@@ -118,7 +138,7 @@
 
   function loadState() {
     var fallback = {
-      profileId: "tc",
+      profileId: "",
       keyAreaId: null,
       specializationId: null,
       externalLevel: 1,
@@ -209,7 +229,7 @@
       render();
     });
     els.resetBtn.addEventListener("click", function () {
-      state.profileId = "tc";
+      state.profileId = "";
       state.keyAreaId = null;
       state.specializationId = null;
       state.externalLevel = 1;
@@ -262,7 +282,19 @@
     });
 
     els.roleSelect.addEventListener("change", function () {
-      var role = roleById[els.roleSelect.value];
+      var value = els.roleSelect.value;
+      if (value === "") {
+        if (state.profileId === "") return;
+        state.profileId = "";
+        state.keyAreaId = null;
+        state.specializationId = null;
+        saveState();
+        renderControls();
+        render();
+        announce(i18n("role_select_label", "Choose your role"));
+        return;
+      }
+      var role = roleById[value];
       if (!role || (state.profileId === role.id && hasSavedProfileSelection())) return;
       state.profileId = role.id;
       state.keyAreaId = null;
@@ -329,13 +361,17 @@
   }
 
   function renderRoleSelect() {
-    replaceChildren(els.roleSelect, data.roles.map(function (role) {
+    var placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = i18n("role_select_label", "Choose your role");
+    var options = [placeholder].concat(data.roles.map(function (role) {
       var option = document.createElement("option");
       option.value = role.id;
       option.textContent = role.label;
       return option;
     }));
-    els.roleSelect.value = state.profileId;
+    replaceChildren(els.roleSelect, options);
+    els.roleSelect.value = hasExplicitProfileSelection() ? state.profileId : "";
   }
 
   function keyAreasForRole(roleId) {
@@ -406,8 +442,9 @@
       return option;
     });
     var imported = assessmentImport();
-    if (imported && mergedProfileId(imported.profileId) !== state.profileId) imported = null;
-    if (imported && imported.profileId && resolveRole(imported.profileId) === state.profileId) {
+    var activeProfileId = effectiveProfileId();
+    if (imported && mergedProfileId(imported.profileId) !== activeProfileId) imported = null;
+    if (imported && imported.profileId && resolveRole(imported.profileId) === activeProfileId) {
       var importedOption = document.createElement("option");
       importedOption.value = "imported";
       importedOption.textContent = i18n("lrn_depth_from_assessment", "From assessment");
@@ -418,12 +455,13 @@
       els.levelSelect.disabled = false;
     }
     replaceChildren(els.levelSelect, options);
-    els.levelSelect.value = imported && imported.profileId && resolveRole(imported.profileId) === state.profileId
+    els.levelSelect.value = imported && imported.profileId && resolveRole(imported.profileId) === activeProfileId
       ? "imported" : String(state.externalLevel);
   }
 
   function syncSelects() {
-    if (els.roleSelect.value !== state.profileId) els.roleSelect.value = state.profileId;
+    var desiredProfileId = hasExplicitProfileSelection() ? state.profileId : "";
+    if (els.roleSelect.value !== desiredProfileId) els.roleSelect.value = desiredProfileId;
     if (els.levelSelect.disabled) els.levelSelect.value = "imported";
     else if (els.levelSelect.value !== String(state.externalLevel)) els.levelSelect.value = String(state.externalLevel);
   }
@@ -455,7 +493,7 @@
 
   function computeAcademyContext(computed) {
     var activeLevel = computed && computed.level && computed.level.focusLevels[0] || "Acquire";
-    var profileId = computed && computed.profile && computed.profile.id || state.profileId;
+    var profileId = computed && computed.profile && computed.profile.id || effectiveProfileId();
     var allPaths = data.academyPaths || [];
     var imported = assessmentImport();
     if (imported && mergedProfileId(imported.profileId) !== profileId) imported = null;
@@ -680,11 +718,12 @@
 
   function academyPathProgress(path) {
     var imported = assessmentImport();
+    var activeProfileId = effectiveProfileId();
     function attainedByImportedBaseline(course) {
       var importer = window.AIFSAssessmentImport || window.AssessmentImport;
       if (!importer || typeof importer.coursePlacement !== "function") return false;
       var placement = importer.coursePlacement(course, imported, {
-        profileId: state.profileId,
+        profileId: activeProfileId,
         capabilities: data.capabilities || [],
         evidence: window.AIFSCapabilityEvidence || {}
       });
@@ -711,7 +750,7 @@
         if (openIndex !== -1) {
           nextCourse = courses[openIndex];
           var placement = window.AIFSAssessmentImport && window.AIFSAssessmentImport.coursePlacement(nextCourse, imported, {
-            profileId: state.profileId, capabilities: data.capabilities || [], evidence: window.AIFSCapabilityEvidence || {}
+            profileId: activeProfileId, capabilities: data.capabilities || [], evidence: window.AIFSCapabilityEvidence || {}
           });
           nextStage = placement && placement.focusLevels[0] || stage.label;
         }
@@ -1156,7 +1195,7 @@
   }
 
   function compute() {
-    var role = roleById[state.profileId];
+    var role = effectiveRole();
     var level = levelDefinitions.find(function (item) {
       return item.value === Number(state.externalLevel);
     }) || levelDefinitions[0];
