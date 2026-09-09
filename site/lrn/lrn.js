@@ -350,6 +350,8 @@
     if (!els.keyAreaSelect) return;
     var options = keyAreasForRole(state.profileId);
     var wrapper = els.keyAreaSelect.closest(".selector-field");
+    var details = els.keyAreaSelect.closest("details");
+    var firstRun = !els.keyAreaSelect.options.length;
     if (!options.length) {
       if (wrapper) wrapper.hidden = true;
       if (els.keyAreaHint) els.keyAreaHint.hidden = false;
@@ -365,9 +367,11 @@
       option.textContent = keyArea.label;
       return option;
     }));
-    if (!options.some(function (k) { return k.id === state.keyAreaId; })) {
-      state.keyAreaId = options[0].id;
-    }
+    var defaulted = !options.some(function (k) { return k.id === state.keyAreaId; });
+    if (defaulted) state.keyAreaId = options[0].id;
+    // Reveal the collapsed filter group once when key areas become available
+    // (first view or profile switch); a deliberate user toggle is never forced.
+    if ((firstRun || defaulted) && details) details.open = true;
     els.keyAreaSelect.value = state.keyAreaId;
   }
 

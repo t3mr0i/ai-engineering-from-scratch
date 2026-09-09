@@ -3509,7 +3509,7 @@ window.LrnData = {
       "summary": "Use AI across the project lifecycle: prompting techniques for project managers, collaboration and reporting with AI, agents in project work, and accountable adoption.",
       "category": "role",
       "recommendationRanks": {
-        "pma": 5,
+        "pma": 3,
         "am": 3,
         "corp": 4
       },
@@ -3666,7 +3666,7 @@ window.LrnData = {
       "recommendationRanks": {
         "lead": 1,
         "corp": 1,
-        "pma": 3,
+        "pma": 4,
         "bsc": 4
       },
       "trackCodes": [
@@ -3757,7 +3757,7 @@ window.LrnData = {
       "category": "role",
       "recommendationRanks": {
         "bsc": 3,
-        "pma": 4,
+        "pma": 5,
         "lead": 3,
         "corp": 3
       },

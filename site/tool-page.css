@@ -60,8 +60,7 @@
   min-width: 0;
 }
 
-.page--tool .personal-plan,
-.page--tool .team-learning {
+.page--tool .personal-plan {
   margin-block: 0;
 }
 
@@ -95,8 +94,7 @@
     font-size: var(--fs-h2);
   }
 
-  .page--tool .personal-plan__intro h2,
-  .page--tool .team-learning__header h2 {
+  .page--tool .personal-plan__intro h2 {
     font-size: var(--fs-h3);
   }
 }
