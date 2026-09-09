@@ -373,7 +373,7 @@
 
   <header class="nav-edge" aria-label="Site navigation">
     <a class="wordmark" href="index.html">
-      <img class="wordmark__logo" src="assets/logo/lhind-logo-blue.png" alt="LHIND" />
+      <img class="wordmark__logo" src="assets/logo/lhind-logo-blue.png" alt="LHIND" width="3939" height="823" fetchpriority="high" decoding="async" />
       <span>AI Learning Catalog</span>
     </a>
     <nav class="nav-links" aria-label="Sections">
@@ -486,11 +486,14 @@
     </div>
   </main>
 
-  <script src="data.js?v=20260525a"></script>
-  <script src="lrn/data.js?v=20260908c"></script>
-  <script src="lrn/curriculum-map.js?v=20260824b"></script>
-  <script src="progress.js?v=20260830a"></script>
-  <script src="learning-visuals.js?v=20260831b"></script>
+  <!-- All deferred: the inline renderer below runs on DOMContentLoaded, which
+       fires after deferred scripts in document order — parsing and first
+       paint no longer wait on the 666KB data.js bundle. -->
+  <script src="data.js?v=20260525a" defer></script>
+  <script src="lrn/data.js?v=20260908c" defer></script>
+  <script src="lrn/curriculum-map.js?v=20260824b" defer></script>
+  <script src="progress.js?v=20260830a" defer></script>
+  <script src="learning-visuals.js?v=20260831b" defer></script>
   <script src="search.js?v=20260813a" defer></script>
   <script src="cmdpalette.js?v=20260813a" defer></script>
   <script>

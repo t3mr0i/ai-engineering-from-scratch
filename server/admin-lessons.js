@@ -8,7 +8,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const LESSON_PATH = /^phases\/(\d{2})-[a-z0-9-]+\/(\d{2})-[a-z0-9-]+$/;
-const MEDIA_FILE = /^docs\/media\/[a-z0-9][a-z0-9._-]{0,100}\.(?:png|jpe?g|gif|webp|mp4|webm|mov|pdf)$/i;
+const MEDIA_FILE = /^docs\/media\/[a-z0-9][a-z0-9._-]{0,100}\.(?:png|jpe?g|gif|webp|svg|mp4|webm|mov|pdf)$/i;
 const FILE_ALLOW = new RegExp(`^(?:docs\\/(?:en|de)\\.md|${MEDIA_FILE.source.slice(1, -1)}|quiz\\.json|code\\/main\\.(?:py|ts|rs|jl)|code\\/tests\\/[a-zA-Z0-9._-]+|outputs\\/[a-zA-Z0-9._-]+)$`, "i");
 const MAX_LESSON_BYTES = 1_500_000;
 const MAX_MEDIA_BYTES = 8_000_000;
@@ -19,6 +19,7 @@ const MEDIA_MIME_TYPES = {
   jpeg: "image/jpeg",
   gif: "image/gif",
   webp: "image/webp",
+  svg: "image/svg+xml",
   mp4: "video/mp4",
   webm: "video/webm",
   mov: "video/quicktime",

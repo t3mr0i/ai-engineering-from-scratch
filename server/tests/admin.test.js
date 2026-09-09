@@ -16,7 +16,7 @@ const {
 } = require("../admin-curriculum");
 const { AdminStore, StoreError } = require("../admin-store");
 const { createAdminAi, AdminAiError, normalizeResult } = require("../admin-ai");
-const { createGitLabPublisher, filesForSnapshot, lessonCommitMessage } = require("../admin-gitlab");
+const { createGitLabPublisher, filesForSnapshot, gitlabLessonAction, lessonCommitMessage } = require("../admin-gitlab");
 const { listLessons, loadLesson, validateLessonDraft } = require("../admin-lessons");
 
 const ROOT = path.resolve(__dirname, "..", "..");
@@ -482,6 +482,21 @@ test("lesson drafts enforce docs, quiz, code, and five-test contracts", () => {
   const codes = new Set(validateLessonDraft(invalid).map((item) => item.code));
   assert.ok(codes.has("lesson.todo"));
   assert.ok(codes.has("lesson.tests.count"));
+});
+
+test("lesson media uses the validated data URL contract", () => {
+  const action = gitlabLessonAction(
+    { path: "phases/20-agentic-engineering/99-admin-test-lesson", mode: "create" },
+    "docs/media/diagram.png",
+    "data:image/png;base64,aGVsbG8=",
+    new Set(),
+  );
+  assert.deepEqual(action, {
+    action: "create",
+    file_path: "phases/20-agentic-engineering/99-admin-test-lesson/docs/media/diagram.png",
+    content: "aGVsbG8=",
+    encoding: "base64",
+  });
 });
 
 test("staged lesson edits are versioned and require a new grill", () => {

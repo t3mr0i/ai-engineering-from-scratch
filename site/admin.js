@@ -271,6 +271,7 @@
     "image/jpeg": "jpg",
     "image/gif": "gif",
     "image/webp": "webp",
+    "image/svg+xml": "svg",
     "video/mp4": "mp4",
     "video/webm": "webm",
     "video/quicktime": "mov",
@@ -278,11 +279,7 @@
   };
 
   function isLessonMediaFile(file) {
-    return /^docs\/media\/[a-z0-9][a-z0-9._-]{0,100}\.(?:png|jpe?g|gif|webp|mp4|webm|mov|pdf)$/i.test(String(file || ""));
-  }
-
-  function isLessonMediaType(type) {
-    return Boolean(LESSON_MEDIA_EXTENSIONS[String(type || "").toLowerCase()]);
+    return /^docs\/media\/[a-z0-9][a-z0-9._-]{0,100}\.(?:png|jpe?g|gif|webp|svg|mp4|webm|mov|pdf)$/i.test(String(file || ""));
   }
 
   function mediaKind(file) {
@@ -1143,10 +1140,21 @@
   }
 
   function insertLessonMedia(file) {
+    if (state.lessonFile !== "docs/en.md" || !state.active || state.active.status !== "draft") return;
     const editor = state.lessonEditor;
     stageLessonMedia(file, (url, filePath, kind) => {
-      if (!editor || typeof editor.insertText !== "function") return;
-      editor.insertText(mediaInsertText(url, filePath, kind));
+      const text = mediaInsertText(url, filePath, kind);
+      if (editor && typeof editor.insertText === "function") {
+        editor.insertText(text);
+        return;
+      }
+      const textarea = $(".lesson-source--fallback textarea");
+      if (!textarea) return;
+      const start = textarea.selectionStart;
+      textarea.value = `${textarea.value.slice(0, start)}${text}${textarea.value.slice(textarea.selectionEnd)}`;
+      textarea.selectionStart = textarea.selectionEnd = start + text.length;
+      state.activeLesson.files[state.lessonFile] = textarea.value;
+      markLessonDirty();
     });
   }
 
@@ -1195,6 +1203,7 @@
       initialValue: source,
       initialEditType: "wysiwyg",
       previewStyle: "vertical",
+      theme: currentAdminTheme() === "dark" ? "dark" : "default",
       hideModeSwitch: false,
       autofocus: false,
       usageStatistics: false,
@@ -1872,7 +1881,7 @@
         },
       });
       const mediaControl = h("div", { class: "lesson-media-control" }, [
-        button("Medien hinzufügen", "secondary", () => mediaInput.click(), "paperclip", { disabled: !editable }),
+        button("Medien hinzufügen", "secondary", () => mediaInput.click(), "paperclip", { disabled: !editable || !isDocumentation }),
         mediaInput,
       ]);
       const sourceCanvas = h("div", { class: "lesson-editor-canvas" });
@@ -2481,6 +2490,7 @@
     try { localStorage.setItem("theme", next); } catch (_) {}
     document.documentElement.dataset.theme = next;
     renderAdminTheme();
+    if (state.view === "lessons" && state.activeLesson) renderLessons();
   }
 
   function renderFatal(error) {

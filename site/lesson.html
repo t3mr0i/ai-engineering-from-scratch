@@ -44,6 +44,11 @@
   <link rel="preload" href="lrn/assets/fonts/LHGHeadWEB-Light.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="lrn/assets/fonts/LHGTextWEB-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <!-- data.js (666KB curriculum index) is needed synchronously by the inline
+       renderer below; preload it so the download starts with the CSS instead
+       of after 15 parser-blocking scripts. Execution order is unchanged. -->
+  <link rel="preload" href="data.js?v=20260525a" as="script">
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/light/style.css">
   <link rel="stylesheet" href="style.css?v=20260824a">
   <link rel="stylesheet" href="pan.css?v=20260831c">
@@ -2277,7 +2282,7 @@
 
   <header class="nav-edge nav-edge--lesson" aria-label="Site navigation">
     <a class="wordmark" href="index.html">
-      <img class="wordmark__logo" src="assets/logo/lhind-logo-blue.png" alt="LHIND" />
+      <img class="wordmark__logo" src="assets/logo/lhind-logo-blue.png" alt="LHIND" width="3939" height="823" fetchpriority="high" decoding="async" />
       <span>AI Learning Catalog</span>
     </a>
     <div class="nav-edge__spacer" aria-hidden="true" style="flex:1"></div>
@@ -2337,10 +2342,10 @@
   <script src="search.js?v=20260813a" defer></script>
   <script src="cmdpalette.js?v=20260813a" defer></script>
   <script src="analytics.js?v=20260525a" defer></script>
-  <script src="figures.js?v=20260607a"></script>
-  <script src="lesson-figures.js?v=20260607a"></script>
-  <script src="learning-visuals.js?v=20260831b"></script>
-  <script src="python-runtime.js?v=20260824a"></script>
+  <script src="figures.js?v=20260607a" defer></script>
+  <script src="lesson-figures.js?v=20260607a" defer></script>
+  <script src="learning-visuals.js?v=20260831b" defer></script>
+  <script src="python-runtime.js?v=20260824a" defer></script>
   <script>
     // Shared by the mermaid init below and updateMermaidThemeAndRerender()
     // further down, so both configure mermaid identically. Colors and font
