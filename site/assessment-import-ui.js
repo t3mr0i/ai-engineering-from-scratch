@@ -8,7 +8,7 @@
   var SHAREPOINT_URL = 'https://lufthansagroup.sharepoint.com/sites/LHIND_APP_AISelfAssessment/SitePages/de/TopicHome.aspx';
   var copy = {
     en: {
-      title: 'Add your assessment', active: 'Your assessment result is connected',
+      title: 'Add your assessment', active: 'Your assessment is connected',
       intro: 'Already completed your self-assessment in SharePoint? You can add your result PDF here.',
       local: 'Your PDF is read on this device. Only the extracted assessment is saved in this browser.',
       upload: 'Upload assessment PDF', replace: 'Upload a newer PDF', alternative: 'Open official self-assessment',
@@ -23,7 +23,7 @@
       apply: 'Use these results', cancel: 'Cancel', remove: 'Remove assessment',
       saved: 'Assessment applied. Your recommendations now use these starting levels.',
       removed: 'Assessment removed. Recommendations use your selected role profile again.',
-      details: 'View levels and role targets', note: 'Imported starting levels from your SharePoint result. Course completion and earned evidence stay separate.',
+      details: 'View score details', note: 'Your SharePoint result sets your starting levels.',
       failed: 'This PDF could not be read. Choose an original self-assessment export with all five result rows.',
       storage: 'The result could not be saved in this browser. Allow local storage and try again.',
       file: 'Choose a PDF file up to 10 MB.', role: 'Profile', date: 'Imported',
@@ -34,7 +34,7 @@
       ambiguous: 'The result contains conflicting rows or an unknown role target. Export the assessment again and try that PDF.'
     },
     de: {
-      title: 'Dein Assessment ergänzen', active: 'Dein Assessment-Ergebnis ist verbunden',
+      title: 'Dein Assessment ergänzen', active: 'Dein Assessment ist verbunden',
       intro: 'Du hast dein Self-Assessment in SharePoint bereits gemacht? Hier kannst du deine Ergebnis-PDF hinzufügen.',
       local: 'Deine PDF wird auf diesem Gerät gelesen. Nur die ausgelesene Einstufung wird in diesem Browser gespeichert.',
       upload: 'Assessment-PDF hochladen', replace: 'Neuere PDF hochladen', alternative: 'Zum Self-Assessment in SharePoint',
@@ -49,7 +49,7 @@
       apply: 'Ergebnisse übernehmen', cancel: 'Abbrechen', remove: 'Assessment entfernen',
       saved: 'Assessment übernommen. Deine Empfehlungen knüpfen jetzt an dein Wissen an.',
       removed: 'Assessment entfernt. Empfehlungen nutzen wieder dein gewähltes Rollenprofil.',
-      details: 'Level und Rollenziele ansehen', note: 'Diese Stufen stammen aus deinem SharePoint-Ergebnis. Deine Kurse und praktischen Nachweise findest du weiterhin in deinem Lernfortschritt.',
+      details: 'Werte im Detail ansehen', note: 'Dein SharePoint-Ergebnis legt deine Startstufen fest.',
       failed: 'Diese PDF konnte nicht gelesen werden. Wähle einen originalen Self-Assessment-Export mit allen fünf Ergebniszeilen.',
       storage: 'Das Ergebnis konnte in diesem Browser nicht gespeichert werden. Erlaube lokalen Speicher und versuche es erneut.',
       file: 'Wähle eine PDF-Datei mit höchstens 10 MB.', role: 'Profil', date: 'Importiert',
@@ -207,16 +207,15 @@
       host.setAttribute('aria-labelledby', heading.id);
       host.appendChild(el('p', record ? t('note') : t('intro'), 'assessment-import__intro'));
       if (record) {
-        var summary = ['Create', 'Deepen', 'Acquire'].map(function (level) {
-          return Object.keys(record.dimensions).filter(function (key) { return record.dimensions[key].currentLevel === level; }).length + ' ' + level;
-        }).join(' · ');
-        host.appendChild(el('p', record.role + ' — ' + summary, 'assessment-import__levels'));
+        var importedDate = new Date(record.importedAt).toLocaleDateString(language());
+        host.appendChild(el('p', t('role') + ': ' + record.role + ' · ' + t('date') + ': ' + importedDate, 'assessment-import__meta'));
+        host.appendChild(resultViz(record));
         try {
           var cockpit = JSON.parse(root.localStorage.getItem('lhind:lrn-cockpit:v3'));
           if (cockpit && cockpit.profileId && cockpit.profileId !== record.profileId) host.appendChild(el('p', t('inactive')));
         } catch (e) {}
-        var details = el('details'); details.appendChild(el('summary', t('details'))); details.appendChild(resultView(record));
-        details.appendChild(el('p', t('date') + ': ' + new Date(record.importedAt).toLocaleDateString(language()))); host.appendChild(details);
+        var scores = el('details', '', 'assessment-import__scores');
+        scores.appendChild(el('summary', t('details'))); scores.appendChild(table(record)); host.appendChild(scores);
       }
       var actions = el('div', '', 'assessment-import__actions');
       var input = el('input'); input.type = 'file'; input.accept = '.pdf,application/pdf'; input.hidden = true;
@@ -239,8 +238,10 @@
       }
       host.appendChild(actions);
       host.appendChild(el('p', t('dropHint'), 'assessment-import__drop-hint'));
-      host.appendChild(helpBlock());
-      host.appendChild(el('p', t('local'), 'assessment-import__privacy'));
+      var foot = el('footer', '', 'assessment-import__foot');
+      foot.appendChild(helpBlock());
+      foot.appendChild(el('p', t('local'), 'assessment-import__privacy'));
+      host.appendChild(foot);
       var status = el('p', message ? t(message) : '', 'assessment-import__status');
       status.tabIndex = -1;
       status.setAttribute('role', error ? 'alert' : 'status'); host.appendChild(status);

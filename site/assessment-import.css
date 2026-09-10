@@ -23,20 +23,22 @@
 .assessment-import__drop-hint { font-size: 13px; color: var(--text-secondary, #52617c); }
 .assessment-import__help { margin-block: 4px 12px; }
 .assessment-import__help ul { margin: 8px 0 8px 1.25rem; padding: 0; display: grid; gap: 6px; max-width: 72ch; line-height: 1.5; }
-.assessment-import__viz { display: grid; gap: 10px; margin-bottom: 16px; }
-.assessment-import__viz-row { display: grid; grid-template-columns: minmax(150px, 230px) 1fr auto; gap: 12px; align-items: center; }
-.assessment-import__viz-name { font-size: 14px; }
+.assessment-import__viz { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); margin-block: 16px; }
+.assessment-import__viz-row { display: grid; gap: 10px; align-content: start; padding: 14px 16px; border: 1px solid var(--border-subtle, var(--rule, #e3e1de)); border-radius: 12px; background: var(--color-surface-sunken, #f6f8fc); }
+.assessment-import__viz-name { font-size: 14px; font-weight: 500; line-height: 1.35; }
 .assessment-import__bars { display: flex; gap: 4px; }
-.assessment-import__bar { flex: 1 1 0; height: 10px; border-radius: 999px; background: var(--border-subtle, var(--rule, #e3e1de)); border: 1px solid var(--border-subtle, var(--rule, #e3e1de)); }
+.assessment-import__bar { flex: 1 1 0; height: 10px; border-radius: 999px; background: var(--color-surface, #fff); border: 1px solid var(--border-subtle, var(--rule, #e3e1de)); }
 .assessment-import__bar[data-current="true"] { background: var(--action-primary, #05164d); border-color: var(--action-primary, #05164d); }
 .assessment-import__bar[data-gap="true"] { background: var(--blueprint-tint, #dbe4ff); border-color: var(--text-link, #2d5fe4); }
 .assessment-import__viz-meta { font-size: 13px; color: var(--text-secondary, #52617c); white-space: nowrap; }
-.assessment-import__viz-legend { font-size: 13px; color: var(--text-secondary, #52617c); margin: 0; }
+.assessment-import__viz-legend { grid-column: 1 / -1; font-size: 13px; color: var(--text-secondary, #52617c); margin: 0; }
+.assessment-import__meta { font-size: 14px; color: var(--text-secondary, #52617c); }
+.assessment-import__scores { margin-block: 4px 0; }
 .assessment-import a { color: var(--text-link, #2d5fe4); text-underline-offset: 3px; }
 .assessment-import__privacy { font-size: 13px; color: var(--text-secondary, #52617c); }
 .assessment-import__status:empty { display: none; }
 .assessment-import__status[role="alert"] { color: var(--lhg-red, #bc0a1d); }
-.assessment-import__levels { font-weight: 500; font-variant-numeric: tabular-nums; }
+.assessment-import__foot { margin-top: 4px; }
 .assessment-import summary { cursor: pointer; width: fit-content; padding-block: 8px; text-decoration: underline; text-underline-offset: 3px; }
 .assessment-import__preview { margin-top: 20px; padding: 24px; background: var(--color-surface, var(--bg-surface, #fff)); border-radius: 12px; }
 .assessment-import__table-wrap { max-width: 100%; overflow-x: auto; }
@@ -75,10 +77,13 @@
   margin: 0;
   font-size: var(--fs-body-sm);
 }
-.page--home .assessment-import > .assessment-import__help {
+.page--home .assessment-import > .assessment-import__foot {
   margin: var(--space-5) 0 0;
   padding-top: var(--space-4);
   border-top: var(--border-hairline);
+}
+.page--home .assessment-import__foot > .assessment-import__help {
+  margin: 0;
 }
 .page--home .assessment-import__help > summary {
   min-height: 44px;
@@ -87,7 +92,7 @@
 .page--home .assessment-import__help > summary::after {
   content: none;
 }
-.page--home .assessment-import > .assessment-import__privacy {
+.page--home .assessment-import__foot > .assessment-import__privacy {
   max-width: 75ch;
   margin: var(--space-2) 0 0;
   font-size: var(--fs-body-sm);
@@ -105,8 +110,7 @@
 @media (max-width: 40rem) {
   .assessment-import { padding-block: 24px; }
   .assessment-import__preview { padding: 16px 12px; }
-  .assessment-import__viz-row { grid-template-columns: 1fr auto; }
-  .assessment-import__viz-name { grid-column: 1 / -1; }
+  .assessment-import__viz { grid-template-columns: 1fr; }
   .assessment-import table { font-size: 13px; }
   .assessment-import :is(th, td) { padding: 10px 8px 10px 0; }
   .assessment-import th:first-child { min-width: 110px; }
