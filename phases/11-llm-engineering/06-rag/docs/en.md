@@ -360,6 +360,13 @@ The indexing phase runs once per document (or when documents update). The queryi
 The last step of querying is building a prompt from the retrieved chunks and the user's question:
 
 ```python editable
+# Requires the blocks above (policies, chunk_text, TF-IDF, retrieve).
+# Run them top-to-bottom first, then this block.
+for _name in ("retrieve", "chunk_embeddings", "all_chunks", "vocab", "idf"):
+    if _name not in dir():
+        raise RuntimeError(f"Missing '{_name}'. Run the blocks above in order first, then Run this block again.")
+del _name
+
 def build_rag_prompt(query, retrieved_chunks):
     """Format retrieved chunks and query into a single prompt."""
     context = "\n\n---\n\n".join(
@@ -391,6 +398,11 @@ Now send that augmented prompt to a real LLM. It reads the context and answers g
 
 ```python editable
 # Generate answer using the LLM
+# Requires retrieve + build_rag_prompt + embeddings from the blocks above.
+for _name in ("retrieve", "build_rag_prompt", "chunk_embeddings", "all_chunks", "vocab", "idf"):
+    if _name not in dir():
+        raise RuntimeError(f"Missing '{_name}'. Run the blocks above in order first, then Run this block again.")
+del _name
 query = "What is the refund policy for enterprise customers?"
 retrieved = retrieve(query, chunk_embeddings, all_chunks, vocab, idf, top_k=3)
 retrieved_text = [chunk for chunk, _ in retrieved]
@@ -410,6 +422,12 @@ print(answer)
 Wrapping retrieve + augment + generate into a single function gives a reusable RAG pipeline:
 
 ```python editable
+# Requires retrieve + build_rag_prompt from the blocks above.
+for _name in ("retrieve", "build_rag_prompt"):
+    if _name not in dir():
+        raise RuntimeError(f"Missing '{_name}'. Run the blocks above in order first, then Run this block again.")
+del _name
+
 async def rag_query(question, chunk_embeddings, chunks, vocab, idf, top_k=3, max_tokens=200):
     """Complete RAG pipeline: retrieve → augment → generate."""
     # Retrieve
@@ -447,6 +465,11 @@ To see exactly what RAG buys you, compare the same question with and without ret
 
 ```python editable
 # Non-RAG: LLM answers from its training data alone
+# RAG comparison below requires retrieve + build_rag_prompt from above.
+for _name in ("retrieve", "build_rag_prompt", "chunk_embeddings", "all_chunks", "vocab", "idf"):
+    if _name not in dir():
+        raise RuntimeError(f"Missing '{_name}'. Run the blocks above in order first, then Run this block again.")
+del _name
 question = "What is the enterprise plan refund policy?"
 
 response_no_rag = await lrn_llm.call(
@@ -491,6 +514,11 @@ Most production RAG systems use these parameters:
 Edit the question below and run the cell to see RAG in action on your own queries. Try questions like "What happens if I don't pay on time?", "How long is the free trial?", or "What's the uptime guarantee?" — watch how retrieval pulls the relevant policy chunk and the LLM grounds its answer in that context.
 
 ```python editable
+# Requires rag_query + embeddings from the blocks above.
+for _name in ("rag_query", "chunk_embeddings", "all_chunks", "vocab", "idf"):
+    if _name not in dir():
+        raise RuntimeError(f"Missing '{_name}'. Run the blocks above in order first, then Run this block again.")
+del _name
 my_question = "What is the service level agreement uptime guarantee?"
 
 result = await rag_query(

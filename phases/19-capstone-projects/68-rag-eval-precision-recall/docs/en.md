@@ -115,16 +115,19 @@ def naive_found_any(ranked, gold):
 print("naive (rank-blind):", naive_found_any(ranked, gold_doc_ids))
 
 def precision_at_k(ranked, gold, k):
+    # Of the k docs you looked at, how many were hits?
     topk = ranked[:k]
     hits = sum(1 for d in topk if d in gold)
     return hits / {{blank:k}}
 
 def recall_at_k(ranked, gold, k):
+    # Of all gold docs that exist, how many did you recover?
     topk = ranked[:k]
     hits = sum(1 for d in topk if d in gold)
     return hits / {{blank:len(gold)}}
 
 def mrr(ranked, gold):
+    # Rank positions start at 1, enumerate() starts at 0.
     for i, d in enumerate(ranked):
         if d in gold:
             return 1.0 / {{blank:(i + 1)}}
@@ -134,6 +137,8 @@ def dcg_at_k(ranked, gold, k):
     total = 0.0
     for i, d in enumerate(ranked[:k]):
         if d in gold:
+            # i starts at 0, but log2(1) == 0 would divide by zero.
+            # i + 2 maps rank 1 -> log2(2) == 1.0.
             total += 1.0 / math.log2(i + {{blank:2}})
     return total
 
@@ -150,6 +155,9 @@ n3 = ndcg_at_k(ranked, gold_doc_ids, 3)
 
 expected = (1 / 3, 0.5, 0.5, 0.38685280723454163)
 got = (p3, r3, m, n3)
+names = ("precision@3", "recall@3", "mrr", "ndcg@3")
+for name, a, b in zip(names, got, expected):
+    print(f"{name}: {a:.4f} (expect {b:.4f})")
 if all(abs(a - b) < 1e-9 for a, b in zip(got, expected)):
     print("PASS")
 else:
