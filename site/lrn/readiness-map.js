@@ -5,7 +5,7 @@
   var copy = {
     en: {
       title: 'Your learning path', intro: 'Choose an area to see the courses and preparation that support your role target.',
-      current: 'Your level', unknown: 'Not assessed', target: 'Role target', noTarget: 'No target for this role',
+      current: 'Your level', unknown: 'Not assessed', target: 'Role target', noTarget: 'No target',
       pathDetails: 'About this learning path', selectArea: 'Choose a learning area', syllabus: 'Syllabus', beyond: 'Beyond role target', coverage: 'More course coverage is needed',
       learned: 'Courses completed; assessment still needed', blocked: 'Preparation open', evidenced: 'Evidenced', selfAssessed: 'Self-assessed',
       complete: 'Completed', progress: 'In progress', ready: 'Available now', unavailable: 'Not available yet', recommendedNext: 'Recommended next', focus: 'Focus',
@@ -15,7 +15,7 @@
     },
     de: {
       title: 'Dein Lernpfad', intro: 'Wähle einen Bereich, um passende Kurse und vorbereitende Schritte für dein Rollenziel zu sehen.',
-      current: 'Dein Stand', unknown: 'Noch nicht eingeschätzt', target: 'Empfohlenes Ziel', noTarget: 'Kein Ziel für diese Rolle',
+      current: 'Dein Stand', unknown: 'Noch nicht eingeschätzt', target: 'Empfohlenes Ziel', noTarget: 'Kein Ziel',
       pathDetails: 'Hinweise zu diesem Lernpfad', selectArea: 'Lernbereich wählen', syllabus: 'Kursübersicht', beyond: 'Über Rollenempfehlung', coverage: 'Hier fehlt noch ein passender Kurs',
       learned: 'Kurse geschafft; Assessment offen', blocked: 'Vorbereitung offen', evidenced: 'Nachgewiesen', selfAssessed: 'Selbsteingeschätzt',
       complete: 'Abgeschlossen', progress: 'Begonnen', ready: 'Jetzt verfügbar', unavailable: 'Noch nicht verfügbar', recommendedNext: 'Hier weiterlernen', focus: 'Schwerpunkt',

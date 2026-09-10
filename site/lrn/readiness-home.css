@@ -156,6 +156,11 @@ body:has(.page--home) { background: var(--color-surface); }
 .readiness-dashboard__actions { min-width: 0; max-width: 100%; }
 .readiness-path-context { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-5); margin-bottom: var(--space-4); }
 .readiness-path-context .readiness-profile-detail { margin: 0; }
+.readiness-path-context .readiness-profile-detail > summary { color: var(--text-link); text-decoration: underline; text-underline-offset: 3px; }
+.readiness-path-context .readiness-profile-detail[open] { flex-basis: 100%; margin-top: var(--space-2); padding: var(--space-4) var(--space-5); border: var(--border-hairline); border-radius: var(--radius-sm); background: var(--color-surface); }
+.readiness-path-context .readiness-profile-detail[open] > summary { margin-bottom: var(--space-2); }
+.readiness-path-context .readiness-profile-detail[open] .readiness-setup__note { max-width: 78ch; }
+.readiness-path-context .readiness-profile-detail[open] .readiness-link { min-height: 36px; }
 .page--home .readiness-map { margin-top: var(--space-4); }
 @media (max-width: 40rem) {
   .page--home[data-readiness-mode="dashboard"] .hero { padding-bottom: var(--space-4); }

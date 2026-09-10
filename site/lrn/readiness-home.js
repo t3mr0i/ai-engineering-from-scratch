@@ -161,10 +161,9 @@
     }
     function renderContext(model) {
       var host = doc.getElementById("readinessNext"); host.replaceChildren();
-      var context = el("p", "readiness-setup__note", t(model.assessmentAvailable ? "assessmentReady" : "roleBased"));
+      host.appendChild(el("p", "readiness-path-context__intro", t(model.assessmentAvailable ? "assessmentReady" : "roleBased")));
       var details = el("details", "readiness-profile-detail");
       details.appendChild(el("summary", "", t("profileDetails")));
-      details.appendChild(context);
       details.appendChild(el("p", "readiness-setup__note", t(model.assessmentAvailable ? "pathKnown" : "pathUnknown")));
       details.appendChild(el("p", "readiness-setup__note", t("targetProgressNote")));
       details.appendChild(el("p", "readiness-setup__note", t(model.targetSource === "assessment-import" ? "imported" : "reference")));
