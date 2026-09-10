@@ -4,6 +4,63 @@
 [hidden] { display: none !important; }
 
 html { color-scheme: light dark; }
+html[data-theme="light"] { color-scheme: light; }
+html[data-theme="dark"] { color-scheme: dark; }
+
+/* D1 fix (portiert aus lrn.css) — expliziter Light-Override für den
+   OS-Media-Query-Dark-Block in lrn/tokens.css. tokens.css kennt nur
+   Dark-Varianten (OS-Media-Query + [data-theme="dark"]), aber kein
+   [data-theme="light"]-Gegenstück. admin.html lädt weder lrn.css noch
+   style.css — also griff hier bisher nur der OS-Block: Bei dunklem
+   Betriebssystem blieb der Admin hartnäckig dunkel, egal was der
+   Theme-Toggle in localStorage schrieb. Dieser Block stellt die
+   Light-Werte aus dem :root-Block von tokens.css wieder her, sobald
+   data-theme="light" explizit gesetzt ist. Selektor-Spezifität ist
+   identisch zum OS-Block (:root dort vs. Attribut hier — beide
+   gleichrangig), daher gewinnt diese später im Source stehende,
+   weiter unten ladende Datei. */
+@media (prefers-color-scheme: dark) {
+  [data-theme="light"] {
+    --text-primary: var(--lhg-core-blue);
+    --text-secondary: var(--lhg-slate-700);
+    --text-muted: var(--lhg-slate-700);
+    --border-subtle: var(--lhg-grey-300);
+    --border-strong: var(--lhg-grey-400);
+    --color-bg: var(--lhg-grey-100);
+    --color-surface: var(--lhg-white);
+    --color-surface-sunken: var(--lhg-grey-200);
+    --text-link: var(--lhg-blue-500);
+    --border-focus: var(--lhg-blue-500);
+    --action-primary: var(--lhg-core-blue);
+    --action-primary-hover: var(--lhg-blue-600);
+    --action-primary-ink: var(--lhg-white);
+    --color-paper: var(--lhg-grey-100);
+    --color-paper-2: var(--lhg-grey-200);
+    --color-paper-3: #e2eaf5;
+    --color-card: var(--lhg-white);
+    --color-ink: var(--lhg-core-blue);
+    --color-ink-2: #14366b;
+    --color-muted: var(--lhg-warm-grey);
+    --color-rule: var(--lhg-grey-300);
+    --color-rule-2: #bfd0e5;
+    --color-track: #dce4f0;
+    --color-accent: var(--lhg-core-blue);
+    --color-accent-2: var(--lhg-blue-500);
+    --color-accent-soft: #dce7f6;
+    --color-accent-ink: #ffffff;
+    --color-sand: var(--lhg-sand);
+    --color-sand-soft: #f0e7d6;
+    --color-warn: #b08a4a;
+    --color-warn-soft: #f0e7d6;
+    --color-ok: var(--lhg-success);
+    --color-ok-soft: #dcefe6;
+    --color-error: var(--lhg-error);
+    --color-error-soft: #f5dede;
+    --color-focus: var(--lhg-blue-500);
+    --shadow-whisper: 0 1px 2px rgba(5, 22, 77, 0.07);
+    --header-bg: rgba(249, 248, 248, 0.9);
+  }
+}
 
 body {
   margin: 0;
@@ -375,7 +432,12 @@ button, select { touch-action: manipulation; }
 .lesson-rich-editor { min-width: 0; overflow: hidden; border: var(--border-hairline); border-radius: var(--radius-md); background: var(--color-surface); box-shadow: var(--shadow-sm); }
 .lesson-rich-editor.is-drop-target { outline: 3px solid color-mix(in srgb, var(--action-accent) 35%, transparent); outline-offset: 3px; }
 .lesson-rich-editor .toastui-editor-defaultUI { border: 0; border-radius: inherit; background: var(--color-surface); color: var(--text-primary); font-family: var(--font-text); }
-.lesson-rich-editor .toastui-editor-toolbar { border-bottom: var(--border-hairline); background: var(--color-surface-sunken); }
+/* Hinweis: Die Toolbar-Leiste heißt in Toast UI v3 .toastui-editor-defaultUI-toolbar
+   (Hintergrund #f7f9fc im Basis-Theme) — .toastui-editor-toolbar ist nur die
+   innere 46px-Box ohne Hintergrund. Der alte Selektor griff deshalb ins Leere
+   und die Leiste blieb im Dark Mode weiß auf Navy. Token-basiert, damit beide
+   Modi ohne weitere Verzweigung stimmen. */
+.lesson-rich-editor .toastui-editor-defaultUI-toolbar { border-bottom: var(--border-hairline); background: var(--color-surface-sunken); }
 .lesson-rich-editor .toastui-editor-toolbar-group { border-color: var(--border-subtle); }
 .lesson-rich-editor .toastui-editor-toolbar-icons { opacity: .82; }
 .lesson-rich-editor .toastui-editor-toolbar-icons:hover { opacity: 1; }

@@ -1917,8 +1917,8 @@
         h("div", { class: "lesson-file-toolbar" }, [
           field("Datei", selectFor(state.lessonFile, fileNames.map((file) => ({ value: file, label: file })), (value) => { state.lessonFile = value; renderLessons(); }, { disabled: !fileNames.length })),
           mediaControl,
-          button("DE-Dokument", "secondary", () => addLessonFile("docs/de.md", "# Deutsche Übersetzung\n\n[TODO]\n"), "translate", { disabled: !editable || fileNames.includes("docs/de.md") }),
-          button("Output", "secondary", () => addLessonFile("outputs/README.md", "# Reusable artifact\n\n[TODO]\n"), "package", { disabled: !editable || fileNames.includes("outputs/README.md") }),
+          button("DE-Dokument anlegen", "secondary", () => addLessonFile("docs/de.md", "# Deutsche Übersetzung\n\n[TODO]\n"), "translate", { disabled: !editable || fileNames.includes("docs/de.md") }),
+          button("Output anlegen", "secondary", () => addLessonFile("outputs/README.md", "# Reusable artifact\n\n[TODO]\n"), "package", { disabled: !editable || fileNames.includes("outputs/README.md") }),
           button("Datei entfernen", "quiet", removeLessonFile, "trash", { disabled: !editable || ["docs/en.md", "quiz.json"].includes(state.lessonFile) || /^code\/main\./.test(state.lessonFile) }),
         ]),
         sourceCanvas,
