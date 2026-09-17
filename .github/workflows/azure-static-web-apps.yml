@@ -9,6 +9,10 @@ name: Deploy to Azure Static Web Apps
 # content placed there would defeat the gate (this is exactly the bug this
 # workflow used to have: it staged phases/ straight into site/phases/,
 # which meant every lesson doc was a plain unauthenticated GET away).
+# This public host ships no AI surface: the api/llm gateway proxy was
+# removed from the repo, and scripts/strip-public-ai.mjs cuts the remaining
+# client hooks below. The internal OpenShift deployment builds from the same
+# site/ tree and keeps its AI features.
 # Requires the repo secret AZURE_STATIC_WEB_APPS_API_TOKEN (the deployment
 # token from the Azure Static Web App resource).
 
@@ -64,6 +68,13 @@ jobs:
             --include='assets/*' \
             --exclude='*' \
             phases/ api/content/_data/phases/
+
+      - name: Strip the AI surface from the public deploy
+        # Yellow mushroom stays online, but must not carry any LLM /
+        # chat-completion code: api/llm is gone from the repo, and this cuts
+        # the client hooks (lrn_llm bootstrap, pan.js) in the upload only.
+        # The OpenShift build never runs this step.
+        run: node scripts/strip-public-ai.mjs site
 
       - name: Deploy
         uses: Azure/static-web-apps-deploy@v1
