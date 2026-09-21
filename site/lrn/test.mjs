@@ -464,10 +464,9 @@ test("composite learning links use the shared interactive-surface contract", () 
     "Composite surfaces must suppress text decoration in every interactive state");
   assert.match(css, /:where\(a:not\(\[class\]\), \.text-link\):hover/,
     "Underline affordance must be opt-in for text links instead of applying to every anchor");
-  assert.match(css, /translateY\(var\(--card-hover-lift\)\)/,
-    "Shared cards must consume the central hover-lift token");
+  assert.doesNotMatch(css, /\.interactive-card:hover\s*\{[^}]*transform\s*:/s,
+    "Shared cards must not move their own pointer hit area on hover");
   for (const token of [
-    "--card-hover-lift",
     "--card-hover-border",
     "--card-hover-shadow",
     "--card-hover-wash-strong",
