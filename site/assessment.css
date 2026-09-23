@@ -1,0 +1,38 @@
+.native-assessment { scroll-margin-top: 88px; padding: 28px; border: 1px solid var(--rule); border-radius: 12px; background: var(--bg-surface); }
+.native-assessment h2 { margin: 0 0 8px; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 500; }
+.native-assessment .assessment-intro { margin: 0 0 24px; max-width: 65ch; color: var(--ink-soft); }
+.assessment-field { display: grid; gap: 8px; max-width: 440px; margin-bottom: 16px; font-weight: 500; }
+.assessment-field select { min-height: 48px; padding: 10px 14px; border: 1px solid var(--rule); border-radius: 8px; background: var(--bg-surface); color: var(--ink); font: inherit; }
+.assessment-progress { margin: 0 0 24px; font-variant-numeric: tabular-nums; color: var(--ink-soft); }
+.assessment-area { padding-block: 16px; border-top: 1px solid var(--rule); }
+.assessment-area h3 { margin: 0 0 16px; font-size: 1.25rem; font-weight: 500; }
+.assessment-question { min-width: 0; margin: 0 0 26px; padding: 0; border: 0; }
+.assessment-question legend { max-width: 72ch; margin-bottom: 12px; padding: 0; font-weight: 500; line-height: 1.5; }
+.assessment-choices { display: flex; flex-wrap: wrap; gap: 8px; }
+.assessment-choice { position: relative; display: inline-flex; cursor: pointer; }
+.assessment-choice input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.assessment-choice span { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 8px 14px; border: 1px solid var(--rule); border-radius: 999px; background: var(--bg-surface); color: var(--ink); }
+.assessment-choice input:checked + span { border-color: var(--blueprint); background: var(--blueprint); color: #fff; }
+.assessment-choice input:focus-visible + span, .assessment-field select:focus-visible, .assessment-action:focus-visible { outline: 3px solid var(--blueprint); outline-offset: 3px; }
+.assessment-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 24px; }
+.assessment-action { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 10px 20px; border: 1px solid var(--blueprint); border-radius: 999px; background: var(--blueprint); color: #fff; text-decoration: none; font: inherit; cursor: pointer; }
+.assessment-action:hover { background: var(--secondary); color: #fff; }
+.assessment-action--secondary { background: transparent; color: var(--blueprint); }
+.assessment-action--secondary:hover { background: var(--bg-surface-hover); color: var(--blueprint); }
+.assessment-error { color: var(--error, #bc0a1d); font-weight: 500; }
+.assessment-table-wrap { overflow-x: auto; }
+.assessment-table { width: 100%; border-collapse: collapse; }
+.assessment-table th, .assessment-table td { padding: 12px 16px 12px 0; border-bottom: 1px solid var(--rule); text-align: left; }
+.assessment-table thead th { color: var(--ink-soft); font-weight: 500; }
+.assessment-table tbody th { font-weight: 500; }
+.assessment-local { margin: 20px 0 0; color: var(--ink-soft); font-size: .9rem; }
+.assessment-meta { margin: 0 0 24px; color: var(--ink-soft); }
+@media (max-width: 640px) {
+  .native-assessment { padding: 20px 16px; }
+  .assessment-actions > .assessment-action { width: 100%; }
+  .assessment-table thead { display: none; }
+  .assessment-table tbody tr { display: block; padding: 12px 0; border-bottom: 1px solid var(--rule); }
+  .assessment-table tbody th { display: block; padding: 0 0 8px; border: 0; }
+  .assessment-table tbody td { display: flex; justify-content: space-between; gap: 16px; padding: 4px 0; border: 0; text-align: right; }
+  .assessment-table tbody td::before { content: attr(data-label); color: var(--ink-soft); text-align: left; }
+}

@@ -300,14 +300,9 @@ test("real catalog plans respect the imported matrix and keep assessment exclusi
   const box = { window: {} };
   vm.runInNewContext(readFileSync('site/lrn/data.js', 'utf8'), box);
   const data = JSON.parse(JSON.stringify(box.window.LrnData));
-  const importer = require('../assessment-import.js');
+  const importer = require('../assessment.js');
   const evidence = require('../skills-progress-evidence.js');
-  const assessment = importer.parseAssessmentText(`Results by Dimension
-Foundation 5.00 CREATE CREATE
-Engineering Literacy 4.00 DEEPEN CREATE
-Product and Process Literacy 2.00 ACQUIRE DEEPEN
-Advisory and Biz Literacy 2.00 ACQUIRE DEEPEN
-Leadership Strategy 2.50 ACQUIRE ACQUIRE`);
+  const assessment = importer.evaluate('tc', 'markets', { q1: 5, q2: 5, q3: 4, q4: 4, q5: 2, q6: 2, q7: 2, q8: 2, q9: 2, q10: 3 });
   const input = { catalog: data, capabilityEvidence: evidence,
     learner: { roleId: 'tc', currentLevel: 'Acquire', assessmentImport: assessment },
     durationWeeks: 8, sessionsPerWeek: 2 };

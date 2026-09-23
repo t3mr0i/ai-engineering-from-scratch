@@ -64,34 +64,25 @@ function boot({ model, storage = {}, search = "" } = {}) {
   return { host, setupSkip, localStorage };
 }
 
-test("missing assessment shows a prompt with an explicit skip action", () => {
+test("missing assessment shows a prominent route to the native flow", () => {
   const state = boot({ model: { roleSelected: true, roleId: "tc", assessmentAvailable: false } });
   assert.equal(state.host.hidden, false);
-  assert.match(state.host.textContent, /Find your starting point with the AI assessment/);
-  const skip = descendants(state.host).find((node) => node.tagName === "BUTTON" || node.textContent === "Skip for now");
-  assert.ok(skip);
+  assert.match(state.host.textContent, /Find your starting point with the AI self-assessment/);
+  assert.equal(descendants(state.host).find((node) => node.textContent === "Start assessment" && node.href).href, "assessment.html");
 });
 
-test("skipping persists per role and hides the prompt", () => {
-  const state = boot({ model: { roleSelected: true, roleId: "tc", assessmentAvailable: false } });
-  const skip = descendants(state.host).find((node) => node.textContent === "Skip for now");
-  skip.click();
-  assert.equal(state.host.hidden, true);
-  assert.deepEqual(JSON.parse(state.localStorage.getItem("aifs:assessment-prompt-skipped:v1")), { tc: true });
-
-  const restored = boot({ model: { roleSelected: true, roleId: "tc", assessmentAvailable: false }, storage: state.localStorage.values });
-  assert.equal(restored.host.hidden, true);
+test("a previous dismissal does not hide the entry", () => {
+  const state = boot({ model: { roleSelected: true, roleId: "tc", assessmentAvailable: false }, storage: { "aifs:assessment-prompt-skipped:v1": '{"tc":true}' } });
+  assert.equal(state.host.hidden, false);
 });
 
-test("a completed assessment suppresses the prompt without a skip record", () => {
+test("a completed assessment keeps a retake route visible", () => {
   const state = boot({ model: { roleSelected: true, roleId: "tc", assessmentAvailable: true } });
-  assert.equal(state.host.hidden, true);
-  assert.equal(state.localStorage.getItem("aifs:assessment-prompt-skipped:v1"), null);
+  assert.equal(state.host.hidden, false);
+  assert.equal(descendants(state.host).find((node) => node.textContent === "Retake assessment" && node.href).href, "assessment.html");
 });
 
-test("before role selection, skipping stores an explicit wildcard dismissal", () => {
-  const state = boot({ model: { roleSelected: false, roleId: null, assessmentAvailable: false } });
-  state.setupSkip.click();
-  assert.deepEqual(JSON.parse(state.localStorage.getItem("aifs:assessment-prompt-skipped:v1")), { "*": true });
+test("profile editing hides the separate assessment banner", () => {
+  const state = boot({ model: { roleSelected: true, roleId: "tc", assessmentAvailable: true }, search: "?view=profile" });
   assert.equal(state.host.hidden, true);
 });

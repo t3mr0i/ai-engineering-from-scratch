@@ -183,20 +183,8 @@ test("allowlists and canonicalizes the learner snapshot", () => {
   assert.doesNotMatch(serialized, /private notes|private answer|private-id|privateNote|forged/);
 });
 
-test("accepts only a validated, role-matched imported assessment baseline", () => {
-  const baseline = {
-    schemaVersion: 1,
-    source: "external-pdf",
-    importedAt: "2026-09-08T12:00:00.000Z",
-    profileId: "tc",
-    dimensions: {
-      Foundation: { score: 5, currentLevel: "Create", targetLevel: "Create" },
-      "Engineering Literacy": { score: 4, currentLevel: "Deepen", targetLevel: "Create" },
-      "Product and Process Literacy": { score: 2, currentLevel: "Acquire", targetLevel: "Deepen" },
-      "Advisory and Biz Literacy": { score: 2, currentLevel: "Acquire", targetLevel: "Deepen" },
-      "Leadership Strategy": { score: 2.5, currentLevel: "Acquire", targetLevel: "Acquire" },
-    },
-  };
+test("accepts only a validated, role-matched native assessment baseline", () => {
+  const baseline = require('../../site/assessment.js').evaluate('tc', 'markets', { q1: 5, q2: 5, q3: 4, q4: 4, q5: 2, q6: 2, q7: 2, q8: 2, q9: 2, q10: 3 }, '2026-09-08T12:00:00.000Z');
   const input = normalizeInput(validPayload({ learner: { ...validPayload().learner, assessmentBaseline: baseline } }), fixture.inventory);
   assert.equal(input.learner.assessmentBaseline.profileId, "tc");
   assert.equal(normalizeInput(validPayload({ learner: { ...validPayload().learner, profileId: "bsc", assessmentBaseline: baseline } }), fixture.inventory).learner.assessmentBaseline, null);
@@ -376,13 +364,8 @@ test("maps upstream failures and invalid envelopes to stable learner AI errors",
 
 test("Navigator ranks actual remaining depths above attained courses and preserves continuation", () => {
   const inventory = loadCurriculum(path.join(__dirname, '..', '..', 'site'));
-  const importer = require('../../site/assessment-import.js');
-  const baseline = importer.parseAssessmentText(`Results by Dimension
-Foundation 5.00 CREATE CREATE
-Engineering Literacy 4.00 DEEPEN CREATE
-Product and Process Literacy 2.00 ACQUIRE DEEPEN
-Advisory and Biz Literacy 2.00 ACQUIRE DEEPEN
-Leadership Strategy 2.50 ACQUIRE ACQUIRE`);
+  const importer = require('../../site/assessment.js');
+  const baseline = importer.evaluate('tc', 'markets', { q1: 5, q2: 5, q3: 4, q4: 4, q5: 2, q6: 2, q7: 2, q8: 2, q9: 2, q10: 3 });
   const payload = { message: 'What should I learn next?', locale: 'en', history: [],
     learner: { profileId: 'tc', currentLevel: 'Acquire', assessmentBaseline: baseline,
       assessmentGaps: [{ capabilityId: 1, currentLevel: 'None', targetLevel: 'Create' }] } };

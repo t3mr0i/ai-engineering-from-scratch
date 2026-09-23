@@ -23,9 +23,9 @@
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title data-i18n="title_assessment">LHIND · AI Self-Assessment – Ergebnis übernehmen</title>
+  <title data-i18n="title_assessment">LHIND · AI Self-Assessment</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='sans-serif' fill='%2305164d'>AI</text></svg>">
-  <meta name="description" content="Complete the official AI Self-Assessment in SharePoint, upload your result PDF, and get course recommendations based on your levels.">
+  <meta name="description" content="Complete the bilingual AI self-assessment and see learning paths for your role and starting level.">
   <meta name="robots" content="noindex">
   <link rel="stylesheet" href="style.css?v=20260909reader">
   <style>
@@ -34,40 +34,15 @@
     .assess-header h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 8px; }
     .assess-header p { color: var(--text-muted); font-size: 1.05rem; max-width: 60ch; }
 
-    .assess-source {
-      padding: 24px; margin-bottom: 8px; border-radius: 12px;
-      background: var(--bg-surface); box-shadow: var(--shadow-sm);
-      border: 1px solid var(--border);
-    }
-    .assess-source h2 { font-size: 1.25rem; margin-bottom: 12px; }
-    .assess-steps { margin: 0 0 4px 1.25rem; padding: 0; display: grid; gap: 10px; }
-    .assess-steps li { line-height: 1.5; }
-    .assess-steps strong { display: block; }
-    .assess-steps span { color: var(--text-muted); }
-    .assess-note { color: var(--text-muted); font-size: 0.9rem; margin-top: 12px; max-width: 72ch; }
-
     .assess-result { margin-top: 8px; }
     .assess-result h2 { margin-bottom: 6px; }
     .assess-result > p { color: var(--text-muted); margin-bottom: 20px; max-width: 72ch; }
-
-    .btn-row { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
-    .btn {
-      min-height: 48px; padding: 13px 22px; border: 1px solid var(--blueprint);
-      border-radius: 999px; background: var(--blueprint); color: #fff;
-      font-family: var(--font-body); font-size: var(--fs-body-sm); cursor: pointer;
-      transition: background-color var(--dur-base), transform var(--dur-fast), box-shadow var(--dur-base);
-    }
-    .btn:hover { background: var(--secondary); box-shadow: var(--shadow-sm); }
-    .btn:active { transform: translateY(1px); }
-    .btn.secondary { background: var(--bg-surface); color: var(--blueprint); }
-    .btn:disabled { opacity: .4; cursor: not-allowed; box-shadow: none; transform: none; }
-    a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 
     @media (max-width: 640px) {
       .assess-page { padding-inline: 16px; }
     }
   </style>
-  <link rel="stylesheet" href="assessment-import.css?v=20260908a">
+  <link rel="stylesheet" href="assessment.css?v=20260923c">
   <link rel="stylesheet" href="lrn/journey.css?v=20260909a">
 </head>
 <body>
@@ -86,7 +61,7 @@
       <span id="langIcon" class="theme-icon">EN</span>
     </a>
   </header>
-  <script src="i18n.js?v=20260909a"></script>
+  <script src="i18n.js?v=20260923c"></script>
   <script src="lang.js"></script>
   <script>
     /* D1 — dark-mode toggle button. Wires the button in the header above
@@ -126,47 +101,20 @@
 
   <main id="main" class="container assess-page">
     <div class="assess-header">
-      <h1 data-i18n="assess_title">AI Self-Assessment – Ergebnis übernehmen</h1>
-      <p data-i18n="assess_intro">Das offizielle Self-Assessment findet in SharePoint statt – nicht hier. Führe es dort durch, lade deine Ergebnis-PDF unten hoch und erhalte Kursempfehlungen auf Basis deiner Level.</p>
+      <h1 data-i18n="assess_title">AI Self-Assessment</h1>
+      <p data-i18n="assess_intro">Wähle deine Rolle und Division, beantworte zehn Fragen und entdecke deinen Ausgangspunkt und passende Lernpfade.</p>
     </div>
-
-    <!-- Step 1: official assessment in SharePoint (external source of truth) -->
-    <section class="assess-source" aria-labelledby="assessSourceTitle">
-      <h2 id="assessSourceTitle" data-i18n="assess_source_title">Offizielles Assessment in SharePoint</h2>
-      <ol class="assess-steps">
-        <li>
-          <strong data-i18n="assess_step1_title">1. Self-Assessment in SharePoint durchführen</strong>
-          <span data-i18n="assess_step1_text">Beantworte dort die 10 Fragen in den 5 Bereichen (Skala 1–5, anonym).</span>
-        </li>
-        <li>
-          <strong data-i18n="assess_step2_title">2. Ergebnis als PDF exportieren</strong>
-          <span data-i18n="assess_step2_text">Lade den originalen Self-Assessment-Export mit allen fünf Ergebniszeilen herunter.</span>
-        </li>
-        <li>
-          <strong data-i18n="assess_step3_title">3. PDF hier hochladen</strong>
-          <span data-i18n="assess_step3_text">Deine PDF wird nur auf diesem Gerät gelesen. Nur die ausgelesene Einstufung wird in diesem Browser gespeichert.</span>
-        </li>
-      </ol>
-      <div class="btn-row">
-        <a class="btn" href="https://lufthansagroup.sharepoint.com/sites/LHIND_APP_AISelfAssessment/SitePages/de/TopicHome.aspx" target="_blank" rel="noopener" data-i18n="assess_source_cta">Offizielles AI Self-Assessment öffnen →</a>
-      </div>
-      <p class="assess-note" data-i18n="assess_source_note">Diese Seite enthält keine eigene Selbsteinschätzung und keine Fähigkeitsdefinitionen – verbindlich ist das SharePoint-Assessment.</p>
-    </section>
-
-    <!-- Step 2: upload the official result PDF -->
-    <section id="assessmentImport" data-assessment-import></section>
-
-    <!-- Step 3: recommendations based on the imported result -->
-    <section class="assess-result" aria-labelledby="assessResultTitle">
+    <section id="nativeAssessment" aria-label="AI Self-Assessment"></section>
+    <section id="assessRecommendations" class="assess-result" aria-labelledby="assessResultTitle" hidden>
       <h2 id="assessResultTitle" data-i18n="assess_result_title">Deine Empfehlungen</h2>
-      <p data-i18n="assess_result_hint">Sobald deine PDF oben übernommen ist, erscheint hier dein nächster Schritt.</p>
+      <p data-i18n="assess_result_hint">Nach dem Assessment findest du hier deinen nächsten Lernschritt.</p>
       <div id="assessmentJourney" class="journey-slot" aria-live="polite"></div>
     </section>
   </main>
 
-  <script src="assessment-import.js?v=20260908a"></script>
-  <script src="assessment-import-ui.js?v=20260908a"></script>
-  <script src="lrn/data.js?v=20260908c"></script>
+  <script src="lrn/data.js?v=20260923a"></script>
+  <script src="assessment.js?v=20260923c"></script>
+  <script src="assessment-ui.js?v=20260923c"></script>
   <script src="lrn/curriculum-map.js?v=20260908a"></script>
   <script src="progress.js?v=20260908a"></script>
   <script src="skills-progress-evidence.js?v=20260908a"></script>
@@ -177,10 +125,7 @@
   <script src="lrn/journey-ui.js?v=20260909a"></script>
 
   <script>
-    // Import-only page: the official AI Self-Assessment lives in SharePoint
-    // (linked above). This page only takes the exported result PDF
-    // (via [data-assessment-import]) and shows the shared journey
-    // recommendations for the imported levels. No manual rating happens here.
+    // The native result feeds the shared learning journey.
     (function () {
       function mountJourney() {
         var host = document.getElementById('assessmentJourney');

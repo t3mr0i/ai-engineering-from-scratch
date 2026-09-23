@@ -38,7 +38,7 @@
   function importedAssessment() {
     var importer = root.AIFSAssessmentImport || root.AssessmentImport;
     if (!importer && typeof require === "function") {
-      try { importer = require("./assessment-import.js"); } catch (_) {}
+      try { importer = require("./assessment.js"); } catch (_) {}
     }
     if (!importer || typeof importer.load !== "function") return null;
     try { return importer.load() || null; } catch (_) { return null; }
