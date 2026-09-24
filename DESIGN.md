@@ -260,6 +260,20 @@ Basic / Advanced / Expert levels as if their intervals were numeric.
 
 ### Learning-home course path
 
+The employee-facing entry presents one assessment action and a clear path to
+choose a role without it. An alternative assessment stays available in a
+disclosure. The level guide uses short text rows, without decorative progress
+rails. The course catalog uses one scannable list: title, format, lesson count,
+and one concrete outcome. Technical course IDs and zero-progress bars do not
+compete with the course choice.
+
+On a course page, the title, short purpose, one start action, and ordered
+lessons come first. A collapsed "More about this course" section holds
+supplementary facts and outcomes; optional practice opens separately within
+it. Unit headers report completion in text, so repeated progress bars and
+technical path tooltips are unnecessary. Keep these simplifications in both
+English and German UI copy.
+
 The returning learning home uses one aligned white syllabus surface rather
 than a recommendation card beside a separate map. Its compact header names
 the selected role and keeps the path-edit action within reach. A five-area

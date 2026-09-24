@@ -1124,18 +1124,14 @@
     formatLabel.textContent = i18n(format.labelKey, format.label);
     formatLabel.title = course.format || formatLabel.textContent;
 
-    head.append(tile, formatLabel);
-
-    var code = document.createElement("span");
-    code.className = "course-card__code";
-    code.textContent = course.id;
+    head.appendChild(tile);
 
     var h = document.createElement("h3");
     h.textContent = course.title;
-    h.title = course.id + " · " + course.title;
 
     var meta = document.createElement("p");
     meta.className = "course-card__meta";
+    meta.appendChild(formatLabel);
     var metaText = document.createElement("span");
     // Course-Card-Meta counts the *lessons* inside the course (per
     // LHIND LRN taxonomy: Role → Key Area → Ausprägung → Level → Course → Unit → Activity).
@@ -1143,8 +1139,8 @@
     // (course.js: activityType → "Lesson"/"Guided Lesson"/"Knowledge Check"),
     // so the catalog-side label should match.
     metaText.textContent = entry.progress.lessonCount === 1
-      ? "1 lesson"
-      : entry.progress.lessonCount + " lessons";
+      ? i18n("course_card_lesson_one", "1 lesson")
+      : i18n("course_card_lessons_many", "{count} lessons").replace("{count}", entry.progress.lessonCount);
     meta.appendChild(metaText);
 
     // Nächster Termin aus catalog.json — nur, wenn einer gepflegt ist.
@@ -1164,17 +1160,8 @@
     if (Array.isArray(course.outcomes) && course.outcomes.length) {
       outcome = document.createElement("p");
       outcome.className = "course-card__outcome";
-      var outcomeLabel = document.createElement("span");
-      outcomeLabel.textContent = i18n("course_card_outcome_label", "You will be able to");
-      outcome.append(outcomeLabel, document.createTextNode(course.outcomes[0]));
+      outcome.textContent = course.outcomes[0];
     }
-
-    var learningMix = document.createElement("p");
-    learningMix.className = "course-card__learning-mix";
-    learningMix.textContent = i18n(
-      "course_card_learning_mix",
-      "Theory · worked examples · hands-on"
-    );
 
     var summary = null;
     if (!outcome && entry.searchMatch && course.summary) {
@@ -1185,16 +1172,16 @@
 
     var foot = document.createElement("div");
     foot.className = "course-card__foot";
-    foot.append(
-      progressMeter(entry.progress.percent, "Progress " + course.title)
-    );
+    if (entry.progress.percent > 0) {
+      foot.append(progressMeter(entry.progress.percent, "Progress " + course.title));
+    }
     var open = document.createElement("span");
     open.className = "interactive-card__action course-card__open";
     open.setAttribute("aria-hidden", "true");
     open.appendChild(lucideIcon("arrow-right"));
     foot.appendChild(open);
 
-    card.append(head, code, h, meta, learningMix);
+    card.append(head, h, meta);
     if (outcome) card.appendChild(outcome);
     if (summary) card.appendChild(summary);
     card.appendChild(foot);

@@ -12,6 +12,9 @@ paths `LP01`–`LP05` (see `CLAUDE.md` §3 for the full taxonomy). Their context
 is a workday tool: they arrive to pick a learning path or course, work
 through lesson content and runnable notebooks, and check progress/badges —
 not a leisure browse.
+Some learners have little experience with digital learning tools. Entry,
+course choice, and the next lesson must be understandable without knowing
+curriculum terms or exploring secondary controls.
 
 ## Product Purpose
 
