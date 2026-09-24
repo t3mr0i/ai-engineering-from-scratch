@@ -1107,7 +1107,7 @@
 
     var title = document.createElement("h2");
     title.id = "learningContractTitle";
-    title.textContent = i18n("course_learning_contract_title", "Apply the course content");
+    title.textContent = contract.headline || i18n("course_learning_contract_title", "Apply the course content");
 
     var note = document.createElement("p");
     note.className = "learning-contract__note";

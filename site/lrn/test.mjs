@@ -191,25 +191,50 @@ test("learning contracts carry a project case, learning sequence, and completion
 test("every course has distinct English and German descriptions of its work", () => {
   assert.deepEqual(Object.keys(courseContracts).sort(), Array.from(data.courses, (course) => course.id).sort());
   for (const lang of ["en", "de"]) {
+    const headlines = new Set();
     const promises = new Set();
     const scenarios = new Set();
+    const stageDescriptions = new Set();
+    const evidenceItems = new Set();
     for (const course of data.courses) {
       const contract = courseContracts[course.id][lang];
+      assert.ok(contract?.headline?.trim(), `${course.id} needs a ${lang} headline`);
       assert.ok(contract?.promise?.trim(), `${course.id} needs a ${lang} promise`);
       assert.ok(contract?.projectScenario?.title?.trim(), `${course.id} needs a ${lang} scenario`);
+      assert.notEqual(contract.headline, contract.projectScenario.title,
+        `${course.id} ${lang} headline must add context beyond the scenario title`);
       assert.ok(contract.projectScenario.description?.trim(), `${course.id} needs a ${lang} scenario description`);
       assert.deepEqual(Array.from(contract.stages || [], (stage) => stage.kind), ["theory", "guided", "hands-on"],
         `${course.id} needs three ${lang} learning stages`);
       assert.ok(contract.stages.every((stage) => stage.title?.trim() && stage.description?.trim()),
         `${course.id} needs named ${lang} learning stages`);
+      for (const stage of contract.stages) {
+        assert.ok(!stageDescriptions.has(stage.description),
+          `${course.id} repeats a ${lang} learning step`);
+        stageDescriptions.add(stage.description);
+      }
       assert.ok(Array.isArray(contract.evidence) && contract.evidence.length >= 3 && contract.evidence.every((item) => item.trim()),
         `${course.id} needs concrete ${lang} completion evidence`);
+      for (const item of contract.evidence) {
+        assert.ok(!evidenceItems.has(item), `${course.id} repeats a ${lang} evidence item`);
+        evidenceItems.add(item);
+      }
       assert.ok(!promises.has(contract.promise), `${course.id} repeats a ${lang} promise`);
+      assert.ok(!headlines.has(contract.headline), `${course.id} repeats a ${lang} headline`);
       assert.ok(!scenarios.has(contract.projectScenario.description), `${course.id} repeats a ${lang} scenario`);
+      headlines.add(contract.headline);
       promises.add(contract.promise);
       scenarios.add(contract.projectScenario.description);
     }
   }
+});
+
+test("course detail loads course-specific contracts before rendering", () => {
+  const html = readFileSync("site/lrn/course.html", "utf8");
+  const contractsAt = html.indexOf('src="course-contracts.js?');
+  const rendererAt = html.indexOf('src="course.js?');
+  assert.ok(contractsAt !== -1 && rendererAt > contractsAt,
+    "course detail must load authored contracts before course.js renders them");
 });
 
 test("Academy source excerpts cover paths without promoting removed or uncertain modules", () => {
