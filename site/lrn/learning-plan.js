@@ -8,7 +8,7 @@
 (function (root, factory) {
   var placementApi = root && root.AIFSAssessmentImport;
   if (!placementApi && typeof require === "function") {
-    try { placementApi = require("../assessment-import.js"); } catch (error) {}
+    try { placementApi = require("../assessment.js"); } catch (error) {}
   }
   var api = factory(placementApi);
   if (typeof module === "object" && module.exports) module.exports = api;

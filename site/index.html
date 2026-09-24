@@ -38,9 +38,8 @@
   <link rel="stylesheet" href="badges.css?v=20260713a">
   <link rel="stylesheet" href="pan.css?v=20260831c">
   <link rel="stylesheet" href="home.css?v=20260831b">
-  <link rel="stylesheet" href="assessment-import.css?v=20260909b">
   <link rel="stylesheet" href="lrn/readiness-map.css?v=20260909clean">
-  <link rel="stylesheet" href="lrn/readiness-home.css?v=20260909history">
+  <link rel="stylesheet" href="lrn/readiness-home.css?v=20260923v2b">
 </head>
 <body>
   <a class="skip-link" href="#readinessSetup" data-i18n="skip_learning_home">Skip to your learning</a>
@@ -64,7 +63,7 @@
       <span id="langIcon" class="theme-icon">EN</span>
     </a>
   </header>
-  <script src="i18n.js?v=20260909a"></script>
+  <script src="i18n.js?v=20260923source"></script>
   <script src="lang.js"></script>
   <script>
     /* D1 — dark-mode toggle button. Wires the button in the header above
@@ -118,8 +117,8 @@
     <section class="hero" aria-labelledby="heroTitle">
       <div class="hero__inner">
         <div class="hero__copy">
-          <h1 id="heroTitle">Your next step with AI</h1>
-          <p id="homeHeroIntro">Choose your role, start a matching course and put your knowledge into practice. We guide you along the way.</p>
+          <h1 id="heroTitle">Welcome.</h1>
+          <p id="homeHeroIntro">Find online courses and sessions to build your AI skills.</p>
         </div>
         <a id="resumeButton" href="#readinessSetup" class="resume-button">
           <span class="button-text" id="resumeButtonText" data-i18n="home_explore_recommendations">Explore recommendations</span>
@@ -128,37 +127,38 @@
       </div>
     </section>
 
-    <section data-assessment-prompt></section>
     <section class="cockpit" id="cockpit" aria-label="Learning dashboard" data-i18n-aria-label="home_dashboard_label">
       <section class="readiness-setup" id="readinessSetup" aria-labelledby="setupTitle">
         <header class="readiness-setup__header">
-          <h2 class="learning-sr-only" id="setupTitle" data-ready-copy="setupTitle">Your personal starting point</h2>
+          <h2 class="learning-sr-only" id="setupTitle" data-ready-copy="setupTitle">Get started</h2>
           <button type="button" class="readiness-link readiness-setup__return" id="setupReturn" data-ready-action="finish" data-ready-copy="returnPath" hidden>Back to my learning path</button>
           <ol class="readiness-setup__steps" id="setupSteps"></ol>
         </header>
         <section class="readiness-setup__step" id="readinessImportStep">
           <div class="readiness-setup__main">
             <div class="readiness-setup__context">
-              <h3 data-ready-copy="importWhy">Let’s build on what you know</h3>
-              <p data-ready-copy="importWhyIntro">Your assessment helps us find courses that build on your experience. You can add it now or start exploring first.</p>
+              <h3 data-ready-copy="importWhy">Where are you starting from?</h3>
+              <p data-ready-copy="importWhyIntro">Answer ten questions to assess where you stand in AI Literacy. Then find training that fits your role.</p>
             </div>
-            <div class="readiness-setup__import"><section id="assessmentImport" data-assessment-import></section></div>
+            <div class="readiness-setup__import">
+              <a class="readiness-button" id="setupAssessmentLink" href="assessment.html">Start the AI Self Assessment</a>
+              <a class="readiness-setup__v2-link" href="assessment-v2.html" data-ready-copy="startAssessmentV2">Start the AI Self Assessment V2</a>
+            </div>
             <div class="readiness-setup__actions readiness-setup__actions--import">
               <button type="button" class="readiness-button" data-ready-action="role" id="setupImportContinue" hidden data-ready-copy="confirmRole">Continue to your role</button>
-              <button type="button" class="readiness-button readiness-button--secondary" data-ready-action="role" id="setupSkip" data-ready-copy="skipAssessment">Explore without an assessment</button>
+              <button type="button" class="readiness-button readiness-button--secondary" data-ready-action="role" id="setupSkip" data-ready-copy="skipAssessment">Continue without an assessment</button>
 
             </div>
           </div>
           <aside class="readiness-setup__guide">
             <span class="readiness-guide-icon" data-learning-icon="book"></span>
-            <h3 data-ready-copy="levelsTitle">Room to grow, step by step</h3>
-            <p data-ready-copy="levelsIntro">Your learning paths bring together three levels:</p>
+            <h3 data-ready-copy="levelsTitle">The three learning levels</h3>
             <dl class="readiness-levels">
-              <div><dt>Acquire</dt><dd><span data-ready-copy="acquireMeaning">Discover the fundamentals.</span><span class="readiness-map__area-rail" aria-hidden="true"><span data-reached="true"></span><span></span><span></span></span></dd></div>
-              <div><dt>Deepen</dt><dd><span data-ready-copy="deepenMeaning">Build on your experience.</span><span class="readiness-map__area-rail" aria-hidden="true"><span data-reached="true"></span><span data-reached="true"></span><span></span></span></dd></div>
-              <div><dt>Create</dt><dd><span data-ready-copy="createMeaning">Shape solutions and share what you know.</span><span class="readiness-map__area-rail" aria-hidden="true"><span data-reached="true"></span><span data-reached="true"></span><span data-reached="true"></span></span></dd></div>
+              <div><dt>Acquire</dt><dd><span data-ready-copy="acquireMeaning">Learn the basics.</span><span class="readiness-map__area-rail" aria-hidden="true"><span data-reached="true"></span><span></span><span></span></span></dd></div>
+              <div><dt>Deepen</dt><dd><span data-ready-copy="deepenMeaning">Use AI in your work.</span><span class="readiness-map__area-rail" aria-hidden="true"><span data-reached="true"></span><span data-reached="true"></span><span></span></span></dd></div>
+              <div><dt>Create</dt><dd><span data-ready-copy="createMeaning">Build your own solutions.</span><span class="readiness-map__area-rail" aria-hidden="true"><span data-reached="true"></span><span data-reached="true"></span><span data-reached="true"></span></span></dd></div>
             </dl>
-            <p class="readiness-setup__note" data-ready-copy="levelsNote">The recommended level depends on your role and the area you’re exploring.</p>
+            <p class="readiness-setup__note" data-ready-copy="levelsNote">Your role sets the recommended level in each area.</p>
           </aside>
         </section>
         <section class="readiness-setup__step readiness-setup__step--role" id="readinessRoleStep" hidden>
@@ -264,11 +264,10 @@
 
   <div class="sr-status" id="srStatus" aria-live="polite"></div>
 
-  <script src="assessment-import.js?v=20260908a" defer></script>
-  <script src="assessment-import-ui.js?v=20260909b" defer></script>
+  <script src="assessment.js?v=20260923c" defer></script>
   <script src="progress.js?v=20260830a" defer></script>
   <script src="badges.js?v=20260713a" defer></script>
-  <script src="lrn/data.js?v=20260908c" defer></script>
+  <script src="lrn/data.js?v=20260923a" defer></script>
   <script src="lrn/course-formats.js?v=20260824a" defer></script>
   <script src="lrn/curriculum-map.js?v=20260831c" defer></script>
   <script src="skills-progress-evidence.js?v=20260825a" defer></script>
@@ -284,7 +283,6 @@
   <script src="lrn/readiness-setup-state.js?v=20260909a" defer></script>
   <script src="lrn/learning-icons.js?v=20260909topics" defer></script>
   <script src="lrn/readiness-map.js?v=20260909direction" defer></script>
-  <script src="lrn/assessment-prompt.js?v=20260909a" defer></script>
-  <script src="lrn/readiness-home.js?v=20260909history" defer></script>
+  <script src="lrn/readiness-home.js?v=20260923source" defer></script>
 </body>
 </html>

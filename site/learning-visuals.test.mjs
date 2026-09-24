@@ -67,11 +67,12 @@ test("all learning surfaces with visualizations load the shared visualization la
   }
 });
 
-test("assessment page stays import-only and links the official SharePoint assessment", async () => {
+test("assessment page hosts native questions and the shared learning journey", async () => {
   const html = await readFile(new URL("assessment.html", import.meta.url), "utf8");
-  assert.match(html, /lufthansagroup\.sharepoint\.com\/sites\/LHIND_APP_AISelfAssessment/);
-  assert.match(html, /data-assessment-import/);
+  assert.match(html, /id="nativeAssessment"/);
+  assert.match(html, /assessment-ui\.js/);
   assert.match(html, /assessmentJourney/);
+  assert.doesNotMatch(html, /assessment-import-ui\.js|type="file"/);
   assert.doesNotMatch(html, /capForm/);
   assert.doesNotMatch(html, /step-rate/);
   assert.doesNotMatch(html, /learning-visuals\.js/);

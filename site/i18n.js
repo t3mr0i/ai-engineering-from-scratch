@@ -92,6 +92,9 @@ window.SITE_I18N = {
   // catalog.html
   catalog_title: { en: "Lesson Catalog", de: "Lektionskatalog" },
   catalog_sub: { en: "Every lesson backing a Technology Consulting course. Search, filter, sort.", de: "Jede Lektion hinter einem Technology-Consulting-Kurs. Suchen, filtern, sortieren." },
+  catalog_assessment_title: { en: "Find your starting point", de: "Finde deinen Einstieg" },
+  catalog_assessment_intro: { en: "Answer ten questions here in the learning catalog and use your result to find a learning path for your role. You can repeat it anytime.", de: "Beantworte zehn Fragen direkt im Lernkatalog und nutze dein Ergebnis für einen Lernpfad passend zu deiner Rolle. Du kannst das Assessment jederzeit wiederholen." },
+  catalog_assessment_action: { en: "Open AI Self Assessment →", de: "AI Self Assessment öffnen →" },
   catalog_primer_link: { en: "Interactive LLM Primer — ~75 min, 20 mini-games →", de: "Interaktiver LLM-Primer — ~75 Min, 20 Minispiele →" },
   catalog_search_ph: { en: "Search lessons...", de: "Lektionen suchen..." },
   catalog_search_label: { en: "Search the curriculum", de: "Lehrplan durchsuchen" },
@@ -123,22 +126,12 @@ window.SITE_I18N = {
   about_h2_who: { en: "Who builds it", de: "Wer es baut" },
   about_h2_involved: { en: "Get involved", de: "Mitmachen" },
 
-  // assessment.html — import-only: the official AI Self-Assessment lives in
-  // SharePoint. This page links there, takes the exported result PDF, and
-  // shows journey recommendations. No manual rating happens here.
-  assess_title: { en: "AI Self-Assessment – Import your result", de: "AI Self-Assessment – Ergebnis übernehmen" },
-  assess_intro: { en: "The official self-assessment runs in SharePoint – not here. Complete it there, upload your result PDF below, and get course recommendations based on your levels.", de: "Das offizielle Self-Assessment findet in SharePoint statt – nicht hier. Führe es dort durch, lade deine Ergebnis-PDF unten hoch und erhalte Kursempfehlungen auf Basis deiner Level." },
-  assess_source_title: { en: "Official assessment in SharePoint", de: "Offizielles Assessment in SharePoint" },
-  assess_step1_title: { en: "1. Complete the self-assessment in SharePoint", de: "1. Self-Assessment in SharePoint durchführen" },
-  assess_step1_text: { en: "Answer the 10 questions across the 5 areas there (scale 1–5, anonymous).", de: "Beantworte dort die 10 Fragen in den 5 Bereichen (Skala 1–5, anonym)." },
-  assess_step2_title: { en: "2. Export your result as PDF", de: "2. Ergebnis als PDF exportieren" },
-  assess_step2_text: { en: "Download the original self-assessment export with all five result rows.", de: "Lade den originalen Self-Assessment-Export mit allen fünf Ergebniszeilen herunter." },
-  assess_step3_title: { en: "3. Upload the PDF here", de: "3. PDF hier hochladen" },
-  assess_step3_text: { en: "Your PDF is read on this device only. Only the extracted levels are stored in this browser.", de: "Deine PDF wird nur auf diesem Gerät gelesen. Nur die ausgelesene Einstufung wird in diesem Browser gespeichert." },
-  assess_source_cta: { en: "Open official AI Self-Assessment →", de: "Offizielles AI Self-Assessment öffnen →" },
-  assess_source_note: { en: "This page contains no self-rating and no capability definitions – the SharePoint assessment is binding.", de: "Diese Seite enthält keine eigene Selbsteinschätzung und keine Fähigkeitsdefinitionen – verbindlich ist das SharePoint-Assessment." },
+  // assessment.html — native role-based self-assessment.
+  assess_title: { en: "AI Self Assessment", de: "AI Self Assessment" },
+  assess_intro: { en: "Answer ten questions to assess where you stand in AI Literacy. Then find learning paths and training for your role.", de: "Beantworte zehn Fragen und schätze deinen Stand in AI Literacy ein. Danach findest du passende Lernpfade und Trainings." },
+  assess_start_native: { en: "Start the AI Self Assessment", de: "AI Self Assessment starten" },
   assess_result_title: { en: "Your recommendations", de: "Deine Empfehlungen" },
-  assess_result_hint: { en: "Once your PDF is applied above, your next step appears here.", de: "Sobald deine PDF oben übernommen ist, erscheint hier dein nächster Schritt." },
+  assess_result_hint: { en: "After the assessment, your next learning step appears here.", de: "Nach dem Assessment findest du hier deinen nächsten Lernschritt." },
   assess_role_label: { en: "Your role", de: "Deine Rolle" },
   btn_start_assessment: { en: "Start assessment →", de: "Assessment starten →" },
   btn_back_role: { en: "← Role", de: "← Rolle" },
@@ -220,7 +213,7 @@ window.SITE_I18N = {
   academy_path_open_course: { en: "Open {title}", de: "{title} öffnen" },
   upskilling_overline: { en: "Your development path", de: "Dein Entwicklungsweg" },
   upskilling_title: { en: "AI Upskilling, step by step", de: "AI Upskilling – Schritt für Schritt" },
-  upskilling_step_assess: { en: "Complete official self-assessment (SharePoint)", de: "Offizielles Self-Assessment durchführen (SharePoint)" },
+  upskilling_step_assess: { en: "Complete the AI Self Assessment", de: "AI Self Assessment durchführen" },
   upskilling_step_recommendations: { en: "Receive recommended trainings", de: "Empfohlene Trainings erhalten" },
   upskilling_step_online: { en: "Complete online training", de: "Online-Trainings abschließen" },
   upskilling_step_blended: { en: "Join an optional blended session", de: "Optional an einer Blended-Learning-Session teilnehmen" },
@@ -308,7 +301,7 @@ window.SITE_I18N = {
   title_glossary: { en: "AI Glossary · LHIND AI Learning Catalog", de: "KI-Glossar · LHIND AI Learning Catalog" },
   title_dictionary: { en: "AI Coding Dictionary · LHIND AI Learning Catalog", de: "KI-Coding-Wörterbuch · LHIND AI Learning Catalog" },
   title_about: { en: "About · LHIND AI Learning Catalog", de: "Über uns · LHIND AI Learning Catalog" },
-  title_assessment: { en: "LHIND · AI Self-Assessment – Import your result", de: "LHIND · AI Self-Assessment – Ergebnis übernehmen" },
+  title_assessment: { en: "LHIND · AI Self Assessment", de: "LHIND · AI Self Assessment" },
   title_prereqs: { en: "Roadmap · LHIND AI Learning Catalog", de: "Roadmap · LHIND AI Learning Catalog" },
   title_badges: { en: "Badges · LHIND AI Learning", de: "Deine Erfolge · LHIND AI Learning" },
   title_course: { en: "Course · LHIND AI Learning Catalog", de: "Kurs · LHIND AI Learning Catalog" },
@@ -436,9 +429,7 @@ window.SITE_I18N = {
   course_activity_completed: { en: "completed", de: "abgeschlossen" },
   course_activity_started: { en: "started", de: "begonnen" },
 
-  // Legacy manual self-assessment flow (role → rate → result), removed from
-  // assessment.html in favor of the SharePoint import. Keys stay for
-  // backward compatibility but are no longer rendered.
+  // Legacy copy keys retained for pages that still reference them.
   assess_score_label: { en: "AI-Literacy Score", de: "KI-Kompetenz-Score" },
   assess_role_ph: { en: "— Select your role —", de: "— Rolle auswählen —" },
   assess_path_hint: { en: "Capabilities below your role's target come first. Each links to the lessons that build it.", de: "Kompetenzen unterhalb des Zielwerts deiner Rolle stehen zuerst. Jede verlinkt zu den Lektionen, die sie aufbauen." },
@@ -510,8 +501,8 @@ window.SITE_I18N = {
   journey_next: { en: "Next learning step", de: "Nächster Lernschritt" },
   journey_open_course: { en: "Open next course", de: "Nächsten Kurs öffnen" },
   journey_no_gap: { en: "No open learning gap", de: "Keine offene Kompetenzlücke" },
-  journey_unknown: { en: "Complete the official Self-Assessment in SharePoint and import your result to get a recommendation.", de: "Führe das offizielle Self-Assessment in SharePoint durch und importiere dein Ergebnis, um eine Empfehlung zu erhalten." },
-  journey_provisional: { en: "Provisional target from your imported assessment", de: "Vorläufiges Ziel aus deinem importierten Assessment" },
+  journey_unknown: { en: "Complete the AI Self Assessment to get a recommendation.", de: "Führe das AI Self Assessment durch, um eine Empfehlung zu erhalten." },
+  journey_provisional: { en: "Provisional target from your self-assessment", de: "Vorläufiges Ziel aus deinem Self-Assessment" },
   journey_source_role: { en: "Source: role target", de: "Quelle: Rollenziel" },
   journey_source_assessment: { en: "Source: Self-Assessment", de: "Quelle: Self-Assessment" },
   journey_level_acquire: { en: "Acquire", de: "Acquire" },

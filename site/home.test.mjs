@@ -4,6 +4,7 @@ import test from "node:test";
 
 const html = readFileSync("site/index.html", "utf8");
 const css = readFileSync("site/home.css", "utf8");
+const sharedCss = readFileSync("site/lrn/lrn.css", "utf8");
 const lrn = readFileSync("site/lrn/lrn.js", "utf8");
 const readiness = readFileSync("site/lrn/readiness-home.js", "utf8");
 
@@ -16,7 +17,10 @@ test("home separates first-time setup from returning learner paths", () => {
   assert.ok(setup > 0 && setup < dashboard);
   assert.ok(dashboard < next && next < map && map < catalog);
   assert.equal((html.match(/id="roleSelect"/g) || []).length, 1);
-  assert.equal((html.match(/data-assessment-import/g) || []).length, 1);
+  assert.match(html, /id="setupAssessmentLink" href="assessment\.html"/);
+  assert.match(html, /href="assessment-v2\.html" data-ready-copy="startAssessmentV2"/);
+  assert.equal((html.match(/href="assessment\.html"/g) || []).length, 1);
+  assert.doesNotMatch(html, /data-assessment-prompt|src="lrn\/assessment-prompt\.js/);
   assert.match(html, /id="readinessDashboard"[^>]*hidden/);
 });
 
@@ -57,4 +61,18 @@ test("home has an isolated responsive composition layer", () => {
 test("default Academy view stays focused to role recommendations", () => {
   assert.match(lrn, /var visiblePaths = state\.academyAll \? allPaths : primaryRecommendations;/);
   assert.match(lrn, /activePath = primaryRecommendations\[0\] \|\| foundationPaths\[0\];/);
+});
+
+test("catalog cards keep a stable pointer target while hovered", () => {
+  const hoverRule = sharedCss.match(
+    /@media \(hover: hover\) and \(pointer: fine\) \{\s*\.interactive-card:hover \{([^}]*)\}/,
+  );
+  assert.ok(hoverRule, "shared interactive-card hover rule is missing");
+  assert.doesNotMatch(
+    hoverRule[1],
+    /transform\s*:/,
+    "moving the card under the pointer causes hover oscillation and dropped clicks",
+  );
+  assert.match(hoverRule[1], /box-shadow:\s*var\(--card-hover-shadow\)/);
+  assert.match(lrn, /var card = document\.createElement\("a"\);[\s\S]*?card\.href = courseHref\(course\.id\);/);
 });

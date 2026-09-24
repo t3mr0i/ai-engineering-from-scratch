@@ -10,7 +10,7 @@
       pace: "A little curiosity. Your own pace.", plan: "My plan", progress: "My progress",
       views: "Plan and progress", editRole: "Role & assessment", skip: "Skip to my progress",
       courseProgress: "Your learning so far", evidenceNote: "Course completion records your learning. Assessments and practical evidence show your competency level.",
-      evidence: "Explore course contributions and capabilities", assessment: "Add or replace my assessment",
+      evidence: "Explore course contributions and capabilities", assessment: "My self-assessment", startAssessment: "Open self-assessment",
       chooseRole: "Choose your role to get started", empty: "Your next course is a good place to begin. Your learning progress will appear here.",
       completed: "courses completed", started: "courses started", lessons: "lessons completed"
     },
@@ -20,14 +20,14 @@
       pace: "Mit Neugier. In deinem Tempo.", plan: "Mein Plan", progress: "Mein Fortschritt",
       views: "Plan und Fortschritt", editRole: "Rolle & Assessment", skip: "Zu meinem Fortschritt springen",
       courseProgress: "Das hast du bisher gelernt", evidenceNote: "Abgeschlossene Kurse halten deinen Lernfortschritt fest. Assessments und praktische Nachweise zeigen deinen Kompetenzstand.",
-      evidence: "Kursbeiträge und Fähigkeiten", assessment: "Assessment verwalten",
+      evidence: "Kursbeiträge und Fähigkeiten", assessment: "Mein Self-Assessment", startAssessment: "Self-Assessment öffnen",
       chooseRole: "Wähle deine Rolle für den Einstieg", empty: "Mit deinem nächsten Kurs geht es los. Hier wird dein Lernfortschritt sichtbar.",
       completed: "Kurse abgeschlossen", started: "Kurse begonnen", lessons: "Lektionen abgeschlossen"
     }
   };
   function copy() { return COPY[root.SiteLang && root.SiteLang.get() === "de" ? "de" : "en"]; }
   function showView() {
-    if (root.location.hash === "#assessmentImport" || root.location.hash === "#assessmentSettings") doc.getElementById("assessmentSettings").open = true;
+    if (root.location.hash === "#assessmentSettings") doc.getElementById("assessmentSettings").open = true;
   }
 
   function node(tag, cls, text) {

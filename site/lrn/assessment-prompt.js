@@ -1,19 +1,6 @@
-/* An assessment is encouraged, never required to browse the authored paths.
-   Only an explicit skip dismisses the reminder; opening SharePoint does not. */
+/* Keep the native assessment entry visible for first visits and retakes. */
 (function (root) {
   "use strict";
-  var key = "aifs:assessment-prompt-skipped:v1", memory = {};
-  function skipped(role) {
-    if (memory[role] || memory["*"]) return true;
-    try { var values = JSON.parse(root.localStorage.getItem(key)) || {}; return !!(values[role] || values["*"]); }
-    catch (_) { return !!memory[role]; }
-  }
-  function skip() {
-    var model = root.LrnJourneyState.snapshot(), role = model.roleSelected ? model.roleId : "*";
-    memory[role] = true;
-    try { var values = JSON.parse(root.localStorage.getItem(key)) || {}; values[role] = true; root.localStorage.setItem(key, JSON.stringify(values)); } catch (_) {}
-    render();
-  }
   function element(tag, text, cls) { var node = root.document.createElement(tag); node.textContent = text; if (cls) node.className = cls; return node; }
   function render() {
     if (!root.LrnJourneyState) return;
@@ -21,22 +8,17 @@
     var profile = new URLSearchParams(root.location.search).get("view") === "profile" || root.location.hash === "#roleSelect";
     var de = root.SiteLang && root.SiteLang.get() === "de";
     root.document.querySelectorAll("[data-assessment-prompt]").forEach(function (host) {
-      host.hidden = profile || model.assessmentAvailable || skipped(model.roleId || "unselected");
+      host.hidden = profile;
       host.replaceChildren();
       if (host.hidden) return;
       host.className = "assessment-prompt";
-      var heading = element("h2", de ? "Finde deinen Einstieg mit dem AI-Assessment" : "Find your starting point with the AI assessment");
+      var heading = element("h2", model.assessmentAvailable ? (de ? "AI Self Assessment wiederholen" : "Retake the AI Self Assessment") : (de ? "Finde deinen Einstieg mit dem AI Self Assessment" : "Find your starting point with the AI Self Assessment"));
       host.appendChild(heading);
-      host.appendChild(element("p", de ? "Was bringst du schon mit? Schätze dich ein und lade dein Ergebnis hoch. So passen die vorgefertigten Lernpfade zu deinem Wissensstand." : "What do you already know? Complete the assessment and upload your result to tailor the prepared learning paths to your starting point."));
+      host.appendChild(element("p", model.assessmentAvailable ? (de ? "Du kannst das Assessment jederzeit wiederholen und deinen Lernpfad aktualisieren." : "You can repeat the assessment anytime and update your learning path.") : (de ? "Beantworte zehn Fragen direkt hier im Lernkatalog und entdecke passende Lernpfade." : "Answer ten questions here in the learning catalog to find a suitable learning path.")));
       var actions = element("div", "", "assessment-prompt__actions");
-      var start = element("a", de ? "Assessment starten" : "Start assessment", "readiness-button");
-      start.href = "https://lufthansagroup.sharepoint.com/sites/LHIND_APP_AISelfAssessment/SitePages/de/TopicHome.aspx";
-      start.target = "_blank"; start.rel = "noopener";
-      start.setAttribute("aria-label", de ? "Assessment starten (SharePoint, neuer Tab)" : "Start assessment (SharePoint, new tab)");
-      var upload = element("a", de ? "Ergebnis hochladen" : "Upload result", "readiness-button readiness-button--secondary");
-      upload.href = "index.html?view=profile&from=" + (root.document.querySelector(".page--learning-workspace") ? "progress" : "learning") + "#assessmentImport";
-      var later = element("button", de ? "Vorerst überspringen" : "Skip for now", "readiness-link"); later.type = "button"; later.addEventListener("click", skip);
-      actions.append(start, upload, later); host.appendChild(actions);
+      var start = element("a", model.assessmentAvailable ? (de ? "AI Self Assessment wiederholen" : "Retake the AI Self Assessment") : (de ? "AI Self Assessment starten" : "Start the AI Self Assessment"), "readiness-button");
+      start.href = "assessment.html";
+      actions.append(start); host.appendChild(actions);
     });
   }
   function start() {
@@ -44,8 +26,6 @@
     root.document.addEventListener("sitelang:change", render);
     root.document.addEventListener("assessment-import:change", render);
     root.addEventListener("storage", render);
-    var setupSkip = root.document.getElementById("setupSkip");
-    if (setupSkip) setupSkip.addEventListener("click", skip);
     render();
   }
   if (root.document.readyState === "loading") root.document.addEventListener("DOMContentLoaded", start, { once: true }); else start();

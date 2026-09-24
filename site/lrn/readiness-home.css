@@ -21,8 +21,10 @@
 .readiness-levels > div { display: grid; grid-template-columns: 6rem minmax(0, 1fr); gap: var(--space-3); padding-block: var(--space-3); border-bottom: var(--border-hairline); }
 .readiness-levels dt { font-weight: var(--weight-medium); color: var(--text-primary); }
 .readiness-levels dd { margin: 0; color: var(--text-secondary); font-size: var(--fs-body-sm); }
-.readiness-setup__import { min-width: 0; margin-top: var(--space-5); border: var(--border-hairline); border-radius: var(--radius-md); background: var(--color-surface); }
-.readiness-setup__import #assessmentImport { border: 0; padding: var(--space-6); }
+.readiness-setup__import { min-width: 0; margin-top: var(--space-5); }
+.readiness-setup__v2-link { display: flex; align-items: center; justify-content: center; min-height: 46px; width: fit-content; max-width: 100%; margin-top: var(--space-3); padding: var(--space-3) var(--space-5); border: 1px solid var(--border-strong); border-radius: var(--radius-pill); color: var(--text-primary); font-size: var(--fs-body-sm); font-weight: var(--weight-medium); line-height: var(--lh-snug); text-align: center; text-decoration: none; }
+.readiness-setup__v2-link:hover { background: var(--color-surface-sunken); color: var(--text-primary); }
+.readiness-setup__v2-link:focus-visible { outline: 3px solid var(--action-primary); outline-offset: 4px; }
 .readiness-setup__note { color: var(--text-secondary); font-size: var(--fs-body-sm); line-height: var(--lh-body); }
 .readiness-setup__actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--space-3) var(--space-5); padding-top: var(--space-5); border-top: var(--border-hairline); }
 .readiness-button { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; width: fit-content; max-width: 100%; padding: var(--space-3) var(--space-5); border: 1px solid transparent; border-radius: var(--radius-pill); background: var(--action-primary); color: var(--action-primary-ink); font: inherit; font-size: var(--fs-body-sm); font-weight: var(--weight-medium); line-height: var(--lh-snug); text-decoration: none; text-align: center; cursor: pointer; }

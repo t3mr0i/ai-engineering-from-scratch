@@ -105,52 +105,62 @@ window.LrnData = {
     {
       "id": "q1",
       "dimension": "literacy",
-      "text": "How clear are the AI-related expectations for your current role at LHIND?"
+      "text": "How clear is your understanding of the AI-related expectations associated with your current role at LHIND (e.g., Leadership, Engineer, Business Analyst, Project Manager, All Employees)?",
+      "textDe": "Wie klar ist Ihnen, welche AI-bezogenen Erwartungen an Ihre aktuelle Rolle bei LHIND gestellt werden (z.B. Leadership, Engineer, Business Analyst, Project Manager, All Employees)?"
     },
     {
       "id": "q2",
       "dimension": "literacy",
-      "text": "How confidently can you explain the differences between classic software solutions, machine learning, and generative AI?"
+      "text": "How confident do you feel in explaining the difference between traditional software solutions and AI-based systems (e.g., machine learning, generative AI) in an understandable way?",
+      "textDe": "Wie sicher fühlen Sie sich darin, den Unterschied zwischen klassischen Softwarelösungen und AI-basierten Systemen (z.B. Machine Learning, Generative AI) verständlich zu erklären?"
     },
     {
       "id": "q3",
       "dimension": "prompting",
-      "text": "How often and effectively do you already use AI tools for research, text, code, analysis, or concept work?"
+      "text": "How often and how effectively do you already use AI tools (e.g., copilots, chatbots, generative AI) in your daily tasks at LHIND (research, writing, coding, analysis, conceptual work)?",
+      "textDe": "Wie häufig und zielführend setzen Sie AI-Tools (z.B. Copilots, Chatbots, Generative AI) bereits für Ihre täglichen Aufgaben bei LHIND ein (Recherche, Text, Code, Analysen, Konzeptarbeit)?"
     },
     {
       "id": "q4",
       "dimension": "prompting",
-      "text": "How well can you structure prompts, improve them iteratively, and critically review AI results for errors, bias, and gaps?"
+      "text": "How well can you formulate, structure, and iteratively refine prompts to consistently obtain high-quality AI results—including critical checks for errors, biases, and omissions?",
+      "textDe": "Wie gut können Sie Eingaben (Prompts) so formulieren, strukturieren und iterativ verbessern, dass Sie konsistent qualitativ hochwertige AI-Ergebnisse erhalten -- inklusive kritischer Prüfung auf Fehler, Verzerrungen und Lücken?"
     },
     {
       "id": "q5",
       "dimension": "business",
-      "text": "How confidently can you identify and prioritize meaningful AI use cases with visible business value?"
+      "text": "How confident are you in identifying meaningful AI use cases within your LHIND environment, estimating the expected business value (e.g., efficiency, quality, customer experience), and roughly prioritizing them?",
+      "textDe": "Wie sicher sind Sie darin, sinnvolle AI-Use-Cases in Ihrem LHIND-Umfeld zu identifizieren, den erwarteten Business Value (z.B. Effizienz, Qualität, Kundenerlebnis) abzuschätzen und grob zu priorisieren?"
     },
     {
       "id": "q6",
       "dimension": "data",
-      "text": "How well can you assess which data sources, data quality, and data volumes an AI use case needs?"
+      "text": "How well can you assess what data (sources, structure, quality, volume) is required for an AI use case, and what risks arise from poor data quality?",
+      "textDe": "Wie gut können Sie einschätzen, welche Daten (Quellen, Struktur, Qualität, Volumen) für einen AI-Use-Case benötigt werden und welche Risiken sich aus schlechter Datenqualität ergeben?"
     },
     {
       "id": "q7",
       "dimension": "data",
-      "text": "How well do you know and apply the relevant guardrails for data protection, IT security, ethics, and responsible AI use?"
+      "text": "How familiar are you with the guidelines relevant to LHIND regarding ethics, data protection (e.g., GDPR), IT security, and the responsible use of AI—and do you take these into account in your decisions?",
+      "textDe": "Wie gut kennen Sie die für LHIND relevanten Leitplanken zu Ethik, Datenschutz (z.B. GDPR), IT-Sicherheit und verantwortungsvollem AI-Einsatz -- und berücksichtigen diese in Ihren Entscheidungen?"
     },
     {
       "id": "q8",
       "dimension": "change",
-      "text": "How confidently can you integrate AI systems into processes and teams while keeping humans accountable and roles clear?"
+      "text": "How confident are you in your ability to integrate AI systems into processes and teams in a way that keeps humans in control (human-in-the-loop), ensures roles are clearly defined, and actively addresses the need for change?",
+      "textDe": "Wie sicher fühlen Sie sich darin, AI-Systeme so in Prozesse und Teams einzubetten, dass Menschen in der Verantwortung bleiben (Human-in-the-Loop), Rollen klar sind und Veränderungsbedarfe aktiv adressiert werden?"
     },
     {
       "id": "q9",
       "dimension": "business",
-      "text": "How routinely do you structure AI initiatives with scope, risks, stakeholders, pilots, and rollout?"
+      "text": "How experienced are you in structuring AI-related initiatives or projects (scope, risks, stakeholders, pilot vs. rollout) and managing them in collaboration with internal and external partners (IT, data, business)?",
+      "textDe": "Wie routiniert sind Sie darin, AI-bezogene Initiativen oder Projekte zu strukturieren (Scope, Risiken, Stakeholder, Pilot vs. Roll-out) und mit internen/externen Partnern (IT, Data, Business) zu steuern?"
     },
     {
       "id": "q10",
       "dimension": "change",
-      "text": "To what extent do you actively shape new AI-based solutions, workflows, or services and share your experience?"
+      "text": "To what extent do you actively help design new AI-based solutions, workflows, or services at LHIND, and share your experiences (e.g., best practices, brown bag sessions, communities of practice) with others?",
+      "textDe": "In welchem Maß gestalten Sie aktiv neue AI-basierte Lösungen, Workflows oder Services bei LHIND mit und teilen Ihre Erfahrungen (z.B. Best Practices, Brown Bags, Communities of Practice) mit anderen?"
     }
   ],
   "roles": [

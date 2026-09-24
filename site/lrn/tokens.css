@@ -217,7 +217,6 @@
 
   /* ── Interactive cards ─────────────────────────────────────────
      One interaction vocabulary for every clickable card family. */
-  --card-hover-lift:        -3px;
   --card-hover-border:      var(--action-accent);
   --card-hover-shadow:      var(--shadow-lg);
   --card-hover-wash-strong: rgba(45, 95, 228, 0.11);
