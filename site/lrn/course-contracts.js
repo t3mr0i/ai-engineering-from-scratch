@@ -2495,10 +2495,10 @@ window.LrnCourseContracts = {
   },
   "LRN-43": {
     "en": {
-      "promise": "Complete the course with an operating-model blueprint that lets multiple teams scale AI through clear decision rights, reusable standards, support, and review cadence.",
+      "promise": "Complete the course with an operating-model blueprint that lets multiple teams scale AI through clear decision rights, reusable standards, a champion network, and review cadence.",
       "projectScenario": {
         "title": "Set up an AI operating model for several teams",
-        "description": "Design how product, engineering, data, security, compliance, and business teams share responsibilities as AI work grows. Define the center or community's services, standards backlog, reusable asset registry, intake and portfolio cadence, and adoption measures.",
+        "description": "Design how product, engineering, data, security, compliance, and business teams share responsibilities as AI work grows. Define the center's services, a champion network that helps teams adopt shared practices, a standards backlog, reusable asset registry, intake and portfolio cadence, and adoption measures.",
         "guardrail": "Make decision rights explicit so a shared center enables consistent practice without obscuring who owns each product and risk decision."
       },
       "stages": [
@@ -2515,21 +2515,21 @@ window.LrnCourseContracts = {
         {
           "kind": "hands-on",
           "title": "Plan the operating-model rollout",
-          "description": "Create a roadmap with owners, capability gaps, adoption measures, and review milestones for the proposed AI operating model or Center of Excellence."
+          "description": "Create a roadmap with owners, champion-network responsibilities, capability gaps, adoption measures, and review milestones for the proposed AI operating model or Center of Excellence."
         }
       ],
       "evidence": [
         "A role charter with decision rights across business, product, engineering, data, security, and compliance",
         "A standards and shared-services backlog with review gates and reusable assets",
         "An intake and portfolio cadence showing how experiments, reuse, risk, and value are considered",
-        "An operating-model roadmap with owners, capability gaps, adoption measures, and milestones"
+        "An operating-model roadmap with owners, champion-network responsibilities, capability gaps, adoption measures, and milestones"
       ]
     },
     "de": {
-      "promise": "Du schließt den Kurs mit einem Betriebsmodell ab, das mehreren Teams ermöglicht, KI mit klaren Entscheidungsrechten, wiederverwendbaren Standards, Unterstützungsangeboten und festen Prüfrhythmen auszubauen.",
+      "promise": "Du schließt den Kurs mit einem Betriebsmodell ab, das mehreren Teams ermöglicht, KI mit klaren Entscheidungsrechten, wiederverwendbaren Standards, einem Champion-Netzwerk und festen Prüfrhythmen auszubauen.",
       "projectScenario": {
         "title": "Ein Betriebsmodell für mehrere KI-Teams aufsetzen",
-        "description": "Gestalte die Zusammenarbeit von Produkt, Engineering, Data, Security, Compliance und Fachbereichen, wenn KI-Vorhaben wachsen. Definiere Leistungen des Centers oder Netzwerks, einen Backlog für Standards, ein Verzeichnis wiederverwendbarer Bausteine, einen Rhythmus für Anfragen und Portfolioentscheidungen sowie Kennzahlen zur Einführung und Nutzung.",
+        "description": "Gestalte die Zusammenarbeit von Produkt, Engineering, Data, Security, Compliance und Fachbereichen, wenn KI-Vorhaben wachsen. Definiere Leistungen des Centers, ein Champion-Netzwerk zur Verbreitung gemeinsamer Praktiken, einen Backlog für Standards, ein Verzeichnis wiederverwendbarer Bausteine, einen Rhythmus für Anfragen und Portfolioentscheidungen sowie Kennzahlen zur Einführung und Nutzung.",
         "guardrail": "Mache Entscheidungsrechte transparent: Eine gemeinsame Stelle fördert einheitliche Arbeitsweisen, ohne die Verantwortung für Produkt- und Risikoentscheidungen zu verwischen."
       },
       "stages": [
@@ -2546,14 +2546,14 @@ window.LrnCourseContracts = {
         {
           "kind": "hands-on",
           "title": "Die Einführung planen",
-          "description": "Erstelle für das Betriebsmodell oder Center of Excellence eine Roadmap mit Verantwortlichen, Kompetenzlücken, Adoptionsmaßen und Prüfterminen."
+          "description": "Erstelle für das Betriebsmodell oder Center of Excellence eine Roadmap mit Verantwortlichen, Aufgaben des Champion-Netzwerks, Kompetenzlücken, Adoptionsmaßen und Prüfterminen."
         }
       ],
       "evidence": [
         "Ein Rollenauftrag mit Entscheidungsrechten für Fachbereich, Produkt, Engineering, Data, Security und Compliance",
         "Ein Backlog für Standards und gemeinsame Leistungen mit Prüftoren und wiederverwendbaren Bausteinen",
         "Ein Intake- und Portfoliorhythmus, der Experimente, Wiederverwendung, Risiken und Wert berücksichtigt",
-        "Eine Roadmap mit Verantwortlichen, Kompetenzlücken, Adoptionsmaßen und Meilensteinen"
+        "Eine Roadmap mit Verantwortlichen, Aufgaben des Champion-Netzwerks, Kompetenzlücken, Adoptionsmaßen und Meilensteinen"
       ]
     }
   },
@@ -2815,10 +2815,10 @@ window.LrnCourseContracts = {
   },
   "LRN-45": {
     "en": {
-      "promise": "Finish with a source-checked account brief and a defensible customer use-case pitch tailored to a defined audience, with claims reviewed before sharing.",
+      "promise": "Finish with a source-checked account brief, a defensible customer use-case pitch, and a weekly follow-up routine that keeps claims and next actions reviewable.",
       "projectScenario": {
         "title": "Prepare for a customer discovery meeting",
-        "description": "Research an account, its industry, competitors, and technology signals; map a customer challenge to a portfolio-aligned solution hypothesis; then draft a concise briefing and pitch for the meeting audience.",
+        "description": "Research an account, its industry, competitors, and technology signals; map a customer challenge to a portfolio-aligned solution hypothesis; then draft a concise briefing and pitch for the meeting audience. Capture meeting questions and agreed next actions in a weekly follow-up workflow.",
         "guardrail": "Keep source evidence attached to customer claims; remove unsupported statements and confidential material before anything is shared externally."
       },
       "stages": [
@@ -2834,22 +2834,23 @@ window.LrnCourseContracts = {
         },
         {
           "kind": "hands-on",
-          "title": "Draft and review customer materials",
-          "description": "Create a pitch, one-pager, or meeting briefing for a defined audience and review every claim for evidence, confidentiality, and tone."
+          "title": "Review materials and plan the follow-up",
+          "description": "Create a pitch, one-pager, or meeting briefing for a defined audience; review claims for evidence, confidentiality, and tone, then prepare a weekly follow-up record with owners and next actions."
         }
       ],
       "evidence": [
         "An account and market brief with source checks for industry, competitor, and technology signals",
         "A customer-challenge map linking pain points to solution hypotheses and portfolio fit",
         "A use-case assessment covering business logic, evidence, value, risk, and stakeholder fit",
-        "A reviewed pitch, one-pager, or meeting brief with unsupported and confidential claims removed"
+        "A reviewed pitch, one-pager, or meeting brief with unsupported and confidential claims removed",
+        "A weekly follow-up record with meeting questions, owners, and agreed next actions"
       ]
     },
     "de": {
-      "promise": "Du schließt den Kurs mit einem quellengeprüften Kundenbriefing und einem begründeten, auf eine Zielgruppe zugeschnittenen Use-Case-Pitch ab, dessen Aussagen vor der Weitergabe geprüft wurden.",
+      "promise": "Du schließt den Kurs mit einem quellengeprüften Kundenbriefing, einem begründeten Use-Case-Pitch und einer wöchentlichen Follow-up-Routine mit prüfbaren Aussagen und nächsten Schritten ab.",
       "projectScenario": {
         "title": "Ein Kundengespräch zur Bedarfsermittlung vorbereiten",
-        "description": "Recherchiere Unternehmen, Branche, Wettbewerb und Technologiesignale. Ordne eine Kundenherausforderung einer passenden Lösungshypothese aus dem Portfolio zu und erstelle ein kompaktes Briefing sowie einen Pitch für die Gesprächszielgruppe.",
+        "description": "Recherchiere Unternehmen, Branche, Wettbewerb und Technologiesignale. Ordne eine Kundenherausforderung einer passenden Lösungshypothese aus dem Portfolio zu und erstelle ein kompaktes Briefing sowie einen Pitch für die Gesprächszielgruppe. Halte Gesprächsfragen und vereinbarte nächste Schritte in einer wöchentlichen Follow-up-Routine fest.",
         "guardrail": "Belege bleiben den Kundenaussagen zugeordnet. Unbelegte Aussagen und vertrauliche Inhalte werden vor einer externen Weitergabe entfernt."
       },
       "stages": [
@@ -2865,15 +2866,16 @@ window.LrnCourseContracts = {
         },
         {
           "kind": "hands-on",
-          "title": "Kundenmaterial erstellen und prüfen",
-          "description": "Erstelle für eine definierte Zielgruppe einen Pitch, One-Pager oder Gesprächstermin-Brief und prüfe Aussagen auf Belege, Vertraulichkeit und Ton."
+          "title": "Kundenmaterial prüfen und Follow-up planen",
+          "description": "Erstelle für eine definierte Zielgruppe einen Pitch, One-Pager oder ein Gesprächsbriefing, prüfe Aussagen auf Belege, Vertraulichkeit und Ton und plane ein wöchentliches Follow-up mit Verantwortlichen und nächsten Schritten."
         }
       ],
       "evidence": [
         "Ein Kunden- und Marktbriefing mit Quellenprüfung zu Branche, Wettbewerb und Technologiesignalen",
         "Eine Zuordnung von Kundenherausforderungen zu Lösungshypothesen und Portfolio-Passung",
         "Eine Use-Case-Bewertung zu Geschäftslogik, Belegen, Wert, Risiko und Stakeholder-Passung",
-        "Ein geprüfter Pitch, One-Pager oder Gesprächstermin-Brief ohne unbelegte oder vertrauliche Aussagen"
+        "Ein geprüfter Pitch, One-Pager oder ein Gesprächsbriefing ohne unbelegte oder vertrauliche Aussagen",
+        "Ein wöchentliches Follow-up-Protokoll mit Gesprächsfragen, Verantwortlichen und vereinbarten nächsten Schritten"
       ]
     }
   },
