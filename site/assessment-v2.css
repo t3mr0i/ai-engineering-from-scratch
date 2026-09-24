@@ -38,13 +38,15 @@
 .v2-question-panel h1 { margin: 0 0 32px; max-width: 42ch; font-family: var(--font-heading); font-weight: 400; font-size: clamp(1.5rem, 2vw, 1.8rem); line-height: 1.35; letter-spacing: -.015em; color: var(--ink); text-wrap: pretty; }
 .v2-rating { margin: 0; padding: 0; border: 0; min-width: 0; }
 .v2-rating legend { margin-bottom: 13px; color: var(--ink-soft); font-size: .9rem; }
-.v2-scale { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; max-width: 600px; }
-.v2-scale-option { position: relative; display: grid; place-items: center; min-height: 64px; border: 1px solid var(--rule); border-radius: 12px; background: var(--bg-surface); color: var(--ink); cursor: pointer; font-size: 1.18rem; font-weight: 500; font-variant-numeric: tabular-nums; transition: background .16s ease, border-color .16s ease, transform .16s ease; }
-.v2-scale-option:hover { border-color: var(--blueprint); background: var(--bg-surface-hover); }
-.v2-scale-option.is-selected { background: var(--blueprint); border-color: var(--blueprint); color: var(--action-primary-ink); }
-.v2-scale-option input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-.v2-scale-option:focus-within { outline: 3px solid var(--blueprint); outline-offset: 3px; }
-.v2-scale-anchors { display: flex; justify-content: space-between; max-width: 600px; margin: 9px 0 27px; color: var(--ink-soft); font-size: .81rem; }
+.v2-scale { display: inline-flex; align-items: center; gap: 2px; padding: 4px; border: 1px solid var(--rule); border-radius: 12px; background: var(--bg-surface-hover); }
+.v2-scale-option { position: relative; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 8px; color: var(--ink-soft); cursor: pointer; transition: color .16s ease, background-color .16s ease; }
+.v2-scale-option:hover { color: var(--blueprint); background: var(--bg-surface); }
+.v2-scale-option svg { width: 32px; height: 32px; fill: transparent; stroke: currentColor; stroke-width: 1.7; stroke-linejoin: round; }
+.v2-scale-option.is-filled { color: var(--blueprint); }
+.v2-scale-option.is-filled svg { fill: currentColor; }
+.v2-scale-option input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.v2-scale-option input:focus-visible + svg { outline: 3px solid var(--blueprint); outline-offset: 3px; border-radius: 4px; }
+.v2-scale-anchors { display: flex; justify-content: space-between; max-width: 308px; margin: 9px 0 27px; color: var(--ink-soft); font-size: .81rem; }
 .v2-na { display: inline-flex; align-items: center; gap: 10px; min-height: 42px; color: var(--ink); font-size: .9rem; cursor: pointer; }
 .v2-na input { accent-color: var(--blueprint); width: 18px; height: 18px; }
 .v2-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 38px; }
@@ -63,6 +65,11 @@
 .v2-review-row { display: grid; grid-template-columns: minmax(0, 1fr) 90px 100px; align-items: center; gap: 24px; padding: 12px 0; }
 .v2-review-row p { margin: 0; color: var(--ink-soft); font-size: .9rem; line-height: 1.42; }
 .v2-review-row strong { color: var(--ink); font-size: .9rem; font-weight: 600; }
+.v2-review-stars { display: inline-flex; gap: 2px; color: var(--ink-soft); }
+.v2-review-stars span { display: inline-flex; }
+.v2-review-stars svg { width: 16px; height: 16px; fill: transparent; stroke: currentColor; stroke-width: 1.7; stroke-linejoin: round; }
+.v2-review-stars .is-filled { color: var(--blueprint); }
+.v2-review-stars .is-filled svg { fill: currentColor; }
 .v2-review-row .v2-action { min-height: 36px; padding: 6px 12px; font-size: .82rem; }
 .v2-data-note { margin-top: 26px; color: var(--ink-soft); font-size: .82rem; line-height: 1.5; }
 [data-theme="dark"] .v2-error { color: var(--ink); }
@@ -81,8 +88,7 @@
   .v2-shell { width: min(100% - 28px, 650px); }
   .v2-lead { margin-bottom: 30px; }
   .v2-lead h1 { font-size: 2.5rem; }
-  .v2-scale { gap: 6px; }
-  .v2-scale-option { min-height: 58px; }
+  .v2-scale-option { width: min(56px, calc((100vw - 54px) / 5)); }
   .v2-review-row { grid-template-columns: minmax(0, 1fr) auto; gap: 8px 16px; }
   .v2-review-row p { grid-column: 1 / -1; }
   .v2-actions .v2-action { flex: 1 1 auto; }

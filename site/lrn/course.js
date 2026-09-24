@@ -331,57 +331,59 @@
       overview.appendChild(outcomesBlock);
     }
 
-    var children = [intro, facts, overview];
-
-    var learningContract = learningContractSection(course);
-    if (learningContract) children.push(learningContract);
-
-    var sessions = sessionSection(course);
-    if (sessions) children.push(sessions);
-
-    if (map.length && window.LearningVisuals) {
-      var routeHost = document.createElement("div");
-      routeHost.className = "learning-visual-slot";
-      var currentAssigned = false;
-      window.LearningVisuals.renderCourseRoute(routeHost, map.map(function (subcourse, index) {
-        var unitStats = subcourseProgress(subcourse);
-        var state = unitStats.percent >= 100 ? "complete" : "open";
-        if (state === "open" && !currentAssigned) {
-          state = "current";
-          currentAssigned = true;
-        }
-        return {
-          code: unitCode(index),
-          title: subcourse.title,
-          count: unitStats.lessonCount,
-          percent: unitStats.percent,
-          state: state,
-          href: "#course-unit-" + String(index + 1)
-        };
-      }), {
-        title: i18n("viz_course_title", "Course route"),
-        description: i18n("viz_course_desc", "Move through the units in order; progress reflects your reading depth.")
-      });
-      children.push(routeHost);
-    }
-
-    var syllabusTitle = document.createElement("h2");
-    syllabusTitle.className = "syllabus-title";
-    syllabusTitle.textContent = i18n("course_tasks_title", "Tasks");
-    children.push(syllabusTitle);
+    var pathSection = document.createElement("section");
+    pathSection.className = "course-path";
+    pathSection.setAttribute("aria-labelledby", "coursePathTitle");
+    var pathHead = document.createElement("div");
+    pathHead.className = "course-path__head";
+    var pathTitle = document.createElement("h2");
+    pathTitle.id = "coursePathTitle";
+    pathTitle.textContent = i18n("course_path_title", "Your course path");
+    var pathMeta = document.createElement("p");
+    pathMeta.className = "course-path__meta";
+    pathMeta.textContent = i18nFmt(
+      stats.subcourseCount === 1 ? "course_path_unit_one" : "course_path_units_many",
+      { count: stats.subcourseCount },
+      stats.subcourseCount === 1 ? "1 unit" : "{count} units"
+    ) + " · " + i18nFmt(
+      stats.lessonCount === 1 ? "course_path_activity_one" : "course_path_activities_many",
+      { count: stats.lessonCount },
+      stats.lessonCount === 1 ? "1 activity" : "{count} activities"
+    );
+    pathHead.append(pathTitle, pathMeta);
+    var pathIntro = document.createElement("p");
+    pathIntro.className = "course-path__intro";
+    pathIntro.textContent = i18n("course_path_intro", "Work through the units in order. Open any unit to see its lessons and labs.");
+    pathSection.append(pathHead, pathIntro);
 
     if (!map.length) {
       var emptyMap = document.createElement("div");
       emptyMap.className = "empty-state";
       emptyMap.textContent = i18n("course_no_map", "No curriculum mapping has been maintained for this course yet.");
-      children.push(emptyMap);
+      pathSection.appendChild(emptyMap);
     } else {
-      map.forEach(function (subcourse, subcourseIndex) {
-        children.push(unitBlock(subcourse, course.id, subcourseIndex));
+      var unitList = document.createElement("div");
+      unitList.className = "course-path__units";
+      var nextUnitIndex = map.findIndex(function (subcourse) {
+        var unitStats = subcourseProgress(subcourse);
+        return unitStats.completedLessons < unitStats.lessonCount;
       });
+      map.forEach(function (subcourse, subcourseIndex) {
+        unitList.appendChild(unitBlock(subcourse, course.id, subcourseIndex, subcourseIndex === nextUnitIndex));
+      });
+      pathSection.appendChild(unitList);
     }
 
+    var children = [intro, facts, pathSection, overview];
+    var sessions = sessionSection(course);
+    if (sessions) children.push(sessions);
+    var learningContract = learningContractSection(course);
+    if (learningContract) children.push(learningContract);
+
     replaceChildren(root, children);
+    var hashedUnit = /^#course-unit-\d+$/.test(window.location.hash)
+      ? root.querySelector(window.location.hash) : null;
+    if (hashedUnit && hashedUnit.classList.contains("unit-block")) hashedUnit.open = true;
     mountJourney(course.id);
     refreshIcons();
   }
@@ -1294,46 +1296,58 @@
     return "circle";
   }
 
-  function unitBlock(subcourse, courseId, subcourseIndex) {
+  function unitBlock(subcourse, courseId, subcourseIndex, isCurrent) {
     var stats = subcourseProgress(subcourse);
-    var block = document.createElement("section");
+    var block = document.createElement("details");
     block.className = "unit-block";
     block.id = "course-unit-" + String(subcourseIndex + 1);
+    block.open = isCurrent;
+    block.dataset.state = stats.lessonCount > 0 && stats.completedLessons >= stats.lessonCount
+      ? "complete" : isCurrent ? "current" : "upcoming";
 
-    var head = document.createElement("div");
-    head.className = "unit-block__head";
-
-    var icon = document.createElement("i");
-    icon.className = "ph-light ph-" + unitIcon(subcourse) + " unit-block__icon";
-    icon.setAttribute("aria-hidden", "true");
+    var summary = document.createElement("summary");
+    summary.className = "unit-block__summary";
 
     var code = document.createElement("span");
     code.className = "unit-block__code";
     code.textContent = unitCode(subcourseIndex);
 
-    var title = document.createElement("h3");
+    var title = document.createElement("strong");
+    title.className = "unit-block__title";
+    title.setAttribute("role", "heading");
+    title.setAttribute("aria-level", "3");
     title.textContent = subcourse.title;
-    title.title = unitCode(subcourseIndex);
 
     var meta = document.createElement("span");
     meta.className = "unit-block__meta";
     meta.textContent = i18nFmt("course_unit_progress", { completed: stats.completedLessons, total: stats.lessonCount }, "{completed} of {total} completed");
 
-    head.append(icon, code, title, meta);
-    block.appendChild(head);
+    var state = document.createElement("span");
+    state.className = "unit-block__state";
+    state.textContent = block.dataset.state === "complete"
+      ? i18n("course_unit_complete", "Complete")
+      : isCurrent ? i18n("course_unit_next", "Next up") : "";
+
+    var chevron = lucideIcon("caret-down");
+    chevron.classList.add("unit-block__chevron");
+    summary.append(code, title, meta, state, chevron);
+    block.appendChild(summary);
+
+    var body = document.createElement("div");
+    body.className = "unit-block__body";
 
     var meter = progressMeter(
       stats.percent,
       i18nFmt("course_progress_label", { title: subcourse.title }, "Progress {title}")
     );
     meter.classList.add("unit-block__meter");
-    block.appendChild(meter);
+    body.appendChild(meter);
 
     if (subcourse.note) {
       var note = document.createElement("p");
       note.className = "unit-block__note";
       note.textContent = subcourse.note;
-      block.appendChild(note);
+      body.appendChild(note);
     }
 
     var list = document.createElement("div");
@@ -1342,7 +1356,8 @@
     lessons.forEach(function (lesson) {
       list.appendChild(activityLink(lesson, courseId, subcourse));
     });
-    block.appendChild(list);
+    body.appendChild(list);
+    block.appendChild(body);
 
     return block;
   }

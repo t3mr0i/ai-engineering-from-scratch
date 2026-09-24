@@ -90,6 +90,7 @@ window.LrnCurriculumMap = {
     ],
     "LRN-02": [
       {
+        "title": "AI tools and prompting for daily work",
         "decision": "core",
         "note": "Turns the technical prompting lessons into productivity routines.",
         "lessons": [

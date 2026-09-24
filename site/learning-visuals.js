@@ -182,7 +182,9 @@
     ));
     var list = document.createElement("ol");
     list.className = "course-route";
-    (units || []).forEach(function (unit, index) {
+    var routeUnits = units || [];
+    list.style.setProperty("--course-route-columns", String(Math.max(1, Math.min(routeUnits.length, 4))));
+    routeUnits.forEach(function (unit, index) {
       var item = document.createElement("li");
       item.className = "course-route__unit";
       item.dataset.state = unit.state || "open";
