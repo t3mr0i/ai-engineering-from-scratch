@@ -24,7 +24,7 @@
       overviewTitle: 'Fünf Bereiche. Dein eigener Ausgangspunkt.', overviewIntro: 'Die Fragen stammen aus dem bestehenden AI Self Assessment. Du kannst jede Antwort vor dem Abschluss ändern.', railTitle: 'Deine Themen',
       foundation: 'Grundverständnis', engineering: 'Engineering Literacy', product: 'Produkt & Prozesse', advisory: 'Advisory & Business', leadership: 'Leadership & Strategie',
       resultAreas: ['Grundverständnis', 'Engineering Literacy', 'Produkt & Prozess Verständnis', 'Advisory & Business Consulting', 'Leadership & Strategy'],
-      questionProgress: 'von 10', low: 'Gering', high: 'Hoch', na: 'Kann ich nicht einschätzen', continue: 'Weiter', review: 'Antworten ansehen', previous: 'Zurück',
+      questionProgress: 'von 10', low: 'Gering', high: 'Hoch', na: 'Kann ich nicht einschätzen', starLabel: '{value} von 5 Sternen', continue: 'Weiter', review: 'Antworten ansehen', previous: 'Zurück',
       roleError: 'Bitte wähle eine Rolle und eine Division.', answerError: 'Wähle eine Einschätzung oder „Kann ich nicht einschätzen“.',
       reviewTitle: 'Passt das für dich?', reviewIntro: 'Du kannst jede Einschätzung noch ändern. Erst wenn du dein Ergebnis anzeigen lässt, wird es in diesem Browser gespeichert.',
       change: 'Ändern', finish: 'Mein Ergebnis anzeigen', resultTitle: 'Dein Ausgangspunkt', resultIntro: 'Deine Selbsteinschätzung hilft dir, den nächsten Schritt zu finden. Sie ist kein Kompetenznachweis.',
@@ -42,7 +42,7 @@
       overviewTitle: 'Five areas. Your own starting point.', overviewIntro: 'The questions come from the current AI Self Assessment. You can change any answer before finishing.', railTitle: 'Your areas',
       foundation: 'Foundation', engineering: 'Engineering Literacy', product: 'Product & Process', advisory: 'Advisory & Business', leadership: 'Leadership & Strategy',
       resultAreas: ['Foundation', 'Engineering Literacy', 'Product and Process Literacy', 'Advisory and Business Consulting', 'Leadership and Strategy'],
-      questionProgress: 'of 10', low: 'Low', high: 'High', na: 'I cannot assess this yet', continue: 'Continue', review: 'Review answers', previous: 'Back',
+      questionProgress: 'of 10', low: 'Low', high: 'High', na: 'I cannot assess this yet', starLabel: '{value} of 5 stars', continue: 'Continue', review: 'Review answers', previous: 'Back',
       roleError: 'Please choose a role and a division.', answerError: 'Choose a rating or “I cannot assess this yet”.',
       reviewTitle: 'Does this look right?', reviewIntro: 'You can change any answer. Your result is saved in this browser only when you choose to see it.',
       change: 'Change', finish: 'Show my result', resultTitle: 'Your starting point', resultIntro: 'Your self-assessment helps you find a next step. It is not a formal skills certificate.',
@@ -55,6 +55,13 @@
   function lang() { return root.SiteLang && root.SiteLang.get() === 'de' ? 'de' : 'en'; }
   function t(key) { return COPY[lang()][key]; }
   function el(tag, className, content) { var item = doc.createElement(tag); if (className) item.className = className; if (content != null) item.textContent = content; return item; }
+  function starIcon() {
+    var svg = doc.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24'); svg.setAttribute('aria-hidden', 'true');
+    var path = doc.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', 'M12 2.6 14.9 8.5l6.5.9-4.7 4.6 1.1 6.5L12 17.5l-5.8 3 1.1-6.5-4.7-4.6 6.5-.9L12 2.6Z');
+    svg.appendChild(path); return svg;
+  }
   function action(label, handler, secondary) { var item = el('button', secondary ? 'v2-action v2-action--secondary' : 'v2-action', label); item.type = 'button'; item.addEventListener('click', handler); return item; }
   function go(page, index, editing) { state.page = page; if (typeof index === 'number') state.index = index; state.editing = !!editing; state.error = ''; render(); var title = host.querySelector('h1'); if (title) title.focus({ preventScroll: true }); root.scrollTo({ top: 0, behavior: 'instant' }); }
   function theme() {
@@ -117,17 +124,22 @@
     main.appendChild(el('p', 'v2-area-name', t(areaKeys[area])));
     var title = el('h1', '', lang() === 'de' ? question.textDe : question.text); title.tabIndex = -1; main.appendChild(title);
     var field = el('fieldset', 'v2-rating'); field.appendChild(el('legend', '', lang() === 'de' ? 'Wie schätzt du dich ein?' : 'How would you rate yourself?'));
-    var scale = el('div', 'v2-scale');
+    var scale = el('div', 'v2-scale'); var starLabels = [];
+    function paintStars() {
+      var answer = state.answers[question.id];
+      starLabels.forEach(function (label, index) { label.classList.toggle('is-filled', Number.isInteger(answer) && index < answer); });
+    }
     [1, 2, 3, 4, 5].forEach(function (value) {
-      var label = el('label', 'v2-scale-option' + (state.answers[question.id] === value ? ' is-selected' : ''));
+      var label = el('label', 'v2-scale-option');
       var input = el('input'); input.type = 'radio'; input.name = question.id; input.value = String(value); input.checked = state.answers[question.id] === value;
-      input.setAttribute('aria-label', String(value) + ' ' + (lang() === 'de' ? 'von fünf' : 'of five'));
-      input.addEventListener('change', function () { state.answers[question.id] = value; state.error = ''; scale.querySelectorAll('.v2-scale-option').forEach(function (option) { option.classList.toggle('is-selected', option === label); }); });
-      label.appendChild(input); label.appendChild(el('span', '', String(value))); scale.appendChild(label);
+      input.setAttribute('aria-label', t('starLabel').replace('{value}', value));
+      input.addEventListener('change', function () { state.answers[question.id] = value; state.error = ''; paintStars(); });
+      label.appendChild(input); label.appendChild(starIcon()); scale.appendChild(label); starLabels.push(label);
     });
+    paintStars();
     field.appendChild(scale); var anchors = el('div', 'v2-scale-anchors'); anchors.appendChild(el('span', '', t('low'))); anchors.appendChild(el('span', '', t('high'))); field.appendChild(anchors);
     var na = el('label', 'v2-na'); var naInput = el('input'); naInput.type = 'radio'; naInput.name = question.id; naInput.value = 'na'; naInput.checked = state.answers[question.id] === 'na';
-    naInput.addEventListener('change', function () { state.answers[question.id] = 'na'; state.error = ''; scale.querySelectorAll('.v2-scale-option').forEach(function (option) { option.classList.remove('is-selected'); }); });
+    naInput.addEventListener('change', function () { state.answers[question.id] = 'na'; state.error = ''; paintStars(); });
     na.appendChild(naInput); na.appendChild(el('span', '', t('na'))); field.appendChild(na); main.appendChild(field);
     if (state.error) { var error = el('p', 'v2-error', state.error); error.setAttribute('role', 'alert'); main.appendChild(error); }
     var actions = el('div', 'v2-actions'); actions.appendChild(action(t('previous'), function () { go(state.editing ? 'review' : state.index === 0 ? 'start' : 'question', state.index - 1); }, true));
@@ -144,7 +156,16 @@
       api.DIMENSIONS[area].questionIds.forEach(function (id, offset) {
         var row = el('div', 'v2-review-row'); var summary = reviewLabels[lang()][area * 2 + offset];
         row.appendChild(el('p', '', summary));
-        var value = state.answers[id]; row.appendChild(el('strong', '', value === 'na' ? t('unknown') : String(value) + ' / 5'));
+        var value = state.answers[id];
+        if (value === 'na') row.appendChild(el('strong', '', t('unknown')));
+        else {
+          var stars = el('span', 'v2-review-stars'); stars.setAttribute('role', 'img');
+          stars.setAttribute('aria-label', t('starLabel').replace('{value}', value));
+          for (var rating = 1; rating <= 5; rating++) {
+            var star = el('span', rating <= value ? 'is-filled' : ''); star.appendChild(starIcon()); stars.appendChild(star);
+          }
+          row.appendChild(stars);
+        }
         var change = action(t('change'), function () { go('question', area * 2 + offset, true); }, true);
         change.setAttribute('aria-label', t('change') + ': ' + summary); row.appendChild(change); section.appendChild(row);
       }); review.appendChild(section);
