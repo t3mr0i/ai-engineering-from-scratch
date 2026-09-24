@@ -2279,7 +2279,7 @@ i[class^="ph "] {
 .course-card {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-2);
   padding: var(--space-5);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
@@ -2344,15 +2344,6 @@ i[class^="ph "] {
 }
 
 
-.course-card__code {
-  display: block;
-  margin: 0 0 2px;
-  color: var(--text-muted);
-  font-family: var(--font-text);
-  font-size: var(--fs-body-xs, 0.75rem);
-  letter-spacing: 0.02em;
-}
-
 /* Fixed two-line title zone so every card's meta + progress line up,
    independent of title length. */
 .course-card h3 {
@@ -2381,15 +2372,6 @@ i[class^="ph "] {
   font-size: var(--fs-body-sm);
 }
 
-.course-card__learning-mix {
-  margin: 0;
-  color: var(--text-muted);
-  font-family: var(--font-text);
-  font-size: var(--fs-caption);
-  font-weight: var(--weight-medium);
-  line-height: var(--lh-snug);
-}
-
 .course-card__summary {
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -2407,23 +2389,15 @@ i[class^="ph "] {
 .course-card__outcome {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   overflow: hidden;
-  min-height: calc(3 * 1.38em);
+  min-height: calc(2 * 1.38em);
   margin: 0;
   color: var(--text-secondary);
   font-family: var(--font-text);
   font-size: var(--fs-body-sm);
   font-weight: var(--weight-regular);
   line-height: 1.38;
-}
-
-.course-card__outcome span {
-  display: block;
-  margin-block-end: var(--space-1);
-  color: var(--text-muted);
-  font-size: var(--fs-caption);
-  font-weight: var(--weight-medium);
 }
 
 /* Footer pinned to the card bottom — progress bars align across the row. */
@@ -2617,6 +2591,24 @@ i[class^="ph "] {
   padding-block-end: clamp(var(--space-7), 6vw, var(--space-8));
   border-radius: var(--radius-lg);
   background: var(--color-surface-sunken);
+}
+
+.course-intro--simple {
+  display: block;
+  padding: var(--space-5) 0 var(--space-6);
+  border-bottom: 1px solid var(--border-subtle);
+  border-radius: 0;
+  background: transparent;
+}
+
+.course-intro--simple .course-head {
+  max-width: 48rem;
+  justify-items: start;
+}
+
+.course-intro--simple .course-head__summary {
+  font-size: var(--fs-body);
+  line-height: var(--lh-normal);
 }
 
 .course-head {
@@ -2833,6 +2825,63 @@ i[class^="ph "] {
 .course-overview__detail strong {
   color: var(--text-primary);
   font-weight: var(--weight-medium);
+}
+
+.course-extra {
+  margin-block: var(--space-7);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.course-extra > summary {
+  width: fit-content;
+  min-height: 48px;
+  padding-block: var(--space-3);
+  color: var(--text-link);
+  font-size: var(--fs-body);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+}
+
+.course-extra > summary:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 3px;
+}
+
+.course-extra__body {
+  display: grid;
+  gap: var(--space-7);
+  padding-block: var(--space-5);
+}
+
+.course-extra .course-includes {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.course-extra .course-facts {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.course-practice {
+  border-top: 1px solid var(--border-subtle);
+}
+
+.course-practice > summary {
+  width: fit-content;
+  min-height: 44px;
+  padding-block: var(--space-3);
+  color: var(--text-link);
+  cursor: pointer;
+}
+
+.course-practice > summary:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 3px;
 }
 
 /* Source excerpt first; the catalog's supplementary route follows below. */
@@ -3506,22 +3555,20 @@ i[class^="ph "] {
 
 .course-path__units {
   display: grid;
-  gap: var(--space-3);
+  gap: 0;
   margin-block-start: var(--space-2);
+  border-top: 1px solid var(--border-subtle);
 }
 
 .unit-block {
   display: block;
   min-width: 0;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
+  border-bottom: 1px solid var(--border-subtle);
   scroll-margin-top: 6rem;
 }
 
 .unit-block[open] {
-  border-color: var(--border-strong);
-  box-shadow: var(--shadow-xs);
+  background: transparent;
 }
 
 .unit-block__summary {
@@ -3530,7 +3577,7 @@ i[class^="ph "] {
   align-items: center;
   gap: var(--space-4);
   min-height: 5rem;
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-4) 0;
   list-style: none;
   cursor: pointer;
 }
@@ -3613,12 +3660,7 @@ i[class^="ph "] {
 .unit-block__body {
   display: grid;
   gap: var(--space-3);
-  padding: 0 var(--space-5) var(--space-5);
-  border-block-start: 1px solid var(--border-subtle);
-}
-
-.unit-block__meter {
-  margin-block-start: var(--space-4);
+  padding: 0 0 var(--space-5) calc(2.75rem + var(--space-4));
 }
 
 .unit-block__note {
@@ -3626,6 +3668,11 @@ i[class^="ph "] {
   color: var(--text-muted);
   font-family: var(--font-text);
   font-size: var(--fs-body-sm);
+}
+
+@media (max-width: 40rem) {
+  .course-extra .course-facts { grid-template-columns: minmax(0, 1fr); }
+  .course-extra .course-fact + .course-fact { border-inline-start: 0; border-block-start: 1px solid var(--border-subtle); }
 }
 
 /* Flat rows inside the unit card — dividers instead of box-in-box borders. */

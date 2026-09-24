@@ -284,12 +284,13 @@ test("AI for Software Engineers exposes the full project-transfer learning contr
   assert.ok(course.learningContract.evidence.some((item) => /pull-request/i.test(item)));
 });
 
-test("catalog and course detail surface outcomes before and after selection", () => {
+test("catalog keeps the course outcome and detail keeps optional practice", () => {
   const catalogSource = readFileSync("site/lrn/lrn.js", "utf8");
   const detailSource = readFileSync("site/lrn/course.js", "utf8");
   assert.match(catalogSource, /course-card__outcome/);
   assert.match(catalogSource, /course\.outcomes\[0\]/);
-  assert.match(catalogSource, /course-card__learning-mix/);
+  assert.doesNotMatch(catalogSource, /course-card__learning-mix/);
+  assert.match(detailSource, /course-extra/);
   assert.match(detailSource, /learningContractSection\(course\)/);
   assert.match(detailSource, /LrnCourseContracts/);
   assert.match(detailSource, /learning-contract__evidence/);

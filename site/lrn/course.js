@@ -166,20 +166,15 @@
     var journeyNext = sharedJourneyNext();
 
     var intro = document.createElement("section");
-    intro.className = "course-intro";
+    intro.className = "course-intro course-intro--simple";
     intro.setAttribute("aria-labelledby", "courseTitle");
 
     var head = document.createElement("header");
     head.className = "course-head";
 
-    var code = document.createElement("p");
-    code.className = "course-head__code";
-    code.textContent = course.id;
-
     var title = document.createElement("h1");
     title.id = "courseTitle";
     title.textContent = course.title;
-    title.title = course.id + " · " + course.title;
 
     var summary = document.createElement("p");
     summary.className = "course-head__summary";
@@ -215,18 +210,7 @@
     progressLabel.textContent = i18n("course_progress_heading", "Course progress");
 
     progress.append(progressLabel, progressMeter(stats.percent, i18nFmt("course_progress_label", { title: course.title }, "Progress {title}")));
-    head.append(code, title, summary, progress, action);
-    if (window.LrnJourneyState) {
-      var journeyModel = window.LrnJourneyState.snapshot();
-      var contribution = journeyModel && journeyModel.steps.find(function (step) { return step.courseId === course.id; });
-      if (contribution && contribution.matches.length) {
-        var purpose = document.createElement("p");
-        purpose.className = "course-journey-purpose";
-        purpose.textContent = i18n("journey_course_contribution", "Contribution to your target") + ": " +
-          uniqueValues(contribution.matches.map(function (match) { return match.dimension + " · " + match.capability + " · " + match.targetLevel; })).join("; ");
-        head.appendChild(purpose);
-      }
-    }
+    head.append(title, summary, progress, action);
 
     var includes = document.createElement("aside");
     includes.className = "course-includes";
@@ -267,49 +251,22 @@
     }
 
     includes.append(includesTitle, formatBadge, includesList);
-    intro.append(head, includes);
+    intro.appendChild(head);
 
     var facts = document.createElement("section");
     facts.className = "course-facts";
     facts.setAttribute("aria-label", i18n("course_facts_label", "Course facts"));
     facts.append(
       factItem("chart-bar", i18n("course_fact_level", "Level"), localizedDepths(course.levels)),
-      factItem("stack", i18n("course_fact_units", "Units"), String(stats.subcourseCount)),
-      factItem("list-checks", i18n("course_fact_activities", "Activities"), String(stats.lessonCount)),
       factItem("compass", i18n("course_fact_focus", "Focus"), courseFocus(course))
     );
 
-    var overview = document.createElement("section");
-    overview.className = "course-overview";
-
-    var about = document.createElement("article");
-    about.className = "course-overview__about";
-    about.setAttribute("aria-labelledby", "courseAboutTitle");
-
-    var aboutTitle = document.createElement("h2");
-    aboutTitle.id = "courseAboutTitle";
-    aboutTitle.textContent = i18n("course_about_title", "About this course");
-    about.appendChild(aboutTitle);
-
-    if (course.format) {
-      about.appendChild(overviewDetail(
-        i18n("course_format_label", "Format"),
-        i18n(format.labelKey, format.label) + " · " + course.format
-      ));
-    }
-    if (modules.length) {
-      about.appendChild(overviewDetail(i18n("course_modules_label", "Modules"), modules.join(" · ")));
-    }
     var owner = window.LrnSchedule ? window.LrnSchedule.trainer(course.ownerTrainerId) : null;
-    if (owner) {
-      about.appendChild(overviewDetail(i18n("course_owner_label", "Course lead"), owner.name || owner.id));
-    }
-
-    overview.appendChild(about);
 
     var outcomes = Array.isArray(course.outcomes) ? course.outcomes.filter(function (s) { return typeof s === "string" && s.trim().length > 0; }) : [];
+    var outcomesBlock = null;
     if (outcomes.length) {
-      var outcomesBlock = document.createElement("section");
+      outcomesBlock = document.createElement("section");
       outcomesBlock.className = "course-head__outcomes";
       outcomesBlock.setAttribute("aria-labelledby", "courseOutcomesTitle");
 
@@ -328,7 +285,6 @@
       });
 
       outcomesBlock.append(outcomesTitle, outcomesList);
-      overview.appendChild(outcomesBlock);
     }
 
     var pathSection = document.createElement("section");
@@ -374,11 +330,30 @@
       pathSection.appendChild(unitList);
     }
 
-    var children = [intro, facts, pathSection, overview];
+    var more = document.createElement("details");
+    more.className = "course-extra";
+    var moreSummary = document.createElement("summary");
+    moreSummary.textContent = i18n("course_more_details", "More about this course");
+    var moreBody = document.createElement("div");
+    moreBody.className = "course-extra__body";
+    moreBody.append(includes, facts);
+    if (owner) moreBody.appendChild(overviewDetail(i18n("course_owner_label", "Course lead"), owner.name || owner.id));
+    if (outcomesBlock) moreBody.appendChild(outcomesBlock);
+    var learningContract = learningContractSection(course);
+    if (learningContract) {
+      var practice = document.createElement("details");
+      practice.className = "course-practice";
+      var practiceSummary = document.createElement("summary");
+      practiceSummary.textContent = i18n("course_learning_contract_label", "Optional practice");
+      practice.append(practiceSummary, learningContract);
+      moreBody.appendChild(practice);
+    }
+    more.append(moreSummary, moreBody);
+
+    var children = [intro, pathSection];
     var sessions = sessionSection(course);
     if (sessions) children.push(sessions);
-    var learningContract = learningContractSection(course);
-    if (learningContract) children.push(learningContract);
+    children.push(more);
 
     replaceChildren(root, children);
     var hashedUnit = /^#course-unit-\d+$/.test(window.location.hash)
@@ -1310,7 +1285,8 @@
 
     var code = document.createElement("span");
     code.className = "unit-block__code";
-    code.textContent = unitCode(subcourseIndex);
+    code.textContent = String(subcourseIndex + 1);
+    code.setAttribute("aria-hidden", "true");
 
     var title = document.createElement("strong");
     title.className = "unit-block__title";
@@ -1336,20 +1312,6 @@
     var body = document.createElement("div");
     body.className = "unit-block__body";
 
-    var meter = progressMeter(
-      stats.percent,
-      i18nFmt("course_progress_label", { title: subcourse.title }, "Progress {title}")
-    );
-    meter.classList.add("unit-block__meter");
-    body.appendChild(meter);
-
-    if (subcourse.note) {
-      var note = document.createElement("p");
-      note.className = "unit-block__note";
-      note.textContent = subcourse.note;
-      body.appendChild(note);
-    }
-
     var list = document.createElement("div");
     list.className = "activity-list";
     var lessons = Array.isArray(subcourse.lessons) ? subcourse.lessons : [];
@@ -1357,6 +1319,12 @@
       list.appendChild(activityLink(lesson, courseId, subcourse));
     });
     body.appendChild(list);
+    if (subcourse.note) {
+      var note = document.createElement("p");
+      note.className = "unit-block__note";
+      note.textContent = subcourse.note;
+      body.appendChild(note);
+    }
     block.appendChild(body);
 
     return block;
@@ -1367,7 +1335,6 @@
     var a = document.createElement("a");
     a.className = "interactive-surface activity-link";
     a.href = lessonHref(lesson.path, courseId);
-    a.title = lesson.path;
 
     var dot = document.createElement("span");
     dot.className = "activity-link__dot";

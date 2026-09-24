@@ -296,6 +296,84 @@
   width: 100%;
 }
 
+.course-search--home .selector-field__label {
+  color: var(--text-primary);
+  font-size: var(--fs-body-sm);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Courses scan as one list: title and purpose carry the decision. */
+.page--home .course-grid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--border-subtle);
+  border-radius: 0;
+}
+
+.page--home .course-card {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr) auto;
+  grid-template-rows: auto auto auto;
+  gap: var(--space-1) var(--space-4);
+  padding: var(--space-5) var(--space-2);
+  border: 0;
+  border-bottom: 1px solid var(--border-subtle);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.page--home .course-card::before { display: none; }
+.page--home .course-card--enter { animation: none; }
+.page--home .course-card__head { grid-column: 1; grid-row: 1 / 4; align-self: start; }
+.page--home .course-card__tile { background: transparent; color: var(--text-secondary); }
+.page--home .course-card h3 {
+  display: block;
+  grid-column: 2;
+  grid-row: 1;
+  min-height: 0;
+  overflow: visible;
+  font-size: var(--fs-h4);
+}
+.page--home .course-card__meta { grid-column: 2; grid-row: 2; flex-wrap: wrap; }
+.page--home .course-card__format {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: var(--fs-caption);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.page--home .course-card__outcome,
+.page--home .course-card__summary {
+  grid-column: 2;
+  grid-row: 3;
+  min-height: 0;
+  max-width: 70ch;
+  margin-top: var(--space-1);
+}
+.page--home .course-card__foot {
+  grid-column: 3;
+  grid-row: 1 / 4;
+  align-self: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.page--home .course-card__foot .progress-meter { width: 8rem; }
+.page--home .course-card:hover { background: var(--color-surface-sunken); box-shadow: none; }
+.page--home .course-card:hover .course-card__tile,
+.page--home .course-card:focus-visible .course-card__tile { background: transparent; color: var(--action-primary); box-shadow: none; transform: none; }
+.page--home .course-card:focus-visible { outline: 2px solid var(--border-focus); outline-offset: -2px; box-shadow: none; }
+
+@media (max-width: 40rem) {
+  .page--home .course-card { grid-template-columns: 2.5rem minmax(0, 1fr); gap: var(--space-1) var(--space-3); }
+  .page--home .course-card__foot { grid-column: 2; grid-row: 4; justify-self: stretch; justify-content: space-between; padding-top: var(--space-2); }
+}
+
 @media (hover: hover) and (pointer: fine) {
   .learning-tool:hover {
     border-color: var(--border-strong);
