@@ -1,0 +1,25 @@
+/* The same assessment outcome language is used in V1 and V2. */
+.assessment-result-content { width: 100%; }
+.assessment-result-identity { display: flex; flex-wrap: wrap; gap: 16px 36px; margin: 0 0 30px; padding: 18px 0; border-block: 1px solid var(--rule); }
+.assessment-result-identity > div { display: grid; gap: 4px; min-width: 180px; }
+.assessment-result-identity dt, .assessment-result-row__levels dt { color: var(--ink-soft); font-size: .83rem; line-height: 1.35; }
+.assessment-result-identity dd, .assessment-result-row__levels dd { margin: 0; color: var(--ink); font-size: .95rem; font-weight: 600; line-height: 1.35; }
+.assessment-result-explainer { max-width: 64ch; margin: 0 0 14px; color: var(--ink-soft); font-size: .9rem; line-height: 1.5; }
+.assessment-result-list { border-top: 1px solid var(--rule); }
+.assessment-result-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(235px, .8fr); align-items: center; gap: 24px; padding: 21px 0; border-bottom: 1px solid var(--rule); }
+.assessment-result-row__main { min-width: 0; }
+.assessment-result-row h2 { margin: 0 0 8px; color: var(--ink); font-family: var(--font-heading); font-size: 1.2rem; font-weight: 500; line-height: 1.25; }
+.assessment-result-stars { display: inline-flex; align-items: center; gap: 4px; color: var(--blueprint); }
+.assessment-result-star { position: relative; display: inline-block; width: 21px; height: 21px; color: var(--blueprint); }
+.assessment-result-star > svg, .assessment-result-star__fill svg { display: block; width: 21px; height: 21px; }
+.assessment-result-star__fill { position: absolute; inset: 0 auto 0 0; overflow: hidden; }
+.assessment-result-unrated { display: inline-block; color: var(--ink-soft); font-size: .9rem; }
+.assessment-result-row__levels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 0; }
+.assessment-result-row__levels > div { display: grid; gap: 5px; }
+@media (max-width: 650px) {
+  .assessment-result-identity { gap: 14px; margin-bottom: 22px; padding: 15px 0; }
+  .assessment-result-identity > div { min-width: min(100%, 170px); }
+  .assessment-result-row { grid-template-columns: 1fr; gap: 14px; padding: 18px 0; }
+  .assessment-result-row h2 { font-size: 1.13rem; }
+  .assessment-result-row__levels { gap: 12px; }
+}

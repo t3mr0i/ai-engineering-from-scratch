@@ -23,27 +23,36 @@
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title data-i18n="title_assessment">LHIND · AI Self-Assessment</title>
+  <title data-i18n="title_assessment">LHIND · AI Self Assessment</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ffffff'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%2305164d' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='sans-serif' fill='%2305164d'>AI</text></svg>">
-  <meta name="description" content="Complete the bilingual AI self-assessment and see learning paths for your role and starting level.">
+  <meta name="description" content="Complete the bilingual AI Self Assessment and see learning paths for your role and starting level.">
   <meta name="robots" content="noindex">
   <link rel="stylesheet" href="style.css?v=20260909reader">
   <style>
-    .assess-page { padding: 100px 0 80px; min-height: 100vh; }
-    .assess-header { margin-bottom: 32px; }
-    .assess-header h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 8px; }
-    .assess-header p { color: var(--text-muted); font-size: 1.05rem; max-width: 60ch; }
+    .assess-page { padding: 88px 0 64px; min-height: 100vh; }
+    .assess-header { width: min(100%, 820px); margin: 0 auto 22px; }
+    .assess-header h1 { font-size: clamp(2rem, 4vw, 2.5rem); margin-bottom: 6px; }
+    .assess-header p { color: var(--text-muted); font-size: 1rem; max-width: 60ch; }
+    .assess-page--focused { padding-top: 24px; }
+    .assess-page--focused .assess-header {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+    }
+    .assess-page--result .assess-header { display: none; }
+    .assess-page--result { padding-top: 94px; }
 
-    .assess-result { margin-top: 8px; }
+    .assess-result { width: min(100%, 820px); margin: 22px auto 0; }
     .assess-result h2 { margin-bottom: 6px; }
     .assess-result > p { color: var(--text-muted); margin-bottom: 20px; max-width: 72ch; }
 
     @media (max-width: 640px) {
-      .assess-page { padding-inline: 16px; }
+      .assess-page { padding: 70px 16px 48px; }
+      .assess-page--focused { padding-top: 24px; }
     }
   </style>
-  <link rel="stylesheet" href="assessment.css?v=20260923c">
+  <link rel="stylesheet" href="assessment.css?v=20260923result">
   <link rel="stylesheet" href="lrn/journey.css?v=20260909a">
+  <link rel="stylesheet" href="assessment-result.css?v=20260923a">
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
@@ -61,7 +70,7 @@
       <span id="langIcon" class="theme-icon">EN</span>
     </a>
   </header>
-  <script src="i18n.js?v=20260923c"></script>
+  <script src="i18n.js?v=20260923source"></script>
   <script src="lang.js"></script>
   <script>
     /* D1 — dark-mode toggle button. Wires the button in the header above
@@ -101,10 +110,10 @@
 
   <main id="main" class="container assess-page">
     <div class="assess-header">
-      <h1 data-i18n="assess_title">AI Self-Assessment</h1>
-      <p data-i18n="assess_intro">Wähle deine Rolle und Division, beantworte zehn Fragen und entdecke deinen Ausgangspunkt und passende Lernpfade.</p>
+      <h1 data-i18n="assess_title">AI Self Assessment</h1>
+      <p data-i18n="assess_intro">Beantworte zehn Fragen und schätze deinen Stand in AI Literacy ein. Danach findest du passende Lernpfade und Trainings.</p>
     </div>
-    <section id="nativeAssessment" aria-label="AI Self-Assessment"></section>
+    <section id="nativeAssessment" aria-label="AI Self Assessment"></section>
     <section id="assessRecommendations" class="assess-result" aria-labelledby="assessResultTitle" hidden>
       <h2 id="assessResultTitle" data-i18n="assess_result_title">Deine Empfehlungen</h2>
       <p data-i18n="assess_result_hint">Nach dem Assessment findest du hier deinen nächsten Lernschritt.</p>
@@ -114,7 +123,8 @@
 
   <script src="lrn/data.js?v=20260923a"></script>
   <script src="assessment.js?v=20260923c"></script>
-  <script src="assessment-ui.js?v=20260923c"></script>
+  <script src="assessment-result.js?v=20260923a"></script>
+  <script src="assessment-ui.js?v=20260923result2"></script>
   <script src="lrn/curriculum-map.js?v=20260908a"></script>
   <script src="progress.js?v=20260908a"></script>
   <script src="skills-progress-evidence.js?v=20260908a"></script>

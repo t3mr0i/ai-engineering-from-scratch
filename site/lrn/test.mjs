@@ -35,6 +35,13 @@ function loadMap() {
   return sandbox.window.LrnCurriculumMap;
 }
 
+function loadCourseContracts() {
+  const sandbox = { window: {}, console };
+  vm.createContext(sandbox);
+  vm.runInContext(readFileSync("site/lrn/course-contracts.js", "utf8"), sandbox, { filename: "course-contracts.js" });
+  return sandbox.window.LrnCourseContracts;
+}
+
 function loadSchedule(data) {
   const sandbox = { window: { LrnData: data }, console };
   vm.createContext(sandbox);
@@ -76,6 +83,7 @@ function loadActiveProfileId() {
 const data = loadData();
 const cmap = loadMap();
 const courseFormats = loadCourseFormats();
+const courseContracts = loadCourseContracts();
 const activeProfileId = loadActiveProfileId();
 
 // ───────────────────────────────────────────────────────────────────────────
@@ -164,6 +172,30 @@ test("learning contracts carry a project case, learning sequence, and completion
   }
 });
 
+test("every course has distinct English and German descriptions of its work", () => {
+  assert.deepEqual(Object.keys(courseContracts).sort(), Array.from(data.courses, (course) => course.id).sort());
+  for (const lang of ["en", "de"]) {
+    const promises = new Set();
+    const scenarios = new Set();
+    for (const course of data.courses) {
+      const contract = courseContracts[course.id][lang];
+      assert.ok(contract?.promise?.trim(), `${course.id} needs a ${lang} promise`);
+      assert.ok(contract?.projectScenario?.title?.trim(), `${course.id} needs a ${lang} scenario`);
+      assert.ok(contract.projectScenario.description?.trim(), `${course.id} needs a ${lang} scenario description`);
+      assert.deepEqual(Array.from(contract.stages || [], (stage) => stage.kind), ["theory", "guided", "hands-on"],
+        `${course.id} needs three ${lang} learning stages`);
+      assert.ok(contract.stages.every((stage) => stage.title?.trim() && stage.description?.trim()),
+        `${course.id} needs named ${lang} learning stages`);
+      assert.ok(Array.isArray(contract.evidence) && contract.evidence.length >= 3 && contract.evidence.every((item) => item.trim()),
+        `${course.id} needs concrete ${lang} completion evidence`);
+      assert.ok(!promises.has(contract.promise), `${course.id} repeats a ${lang} promise`);
+      assert.ok(!scenarios.has(contract.projectScenario.description), `${course.id} repeats a ${lang} scenario`);
+      promises.add(contract.promise);
+      scenarios.add(contract.projectScenario.description);
+    }
+  }
+});
+
 test("AI for Software Engineers exposes the full project-transfer learning contract", () => {
   const course = data.courses.find((item) => item.id === "LRN-06");
   assert.ok(course, "LRN-06 missing from data.js");
@@ -182,8 +214,8 @@ test("catalog and course detail surface outcomes before and after selection", ()
   assert.match(catalogSource, /course-card__outcome/);
   assert.match(catalogSource, /course\.outcomes\[0\]/);
   assert.match(catalogSource, /course-card__learning-mix/);
-  assert.match(detailSource, /learningContractSection\(course, map, stats\)/);
-  assert.match(detailSource, /defaultLearningContract/);
+  assert.match(detailSource, /learningContractSection\(course\)/);
+  assert.match(detailSource, /LrnCourseContracts/);
   assert.match(detailSource, /learning-contract__evidence/);
 });
 
