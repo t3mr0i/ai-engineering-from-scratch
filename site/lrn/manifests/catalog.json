@@ -1087,7 +1087,7 @@
     {
       "id": "LRN-06",
       "sequence": 6,
-      "academyCourse": "AI-01",
+      "academyCourse": "AI-06-2",
       "title": "AI for Software Engineers / GitHub Copilot",
       "status": "Maintained in SharePoint",
       "source": "trainings.xlsx",
@@ -3313,53 +3313,6 @@
   "sessions": [],
   "academyPaths": [
     {
-      "id": "academy-ai-01",
-      "academyCourse": "AI-01",
-      "title": "Introduction to GitHub Copilot",
-      "format": "Blended learning",
-      "audience": "Developers, business analysts, and knowledge workers with little or no Copilot experience.",
-      "prerequisites": "Basic digital skills and access to GitHub Copilot; no advanced AI knowledge required.",
-      "summary": "Learn Copilot interaction patterns, supply useful context, apply suggestions to real work, and verify code, privacy, and quality before accepting results.",
-      "category": "technical",
-      "recommendationRanks": {
-        "tc": 1,
-        "am": 2
-      },
-      "trackCodes": [
-        "LP03"
-      ],
-      "stages": [
-        {
-          "label": "Acquire",
-          "focus": "Copilot modes, prompts, context, boundaries, and safe everyday use.",
-          "courses": [
-            "LRN-06"
-          ]
-        },
-        {
-          "label": "Deepen",
-          "focus": "Apply Copilot to code and document work, then review the resulting change.",
-          "courses": [
-            "LRN-22",
-            "LRN-20"
-          ]
-        },
-        {
-          "label": "Create",
-          "focus": "Verify AI-assisted changes with evaluation, tests, and release-quality gates.",
-          "courses": [
-            "LRN-19"
-          ]
-        }
-      ],
-      "providers": [
-        "Microsoft Learn",
-        "LinkedIn Learning",
-        "LHIND Trainingcamp",
-        "DataCamp"
-      ]
-    },
-    {
       "id": "academy-ai-02",
       "academyCourse": "AI-02",
       "title": "Agentic Software Engineering",
@@ -3569,7 +3522,7 @@
       "format": "Three-module learning journey",
       "audience": "All LHIND employees, from first-time users to technical power users.",
       "prerequisites": "Module 1 has no prerequisite. Hands-on participation needs the approved tools; Module 3 expects prior file-based agent experience.",
-      "summary": "Progress from the LHIND tool landscape through a six-move hands-on workflow to persistent context, reusable skills, and an agent-harness prototype.",
+      "summary": "Progress from the LHIND tool landscape through a hands-on workflow and GitHub Copilot (AI-06-2) to persistent context, reusable skills, and an agent-harness prototype.",
       "category": "foundation",
       "foundationRank": 2,
       "recommendationRanks": {},
@@ -3589,10 +3542,11 @@
         },
         {
           "label": "Deepen",
-          "focus": "Module 2: turn source files into notes, briefings, and presentations with prompts, skills, and deliberate review.",
+          "focus": "Module 2: turn source files into notes, briefings, and presentations, and practise GitHub Copilot with prompts, repository context, and deliberate review.",
           "courses": [
             "LRN-02",
-            "LRN-22"
+            "LRN-22",
+            "LRN-06"
           ]
         },
         {
@@ -3607,7 +3561,9 @@
       "providers": [
         "LinkedIn Learning",
         "Microsoft Learn",
-        "Coursera"
+        "Coursera",
+        "LHIND Trainingcamp",
+        "DataCamp"
       ]
     },
     {

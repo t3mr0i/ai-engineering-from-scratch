@@ -531,6 +531,14 @@
     });
     var visiblePaths = state.academyAll ? allPaths : primaryRecommendations;
     var saved = progressApi && progressApi.getLearningPath ? progressApi.getLearningPath() : null;
+    if (saved && saved.academyCourse === "AI-01" && progressApi.saveLearningPath) {
+      saved = progressApi.saveLearningPath({
+        academyCourse: "AI-06",
+        profileId: saved.profileId,
+        targetLevel: saved.targetLevel,
+        source: saved.source || "choice"
+      });
+    }
     var activePath = saved && saved.profileId === profileId && allPaths.find(function (path) {
       return path.academyCourse === saved.academyCourse;
     });
@@ -923,7 +931,6 @@
 
   function academyPathIcon(path) {
     var icons = {
-      "AI-01": "code",
       "AI-02": "robot",
       "AI-03": "tree-structure",
       "AI-04": "clipboard-text",

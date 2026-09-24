@@ -59,6 +59,7 @@
   function resolveAcademyPath() {
     var params = new URLSearchParams(window.location.search);
     var id = params.get("academy");
+    if (id === "AI-01") id = "AI-06";
     return id && academyPathByCourse[id] ? academyPathByCourse[id] : null;
   }
 
@@ -396,6 +397,7 @@
   function renderAcademyPath(path) {
     document.title = path.title + " · LHIND AI Learning Catalog";
     var pathSaved = persistAcademyPath(path);
+    var routeCopy = academyRouteCopy(path);
 
     var assessment = importedAssessment();
     var stats = academyPathStats(path);
@@ -425,7 +427,7 @@
 
     var summary = document.createElement("p");
     summary.className = "course-head__summary";
-    summary.textContent = path.summary;
+    summary.textContent = routeCopy ? routeCopy.summary : path.summary;
 
     var progress = document.createElement("div");
     progress.className = "course-head__progress";
@@ -495,7 +497,7 @@
     formatBadge.append(lucideIcon("graduation-cap"), document.createTextNode(i18n("academy_path_format_badge", "Academy learning path")));
     var includesList = document.createElement("ul");
     includesList.className = "course-includes__list";
-    includesList.appendChild(includesItem("presentation-chart", path.format));
+    includesList.appendChild(includesItem("presentation-chart", routeCopy ? routeCopy.format : path.format));
     (path.stages || []).forEach(function (stage) {
       var count = uniqueValues(stage.courses || []).length;
       includesList.appendChild(includesItem(
@@ -510,14 +512,11 @@
     facts.className = "course-facts";
     facts.setAttribute("aria-label", i18n("academy_path_facts_label", "Learning-path facts"));
     facts.append(
-      factItem("presentation-chart", i18n("academy_path_fact_format", "Format"), path.format),
+      factItem("presentation-chart", i18n("academy_path_fact_format", "Format"), routeCopy ? routeCopy.format : path.format),
       factItem("stairs", i18n("academy_path_fact_stages", "Stages"), String((path.stages || []).length)),
       factItem("stack", i18n("academy_path_fact_courses", "Courses"), String(stats.courses.length)),
       factItem("list-checks", i18n("academy_path_fact_activities", "Activities"), String(stats.lessonCount))
     );
-    if (Array.isArray(path.providers) && path.providers.length) {
-      facts.appendChild(factItem("buildings", i18n("academy_path_fact_providers", "Providers"), path.providers.join(" · ")));
-    }
 
     var overview = document.createElement("section");
     overview.className = "course-overview";
@@ -529,8 +528,8 @@
     aboutTitle.textContent = i18n("academy_path_about_title", "About this learning path");
     about.append(
       aboutTitle,
-      overviewDetail(i18n("academy_path_audience", "Audience"), path.audience),
-      overviewDetail(i18n("academy_path_prerequisites", "Prerequisites"), path.prerequisites)
+      overviewDetail(i18n("academy_path_audience", "Audience"), routeCopy ? routeCopy.audience : path.audience),
+      overviewDetail(i18n("academy_path_prerequisites", "Prerequisites"), routeCopy ? routeCopy.prerequisites : path.prerequisites)
     );
     var trackNames = (path.trackCodes || []).map(function (trackCode) {
       return trackByCode[trackCode] ? trackByCode[trackCode].label : trackCode;
@@ -579,18 +578,195 @@
     journey.append(journeyTitle, journeyList);
     overview.appendChild(journey);
 
-    var children = [intro, facts, overview];
+    var recommendations = academyRecommendationsSection(path);
+    var workshop = academyWorkshopSection(path);
+    var offering = recommendations ? null : academyOfferingSection(path);
+    var routeTitle = document.createElement("h2");
+    routeTitle.className = "academy-route-title";
+    routeTitle.textContent = i18n("academy_path_route_title", "Supplementary learning route in this catalog");
+    var routeIntro = document.createElement("p");
+    routeIntro.className = "academy-route-intro";
+    routeIntro.textContent = i18n(
+      "academy_path_route_intro",
+      "The courses below are this catalog's supplementary learning route. They do not replace the AI Literacy recommendations or LHIND Academy live modules. Progress here records activity in this catalog."
+    );
+    var children = [intro];
+    if (recommendations) children.push(recommendations);
+    if (workshop) children.push(workshop);
+    if (offering) children.push(offering);
+    children.push(routeTitle, routeIntro, facts, overview);
     var syllabusTitle = document.createElement("h2");
     syllabusTitle.className = "syllabus-title";
-    syllabusTitle.textContent = i18n("academy_path_courses_title", "Supporting courses");
+    syllabusTitle.textContent = i18n("academy_path_courses_title", "Courses in this route");
     children.push(syllabusTitle);
     (path.stages || []).forEach(function (stage, index) {
-      children.push(academyStageBlock(stage, index, assessment));
+      children.push(academyStageBlock(path, stage, index, assessment));
     });
 
     replaceChildren(root, children);
     mountJourney(path.academyCourse);
     refreshIcons();
+  }
+
+  function academyRouteCopy(path) {
+    if (!window.SiteLang || window.SiteLang.get() !== "de") return null;
+    return (window.LrnAcademyRouteDe || {})[path.academyCourse] || null;
+  }
+
+  function academySourceLink(url, label) {
+    var link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = label;
+    return link;
+  }
+
+  function academyRecommendationsSection(path) {
+    var source = window.LrnAcademyRecommendations;
+    if (!source || !Array.isArray(source.records)) return null;
+    var records = source.records.filter(function (record) { return record.academy === path.academyCourse; });
+    if (!records.length) return null;
+
+    var section = document.createElement("section");
+    section.className = "academy-offering academy-recommendations";
+    section.setAttribute("aria-labelledby", "academyRecommendationsTitle");
+    var title = document.createElement("h2");
+    title.id = "academyRecommendationsTitle";
+    title.textContent = i18n("academy_recommendations_title", "AI Literacy online-course recommendations");
+    var note = document.createElement("p");
+    note.className = "academy-offering__source";
+    note.textContent = i18n("academy_recommendations_note", "Official recommendation list, August 2026. Choose the courses for your role and level; check the source for updates.");
+    var sourceLink = academySourceLink(source.sourceUrl, i18n("academy_recommendations_source", "Open official recommendation list"));
+    section.append(title, note, sourceLink);
+
+    var roles = [];
+    records.forEach(function (record) {
+      if (roles.indexOf(record.role) === -1) roles.push(record.role);
+    });
+    var primaryRole = roles.reduce(function (best, role) {
+      var count = records.filter(function (record) { return record.role === role; }).length;
+      var bestCount = records.filter(function (record) { return record.role === best; }).length;
+      return count > bestCount ? role : best;
+    }, roles[0]);
+    roles.forEach(function (role) {
+      var roleRecords = records.filter(function (record) { return record.role === role; });
+      var group = document.createElement("details");
+      group.className = "academy-recommendations__role";
+      if (role === primaryRole) group.open = true;
+      var summary = document.createElement("summary");
+      summary.textContent = role + " · " + i18nFmt(
+        roleRecords.length === 1 ? "academy_recommendations_count_one" : "academy_recommendations_count",
+        { count: roleRecords.length },
+        roleRecords.length === 1 ? "1 online course" : "{count} online courses"
+      );
+      var list = document.createElement("ul");
+      list.className = "academy-offering__modules";
+      roleRecords.forEach(function (record) {
+        var item = document.createElement("li");
+        var name = academySourceLink(record.url, record.course);
+        name.className = "academy-recommendations__course";
+        var meta = document.createElement("span");
+        meta.textContent = [record.level, record.provider, record.hours ? record.hours + " h" : ""].filter(Boolean).join(" · ");
+        item.append(name, meta);
+        list.appendChild(item);
+      });
+      group.append(summary, list);
+      section.appendChild(group);
+    });
+    return section;
+  }
+
+  function academyWorkshopSection(path) {
+    var workshops = {
+      "AI-02": {
+        title: "AI-02 Modul 4: AI Agentic Software Engineering - Hands-on",
+        en: "Two-hour German-language live session after three online modules: approved coding tools, prompt and context engineering, code review, tests, RAG and agent workflows with guardrails.",
+        de: "Zweistündige Live-Session auf Deutsch nach drei Online-Modulen: freigegebene Coding-Tools, Prompt- und Context-Engineering, Code-Review, Tests sowie RAG- und Agenten-Workflows mit Guardrails."
+      },
+      "AI-08": {
+        title: "AI-08 Modul 2: AI für Führungskräfte, Projektleiter, Senior Consultants (AI for Leaders)",
+        en: "Three-hour live session transferring online learning to leadership scenarios, organizational roles, governance, change and concrete initiatives.",
+        de: "Dreistündige Live-Session für den Transfer der Online-Inhalte auf Führungsszenarien, Rollen, Governance, Change und konkrete Initiativen."
+      }
+    };
+    var workshop = workshops[path.academyCourse];
+    if (!workshop) return null;
+    var section = document.createElement("section");
+    section.className = "academy-offering academy-workshop";
+    var title = document.createElement("h2");
+    title.textContent = i18n("academy_workshop_title", "LHIND Academy live module");
+    var moduleTitle = document.createElement("h3");
+    moduleTitle.textContent = workshop.title;
+    var description = document.createElement("p");
+    description.textContent = workshop[window.SiteLang && window.SiteLang.get() === "de" ? "de" : "en"];
+    var note = document.createElement("p");
+    note.className = "academy-offering__source";
+    note.textContent = i18n("academy_workshop_note", "Listed in the Service Portal on 24 September 2026. Check the catalog for current dates and availability.");
+    section.append(title, moduleTitle, description, note, academySourceLink(
+      "https://esm.lhind.app.lufthansa.com/wm/app-SelfServicePortal/search-page/6cac2957-1ae1-e511-dd9b-74d02b9d869c?structures=87a0f940-8069-f111-19b0-b1243d88a77a_178bf9cc-cffc-ee11-f2ba-00505686fb19",
+      i18n("academy_workshop_link", "Open AI Literacy in the Service Portal")
+    ));
+    return section;
+  }
+
+  function academyOfferingSection(path) {
+    var offering = (window.LrnAcademyOfferings || {})[path.academyCourse];
+    if (!offering) return null;
+
+    var section = document.createElement("section");
+    section.className = "academy-offering";
+    section.setAttribute("aria-labelledby", "academyOfferingTitle");
+
+    var title = document.createElement("h2");
+    title.id = "academyOfferingTitle";
+    title.textContent = i18n("academy_offering_title", "Academy offering");
+    var source = document.createElement("p");
+    source.className = "academy-offering__source";
+    source.textContent = i18nFmt(
+      "academy_offering_source_note",
+      { source: offering.source },
+      "Local source: {source}. Check the Learning Portal for the current offer and enrollment."
+    );
+    var courseTitle = document.createElement("h3");
+    courseTitle.textContent = offering.title;
+    section.append(title, courseTitle, source);
+
+    var modules = Array.isArray(offering.modules) ? offering.modules : [];
+    if (modules.length) {
+      var modulesTitle = document.createElement("h4");
+      modulesTitle.textContent = i18n("academy_offering_modules", "Courses and modules in the training overview");
+      var list = document.createElement("ul");
+      list.className = "academy-offering__modules";
+      modules.forEach(function (module) {
+        var item = document.createElement("li");
+        var name = document.createElement("strong");
+        name.textContent = (module.id === "AI-06-2" ? "AI-06-2 · " : "") + module.title;
+        var meta = document.createElement("span");
+        meta.textContent = [module.provider, module.duration,
+          module.optional ? i18n("academy_offering_optional", "Optional") : ""
+        ].filter(Boolean).join(" · ");
+        item.append(name, meta);
+        list.appendChild(item);
+      });
+      section.append(modulesTitle, list);
+    } else {
+      if (offering.overview) {
+        var lang = window.SiteLang ? window.SiteLang.get() : "en";
+        var overview = document.createElement("p");
+        overview.className = "academy-offering__overview";
+        overview.textContent = offering.overview[lang] || offering.overview.en;
+        section.appendChild(overview);
+      }
+      var missing = document.createElement("p");
+      missing.className = "academy-offering__missing";
+      missing.textContent = i18n(
+        "academy_offering_no_modules",
+        "The local sources do not establish a reliable module list for this course. Check the Learning Portal for the current modules."
+      );
+      section.appendChild(missing);
+    }
+    return section;
   }
 
   function persistAcademyPath(path) {
@@ -618,6 +794,7 @@
 
   function academyStageStats(path, assessment) {
     var firstOpen = -1;
+    var routeCopy = academyRouteCopy(path);
     var stages = (path.stages || []).map(function (stage, index) {
       var courses = uniqueValues(stage.courses || []).map(function (id) { return courseById[id]; }).filter(Boolean);
       var courseStats = courses.map(courseProgress);
@@ -632,7 +809,7 @@
       if (firstOpen === -1 && percent < 100 && !assessmentGapClosed) firstOpen = index;
       return {
         label: stage.label,
-        focus: stage.focus,
+        focus: routeCopy && routeCopy.stages[index] ? routeCopy.stages[index] : stage.focus,
         percent: percent,
         completedCourses: completedCourses,
         courseCount: courses.length,
@@ -646,7 +823,7 @@
     return stages;
   }
 
-  function academyStageBlock(stage, index, assessment) {
+  function academyStageBlock(path, stage, index, assessment) {
     var courses = uniqueValues(stage.courses || []).map(function (id) { return courseById[id]; }).filter(Boolean);
     var lessonPathsForStage = uniqueValues(courses.reduce(function (all, item) {
       return all.concat(lessonPaths(item.id));
@@ -682,7 +859,8 @@
     if (stage.focus) {
       var note = document.createElement("p");
       note.className = "unit-block__note";
-      note.textContent = stage.focus;
+      var routeCopy = academyRouteCopy(path);
+      note.textContent = routeCopy && routeCopy.stages[index] ? routeCopy.stages[index] : stage.focus;
       block.appendChild(note);
     }
     if (courses.length && courses.every(function (item) { return courseProgress(item).percent === 100 || assessmentAttainedCourse(item, assessment); })) {
@@ -927,18 +1105,18 @@
     var header = document.createElement("header");
     header.className = "learning-contract__header";
 
-    var eyebrow = document.createElement("p");
-    eyebrow.className = "learning-contract__eyebrow";
-    eyebrow.textContent = i18n("course_learning_contract_label", "Learning contract");
-
     var title = document.createElement("h2");
     title.id = "learningContractTitle";
-    title.textContent = i18n("course_learning_contract_title", "From concept to project evidence");
+    title.textContent = i18n("course_learning_contract_title", "Apply the course content");
+
+    var note = document.createElement("p");
+    note.className = "learning-contract__note";
+    note.textContent = i18n("course_learning_contract_note", "Suggested by this catalog; this is not a Learning Portal completion requirement.");
 
     var promise = document.createElement("p");
     promise.className = "learning-contract__promise";
     promise.textContent = contract.promise;
-    header.append(eyebrow, title, promise);
+    header.append(title, note, promise);
 
     var body = document.createElement("div");
     body.className = "learning-contract__body";
@@ -951,7 +1129,7 @@
       scenarioLabel.className = "learning-contract__section-label";
       scenarioLabel.append(
         lucideIcon("briefcase"),
-        document.createTextNode(i18n("course_project_scenario_title", "Project scenario"))
+        document.createTextNode(i18n("course_project_scenario_title", "Practice scenario"))
       );
 
       var scenarioTitle = document.createElement("h3");
@@ -979,7 +1157,7 @@
       method.className = "learning-contract__method";
 
       var methodTitle = document.createElement("h3");
-      methodTitle.textContent = i18n("course_learning_method_title", "How you learn");
+      methodTitle.textContent = i18n("course_learning_method_title", "Suggested steps");
 
       var stageList = document.createElement("ol");
       stageList.className = "learning-contract__stages";
@@ -1013,7 +1191,7 @@
       var evidenceTitle = document.createElement("h3");
       evidenceTitle.append(
         lucideIcon("seal-check"),
-        document.createTextNode(i18n("course_completion_evidence_title", "Evidence of completion"))
+        document.createTextNode(i18n("course_completion_evidence_title", "Possible work samples"))
       );
 
       var evidenceList = document.createElement("ul");
