@@ -42,6 +42,20 @@ function loadCourseContracts() {
   return sandbox.window.LrnCourseContracts;
 }
 
+function loadAcademyOfferings() {
+  const sandbox = { window: {}, console };
+  vm.createContext(sandbox);
+  vm.runInContext(readFileSync("site/lrn/academy-offerings.js", "utf8"), sandbox, { filename: "academy-offerings.js" });
+  return sandbox.window.LrnAcademyOfferings;
+}
+
+function loadAcademyRecommendations() {
+  const sandbox = { window: {}, console };
+  vm.createContext(sandbox);
+  vm.runInContext(readFileSync("site/lrn/academy-recommendations.js", "utf8"), sandbox, { filename: "academy-recommendations.js" });
+  return sandbox.window.LrnAcademyRecommendations;
+}
+
 function loadSchedule(data) {
   const sandbox = { window: { LrnData: data }, console };
   vm.createContext(sandbox);
@@ -84,6 +98,8 @@ const data = loadData();
 const cmap = loadMap();
 const courseFormats = loadCourseFormats();
 const courseContracts = loadCourseContracts();
+const academyOfferings = loadAcademyOfferings();
+const academyRecommendations = loadAcademyRecommendations();
 const activeProfileId = loadActiveProfileId();
 
 // ───────────────────────────────────────────────────────────────────────────
@@ -175,25 +191,85 @@ test("learning contracts carry a project case, learning sequence, and completion
 test("every course has distinct English and German descriptions of its work", () => {
   assert.deepEqual(Object.keys(courseContracts).sort(), Array.from(data.courses, (course) => course.id).sort());
   for (const lang of ["en", "de"]) {
+    const headlines = new Set();
     const promises = new Set();
     const scenarios = new Set();
+    const stageDescriptions = new Set();
+    const evidenceItems = new Set();
     for (const course of data.courses) {
       const contract = courseContracts[course.id][lang];
+      assert.ok(contract?.headline?.trim(), `${course.id} needs a ${lang} headline`);
       assert.ok(contract?.promise?.trim(), `${course.id} needs a ${lang} promise`);
       assert.ok(contract?.projectScenario?.title?.trim(), `${course.id} needs a ${lang} scenario`);
+      assert.notEqual(contract.headline, contract.projectScenario.title,
+        `${course.id} ${lang} headline must add context beyond the scenario title`);
       assert.ok(contract.projectScenario.description?.trim(), `${course.id} needs a ${lang} scenario description`);
       assert.deepEqual(Array.from(contract.stages || [], (stage) => stage.kind), ["theory", "guided", "hands-on"],
         `${course.id} needs three ${lang} learning stages`);
       assert.ok(contract.stages.every((stage) => stage.title?.trim() && stage.description?.trim()),
         `${course.id} needs named ${lang} learning stages`);
+      for (const stage of contract.stages) {
+        assert.ok(!stageDescriptions.has(stage.description),
+          `${course.id} repeats a ${lang} learning step`);
+        stageDescriptions.add(stage.description);
+      }
       assert.ok(Array.isArray(contract.evidence) && contract.evidence.length >= 3 && contract.evidence.every((item) => item.trim()),
         `${course.id} needs concrete ${lang} completion evidence`);
+      for (const item of contract.evidence) {
+        assert.ok(!evidenceItems.has(item), `${course.id} repeats a ${lang} evidence item`);
+        evidenceItems.add(item);
+      }
       assert.ok(!promises.has(contract.promise), `${course.id} repeats a ${lang} promise`);
+      assert.ok(!headlines.has(contract.headline), `${course.id} repeats a ${lang} headline`);
       assert.ok(!scenarios.has(contract.projectScenario.description), `${course.id} repeats a ${lang} scenario`);
+      headlines.add(contract.headline);
       promises.add(contract.promise);
       scenarios.add(contract.projectScenario.description);
     }
   }
+});
+
+test("course detail loads course-specific contracts before rendering", () => {
+  const html = readFileSync("site/lrn/course.html", "utf8");
+  const contractsAt = html.indexOf('src="course-contracts.js?');
+  const rendererAt = html.indexOf('src="course.js?');
+  assert.ok(contractsAt !== -1 && rendererAt > contractsAt,
+    "course detail must load authored contracts before course.js renders them");
+});
+
+test("Academy source excerpts cover paths without promoting removed or uncertain modules", () => {
+  assert.deepEqual(Object.keys(academyOfferings).sort(), Array.from(data.academyPaths, (path) => path.academyCourse).sort());
+  const excluded = new Set(["AI-06-01", "AI-06-02", "AI-06-04", "AI-07-02", "AI-08-03", "AI-09-02"]);
+  for (const path of data.academyPaths) {
+    const offering = academyOfferings[path.academyCourse];
+    assert.ok(offering.title && offering.source, `${path.academyCourse} needs a named local source`);
+    assert.ok(Array.isArray(offering.modules), `${path.academyCourse} needs a module list, even when unverified`);
+    for (const module of offering.modules) {
+      assert.ok(module.id.startsWith(path.academyCourse + "-"));
+      assert.ok(module.title && (module.sourceRow > 1 || module.source),
+        `${module.id} needs a traceable source`);
+      assert.ok(!excluded.has(module.id), `${module.id} must not appear as a current module`);
+    }
+  }
+  assert.equal(academyOfferings["AI-01"], undefined);
+  assert.ok(academyOfferings["AI-06"].modules.some((module) =>
+    module.id === "AI-06-2" && /GitHub Copilot/i.test(module.title)));
+  const html = readFileSync("site/lrn/course.html", "utf8");
+  assert.ok(html.indexOf('src="academy-offerings.js') < html.indexOf('src="course.js'));
+});
+
+test("official AI Literacy recommendations retain role, level, and provider links", () => {
+  const source = JSON.parse(readFileSync("docs/ai-literacy-lhind/kurse.json", "utf8"));
+  const fields = ["academy", "role", "level", "course", "provider", "hours", "url", "format"];
+  assert.equal(academyRecommendations.records.length, source.length);
+  for (let index = 0; index < source.length; index++) {
+    for (const field of fields) {
+      assert.equal(academyRecommendations.records[index][field], source[index][field], `record ${index} ${field}`);
+    }
+  }
+  assert.match(academyRecommendations.sourceUrl, /lufthansagroup\.sharepoint\.com.*Empfehlungsliste/);
+  const html = readFileSync("site/lrn/course.html", "utf8");
+  assert.ok(html.indexOf('src="academy-recommendations.js') < html.indexOf('src="course.js'));
 });
 
 test("AI for Software Engineers exposes the full project-transfer learning contract", () => {
@@ -324,8 +400,11 @@ test("Harness Engineering is staged in LP03 and not broadened through LP02", () 
 test("Academy learning paths cover every imported AI course exactly once", () => {
   assert.ok(Array.isArray(data.academyPaths), "LrnData.academyPaths must be an array");
   const actual = data.academyPaths.map((path) => path.academyCourse).sort();
-  const expected = ["AI-01", "AI-02", "AI-03", "AI-04", "AI-05", "AI-06", "AI-07", "AI-08", "AI-09", "AI-10", "AI-12"];
+  const expected = ["AI-02", "AI-03", "AI-04", "AI-05", "AI-06", "AI-07", "AI-08", "AI-09", "AI-10", "AI-12"];
   assert.deepEqual([...actual], expected);
+  assert.equal(data.courses.find((course) => course.id === "LRN-06").academyCourse, "AI-06-2");
+  assert.ok(data.academyPaths.find((path) => path.academyCourse === "AI-06").stages
+    .some((stage) => stage.courses.includes("LRN-06")));
   assert.equal(new Set(data.academyPaths.map((path) => path.id)).size, data.academyPaths.length,
     "Academy path ids must be unique");
 });
@@ -363,8 +442,8 @@ test("Academy paths separate shared foundations from explicit profile recommenda
 test("Academy recommendations stay focused to three ordered trainings per profile", () => {
   const expected = {
     bsc: ["AI-04", "AI-07", "AI-10"],
-    tc: ["AI-01", "AI-02", "AI-03"],
-    am: ["AI-02", "AI-01", "AI-05"],
+    tc: ["AI-02", "AI-03", "AI-04"],
+    am: ["AI-02", "AI-05"],
     pma: ["AI-04", "AI-07", "AI-05"],
     corp: ["AI-08", "AI-07", "AI-10"],
     lead: ["AI-08", "AI-07", "AI-10"],

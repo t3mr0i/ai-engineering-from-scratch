@@ -1148,7 +1148,7 @@
     "provider": "LinkedIn Learning",
     "hours": "2",
     "url": "https://www.linkedin.com/learning/learning-microsoft-365-copilot-for-work-26545077",
-    "format": "",
+    "format": "nur Online",
     "capability": "AI-Assisted Documentation"
   },
   {
@@ -1160,7 +1160,7 @@
     "provider": "LinkedIn Learning",
     "hours": "1",
     "url": "https://www.linkedin.com/learning/how-to-research-and-write-using-generative-ai-tools-29670569",
-    "format": "",
+    "format": "nur Online",
     "capability": "AI-Assisted Documentation"
   }
 ]
