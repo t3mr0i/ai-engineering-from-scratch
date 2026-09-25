@@ -68,7 +68,7 @@ test("missing assessment shows a prominent route to the native flow", () => {
   const state = boot({ model: { roleSelected: true, roleId: "tc", assessmentAvailable: false } });
   assert.equal(state.host.hidden, false);
   assert.match(state.host.textContent, /Find your starting point with the AI Self Assessment/);
-  assert.equal(descendants(state.host).find((node) => node.textContent === "Start the AI Self Assessment" && node.href).href, "assessment.html");
+  assert.equal(descendants(state.host).find((node) => node.textContent === "Start the AI Self Assessment" && node.href).href, "assessment-v2.html");
 });
 
 test("a previous dismissal does not hide the entry", () => {
@@ -79,7 +79,7 @@ test("a previous dismissal does not hide the entry", () => {
 test("a completed assessment keeps a retake route visible", () => {
   const state = boot({ model: { roleSelected: true, roleId: "tc", assessmentAvailable: true } });
   assert.equal(state.host.hidden, false);
-  assert.equal(descendants(state.host).find((node) => node.textContent === "Retake the AI Self Assessment" && node.href).href, "assessment.html");
+  assert.equal(descendants(state.host).find((node) => node.textContent === "Retake the AI Self Assessment" && node.href).href, "assessment-v2.html");
 });
 
 test("profile editing hides the separate assessment banner", () => {

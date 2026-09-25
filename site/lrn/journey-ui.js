@@ -186,7 +186,7 @@
       title: next.title || t("next"),
       reason: next.reason || (next.dimension ? clean(next.dimension) + " · " + t("fromTo", { current: clean(next.currentLevel), target: clean(next.targetLevel) }) : "")
     };
-    if (!model || !model.assessmentAvailable) return { href: links.assessment || "assessment.html", label: t("assessment"), title: t("assessment"), reason: t("assessmentReason") };
+    if (!model || !model.assessmentAvailable) return { href: links.assessment || "assessment-v2.html", label: t("assessment"), title: t("assessment"), reason: t("assessmentReason") };
     var hasGaps = Array.isArray(model.gaps) && model.gaps.length > 0;
     var hasOpenSteps = Array.isArray(model.steps) && model.steps.some(function (step) { return step.status !== "completed"; });
     if (hasGaps || model.unknownCount > 0 || hasOpenSteps) return { href: links.plan || "index.html#readinessMap", label: t("plan"), title: t("plan"), reason: hasOpenSteps && !hasGaps && !model.unknownCount ? t("blockedReason") : t("planReason") };
@@ -369,7 +369,7 @@
       });
       if (!options.progressOnly) target.appendChild(overview);
       var assessmentLink = el("a", "journey-ui__text-link", known.length ? (de ? "Assessment wiederholen" : "Retake assessment") : t("assessment"));
-      assessmentLink.href = model.links && model.links.assessment || "assessment.html";
+      assessmentLink.href = model.links && model.links.assessment || "assessment-v2.html";
       target.appendChild(assessmentLink);
       var details = el("details", "journey-ui__details");
       details.open = options.progressOnly || expanded;

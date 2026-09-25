@@ -11,7 +11,7 @@ test("every catalog navigation surface loads the role-aware admin entry", () => 
   const surfaces = [
     "about.html",
     "ai-coding-dictionary.html",
-    "assessment.html",
+    "assessment-v2.html",
     "badges.html",
     "catalog.html",
     "glossary.html",

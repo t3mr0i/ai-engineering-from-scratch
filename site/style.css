@@ -1142,7 +1142,7 @@ body.js-anim .toc-row.in-view {
 
 /* Small tablets / large phones: hide the secondary section nav.
    The wordmark and compact icon actions keep primary navigation available.
-   640px matches the breakpoint used by lesson.html and assessment.html. */
+   640px matches the breakpoint used by lesson.html and assessment-v2.html. */
 @media (max-width: 640px) {
   .nav-links {
     display: none;

@@ -113,7 +113,7 @@
     model.steps.forEach(function (step) { step.href = relativeHref(step.href); if (step.activityHref) step.activityHref = relativeHref(step.activityHref); });
     model.branches.forEach(function (branch) { branch.stages.forEach(function (stage) { (stage.reviewCourses || []).forEach(function (course) { course.href = relativeHref(course.href); }); }); });
     model.externalRecommendations.forEach(function (step) { step.href = relativeHref(step.href); });
-    model.links = { home: relativeHref("index.html"), assessment: relativeHref("assessment.html"), plan: relativeHref("index.html#readinessMap"), skills: relativeHref("personal-plan.html#progress"), catalog: relativeHref("index.html#trainingCatalogTitle") };
+    model.links = { home: relativeHref("index.html"), assessment: relativeHref("assessment-v2.html"), plan: relativeHref("index.html#readinessMap"), skills: relativeHref("personal-plan.html#progress"), catalog: relativeHref("index.html#trainingCatalogTitle") };
     return model;
   }
   function buildPlan(options, existing) {

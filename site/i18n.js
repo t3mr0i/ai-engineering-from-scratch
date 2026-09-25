@@ -126,20 +126,6 @@ window.SITE_I18N = {
   about_h2_who: { en: "Who builds it", de: "Wer es baut" },
   about_h2_involved: { en: "Get involved", de: "Mitmachen" },
 
-  // assessment.html — native role-based self-assessment.
-  assess_title: { en: "AI Self Assessment", de: "AI Self Assessment" },
-  assess_intro: { en: "Answer ten questions to assess where you stand in AI Literacy. Then find learning paths and training for your role.", de: "Beantworte zehn Fragen und schätze deinen Stand in AI Literacy ein. Danach findest du passende Lernpfade und Trainings." },
-  assess_start_native: { en: "Start the AI Self Assessment", de: "AI Self Assessment starten" },
-  assess_result_title: { en: "Your recommendations", de: "Deine Empfehlungen" },
-  assess_result_hint: { en: "After the assessment, your next learning step appears here.", de: "Nach dem Assessment findest du hier deinen nächsten Lernschritt." },
-  assess_role_label: { en: "Your role", de: "Deine Rolle" },
-  btn_start_assessment: { en: "Start assessment →", de: "Assessment starten →" },
-  btn_back_role: { en: "← Role", de: "← Rolle" },
-  btn_see_path: { en: "See my path →", de: "Meinen Lernpfad ansehen →" },
-  assess_your_path: { en: "Your learning path", de: "Dein Lernpfad" },
-  btn_adjust_ratings: { en: "← Adjust ratings", de: "← Bewertungen anpassen" },
-  btn_start_over: { en: "Start over", de: "Neu starten" },
-
   // prereqs.html
   prereqs_title: { en: "Roadmap", de: "Roadmap" },
   prereqs_sub: { en: "Click any phase to see its prerequisites and what it unlocks downstream.", de: "Klicke auf eine Phase, um ihre Voraussetzungen und Folgephasen zu sehen." },
@@ -316,7 +302,6 @@ window.SITE_I18N = {
   title_glossary: { en: "AI Glossary · LHIND AI Learning Catalog", de: "KI-Glossar · LHIND AI Learning Catalog" },
   title_dictionary: { en: "AI Coding Dictionary · LHIND AI Learning Catalog", de: "KI-Coding-Wörterbuch · LHIND AI Learning Catalog" },
   title_about: { en: "About · LHIND AI Learning Catalog", de: "Über uns · LHIND AI Learning Catalog" },
-  title_assessment: { en: "LHIND · AI Self Assessment", de: "LHIND · AI Self Assessment" },
   title_prereqs: { en: "Roadmap · LHIND AI Learning Catalog", de: "Roadmap · LHIND AI Learning Catalog" },
   title_badges: { en: "Badges · LHIND AI Learning", de: "Deine Erfolge · LHIND AI Learning" },
   title_course: { en: "Course · LHIND AI Learning Catalog", de: "Kurs · LHIND AI Learning Catalog" },
@@ -507,7 +492,7 @@ window.SITE_I18N = {
   viz_state_open: { en: "Not started", de: "Nicht begonnen" },
 
   // index.html footer — added alongside the new footer so about.html and
-  // assessment.html become reachable (see nav gap in the plan's §6).
+  // assessment-v2.html become reachable (see nav gap in the plan's §6).
   nav_assessment: { en: "Assessment result", de: "Assessment-Ergebnis" },
   lrn_depth_from_assessment: { en: "From assessment", de: "Aus dem Assessment" },
   assessment_no_gap: { en: "No open assessment gap", de: "Kein offener Assessment-Lernbedarf" },

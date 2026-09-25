@@ -38,7 +38,7 @@
   <link rel="stylesheet" href="badges.css?v=20260713a">
   <link rel="stylesheet" href="pan.css?v=20260831c">
   <link rel="stylesheet" href="home.css?v=20260924simple">
-  <link rel="stylesheet" href="lrn/readiness-map.css?v=20260924card">
+  <link rel="stylesheet" href="lrn/readiness-map.css?v=20260925bluestep">
   <link rel="stylesheet" href="lrn/readiness-home.css?v=20260924tabs">
 </head>
 <body>
@@ -142,16 +142,12 @@
               <p data-ready-copy="importWhyIntro">Answer ten questions to assess where you stand in AI Literacy. Then find training that fits your role.</p>
             </div>
             <div class="readiness-setup__import">
-              <a class="readiness-button" id="setupAssessmentLink" href="assessment.html">Start the AI Self Assessment</a>
+              <a class="readiness-button" id="setupAssessmentLink" href="assessment-v2.html">Start the AI Self Assessment</a>
             </div>
             <div class="readiness-setup__actions readiness-setup__actions--import">
               <button type="button" class="readiness-button" data-ready-action="role" id="setupImportContinue" hidden data-ready-copy="confirmRole">Continue to your role</button>
               <button type="button" class="readiness-button readiness-button--secondary" data-ready-action="role" id="setupSkip" data-ready-copy="skipAssessment">Continue without an assessment</button>
             </div>
-            <details class="readiness-setup__alternate">
-              <summary data-ready-copy="otherAssessment">Another assessment option</summary>
-              <a class="readiness-setup__v2-link" href="assessment-v2.html" data-ready-copy="startAssessmentV2">Start the AI Self Assessment V2</a>
-            </details>
           </div>
           <aside class="readiness-setup__guide">
             <h3 data-ready-copy="levelsTitle">The three learning levels</h3>
@@ -160,7 +156,7 @@
               <div><dt>Deepen</dt><dd data-ready-copy="deepenMeaning">Use AI in your work.</dd></div>
               <div><dt>Create</dt><dd data-ready-copy="createMeaning">Build your own solutions.</dd></div>
             </dl>
-            <p class="readiness-setup__note" data-ready-copy="levelsNote">Your role sets the recommended level in each area.</p>
+            <p class="readiness-setup__note" data-ready-copy="levelsNote">The recommended level is a suggestion, not a requirement.</p>
           </aside>
         </section>
         <section class="readiness-setup__step readiness-setup__step--role" id="readinessRoleStep" hidden>
@@ -181,7 +177,6 @@
         </section>
         <section class="readiness-setup__step readiness-setup__step--review" id="readinessReviewStep" hidden>
           <h3 tabindex="-1" data-ready-copy="reviewTitle">Different areas. One role-specific goal.</h3>
-          <p id="setupReviewIntro" hidden></p>
           <div id="setupReview"></div>
           <div class="readiness-setup__actions">
             <button type="button" class="readiness-link" data-ready-action="role" data-ready-copy="back">Back</button>
@@ -192,7 +187,7 @@
 
       <section id="readinessDashboard" class="readiness-dashboard" hidden aria-labelledby="readinessTitle">
         <header class="readiness-dashboard__header">
-          <div><h2 id="readinessTitle" tabindex="-1"></h2><p id="readinessRoleSummary" hidden></p></div>
+          <div><h2 id="readinessTitle" tabindex="-1"></h2></div>
           <div class="readiness-dashboard__actions">
             <a class="readiness-button readiness-button--secondary" href="index.html?view=profile&amp;from=learning" data-ready-copy="profileTitle">Role &amp; assessment</a>
           </div>
@@ -213,7 +208,6 @@
       <section class="training-catalog" aria-labelledby="trainingCatalogTitle">
         <div class="home-section-heading home-section-heading--catalog">
           <h2 id="trainingCatalogTitle" data-ready-copy="catalogTitle">Browse all trainings</h2>
-          <p data-ready-copy="catalogIntro">Search the full catalog or narrow it by learning status.</p>
         </div>
         <form class="course-search course-search--home" id="searchForm" role="search">
           <label class="selector-field__label" for="searchInput">
@@ -285,6 +279,6 @@
   <script src="lrn/readiness-setup-state.js?v=20260909a" defer></script>
   <script src="lrn/learning-icons.js?v=20260909topics" defer></script>
   <script src="lrn/readiness-map.js?v=20260924card" defer></script>
-  <script src="lrn/readiness-home.js?v=20260924simple" defer></script>
+  <script src="lrn/readiness-home.js?v=20260925dedupe" defer></script>
 </body>
 </html>

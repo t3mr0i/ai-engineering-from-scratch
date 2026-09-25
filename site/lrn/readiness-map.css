@@ -106,9 +106,9 @@
 .readiness-map__stage:not(:last-child) { border-bottom: var(--border-hairline); }
 .readiness-map__stage:not(:last-child)::before,
 .readiness-map__stage-head::before { display: none; }
-.readiness-map__stage-head { margin-bottom: var(--space-2); }
-.readiness-map__stage h4 { font-size: var(--fs-h4); }
-.readiness-map__reached-icon { width: 22px; height: 22px; margin-right: var(--space-2); color: var(--action-primary); }
+.readiness-map__stage-head { align-items: center; margin-bottom: var(--space-2); }
+.readiness-map__stage h4 { display: flex; align-items: center; gap: var(--space-2); font-size: var(--fs-h4); }
+.readiness-map__reached-icon { width: 22px; height: 22px; color: var(--action-accent); }
 .readiness-map__courses { gap: 0; }
 .readiness-map__course:last-child { border-bottom: 0; }
 .readiness-map__course-row { align-items: baseline; padding: var(--space-4) 0 var(--space-2); }
@@ -147,3 +147,8 @@
   .readiness-map__course-row { flex-direction: column; align-items: flex-start; gap: var(--space-2); }
   .readiness-map__action { width: auto; }
 }
+
+/* --action-accent has no dark-mode value; reuse --action-primary, which
+   flips to a light blue on dark surfaces. */
+@media (prefers-color-scheme: dark) { .readiness-map__reached-icon { color: var(--action-primary); } }
+[data-theme="dark"] .readiness-map__reached-icon { color: var(--action-primary); }

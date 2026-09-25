@@ -4,80 +4,60 @@
   "use strict";
   var COPY = {
     en: {
-      academyTitle: "LHIND Academy learning paths", academyIntro: "Explore the online preparation and practical stages. Available sessions and booking links are listed in the learning path.",
-      profileTitle: "Role & assessment", backPlan: "Back to my progress", backLearning: "Back to my learning path", saveProfile: "Apply and return",
+      academyTitle: "LHIND Academy training", academyIntro: "Explore the online preparation and practical stages. Available sessions and booking links are listed in the training.",
+      profileTitle: "Role & assessment", backPlan: "Back to my progress", backLearning: "Back to my training steps", saveProfile: "Apply and return",
       roleBased: "Role-based suggestions · Assessment can be added anytime", assessmentReady: "Your assessment is included in these paths",
-      returnPath: "Back to my learning path", roleSummary: "Learning areas tailored to your role.",
+      returnPath: "Back to my training steps",
       pathKnown: "Your assessment sets the starting point for each area. Choose an area to see its courses and the steps towards your role’s recommended level.",
       pathUnknown: "Choose an area to see its full course sequence. These first suggestions follow your role; an assessment helps tailor where you begin.",
-      navHome: "My learning", navAreas: "Learning areas", navCatalog: "Explore courses", navPlan: "My progress", navProgress: "My progress", navTrainer: "Trainer area", paceNote: "A little curiosity. Your own pace.",
-      levelsTitle: "The three learning levels", laterNote: "You can add your assessment whenever you’re ready.",
-      catalogTitle: "Find a course", catalogIntro: "Search by topic or browse the courses below.", welcomeBack: "Your learning path", welcomeIntro: "Build on what you know, explore the steps ahead and learn at your own pace.", knowledgeDetails: "What this course helps you practise", profileDetails: "How your level is determined", addAssessment: "Add my assessment",
+      navHome: "My learning", navAreas: "Learning areas", navCatalog: "Explore courses", navPlan: "My progress", navTrainer: "Trainer area",
+      levelsTitle: "The three learning levels",
+      catalogTitle: "Find a course", welcomeBack: "Your training steps", welcomeIntro: "Build on what you know, explore the steps ahead and learn at your own pace.", profileDetails: "How your level is determined",
       hero: "Welcome.", heroIntro: "Find online courses and sessions to build your AI skills.",
-      setupTitle: "Get started", setupIntro: "Find courses that fit your experience and your work.",
+      setupTitle: "Get started",
       importStep: "Your knowledge", roleStep: "Your role", reviewStep: "Your learning paths",
       importWhy: "Where are you starting from?", importWhyIntro: "Answer ten short questions so we can suggest courses for your role. You can also continue without them.",
       acquireMeaning: "Learn the basics.", deepenMeaning: "Use AI in your work.", createMeaning: "Build your own solutions.",
-      levelsNote: "Your role sets the recommended level in each area.",
+      levelsNote: "The recommended level is a suggestion, not a requirement.",
       startAssessment: "Answer ten questions", retakeAssessment: "Repeat the assessment",
-      startAssessmentV2: "Start the AI Self Assessment V2",
-      otherAssessment: "Another assessment option",
-      confirmRole: "Continue to your role", skipAssessment: "Choose my role instead", browse: "Explore all courses", back: "Back",
+      confirmRole: "Continue to your role", skipAssessment: "Choose my role instead", back: "Back",
       roleTitle: "Which role describes your work?", roleIntro: "Choose the role that feels closest to your everyday work. We’ll use it to suggest suitable learning paths. You can change it anytime.",
-      previewPaths: "Show my learning paths", reviewTitle: "Here’s how your learning paths come together", finish: "Use these learning paths",
-      savedHere: "Your selection is remembered in this browser. You can adjust your role or replace your assessment at any time.",
-      dashboardTitle: "Recommended for you", editProfile: "Change role & assessment", personalPlan: "Adapt my learning path", evidence: "View capability evidence",
+      previewPaths: "Show my training steps", reviewTitle: "Here’s how your training steps come together", finish: "Use these training steps",
+      evidence: "View capability evidence",
       targetTitle: "Recommended levels for your role", chooseRole: "Select your role to see its recommended levels.", importedRole: "Your role was selected in the self-assessment. Check that it matches your work.",
-      reference: "Targets from the AI Literacy reference", imported: "Targets from your self-assessment", changed: "Your assessment targets differ from the role reference. These paths use the targets from your assessment.",
+      reference: "Targets from the AI Literacy reference", imported: "Targets from your self-assessment",
       unknown: "Not assessed", noTarget: "No target", current: "Your starting point", target: "Recommended target", area: "Competency area",
-      previewKnown: "Your assessment and available learning evidence determine where each path starts. You can work across areas; shared courses can contribute to several targets.",
-      previewUnknown: "You can start with the fundamentals. Until you complete the assessment, recommendations are provisional and your current levels remain unknown.",
-      provisional: "These first suggestions are based on your role. Add an assessment whenever you’d like more personal recommendations.",
-      next: "A good next step", continue: "Continue learning", open: "Start course", contributes: "Helps you progress in", why: "Why this course?",
-      direction: "Your learning profile", targetProgress: "areas at their recommended target", targetProgressNote: "Based on assessment and demonstrated evidence. Course completion alone does not prove a competency level.",
-      unknownAreas: "areas are ready for you to explore. An assessment can help you find where to begin.",
-      allAreas: "Prioritize across all areas", focus: "Your chosen focus", focusFallback: "This area has no immediately available next course. The recommendation below comes from another area; check the map for completed targets or open preparation.",
-      noNextTitle: "See how far you’ve come", noNext: "There is no immediately available course in these paths. The map shows reached targets, open preparation and gaps in the course offering.",
+      targetProgressNote: "Based on assessment and demonstrated evidence. Course completion alone does not prove a competency level.",
       savedSession: "Your browser could not save this setup. You can continue now, but may need to confirm your role again on your next visit.",
-      preparation: "Preparation", ready: "Available now", inProgress: "In progress", clearFilters: "Reset catalog filters"
+      clearFilters: "Reset catalog filters"
     },
     de: {
       academyTitle: "Lernpfade der LHIND Academy", academyIntro: "Hier findest du Onlinevorbereitung und praktische Vertiefung. Verfügbare Termine und Buchungslinks stehen im jeweiligen Lernpfad.",
       profileTitle: "Rolle & Assessment", backPlan: "Zurück zu meinem Fortschritt", backLearning: "Zurück zu meinem Lernpfad", saveProfile: "Übernehmen und zurück",
       roleBased: "Empfehlungen nach deiner Rolle · Assessment jederzeit ergänzbar", assessmentReady: "Deine Einschätzung ist in diesen Lernwegen berücksichtigt",
-      returnPath: "Zurück zu meinem Lernpfad", roleSummary: "Lernbereiche passend zu deiner Rolle.",
+      returnPath: "Zurück zu meinem Lernpfad",
       pathKnown: "Dein Assessment zeigt, wo du in jedem Bereich anknüpfen kannst. Wähle einen Bereich und entdecke die Kurse bis zur empfohlenen Zielstufe deiner Rolle.",
       pathUnknown: "Wähle einen Bereich und sieh dir alle Kurse an. Die erste Auswahl folgt deiner Rolle; ein Assessment hilft, den Einstieg an dein Wissen anzupassen.",
-      navHome: "Mein Lernen", navAreas: "Lernbereiche", navCatalog: "Kurse entdecken", navPlan: "Mein Fortschritt", navProgress: "Mein Fortschritt", navTrainer: "Trainerbereich", paceNote: "Mit Neugier. In deinem Tempo.",
-      levelsTitle: "Die drei Lernstufen", laterNote: "Dein Assessment kannst du jederzeit ergänzen.",
-      catalogTitle: "Kurs finden", catalogIntro: "Suche nach einem Thema oder stöbere in den Kursen unten.", welcomeBack: "Dein Lernpfad", welcomeIntro: "Knüpfe an dein Wissen an, entdecke die nächsten Etappen und lerne in deinem Tempo.", knowledgeDetails: "Das kannst du hier üben", profileDetails: "Wie sich dein Stand zusammensetzt", addAssessment: "Mein Assessment ergänzen",
+      navHome: "Mein Lernen", navAreas: "Lernbereiche", navCatalog: "Kurse entdecken", navPlan: "Mein Fortschritt", navTrainer: "Trainerbereich",
+      levelsTitle: "Die drei Lernstufen",
+      catalogTitle: "Kurs finden", welcomeBack: "Dein Lernpfad", welcomeIntro: "Knüpfe an dein Wissen an, entdecke die nächsten Etappen und lerne in deinem Tempo.", profileDetails: "Wie sich dein Stand zusammensetzt",
       hero: "Schön, dass du da bist.", heroIntro: "Hier findest du Online-Kurse und Sessions, mit denen du deine AI-Fähigkeiten ausbauen kannst.",
-      setupTitle: "Dein Einstieg", setupIntro: "Finde Kurse, die zu deiner Erfahrung und deiner Arbeit passen.",
+      setupTitle: "Dein Einstieg",
       importStep: "Dein Wissen", roleStep: "Deine Rolle", reviewStep: "Dein Lernweg",
       importWhy: "Wo stehst du gerade?", importWhyIntro: "Beantworte zehn kurze Fragen. So können wir dir passende Kurse für deine Rolle vorschlagen. Du kannst diesen Schritt auch überspringen.",
       acquireMeaning: "Lerne die Grundlagen kennen.", deepenMeaning: "Nutze KI in deiner Arbeit.", createMeaning: "Entwickle eigene Lösungen.",
-      levelsNote: "Deine Rolle bestimmt die empfohlene Stufe in jedem Bereich.",
+      levelsNote: "Die empfohlene Stufe ist eine Empfehlung und nicht bindend.",
       startAssessment: "Zehn Fragen beantworten", retakeAssessment: "Einschätzung wiederholen",
-      startAssessmentV2: "AI Self Assessment V2 starten",
-      otherAssessment: "Weitere Möglichkeit zur Selbsteinschätzung",
-      confirmRole: "Weiter zu deiner Rolle", skipAssessment: "Stattdessen Rolle auswählen", browse: "Alle Kurse entdecken", back: "Zurück",
+      confirmRole: "Weiter zu deiner Rolle", skipAssessment: "Stattdessen Rolle auswählen", back: "Zurück",
       roleTitle: "Was beschreibt deinen Arbeitsalltag am besten?", roleIntro: "Wähle die Rolle, die am besten zu deiner Arbeit passt. Daraus stellen wir deine Lernwege zusammen. Deine Auswahl kannst du jederzeit ändern.",
       previewPaths: "Meine Lernwege anzeigen", reviewTitle: "So setzen sich deine Lernwege zusammen", finish: "Meinen Lernbereich öffnen",
-      savedHere: "Deine Auswahl wird in diesem Browser gespeichert. Du kannst deine Rolle jederzeit anpassen oder dein Assessment ersetzen.",
-      dashboardTitle: "Für dich empfohlen", editProfile: "Rolle & Assessment ändern", personalPlan: "Lernpfad anpassen", evidence: "Kompetenznachweise ansehen",
+      evidence: "Kompetenznachweise ansehen",
       targetTitle: "Empfohlene Stufen für deine Rolle", chooseRole: "Wähle deine Rolle, um die empfohlenen Zielstufen zu sehen.", importedRole: "Deine Rolle wurde im Self-Assessment ausgewählt. Prüfe, ob sie zu deiner Arbeit passt.",
-      reference: "Zielstufen aus der AI-Literacy-Referenz", imported: "Zielstufen aus deinem Self-Assessment", changed: "Deine Assessment-Zielstufen weichen von der Rollenreferenz ab. Diese Lernwege verwenden die Ziele aus deinem Assessment.",
+      reference: "Zielstufen aus der AI-Literacy-Referenz", imported: "Zielstufen aus deinem Self-Assessment",
       unknown: "Noch nicht eingeschätzt", noTarget: "Kein Ziel", current: "Dein aktueller Stand", target: "Empfohlenes Ziel", area: "Kompetenzbereich",
-      previewKnown: "Dein Assessment und vorhandene Kompetenznachweise bestimmen den Einstieg in jeden Lernweg. Du kannst zwischen Bereichen wechseln; gemeinsame Kurse unterstützen mehrere Ziele.",
-      previewUnknown: "Für den Anfang empfehlen wir dir passende Grundlagen. Mit einem Assessment können wir später genauer an dein Wissen anknüpfen. Dein aktueller Stand bleibt bis dahin offen.",
-      provisional: "Diese ersten Vorschläge orientieren sich an deiner Rolle. Mit einem Assessment können wir sie noch persönlicher auf dich abstimmen.",
-      next: "Ein guter nächster Schritt", continue: "Weiterlernen", open: "Kurs starten", contributes: "Dabei beschäftigst du dich mit", why: "Warum dieser Kurs?",
-      direction: "Dein Lernprofil", targetProgress: "Bereiche auf der empfohlenen Zielstufe", targetProgressNote: "Dein Stand ergibt sich aus deinem Assessment und praktischen Nachweisen. Deine abgeschlossenen Kurse halten wir zusätzlich als Lernfortschritt fest.",
-      unknownAreas: "Bereiche laden zum Entdecken ein. Ein Assessment hilft dir, einen passenden Einstieg zu finden.",
-      allAreas: "Alle Bereiche berücksichtigen", focus: "Dein gewählter Fokus", focusFallback: "Für deinen Fokus ist gerade kein weiterer Kurs direkt verfügbar. Vielleicht möchtest du in der Zwischenzeit diesen anderen Bereich entdecken. Details findest du in deinen Lernbereichen.",
-      noNextTitle: "Schau dir deinen Lernfortschritt an", noNext: "Für dich ist gerade kein weiterer Kurs direkt verfügbar. In deinen Lernbereichen findest du erreichte Ziele, hilfreiche Vorbereitung und Bereiche, für die wir noch Kurse ergänzen.",
+      targetProgressNote: "Dein Stand ergibt sich aus deinem Assessment und praktischen Nachweisen. Deine abgeschlossenen Kurse halten wir zusätzlich als Lernfortschritt fest.",
       savedSession: "Dein Browser konnte die Einrichtung nicht speichern. Du kannst jetzt weiterlernen, musst deine Rolle beim nächsten Besuch aber eventuell erneut bestätigen.",
-      preparation: "Vorbereitung", ready: "Jetzt verfügbar", inProgress: "Begonnen", clearFilters: "Katalogfilter zurücksetzen"
+      clearFilters: "Katalogfilter zurücksetzen"
     }
   };
   function language() { return root.SiteLang && root.SiteLang.get() === "de" ? "de" : "en"; }
@@ -164,7 +144,6 @@
       } else targets.appendChild(el("p", "", t("chooseRole")));
       var preview = doc.getElementById("setupReview"); preview.replaceChildren();
       if (selected) preview.appendChild(targetTable(model, true));
-      doc.getElementById("setupReviewIntro").textContent = t(model.assessmentAvailable ? "previewKnown" : "previewUnknown");
     }
     function renderContext(model) {
       var host = doc.getElementById("readinessNext"); host.replaceChildren();
@@ -237,7 +216,6 @@
       if (!configured) renderSetup(model);
       else {
         doc.getElementById("readinessTitle").textContent = model.role.label;
-        doc.getElementById("readinessRoleSummary").textContent = t("roleSummary");
         var notice = doc.getElementById("readinessStorageNotice"); notice.hidden = !sessionOnly; notice.textContent = sessionOnly ? t("savedSession") : "";
         renderContext(model); renderMap(model);
       }

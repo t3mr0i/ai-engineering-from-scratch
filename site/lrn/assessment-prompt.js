@@ -17,7 +17,7 @@
       host.appendChild(element("p", model.assessmentAvailable ? (de ? "Du kannst das Assessment jederzeit wiederholen und deinen Lernpfad aktualisieren." : "You can repeat the assessment anytime and update your learning path.") : (de ? "Beantworte zehn Fragen direkt hier im Lernkatalog und entdecke passende Lernpfade." : "Answer ten questions here in the learning catalog to find a suitable learning path.")));
       var actions = element("div", "", "assessment-prompt__actions");
       var start = element("a", model.assessmentAvailable ? (de ? "AI Self Assessment wiederholen" : "Retake the AI Self Assessment") : (de ? "AI Self Assessment starten" : "Start the AI Self Assessment"), "readiness-button");
-      start.href = "assessment.html";
+      start.href = "assessment-v2.html";
       actions.append(start); host.appendChild(actions);
     });
   }

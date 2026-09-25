@@ -1,4 +1,4 @@
-/* Exploratory assessment interface. The questions and saved result contract are shared with V1. */
+/* Assessment interface. The questions and saved result contract come from assessment.js. */
 (function (root) {
   'use strict';
   var doc = root.document;
@@ -16,7 +16,7 @@
   if (previousResult) { state.role = previousResult.profileId; state.division = previousResult.divisionId; }
   var COPY = {
     de: {
-      backCatalog: 'Zum Lernkatalog', original: 'Bisheriges Assessment', themeLight: 'Helles Farbschema wählen', themeDark: 'Dunkles Farbschema wählen',
+      backCatalog: 'Zum Lernkatalog', themeLight: 'Helles Farbschema wählen', themeDark: 'Dunkles Farbschema wählen',
       title: 'Sieh, wo du gerade stehst.', intro: 'Mit zehn Fragen schätzt du deine AI-Fähigkeiten ein und findest einen passenden Einstieg in deinen Lernweg.',
       startTitle: 'Was passt zu deiner Arbeit?', startIntro: 'Wähle deine Rolle und Division. Die Rolle bestimmt dein Zielbild. Die Division verändert weder Fragen noch Bewertung.',
       role: 'Deine Rolle', roleEmpty: 'Rolle auswählen', division: 'Deine Division', divisionEmpty: 'Division auswählen', start: 'Einschätzung beginnen',
@@ -31,10 +31,10 @@
       current: 'Dein Stand', target: 'Ziel für deine Rolle', unknown: 'Nicht eingeschätzt', ratingExplainer: 'Die Sterne zeigen, wie du dich in den einzelnen Bereichen eingeschätzt hast.', path: 'Meinen Lernpfad ansehen', again: 'Noch einmal starten',
       savedNote: 'Nur deine Rolle, Division und Ergebnisse werden in diesem Browser gespeichert. Einzelne Antworten werden verworfen.',
       saveError: 'Dein Ergebnis konnte in diesem Browser nicht gespeichert werden. Bitte prüfe den lokalen Speicher und versuche es erneut.',
-      existing: 'Es gibt bereits ein Assessment-Ergebnis. Wenn du V2 abschließt, ersetzt dein neues Ergebnis das bisherige.'
+      existing: 'Es gibt bereits ein Assessment-Ergebnis. Wenn du abschließt, ersetzt dein neues Ergebnis das bisherige.'
     },
     en: {
-      backCatalog: 'Back to learning catalog', original: 'Current assessment', themeLight: 'Switch to light theme', themeDark: 'Switch to dark theme',
+      backCatalog: 'Back to learning catalog', themeLight: 'Switch to light theme', themeDark: 'Switch to dark theme',
       title: 'See where you stand today.', intro: 'Answer ten questions to assess your AI skills and find a good place to start learning.',
       startTitle: 'What fits your work?', startIntro: 'Choose your role and division. Your role sets your targets. Division does not change the questions or scores.',
       role: 'Your role', roleEmpty: 'Select a role', division: 'Your division', divisionEmpty: 'Select a division', start: 'Begin assessment',
@@ -49,7 +49,7 @@
       current: 'Your level', target: 'Target for your role', unknown: 'Not assessed', ratingExplainer: 'The stars show how you rated yourself in each area.', path: 'See my learning path', again: 'Start again',
       savedNote: 'Only your role, division and results are saved in this browser. Individual answers are discarded.',
       saveError: 'Your result could not be saved in this browser. Check browser storage and try again.',
-      existing: 'An assessment result already exists. Finishing V2 will replace that result.'
+      existing: 'An assessment result already exists. Finishing will replace that result.'
     }
   };
   function lang() { return root.SiteLang && root.SiteLang.get() === 'de' ? 'de' : 'en'; }
@@ -70,7 +70,6 @@
   }
   function renderHeader() {
     doc.getElementById('v2BackLink').textContent = t('backCatalog');
-    doc.getElementById('v2OriginalLink').textContent = t('original');
     var toggle = doc.getElementById('darkModeToggle');
     toggle.setAttribute('aria-label', t(theme() === 'dark' ? 'themeLight' : 'themeDark'));
     toggle.title = toggle.getAttribute('aria-label');

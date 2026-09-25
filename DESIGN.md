@@ -261,8 +261,8 @@ Basic / Advanced / Expert levels as if their intervals were numeric.
 ### Learning-home course path
 
 The employee-facing entry presents one assessment action and a clear path to
-choose a role without it. An alternative assessment stays available in a
-disclosure. The level guide uses short text rows, without decorative progress
+choose a role without it. The star-rating assessment is the only assessment
+surface. The level guide uses short text rows, without decorative progress
 rails. The course catalog uses one scannable list: title, format, lesson count,
 and one concrete outcome. Technical course IDs and zero-progress bars do not
 compete with the course choice.
@@ -356,7 +356,7 @@ zero value.
   unclassed prose links and `.text-link`, never patched per component family.
 - **Do** load the same stylesheet composition on every page. Right now
   `index.html` loads only `lrn.css`+`badges.css`, `about.html`/`catalog.html`/
-  `glossary.html`/`assessment.html`/`prereqs.html` load only `style.css`,
+  `glossary.html`/`assessment-v2.html`/`prereqs.html` load only `style.css`,
   `lesson.html` loads `style.css`+`badges.css`, and `badges.html` loads all
   three — reconcile to one deliberate composition.
 

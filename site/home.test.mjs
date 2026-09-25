@@ -17,9 +17,10 @@ test("home separates first-time setup from returning learner paths", () => {
   assert.ok(setup > 0 && setup < dashboard);
   assert.ok(dashboard < next && next < map && map < catalog);
   assert.equal((html.match(/id="roleSelect"/g) || []).length, 1);
-  assert.match(html, /id="setupAssessmentLink" href="assessment\.html"/);
-  assert.match(html, /href="assessment-v2\.html" data-ready-copy="startAssessmentV2"/);
-  assert.equal((html.match(/href="assessment\.html"/g) || []).length, 1);
+  assert.match(html, /id="setupAssessmentLink" href="assessment-v2\.html"/);
+  assert.doesNotMatch(html, /readiness-setup__alternate/);
+  assert.doesNotMatch(html, /href="assessment\.html"/);
+  assert.equal((html.match(/href="assessment-v2\.html"/g) || []).length, 1);
   assert.doesNotMatch(html, /data-assessment-prompt|src="lrn\/assessment-prompt\.js/);
   assert.match(html, /id="readinessDashboard"[^>]*hidden/);
 });

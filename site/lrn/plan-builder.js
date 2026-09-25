@@ -556,7 +556,7 @@
       else {
         evidence.append(icon("info"), root.document.createTextNode(t("assessmentMissing") + " · "));
         var assessmentLink = create("a", "", t("assessmentLink"));
-        assessmentLink.href = "assessment.html";
+        assessmentLink.href = "assessment-v2.html";
         evidence.appendChild(assessmentLink);
       }
     }

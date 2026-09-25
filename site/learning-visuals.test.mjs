@@ -67,12 +67,11 @@ test("all learning surfaces with visualizations load the shared visualization la
   }
 });
 
-test("assessment page hosts native questions and the shared learning journey", async () => {
-  const html = await readFile(new URL("assessment.html", import.meta.url), "utf8");
-  assert.match(html, /id="nativeAssessment"/);
-  assert.match(html, /assessment-ui\.js/);
-  assert.match(html, /assessmentJourney/);
-  assert.doesNotMatch(html, /assessment-import-ui\.js|type="file"/);
+test("assessment page hosts the native question flow", async () => {
+  const html = await readFile(new URL("assessment-v2.html", import.meta.url), "utf8");
+  assert.match(html, /id="assessmentV2"/);
+  assert.match(html, /assessment-v2\.js/);
+  assert.doesNotMatch(html, /assessment-ui\.js|assessment-import-ui\.js|type="file"/);
   assert.doesNotMatch(html, /capForm/);
   assert.doesNotMatch(html, /step-rate/);
   assert.doesNotMatch(html, /learning-visuals\.js/);
