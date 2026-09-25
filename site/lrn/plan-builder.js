@@ -30,7 +30,7 @@
   var COPY = {
     en: {
       eyebrow: "Personal learning plan",
-      title: "Make your learning path fit your workday.",
+      title: "Make your training steps fit your workday.",
       intro: "What would you like to learn, and how much time fits your week? We’ll suggest suitable courses. You can adjust their order before saving.",
       local: "Stored in this browser",
       goal: "What do you want to be able to do?",
@@ -82,7 +82,7 @@
     },
     de: {
       eyebrow: "Persönlicher Lernplan",
-      title: "Passe deinen Lernpfad an deinen Arbeitsalltag an.",
+      title: "Passe deine Trainingsschritte an deinen Arbeitsalltag an.",
       intro: "Was möchtest du lernen, und wie viel Zeit passt in deine Woche? Wir stellen dir passende Kurse zusammen. Vor dem Speichern kannst du die Reihenfolge anpassen.",
       local: "In diesem Browser gespeichert",
       goal: "Was möchtest du anschließend können?",

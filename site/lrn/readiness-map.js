@@ -4,9 +4,9 @@
 
   var copy = {
     en: {
-      title: 'Your learning path', intro: 'Choose an area to see the courses and preparation that support your role target.',
+      title: 'Your training steps', intro: 'Choose an area to see the courses and preparation that support your role target.',
       current: 'Your level', unknown: 'Not assessed', target: 'Role target', noTarget: 'No target',
-      pathDetails: 'About this learning path', selectArea: 'Choose a learning area', beyond: 'Beyond role target', coverage: 'More course coverage is needed',
+      pathDetails: 'About these training steps', selectArea: 'Choose a learning area', beyond: 'Beyond role target', coverage: 'More course coverage is needed',
       learned: 'Courses completed; assessment still needed', blocked: 'Preparation open', evidenced: 'Evidenced', selfAssessed: 'Self-assessed',
       complete: 'Completed', progress: 'In progress', ready: 'Available now', unavailable: 'Not available yet', recommendedNext: 'Recommended next', focus: 'Focus',
       start: 'Start course', continue: 'Continue course', coursePreview: 'View course', units: 'Course units', lessons: '{count} lessons', contributes: 'Also supports', prerequisites: 'Complete first', details: 'Course details', noCourses: 'No matching course is currently available at this stage.',
@@ -14,9 +14,9 @@
       courseProgress: '{percent}% complete', note: 'Course completion records learning activity. Assessment or demonstrated evidence is required to establish a competency level.'
     },
     de: {
-      title: 'Dein Lernpfad', intro: 'Wähle einen Bereich, um passende Kurse und vorbereitende Schritte für dein Rollenziel zu sehen.',
+      title: 'Deine Trainingsschritte', intro: 'Wähle einen Bereich, um passende Kurse und vorbereitende Schritte für dein Rollenziel zu sehen.',
       current: 'Dein Stand', unknown: 'Noch nicht eingeschätzt', target: 'Empfohlenes Ziel', noTarget: 'Kein Ziel',
-      pathDetails: 'Hinweise zu diesem Lernpfad', selectArea: 'Lernbereich wählen', beyond: 'Über Rollenempfehlung', coverage: 'Hier fehlt noch ein passender Kurs',
+      pathDetails: 'Hinweise zu deinen Trainingsschritten', selectArea: 'Lernbereich wählen', beyond: 'Über Rollenempfehlung', coverage: 'Hier fehlt noch ein passender Kurs',
       learned: 'Kurse geschafft; Assessment offen', blocked: 'Vorbereitung offen', evidenced: 'Nachgewiesen', selfAssessed: 'Selbsteingeschätzt',
       complete: 'Abgeschlossen', progress: 'Begonnen', ready: 'Jetzt verfügbar', unavailable: 'Noch nicht verfügbar', recommendedNext: 'Hier weiterlernen', focus: 'Schwerpunkt',
       start: 'Kurs starten', continue: 'Kurs fortsetzen', coursePreview: 'Kurs ansehen', units: 'Kurseinheiten', lessons: '{count} Lektionen', contributes: 'Unterstützt auch', prerequisites: 'Zuerst abschließen', details: 'Kursdetails', noCourses: 'Für diese Stufe ist derzeit kein passender Kurs verfügbar.',

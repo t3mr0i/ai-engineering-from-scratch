@@ -375,7 +375,7 @@ test("coverage gaps and evidence guidance stay behind a collapsed path disclosur
   assert.ok(details);
   assert.equal(details.open, false);
   assert.equal(details.children[0].tagName, "SUMMARY");
-  assert.match(details.textContent, /About this learning path/);
+  assert.match(details.textContent, /About these training steps/);
   assert.match(details.textContent, /More course coverage is needed/);
   assert.match(details.textContent, /Architecture · Create/);
   assert.match(details.textContent, /Course completion records learning activity/);

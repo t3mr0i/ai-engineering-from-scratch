@@ -5,7 +5,7 @@
   var doc = root.document;
   var COPY = {
     en: {
-      backToPath: "My learning path", savedNotes: "Saved notes & code", ongoing: "Continue learning", finished: "Completed courses", checks: "Confirmed self-checks", emptyOngoing: "You haven’t started a course yet.", emptyFinished: "Your completed courses will appear here.", emptyChecks: "Confirmed practical self-checks will appear here. Reading and quiz answers do not count as these checks.", read: "read", doneLessons: "lessons completed", courseContinue: "Continue", courseReview: "Review", checkCount: "confirmed self-checks", title: "My progress", intro: "Your courses in progress, completed lessons, and practical evidence.",
+      backToPath: "My training steps", savedNotes: "Saved notes & code", ongoing: "Continue learning", finished: "Completed courses", checks: "Confirmed self-checks", emptyOngoing: "You haven’t started a course yet.", emptyFinished: "Your completed courses will appear here.", emptyChecks: "Confirmed practical self-checks will appear here. Reading and quiz answers do not count as these checks.", read: "read", doneLessons: "lessons completed", courseContinue: "Continue", courseReview: "Review", checkCount: "confirmed self-checks", title: "My progress", intro: "Your courses in progress, completed lessons, and practical evidence.",
       navHome: "My learning", navAreas: "Learning areas", navCatalog: "Explore courses",
       pace: "A little curiosity. Your own pace.", plan: "My plan", progress: "My progress",
       views: "Plan and progress", editRole: "Role & assessment", skip: "Skip to my progress",
@@ -15,7 +15,7 @@
       completed: "courses completed", started: "courses started", lessons: "lessons completed"
     },
     de: {
-      backToPath: "Mein Lernpfad", savedNotes: "Merkzettel & gespeicherter Code", ongoing: "Hier kannst du weitermachen", finished: "Abgeschlossene Kurse", checks: "Bestätigte Selbstchecks", emptyOngoing: "Du hast noch keinen Kurs begonnen.", emptyFinished: "Hier erscheinen deine abgeschlossenen Kurse.", emptyChecks: "Hier erscheinen bestätigte praktische Selbstchecks. Lesefortschritt und Quizantworten zählen nicht als solche Nachweise.", read: "gelesen", doneLessons: "Lektionen abgeschlossen", courseContinue: "Fortsetzen", courseReview: "Ansehen", checkCount: "bestätigte Selbstchecks", title: "Mein Fortschritt", intro: "Deine begonnenen Kurse, abgeschlossenen Lektionen und praktischen Nachweise.",
+      backToPath: "Meine Trainingsschritte", savedNotes: "Merkzettel & gespeicherter Code", ongoing: "Hier kannst du weitermachen", finished: "Abgeschlossene Kurse", checks: "Bestätigte Selbstchecks", emptyOngoing: "Du hast noch keinen Kurs begonnen.", emptyFinished: "Hier erscheinen deine abgeschlossenen Kurse.", emptyChecks: "Hier erscheinen bestätigte praktische Selbstchecks. Lesefortschritt und Quizantworten zählen nicht als solche Nachweise.", read: "gelesen", doneLessons: "Lektionen abgeschlossen", courseContinue: "Fortsetzen", courseReview: "Ansehen", checkCount: "bestätigte Selbstchecks", title: "Mein Fortschritt", intro: "Deine begonnenen Kurse, abgeschlossenen Lektionen und praktischen Nachweise.",
       navHome: "Mein Lernen", navAreas: "Lernbereiche", navCatalog: "Kurse entdecken",
       pace: "Mit Neugier. In deinem Tempo.", plan: "Mein Plan", progress: "Mein Fortschritt",
       views: "Plan und Fortschritt", editRole: "Rolle & Assessment", skip: "Zu meinem Fortschritt springen",

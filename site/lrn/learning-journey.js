@@ -198,7 +198,7 @@
       var activityPath = lessonPaths(id, input.courseMaps).find(function (path) { return !(input.progressState && input.progressState.lessons && input.progressState.lessons[path] && input.progressState.lessons[path].completedAt); });
       var reason = match.capability
         ? (de ? "Übt " : "Practises ") + match.capability + " · " + match.dimension + " · " + match.targetLevel + "."
-        : (de ? "Für deinen persönlichen Lernpfad ausgewählt; ohne belegte Dimensionszuordnung." : "Selected for your personal learning path; no confirmed dimension mapping.");
+        : (de ? "Für deine Trainingsschritte ausgewählt; ohne belegte Dimensionszuordnung." : "Selected for your training steps; no confirmed dimension mapping.");
       if (status === "in-progress") reason = (de ? "Setze deinen begonnenen Kurs fort. " : "Continue the course you started. ") + reason;
       if (status === "prerequisite-open") reason = (de ? "Zuerst die vorbereitenden Lernschritte abschließen. " : "Complete the preparatory learning steps first. ") + reason;
       if (assigned.indexOf(id) >= 0) reason = (de ? "Deinem Team zugewiesen. " : "Assigned to your team. ") + reason;
