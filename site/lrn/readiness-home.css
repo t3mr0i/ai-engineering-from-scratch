@@ -173,6 +173,11 @@ body:has(.page--home) { background: var(--color-surface); }
 .page--home[data-readiness-mode="profile"] .hero { padding-bottom: var(--space-4); }
 #profileBack { margin-bottom: var(--space-3); }
 .readiness-dashboard__actions { flex-direction: row; gap: var(--space-3); }
+.readiness-dashboard__actions .readiness-button {
+  min-height: 44px; padding: var(--space-2) 0; border: 0; border-radius: 0;
+  background: transparent; color: var(--text-link); text-decoration: underline; text-underline-offset: 3px;
+}
+.readiness-dashboard__actions .readiness-button:hover { background: transparent; color: var(--text-primary); }
 
 .page--home[data-readiness-mode="profile"] .selector-field__label { text-transform: none; letter-spacing: normal; font-size: var(--fs-body-sm); }
 

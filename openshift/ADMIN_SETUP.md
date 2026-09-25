@@ -12,6 +12,13 @@ through `ADMIN_ROLES_JSON`. Higher roles inherit lower-role capabilities.
 `ADMIN_DEV_MODE=true` bypasses the proxy contract only for local development
 and must never be set in the production Deployment.
 
+The separate Trainerbereich currently follows the catalog's site-wide access:
+any visitor who can open the learning catalog can view and edit its
+Serviceportal links. Those links are stored in
+`ADMIN_DATA_DIR/trainer-service-links.json` on the existing persistent volume;
+module names and ordering still come from the published catalog. Group-based
+access can be added later without changing the link data.
+
 GitLab uses a least-privilege project access token. It needs permission to
 create `curriculum/change-*` branches, commit the four LRN manifest and
 compatibility files, and open merge requests. It must not be able to push to

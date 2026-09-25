@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <script src="/gate-guard.js"></script>
+  <script>
+    try { const choice = localStorage.getItem("theme"); if (choice === "light" || choice === "dark") document.documentElement.dataset.theme = choice; } catch (_) {}
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Trainerbereich · AI Learning Catalog</title>
+  <link rel="stylesheet" href="lrn/tokens.css">
+  <link rel="stylesheet" href="trainer.css">
+  <script src="trainer.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#trainerMain">Zum Inhalt springen</a>
+  <header class="trainer-header">
+    <a class="trainer-brand" href="index.html"><img src="assets/logo/lhind-logo-blue.png" alt="LHIND"><span>AI Learning Catalog</span></a>
+    <a class="trainer-back" href="index.html">Zurück zum Lernkatalog</a>
+  </header>
+  <main id="trainerMain" class="trainer-main">
+    <h1>Trainerbereich</h1>
+    <p class="trainer-intro">Serviceportal-Links für die Trainingsmodule im Katalog pflegen.</p>
+    <p id="trainerSummary" class="trainer-summary" aria-live="polite"></p>
+    <div class="trainer-toolbar">
+      <div class="trainer-search">
+        <label for="trainerSearch">Module suchen</label>
+        <input id="trainerSearch" type="search" placeholder="Titel oder Modul-ID" autocomplete="off">
+      </div>
+      <div class="trainer-filters" role="group" aria-label="Module nach Linkstatus filtern">
+        <button type="button" data-trainer-filter="all" aria-pressed="true">Alle</button>
+        <button type="button" data-trainer-filter="missing" aria-pressed="false">Ohne Link</button>
+        <button type="button" data-trainer-filter="linked" aria-pressed="false">Verlinkt</button>
+      </div>
+    </div>
+    <p id="trainerCount" class="trainer-count" aria-live="polite"></p>
+    <div id="trainerStatus" class="trainer-status" role="status" aria-live="polite">Module werden geladen …</div>
+    <div id="trainerListHead" class="trainer-list-head" aria-hidden="true"><span>Modul</span><span>Serviceportal</span><span>Aktionen</span></div>
+    <div id="trainerModules" class="trainer-modules" aria-label="Trainingsmodule"></div>
+    <nav id="trainerPagination" class="trainer-pagination" aria-label="Modulseiten" hidden>
+      <button id="trainerPrev" type="button">Zurück</button>
+      <span id="trainerPageInfo" aria-live="polite"></span>
+      <button id="trainerNext" type="button">Weiter</button>
+    </nav>
+  </main>
+</body>
+</html>

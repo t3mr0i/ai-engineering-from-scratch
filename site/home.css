@@ -1,4 +1,8 @@
 /* Hallmark · genre: modern-minimal · macrostructure: Index-First · theme: LHIND Flight Deck · enrichment: none · nav: N9 · footer: none · design-system: DESIGN.md · designed-as-app · pre-emit critique: P5 H5 E5 S5 R5 V5 · contrast: pass (40–41) · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49) · icons: pass (30) · mobile: pass (34, 49, 50–57) */
+.nav-trainer-entry i { font-size: 18px; line-height: 1; }
+@media (max-width: 720px) {
+  .nav-edge--home { gap: 8px; padding-inline: 12px; }
+}
 
 /* Homepage-only composition layer. The shared Lufthansa tokens and component
    contracts continue to live in lrn/tokens.css, lrn/lrn.css, and pan.css. */

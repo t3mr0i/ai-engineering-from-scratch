@@ -37,6 +37,7 @@ const {
   cookieFromRequest,
 } = require('./gate-core');
 const { createAdminApi } = require('./admin-api');
+const { createTrainerApi } = require('./trainer-api');
 const { readJson, sendJson } = require('./admin-api');
 const { StoreError } = require('./admin-store');
 const { LrnReportStore, ReportError } = require('./lrn-report-store');
@@ -70,6 +71,7 @@ const handleAdminApi = createAdminApi({
   reportStore: lrnReportStore,
   teamStore: teamLearningStore,
 });
+const handleTrainerApi = createTrainerApi({ webRoot: WEB_ROOT, dataDir: ADMIN_DATA_DIR });
 
 // Server-side proxy for the LHIND LLM gateway (Bifrost). The key lives only
 // here — notebooks call this same-origin endpoint instead of gateway.lhind.ai
@@ -472,6 +474,12 @@ const server = http.createServer((req, res) => {
     }
     res.writeHead(401, { 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('Unauthorized');
+    return;
+  }
+
+  // Every visitor admitted by the site gate can view and maintain trainer links.
+  if (pathOnly.startsWith('/api/trainer/')) {
+    handleTrainerApi(req, res, pathOnly);
     return;
   }
 

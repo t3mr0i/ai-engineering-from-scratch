@@ -282,11 +282,26 @@ test("choosing an area reports the selected dimension id", () => {
   assert.equal(selectedId, "foundation");
 });
 
+test("area indicators show known stages and keep unknown progress empty", () => {
+  const root = render(fixture(), { activeDimensionId: "engineering", onSelect() {} });
+  const engineering = areaButton(root, "engineering");
+  const advisory = areaButton(root, "advisory");
+  const engineeringRail = nodesWithClass(engineering, "readiness-map__area-rail")[0];
+  const advisoryRail = nodesWithClass(advisory, "readiness-map__area-rail")[0];
+
+  assert.match(engineering.textContent, /Your level: Not assessed/);
+  assert.match(engineering.textContent, /Role target: Create/);
+  assert.deepEqual(engineeringRail.children.map((segment) => segment.dataset.reached), ["false", "false", "false"]);
+  assert.deepEqual(engineeringRail.children.map((segment) => segment.dataset.target), ["false", "false", "true"]);
+  assert.deepEqual(advisoryRail.children.map((segment) => segment.dataset.reached), ["true", "false", "false"]);
+  assert.deepEqual(advisoryRail.children.map((segment) => segment.dataset.target), ["false", "true", "false"]);
+});
+
 test("unknown competence remains distinct from an explicit zero level", () => {
   const root = render(fixture(), { activeDimensionId: "engineering", onSelect() {} });
-  assert.match(track(root, "engineering").textContent, /Not assessed/);
+  assert.match(areaButton(root, "engineering").textContent, /Not assessed/);
   assert.match(areaButton(root, "foundation").textContent, /None/);
-  assert.doesNotMatch(track(root, "engineering").textContent, /Your level: Acquire/);
+  assert.doesNotMatch(track(root, "engineering").textContent, /Your level:/);
 });
 
 test("ready and in-progress courses expose real course or activity links", () => {

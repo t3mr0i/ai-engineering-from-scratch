@@ -37,6 +37,13 @@ test("secondary planning tools open the shared plan and progress workspace", () 
     "duplicated five-step journey should not compete with the actual learning path");
 });
 
+test("trainer access is in the header rather than the learning sidebar", () => {
+  const header = html.slice(html.indexOf('<header class="nav-edge'), html.indexOf('</header>'));
+  const sidebar = html.slice(html.indexOf('<aside class="learning-sidebar">'), html.indexOf('</aside>'));
+  assert.match(header, /id="trainerNav"[^>]*href="trainer\.html"|href="trainer\.html"[^>]*id="trainerNav"/);
+  assert.doesNotMatch(sidebar, /trainerNav|trainer\.html/);
+});
+
 test("profile editing is a distinct route with a whitelisted return target", () => {
   assert.match(html, /id="profileNav" hidden/);
   assert.match(html, /id="profileBack"[^>]*hidden/);
